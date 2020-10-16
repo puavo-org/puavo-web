@@ -1,5 +1,4 @@
-
-require "colorize"
+require 'colorize'
 
 class LDAPTestEnvException < Exception
 end
@@ -15,7 +14,6 @@ end
 
 class ExpectationError < LDAPTestEnvException
 end
-
 
 class LDAPTestEnv
   @@test_count = 0
@@ -46,8 +44,8 @@ class LDAPTestEnv
     @ldap_base = test_organisation.ldap_base
     LdapBase.ldap_setup_connection( test_organisation.ldap_host,
                                     test_organisation.ldap_base,
-                                    default_ldap_configuration["bind_dn"],
-                                    default_ldap_configuration["password"] )
+                                    default_ldap_configuration['bind_dn'],
+                                    default_ldap_configuration['password'] )
 
 
 
@@ -77,18 +75,15 @@ class LDAPTestEnv
       s.destroy
     end
 
-    IdPool.set_id!("puavoNextGidNumber", 10004)
-    IdPool.set_id!("puavoNextUidNumber", 10002)
-    IdPool.set_id!("puavoNextRid", 3)
-    IdPool.set_id!("puavoNextId", 9)
+    IdPool.set_id!('puavoNextGidNumber', 10004)
+    IdPool.set_id!('puavoNextUidNumber', 10002)
+    IdPool.set_id!('puavoNextRid', 3)
+    IdPool.set_id!('puavoNextId', 9)
 
     @entries = {}
-
-
   end
 
   def validate(name, enabled=true,  &block)
-
     if @disabled || !enabled
       puts "Skipping '#{ name }' because it is disabled".red
       return
@@ -128,17 +123,12 @@ class LDAPTestEnv
       }
     end
   end
-
-
 end
 
-
-
-
 class LDAPObject
-
   attr_accessor :password
   attr_reader :dn, :id
+
   @@test_count = 0
 
   def initialize(id, ldap_host, env)
@@ -175,7 +165,6 @@ class LDAPObject
   end
 
   def self.method_added(method_name)
-
     # create "cannot_" versions of "can_" methods
     if method_name.to_s[0...4] == "can_"
       new_name = method_name.to_s.gsub(/can_/, "cannot_")
@@ -191,7 +180,6 @@ class LDAPObject
         end
         raise "Expected '#{ new_name }(#{ args.join ", " })' on #{ to_s } to raise #{ exception }"
       end
-
     end
   end
 
@@ -297,7 +285,6 @@ class LDAPObject
     pw_test.dn = target.dn
     pw_test.password = new_password
     pw_test.connect
-
   end
 
   def connect
@@ -320,7 +307,4 @@ class LDAPObject
 
     @connected = true
   end
-
 end
-
-

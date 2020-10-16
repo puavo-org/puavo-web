@@ -5,18 +5,18 @@ def define_basic(env)
     config.dn = LdapOrganisation.first.dn
   end
 
-  env.define :school do |school_config|
+  env.define :school do |config|
     @school = School.create(
-      :cn => "gryffindor",
-      :displayName => "Gryffindor"
+      :cn          => 'gryffindor',
+      :displayName => 'Gryffindor',
     )
-    school_config.dn = @school.dn
+    config.dn = @school.dn
   end
 
   env.define :group do |config|
     group = Group.create(
-      :displayName => "Test Group",
-      :cn          => "testgroup",
+      :displayName => 'Test Group',
+      :cn          => 'testgroup',
       :puavoSchool => env.school.dn
     )
     config.dn = group.dn
@@ -24,56 +24,56 @@ def define_basic(env)
 
   env.define :teacher do |config|
     teacher = User.create(
-      :puavoSchool => env.school.dn,
-      :givenName => "Severus",
-      :sn => "Snape",
-      :uid => "severus.snape",
-      :new_password => config.default_password,
+      :givenName                 => 'Severus',
+      :new_password              => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "teacher"
+      :puavoEduPersonAffiliation => 'teacher',
+      :puavoSchool               => env.school.dn,
+      :sn                        => 'Snape',
+      :uid                       => 'severus.snape',
     )
     config.dn = teacher.dn
   end
 
   env.define :admin do |config|
     admin = User.create(
-      :puavoSchool => env.school.dn,
-      :givenName => "Minerva",
-      :sn => "McGonagall",
-      :uid => "minerva.mcgonagall",
-      :new_password => config.default_password,
+      :givenName                 => 'Minerva',
+      :new_password              => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "admin",
-      :school_admin => true
+      :puavoEduPersonAffiliation => 'admin',
+      :puavoSchool               => env.school.dn,
+      :school_admin              => true,
+      :sn                        => 'McGonagall',
+      :uid                       => 'minerva.mcgonagall',
     )
     @school.add_admin(admin)
     config.dn = admin.dn
   end
 
-
   env.define :owner do |config|
-    config.dn = User.find(:first, :attribute => "uid", :value => "cucumber").dn.to_s
-    config.password = "cucumber"
+    config.dn = User.find(:first, :attribute => 'uid', :value => 'cucumber') \
+                    .dn.to_s
+    config.password = 'cucumber'
   end
 
   env.define :puavo do |config|
-    config.dn = "uid=puavo,o=puavo"
-    config.password = "password"
+    config.dn = 'uid=puavo,o=puavo'
+    config.password = 'password'
   end
 
   env.define :pwmgmt do |config|
-    config.dn = "uid=pw-mgmt,o=puavo"
-    config.password = "password"
+    config.dn = 'uid=pw-mgmt,o=puavo'
+    config.password = 'password'
   end
 
   env.define :sysgroup_getent do |config|
     service =  LdapService.new
-    service.uid = "testservice"
-    service.userPassword = "secretsecretsecretsecretsecret"
+    service.uid = 'testservice'
+    service.userPassword = 'secretsecretsecretsecretsecret'
     service.groups = SystemGroup.all.map{ |g| g.id }
     service.save!
     config.dn = service.dn
-    config.password = "secretsecretsecretsecretsecret"
+    config.password = 'secretsecretsecretsecretsecret'
   end
 
   env.define :student do |config|
@@ -97,6 +97,20 @@ def define_basic(env)
     )
     student.save!
     config.dn = student.dn
+  end
+
+  env.define :staff do |config|
+    staff = User.new(
+      :givenName                 => 'Rubeus',
+      :new_password              => config.default_password,
+      :new_password_confirmation => config.default_password,
+      :puavoEduPersonAffiliation => 'staff',
+      :puavoSchool               => env.school.dn,
+      :sn                        => 'Hagrid',
+      :uid                       => 'rubeus.hagrid',
+    )
+    staff.save!
+    config.dn = staff.dn
   end
 
   env.define :teacher2 do |config|
@@ -128,24 +142,52 @@ def define_basic(env)
 
   env.define :other_school do |config|
     @other_school = School.create(
-      :cn => "slytherin",
-      :displayName => "Slytherin"
+      :cn => 'beauxbatons',
+      :displayName => 'Beauxbatons',
     )
     config.dn = @other_school.dn
   end
 
+  env.define :other_school_admin do |config|
+    other_school_admin = User.create(
+      :givenName                 => 'Nicolas',
+      :mail                      => 'nicolas.flamel@example.com',
+      :new_password              => config.default_password,
+      :new_password_confirmation => config.default_password,
+      :puavoEduPersonAffiliation => 'admin',
+      :puavoSchool               => env.other_school.dn,
+      :sn                        => 'Flamel',
+      :uid                       => 'nicolas.flamel',
+    )
+    config.dn = other_school_admin.dn
+  end
+
   env.define :other_school_student do |config|
     other_school_student = User.create(
-      :puavoSchool => env.other_school.dn,
-      :givenName => "Draco",
-      :sn => "Malfoy",
-      :mail => "malfoy@example.com",
-      :uid => "draco.malfoy",
-      :new_password => config.default_password,
+      :givenName                 => 'Fleur',
+      :mail                      => 'fleur.delacour@example.com',
+      :new_password              => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "student"
+      :puavoEduPersonAffiliation => 'student',
+      :puavoSchool               => env.other_school.dn,
+      :sn                        => 'Delacour',
+      :uid                       => 'fleur.delacour',
     )
     config.dn = other_school_student.dn
+  end
+
+  env.define :other_school_teacher do |config|
+    other_school_teacher = User.create(
+      :givenName                 => 'Madame',
+      :mail                      => 'madame.maxine@example.com',
+      :new_password              => config.default_password,
+      :new_password_confirmation => config.default_password,
+      :puavoEduPersonAffiliation => 'teacher',
+      :puavoSchool               => env.other_school.dn,
+      :sn                        => 'Maxine',
+      :uid                       => 'madame.maxine',
+    )
+    config.dn = other_school_teacher.dn
   end
 
   env.define :id_pool do |config|
@@ -161,41 +203,39 @@ def define_basic(env)
   end
 
   env.define :printer do |config|
-    printer = Printer.create(
-      :printerDescription => "foo"
-    )
+    printer = Printer.create(:printerDescription => 'foo')
     config.dn = printer.dn
   end
 
   env.define :bootserver do |config|
     bootserver = Server.create(
-      :puavoHostname => "boot01",
-      :puavoDeviceType => "bootserver",
-      :macAddress => "27:c0:59:3c:bc:b4",
-      :description => "test",
-      :puavoSchool => env.school.dn )
+      :description     => 'test',
+      :macAddress      => '27:c0:59:3c:bc:b4',
+      :puavoDeviceType => 'bootserver',
+      :puavoHostname   => 'boot01',
+      :puavoSchool     => env.school.dn)
     config.dn = bootserver.dn
   end
 
   env.define :bootserver2 do |config|
     bootserver = Server.create(
-      :puavoHostname => "boot10",
-      :puavoDeviceType => "bootserver",
-      :macAddress => "27:c0:59:3c:bc:b5",
-      :description => "test" )
+      :description     => 'test',
+      :macAddress      => '27:c0:59:3c:bc:b5',
+      :puavoDeviceType => 'bootserver',
+      :puavoHostname   => 'boot10')
     config.dn = bootserver.dn
   end
 
   env.define :laptop do |config|
     laptop = Device.new
-    laptop.classes = ["top", "device", "puppetClient", "puavoNetbootDevice", "simpleSecurityObject"]
-    laptop.puavoSchool = env.school.dn
-    laptop.puavoHostname = "laptop-01"
-    laptop.puavoDeviceType = "laptop"
-    laptop.macAddress = "27:c0:59:3c:bc:b6"
+    laptop.classes = %w(top device puppetClient puavoNetbootDevice simpleSecurityObject)
     laptop.description = "test laptop"
+    laptop.macAddress = "27:c0:59:3c:bc:b6"
+    laptop.puavoDeviceType = "laptop"
+    laptop.puavoHostname = "laptop-01"
+    laptop.puavoSchool = env.school.dn
     laptop.userPassword = config.default_password
-    laptop.save
+    laptop.save!
     config.dn = laptop.dn
     config.password = config.default_password
   end
