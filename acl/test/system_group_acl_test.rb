@@ -1,5 +1,4 @@
-
-
 env = LDAPTestEnv.new
-env.validate "System Group" do
+
+env.validate 'System Group' do
 end
