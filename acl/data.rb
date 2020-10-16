@@ -5,33 +5,12 @@ def define_basic(env)
     config.dn = LdapOrganisation.first.dn
   end
 
-  env.define :school, :role do |school_config, role_config|
-
+  env.define :school do |school_config|
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor"
     )
     school_config.dn = @school.dn
-
-    # Role for students
-    Role.create(
-      :displayName => "Class 4",
-      :puavoSchool => @school.dn
-    )
-
-    # Role for teachers and admins
-    Role.create(
-      :displayName => "Staff",
-      :puavoSchool => @school.dn
-    )
-
-    # Unused role for testing
-    role = Role.create(
-      :displayName => "Class 5",
-      :puavoSchool => @school.dn
-    )
-    role_config.dn = role.dn
-
   end
 
   env.define :group do |config|
@@ -49,7 +28,6 @@ def define_basic(env)
       :givenName => "Severus",
       :sn => "Snape",
       :uid => "severus.snape",
-      :role_name => "Staff",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => "teacher"
@@ -63,7 +41,6 @@ def define_basic(env)
       :givenName => "Minerva",
       :sn => "McGonagall",
       :uid => "minerva.mcgonagall",
-      :role_name => "Staff",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => "admin",
@@ -107,7 +84,6 @@ def define_basic(env)
       :sn => "Potter",
       :mail => "harry@example.com",
       :uid => "harry.potter",
-      :role_name => "Class 4",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => "student",
@@ -129,7 +105,6 @@ def define_basic(env)
       :givenName => "Gilderoy",
       :sn => "Lockhart",
       :uid => "gilderoy.lockhart",
-      :role_name => "Staff",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => "teacher"
@@ -144,7 +119,6 @@ def define_basic(env)
       :mail => "ron@example.com",
       :sn => "Wesley",
       :uid => "ron.wesley",
-      :role_name => "Class 4",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => "student"
@@ -152,19 +126,12 @@ def define_basic(env)
     config.dn = student2.dn
   end
 
-
-
   env.define :other_school do |config|
     @other_school = School.create(
       :cn => "slytherin",
       :displayName => "Slytherin"
     )
     config.dn = @other_school.dn
-
-    Role.create(
-      :displayName => "Class 4",
-      :puavoSchool => @other_school.dn
-    )
   end
 
   env.define :other_school_student do |config|
@@ -174,7 +141,6 @@ def define_basic(env)
       :sn => "Malfoy",
       :mail => "malfoy@example.com",
       :uid => "draco.malfoy",
-      :role_name => "Class 4",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => "student"
@@ -224,7 +190,7 @@ def define_basic(env)
     laptop = Device.new
     laptop.classes = ["top", "device", "puppetClient", "puavoNetbootDevice", "simpleSecurityObject"]
     laptop.puavoSchool = env.school.dn
-    laptop.puavoHostname = "ldaptop-01"
+    laptop.puavoHostname = "laptop-01"
     laptop.puavoDeviceType = "laptop"
     laptop.macAddress = "27:c0:59:3c:bc:b6"
     laptop.description = "test laptop"
@@ -233,5 +199,4 @@ def define_basic(env)
     config.dn = laptop.dn
     config.password = config.default_password
   end
-
 end
