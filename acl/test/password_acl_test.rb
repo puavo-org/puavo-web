@@ -72,3 +72,14 @@ env.validate 'User password' do
     test.call()
   end
 end
+
+env.validate 'password attribute secrecy' do
+  # Nobody should be able to read anybody's "userPassword"- or
+  # "sambaNTPassword"-attributes (maybe add "bootserver" to this list?).
+  [ admin, laptop, owner, puavo, pwmgmt, student, teacher ].each do |actor|
+    [ :userPassword, :sambaNTPassword ].each do |attribute|
+      actor.cannot_read actor,   [ attribute ], InsufficientAccessRights
+      actor.cannot_read student, [ attribute ], InsufficientAccessRights
+    end
+  end
+end
