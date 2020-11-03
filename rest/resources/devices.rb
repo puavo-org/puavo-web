@@ -36,6 +36,12 @@ class Device < Host
     by_attr!(:hostname, hostname)
   end
 
+  # Like by_hostname, but returns the low-level raw data and only the attributes you ask.
+  # (The "raw_by_dn" method wants a DN, and I have a hostname.)
+  def self.by_hostname_raw_attrs(hostname, attributes)
+    self.raw_filter(self.ldap_base(), "(&(objectclass=*)(puavoHostname=#{escape(hostname)}))", attributes)
+  end
+
   # Find device by it's mac address
   def self.by_mac_address!(mac_address)
     by_attr!(:hostname, mac_address)

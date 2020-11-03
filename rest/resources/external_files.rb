@@ -13,6 +13,17 @@ class ExternalFile < LdapModel
     "(&(objectClass=top)(objectClass=puavoFile))"
   end
 
+  def self.raw_list
+    ExternalFile.raw_filter(self.ldap_base(),
+                            self.base_filter(),
+                            ['cn', 'puavoDataHash']).collect do |file|
+      {
+        name: file['cn'][0],
+        data_hash: file['puavoDataHash'][0],
+      }
+    end
+  end
+
   # return file contents for file name
   def self.data_only(name)
     res = by_attr!(:name, name, {
@@ -42,7 +53,7 @@ class ExternalFiles < PuavoSinatra
   get "/v3/external_files" do
     auth :basic_auth, :server_auth, :legacy_server_auth
 
-    json ExternalFile.all
+    json ExternalFile.raw_list
   end
 
   # Get metadata for external file
@@ -81,19 +92,16 @@ class ExternalFiles < PuavoSinatra
   get "/v3/devices/:hostname/external_files" do
     auth :basic_auth, :server_auth, :legacy_server_auth
 
-    printer_ppd_data_hash = nil
-    device = Device.by_hostname(params[:hostname])
+    external_files = ExternalFile.raw_list
 
-    if device
-      if device.printer_ppd
-        printer_ppd_data_hash = Digest::SHA1.new
-        printer_ppd_data_hash.update(device.printer_ppd)
-      end
-    end
+    # If the device has a printer driver, manually append
+    # its file to the external files list
+    raw_device = Device.by_hostname_raw_attrs(params[:hostname], ['puavoPrinterPPD'])
 
-    external_files = ExternalFile.all
+    if raw_device.count == 1 && raw_device[0].include?('puavoPrinterPPD')
+      printer_ppd_data_hash = Digest::SHA1.new
+      printer_ppd_data_hash.update(raw_device[0]['puavoPrinterPPD'][0].to_s)
 
-    if printer_ppd_data_hash
       external_files.push(
         {"name" => "printer.ppd", "data_hash" => printer_ppd_data_hash.to_s }
       )
@@ -109,9 +117,12 @@ class ExternalFiles < PuavoSinatra
 
     content_type "application/octet-stream"
 
+    # Manually handle the printer driver file
     if params[:name] == "printer.ppd"
-      if device = Device.by_hostname(params[:hostname])
-        device.printer_ppd
+      raw_device = Device.by_hostname_raw_attrs(params[:hostname], ['puavoPrinterPPD'])
+
+      if raw_device.count == 1 && raw_device[0].include?('puavoPrinterPPD')
+        raw_device[0]['puavoPrinterPPD']
       end
     else
       ExternalFile.data_only(params[:name])
