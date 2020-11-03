@@ -148,37 +148,8 @@ describe PuavoRest::Users do
       assert_equal "Brown", data["last_name"]
       assert_equal "Brown Bob", data["reverse_name"]
       assert_equal "bob@example.com", data["email"]
-      assert_includes data["secondary_emails"], "bob@foobar.com"
-      assert_includes data["secondary_emails"], "bob@helloworld.com"
-      assert_equal "teacher", data["user_type"]
-      assert_equal "en", data["preferred_language"]
-      assert data["uid_number"], "has uid number"
-      assert data["gid_number"], "has gid number"
-      assert_equal Fixnum, data["uid_number"].class, "uid number must be a Fixnum"
-
-      assert data["organisation"], "has organisation data added"
-
-      assert_equal "Example Organisation", data["organisation"]["name"]
-      assert_equal "example.puavo.net", data["organisation"]["domain"]
-      assert_equal "dc=edu,dc=example,dc=net", data["organisation"]["base"]
-      assert_equal "bob@example.puavo.net", data["domain_username"]
-      assert_equal "schoolhomepage.example", data["homepage"]
-
-      assert data["schools"], "has schools data added"
-      assert_equal(1, data["schools"].size)
-      assert(data["schools"].first["id"], "school data has id")
-      assert_equal("Gryffindor", data["schools"].first["name"])
-
-      group = data["schools"].first["groups"].first
-      assert_equal "Group 1", group["name"]
-      assert_equal "teaching group", group["type"]
-
-      assert_equal "http://example.puavo.net/v3/users/bob/profile.jpg",
-                   data["profile_image_link"]
-
-      assert_equal "Europe/Helsinki", data["timezone"]
-
-      assert_equal "bob", data["external_id"]
+      assert_equal "Example Organisation", data["organisation_name"]
+      assert_equal "example.puavo.net", data["organisation_domain"]
     end
   end
 

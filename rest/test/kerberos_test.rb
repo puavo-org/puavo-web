@@ -66,8 +66,6 @@ describe PuavoRest::SSO do
       assert_equal 'bob', data['username']
       assert_equal 'Bob', data['first_name']
       assert_equal 'Brown', data['last_name']
-      assert_equal 'bob@example.com', data['email']
-      assert_equal 'bob@EXAMPLE.PUAVO.NET', data['edu_person_principal_name']
     end
   end
 end

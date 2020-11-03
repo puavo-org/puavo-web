@@ -1233,8 +1233,19 @@ class Users < PuavoSinatra
 
   get "/v3/whoami" do
     auth :basic_auth, :kerberos
-    user = User.current.to_hash
-    json user.merge("organisation" => LdapModel.organisation.to_hash)
+
+    user = User.current
+    organisation = LdapModel.organisation
+
+    json({
+      id: user.id,
+      dn: user.dn.to_s,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      username: user.username,
+      organisation_name: organisation.name,
+      organisation_domain: organisation.domain,
+    })
   end
 
 
