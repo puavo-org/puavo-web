@@ -147,16 +147,6 @@ class Organisations < PuavoSinatra
     require_admin!
   end
 
-  get "/v3/organisations" do
-    auth :basic_auth, :kerberos
-    require_admin_or_not_people!
-
-    Organisation.refresh
-    LdapModel.setup(:credentials => CONFIG["server"]) do
-      json Organisation.all
-    end
-  end
-
   get "/v3/current_organisation" do
     auth :basic_auth, :kerberos, :server_auth
     require_admin_or_not_people!
