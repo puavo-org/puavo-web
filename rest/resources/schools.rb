@@ -207,11 +207,6 @@ class School < LdapModel
 end
 
 class Schools < PuavoSinatra
-  get "/v3/schools" do
-    auth :basic_auth, :server_auth, :kerberos
-    json School.all
-  end
-
   get "/v3/schools/:school_id/users" do
     auth :basic_auth, :kerberos
     school = School.by_attr!(:id, params["school_id"])
