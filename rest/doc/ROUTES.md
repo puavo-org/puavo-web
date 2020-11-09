@@ -352,15 +352,3 @@ Basic auth or boot server auth
 ### Returns
 
     (Array)
-
-## POST /v3/primus/:filename
-
-Upload Primus integration file
-
-    curl --user username:secret --form file=@oppilaat.txt http://<server>/v3/primus/oppilaat.txt
-
-or
-
-    curl --user username:secret --header 'content-type: text/csv' --data-binary @oppilaat.txt http://<server>/v3/primus/oppilaat.txt
-
-

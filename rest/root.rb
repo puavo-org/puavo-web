@@ -225,7 +225,6 @@ class Root < PuavoSinatra
 
   if CONFIG["cloud"]
     use PuavoRest::SSO
-    use PuavoRest::Primus
     use PuavoRest::Certs
   end
 
