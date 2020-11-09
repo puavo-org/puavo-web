@@ -120,9 +120,77 @@ class Organisation < LdapModel
 
   computed_attr :owners
   def owners
+    # A compact hash, contains only relevant information about the user
+    # Some of the fields, like UID and SSH public key, are needed by
+    # puavoadmins-update and puavo-update-admins scripts.
+    def owner_hash(u)
+      # don't crash if the owners array contains a deleted user
+      return nil unless u
+
+      return {
+        id: u.id,
+        dn: u.dn,
+        first_name: u.first_name,
+        last_name: u.last_name,
+        username: u.username,
+        uid_number: u.uid_number,
+        gid_number: u.gid_number,
+        ssh_public_key: u.ssh_public_key,
+      }
+    end
+
     Array( get_own(:owner) ).select{ |o| o.to_s.match(/#{self.base}$/) }.map do |owner_dn|
-      User.by_dn(owner_dn)
+      owner_hash(User.by_dn(owner_dn))
     end.compact
+  end
+
+  # Customized to_hash method for stripping down the returned data to only bare essentials
+  def to_hash
+    out = {
+      dn: self.dn,
+      base: self.base,
+      name: self.name,
+      domain: self.domain,
+      preferred_image: self.preferred_image,
+      preferred_language: self.preferred_language,
+      locale: self.locale,
+      allow_guest: self.allow_guest,
+      automatic_image_updates: self.automatic_image_updates,
+      personal_device: self.personal_device,
+      timezone: self.timezone,
+      keyboard_layout: self.keyboard_layout,
+      keyboard_variant: self.keyboard_variant,
+      image_series_source_urls: self.image_series_source_urls,
+      puavoconf: self.puavoconf,
+      autopoweroff_mode: self.autopoweroff_mode,
+      daytime_start_hour: self.daytime_start_hour,
+      daytime_end_hour: self.daytime_end_hour,
+      puavo_kerberos_realm: self.puavo_kerberos_realm,
+      owners: []
+    }
+
+    # Fill in the owners array without constructing user objects
+    # (the self.owners User objects appear to be constructed on-demand)
+    attrs = ['puavoId', 'dn', 'uid', 'givenName', 'sn', 'uidNumber', 'gidNumber', 'puavoSshPublicKey']
+
+    self.owner.each do |dn|
+      next if dn == 'uid=admin,o=puavo'
+
+      User.raw_filter(escape(dn), '(objectclass=*)', attrs) do |o|
+        out[:owners] << {
+          id: o['puavoId'][0].to_i,
+          dn: dn,
+          username: o['uid'][0].force_encoding('UTF-8'),
+          first_name: o['givenName'][0].force_encoding('UTF-8'),
+          last_name: o['sn'][0].force_encoding('UTF-8'),
+          uid_number: o['uidNumber'][0].to_i,
+          gid_number: o['gidNumber'][0].to_i,
+          ssh_public_key: o.to_hash.fetch('puavoSshPublicKey', [])[0]
+        }
+      end
+    end
+
+    return out
   end
 
 end
