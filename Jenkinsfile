@@ -119,6 +119,9 @@ Environment="PUAVO_WEB_CUCUMBER_TESTS=true"
 EOF
           '''
 
+          // make the above trick effective
+          sh 'systemctl daemon-reload'
+
           // Test installation can be done and works
           // (as a side-effect restarts puavo-rest and puavo-web).
           sh 'script/test-install.sh'
