@@ -47,7 +47,7 @@ Feature: Search users
   Scenario: School admin should not find students from other schools
     Given a new school and group with names "Example school 2", "Class 1" on the "example" organisation
     And the following users:
-      | givenName | sn    | uid       | password | school_admin | puavoEduPersonAffiliation |
-      | Elizabeth | Jones | elizabeth | secret   | false        | student                   |
+      | givenName | sn    | uid       | password | school_admin | puavoEduPersonAffiliation | school           |
+      | Elizabeth | Jones | elizabeth | secret   | false        | student                   | Example school 2 |
     When I search user with "Elizabeth"
     And I should get no search results
