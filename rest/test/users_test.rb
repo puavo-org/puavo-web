@@ -146,8 +146,6 @@ describe PuavoRest::Users do
       assert_equal "bob", data["username"]
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
-      assert_equal "Brown Bob", data["reverse_name"]
-      assert_equal "bob@example.com", data["email"]
       assert_equal "Example Organisation", data["organisation_name"]
       assert_equal "example.puavo.net", data["organisation_domain"]
     end
