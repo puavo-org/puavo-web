@@ -27,9 +27,10 @@ Feature: Devices registration
     When I enter "cucumber" into process "puavo-register"
     Then I should see the following output from process "puavo-register":
     """
-    Is this information correct? (y/n)
+    Change (a)ll / (d)evice type / (s)chool / (h)ostname / (p)rimary user
+      or register to Puavo with the above information? (y)es
     """
-    When I enter "n" into process "puavo-register"
+    When I enter "a" into process "puavo-register"
     Then I should see the following output from process "puavo-register":
     """
     Device type selection:
@@ -68,7 +69,6 @@ Feature: Devices registration
     When I enter "" into process "puavo-register"
     When I enter "" into process "puavo-register"
     When I enter "cucumber" into process "puavo-register"
-    When I enter "" into process "puavo-register"
     Then I should see the following output from process "puavo-register":
     """
     HOST INFORMATION:
@@ -80,6 +80,9 @@ Feature: Devices registration
     Device manufacturer:
     Device model:
     Device primary user:    cucumber
+
+    Change (a)ll / (d)evice type / (s)chool / (h)ostname / (p)rimary user
+      or register to Puavo with the above information? (y)es
     """
     When I enter "y" into process "puavo-register"
     Then I should see the following output from process "puavo-register":
