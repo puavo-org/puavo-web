@@ -6,19 +6,19 @@ def define_basic(env)
   end
 
   env.define :school do |config|
-    @school = School.create(
+    school = School.create(
       :cn          => 'gryffindor',
       :displayName => 'Gryffindor',
     )
-    config.dn = @school.dn
+    config.dn = school.dn
+    config.model_object = school
   end
 
   env.define :group do |config|
     group = Group.create(
       :displayName => 'Test Group',
       :cn          => 'testgroup',
-      :puavoSchool => env.school.dn
-    )
+      :puavoSchool => env.school.dn)
     config.dn = group.dn
   end
 
@@ -30,8 +30,7 @@ def define_basic(env)
       :puavoEduPersonAffiliation => 'teacher',
       :puavoSchool               => env.school.dn,
       :sn                        => 'Snape',
-      :uid                       => 'severus.snape',
-    )
+      :uid                       => 'severus.snape')
     config.dn = teacher.dn
   end
 
@@ -42,11 +41,9 @@ def define_basic(env)
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => 'admin',
       :puavoSchool               => env.school.dn,
-      :school_admin              => true,
       :sn                        => 'McGonagall',
-      :uid                       => 'minerva.mcgonagall',
-    )
-    @school.add_admin(admin)
+      :uid                       => 'minerva.mcgonagall')
+    env.school.model_object.add_admin(admin)
     config.dn = admin.dn
   end
 
@@ -112,8 +109,7 @@ def define_basic(env)
       :puavoEduPersonAffiliation => 'staff',
       :puavoSchool               => env.school.dn,
       :sn                        => 'Hagrid',
-      :uid                       => 'rubeus.hagrid',
-    )
+      :uid                       => 'rubeus.hagrid')
     staff.save!
     config.dn = staff.dn
   end
@@ -126,8 +122,7 @@ def define_basic(env)
       :uid => "gilderoy.lockhart",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "teacher"
-    )
+      :puavoEduPersonAffiliation => "teacher")
     config.dn = teacher2.dn
   end
 
@@ -136,21 +131,19 @@ def define_basic(env)
       :puavoSchool => env.school.dn,
       :givenName => "Ron",
       :mail => "ron@example.com",
-      :sn => "Wesley",
-      :uid => "ron.wesley",
+      :sn => "Weasley",
+      :uid => "ron.weasley",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "student"
-    )
+      :puavoEduPersonAffiliation => "student")
     config.dn = student2.dn
   end
 
   env.define :other_school do |config|
-    @other_school = School.create(
+    other_school = School.create(
       :cn => 'beauxbatons',
-      :displayName => 'Beauxbatons',
-    )
-    config.dn = @other_school.dn
+      :displayName => 'Beauxbatons')
+    config.dn = other_school.dn
   end
 
   env.define :other_school_admin do |config|
@@ -162,8 +155,7 @@ def define_basic(env)
       :puavoEduPersonAffiliation => 'admin',
       :puavoSchool               => env.other_school.dn,
       :sn                        => 'Flamel',
-      :uid                       => 'nicolas.flamel',
-    )
+      :uid                       => 'nicolas.flamel')
     config.dn = other_school_admin.dn
   end
 
@@ -176,8 +168,7 @@ def define_basic(env)
       :puavoEduPersonAffiliation => 'student',
       :puavoSchool               => env.other_school.dn,
       :sn                        => 'Delacour',
-      :uid                       => 'fleur.delacour',
-    )
+      :uid                       => 'fleur.delacour')
     config.dn = other_school_student.dn
   end
 
@@ -190,8 +181,7 @@ def define_basic(env)
       :puavoEduPersonAffiliation => 'teacher',
       :puavoSchool               => env.other_school.dn,
       :sn                        => 'Maxine',
-      :uid                       => 'madame.maxine',
-    )
+      :uid                       => 'madame.maxine')
     config.dn = other_school_teacher.dn
   end
 
@@ -223,12 +213,12 @@ def define_basic(env)
   end
 
   env.define :bootserver2 do |config|
-    bootserver = Server.create(
+    bootserver2 = Server.create(
       :description     => 'test',
       :macAddress      => '27:c0:59:3c:bc:b5',
       :puavoDeviceType => 'bootserver',
       :puavoHostname   => 'boot10')
-    config.dn = bootserver.dn
+    config.dn = bootserver2.dn
   end
 
   env.define :laptop do |config|

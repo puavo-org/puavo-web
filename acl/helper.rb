@@ -19,6 +19,8 @@ class LDAPTestEnv
   @@test_count = 0
 
   def initialize
+    Puavo::Test.clean_up_ldap
+
     define_basic(self)
   end
 
@@ -97,7 +99,6 @@ class LDAPTestEnv
   # Define test data object.
   def define(*ids, &seeder)
     ids.each do |id|
-
       # Define lazy method that creates and returns the ldap object when called
       singleton = class << self; self end
       singleton.send :define_method, id, lambda {
@@ -127,7 +128,7 @@ end
 
 class LDAPObject
   attr_accessor :password
-  attr_reader :dn, :id
+  attr_reader :dn, :id, :model_object
 
   @@test_count = 0
 
@@ -136,6 +137,7 @@ class LDAPObject
     @ldap_host = ldap_host
     @env = env
     @log_prefix = ""
+    @model_object = nil
   end
 
   def ensure_object(target)
@@ -156,6 +158,10 @@ class LDAPObject
 
   def dn=(dn)
     @dn = dn.to_s
+  end
+
+  def model_object=(model_object)
+    @model_object = model_object
   end
 
   def log(msg)
