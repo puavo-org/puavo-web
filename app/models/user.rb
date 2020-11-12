@@ -32,7 +32,6 @@ class User < LdapBase
 
   before_update :change_password
 
-  after_save :set_school_admin
   after_save :add_member_uid_to_models
   after_save :update_roles
 
@@ -48,7 +47,6 @@ class User < LdapBase
   @@extra_attributes = [
      :password,
      :new_password,
-     :school_admin,
      :uid_has_changed,
      :role_ids,
      :role_name,
@@ -761,14 +759,6 @@ class User < LdapBase
 
   def set_uid_number
     self.uidNumber = IdPool.next_uid_number
-  end
-
-  # FIXME: This method is used only cucumber test. Move this methmod to test code.
-  def set_school_admin
-    if self.school_admin == "true"
-      self.school.puavoSchoolAdmin = Array(self.school.puavoSchoolAdmin).push self.dn
-      self.school.save!
-    end
   end
 
   def is_uid_changed
