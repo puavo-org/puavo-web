@@ -75,6 +75,16 @@ class School < LdapModel
     "(objectClass=puavoSchool)"
   end
 
+  # Finds a school by DN and returns raw attributes in a hash (not a School object)
+  def self.by_dn_raw_attrs(dn, attributes)
+    out = []
+
+    # due the way raw_filter() works, we must use a block when doing plain DN searches
+    School.raw_filter(dn, base_filter(), attributes) { |s| out << s.to_hash }
+
+    return out.size == 1 ? out.first : nil
+  end
+
   computed_attr :puavo_id
   def puavo_id
     id
