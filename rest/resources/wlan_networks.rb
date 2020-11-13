@@ -3,18 +3,49 @@ require_relative "./devices"
 module PuavoRest
 class WlanNetworks < PuavoSinatra
 
-  def networks
-    device = Device.by_hostname(params["hostname"])
+  def parse_json_array(value)
+    Array(value).map do |n|
+      begin
+        JSON.parse(n)
+      rescue JSON::ParserError
+        JSON::ParserError
+      end
+    end.select{|v| v != JSON::ParserError}
+  end
 
-    if device.nil? then
-      status 404
-      return json({ :status => "failed",
-                    :error  => "Cannot find device by hostname" })
+  def networks
+    # Check that the device exists, then find its school for the WLAN settings
+    device = Device.by_hostname_raw_attrs(params['hostname'], ['puavoSchool'])
+
+    if device.count != 1
+      raise NotFound, :user => 'Cannot find device by hostname'
     end
 
-    org_networks = Array(device.organisation["wlan_networks"])
-    school_networks = Array(device.school["wlan_networks"])
+    school = School.by_dn_raw_attrs(device[0]['puavoSchool'][0], ['puavoWlanSSID'])
 
+    if school.nil?
+      school_networks = []
+    else
+      school_networks = parse_json_array(school.fetch('puavoWlanSSID', []))
+    end
+
+    # Get the current organsation WLAN definitions. Our organisation cache is bugged,
+    # so query the database directly.
+    organisation = []
+
+    Organisation.connection.search(
+      Organisation.current.dn, LDAP::LDAP_SCOPE_BASE, '(objectclass=*)', ['puavoWlanSSID']) do |org|
+      organisation << org.to_hash
+    end
+
+    if organisation.count == 1
+      org_networks = parse_json_array(organisation[0].fetch('puavoWlanSSID', []))
+    else
+      # Okay. Right. Whatever. Use the cached value then and hope for the best.
+      org_networks = Array(Organisation.current.wlan_networks)
+    end
+
+    # Allow schools to override organisation-level networks
     school_networks_ssids = school_networks.map { |w| w["ssid"] }
     org_networks.delete_if { |w| school_networks_ssids.include?(w["ssid"]) }
 
