@@ -42,18 +42,6 @@ describe PuavoRest::Organisations do
 
   end
 
-  it "can be fetched by admin" do
-    basic_authorize "cucumber", "cucumber"
-    get "/v3/organisations"
-    assert_200
-    data = JSON.parse(last_response.body)
-
-    assert(
-      !data.select{ |o| o["domain"] == "example.puavo.net" }.empty?,
-      "Has example.puavo.net"
-    )
-  end
-
   it "can be fetched by bootserver" do
     basic_authorize @server1.dn, "secret"
     get "/v3/current_organisation"
@@ -71,15 +59,4 @@ describe PuavoRest::Organisations do
     assert_equal "example.puavo.net", data["domain"]
     assert_equal "cucumber", data["owners"][0]["username"]
   end
-
-  it "cannot be fetched by normal user" do
-    basic_authorize "bob", "secret"
-    get "/v3/organisations"
-    data = JSON.parse(last_response.body)
-    assert_equal 401, last_response.status
-    assert data["error"]
-    assert_equal data["error"]["code"], "Unauthorized"
-  end
-
-
 end
