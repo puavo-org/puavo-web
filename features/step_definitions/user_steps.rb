@@ -21,7 +21,7 @@ Given(/^the following users:$/) do |users|
       school = @school
     end
 
-    raise "No school set for user definition #{ u.inspect }" unless school
+    raise "No school found from user definition #{ u.inspect }" unless school
 
     if u['groups'] then
       groups = u['groups'].split.map do |g_cn|

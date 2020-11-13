@@ -171,8 +171,8 @@ Feature: Manage schools
   Scenario: Delete school when it still contains the users and groups
     Given a new school and group with names "Test School 1", "Group 1" on the "example" organisation
     And the following users:
-    | givenName | sn     | uid   | password | puavoEduPersonAffiliation | school |
-    | User 1    | User 1 | user1 | secret   | student                   | Test   |
+    | givenName | sn     | uid   | password | puavoEduPersonAffiliation | school        |
+    | User 1    | User 1 | user1 | secret   | student                   | Test School 1 |
     And I am on the show school page with "Test School 1"
     When I follow "Delete school"
     Then I should see "The school was not removed. Its users, groups, devices and boot servers must be removed first."
