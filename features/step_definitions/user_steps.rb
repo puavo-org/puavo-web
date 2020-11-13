@@ -14,10 +14,15 @@ Given(/^the following users:$/) do |users|
   users.hashes.each do |u|
     groups = nil
     school = nil
-    if u["school"] then
-      school = School.find(:first, :attribute => "displayName", :value => u["school"])
-      u.delete("school")
+    if u['school'] then
+      school = School.find(:first, :attribute => "displayName", :value => u['school'])
+      u.delete('school')
+    else
+      school = @school
     end
+
+    raise "No school set for user definition #{ u.inspect }" unless school
+
     if u['groups'] then
       groups = u['groups'].split.map do |g_cn|
                  Group.find(:first, :attribute => 'cn', :value => g_cn)
@@ -26,13 +31,23 @@ Given(/^the following users:$/) do |users|
     end
 
     user = User.new(u)
-    user.puavoSchool = (school || @school).dn
-    if u["school_admin"] && u["school_admin"] == "true"
+    user.puavoSchool = school.dn
+
+    is_school_admin = (u['school_admin'] && u['school_admin'] == 'true')
+
+    if is_school_admin then
       user.puavoAdminOfSchool = user.puavoSchool
       SambaGroup.add_uid_to_memberUid('Domain Admins', user.uid)
     end
-    user.set_password(u["password"])
+
+    user.set_password(u['password'])
     user.save!
+
+    if is_school_admin then
+      school.puavoSchoolAdmin = Array(school.puavoSchoolAdmin).push(user.dn)
+      school.save!
+    end
+
     user.groups = groups if groups  # XXX must be after .save! due to weird APIs
     user.update_associations
   end
