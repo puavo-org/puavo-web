@@ -69,29 +69,34 @@ env.validate "Organisation" do
   owner.can_modify organisation, [ :add,    :owner, [ teacher.dn ] ]
   owner.can_modify organisation, [ :delete, :owner, [ teacher.dn ] ]
 
-  # Owner can read following attributes
-  owner.can_read organisation, [ :cn,
-                                 :description,
-                                 :eduOrgHomePageURI,
-                                 :eduOrgLegalName,
-                                 :facsimileTelephoneNumber,
-                                 :l,
-                                 :o,
-                                 :owner,
-                                 :postOfficeBox,
-                                 :postalAddress,
-                                 :postalCode,
-                                 :preferredLanguage,
-                                 :puavoDeviceAutoPowerOffMode,
-                                 :puavoDeviceOffHour,
-                                 :puavoDeviceOnHour,
-                                 :puavoDomain,
-                                 :puavoEduOrgAbbreviation,
-                                 :puavoKadminPort,
-                                 :puavoKerberosRealm,
-                                 :puavoRemoteDesktopPrivateKey,
-                                 :sambaDomainName,
-                                 :st,
-                                 :street,
-                                 :telephoneNumber ]
+  lots_of_organisation_attributes = [ :cn,
+                                      :description,
+                                      :eduOrgHomePageURI,
+                                      :eduOrgLegalName,
+                                      :facsimileTelephoneNumber,
+                                      :l,
+                                      :o,
+                                      :owner,
+                                      :postOfficeBox,
+                                      :postalAddress,
+                                      :postalCode,
+                                      :preferredLanguage,
+                                      :puavoDeviceAutoPowerOffMode,
+                                      :puavoDeviceOffHour,
+                                      :puavoDeviceOnHour,
+                                      :puavoDomain,
+                                      :puavoEduOrgAbbreviation,
+                                      :puavoKadminPort,
+                                      :puavoKerberosRealm,
+                                      :puavoRemoteDesktopPrivateKey,
+                                      :sambaDomainName,
+                                      :st,
+                                      :street,
+                                      :telephoneNumber ]
+
+  # Owner can read organisation attributes
+  owner.can_read organisation, lots_of_organisation_attributes
+
+  # Special users can read organisation attributes
+  puavo.can_read organisation, lots_of_organisation_attributes
 end
