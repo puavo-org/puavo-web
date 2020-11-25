@@ -5,6 +5,7 @@ Feature: Manage devices
     And the following users:
       | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
       | Pavel     | Taylor | pavel | secret   | true         | staff                     |
+      | Huey      | Duck   | huey  | password | false        | student                   |
     And I am logged in as "pavel" with password "secret"
     And the following devices:
       | puavoHostname | macAddress        | puavoDeviceType | puavoMountpoint                                                      |
@@ -79,6 +80,26 @@ Feature: Manage devices
     And I press "Update"
     Then I should see "Device was successfully updated."
     And I should not see "Device primary user Pavel Taylor"
+
+  Scenario: Deleting the device primary user should not leave behind stale references to them
+    # Setup
+    Given I am on the devices list page
+    And I press "Edit..." on the "laptop-01" row
+    And I fill in "Device primary user" with "huey"
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should see "Device primary user Huey Duck"
+    And the primary user of the device "laptop-01" should be "huey"
+    # Delete (must login as "cucumber" to see the delete button)
+    Given I am logged in as "cucumber" with password "cucumber"
+    Given I am on the show user page with "huey"
+    And I should see "Delete user"
+    When I follow "Delete user"
+    Then I should see "User was successfully removed."
+    # Verify
+    Given I am on the show device page with "laptop-01"
+    Then I should not see "Huey Duck"
+    And the primary user of the device "laptop-01" should be nil
 
   Scenario: Change Image series source URL
     Given I am logged in as "example" organisation owner

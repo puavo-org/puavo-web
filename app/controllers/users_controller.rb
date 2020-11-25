@@ -731,6 +731,24 @@ class UsersController < ApplicationController
         end
       end
 
+      # Any primary devices? LDAP is not a relational database, so manually break the
+      # connection between a deleted user and devices where they were the primary user.
+      user_devices = Device.find(:all,
+                                 :attribute => 'puavoDevicePrimaryUser',
+                                 :value => @user.dn.to_s)
+
+      user_devices.each do |device|
+        begin
+          device.puavoDevicePrimaryUser = nil
+          device.save!
+        rescue
+          # If the primary user cannot be cleared, CANCEL the deletion
+          flash[:alert] = t('flash.device_primary_user_removal_failed')
+          redirect_to(user_path(@school, @user))
+          return
+        end
+      end
+
       if @user.destroy
         flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.user'))
       end

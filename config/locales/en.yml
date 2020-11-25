@@ -386,6 +386,7 @@ en:
     organisation_ownership_removed: "Admin user organisation ownership was removed."
     organisation_ownership_not_removed: "Admin user organisation ownership could not be removed automatically!"
     user_deletion_prevented: "User cannot be removed"
+    device_primary_user_removal_failed: "Failed to clear the primary user of a device. The user was not deleted. You can try deleting the user again; if it still fails, remove the user from their devices manually and try again."
     organisation:
       updated: "Organisation was successfully updated."
       wrong_user_type: Organisation owner access rights can be added only if the type of the user is admin

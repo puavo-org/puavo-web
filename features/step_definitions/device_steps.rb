@@ -19,3 +19,19 @@ Given /^the following devices:$/ do |servers|
     d.save!
   end
 end
+
+Given('I am on the show page of device {string}') do |hostname|
+end
+
+Then('the primary user of the device {string} should be {string}') do |hostname, username|
+  set_ldap_admin_connection
+  d = Device.find_by_hostname(hostname)
+  u = User.find(:first, :attribute => 'uid', :value => username)
+  d.puavoDevicePrimaryUser.to_s.should == u.dn.to_s
+end
+
+Then('the primary user of the device {string} should be nil') do |hostname|
+  set_ldap_admin_connection
+  d = Device.find_by_hostname(hostname)
+  d.puavoDevicePrimaryUser.should == nil
+end

@@ -386,6 +386,7 @@ fi:
     organisation_ownership_removed: "Admin-käyttäjän organisaation omistajuus poistettiin."
     organisation_ownership_not_removed: "Admin-käyttäjän organisaation omistajuutta ei voitu poistaa automaattisesti!"
     user_deletion_prevented: "Käyttäjän poisto on estetty"
+    device_primary_user_removal_failed: "Laitteen ensisijaisen käyttäjän nollaus ei onnistunut. Käyttäjää ei vielä poistettu. Voit yrittää käyttäjän poistoa uudelleen; jos se epäonnistuu yhä, poista käyttäjä hänen laitteistaan käsin ja yritä uudelleen."
     organisation:
       updated: "Organisaatio päivitettiin onnistuneesti."
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyyppi on ylläpitäjä"
