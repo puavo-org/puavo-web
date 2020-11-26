@@ -1070,7 +1070,8 @@ fi:
       title: Lataamattomat käyttäjätunnuslistat
       description: "Aiemmin massalisätyt käyttäjät on listattu täällä. Lataa haluamasi lista ja tulosta se paperille. Leikkaa saksilla tunnukset erilleen, jolloin saat niistä revittäviä käyttäjätunnuslappuja. Huomaathan, että jokaisen listan voi ladata vain kerran! Listat on lajiteltu uusimmasta vanhimpaan."
       description_empty: Sinulla ei ole nyt yhtään lataamatonta käyttäjätunnuslistaa
-      created: Tämä lista on luotu
+      created: Lista luotu
+      created_by: Listan luoja
       users_count_title: Käyttäjiä listassa
       label_generate_password: Aseta satunnainen salasana listan käyttäjille
       label_set_password: Aseta kaikkien listan käyttäjien salasanaksi
