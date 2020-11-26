@@ -4,6 +4,7 @@
 class ApplicationController < ActionController::Base
   include Puavo::AuthenticationHelper
   include Puavo::Helpers
+  include FastGettext::Translation
 
   attr_reader :school
   helper_method( :theme, :current_user, :current_organisation,
@@ -22,6 +23,16 @@ class ApplicationController < ActionController::Base
 
   before_action do
     response.headers["X-puavo-web-version"] = "#{ PuavoUsers::VERSION } #{ PuavoUsers::GIT_COMMIT }"
+  end
+
+  before_action :set_gettext_language
+
+  def set_gettext_language
+    FastGettext.available_locales = ['en', 'fi', 'sv', 'de']  # 'en' must be first, otherwise tests can fail
+    FastGettext.text_domain = 'puavoweb'
+    FastGettext.add_text_domain('puavoweb', path: 'config/locales', type: :yaml)
+    FastGettext.set_locale(params[:locale] || session[:locale] || request.env['HTTP_ACCEPT_LANGUAGE'])
+    session[:locale] = I18n.locale = FastGettext.locale
   end
 
   before_action :set_initial_locale
