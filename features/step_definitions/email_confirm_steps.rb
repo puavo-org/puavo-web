@@ -1,6 +1,6 @@
 Given(/^generate new email confirm token for user "(.*?)" with "(.*?)" with secret "(.*?)"$/) do |username, email, secret|
   jwt_data = {
-    "iat" => Time.now.to_i.to_s,
+    "iat" => Time.now.to_i,
 
     "username" => username,
     "organisation_domain" => "example.puavo.net",

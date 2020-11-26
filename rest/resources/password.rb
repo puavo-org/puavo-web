@@ -26,7 +26,7 @@ class Password < PuavoSinatra
 
     jwt_data = {
       # Issued At
-      "iat" => Time.now.to_i.to_s,
+      "iat" => Time.now.to_i,
 
       "username" => user.username,
       "organisation_domain" => user.organisation_domain
@@ -72,7 +72,7 @@ class Password < PuavoSinatra
     end
 
     lifetime =  CONFIG["password_management"]["lifetime"]
-    if Time.at( jwt_data["iat"].to_i + lifetime ) < Time.now
+    if Time.at( jwt_data["iat"] + lifetime ) < Time.now
       status 404
       return json({ :status => "failed",
                     :error => "Token lifetime has expired" })

@@ -98,7 +98,7 @@ class ExternalService < LdapModel
 
     jwt_data = filtered_user_hash(user).merge({
       # Issued At
-      "iat" => Time.now.to_i.to_s,
+      "iat" => Time.now.to_i,
       # JWT ID
       "jti" => UUID.generator.generate,
 
