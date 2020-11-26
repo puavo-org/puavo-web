@@ -1,1 +1,1 @@
-default: --format pretty features
+default: --format pretty features --publish-quiet
