@@ -16,8 +16,15 @@
 <%= start_box t('.organisation_owners') %>
   <table id="currentOwners">
     <% Array(@owners).each do |u| %>
+    <% if u.puavoRemovalRequestTime %>
+    <tr class="groupUserMarkedForDeletion">
+    <% else %>
     <tr>
-      <td><%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
+    <% end %>
+      <td>
+        <%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)
+        <% if u.puavoLocked %><i class="icon-lock"></i><% end %>
+      </td>
       <td>
         <% if @logged_in_user == u.dn.to_s %>
         <span class="noOwnerSelfRemove"><%= t('organisations.owners.cant_remove_yourself') %></span>
@@ -37,8 +44,15 @@
 <%= start_box t('.other_admin_users') %>
   <table id="availableAdmins">
     <% Array(@allowed_owners).each do |u| %>
+    <% if u.puavoRemovalRequestTime %>
+    <tr class="groupUserMarkedForDeletion">
+    <% else %>
     <tr>
-      <td><%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
+    <% end %>
+      <td>
+        <%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)
+        <% if u.puavoLocked %><i class="icon-lock"></i><% end %>
+      </td>
       <td><%= link_to('◄ ' + t('link.add'),
                       add_owner_organisations_path(u),
                       method: :put,
