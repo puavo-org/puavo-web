@@ -113,6 +113,7 @@ class LdapBase < ActiveLdap::Base
   def self.resize_image(image_path)
     img = Magick::Image.read(image_path).first
     img.format = "JPEG"
+    img.strip!
     img.resize_to_fit(image_size[:width], image_size[:height]).to_blob
   end
 
