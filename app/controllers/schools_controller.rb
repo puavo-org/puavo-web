@@ -64,6 +64,8 @@ class SchoolsController < ApplicationController
   # GET /schools/new
   # GET /schools/new.xml
   def new
+    return if redirected_nonowner_user?
+
     @school = School.new
     @is_new_school = true
 
@@ -82,6 +84,8 @@ class SchoolsController < ApplicationController
   # POST /schools
   # POST /schools.xml
   def create
+    return if redirected_nonowner_user?
+
     @school = School.new(school_params)
 
     respond_to do |format|
@@ -119,6 +123,8 @@ class SchoolsController < ApplicationController
   # DELETE /schools/1
   # DELETE /schools/1.xml
   def destroy
+    return if redirected_nonowner_user?
+
     @school = School.find(params[:id])
 
     new_groups = new_group_management?(@school)
@@ -168,6 +174,8 @@ class SchoolsController < ApplicationController
 
   # GET /schools/1/admins
   def admins
+    return if redirected_nonowner_user?
+
     @school = School.find(params[:id])
     @school_admins = @school.user_school_admins
     @allowed_school_admins = User.find(:all,
@@ -200,6 +208,8 @@ class SchoolsController < ApplicationController
 
   # PUT /schools/1/add_school_admin/1
   def add_school_admin
+    return if redirected_nonowner_user?
+
     @school = School.find(params[:id])
     @user = User.find(params[:user_id])
 
@@ -223,6 +233,8 @@ class SchoolsController < ApplicationController
 
   # PUT /schools/1/remove_school_admin/1
   def remove_school_admin
+    return if redirected_nonowner_user?
+
     @school = School.find(params[:id])
     @user = User.find(params[:user_id])
 
@@ -244,6 +256,8 @@ class SchoolsController < ApplicationController
 
   # GET /schools/1/wlan
   def wlan
+    return if redirected_nonowner_user?
+
     @school = School.find(params[:id])
 
     respond_to do |format|
@@ -253,6 +267,8 @@ class SchoolsController < ApplicationController
 
   # PUT /schools/1/wlan/update
   def wlan_update
+    return if redirected_nonowner_user?
+
     @school = School.find(params[:id])
 
     @school.update_wlan_attributes(params)

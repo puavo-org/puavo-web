@@ -23,7 +23,7 @@ class PuavoMenu < MetaMenu
       title { t('schools.menu.admins') }
       link { admins_school_path(@school) }
       active_on_action "admins"
-      owners_only { false }
+      owners_only { true }
       hide_when { not current_user.organisation_owner? }
     end
 
@@ -32,7 +32,7 @@ class PuavoMenu < MetaMenu
       link { wlan_school_path(@school) }
       active_on_action "wlan"
       active_on_action "wlan_update"
-      owners_only { false }
+      owners_only { true }
       hide_when { not current_user.organisation_owner? }
     end
 
