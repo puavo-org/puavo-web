@@ -555,7 +555,7 @@ $(document).ready(function() {
         // Name of the objects the table contains. Currently always a plural.
         itemName: "<%= t('users.index.users') %>",
 
-<% if @is_owner %>
+<% if @is_owner || @permit_single_user_deletion %>
         permitUserDeletion: true,
 <% end %>
 

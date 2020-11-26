@@ -19,6 +19,18 @@ module Puavo
       new_group_management["only_of_schools"].include?(school.puavoId)
     end
 
+    # Returns true if the specified user (in the current organisation) has any
+    # extra permissions granted for them
+    def can_schooladmin_do_this?(username, action)
+      permissions = Puavo::Organisation.find(LdapOrganisation.current.cn).
+                      value_by_key('schooladmin_permissions')
+      return false unless permissions
+
+      extra = permissions.fetch('by_username', {}).fetch(username, {})
+
+      return extra.include?(action.to_s) && extra[action.to_s] == true
+    end
+
     def supertable_sorting_locale
       # It's probably not a good idea to use Finnish collation by default in the long run,
       # but at the time I'm making this commit, "fi-FI" is the default and all others are

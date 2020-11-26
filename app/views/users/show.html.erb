@@ -11,11 +11,11 @@
     <h1><%= h @user.displayName %></h1>
     <% hack_blank = false %>
 
-    <% if @is_owner %>
+    <% if @user_is_owner %>
     <p class="infoNotice"><%= t('.user_is_an_organisation_owner') %></p>
     <% end %>
 
-    <% if @is_admin %>
+    <% if @user_is_admin %>
     <p class="infoNotice"><%= t('.user_is_a_school_admin') %></p>
     <% end %>
 
@@ -238,7 +238,7 @@
       <ul>
         <li>
           <%
-          if @is_owner || @is_admin
+          if @user_is_owner || @user_is_admin
             confirm_msg = t('destroy_confirm_admin', object_name: @user.displayName)
           else
             confirm_msg = t('destroy_confirm', object_name: @user.displayName)

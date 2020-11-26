@@ -76,6 +76,15 @@ class UsersController < ApplicationController
   # New AJAX-based index for non-test environments
   def new_cool_users_index
     @is_owner = is_owner?
+    @permit_single_user_deletion = false
+
+    unless @is_owner
+      # This user is not an owner, but they *have* to be a school admin, because only owners
+      # and school admins can log in. See if they've been granted any extra permissions.
+      if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
+        @permit_single_user_deletion = true
+      end
+    end
 
     get_synchronised_deletions(@organisation_name, school.id.to_i)
 
@@ -450,8 +459,8 @@ class UsersController < ApplicationController
     organisation_owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" } || []
     school_admins = @school.user_school_admins if @school
 
-    @is_owner = organisation_owners.include?(@user.dn)
-    @is_admin = school_admins && school_admins.include?(@user)
+    @user_is_owner = organisation_owners.include?(@user.dn)
+    @user_is_admin = school_admins && school_admins.include?(@user)
 
     get_synchronised_deletions(@organisation_name, @user.school.id.to_i)
 
@@ -482,8 +491,18 @@ class UsersController < ApplicationController
       data[1].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
 
-    # Can the currently logged in user delete users?
-    @permit_user_deletion = is_owner?
+    @permit_user_deletion = false
+
+    if is_owner?
+      # Owners can always delete users
+      @permit_user_deletion = true
+    else
+      # This user is not an owner, but they *have* to be a school admin, because only owners
+      # and school admins can log in. See if they've been granted any extra permissions.
+      if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
+        @permit_user_deletion = true
+      end
+    end
 
     # Learner ID
     @learner_id = nil
@@ -697,7 +716,26 @@ class UsersController < ApplicationController
   # DELETE /:school_id/users/1
   # DELETE /:school_id/users/1.xml
   def destroy
-    return if redirected_nonowner_user?
+    # Can't use redirected_nonowner_user? here because we must allow school admins
+    # to get here too if it has been explicitly allowed
+    permit_user_deletion = false
+
+    if is_owner?
+      # Owners can always delete users
+      permit_user_deletion = true
+    else
+      # This user is not an owner, but they *have* to be a school admin, because only owners
+      # and school admins can log in. See if they've been granted any extra permissions.
+      if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
+        permit_user_deletion = true
+      end
+    end
+
+    unless permit_user_deletion
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to schools_path
+      return
+    end
 
     @user = get_user(params[:id])
     return if @user.nil?
