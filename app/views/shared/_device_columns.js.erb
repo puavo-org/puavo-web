@@ -13,6 +13,22 @@
         subType: COLUMN_SUBTYPE_DEVICE_BATTERY_CAPACITY,
     },
 
+    bat_pcnt: {
+        key: "bat_pcnt",
+        title: "<%= t('columns.devices.bat_pcnt') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_FLOAT,
+        subType: COLUMN_SUBTYPE_DEVICE_BATTERY_CAPACITY,
+    },
+
+    bat_volts: {
+        key: "bat_volts",
+        title: "<%= t('columns.devices.bat_volts') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_FLOAT,
+        subType: COLUMN_SUBTYPE_DEVICE_BATTERY_VOLTAGE,
+    },
+
     bat_serial: {
         key: "bat_serial",
         title: "<%= t('columns.devices.bat_serial') %>",

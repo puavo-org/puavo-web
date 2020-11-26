@@ -242,6 +242,8 @@ fi:
       bat_vendor: "Akun valmistaja"
       bat_serial: "Akun sarjanumero"
       bat_cap: "Akun kapasiteetti"
+      bat_pcnt: "Akun latausaste"
+      bat_volts: "Akun jännite"
       wifi: "WiFi"
       monitors_xml: "Näyttöasetukset (XML)"
       xrandr: "Xrandr"

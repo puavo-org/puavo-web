@@ -242,6 +242,8 @@ en:
       bat_vendor: "Battery vendor"
       bat_serial: "Battery serial"
       bat_cap: "Battery capacity"
+      bat_pcnt: "Battery percentage"
+      bat_volts: "Battery voltage"
       wifi: "WiFi"
       monitors_xml: "Display settings (XML)"
       xrandr: "Xrandr"

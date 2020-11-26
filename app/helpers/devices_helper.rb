@@ -122,6 +122,17 @@ module DevicesHelper
     }
   end
 
+  def self.mangle_percentage_number(s)
+    # A string containing a floating-point number, with a locate-specific digit separator
+    # (dot, comma) and ending in a '%'. Convert it to a saner format.
+    s.gsub(',', '.').gsub('%', '').to_f
+  end
+
+  def self.mangle_battery_voltage(s)
+    # Like above, but replaces "V", not "%"
+    s.gsub(',', '.').gsub('V', '').to_f
+  end
+
   # Extracts the pieces we care about from puavoDeviceHWInfo field
   def self.extract_hardware_info(raw_hw_info)
     megabytes = 1024 * 1024
@@ -158,19 +169,16 @@ module DevicesHelper
         out[:bat_vendor] = info['battery']['vendor']
         out[:bat_serial] = info['battery']['serial']
 
-        hw_bat_capacity = info['battery']['capacity']
+        if info['battery']['capacity']
+          out[:bat_cap] = self.mangle_percentage_number(info['battery']['capacity']).to_i
+        end
 
-        if hw_bat_capacity
-          # Convert the battery capacity into an integer. It's a floating-point number, with
-          # a locate-specific digit separator (dot, comma) and ending in a '%'. I could keep
-          # it as a float, but at the moment, I can't easily add floats to the supertable
-          # (actually I can, but making filters for them is painful).
+        if info['battery']['percentage']
+          out[:bat_pcnt] = self.mangle_percentage_number(info['battery']['percentage']).to_i
+        end
 
-          hw_bat_capacity = hw_bat_capacity.gsub(',', '.')
-          hw_bat_capacity = hw_bat_capacity.gsub('%', '')
-          hw_bat_capacity = hw_bat_capacity.to_i
-
-          out[:bat_cap] = hw_bat_capacity
+        if info['battery']['voltage']
+          out[:bat_volts] = self.mangle_battery_voltage(info['battery']['voltage'])
         end
       end
 

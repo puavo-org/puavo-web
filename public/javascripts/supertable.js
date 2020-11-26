@@ -556,9 +556,10 @@ const COLUMN_SUBTYPE_USER_USERNAME = 1,
       COLUMN_SUBTYPE_GROUP_TYPE = 4,
       COLUMN_SUBTYPE_DEVICE_HOSTNAME = 5,
       COLUMN_SUBTYPE_DEVICE_BATTERY_CAPACITY = 6,
-      COLUMN_SUBTYPE_DEVICE_WARRANTY_DATE = 7,
-      COLUMN_SUBTYPE_DEVICE_SUPPORT_URL = 8,
-      COLUMN_SUBTYPE_DEVICE_PRIMARY_USER = 9;
+      COLUMN_SUBTYPE_DEVICE_BATTERY_VOLTAGE = 7,
+      COLUMN_SUBTYPE_DEVICE_WARRANTY_DATE = 8,
+      COLUMN_SUBTYPE_DEVICE_SUPPORT_URL = 9,
+      COLUMN_SUBTYPE_DEVICE_PRIMARY_USER = 10;
 
 // Filter operator codes. Just say no to zeroes.
 const OPERATOR_EQUAL = 1,
@@ -3845,6 +3846,10 @@ class SuperTable {
 
                         case COLUMN_SUBTYPE_DEVICE_BATTERY_CAPACITY:
                             contents = `${contents}%`;
+                            break;
+
+                        case COLUMN_SUBTYPE_DEVICE_BATTERY_VOLTAGE:
+                            contents = `${contents}V`;
                             break;
 
                         case COLUMN_SUBTYPE_DEVICE_WARRANTY_DATE:
