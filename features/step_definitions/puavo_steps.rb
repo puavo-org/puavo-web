@@ -87,6 +87,9 @@ Given(/^I am on ([^\"]+) with "([^\"]*)"$/) do |page_name, value|
     when /show/
       visit user_path(@school, user)
     end
+  when /the new other device page/, /the devices list/
+    @school = School.find( :first, :attribute => "displayName", :value => value )
+    visit path_to(page_name)
   when /device page$/
     device = Device.find_by_hostname(value)
     case page_name
@@ -105,9 +108,6 @@ Given(/^I am on ([^\"]+) with "([^\"]*)"$/) do |page_name, value|
     when /the edit group page/
       visit edit_group_path(@school, group)
     end
-  when /the new other device page/, /the devices list/
-    @school = School.find( :first, :attribute => "displayName", :value => value )
-    visit path_to(page_name)
   else
     raise "Unknow page: #{page_name}"
   end
