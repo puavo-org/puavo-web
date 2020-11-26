@@ -8,6 +8,9 @@ Feature: Manage schools
     And the following schools:
     | displayName              | cn        |
     | Greenwich Steiner School | greenwich |
+    And the following users:
+      | givenName | sn     | uid    | password | school_admin | puavoEduPersonAffiliation |
+      | Donald    | Duck   | donald | 313      | true         | admin                     |
     And I am logged in as "example" organisation owner
 
   Scenario: Add new school to organisation
@@ -167,6 +170,14 @@ Feature: Manage schools
     And I am on the show school page with "Test School 1"
     When I follow "Delete school"
     Then I should see "School was successfully removed."
+
+  Scenario: Non-owners should not even see the school deletion link
+    Given the following schools:
+    | displayName   | cn          |
+    | Test School 1 | testschool1 |
+    And I am logged in as "donald" with password "313"
+    And I am on the show school page with "Test School 1"
+    And I should not see "Delete school"
 
   Scenario: Delete school when it still contains the users and groups
     Given a new school and group with names "Test School 1", "Group 1" on the "example" organisation

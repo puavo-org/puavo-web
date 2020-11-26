@@ -208,10 +208,10 @@
     <% end %>
   </li>
 
+  <% if current_user.organisation_owner? %>
   <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
     <div class="dropdown">
-      <% if current_user.organisation_owner? %>
       <ul>
         <li>
           <%= link_to new_rename_groups_path(@school) do %>
@@ -219,7 +219,6 @@
           <% end %>
         </li>
       </ul>
-      <% end %>
 
       <ul>
       <li>
@@ -230,5 +229,6 @@
       </ul>
     </div>
   </li>
+  <% end %>
 </ul>
 <% end %>
