@@ -447,6 +447,12 @@ function isInteger(s)
     return /^\d+$/.test(s);
 }
 
+function isFloat(s)
+{
+    // Not a very good test, but I don't know what else to do
+    return !isNaN(parseFloat(s));
+}
+
 // For some reason I can't reliably do this in server end
 function escapeHTML(s)
 {
@@ -538,8 +544,9 @@ const COLUMN_FLAG_SORTABLE = 0x01,  // this column can be sorted
 // Column data types. Do NOT use zero here, because... JavaScript's "types".
 const COLUMN_TYPE_STRING = 1,
       COLUMN_TYPE_INTEGER = 2,
-      COLUMN_TYPE_UNIXTIME = 3,             // same as integer, but will be displayed in human-readable format
-      COLUMN_TYPE_BOOLEAN = 4;
+      COLUMN_TYPE_FLOAT = 3,
+      COLUMN_TYPE_UNIXTIME = 4,             // same as integer, but will be displayed in human-readable format
+      COLUMN_TYPE_BOOLEAN = 5;
 
 // Column data subtypes, for enabling highly context-specific things that would be
 // otherwise very hard to do. Again, no zeroes here.
@@ -567,38 +574,38 @@ const OPERATOR_TYPES = {
         // Always a regexp for string columns
         title: "=",
         operator: OPERATOR_EQUAL,
-        available: [COLUMN_TYPE_STRING, COLUMN_TYPE_INTEGER, COLUMN_TYPE_BOOLEAN, COLUMN_TYPE_UNIXTIME],
+        available: [COLUMN_TYPE_STRING, COLUMN_TYPE_INTEGER, COLUMN_TYPE_FLOAT, COLUMN_TYPE_BOOLEAN, COLUMN_TYPE_UNIXTIME],
     },
 
     neq: {
         // Always a regexp for string columns
         title: "≠",
         operator: OPERATOR_NOT_EQUAL,
-        available: [COLUMN_TYPE_STRING, COLUMN_TYPE_INTEGER, COLUMN_TYPE_BOOLEAN, COLUMN_TYPE_UNIXTIME],
+        available: [COLUMN_TYPE_STRING, COLUMN_TYPE_INTEGER, COLUMN_TYPE_FLOAT, COLUMN_TYPE_BOOLEAN, COLUMN_TYPE_UNIXTIME],
     },
 
     lt: {
         title: "<",
         operator: OPERATOR_LESS_THAN,
-        available: [COLUMN_TYPE_INTEGER, COLUMN_TYPE_UNIXTIME],
+        available: [COLUMN_TYPE_INTEGER, COLUMN_TYPE_FLOAT, COLUMN_TYPE_UNIXTIME],
     },
 
     lte: {
         title: "≤",
         operator: OPERATOR_LESS_OR_EQUAL,
-        available: [COLUMN_TYPE_INTEGER, COLUMN_TYPE_UNIXTIME],
+        available: [COLUMN_TYPE_INTEGER, COLUMN_TYPE_FLOAT, COLUMN_TYPE_UNIXTIME],
     },
 
     gt: {
         title: ">",
         operator: OPERATOR_GREATER_THAN,
-        available: [COLUMN_TYPE_INTEGER, COLUMN_TYPE_UNIXTIME],
+        available: [COLUMN_TYPE_INTEGER, COLUMN_TYPE_FLOAT, COLUMN_TYPE_UNIXTIME],
     },
 
     gte: {
         title: "≥",
         operator: OPERATOR_GREATER_OR_EQUAL,
-        available: [COLUMN_TYPE_INTEGER, COLUMN_TYPE_UNIXTIME],
+        available: [COLUMN_TYPE_INTEGER, COLUMN_TYPE_FLOAT, COLUMN_TYPE_UNIXTIME],
     },
 };
 
@@ -767,6 +774,62 @@ class FilterInteger extends FilterBase {
     getFilterValue()
     {
         return parseInt(this.input.value.trim(), 10);
+    }
+};
+
+// A float filter
+class FilterFloat extends FilterBase {
+    constructor(container, parentClass, initial)
+    {
+        super(container, parentClass);
+
+        this.input = document.createElement("input");
+        this.input.type = "search";
+        this.input.classList.add("single");
+        this.input.placeholder = I18n.translate("supertable.control.filter.placeholder_float");
+        this.input.title = I18n.translate("supertable.control.filter.placeholder_float");
+        this.input.setAttribute("maxlength", "15");
+        this.input.addEventListener("input", event => this.onInput(event));
+
+        // restore filter settings
+        if (initial) {
+            this.input.value = initial;
+            this.changed = true;
+        }
+
+        container.appendChild(this.input);
+
+        this.validate();
+    }
+
+    validate()
+    {
+        const v = this.input.value.trim();
+
+        if (v.length == 0)
+            this.valid = false;
+        else this.valid = isFloat(v);
+    }
+
+    onInput(event)
+    {
+        this.changed = true;
+        this.validate();
+        this.notifyParent();
+    }
+
+    getSaveValue()
+    {
+        return this.input.value ? this.getFilterValue() : null;
+    }
+
+    getFilterValue()
+    {
+        const cleaned = this.input.value.trim().replace(/,/g, '.');
+        const parsed = parseFloat(cleaned);
+
+        //console.log(`FilterFloat::getFilterValue(): raw=|${cleaned}| x=|${parsed}|`);
+        return parsed;
     }
 };
 
@@ -1143,6 +1206,9 @@ class FilterEditor {
 
             case COLUMN_TYPE_INTEGER:
                 return new FilterInteger(container, this, initial);
+
+            case COLUMN_TYPE_FLOAT:
+                return new FilterFloat(container, this, initial);
 
             case COLUMN_TYPE_BOOLEAN:
                 return new FilterBoolean(container, this, initial);
@@ -2563,6 +2629,7 @@ class SuperTable {
                         switch (type) {
                             case COLUMN_TYPE_STRING:
                             case COLUMN_TYPE_INTEGER:
+                            case COLUMN_TYPE_FLOAT:
                             default:
                                 converted = value;
                                 break;
@@ -3519,6 +3586,7 @@ class SuperTable {
             break;
 
             case COLUMN_TYPE_INTEGER:
+            case COLUMN_TYPE_FLOAT:
             case COLUMN_TYPE_BOOLEAN:       // argh
             case COLUMN_TYPE_UNIXTIME:
                 out.sort((a, b) => {
@@ -3614,6 +3682,7 @@ class SuperTable {
                         break;
 
                     case COLUMN_TYPE_INTEGER:
+                    case COLUMN_TYPE_FLOAT:
                     case COLUMN_TYPE_BOOLEAN:           // ewww
                     case COLUMN_TYPE_UNIXTIME:
                         classes.push("typeNumeric");

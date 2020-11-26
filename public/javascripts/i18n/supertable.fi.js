@@ -33,6 +33,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
             filter: {
                 placeholder_string: "Regexp-tekstijono",
                 placeholder_integer: "Numero",
+                placeholder_float: "Numero",
                 title_boolean: "Tosi",
                 placeholder_unixtime_year: "VVVV",
                 placeholder_unixtime_month: "KK",

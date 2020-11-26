@@ -33,6 +33,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
             filter: {
                 placeholder_string: "Regexp string",
                 placeholder_integer: "Number",
+                placeholder_float: "Number",
                 title_boolean: "True",
                 placeholder_unixtime_year: "YYYY",
                 placeholder_unixtime_month: "MM",
