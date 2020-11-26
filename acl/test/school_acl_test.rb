@@ -43,7 +43,6 @@ env.validate "school" do
   {
     :cn                        => 'testname',
     :description               => 'test',
-    :displayName               => 'newname',
     :displayName               => 'Test name',
     :facsimileTelephoneNumber  => '0123456789',
     :jpegPhoto                 => 'test',
