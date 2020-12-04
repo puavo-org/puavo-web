@@ -757,6 +757,8 @@ class DevicesController < ApplicationController
 
     strip_img(p)
 
+    clear_puavoconf(p)
+
     return p
   end
 

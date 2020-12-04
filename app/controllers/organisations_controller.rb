@@ -419,6 +419,8 @@ class OrganisationsController < ApplicationController
 
       strip_img(o)
 
+      clear_puavoconf(o)
+
       return o
     end
 

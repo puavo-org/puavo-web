@@ -336,6 +336,8 @@ class SchoolsController < ApplicationController
 
       strip_img(s)
 
+      clear_puavoconf(s)
+
       return s
     end
 

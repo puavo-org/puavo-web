@@ -249,4 +249,18 @@ class ApplicationController < ActionController::Base
       hash['puavoDeviceImage'] = hash['puavoDeviceImage'][0..-5]
     end
   end
+
+  def clear_puavoconf(hash)
+    # Empty strings aren't valid JSON, so if there are no puavo-conf settings, we get
+    # "{}" back from the edit form. Convert them into nil values, so the database
+    # stays cleaner. Also strip out Windows linebreaks ("\r") that browsers like
+    # to use instead of just "\n".
+    if hash.include?('puavoConf')
+      if hash['puavoConf'] == '{}'
+        hash['puavoConf'] = ''
+      else
+        hash['puavoConf'].gsub!("\r", "")
+      end
+    end
+  end
 end
