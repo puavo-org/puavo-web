@@ -180,6 +180,23 @@ $puavoConfOddRow: #f0f0f0;
 $puavoConfEvenRow: #e0e0e0;
 $puavoConfBorder: #bbb;
 
+/* puavo-conf editor */
+$pceDeleteForeground: #f00;
+$pceDeleteBackground: none;
+$pceDeleteBorder: transparent;
+$pceDeleteHoverForeground: #000;
+$pceDeleteHoverBackground: #f88;
+$pceDeleteHoverBorder: #f00;
+$pceError: #f00;
+$pceAutocompleteBackground: #fff;
+$pceAutocompleteForeground: #000;
+$pceAutocompleteHint: #888;
+$pceAutocompleteEntryHoverForeground: #fff;
+$pceAutocompleteEntryHoverBackground: #00f;
+$pceAutocompleteMatchForeground: #000;
+$pceAutocompleteMatchBackground: #0ff;
+
+
 /* Miscellaneous */
 $mountPointsHeadingBack: #ccc;
 $groupRenameTableHeaderBack: #ccc;

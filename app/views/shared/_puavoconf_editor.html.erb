@@ -1,0 +1,28 @@
+<% content_for :javascript do %>
+<%= javascript_include_tag 'puavoconf_editor', skip_pipeline: true %>
+<% end %>
+
+<% content_for :post_load_javascript do %>
+<script>
+const PUAVOCONF_DEFINITIONS = <%= get_puavoconf_definitions() %>;
+
+new PuavoConfEditor(
+    // unique ID (it's possible to have multiple puavoconf editors on one page, but currently
+    // this feature is not used on any page)
+    "puavoconf1",
+
+    // target DIV
+    document.getElementById("puavoConfEditor"),
+
+    // storage (where to load and save the puavo-conf settings in JSON
+    document.getElementById("<%= storage %>"),
+
+    // definitions
+    PUAVOCONF_DEFINITIONS,
+
+    // UI language
+    I18n.locale,
+);
+
+</script>
+<% end %>

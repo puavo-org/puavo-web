@@ -1,0 +1,144 @@
+.pcEdit {
+  display: block;
+  width: 100%;
+}
+
+.pcEdit ::placeholder {
+  font-style: italic;
+}
+
+.pcEdit table {
+  border-collapse: collapse;
+  width: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.pcEdit td {
+  margin: 0 !important;
+  padding: 5px !important;
+}
+
+.pcEdit .buttons {
+  width: 0;       /* minimize cell width */
+}
+
+.pcEdit .buttons a {
+  cursor: pointer;
+  padding: 5px;
+}
+
+.pcEdit .buttons a.delete {
+  color: $pceDeleteForeground !important;
+  background: $pceDeleteBackground !important;
+  border: 1px solid $pceDeleteBorder  !important;
+}
+
+.pcEdit .buttons a.delete:hover {
+  color: $pceDeleteHoverForeground !important;
+  background: $pceDeleteHoverBackground !important;
+  border: 1px solid $pceDeleteHoverBorder !important;
+}
+
+.pcEdit .key {
+  width: 0;
+}
+
+.pcEdit .value {
+  width: 100%;
+}
+
+.pcEdit div.editor {
+  display: block;
+  width: 100%;
+}
+
+.pcEdit div.editor input[type="text"] {
+  width: 100%;
+  padding: 5px !important;
+}
+
+.pcEdit div.editor label {
+  font-size: 100%;
+  margin-right: 1em;
+}
+
+.pcEdit input.new {
+  width: 100%;
+}
+
+.pcEdit textarea {
+  width: 100%;
+}
+
+.pcEdit .invalid {
+  border: 1px solid $pceError;
+}
+
+.pcAutocomplete {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  color: $pceAutocompleteForeground;
+  border: 2px solid $formFieldsetBorderColor;
+  background: $pceAutocompleteBackground;
+  box-shadow: 0 5px 10px $defaultBoxShadow;
+  visibility: hidden;
+  margin: 0;
+  padding: 0px;
+  font-size: 90%;
+
+  min-width: 500px;
+  max-height: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.pcAutocomplete ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 2px;
+}
+
+.pcAutocomplete a, .pcAutocomplete div {
+  display: block;
+  padding: 5px 10px;
+}
+
+.pcAutocomplete div {
+  color: $pceAutocompleteHint;
+  cursor: default;
+}
+
+.pcAutocomplete .new {
+  font-style: italic;
+}
+
+.pcAutocomplete .error {
+  color: $pceError;
+}
+
+.pcAutocomplete a {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pcAutocomplete a:hover {
+  color: $pceAutocompleteEntryHoverForeground;
+  background: $pceAutocompleteEntryHoverBackground;
+}
+
+.pcAutocomplete span {
+  pointer-events: none;   /* pass the click to the parent A element, so dataset works */
+}
+
+.pcAutocomplete span.match {      /* matching part highlight */
+  color: $pceAutocompleteMatchForeground;
+  background: $pceAutocompleteMatchBackground;
+}
+
+.pcAutocomplete span.hint {
+  margin-left: 1em;
+  color: $pceAutocompleteHint;
+  font-style: italic;
+}
