@@ -349,19 +349,19 @@ function newElem(params)
 {
     let e = document.createElement(params["tag"]);
 
-    if (params["id"])
+    if ("id" in params && params["id"] !== undefined)
         e.id = params["id"];
 
-    if (params["classes"])
+    if ("classes" in params && params["classes"] !== undefined)
         e.className = params["classes"].join(" ");
 
-    if (params["content"])
+    if ("content" in params && params["content"] !== undefined)
         e.innerHTML = params["content"];
 
-    if (params["contentText"])
+    if ("contentText" in params && params["contentText"] !== undefined)
         e.innerText = params["contentText"];
 
-    if (params["innerText"])
+    if ("innerText" in params && params["innerText"] !== undefined)
         e.appendChild(document.createTextNode(params["innerText"]));
 
     return e;
