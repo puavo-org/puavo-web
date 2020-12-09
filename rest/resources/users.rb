@@ -1328,6 +1328,8 @@ class Users < PuavoSinatra
   get '/v4/users' do
     auth :basic_auth, :kerberos
 
+    raise Unauthorized, :user => nil unless User.current.admin?
+
     v4_do_operation do
       # which fields to get?
       user_fields = v4_get_fields(params).to_set
