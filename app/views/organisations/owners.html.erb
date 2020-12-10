@@ -2,17 +2,6 @@
 
 <h1><%= t('.title') %></h1>
 
-<% unless Array(@missing).empty? %>
-<div class="genericWarning">
-  <p><strong><%= t('.removed_owners_title') %></strong> <%= t('.removed_owners_warning') %></p>
-  <ul>
-  <% Array(@missing).each do |m| %>
-    <li><%= m %></li>
-  <% end %>
-  </ul>
-</div>
-<% end %>
-
 <%= start_box t('.organisation_owners') %>
   <table id="currentOwners">
     <% Array(@owners).each do |u| %>

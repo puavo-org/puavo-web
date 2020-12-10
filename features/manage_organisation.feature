@@ -130,9 +130,6 @@ Feature: Manage organisation
     Then I should see "User was successfully removed."
     When I follow "Owners"
     Then I should not see "Pavel Taylor"
-    # The presence of the following text on the page means the organisation owners array was not
-    # successfully updated and the deleted user's DN is still in it.
-    And I should not see "The following admins have been removed"
 
 
   Scenario: Try to set student to organisation owner

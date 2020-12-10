@@ -148,20 +148,10 @@ class OrganisationsController < ApplicationController
     # List of (admin) users who currently ARE the owners of this organisation
     @owners = []
 
-    # Deleted users that still hang around in the owners list
-    @missing = []
-
     LdapOrganisation.current.owner.each.select do |dn|
       dn != "uid=admin,o=puavo"
     end.each do |dn|
-      begin
-        @owners << User.find(dn)
-      rescue ActiveLdap::EntryNotFound
-        # This user has been removed, but their DN is
-        # still listed in the "owners" array...
-        puts "User #{dn} no longer exists!"
-        @missing << dn
-      end
+      @owners << User.find(dn)
     end
 
     # List of admin users who currently are NOT the owners of this organisation

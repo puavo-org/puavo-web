@@ -524,8 +524,6 @@ fi:
       title: Organisaation omistajat
       other_admin_users: "Lisää ylläpitäjälle organisaation hallintaoikeus"
       organisation_owners: "Seuraavilla ylläpitäjillä on hallintaoikeus organisaatioon"
-      removed_owners_title: "VAROITUS:"
-      removed_owners_warning: "Seuraavat käyttäjät on poistettu, mutta heidät on yhä listattu organisaation omistajissa. Opinsysin tuki auttaa tässä asiassa."
       cant_remove_yourself: "(Et voi poistaa omaa omistusoikeuttasi)"
     deleted_users:
       title: "Organisaation poistettavaksi merkityt käyttäjät"
