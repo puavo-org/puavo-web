@@ -63,7 +63,7 @@ describe PuavoRest::Host do
       data = JSON.parse(last_response.body)
 
       assert data["boot_duration"], "should have boot time field"
-      assert_equal Fixnum, data["boot_duration"].class, data["boot_duration"]
+      assert_equal Integer, data["boot_duration"].class, data["boot_duration"]
 
       assert(
         data["boot_duration"] > 50,

@@ -300,7 +300,7 @@ describe PuavoRest::Sessions do
         )
         assert school_group["gid_number"], "has a gid number"
 
-        assert_equal Fixnum, data["user"]["groups"].first["gid_number"].class, "gid_number must be number"
+        assert_equal Integer, data["user"]["groups"].first["gid_number"].class, "gid_number must be number"
       end
     end
   end

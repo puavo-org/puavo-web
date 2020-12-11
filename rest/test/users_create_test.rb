@@ -50,9 +50,9 @@ describe LdapModel do
       @year_class.save!
     end
 
-    it "has Fixnum id" do
+    it "has Integer id" do
       # FIXME: should be String
-      assert_equal Fixnum, @user.id.class
+      assert_equal Integer, @user.id.class
     end
 
     it "has dn" do
