@@ -6,23 +6,12 @@
 <script>
 const PUAVOCONF_DEFINITIONS = <%= get_puavoconf_definitions() %>;
 
-new PuavoConfEditor(
-    // unique ID (it's possible to have multiple puavoconf editors on one page, but currently
-    // this feature is not used on any page)
-    "puavoconf1",
-
-    // target DIV
-    document.getElementById("puavoConfEditor"),
-
-    // storage (where to load and save the puavo-conf settings in JSON
-    document.getElementById("<%= storage %>"),
-
-    // definitions
-    PUAVOCONF_DEFINITIONS,
-
-    // UI language
-    I18n.locale,
-);
+new PuavoConfEditor({
+    prefix: "puavoconf1",
+    container: document.getElementById("puavoConfEditor"),
+    definitions: PUAVOCONF_DEFINITIONS,
+    language: I18n.locale,
+});
 
 </script>
 <% end %>

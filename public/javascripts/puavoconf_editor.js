@@ -1,5 +1,7 @@
 "use strict";
 
+// PuavoConf editor v1.1
+
 // Translations
 const PC_STRINGS = {
     "en": {
@@ -7,8 +9,8 @@ const PC_STRINGS = {
         "already_exists": "Key \"$(key)\" already exists",
         "accept_existing": "Create this key by pressing Enter or Tab",
         "accept_new": "Create a new key named \"$(key)\" by pressing Enter or Tab",
-        "no_suggestions": "No key name suggestions available",
         "delete": "Delete this key",
+        "show_raw": "Show editable JSON",
     },
 
     "fi": {
@@ -16,8 +18,8 @@ const PC_STRINGS = {
         "already_exists": "Avain \"$(key)\" on jo käytössä",
         "accept_existing": "Lisää tämä avain painamalla Enter tai Tab",
         "accept_new": "Luo uusi avain \"$(key)\" painamalla Enter tai Tab",
-        "no_suggestions": "Avaimen nimiehdotuksia ei ole tarjolla",
         "delete": "Poista tämä avain",
+        "show_raw": "Näytä muokattava JSON",
     }
 };
 
@@ -265,38 +267,109 @@ class ConfigBoolean extends ConfigEntry {
 
 class PuavoConfEditor
 {
-    constructor(prefix, container, storage, definitions, language="en")
+    constructor(params)
     {
-        this.prefix = prefix;
-        this.container = container;
-        this.storage = storage;
-        this.definitions = definitions;
-        this.language = language;
+        if (!params.prefix) {
+            console.warn("PuavoConfEditor::ctor(): params.prefix does not exist, editor not created");
+            return;
+        }
 
-        this.tableEntries = [];                 // "nice" entries of the current table rows
-        this.autocomplete = null;               // parent element for the autocomplete overlay
-        this.matches = [];                      // autocomplete matches
+        this.prefix = params.prefix;
 
-        // Replace the textarea with us
+        if (!params.container) {
+            console.warn("PuavoConfEditor::ctor(): params.container is missing/invalid, editor not created");
+            return;
+        }
+
+        this.editor = params.container.getElementsByClassName("pcEdit")[0];
+        this.storage = params.container.getElementsByTagName("textarea")[0];
+
+        if (!this.editor || !this.storage) {
+            console.warn("PuavoConfEditor::ctor(): missing editor DIV or storage textarea, editor not created");
+            return;
+        }
+
+        if (params.definitions)
+            this.definitions = params.definitions;
+        else {
+            this.definitions = {};
+            console.warn("PuavoConfEditor::ctor(): no puavoconf definitions given, autocomplete suggestions not available");
+        }
+
+        this.language = params.language || "en";
+
+        this.suggestions = newElem(
+            "div",
+            {
+                id: `${this.prefix}-autocomplete`,
+                classes: ["pcSuggestions"]
+            }
+        );
+
+        this.suggestionsList = [];      // a list of suggested puavo-conf entries
+
+        this.entries = [];              // the actual things we're editing
+
+        this.table = null;              // the table containing the entries
+
+        this.showRaw = document.createElement("input");
+        this.showRaw.type = "checkbox";
+        this.showRaw.id = `${this.prefix}-showRaw`;
+        this.showRaw.addEventListener("click", event => this.toggleRaw(event));
+
+        this.rawLabel = document.createElement("label");
+        this.rawLabel.innerText = translate(this.language, "show_raw");
+        this.rawLabel.htmlFor = this.showRaw.id;
+
         this.storage.style.display = "none";
-        this.load(this.storage.value);
+        this.load(this.storage.value, true);
 
         this.buildTable();
 
-        this.autocomplete = document.createElement("div");
-        this.autocomplete.id = `${this.prefix}-autocomplete`;
-        this.autocomplete.classList.add("pcAutocomplete");
-
-        this.container.innerHTML = "";
-        this.container.appendChild(this.table);
-        document.body.appendChild(this.autocomplete);
+        this.editor.appendChild(this.table);
+        this.editor.appendChild(this.showRaw);
+        this.editor.appendChild(this.rawLabel);
+        document.body.appendChild(this.suggestions);
 
         this.save();
+
+        this.storage.addEventListener("input", event => this.rawEdited(event));
+    }
+
+    toggleRaw(event)
+    {
+        if (event.target.checked)
+            this.storage.style.display = "initial";
+        else this.storage.style.display = "none";
+    }
+
+    rawEdited(event)
+    {
+        const text = event.target.value;
+        let parsed = null;
+
+        try {
+            parsed = JSON.parse(text);
+        } catch (e) {
+            event.target.classList.add("pcRawError");
+            return;
+        }
+
+        event.target.classList.remove("pcRawError");
+
+        // Rebuild the table (inefficient, but... eh)
+        this.load(this.storage.value, false);
+        this.buildTable();
+
+        this.editor.innerHTML = "";
+        this.editor.appendChild(this.table);
+        this.editor.appendChild(this.showRaw);
+        this.editor.appendChild(this.rawLabel);
     }
 
     findEntry(key)
     {
-        for (let entry of this.tableEntries)
+        for (let entry of this.entries)
             if (entry.key == key)
                 return entry;
 
@@ -340,7 +413,7 @@ class PuavoConfEditor
     }
 
     // Loads the puavoconf data from the "storage" textarea
-    load(puavoconf)
+    load(puavoconf, initial)
     {
         let parsed = [];
 
@@ -362,12 +435,13 @@ class PuavoConfEditor
         for (const key in parsed)
             keys.push(key);
 
-        keys.sort();
+        if (initial)
+            keys.sort();
 
-        this.tableEntries = [];
+        this.entries = [];
 
         for (const key of keys)
-            this.tableEntries.push(this.createEntry(key, parsed[key]));
+            this.entries.push(this.createEntry(key, parsed[key]));
     }
 
     // Converts the entries to JSON and stores them in the textarea
@@ -375,54 +449,32 @@ class PuavoConfEditor
     {
         let values = {};
 
-        for (let e of this.tableEntries)
+        for (let e of this.entries)
             values[e.key] = e.getValue();
 
         // pretty-printed output
         this.storage.value = JSON.stringify(values, null, "\t");
+
+        // It will be valid now, if someone hand-edited it
+        this.storage.classList.remove("pcRawError");
     }
 
-    hideAutocomplete(whatever=null)     // this is sometimes called from an event handler
+    buildTable()
     {
-        this.autocomplete.style.visibility = "hidden";
-    }
+        let thead = document.createElement("thead");
 
-    // Called from the value editors
-    entryHasChanged(key, value)
-    {
-        this.save();
-    }
+        let tbody = document.createElement("tbody");
 
-    deleteRow(event)
-    {
-        const key = event.target.parentNode.parentNode.dataset.key
+        // Existing entry rows
+        for (let entry of this.entries)
+            tbody.appendChild(this.createRowForExistingEntry(entry));
 
-        // Locate the entry
-        let entry = null,
-            index = null;
+        // New entry row
+        tbody.appendChild(this.createRowForNewEntry());
 
-        for (let i in this.tableEntries) {
-            if (this.tableEntries[i].key == key) {
-                entry = this.tableEntries[i];
-                index = i;
-                break;
-            }
-        }
-
-        if (entry === null)
-            return;
-
-        // Nuke it
-        this.tableEntries.splice(index, 1);
-        document.getElementById(entry.tableRowID).remove();
-
-        // Rebuild the autocomplete list if it was open
-        if (this.autocomplete.style.visibility == "visible")
-            this.listMatchingEntries();
-
-        document.getElementById(`${this.prefix}-newInput`).focus();
-
-        this.save();
+        this.table = document.createElement("table");
+        this.table.appendChild(thead);
+        this.table.appendChild(tbody);
     }
 
     createRowForExistingEntry(entry)
@@ -440,12 +492,7 @@ class PuavoConfEditor
 
         buttonsCell.appendChild(deleteButton);
 
-        // Add some wbr tags to aid the browser in wrapping long lines.
-        // Can't use &shy; markers, because that would add fake "-" characters
-        // to the strings and that's a big no-no.
-        let s = entry.key.slice();
-
-        keyCell.innerHTML = s.replace(".", ".<wbr>").replace("_", "_<wbr>");
+        keyCell.innerText = entry.key;
 
         let form = document.createElement("div");
 
@@ -482,9 +529,9 @@ class PuavoConfEditor
         selector.id = `${this.prefix}-newInput`;
         selector.classList.add("new");
         selector.placeholder = translate(this.language, "new_placeholder");
-        selector.addEventListener("input", event => this.handleAutocompleteInput(event));
-        selector.addEventListener("keydown", event => this.handleAutocompleteKeys(event));
-        selector.addEventListener("focusin", event => this.handleAutocompleteInput(event));
+        selector.addEventListener("input", event => this.handleNewEntryInput(event));
+        selector.addEventListener("keydown", event => this.handleNewEntryKeys(event));
+        selector.addEventListener("focusin", event => this.handleNewEntryInput(event));
 
         // FIXME: If this is uncommented, then we cannot select entries from the list,
         // because clicking them immediately unfocuses the list and closes it BEFORE
@@ -498,6 +545,85 @@ class PuavoConfEditor
         return row;
     }
 
+    // Handles special keys in the entry name input box, like Tab, Enter and Esc
+    handleNewEntryKeys(event)
+    {
+        if (event.keyCode == 9 || event.keyCode == 13) {    // Tab, Enter
+            event.preventDefault();
+
+            // Accept the first matching item
+            let key = null;
+
+            if (this.suggestions.length > 0)
+                key = this.suggestions[0];
+            else {
+                // This key does not exist in the definitions, so it could be a completely
+                // new puavoconf item
+                key = event.target.value.trim();
+            }
+
+            if (key === null || key.length == 0)
+                return;
+
+            this.createNewEntry(key);
+        } else if (event.keyCode == 40) {                   // Down arrow
+            // List ALL available (no duplicates) keys
+            this.listSuggestions(true);
+        } else if (event.keyCode == 27) {                   // Esc
+            // Temporarily hide the suggestions list
+            this.hideSuggestions();
+        }
+    }
+
+    // List and show matching suggestions
+    handleNewEntryInput(event)
+    {
+        this.listSuggestions(false);
+    }
+
+    hideSuggestions(whatever=null)      // this is sometimes called from an event handler
+    {
+        this.suggestions.style.visibility = "hidden";
+    }
+
+    // Called from the value editors
+    entryHasChanged(key, value)
+    {
+        this.save();
+    }
+
+    deleteRow(event)
+    {
+        const key = event.target.parentNode.parentNode.dataset.key
+
+        // Locate the entry
+        let entry = null,
+            index = null;
+
+        for (let i in this.entries) {
+            if (this.entries[i].key == key) {
+                entry = this.entries[i];
+                index = i;
+                break;
+            }
+        }
+
+        if (entry === null)
+            return;
+
+        // Nuke it
+        this.entries.splice(index, 1);
+        document.getElementById(entry.tableRowID).remove();
+
+        // Rebuild the autocomplete list if it was open
+        if (this.suggestions.style.visibility == "visible")
+            this.listSuggestions(true);
+
+        document.getElementById(`${this.prefix}-newInput`).focus();
+
+        this.save();
+    }
+
     // Creates a new entry with the given name, and inserts it into the table.
     // A new "new entry" row is created below it.
     createNewEntry(key)
@@ -507,11 +633,11 @@ class PuavoConfEditor
             return;
         }
 
-        this.hideAutocomplete();
-        this.autocomplete.innerHTML = "";
+        this.hideSuggestions();
+        this.suggestions.innerHTML = "";
 
         let entry = this.createEntry(key, null);
-        this.tableEntries.push(entry);
+        this.entries.push(entry);
 
         // Remove the old input row, create a new entry row in its place,
         // then recreate the input row
@@ -531,108 +657,72 @@ class PuavoConfEditor
         this.save();
     }
 
-    // Handles special keys in the entry name input box, like Tab, Enter and Esc
-    handleAutocompleteKeys(event)
-    {
-        if (event.keyCode == 9 || event.keyCode == 13) {    // Tab, Enter
-            event.preventDefault();
-
-            // Accept the first matching item
-            let key = null;
-
-            if (this.matches.length > 0)
-                key = this.matches[0];
-            else {
-                // This key does not exist in the definitions, so it could be a completely
-                // new puavoconf item
-                key = event.target.value.trim();
-            }
-
-            if (key === null || key.length == 0)
-                return;
-
-            this.createNewEntry(key);
-        } else if (event.keyCode == 40) {                   // Down arrow
-            // List ALL available (no duplicates) keys
-            this.listMatchingEntries(true);
-        } else if (event.keyCode == 27) {                   // Esc
-            // Temporarily hide the autocomplete list
-            this.hideAutocomplete();
-        }
-    }
-
-    handleAutocompleteInput(event)
-    {
-        this.listMatchingEntries(false);
-    }
-
-    clickedMatchingEntry(event)
+    clickedSuggestion(event)
     {
         this.createNewEntry(event.target.dataset.key);
     }
 
-    listMatchingEntries(showAll=false)
+    listSuggestions(showAll=false)
     {
         let newInput = document.getElementById(`${this.prefix}-newInput`);
         const needle = newInput.value.trim().toLowerCase();
 
-        this.matches = [];
+        this.suggestionsList = [];
 
         let existing = new Set();
 
         // Find all matching definitions. Partial matches are enough.
         if (showAll || needle.length > 0) {
-            for (const entry of this.tableEntries)
+            for (const entry of this.entries)
                 existing.add(entry.key);
 
             for (const key in this.definitions)
                 if (!existing.has(key))
                     if (showAll || key.includes(needle))
-                        this.matches.push(key);
+                        this.suggestionsList.push(key);
         }
 
         if (!showAll && needle.length == 0) {
             // Nothing to show
-            this.autocomplete.style.visibility = "hidden";
+            this.suggestions.style.visibility = "hidden";
             return;
         }
 
-        this.matches.sort();
+        this.suggestionsList.sort();
 
-        let outer = null;
+        this.suggestions.innerHTML = "";
 
-        if (this.matches.length == 0) {
+        if (this.suggestionsList.length == 0) {
             // This is a completely new entry, we have no definition for it
-            outer = document.createElement("div");
-
-            outer.classList.add("new");
+            let e = document.createElement("div");
 
             if (existing.has(needle)) {
-                // ...aaaand it's a duplicate
-                outer.innerHTML = translate(this.language, "already_exists", { "key": needle });
-                outer.classList.add("error");
+                // It's a duplicate
+                e.innerHTML = translate(this.language, "already_exists", { "key": needle });
+                e.classList.add("error");
             } else {
-                if (needle.length == 0)
-                    outer.innerHTML = translate(this.language, "no_suggestions")
-                else outer.innerHTML = translate(this.language, "accept_new", { "key": needle })
+                e.innerHTML = translate(this.language, "accept_new", { "key": needle })
+                e.classList.add("new");
             }
+
+            this.suggestions.appendChild(e);
         } else {
             // Construct a list of matching items
-            outer = document.createElement("ul");
-
             let first = true;
 
-            for (const key of this.matches) {
-                let elem = document.createElement("a");
+            for (const key of this.suggestionsList) {
+                let e = document.createElement("div");
 
-                elem.dataset.key = key;
-                elem.addEventListener("click", event => this.clickedMatchingEntry(event));
+                e.classList.add("entry");
+
+                e.dataset.key = key;
+                e.addEventListener("click", event => this.clickedSuggestion(event));
 
                 let html = "";
 
-                if (showAll) {
+                if (showAll)
                     html = key;
-                } else {
+                else {
                     // Highlight the matching part
                     const pos = key.indexOf(needle);
 
@@ -645,46 +735,19 @@ class PuavoConfEditor
                 if (first)
                     html += `<span class="hint">${translate(this.language, "accept_existing")}</span>`;
 
-                elem.innerHTML = html;
+                e.innerHTML = html;
 
-                let li = document.createElement("li");
-
-                li.appendChild(elem);
-                outer.appendChild(li);
-
+                this.suggestions.appendChild(e);
                 first = false;
             }
         }
 
-        if (this.autocomplete.firstChild)
-            this.autocomplete.firstChild.remove();
-
-        this.autocomplete.appendChild(outer);
-
-        // Position and display the autocomplete match list
+        // Position the suggestions list
         const location = newInput.getBoundingClientRect();
 
-        this.autocomplete.style.top = `${location.bottom + window.scrollY}px`;
-        this.autocomplete.style.left = `${location.left + window.scrollX}px`;
-        this.autocomplete.style.width = `${location.width}px`;
-        this.autocomplete.style.visibility = "visible";
-    }
-
-    buildTable()
-    {
-        let thead = document.createElement("thead");
-
-        let tbody = document.createElement("tbody");
-
-        // Existing entry rows
-        for (let entry of this.tableEntries)
-            tbody.appendChild(this.createRowForExistingEntry(entry));
-
-        // Initial new entry row
-        tbody.appendChild(this.createRowForNewEntry());
-
-        this.table = document.createElement("table");
-        this.table.appendChild(thead);
-        this.table.appendChild(tbody);
+        this.suggestions.style.top = `${location.bottom + window.scrollY}px`;
+        this.suggestions.style.left = `${location.left + window.scrollX}px`;
+        this.suggestions.style.width = `${location.width}px`;
+        this.suggestions.style.visibility = "visible";
     }
 };

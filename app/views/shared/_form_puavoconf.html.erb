@@ -2,8 +2,10 @@
 <tr>
   <th><%= f.label :puavoConf %></th>
   <td>
-    <div id="puavoConfEditor" class="pcEdit"></div>
-    <%= f.text_area :puavoConf, cols: 40, rows: 6 %>
+    <div id="puavoConfEditor">
+      <div class="pcEdit"></div>
+      <%= f.text_area :puavoConf, cols: 40, rows: 6, spellcheck: false %>
+    </div>
   </td>
 </tr>
 <!-- shared/_form_puavoconf ends -->

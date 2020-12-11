@@ -1,3 +1,7 @@
+.pcRawError {
+  border: 1px solid $pceError;
+}
+
 .pcEdit {
   display: block;
   width: 100%;
@@ -75,70 +79,60 @@
   border: 1px solid $pceError;
 }
 
-.pcAutocomplete {
+/* The autocomplete suggestions list */
+.pcSuggestions {
   position: absolute;
   z-index: 1;
-  display: block;
-  color: $pceAutocompleteForeground;
-  border: 2px solid $formFieldsetBorderColor;
-  background: $pceAutocompleteBackground;
-  box-shadow: 0 5px 10px $defaultBoxShadow;
+  border: 1px solid #000;
+  background: #fff;
   visibility: hidden;
   margin: 0;
-  padding: 0px;
+  padding: 2px;
   font-size: 90%;
 
   min-width: 500px;
   max-height: 300px;
   overflow-x: hidden;
   overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
 }
 
-.pcAutocomplete ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 2px;
-}
-
-.pcAutocomplete a, .pcAutocomplete div {
+.pcSuggestions div {
   display: block;
-  padding: 5px 10px;
-}
-
-.pcAutocomplete div {
-  color: $pceAutocompleteHint;
-  cursor: default;
-}
-
-.pcAutocomplete .new {
-  font-style: italic;
-}
-
-.pcAutocomplete .error {
-  color: $pceError;
-}
-
-.pcAutocomplete a {
-  text-decoration: none;
+  padding: 5px;
   cursor: pointer;
 }
 
-.pcAutocomplete a:hover {
+.pcSuggestions div.new {
+  font-style: italic;
+}
+
+.pcSuggestions div.error {
+  color: $pceError;
+  font-style: italic;
+}
+
+.pcSuggestions div.entry {
+}
+
+.pcSuggestions div.entry:hover {
   color: $pceAutocompleteEntryHoverForeground;
   background: $pceAutocompleteEntryHoverBackground;
 }
 
-.pcAutocomplete span {
-  pointer-events: none;   /* pass the click to the parent A element, so dataset works */
+.pcSuggestions span {
+  pointer-events: none;
 }
 
-.pcAutocomplete span.match {      /* matching part highlight */
-  color: $pceAutocompleteMatchForeground;
-  background: $pceAutocompleteMatchBackground;
-}
-
-.pcAutocomplete span.hint {
+.pcSuggestions span.hint {
   margin-left: 1em;
   color: $pceAutocompleteHint;
   font-style: italic;
+}
+
+.pcSuggestions span.match {
+  color: $pceAutocompleteMatchForeground;
+  background: $pceAutocompleteMatchBackground;
 }
