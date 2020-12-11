@@ -16,14 +16,20 @@ Feature: Manage users
     # Part 1: an admin user does NOT see the delete link
     Given I am logged in as "admin" with password "secret"
     And I am on the show user page with "admin"
-    Then I should see "The user is an admin of this school"
+    Then I should see:
+      """
+      This user is an administrator of the school "School 1"
+      """
     And I should not see "The user is an owner of this organisation"
     And I should not see "Delete user"
 
     # Part 2: an owner user DOES see the delete link
     Given I am logged in as "cucumber" with password "cucumber"
     And I am on the show user page with "admin"
-    Then I should see "The user is an admin of this school"
+    Then I should see:
+      """
+      This user is an administrator of the school "School 1"
+      """
     And I should not see "The user is an owner of this organisation"
     And I should see "Delete user"
 
@@ -327,7 +333,10 @@ Feature: Manage users
     And a new school and group with names "Example school 2", "Class 5" on the "example" organisation
     And "pavel" is a school admin on the "Example school 2" school
     And I am on the show user page with "pavel"
-    And I should see "The user is an admin of this school"
+    And I should see:
+      """
+      This user is an administrator of the school "Example school 2"
+      """
     And I am on the show user page with "jane"
     When I follow "Change school"
     And I select "Example school 2" from "new_school"
@@ -509,7 +518,7 @@ Feature: Manage users
     And I check "Admin"
     And I press "Create"
     And I press "Save"
-    Then I should not see "The user is an admin of this school"
+    Then I should not see "The user is an administrator of the school"
     And I should not see "The user is an owner of this organisation"
     # make them an owner and an admin
     When I follow "Owners"
@@ -525,7 +534,10 @@ Feature: Manage users
     Then I should see "Thomas Anderson (School 1) is now an admin user"
     And I should see "Thomas Anderson (neo) School 1" on the school admin list
     Then I am on the show user page with "neo"
-    And I should see "The user is an admin of this school"
+    And I should see:
+      """
+      This user is an administrator of the school "School 1"
+      """
     And I should see "The user is an owner of this organisation"
     # then remove the admin role
     Then I am on the edit user page with "neo"
@@ -533,7 +545,7 @@ Feature: Manage users
     And I press "Update"
     Then I should see "User was successfully updated."
     # verify everything
-    Then I should not see "The user is an admin of this school"
+    Then I should not see "The user is an administrator of the school"
     And I should not see "The user is an owner of this organisation"
     When I follow "Owners"
     Then I should not see "Thomas Anderson (neo) School 1" within "#currentOwners"
