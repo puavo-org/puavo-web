@@ -177,29 +177,39 @@ class SchoolsController < ApplicationController
     return if redirected_nonowner_user?
 
     @school = School.find(params[:id])
-    @school_admins = @school.user_school_admins
-    @allowed_school_admins = User.find(:all,
-                                       :attribute => 'puavoEduPersonAffiliation',
-                                       :value => 'admin').delete_if do |u|
-      @school_admins.include?(u)
+
+    # Current admin-level users in this schools
+    @current_admins = []
+    current_dn = Set.new
+
+    @school.user_school_admins.each do |u|
+      @current_admins << {
+        user: u,
+        schools: [],
+        primary: nil,
+      }
+
+      current_dn << u.dn
     end
 
-    @school_admins = sort_users(@school_admins)
-    @allowed_school_admins = sort_users(@allowed_school_admins)
+    # Users who aren't admins yet, but could be
+    @available_admins = User.find(:all,
+                                  :attribute => 'puavoEduPersonAffiliation',
+                                  :value => 'admin')
+    .delete_if do |u|
+      current_dn.include?(u.dn)
+    end.collect do |u|
+      {
+        user: u,
+        schools: [],
+        primary: nil,
+      }
+    end
 
     schools = {}
 
-    @school_admins.each do |a|
-      dn = a.school.dn
-      schools[dn] = School.find(dn) unless schools.include?(dn)
-      a.school = schools[dn]
-    end
-
-    @allowed_school_admins.each do |a|
-      dn = a.school.dn
-      schools[dn] = School.find(dn) unless schools.include?(dn)
-      a.school = schools[dn]
-    end
+    @current_admins = sort_users(find_user_schools(@current_admins, schools))
+    @available_admins = sort_users(find_user_schools(@available_admins, schools))
 
     respond_to do |format|
       format.html # admins.html.erb
@@ -288,8 +298,18 @@ class SchoolsController < ApplicationController
   private
     def sort_users(l)
       l.sort! do |a, b|
-        ((a["givenName"] || "") + (a["sn"] || "")).downcase <=>
-          ((b["givenName"] || "") + (b["sn"] || "")).downcase
+        ((a[:user]["givenName"] || "") + (a[:user]["sn"] || "")).downcase <=>
+          ((b[:user]["givenName"] || "") + (b[:user]["sn"] || "")).downcase
+      end
+    end
+
+    def find_user_schools(l, schools_cache)
+      l.each do |o|
+        Array(o[:user].puavoSchool).each do |dn|
+          schools_cache[dn] = School.find(dn) unless schools_cache.include?(dn)
+          o[:schools] << schools_cache[dn]
+          o[:primary] = schools_cache[dn] unless o[:primary]
+        end
       end
     end
 

@@ -1,18 +1,22 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.admins') %>
 
-<h1><%= t('.school_admins') %></h1>
+<h1><%= t('.title') %></h1>
 
-<%= start_box t('.this_school_admin_users', :school_name => @school.displayName) %>
+<%= start_box t('.current') %>
   <table id="this_school_admin_users">
-    <% Array(@school_admins).each do |u| %>
+    <% if @current_admins.empty? %>
+    <tr><td><%= t('.no_admins') %></td></tr>
+    <% else %>
+    <% Array(@current_admins).each do |a| %>
+    <% u = a[:user] %>
     <% if u.puavoRemovalRequestTime %>
     <tr class="groupUserMarkedForDeletion">
     <% else %>
     <tr>
     <% end %>
       <td>
-        <%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)
-        <% if u.puavoLocked %><i class="icon-lock"></i><% end %>
+        <%= render(:partial => 'shared/owners_and_admins',
+                   :locals => { :user => u, :schools => a[:schools] }) %>
       </td>
       <td><%= link_to(t('link.remove') + ' ►',
                       remove_school_admin_school_path(@school, u),
@@ -21,27 +25,35 @@
                       class: 'btn') %></td>
     </tr>
     <% end %>
+    <% end %>
   </table>
 <%= end_box %>
 
-<%= start_box t('.other_admin_users') %>
+<%= start_box t('.available') %>
   <table id="other_admin_users">
-    <% Array(@allowed_school_admins).each do |u| %>
+    <% if @available_admins.empty? %>
+    <tr><td><%= t('.none_left') %></td></tr>
+    <% else %>
+    <% Array(@available_admins).each do |a| %>
+    <% u = a[:user] %>
     <% if u.puavoRemovalRequestTime %>
     <tr class="groupUserMarkedForDeletion">
     <% else %>
     <tr>
     <% end %>
       <td>
-        <%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)
-        <% if u.puavoLocked %><i class="icon-lock"></i><% end %>
+        <%= render(:partial => 'shared/owners_and_admins',
+                   :locals => { :user => u, :schools => a[:schools] }) %>
       </td>
-      <td><%= link_to('◄ ' + t('link.add'),
-                      add_school_admin_school_path(@school, u),
-                      method: :put,
-                      id: "add_user_#{u.id}",
-                      class: 'btn') %></td>
+      <td>
+        <%= link_to('◄ ' + t('link.add'),
+                    add_school_admin_school_path(@school, u),
+                    method: :put,
+                    id: "add_user_#{u.id}",
+                    class: 'btn') %>
+      </td>
     </tr>
+    <% end %>
     <% end %>
   </table>
 <%= end_box %>

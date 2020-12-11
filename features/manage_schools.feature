@@ -222,14 +222,14 @@ Feature: Manage schools
     Then I should not see "The user is an admin of this school"
     Given I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
-    Then I should see "Greenwich Steiner School admin users"
-    And  I should see "Add management access rights"
-    And I should not see "Pavel Taylor (pavel) (Greenwich Steiner School)" on the school admin list
-    And I should be added school management access to the "Pavel Taylor (pavel) (Greenwich Steiner School)"
+    Then I should see "Current administrators"
+    And I should see "Add administrator rights"
+    And I should not see "Pavel Taylor (pavel) Greenwich Steiner School" on the school admin list
+    And I should be added school management access to the "Pavel Taylor (pavel) Greenwich Steiner School"
     When I follow "Add" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor (Greenwich Steiner School) is now an admin user"
-    And I should see "Pavel Taylor (pavel) (Greenwich Steiner School)" on the school admin list
-    And I should not be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
+    And I should see "Pavel Taylor (pavel) Greenwich Steiner School" on the school admin list
+    And I should not be added school management access to the "Pavel Taylor Greenwich Steiner School"
     And the memberUid should include "pavel" on the "Domain Admins" samba group
     Given I am on the show user page with "pavel"
     Then I should see "The user is an admin of this school"
@@ -245,12 +245,12 @@ Feature: Manage schools
     When I follow "Admins"
     And I follow "Add" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor (Greenwich Steiner School) is now an admin user"
-    And I should see "Pavel Taylor (pavel) (Example school 1)" on the school admin list
-    And I should not be added school management access to the "Pavel Taylor (pavel) (Example school 1)"
+    And I should see "Pavel Taylor (pavel) Example school 1" on the school admin list
+    And I should not be added school management access to the "Pavel Taylor (pavel) Example school 1"
     When I follow "Remove" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor (Greenwich Steiner School) is no longer an admin user in this school"
-    And I should not see "Pavel Taylor (pavel) (Example school 1)" on the school admin list
-    And I should be added school management access to the "Pavel Taylor (pavel) (Example school 1)"
+    And I should not see "Pavel Taylor (pavel) Example school 1" on the school admin list
+    And I should be added school management access to the "Pavel Taylor (pavel) Example school 1"
     And the memberUid should include "pavel" on the "Domain Admins" samba group
     When I am on the school page with "Example school 1"
     And I follow "Admins"
@@ -268,11 +268,11 @@ Feature: Manage schools
     | Ben       | Mabey  | ben   | secret   | staff                     | Greenwich Steiner School |
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
-    Then I should be added school management access to the "Pavel Taylor (pavel) (Greenwich Steiner School)"
-    And I should not be added school management access to the "Ben Mabey (ben) (Greenwich Steiner School)"
+    Then I should be added school management access to the "Pavel Taylor (pavel) Greenwich Steiner School"
+    And I should not be added school management access to the "Ben Mabey (ben) Greenwich Steiner School"
     When I try to add "Ben Mabey" to admin user on the "Greenwich Steiner School" school
     Then I should not see "Ben Mabey (Greenwich Steiner School) is now an admin user"
-    And I should not see "Ben Mabey (ben) (Greenwich Steiner School)" on the school admin list
+    And I should not see "Ben Mabey (ben) Greenwich Steiner School" on the school admin list
     And I should see "School management access rights can be added only if the type of the user is admin"
 
   Scenario: Check school special ldap attributes

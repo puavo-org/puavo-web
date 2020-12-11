@@ -1,0 +1,5 @@
+        <%= link_to "#{user.displayName} (#{user.uid})", user_path(schools.first, user) %>
+        <% if user.puavoLocked %><i class="icon-lock"></i><% end %><br>
+        <% schools.each do |s| %>
+        <%= link_to(s.displayName, school_path(s)) %>
+        <% end %>

@@ -2,17 +2,18 @@
 
 <h1><%= t('.title') %></h1>
 
-<%= start_box t('.organisation_owners') %>
+<%= start_box t('.current') %>
   <table id="currentOwners">
-    <% Array(@owners).each do |u| %>
+    <% Array(@current_owners).each do |o| %>
+    <% u = o[:user] %>
     <% if u.puavoRemovalRequestTime %>
     <tr class="groupUserMarkedForDeletion">
     <% else %>
     <tr>
     <% end %>
       <td>
-        <%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)
-        <% if u.puavoLocked %><i class="icon-lock"></i><% end %>
+        <%= render(:partial => 'shared/owners_and_admins',
+                   :locals => { :user => u, :schools => o[:schools] }) %>
       </td>
       <td>
         <% if @logged_in_user == u.dn.to_s %>
@@ -30,24 +31,31 @@
   </table>
 <%= end_box %>
 
-<%= start_box t('.other_admin_users') %>
+<%= start_box t('.available') %>
   <table id="availableAdmins">
-    <% Array(@allowed_owners).each do |u| %>
+    <% if @available_owners.empty? %>
+    <tr><td><%= t('.none_left') %></td></tr>
+    <% else %>
+    <% Array(@available_owners).each do |o| %>
+    <% u = o[:user] %>
     <% if u.puavoRemovalRequestTime %>
     <tr class="groupUserMarkedForDeletion">
     <% else %>
     <tr>
     <% end %>
       <td>
-        <%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)
-        <% if u.puavoLocked %><i class="icon-lock"></i><% end %>
+        <%= render(:partial => 'shared/owners_and_admins',
+                   :locals => { :user => u, :schools => o[:schools] }) %>
       </td>
-      <td><%= link_to('◄ ' + t('link.add'),
-                      add_owner_organisations_path(u),
-                      method: :put,
-                      id: "add_user_#{u.id}",
-                      class: 'btn') %></td>
+      <td>
+        <%= link_to('◄ ' + t('link.add'),
+                    add_owner_organisations_path(u),
+                    method: :put,
+                    id: "add_user_#{u.id}",
+                    class: 'btn') %>
+      </td>
     </tr>
+    <% end %>
     <% end %>
   </table>
 <%= end_box %>

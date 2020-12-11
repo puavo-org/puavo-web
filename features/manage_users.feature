@@ -513,17 +513,17 @@ Feature: Manage users
     And I should not see "The user is an owner of this organisation"
     # make them an owner and an admin
     When I follow "Owners"
-    Then I should see "Thomas Anderson (neo) (School 1)" within "#availableAdmins"
+    Then I should see "Thomas Anderson (neo) School 1" within "#availableAdmins"
     And I follow "Add" on the "Thomas Anderson" user
     Then I should see "Thomas Anderson is now an owner of this organisation"
-    And I should see "Thomas Anderson (neo) (School 1)" within "#currentOwners"
-    And I should not see "Thomas Anderson (neo) (School 1)" within "#availableAdmins"
+    And I should see "Thomas Anderson (neo) School 1" within "#currentOwners"
+    And I should not see "Thomas Anderson (neo) School 1" within "#availableAdmins"
     Then I am on the school page with "School 1"
     When I follow "Admins"
-    Then I should see "Thomas Anderson (neo) (School 1)" within "#other_admin_users"
+    Then I should see "Thomas Anderson (neo) School 1" within "#other_admin_users"
     And I follow "Add" on the "Thomas Anderson" user
     Then I should see "Thomas Anderson (School 1) is now an admin user"
-    And I should see "Thomas Anderson (neo) (School 1)" on the school admin list
+    And I should see "Thomas Anderson (neo) School 1" on the school admin list
     Then I am on the show user page with "neo"
     And I should see "The user is an admin of this school"
     And I should see "The user is an owner of this organisation"
@@ -536,12 +536,12 @@ Feature: Manage users
     Then I should not see "The user is an admin of this school"
     And I should not see "The user is an owner of this organisation"
     When I follow "Owners"
-    Then I should not see "Thomas Anderson (neo) (School 1)" within "#currentOwners"
-    And I should not see "Thomas Anderson (neo) (School 1)" within "#availableAdmins"
+    Then I should not see "Thomas Anderson (neo) School 1" within "#currentOwners"
+    And I should not see "Thomas Anderson (neo) School 1" within "#availableAdmins"
     Then I am on the school page with "School 1"
     When I follow "Admins"
-    Then I should not see "Thomas Anderson (neo) (School 1)" within "#this_school_admin_users"
-    And I should not see "Thomas Anderson (neo) (School 1)" within "#other_admin_users"
+    Then I should not see "Thomas Anderson (neo) School 1" within "#this_school_admin_users"
+    And I should not see "Thomas Anderson (neo) School 1" within "#other_admin_users"
 
 # FIXME
 #  @allow-rescue

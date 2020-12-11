@@ -522,8 +522,9 @@ en:
       add_puavo_billing_info: Add a new billing info
     owners:
       title: Organisation owners
-      other_admin_users: "Grant organisation ownership to adminstrators"
-      organisation_owners: "The following admins are owners in this organisation:"
+      current: "Current owners"
+      available: "Grant organisation ownership"
+      none_left: "(All admin-level users are already organisation owners)"
       cant_remove_yourself: "(You can't remove your own owner-level rights)"
     deleted_users:
       title: "Users in the organisation who are marked for deletion"
@@ -676,9 +677,12 @@ en:
       admins: Admins
       wlan: WLAN
     admins:
-      this_school_admin_users: "%{school_name} admin users"
-      other_admin_users: Add management access rights
-      school_admins: School admins
+    admins:
+      title: "School Administrators"
+      current: "Current administrators"
+      available: "Add administrator rights"
+      no_admins: "(No administrators)"
+      none_left: "(All users who have the administrator role already are school administrators.)"
     show:
       contacts: Contact Information
       devices: Devices
