@@ -42,16 +42,17 @@
         <li><code>id</code> Unique identifier for the school</li>
         <li><code>name</code> Human-readable school name</li>
         <li><code>abbreviation</code> Valid POSIX name for the school</li>
+        <li><code>school_code</code> The Finnish school code. Can be <code>null</code> if it hasn't been specified. Not all schools have this set.</li>
 
-        <li><code>roles</code> List of roles (String) user has in the school, one or more of these:<ul>
+        <li><code>roles</code> One or more (there should always be at least one) roles the user has in this school. An array of strings, possible values are:<ul>
             <li><code>teacher</code>, <code>staff</code>, <code>student</code>, <code>visitor</code>, <code>parent</code>, <code>admin</code>, <code>schooladmin</code> or <code>testuser</code></li>
         </ul></li>
 
-        <li><code>groups</code> List of group objects user has in the school<ul>
-            <li><code>id</code> Unique identifier for the school</li>
+        <li><code>groups</code> List of groups the user has in the school:<ul>
+            <li><code>id</code> Unique identifier for the group</li>
             <li><code>name</code> Human-readable group name</li>
             <li><code>abbreviation</code> Valid POSIX name for the group</li>
-            <li><code>type</code> Type of the group (String). One of these:<ul>
+            <li><code>type</code> Type of the group. Either <code>null</code> (if the type is unspecified) or one of these:<ul>
                 <li><code>teaching group</code>, <code>year class</code>, <code>administrative group</code>, <code>course</code>, <code>archive users</code> or <code>other groups</code></li>
             </ul></li>
         </ul></li>
@@ -66,7 +67,7 @@
     </ul></li>
 
     <li><code>learner_id</code><ul>
-        <li>The 11-digit Finnish national learner ID. <a href="https://wiki.eduuni.fi/display/CSCMPASSID/Data+models">Read this for more information</a>. Can be <code>null</code> if the ID has not been specified. Will <strong>always</strong> be <code>null</code> for non-student users.</li>
+        <li>The 11-digit Finnish national learner ID, prefixed with the OID "1.2.246.562.24.". <a href="https://wiki.eduuni.fi/display/CSCMPASSID/Data+models">Read this for more information</a>. Can be <code>null</code> if the ID has not been specified. Will <strong>always</strong> be <code>null</code> for non-student users.</li>
     </ul></li>
 </ul>
 
