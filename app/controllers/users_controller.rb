@@ -454,15 +454,30 @@ class UsersController < ApplicationController
       @user.puavoRemovalRequestTime = convert_timestamp(@user.puavoRemovalRequestTime)
     end
 
-    # organisation owner or school admin?
-    # TODO: This only checks the primary school, but users can be admins in multiple schools!
+    # Is the user an organisation owner?
     organisation_owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" } || []
-    school_admins = @school.user_school_admins if @school
-
     @user_is_owner = organisation_owners.include?(@user.dn)
-    @user_is_admin = school_admins && school_admins.include?(@user)
 
-    get_synchronised_deletions(@organisation_name, @user.school.id.to_i)
+    # List schools where this user is an admin in
+    @admin_in_schools = []
+
+    Array(@user.puavoAdminOfSchool || []).each do |dn|
+      @admin_in_schools << School.find(dn)
+    end
+
+    # Multiple schools?
+    @other_schools = []
+
+    if Array(@user.puavoSchool).count > 1
+      Array(@user.puavoSchool).each do |dn|
+        @other_schools << School.find(dn)
+      end
+
+      @other_schools.shift
+    end
+
+    # We only care about synchronised deletions in the primary school
+    get_synchronised_deletions(@organisation_name, Array(@user.school).first.id.to_i)
 
     # find the user's devices
     @user_devices = Device.find(:all,
