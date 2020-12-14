@@ -149,7 +149,7 @@ module ApplicationHelper
       return ""
     end
 
-    return link_to( user.displayName, user_path(:school_id => user.school.puavoId, :id => user.puavoId) )
+    return link_to( user.displayName, user_path(:school_id => Array(user.school).first.puavoId, :id => user.puavoId) )
 
   end
 

@@ -19,7 +19,7 @@ html_args[:'data-remote'] = true if @data_remote
         <div id="right">
           <section class="userInfo">
             <p class="userName"><%= current_user.displayName %></p>
-            <p class="userSchool"><%= current_user.school.displayName %></p>
+            <p class="userSchool"><%= Array(current_user.school).first.displayName %></p>
             <p class="userRole"><%= (current_user.roles.map &:displayName).join(", ") %></p>
           </section>
 
