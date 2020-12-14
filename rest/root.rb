@@ -16,17 +16,6 @@ STARTED = Time.now
 HOSTNAME = Socket.gethostname
 FQDN = Socket.gethostbyname(Socket.gethostname).first
 
-def self.about
-  return ({
-      "git_commit" => GIT_COMMIT,
-      "hostname" => HOSTNAME,
-      "fqdn" => HOSTNAME,
-      "version" => VERSION,
-      "deb_package" => DEB_PACKAGE,
-      "uptime" => (Time.now - STARTED).to_i
-  })
-end
-
 # Use $rest_flog only when not in sinatra routes.
 # Sinatra routes have a "flog" method which automatically
 # logs the route and user.
@@ -196,10 +185,6 @@ class Root < PuavoSinatra
       User.by_username("noone")
     end
     json({:ok => true})
-  end
-
-  get "/v3/about" do
-    json(PuavoRest.about)
   end
 
   use BeforeFilters
