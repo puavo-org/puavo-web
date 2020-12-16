@@ -159,23 +159,6 @@ class Root < PuavoSinatra
     })
   end
 
-  get "/" do
-    "puavo-rest root"
-  end
-
-  get "/v3" do
-    "puavo-rest v3 root"
-  end
-
-  get "/v3/error_test" do
-    1 / 0
-  end
-
-  get "/v3/slow_test" do
-    sleep 2
-    "I was slow"
-  end
-
   get "/v3/ldap_connection_test" do
     LdapModel.setup(:credentials => CONFIG["server"]) do
       # Just try get something from the ldap. This does not find anything but
