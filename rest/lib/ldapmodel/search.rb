@@ -337,5 +337,28 @@ class LdapModel
     _ldap_attrs
   end
 
+  def self.id_from_dn(dn)
+    md = dn.match(/puavoId=\d+/)
+
+    if md
+      temp = md[0].force_encoding('UTF-8')
+      return temp[temp.index('=') + 1 .. -1].to_i
+    else
+      return nil
+    end
+  end
+
+  # "Cleans" a plain hash returned by an LDAP raw search
+  def self.transform_hash(h)
+    h.transform_values! do |v|
+      if v.nil?
+        nil
+      elsif v.size == 1
+        v[0].force_encoding('UTF-8')
+      else
+        v.collect { |a| a.force_encoding('UTF-8') }
+      end
+    end
+  end
 
 end
