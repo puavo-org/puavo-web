@@ -401,6 +401,15 @@ class User < LdapModel
     by_attr!(:username, username, options)
   end
 
+  # The "raw" version of by_username. No objects here, just raw data,
+  # with the attributes you wanted.
+  def self.by_username_raw_attrs(username, attributes)
+    raw_filter(ldap_base(), "(uid=#{ escape(username) })", attributes)
+  end
+
+  def self.by_id_raw_attrs(id, attributes)
+    raw_filter(ldap_base(), "(puavoId=#{ escape(id.to_i) })", attributes)
+  end
 
   # Find dn string for username
   #
