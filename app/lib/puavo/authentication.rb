@@ -99,7 +99,6 @@ module Puavo
       end
 
       if not user_dn
-        FLOG.warn "Cannot resolve UID to DN", "uid" => uid
         raise AuthenticationFailed, "Cannot get dn for UID '#{ uid }'"
       end
 

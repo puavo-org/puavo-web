@@ -80,11 +80,6 @@ class ImportWorker
 
     cipher = Gibberish::AES::CBC.new(Rails.application.secrets.secret_key_base)
 
-    flog = FLOG.merge(
-      :organisation_key => organisation_key,
-      :user_dn => user_dn
-    )
-
     timestamp = Time.now.getutc.strftime("%Y%m%d%H%M%SZ")
     create_timestamp = "create:#{user_dn}:" + timestamp
     change_school_timestamp = "change_school:#{user_dn}:" + timestamp
@@ -187,10 +182,6 @@ class ImportWorker
     end
 
     db.set("status", "finished")
-
-    flog.info "import finished", log_msg.merge(
-      :duration => (Time.now - started).to_f.round(3)
-    )
 
   end
 

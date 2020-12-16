@@ -39,7 +39,6 @@ class ApplicationController < ActionController::Base
   before_action :setup_authentication
   before_action :require_login
   before_action :require_puavo_authorization
-  before_action :log_request
   before_action :find_school
   before_action :set_menu
   before_action :get_organisation
@@ -48,52 +47,8 @@ class ApplicationController < ActionController::Base
 
   if ENV["RAILS_ENV"] == "production"
     rescue_from Exception do |error|
-      @request = request
-      @error = error
-      @error_uuid = (0...25).map{ ('a'..'z').to_a[rand(26)] }.join
-      flog.error("unhandled exception", {
-        :parameters => params,
-        :error => {
-          :uuid => @error_uuid,
-          :code => @error.class.name,
-          :message => @error.message,
-          :backtrace => @error.backtrace
-        }
-      })
-      logger.error @error.message
-      logger.error @error.backtrace.join("\n")
-
       render :status => 500, :layout => false, :template => "errors/sorry.html.erb"
     end
-  end
-
-  def log_request
-    flog.info "request", :parameters => params
-  end
-
-  def flog
-    attrs = {
-      :controller => self.class.name,
-      :organisation_key => "NOT SET",
-      :request => {
-        :url => request.url,
-        :method => request.method,
-        :ip => request.env["HTTP_X_REAL_IP"]
-      }
-    }
-
-    if current_organisation?
-      attrs[:organisation_key] = current_organisation.organisation_key
-    end
-
-    if current_user?
-      attrs[:credentials] = {
-        :username => current_user.uid,
-        :dn => current_user.dn.to_s.downcase!
-      }
-    end
-
-    FLOG.merge(attrs)
   end
 
   # Cached schools query
