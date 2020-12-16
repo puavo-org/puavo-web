@@ -44,6 +44,23 @@ Feature: Manage groups
     And I should see "Abbreviation can't be blank"
     And I should see "Failed to create group!"
 
+  Scenario: Invalid characters in the group abbreviation
+    And I am on the new group page
+    When I fill in "Group name" with "Test"
+    And I fill in "Abbreviation" with "test/"
+    When I press "Create"
+    And I should see "Abbreviation contains invalid characters (allowed characters are a-z0-9-)"
+    And I should see "Failed to create group!"
+    Then I fill in "Abbreviation" with "test."
+    When I press "Create"
+    And I should see "Abbreviation contains invalid characters (allowed characters are a-z0-9-)"
+    Then I fill in "Abbreviation" with "test "
+    When I press "Create"
+    And I should see "Abbreviation contains invalid characters (allowed characters are a-z0-9-)"
+    Then I fill in "Abbreviation" with "test"
+    When I press "Create"
+    And I should see "Group was successfully created."
+
   Scenario: Edit group information
     Given the following groups:
     | displayName | cn      |

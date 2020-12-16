@@ -58,6 +58,50 @@ describe LdapModel do
     end
   end
 
+  describe "illegal characters in group abbreviations" do
+    it "test slashes" do
+      @group2 = PuavoRest::Group.new(
+        :name => "Test",
+        :abbreviation => "test/",
+        :school_dn => @school.dn
+      )
+
+      exception = assert_raises BadInput do
+        @group2.save!
+      end
+
+      assert_equal("group abbreviation \"test/\" contains invalid characters", exception.message)
+    end
+
+    it "test dots" do
+      @group2 = PuavoRest::Group.new(
+        :name => "Test",
+        :abbreviation => "test.",
+        :school_dn => @school.dn
+      )
+
+      exception = assert_raises BadInput do
+        @group2.save!
+      end
+
+      assert_equal("group abbreviation \"test.\" contains invalid characters", exception.message)
+    end
+
+    it "test spaces" do
+      @group2 = PuavoRest::Group.new(
+        :name => "Test",
+        :abbreviation => "te st",
+        :school_dn => @school.dn
+      )
+
+      exception = assert_raises BadInput do
+        @group2.save!
+      end
+
+      assert_equal("group abbreviation \"te st\" contains invalid characters", exception.message)
+    end
+  end
+
   describe "group abbreviations must be unique" do
     it "updating an existing group must succeed" do
       @group2.name = "foobar"

@@ -24,6 +24,10 @@ class Group < LdapModel
       self.object_classes = ['top', 'posixGroup', 'puavoEduGroup','sambaGroupMapping']
     end
 
+    unless self.abbreviation =~ /^[a-z0-9-]+$/
+      raise BadInput, :user => "group abbreviation \"#{self.abbreviation}\" contains invalid characters"
+    end
+
     unless Group.by_attr(:abbreviation, self.abbreviation, :multiple => true).empty?
       raise BadInput, :user => "duplicate group abbreviation \"#{self.abbreviation}\""
     end
@@ -44,6 +48,10 @@ class Group < LdapModel
   end
 
   before :update do
+    unless self.abbreviation =~ /^[a-z0-9-]+$/
+      raise BadInput, :user => "group abbreviation \"#{self.abbreviation}\" contains invalid characters"
+    end
+
     # validate abbreviation uniqueness, but don't check the group against itself
     other_groups = Group.by_attr(:abbreviation, self.abbreviation, :multiple => true)
     other_groups.reject!{|g| g.id == self.id }
