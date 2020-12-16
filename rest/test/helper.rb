@@ -8,23 +8,6 @@ ENV['RACK_ENV'] = 'test'
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../../config/environment", __FILE__)
 
-class MockFluent
-  attr_reader :data, :timed_data
-  def initialize(opts={})
-    @opts = opts
-  end
-  def post(*args)
-    @data ||= []
-    @data.push args
-    return !@opts[:broken]
-  end
-  def post_with_time(*args)
-    @timed_data ||= []
-    @timed_data.push args
-    return !@opts[:broken]
-  end
-end
-
 def create_server(attrs)
   server = Server.new
   server.attributes = attrs
