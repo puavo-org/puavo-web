@@ -69,7 +69,7 @@ class BeforeFilters < PuavoSinatra
     end
 
     if organisation.nil? then
-      $rest_flog.warn(nil, "cannot to get organisation for hostname #{ request.host.to_s }")
+      $rest_flog.warn("cannot to get organisation for hostname #{ request.host.to_s }")
     end
 
     LdapModel.setup(
@@ -101,7 +101,7 @@ class BeforeFilters < PuavoSinatra
     end
 
     self.flog = $rest_flog = $rest_flog_base.merge(log_meta, nil)
-    flog.info('handling request', 'handling request...')
+    flog.info('handling request...')
 
   end
 
@@ -118,8 +118,7 @@ class BeforeFilters < PuavoSinatra
     if env["sinatra.error"]
       err = env["sinatra.error"]
       if err.kind_of?(JSONError) || err.kind_of?(Sinatra::NotFound)
-        flog.warn('request rejected',
-                  "... request rejected (in #{ request_duration } seconds): #{ err.message }",
+        flog.warn("... request rejected (in #{ request_duration } seconds): #{ err.message }",
                   :reason => err.as_json)
       else
         unhandled_exception = {
@@ -130,12 +129,11 @@ class BeforeFilters < PuavoSinatra
           }
         }
         flog.error(
-          'unhandled exception',
           "unhandled exception: #{ err.message } / #{ err.backtrace } ...",
           unhandled_exception.merge(:backtrace => err.backtrace))
       end
     else
-      flog.info('request done', "... request done (in #{ request_duration } seconds).")
+      flog.info("... request done (in #{ request_duration } seconds).")
     end
 
 

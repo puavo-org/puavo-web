@@ -221,20 +221,8 @@ class SSO < PuavoSinatra
 
 
     url = @external_service.generate_login_url(user, return_to)
-    flog.info('redirecting sso auth',
-              "redirecting sso auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
-
-    flog.info('sso login ok', 'sso login ok', {
-                :return_to => return_to,
-                :external_service => @external_service.to_hash,
-                :user => user
-              })
-
-    flog.info('sso', nil, {
-      :login_ok => true,
-      :return_to => return_to
-    })
-
+    flog.info('SSO login ok')
+    flog.info("redirecting SSO auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
     redirect url
   end
 
@@ -245,21 +233,12 @@ class SSO < PuavoSinatra
   def render_form(error_message, err=nil)
     if env["REQUEST_METHOD"] == "POST"
       @error_message = error_message
-      err_msg = {
-        :login_ok => false,
-        :reason => error_message,
-        :params => params
-      }
+
       if err
-        err_msg[:error_class] = err.class.name
-        err_msg[:error_message] = err.message
-        err_msg[:meta] = err.meta
-        err_msg[:organisation_domain] = Organisation.current.domain
-        flog_err_msg = "sso error: #{ error_message } / #{ err.message }"
+        flog.warn("sso error: #{error_message} (err: #{err.inspect})")
       else
-        flog_err_msg = "sso error: #{ error_message }"
+        flog.warn("sso error: #{error_message}")
       end
-      flog.warn('sso error', flog_err_msg, err_msg)
     end
 
     @external_service ||= fetch_external_service
@@ -301,20 +280,20 @@ class SSO < PuavoSinatra
 
     org_name = nil
 
-    flog.info(nil, 'Trying to figure out the organisation name for this SSO request')
+    flog.info('Trying to figure out the organisation name for this SSO request')
 
     if request['organisation']
       # Find the organisation that matches this request
       req_organisation = request['organisation']
 
-      flog.info(nil, "The request includes organisation name \"#{req_organisation}\"")
+      flog.info("The request includes organisation name \"#{req_organisation}\"")
 
       # If external domains are specified, then try doing a reverse lookup
       # (ie. convert the external domain back into an organisation name)
       if CONFIG.include?('external_domain')
         CONFIG['external_domain'].each do |name, external|
           if external == req_organisation
-            flog.info(nil, "Found a reverse mapping from external domain \"#{external}\" " \
+            flog.info("Found a reverse mapping from external domain \"#{external}\" " \
                       "to \"#{name}\", using it instead")
             req_organisation = name
             break
@@ -325,13 +304,13 @@ class SSO < PuavoSinatra
       # Find the organisation
       if ORGANISATIONS.include?(req_organisation)
         # This name probably came from the reverse mapping above
-        flog.info(nil, "Organisation \"#{req_organisation}\" exists, using it")
+        flog.info("Organisation \"#{req_organisation}\" exists, using it")
         org_name = req_organisation
       else
         # Look for LDAP host names
         ORGANISATIONS.each do |name, data|
           if data['host'] == req_organisation
-            flog.info(nil, "Found a configured organisation \"#{name}\"")
+            flog.info("Found a configured organisation \"#{name}\"")
             org_name = name
             break
           end
@@ -339,22 +318,22 @@ class SSO < PuavoSinatra
       end
 
       unless org_name
-        flog.warn(nil, "Did not find the request organisation \"#{req_organisation}\" in organisations.yml")
+        flog.warn("Did not find the request organisation \"#{req_organisation}\" in organisations.yml")
       end
 
     else
-      flog.warn(nil, 'There is no organisation name in the request')
+      flog.warn('There is no organisation name in the request')
     end
 
     # No organisation? Is this a development/testing environment?
     unless org_name
       if ORGANISATIONS.include?('hogwarts')
-        flog.info(nil, 'This appears to be a development environment, using hogwarts')
+        flog.info('This appears to be a development environment, using hogwarts')
         org_name = 'hogwarts'
       end
     end
 
-    flog.info(nil, "Final organisation name is \"#{org_name}\"")
+    flog.info("Final organisation name is \"#{org_name}\"")
 
     begin
       # Any per-organisation login screen customisations?
@@ -365,7 +344,7 @@ class SSO < PuavoSinatra
     end
 
     unless customisations.empty?
-      flog.info(nil, "Organisation \"#{org_name}\" has login screen customisations enabled")
+      flog.info("Organisation \"#{org_name}\" has login screen customisations enabled")
     end
 
     # Apply per-customer customisations
@@ -439,8 +418,7 @@ class SSO < PuavoSinatra
     end
 
     if !params["username"].include?("@") && params["organisation"].nil?
-      flog.error('sso error',
-                 "organisation missing from username: #{ params['username'] }")
+      flog.error("SSO error: organisation missing from username: #{ params['username'] }")
       render_form(t.sso.organisation_missing)
     end
 
@@ -449,8 +427,7 @@ class SSO < PuavoSinatra
     if params["username"].include?("@")
       _, user_org = params["username"].split("@")
       if Organisation.by_domain(ensure_topdomain(user_org)).nil?
-        flog.info('sso error',
-                  "could not find organisation for domain #{ user_org }")
+        flog.info("SSO error: could not find organisation for domain #{ user_org }")
         render_form(t.sso.bad_username_or_pw)
       end
     end

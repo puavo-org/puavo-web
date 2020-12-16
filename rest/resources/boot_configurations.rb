@@ -39,7 +39,7 @@ class BootConfigurations < PuavoSinatra
       :type => host.type,
     }
 
-    flog.info('boot done', "boot done by '#{ host.hostname }'", res)
+    flog.info("boot done by '#{ host.hostname }'", res)
     json res
   end
 
@@ -69,8 +69,7 @@ class BootConfigurations < PuavoSinatra
       host.save_boot_time
     end
 
-    flog.info('send boot configuration',
-              "sending boot configuration for '#{ host.hostname }'",
+    flog.info("sending boot configuration for '#{ host.hostname }'",
               :host => log_attrs)
 
     host

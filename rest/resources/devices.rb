@@ -513,22 +513,16 @@ class Devices < PuavoSinatra
       device.hw_info = json(data)
       device.save!
 
-      msg = 'received sysinfo from a device'
-      flog.info(msg, "#{ msg } with hostname #{ params['hostname'] }")
+      flog.info("received sysinfo from device '#{params['hostname']}'")
       json({ :status => 'successfully' })
     rescue NotFound => e
       status 404
-      msg = 'failed in receiving sysinfo'
-      flog.error(msg,
-                 "#{ msg }: could not find device with hostname" \
-                   + " #{ params['hostname'] }")
+      flog.error("sysinfo receiving failed, could not find device by hostname '#{params["hostname"]}'")
       json({ :status => 'failed',
              :error  => 'could not find device by hostname' })
     rescue StandardError => e
       status 404
-      flog.error('failed in receiving sysinfo',
-                 "failed in receiving sysinfo for #{ params['hostname'] }: " \
-                   + e.message)
+      flog.error("sysinfo receiving failed for device '#{params['hostname']}': #{e.message}")
       json({ :status => 'failed', :error => 'failed due to unknown error' })
     end
   end
@@ -602,7 +596,7 @@ class Devices < PuavoSinatra
           begin
             school_cache[school_dn] = School.by_dn(school_dn)
           rescue StandardError => e
-            flog.error(nil, "School not found by DN '#{school_dn}', exam server '#{dev['puavoHostname'][0]}' ignored")
+            flog.error("School not found by DN '#{school_dn}', exam server '#{dev['puavoHostname'][0]}' ignored")
             next
           end
         end
@@ -615,7 +609,7 @@ class Devices < PuavoSinatra
           school_name: school_cache[school_dn].name,
         }
       rescue StandardError => e
-        flog.error(nil, e)
+        flog.error(e)
         next
       end
     end

@@ -101,8 +101,7 @@ class Password < PuavoSinatra
                               json_params['new_password'],
                               '???')    # no request ID
 
-    flog.info('ldappasswd call',
-              "changed user password for '#{ user.username }'",
+    flog.info("changed user password for '#{ user.username }'",
               res.merge(
                 :from => "users resource",
                   :user => {

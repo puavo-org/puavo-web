@@ -964,7 +964,7 @@ class Users < PuavoSinatra
                             request_id)
 
       unless json_params.include?('request_id')
-        $rest_flog.error(nil, "got a PUT /v3/users/password without \"request_id\" in the parameters, ignoring")
+        $rest_flog.error("got a PUT /v3/users/password without \"request_id\" in the parameters, ignoring")
 
         return json({
           :exit_status => 1,
@@ -1000,7 +1000,7 @@ class Users < PuavoSinatra
         raise 'either actor_dn or actor_username parameter must be set'
       end
     rescue StandardError => e
-      $rest_flog.error(nil, "[#{request_id}] #{e}")
+      $rest_flog.error("[#{request_id}] #{e}")
 
       return json({
         :exit_status => 1,
@@ -1011,7 +1011,7 @@ class Users < PuavoSinatra
       })
     end
 
-    $rest_flog.info(nil,
+    $rest_flog.info(
       "[#{request_id}] \"PUT /v3/users/password\" starting " \
       "for user \"#{json_params['target_user_username']}\""
     )
@@ -1020,7 +1020,7 @@ class Users < PuavoSinatra
       username = json_params['target_user_username']
 
       if too_many_password_change_attempts(username)
-        $rest_flog.error(nil, "[#{request_id}] password change rate limit hit for user \"#{username}\"")
+        $rest_flog.error("[#{request_id}] password change rate limit hit for user \"#{username}\"")
 
         return json({
           :exit_status => 1,
@@ -1050,9 +1050,9 @@ class Users < PuavoSinatra
           "#{res[:exit_status]}"
 
     if res[:exit_status] == 0
-      $rest_flog.info(nil, msg)
+      $rest_flog.info(msg)
     else
-      $rest_flog.error(nil, msg)
+      $rest_flog.error(msg)
     end
 
     return json(res)
@@ -1177,7 +1177,7 @@ class Users < PuavoSinatra
       begin
         JSON.parse(data)
       rescue StandardError => e
-        $rest_flog.error(nil, "can't set external data for user \"#{params["username"]}\" because the JSON is not valid: #{e}")
+        $rest_flog.error("can't set external data for user \"#{params["username"]}\" because the JSON is not valid: #{e}")
         return 400, 'user external data must be either an empty string (to clear it), or valid JSON'
       end
 

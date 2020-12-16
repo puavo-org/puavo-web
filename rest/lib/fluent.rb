@@ -95,20 +95,20 @@ class FluentWrap
 
   # Shortcut for #log(:info, msg)
   # @see #log
-  def info(msgtag, message=nil, attrs=nil)
-    log("info", msgtag, message, attrs)
+  def info(message=nil, attrs=nil)
+    log("info", nil, message, attrs)
   end
 
   # Shortcut for #log(:warn, msg)
   # @see #log
-  def warn(msgtag, message=nil, attrs=nil)
-    log("warn", msgtag, message, attrs)
+  def warn(message=nil, attrs=nil)
+    log("warn", nil, message, attrs)
   end
 
   # Shortcut for #log(:error, msg)
   # @see #log
-  def error(msgtag, message=nil, attrs=nil)
-    log("error", msgtag, message, attrs)
+  def error(message=nil, attrs=nil)
+    log("error", nil, message, attrs)
   end
 
   # Create new child logger. The child will inherit base_attrs from the parent

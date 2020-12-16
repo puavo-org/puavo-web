@@ -103,7 +103,7 @@ class Sessions < PuavoSinatra
 
       msg = 'authoritative session requested,' \
               + ' setting up ldap connection to ldapmaster'
-      flog.info(msg, msg)
+      flog.info(msg)
       LdapModel.disconnect()
       auth :basic_auth, :server_auth, :kerberos
       LdapModel.setup(:ldap_server => CONFIG['ldapmaster'])
@@ -216,15 +216,10 @@ class Sessions < PuavoSinatra
       end
     end
 
-    flog.info(nil, "created new session #{ session["uuid"] }")
+    flog.info("created new session #{ session["uuid"] }")
     session["printer_queues"].uniq!{ |pq| pq.dn.downcase }
     session["organisation"] = Organisation.current.domain
     session.save
-
-    flog.info('new session', nil, :device => json_params["hostname"])
-
-    # Use different message to avoid type collisions in elasticsearch
-    flog.info('created session', nil, { :session => session.to_hash })
 
     json session
   end
