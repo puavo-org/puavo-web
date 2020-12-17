@@ -52,7 +52,6 @@ class BeforeFilters < PuavoSinatra
 
     @req_start = Time.now
     ip = env["HTTP_X_REAL_IP"] || request.ip
-    response.headers["X-puavo-rest-version"] = "#{ VERSION } #{ GIT_COMMIT }"
 
     begin
       @client_hostname = Resolv.new.getname(ip)
