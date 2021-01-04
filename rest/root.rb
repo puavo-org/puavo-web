@@ -3,11 +3,6 @@ Encoding.default_external = Encoding::UTF_8
 require_relative "./puavo-rest"
 require_relative "./lib/mailer"
 
-#   @overload $0 $1
-#   @method $0_$1 $1
-#   @return [HTTP response]
-
-
 module PuavoRest
 DEB_PACKAGE = Array(`dpkg -l | grep puavo-rest`.split())[2]
 VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
@@ -40,6 +35,8 @@ def self.test_boot_server_dn=(dn)
   @@test_boot_server_dn = dn
 end
 
+UUID_ALPHABET = ('a'..'z').to_a.freeze
+
 class BeforeFilters < PuavoSinatra
   before do
     $rest_flog = $rest_flog_base.merge({}, nil)
@@ -68,7 +65,7 @@ class BeforeFilters < PuavoSinatra
     end
 
     if organisation.nil? then
-      $rest_flog.warn("cannot to get organisation for hostname #{ request.host.to_s }")
+      $rest_flog.warn("cannot determine the organisation for host '#{ request.host.to_s }'")
     end
 
     LdapModel.setup(
@@ -82,10 +79,6 @@ class BeforeFilters < PuavoSinatra
     end
 
     log_meta = {
-      :bootserver => !!CONFIG["bootserver"],
-      :cloud => !!CONFIG["cloud"],
-      :rack_env => ENV["RACK_ENV"],
-      :req_uuid => UUID.generate,
       :request => {
         :url => request.url,
         :headers => request_headers,
@@ -101,11 +94,9 @@ class BeforeFilters < PuavoSinatra
 
     self.flog = $rest_flog = $rest_flog_base.merge(log_meta, nil)
     flog.info('handling request...')
-
   end
 
   after do
-
     LdapModel::PROF.print_search_count("#{ env["REQUEST_METHOD"] } #{ request.path }")
     LdapModel::PROF.reset
 
@@ -122,19 +113,21 @@ class BeforeFilters < PuavoSinatra
       else
         unhandled_exception = {
           :error => {
-            :uuid => (0...25).map{ ('a'..'z').to_a[rand(26)] }.join,
+            :uuid => UUID_ALPHABET.sample(25).join,
             :code => err.class.name,
             :message => err.message
           }
         }
-        flog.error(
-          "unhandled exception: #{ err.message } / #{ err.backtrace } ...",
-          unhandled_exception.merge(:backtrace => err.backtrace))
+
+        flog.error("UNHANDLED EXCEPTION (UUID #{unhandled_exception[:error][:uuid]}): #{err.message}")
+
+        Array(err.backtrace).reverse.each do |b|
+          flog.error(b)
+        end
       end
     else
       flog.info("... request done (in #{ request_duration } seconds).")
     end
-
 
     LdapModel.clear_setup
     LocalStore.close_connection
