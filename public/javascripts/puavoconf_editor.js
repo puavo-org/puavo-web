@@ -554,8 +554,8 @@ class PuavoConfEditor
             // Accept the first matching item
             let key = null;
 
-            if (this.suggestions.length > 0)
-                key = this.suggestions[0];
+            if (this.suggestionsList.length > 0)
+                key = this.suggestionsList[0];
             else {
                 // This key does not exist in the definitions, so it could be a completely
                 // new puavoconf item
