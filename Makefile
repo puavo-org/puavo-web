@@ -129,7 +129,7 @@ test:
 	bundle exec cucumber --color --tags "not @start_test_server" \
 		--format=message --out log/cucumber-tests-notTS.json
 	bundle exec cucumber --color --tags @start_test_server \
-		--format=message json --out log/cucumber-tests-TS.json
+		--format=message --out log/cucumber-tests-TS.json
 	bundle exec rails runner acl/runner.rb
 
 seed:
