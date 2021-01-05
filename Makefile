@@ -102,6 +102,7 @@ install: clean-for-install mkdirs
 	cp $(RAILS_CONFIG_DIR)/unicorn.rb.example $(CONF_DIR)/unicorn.rb
 	cp $(RAILS_CONFIG_DIR)/puavo_external_files.yml.example $(CONF_DIR)/puavo_external_files.yml
 	cp $(RAILS_CONFIG_DIR)/releases.json.example $(CONF_DIR)/releases.json
+	cp $(RAILS_CONFIG_DIR)/puavoconf_definitions.json.example $(CONF_DIR)/puavoconf_definitions.json
 
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
@@ -117,6 +118,7 @@ symlink-config:
 	ln -sf /etc/puavo-web/services.yml config/services.yml
 	ln -sf /etc/puavo-web/unicorn.rb config/unicorn.rb
 	ln -sf /etc/puavo-web/releases.json config/releases.json
+	ln -sf /etc/puavo-web/puavoconf_definitions.json config/puavoconf_definitions.json
 
 test-rest:
 	$(MAKE) -C rest test

@@ -1,0 +1,170 @@
+{
+  "puavo.acpi.wakeup.enabled": {
+    "default": "true"
+  },
+  "puavo.admin.logging.master": {
+    "default": ""
+  },
+  "puavo.admin.logging.policy": {
+    "default": "local-only"
+  },
+  "puavo.autopoweroff.daytime_end_hour": {
+    "default": "16"
+  },
+  "puavo.autopoweroff.daytime_start_hour": {
+    "default": "7"
+  },
+  "puavo.autopoweroff.enabled": {
+    "default": "false"
+  },
+  "puavo.service.puavo-autopoweroff.enabled": {
+    "default": "false"
+  },
+  "puavo.boot.plymouth.theme": {
+    "default": "kites"
+  },
+  "puavo.desktop.background": {
+    "default": ""
+  },
+  "puavo.desktop.dconf.settings": {
+    "default": ""
+  },
+  "puavo.desktop.environment": {
+    "default": ""
+  },
+  "puavo.desktop.keyboard.layout": {
+    "default": "fi,ru,ru,gb"
+  },
+  "puavo.desktop.keyboard.variant": {
+    "default": ",,phonetic,dvorak"
+  },
+  "puavo.greeter.userlist.accepted_users": {
+    "default": ""
+  },
+  "puavo.image.automatic_updates": {
+    "default": "true"
+  },
+  "puavo.image.download.ratelimit": {
+    "default": "4m"
+  },
+  "puavo.image.overlay": {
+    "default": ""
+  },
+  "puavo.image.path": {
+    "default": "/ltsp.img"
+  },
+  "puavo.image.preferred": {
+    "default": ""
+  },
+  "puavo.image.series.urls": {
+    "default": "[]"
+  },
+  "puavo.image.servers": {
+    "default": ""
+  },
+  "puavo.kernel.arguments": {
+    "default": ""
+  },
+  "puavo.kernel.modules.blacklist": {
+    "default": ""
+  },
+  "puavo.kernel.modules.load": {
+    "default": ""
+  },
+  "puavo.kernel.version": {
+    "default": ""
+  },
+  "puavo.l10n.locale": {
+    "default": "fi_FI.UTF-8"
+  },
+  "puavo.mounts.by_user_from_bootserver.enabled": {
+    "default": "false"
+  },
+  "puavo.mounts.extramounts": {
+    "default": ""
+  },
+  "puavo.mounts.nethomes.enabled": {
+    "default": "false"
+  },
+  "puavo.pm.display.drrs.enabled": {
+    "default": "true"
+  },
+  "puavo.pm.lidsuspend.enabled": {
+    "default": "false"
+  },
+  "puavo.pm.lidswitchdocked.action": {
+    "default": ""
+  },
+  "puavo.pm.nmi_watchdog.enabled": {
+    "default": "false"
+  },
+  "puavo.pm.sata_alpm.enabled": {
+    "default": "false"
+  },
+  "puavo.pm.suspend.enabled": {
+    "default": "false"
+  },
+  "puavo.pm.usbcore.autosuspend": {
+    "default": ""
+  },
+  "puavo.pm.wireless.enabled": {
+    "default": "false"
+  },
+  "puavo.hosttype": {
+    "default": ""
+  },
+  "puavo.profile.bigtouch": {
+    "default": "false"
+  },
+  "puavo.profile.bootserver": {
+    "default": "false"
+  },
+  "puavo.profile.diskinstaller": {
+    "default": "false"
+  },
+  "puavo.profile.fatclient": {
+    "default": "false"
+  },
+  "puavo.profile.infotv": {
+    "default": "false"
+  },
+  "puavo.profile.laptop": {
+    "default": "false"
+  },
+  "puavo.profile.onlyfree": {
+    "default": "false"
+  },
+  "puavo.profile.personal": {
+    "default": "false"
+  },
+  "puavo.profile.preinstalled": {
+    "default": "false"
+  },
+  "puavo.profile.restricted": {
+    "default": "false"
+  },
+  "puavo.profile.unregistered": {
+    "default": "false"
+  },
+  "puavo.profile.usb-factory": {
+    "default": "false"
+  },
+  "puavo.profile.webkiosk": {
+    "default": "false"
+  },
+  "puavo.profile.wirelessaccesspoint": {
+    "default": "false"
+  },
+  "puavo.profiles.list": {
+    "default": ""
+  },
+  "puavo.time.timezone": {
+    "default": "Europe/Helsinki"
+  },
+  "puavo.xorg.intel_backlight": {
+    "default": "false"
+  },
+  "puavo.xorg.noaccel": {
+    "default": "false"
+  }
+}

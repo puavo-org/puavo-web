@@ -28,6 +28,7 @@ config/puavo_external_files.yml
 config/services.yml
 config/secrets.yml
 config/releases.json
+config/puavoconf_definitions.json
 node_modules/
 public/assets/
 public/import_tool.js
