@@ -147,14 +147,19 @@
   margin-bottom: 20px;
   padding: 0;
 
+  $THUMBNAIL_PADDING: 10px;
+
   .basicInfoImage {
     img {
       max-width: 220px;
-      padding: 10px;
+      padding: $THUMBNAIL_PADDING;
       border: 1px solid $basicInfoBorders;
     }
 
-    width: 240px;
+    /* Explicit size, to prevent the page from jumping once the image has been loaded */
+    width: 220px + ($THUMBNAIL_PADDING * 2);
+    height: 220px + ($THUMBNAIL_PADDING * 2);
+
     text-align: center;
   }
 
