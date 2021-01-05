@@ -138,33 +138,29 @@ module ApplicationHelper
     t('group_type.' + group_type)
   end
 
-  def link_to_user_by_dn(dn)
-    return "" if dn.nil?
+  def find_user_by_dn(dn)
+    return nil if dn.nil?
 
-    return "" if dn.class != ActiveLdap::DistinguishedName
+    return nil if dn.class != ActiveLdap::DistinguishedName
 
     begin
-      user = User.find(dn)
+      return User.find(dn)
     rescue ActiveLdap::EntryNotFound
-      return ""
+      return nil
     end
-
-    return link_to( user.displayName, user_path(:school_id => Array(user.school).first.puavoId, :id => user.puavoId) )
-
   end
 
-  def uid_by_dn(dn)
-    return "" if dn.nil?
+  def link_to_user_by_dn(dn)
+    user = find_user_by_dn(dn)
+    return '' unless user
+    return link_to("#{user.displayName}",
+                   user_path(:school_id => Array(user.school).first.puavoId,
+                             :id => user.puavoId))
+  end
 
-    return "" if dn.class != ActiveLdap::DistinguishedName
-
-    begin
-      user_uid = User.find(dn).uid
-    rescue ActiveLdap::EntryNotFound
-      user_uid = ""
-    end
-
-    return user_uid
+  def get_uid_by_dn(dn)
+    user = find_user_by_dn(dn)
+    return user ? user.uid : ''
   end
 
   def fingerprint(public_key)
