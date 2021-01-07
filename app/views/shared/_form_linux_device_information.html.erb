@@ -30,7 +30,7 @@
   </tr>
   <% end %>
 
-  <% unless f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
+  <% unless f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') || f.object.classes.include?('puavoServer') %>
   <tr>
     <th><%= f.label :puavoDevicePrimaryUser %></th>
     <td><%= f.text_field :puavoDevicePrimaryUser, :value => get_uid_by_dn(f.object.puavoDevicePrimaryUser) %></td>

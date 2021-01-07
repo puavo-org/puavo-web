@@ -33,7 +33,7 @@
     </tr>
     <% end %>
 
-    <% unless device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
+    <% unless device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') || device.classes.include?('puavoServer') %>
     <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDevicePrimaryUser") %></th>
       <td><%= h link_to_user_by_dn(device.puavoDevicePrimaryUser) %></td>
