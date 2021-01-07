@@ -506,9 +506,11 @@ class UsersController < ApplicationController
       data[1].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
 
+    @viewer_is_an_owner = is_owner?
+
     @permit_user_deletion = false
 
-    if is_owner?
+    if @viewer_is_an_owner
       # Owners can always delete users
       @permit_user_deletion = true
     else

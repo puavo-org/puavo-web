@@ -68,8 +68,14 @@
     <% unless @other_schools.empty? %>
     <p class="infoTitle"><%= t ('.other_schools') %></p>
     <ul class="infoValue">
+      <% if @viewer_is_an_owner %>
       <% @other_schools.each do |s| %>
         <li><%= link_to(s.displayName, school_path(s)) %></li>
+      <% end %>
+      <% else %>
+      <% @other_schools.each do |s| %>
+        <li><%= s.displayName %></li>
+      <% end %>
       <% end %>
     </ul>
     <% end %>
