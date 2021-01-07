@@ -560,16 +560,41 @@ class DevicesController < ApplicationController
         @device.remove_printer(printer_dn)
       end
     end
+
     @device.save!
 
     dp = device_params
     handle_date_multiparameter_attribute(dp, "puavoPurchaseDate")
     handle_date_multiparameter_attribute(dp, "puavoWarrantyEndDate")
 
+    # This is so ugly code. I'm sorry.
+    failed = false
+
+    if dp['puavoDevicePrimaryUser'].nil? || dp['puavoDevicePrimaryUser'].empty?
+      # Clear
+      dp['puavoDevicePrimaryUser'] = nil
+    else
+      # Set
+      dn = DeviceBase.uid_to_dn(dp['puavoDevicePrimaryUser'])
+
+      if dn
+        dp['puavoDevicePrimaryUser'] = dn
+      else
+        flash[:alert] = t('flash.save_failed')
+
+        # copied/moved from the model validation code
+        @device.errors.add(:puavoDevicePrimaryUser,
+                           I18n.t("activeldap.errors.messages.invalid",
+                           :attribute => I18n.t('activeldap.attributes.device.puavoDevicePrimaryUser')))
+
+        failed = true
+      end
+    end
+
     @school_printers = school_printers
 
     respond_to do |format|
-      if @device.update_attributes(dp)
+      if !failed && @device.update_attributes(dp)
         format.html { redirect_to(device_path(@school, @device), :notice => t('flash.device_updated')) }
         format.xml  { head :ok }
       else
@@ -705,7 +730,7 @@ class DevicesController < ApplicationController
       :puavoDeviceManufacturer,
       :puavoDeviceModel,
       :serialNumber,
-      :primary_user_uid,
+      :puavoDevicePrimaryUser,
       :puavoDeviceBootMode,
       :puavoDeviceDefaultAudioSource,
       :puavoDeviceDefaultAudioSink,

@@ -95,7 +95,7 @@ describe PuavoRest::Devices do
         :puavoAllowGuest => false,
         :puavoAutomaticImageUpdates => false,
         :puavoPersonallyAdministered => true,
-        :primary_user_uid => 'bob',
+        :puavoDevicePrimaryUser => @user.dn.to_s,
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1",
         :puavoDeviceDefaultAudioSource => "alsa_input.pci-0000_00_1b.0.analog-stereo",
         :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo",
@@ -593,7 +593,7 @@ describe PuavoRest::Devices do
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoSchool => @school.dn,
-        :primary_user_uid => 'bob'
+        :puavoDevicePrimaryUser => @user.dn.to_s
       )
 
       # device puavoDevicePrimaryUser is invalid when user 'bob' is removed

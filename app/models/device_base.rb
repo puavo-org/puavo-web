@@ -8,14 +8,13 @@ class DeviceBase < LdapBase
   include PuavoTagMixin
   include Mountpoint
 
-  attr_accessor :host_certificate_request_send, :image, :primary_user_uid
+  attr_accessor :host_certificate_request_send, :image
   attr_accessor :host_certificate_request, :hostCertificates, :hostCertificates, :rootca, :orgcabundle, :ldap_password
   attr_reader :userCertificate  # for old puavo-register code
 
   before_validation( :set_puavo_id,
                      :set_password,
-                     :downcase_mac_addresses,
-                     :set_puavo_device_primary_user )
+                     :downcase_mac_addresses )
   before_save :set_puppetclass, :set_parentNode, :set_puavo_mountpoint
 
   IA5STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?')
@@ -158,15 +157,6 @@ class DeviceBase < LdapBase
       end
     end
 
-    # Validate primary_user_uid and puavoDevicePrimaryUser
-    if !self.primary_user_uid.nil? && !self.primary_user_uid.empty?
-      if self.puavoDevicePrimaryUser.nil?
-        errors.add( :primary_user_uid,
-                    I18n.t("activeldap.errors.messages.invalid",
-                           :attribute => I18n.t('activeldap.attributes.device.primary_user_uid') ) )
-      end
-    end
-
     # Validate the image, if set. Must be done here, because if the file is not a valid image file,
     # it will cause an exception in ImageMagick.
     if self.image && !self.image.path.to_s.empty?
@@ -286,6 +276,22 @@ class DeviceBase < LdapBase
         return nil
       end
     end
+  end
+
+  def self.uid_to_dn(uid)
+    return nil if uid.nil? || uid.empty?
+
+    uid = Net::LDAP::Filter.escape( uid )
+    filter = "(uid=#{ uid })"
+
+    user_dn = nil
+    users = User.search_as_utf8( :filter => filter,
+                                 :scope => :one,
+                                 :attributes => [] ).each do |dn, attributes|
+      user_dn = dn
+    end
+
+    return user_dn
   end
 
   private
@@ -445,25 +451,4 @@ class DeviceBase < LdapBase
        :new_attribute_name => "monitors_xml",
        :value_block => lambda{ |value| Array(value).first } } ]
   end
-
-  def uid_to_dn(uid)
-    return nil if uid.nil? || uid.empty?
-
-    uid = Net::LDAP::Filter.escape( uid )
-    filter = "(uid=#{ uid })"
-
-    user_dn = nil
-    users = User.search_as_utf8( :filter => filter,
-                                 :scope => :one,
-                                 :attributes => [] ).each do |dn, attributes|
-      user_dn = dn
-    end
-
-    return user_dn
-  end
-
-  def set_puavo_device_primary_user
-      self.puavoDevicePrimaryUser = uid_to_dn(self.primary_user_uid)
-  end
-
 end

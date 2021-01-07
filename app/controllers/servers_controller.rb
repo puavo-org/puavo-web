@@ -192,7 +192,6 @@ class ServersController < ApplicationController
         :puavoDeviceManufacturer,
         :puavoDeviceModel,
         :serialNumber,
-        :primary_user_uid,
         :puavoPrinterDeviceURI,
         :puavoPrinterPPD,
         :puavoDefaultPrinter,
