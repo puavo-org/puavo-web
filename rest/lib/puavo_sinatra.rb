@@ -14,15 +14,14 @@ class PuavoSinatra < Sinatra::Base
   set :raise_errors, true
   set :root, ROOT
 
-  # Get request specific {FluentWrap} instance
-  # @return FluentWrap
+  # Get request specific {RestLogger} instance
+  # @return RestLogger
   def flog
     Thread.current[:fluent]
   end
 
-  # Set {FluentWrap} instance for the request
-  #
-  # @param logger [FluentWrap]
+  # Set {RestLogger} instance for the request
+  # @param logger [RestLogger]
   def flog=(logger)
     Thread.current[:fluent] = logger
   end

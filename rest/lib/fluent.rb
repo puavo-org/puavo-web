@@ -1,67 +1,57 @@
-# Dummy logger stub that ignores everything. Mostly needed to make some logging-related
-# tests to pass.
-class DummyFluentLogger
-    def post(tag, record)
-    end
-end
-
-# Small wrapper for fluent-logger gem. Most notably this wrapper filters out
-# all data keys with `password` string
-class FluentWrap
-
-  # @param tag [String] Fluent tag
+class RestLogger
   # @param base_attrs [Hash] Data to be added for each log message
-  # @param logger [Object] Fluent logger object. Can be set for mocking purposes for testing
-  def initialize(tag, base_attrs, fluent_logger=DummyFluentLogger.new)
-    @tag = tag
-    @fluent_logger = fluent_logger
-    @human_readable_logger = Logger.new(STDOUT)
+  def initialize(base_attrs)
+    @logger = Logger.new(STDOUT)
     @base_attrs = clean(base_attrs)
   end
+
+  # Create a new child logger. The child will inherit base_attrs from the parent.
+  # @param more_attrs [Hash] Data to be added for each log message
+  def merge(more_attrs=nil)
+    RestLogger.new(
+      @base_attrs.merge(more_attrs || {})
+    )
+  end
+
+  # Shortcut for #log(:info, msg)
+  # @see #log
+  def info(message)
+    log("info", message)
+  end
+
+  # Shortcut for #log(:warn, msg)
+  # @see #log
+  def warn(message)
+    log("warn", message)
+  end
+
+  # Shortcut for #log(:error, msg)
+  # @see #log
+  def error(message)
+    log("error", message)
+  end
+
+  private
 
   # Log a message
   #
   # @param level [Symbol] `:info`, `:warn` or `:error`
-  # @param msgtag [String] fluent tag-like message
   # @param message [String] message for humans
   # @param attrs [hash] Data to be added with the message
-  def log(level, msgtag, message=nil, attrs=nil)
-    if [:msg, :meta, :level].include?(msgtag)
-      raise "Illegal fluentd message key: #{ msgtag }"
-    end
+  def log(level, message)
+    return unless message
+
+    # Prevent the puavo-rest test runner from logging messages
+    return if !(ENV["FLUENTD_STDOUT"] || (ENV["RACK_ENV"] != "test") || (ENV["RAILS_ENV"] != "test"))
 
     record = {
-      :msg  => msgtag, # for legacy elasticsearch support
-      :meta => clean(@base_attrs),
+      :meta => clean(@base_attrs)
     }
 
-    record[:meta][:level] = level
-
-    # Write attrs under a key defined by msgtag to avoid type errors in
-    # elasticsearch
-    record[msgtag] = clean(attrs) if attrs
-
-    if message then
-      if ENV["FLUENTD_STDOUT"] || (ENV["RACK_ENV"] != "test") || (ENV["RAILS_ENV"] != "test") then
-        begin
-          if !%w(info warn error).include?(level) then
-            raise 'Unsupported log level method'
-          end
-          if @human_readable_logger.nil? then
-            raise 'Logger object is not set'
-          end
-
-          @human_readable_logger.send(level,
-                                      human_readable_msg(message, record))
-
-        rescue StandardError => e
-          #STDERR.puts "Failed to log message: #{ record.inspect } :: #{ e }"
-        end
-      end
-    end
-
-    if msgtag then
-      @fluent_logger.post(@tag, record)
+    begin
+      @logger.send(level, human_readable_msg(message, record))
+    rescue StandardError => e
+      STDERR.puts "FATAL: Failed to log message: #{message}: #{e}"
     end
   end
 
@@ -80,50 +70,15 @@ class FluentWrap
     # because the full url may contain sensitive parameters.
     path = (request && request[:path]) || '(PATH?)'
 
-    if !msg.kind_of?(String) then
-      raise 'Message is not a string'
-    end
-    msg_no_newlines = msg.chomp.gsub(/\n/, ' / ')
+    msg_no_newlines = msg.to_s.chomp.gsub(/\n/, ' / ')
     message = "#{ method } #{ path } from #{ hostname }/#{ client_ip } (#{ organisation }) :: #{ msg_no_newlines }"
 
-    if !request || !meta || show_full_record then
-      message = "#{ message } :::: #{ record.to_json }"
+    if !request || !meta
+      message = "#{ message }, #{ record.to_json }"
     end
 
     message
   end
-
-  # Shortcut for #log(:info, msg)
-  # @see #log
-  def info(message=nil, attrs=nil)
-    log("info", nil, message, attrs)
-  end
-
-  # Shortcut for #log(:warn, msg)
-  # @see #log
-  def warn(message=nil, attrs=nil)
-    log("warn", nil, message, attrs)
-  end
-
-  # Shortcut for #log(:error, msg)
-  # @see #log
-  def error(message=nil, attrs=nil)
-    log("error", nil, message, attrs)
-  end
-
-  # Create new child logger. The child will inherit base_attrs from the parent
-  # @param more_attrs [Hash] Data to be added for each log message
-  # @param new_logger [Object] Change log logger instance
-  # @return FluentWrap
-  def merge(more_attrs=nil, new_fluent_logger=nil)
-    FluentWrap.new(
-      @tag,
-      @base_attrs.merge(more_attrs || {}),
-      new_fluent_logger || @fluent_logger,
-    )
-  end
-
-  private
 
   MAX_SIZE = 1024 * 512
   def truncate_large(val)

@@ -14,13 +14,12 @@ FQDN = Socket.gethostbyname(Socket.gethostname).first
 # Use $rest_flog only when not in sinatra routes.
 # Sinatra routes have a "flog" method which automatically
 # logs the route and user.
-$rest_flog_base = FluentWrap.new(
-  "puavo-rest",
+$rest_flog_base = RestLogger.new(
   :hostname => HOSTNAME,
   :fqdn => FQDN,
   :version => "#{ VERSION } #{ GIT_COMMIT }",
-  :deb_package => DEB_PACKAGE,
 )
+
 $rest_flog = $rest_flog_base.merge({})
 
 $mailer = PuavoRest::Mailer.new
@@ -39,7 +38,7 @@ UUID_ALPHABET = ('a'..'z').to_a.freeze
 
 class BeforeFilters < PuavoSinatra
   before do
-    $rest_flog = $rest_flog_base.merge({}, nil)
+    $rest_flog = $rest_flog_base.merge({})
 
     LdapModel::PROF.reset
 
@@ -65,7 +64,7 @@ class BeforeFilters < PuavoSinatra
     end
 
     if organisation.nil? then
-      $rest_flog.warn("cannot determine the organisation for host '#{ request.host.to_s }'")
+      $rest_flog_base.warn("cannot determine the organisation for host '#{ request.host.to_s }'")
     end
 
     LdapModel.setup(
@@ -92,7 +91,7 @@ class BeforeFilters < PuavoSinatra
       log_meta[:organisation_key] = Organisation.current.organisation_key
     end
 
-    self.flog = $rest_flog = $rest_flog_base.merge(log_meta, nil)
+    self.flog = $rest_flog = $rest_flog_base.merge(log_meta)
     flog.info('handling request...')
   end
 
@@ -108,8 +107,7 @@ class BeforeFilters < PuavoSinatra
     if env["sinatra.error"]
       err = env["sinatra.error"]
       if err.kind_of?(JSONError) || err.kind_of?(Sinatra::NotFound)
-        flog.warn("... request rejected (in #{ request_duration } seconds): #{ err.message }",
-                  :reason => err.as_json)
+        flog.warn("... request rejected (in #{ request_duration } seconds): #{ err.message }")
       else
         unhandled_exception = {
           :error => {

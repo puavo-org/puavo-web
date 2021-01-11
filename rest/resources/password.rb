@@ -101,13 +101,7 @@ class Password < PuavoSinatra
                               json_params['new_password'],
                               '???')    # no request ID
 
-    flog.info("changed user password for '#{ user.username }'",
-              res.merge(
-                :from => "users resource",
-                  :user => {
-                    :dn  => user.dn,
-                    :uid => user.username,
-                  }))
+    flog.info("changed user password for '#{ user.username }' (DN #{user.dn.to_s})")
 
     if res[:exit_status] != 0
       status 404
