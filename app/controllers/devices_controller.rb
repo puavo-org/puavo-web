@@ -527,7 +527,26 @@ class DevicesController < ApplicationController
       @device_type_label = "???"
     end
 
-    if @device.valid?
+    # None of the device types you can create directory using puavo-web allows you to specify
+    # the primary user for the device. The only place that can set it is puavo-register.
+    # And this is where those calls end up in. This is ugly code, but in a different way.
+    primary_user_failed = false
+
+    if dp['puavoDevicePrimaryUser']
+      dn = DeviceBase.uid_to_dn(dp['puavoDevicePrimaryUser'])
+
+      if dn
+        @device.puavoDevicePrimaryUser = dn
+      else
+        primary_user_failed = true
+
+        @device.errors.add(:puavoDevicePrimaryUser,
+                           I18n.t("activeldap.errors.messages.invalid",
+                           :attribute => I18n.t('activeldap.attributes.device.puavoDevicePrimaryUser')))
+      end
+    end
+
+    if !primary_user_failed && @device.valid?
       unless @device.host_certificate_request.nil?
         @device.sign_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
         @device.get_ca_certificate(current_organisation.organisation_key)
@@ -535,7 +554,7 @@ class DevicesController < ApplicationController
     end
 
     respond_to do |format|
-      if @device.save
+      if !primary_user_failed && @device.save
         format.html { redirect_to(device_path(@school, @device), :notice => t('flash.device_created')) }
         format.xml  { render :xml => @device, :status => :created, :location => device_path(@school, @device) }
         format.json  { render :json => @device, :status => :created, :location => device_path(@school, @device) }
