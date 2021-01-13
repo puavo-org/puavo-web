@@ -530,15 +530,15 @@ class DevicesController < ApplicationController
     # None of the device types you can create directory using puavo-web allows you to specify
     # the primary user for the device. The only place that can set it is puavo-register.
     # And this is where those calls end up in. This is ugly code, but in a different way.
-    primary_user_failed = false
+    primary_user_ok = true
 
-    if dp['puavoDevicePrimaryUser']
-      dn = DeviceBase.uid_to_dn(dp['puavoDevicePrimaryUser'])
+    if !dp['puavoDevicePrimaryUser'].nil? && !dp['puavoDevicePrimaryUser'].strip.empty?
+      dn = DeviceBase.uid_to_dn(dp['puavoDevicePrimaryUser'].strip)
 
       if dn
         @device.puavoDevicePrimaryUser = dn
       else
-        primary_user_failed = true
+        primary_user_ok = false
 
         @device.errors.add(:puavoDevicePrimaryUser,
                            I18n.t("activeldap.errors.messages.invalid",
@@ -546,7 +546,7 @@ class DevicesController < ApplicationController
       end
     end
 
-    if !primary_user_failed && @device.valid?
+    if primary_user_ok && @device.valid?
       unless @device.host_certificate_request.nil?
         @device.sign_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
         @device.get_ca_certificate(current_organisation.organisation_key)
@@ -554,7 +554,7 @@ class DevicesController < ApplicationController
     end
 
     respond_to do |format|
-      if !primary_user_failed && @device.save
+      if primary_user_ok && @device.save
         format.html { redirect_to(device_path(@school, @device), :notice => t('flash.device_created')) }
         format.xml  { render :xml => @device, :status => :created, :location => device_path(@school, @device) }
         format.json  { render :json => @device, :status => :created, :location => device_path(@school, @device) }
