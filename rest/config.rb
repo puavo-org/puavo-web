@@ -17,8 +17,8 @@ default_config = {
     :db => 0
   },
   "server" => {
-    :dn => PUAVO_ETC.ds_puavo_dn,
-    :password => PUAVO_ETC.ds_puavo_password,
+    :dn => PUAVO_ETC.ldap_dn,
+    :password => PUAVO_ETC.ldap_password
   }
 }
 
@@ -48,8 +48,8 @@ if ENV['RACK_ENV'] == 'test' then
       :db => 1
     },
     "server" => {
-      :dn => PUAVO_ETC.ds_puavo_dn,
-      :password => PUAVO_ETC.ds_puavo_password,
+      :dn => PUAVO_ETC.ldap_dn,
+      :password => PUAVO_ETC.ldap_password
     },
     "puavo_ca" => "http://localhost:8080",
   }
