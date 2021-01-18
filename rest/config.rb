@@ -24,6 +24,16 @@ default_config = {
 
 
 if ENV['RACK_ENV'] == 'test' then
+  # XXX For testing system we use a strange configuration, where
+  # XXX puavo-rest is simultaneously a bootserver and a cloud server.
+  # XXX Here, PUAVO_ETC.ldap_dn == "uid=admin,o=puavo" that is not in
+  # XXX production anywhere, not in bootservers or in the cloud
+  # XXX (bootservers use their own credentials and the cloud server uses
+  # XXX "uid=puavo,o=puavo").  This means that, by design, some tests in
+  # XXX the test system may return results which do not match what actually
+  # XXX happens in production systems, mostly regarding ldap ACLs
+  # XXX with the ldap accounts that puavo-rest uses.
+
   CONFIG = {
     "ldap" => fqdn,
     "ldapmaster" => PUAVO_ETC.get(:ldap_master),
