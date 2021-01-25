@@ -49,19 +49,12 @@ ensure
   return input
 end
 
-def try_save_user(user, old_role)
+def try_save_user(user)
   while(true)
     begin
       user.save!
       break
     rescue Exception => e
-      if e.to_s == "Role Roles can't be blank"
-        # just hack it, no one cares about roles anymore
-        puts "Looks like this organisation is still using roles, hacking around it..."
-        user.role_name = old_role
-        retry
-      end
-
       puts "Can't save user: #{e.to_s}"
       puts "Press S to skip this organisation, Esc to abort, or any other key to retry..."
 
@@ -131,11 +124,9 @@ databases.each do |database|
 
   if user = User.find(:first, :attribute => "uid", :value => owner_uid )
     puts "User already exists: #{ owner_uid } (#{ database }). Changing the password."
-    role = nil
   else
     puts "Creating new user: #{ owner_uid } (#{ database })."
     school = School.find(:first, :attribute => "displayName", :value => "Administration")
-    role = school.roles.first.displayName
     user = User.new
     user.uid = owner_uid
     user.puavoSchool = school.dn
@@ -148,7 +139,7 @@ databases.each do |database|
   user.password_change_mode = :no_upstream
   user.puavoEduPersonAffiliation = "admin"
   user.puavoSshPublicKey = owner_ssh_public_key
-  try_save_user(user, role)
+  try_save_user(user)
 
   begin
     ldap_organisation = LdapOrganisation.first
