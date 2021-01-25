@@ -462,7 +462,10 @@ class UsersController < ApplicationController
     @admin_in_schools = []
 
     Array(@user.puavoAdminOfSchool || []).each do |dn|
-      @admin_in_schools << School.find(dn)
+      begin
+        @admin_in_schools << School.find(dn)
+      rescue
+      end
     end
 
     # Multiple schools?

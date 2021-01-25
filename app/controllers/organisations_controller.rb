@@ -152,13 +152,16 @@ class OrganisationsController < ApplicationController
     LdapOrganisation.current.owner.each.select do |dn|
       dn != "uid=admin,o=puavo"
     end.each do |dn|
-      @current_owners << {
-        user: User.find(dn),
-        schools: [],
-        primary: nil,
-      }
+      begin
+        @current_owners << {
+          user: User.find(dn),
+          schools: [],
+          primary: nil,
+        }
 
-      current_dn << dn
+        current_dn << dn
+      rescue
+      end
     end
 
     # List of admin users who currently are NOT the owners of this organisation
