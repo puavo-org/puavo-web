@@ -255,6 +255,7 @@ en:
       purchase_loc: "Purchase location"
       purchase_url: "Purchase URL"
       purchase_support: "Support contract"
+      location: "Location"
 
   # Quick search
   search:

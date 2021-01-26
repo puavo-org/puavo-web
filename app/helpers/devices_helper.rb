@@ -79,6 +79,7 @@ module DevicesHelper
     'puavoPurchaseLocation',
     'puavoPurchaseURL',
     'puavoSupportContract',
+    'puavoLocationName',
     'createTimestamp',    # LDAP operational attribute
     'modifyTimestamp'     # LDAP operational attribute
   ]
@@ -119,6 +120,7 @@ module DevicesHelper
       purchase_loc: dev['puavoPurchaseLocation'] ? dev['puavoPurchaseLocation'][0] : nil,
       purchase_url: dev['puavoPurchaseURL'] ? dev['puavoPurchaseURL'][0] : nil,
       purchase_support: dev['puavoSupportContract'] ? dev['puavoSupportContract'][0] : nil,
+      location: dev['puavoLocationName'] ? dev['puavoLocationName'][0] : nil,
     }
   end
 

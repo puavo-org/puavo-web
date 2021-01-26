@@ -255,6 +255,7 @@ fi:
       purchase_loc: "Hankintapaikka"
       purchase_url: "Hankinta-URL"
       purchase_support: "Tukiyhteyshenkilö"
+      location: "Sijainti"
 
   # Quick search
   search:
