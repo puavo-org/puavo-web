@@ -217,12 +217,15 @@ def define_basic(env)
   end
 
   env.define :bootserver do |config|
-    bootserver = Server.create(
-      :description     => 'test',
-      :macAddress      => '27:c0:59:3c:bc:b4',
-      :puavoDeviceType => 'bootserver',
-      :puavoHostname   => 'boot01',
-      :puavoSchool     => env.school.dn)
+    bootserver = Server.new
+    bootserver.classes = %w(top device puppetClient puavoServer simpleSecurityObject)
+    bootserver.description = 'test'
+    bootserver.macAddress  = '27:c0:59:3c:bc:b4'
+    bootserver.puavoDeviceType = 'bootserver'
+    bootserver.puavoHostname = 'boot01'
+    bootserver.puavoSchool = env.school.dn
+    bootserver.userPassword = config.default_password
+    bootserver.save!
     config.dn = bootserver.dn
   end
 
@@ -237,7 +240,7 @@ def define_basic(env)
 
   env.define :laptop do |config|
     laptop = Device.new
-    laptop.classes = %w(top device puppetClient puavoNetbootDevice simpleSecurityObject)
+    laptop.classes = %w(top device puppetClient puavoLocalbootDevice simpleSecurityObject)
     laptop.description = "test laptop"
     laptop.macAddress = "27:c0:59:3c:bc:b6"
     laptop.puavoDeviceType = "laptop"
@@ -247,5 +250,17 @@ def define_basic(env)
     laptop.save!
     config.dn = laptop.dn
     config.password = config.default_password
+  end
+
+  env.define :fatclient do |config|
+    fatclient = Device.new
+    fatclient.classes = %w(top device puppetClient puavoNetbootDevice)
+    fatclient.description = 'test fatclient'
+    fatclient.macAddress = '08:00:27:82:70:df'
+    fatclient.puavoDeviceType = 'fatclient'
+    fatclient.puavoHostname = 'fatclient-01'
+    fatclient.puavoSchool = env.school.dn
+    fatclient.save!
+    config.dn = fatclient.dn
   end
 end
