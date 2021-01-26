@@ -104,12 +104,24 @@ class Group < LdapModel
     add(:member_dns, user.dn)
   end
 
+  # Like above, but without any User objects. Takes the username and DN directly.
+  def add_member_raw(username, dn)
+    add(:member_usernames, username)
+    add(:member_dns, dn)
+  end
+
   # Remove member for the group
   #
   # @param user [User] user to add as member
   def remove_member(user)
     remove(:member_usernames, user.username)
     remove(:member_dns, user.dn)
+  end
+
+  # Like above, but without any User objects. Takes the username and DN directly.
+  def remove_member_raw(username, dn)
+    remove(:member_usernames, username)
+    remove(:member_dns, dn)
   end
 
   # Does user belong to this group
