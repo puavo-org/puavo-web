@@ -33,16 +33,16 @@
         <% end %>
 
         <%
-        org_domain = @login_content['organisation']
+        display_domain = @login_content['display_domain']
         name = @login_content['username']
         password = @login_content['text_password']
         %>
 
         <fieldset>
             <div class="row">
-                <% if org_domain %><div class="col-username"><% end %>
+                <% if display_domain %><div class="col-username"><% end %>
                 <input type="text" id="username" name="username" placeholder="<%= @login_content['username_placeholder'] %>" value="<%= name %>" <%= (name.nil? || name.empty?) ? "autofocus" : "" %> required>
-                <% if org_domain %></div><div class="col-orgname"><span>@<%= org_domain %></span></div><% end %>
+                <% if display_domain %></div><div class="col-orgname"><span>@<%= display_domain %></span></div><% end %>
             </div>
 
             <div class="row">
