@@ -42,11 +42,15 @@ env.validate 'user attributes' do
                      :puavoEduPersonAffiliation,
                      :puavoId,
                      :puavoLocale,
+                     :puavoSchool,
                      :sn,
                      :telephoneNumber,
                      :uid,
                      :uidNumber ]
   puavo.can_read student,  attribute_list
+  puavo.can_read teacher,  attribute_list
+  puavo.can_read admin,    attribute_list
+
   pwmgmt.can_read student, attribute_list
 
   sysgroup_getent.can_read student, [ :puavoSchool ]

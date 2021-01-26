@@ -23,25 +23,39 @@ def define_basic(env)
   end
 
   env.define :teacher do |config|
+    test_image = Magick::Image.read("features/support/test.jpg").first.to_blob
     teacher = User.create(
       :givenName                 => 'Severus',
       :new_password              => config.default_password,
       :new_password_confirmation => config.default_password,
+      :jpegPhoto                 => test_image,
+      :mail                      => 'severus@example.com',
+      :preferredLanguage         => 'en',
+      :puavoAcceptedTerms        => 'TRUE',
       :puavoEduPersonAffiliation => 'teacher',
+      :puavoLocale               => 'en_US.UTF-8',
       :puavoSchool               => env.school.dn,
       :sn                        => 'Snape',
+      :telephoneNumber           => '234567',
       :uid                       => 'severus.snape')
     config.dn = teacher.dn
   end
 
   env.define :admin do |config|
+    test_image = Magick::Image.read("features/support/test.jpg").first.to_blob
     admin = User.create(
       :givenName                 => 'Minerva',
       :new_password              => config.default_password,
       :new_password_confirmation => config.default_password,
+      :jpegPhoto                 => test_image,
+      :mail                      => 'minerva@example.com',
+      :preferredLanguage         => 'en',
+      :puavoAcceptedTerms        => 'TRUE',
       :puavoEduPersonAffiliation => 'admin',
+      :puavoLocale               => 'en_US.UTF-8',
       :puavoSchool               => env.school.dn,
       :sn                        => 'McGonagall',
+      :telephoneNumber           => '345678',
       :uid                       => 'minerva.mcgonagall')
     env.school.model_object.add_admin(admin)
     config.dn = admin.dn
