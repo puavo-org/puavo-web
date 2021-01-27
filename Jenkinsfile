@@ -132,6 +132,12 @@ EOF
               http://localhost:9292/v3/refresh_organisations
           '''
 
+          // Restart puavo-rest after organisations refresh.
+          sh '''
+            systemctl daemon-reload
+            service puavo-rest restart
+          '''
+
           // Execute rest tests first as they are more low level
           sh '''
             make test-rest
