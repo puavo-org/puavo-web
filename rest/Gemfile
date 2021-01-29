@@ -17,7 +17,7 @@ gem "gettext_i18n_rails"
 gem "sinatra"
 gem "sinatra-contrib"
 gem "uuid"
-gem "puma"
+gem "puma", "~> 4"      # 5.x series breaks kerberos/gssapi (/v3/whoami test)
 gem "rack-rewrite"
 gem "rack", "2.1.2"   # 2.2.x breaks some VirtualHostBase tests
 gem "addressable"
