@@ -104,6 +104,17 @@ describe LdapModel do
       )
     end
 
+    it "can clear the email address" do
+      user = PuavoRest::User.by_dn!(@user.dn)
+      assert_equal user.email, "heli.kopteri@example.com"
+
+      user.email = nil
+      assert user.save!
+
+      user = PuavoRest::User.by_dn!(@user.dn)
+      assert_nil user.email
+    end
+
     it "can add secondary emails" do
       @user.secondary_emails = ["heli.another@example.com"]
       @user.save!
@@ -114,6 +125,22 @@ describe LdapModel do
       user = PuavoRest::User.by_dn!(@user.dn)
       assert_equal user.email, "heli.kopteri@example.com"
       assert_equal user.secondary_emails, ["heli.another@example.com"]
+
+      # Moar
+      user = PuavoRest::User.by_dn!(@user.dn)
+      assert_equal user.secondary_emails, ["heli.another@example.com"]
+      user.secondary_emails = ["heli.another@example.com", "third@one.tld"]
+      assert user.save!
+
+      user = PuavoRest::User.by_dn!(@user.dn)
+      assert_equal user.email, "heli.kopteri@example.com"
+      assert_equal user.secondary_emails, ["heli.another@example.com", "third@one.tld"]
+      user.secondary_emails = ["third@one.tld", "heli.another@example.com"]   # swap
+      assert user.save!
+
+      user = PuavoRest::User.by_dn!(@user.dn)
+      assert_equal user.email, "heli.kopteri@example.com"
+      assert_equal user.secondary_emails, ["third@one.tld", "heli.another@example.com"]
     end
 
     it "can change primary email without affecting secondary emails" do
@@ -129,6 +156,55 @@ describe LdapModel do
       user = PuavoRest::User.by_dn!(@user.dn)
       assert_equal user.email, "newemail@example.com"
       assert_equal user.secondary_emails, ["heli.another@example.com"]
+    end
+
+    it "removing the secondary email addresses does not modify the primary email address" do
+      # Set and verify
+      user = PuavoRest::User.by_dn!(@user.dn)
+      user.secondary_emails = ["heli.another@example.com"]
+      assert user.save!
+      user = PuavoRest::User.by_dn!(@user.dn)
+      assert_equal user.email, "heli.kopteri@example.com"
+      assert_equal user.secondary_emails, ["heli.another@example.com"]
+
+      # Clear and verify
+      user = PuavoRest::User.by_dn!(@user.dn)
+      user.secondary_emails = []
+      assert user.save!
+      assert_equal user.email, "heli.kopteri@example.com"
+      assert_equal user.secondary_emails, []
+    end
+
+    it "removing the email address shifts the secondary addresses" do
+      # Add a secondary email address
+      user = PuavoRest::User.by_dn!(@user.dn)
+      user.secondary_emails = ["heli.another@example.com"]
+      assert user.save!
+
+      # Verify it
+      user = PuavoRest::User.by_dn!(@user.dn)
+      assert_equal user.email, "heli.kopteri@example.com"
+      assert_equal user.secondary_emails, ["heli.another@example.com"]
+
+      # Removing the primary email shifts the address array so that the first secondary
+      # address becomes the primary address
+      user = PuavoRest::User.by_dn!(@user.dn)
+      user.email = nil
+      assert user.save!
+
+      # Verify it
+      user = PuavoRest::User.by_dn!(@user.dn)
+      assert_equal user.email, "heli.another@example.com"
+      assert_equal user.secondary_emails, []
+
+      # Again
+      user = PuavoRest::User.by_dn!(@user.dn)
+      user.email = nil
+      assert user.save!
+
+      user = PuavoRest::User.by_dn!(@user.dn)
+      assert_nil user.email
+      assert_equal user.secondary_emails, []
     end
 
     it "can authenticate using the username and password" do
