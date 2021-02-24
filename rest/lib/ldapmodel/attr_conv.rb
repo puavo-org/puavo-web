@@ -493,9 +493,17 @@ class LdapModel
     return if !changed?(pretty_name)
     ldap_name = pretty2ldap[pretty_name.to_sym]
     val = Array(get_raw(ldap_name)).first
-    if self.class.by_attr(pretty_name, val)
-      add_validation_error(pretty_name, "#{ pretty_name.to_s }_not_unique".to_sym, "#{ pretty_name }=#{ val } is not unique")
+
+    other = self.class.by_attr(pretty_name, val)
+    return if other.nil?
+
+    begin
+      # Don't compare against ourselves
+      return if self.puavo_id == other.puavo_id
+    rescue
     end
+
+    add_validation_error(pretty_name, "#{ pretty_name.to_s }_not_unique".to_sym, "#{ pretty_name }=#{ val } is not unique")
   end
 
   # Raises {ValidationError} if {#add_validation_error} was called at least once
