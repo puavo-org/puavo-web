@@ -342,7 +342,7 @@ class User < LdapModel
 
   def email=(_email)
     secondary_emails = Array(get_raw(:mail))[1..-1] || []
-    write_raw(:mail, [_email] + secondary_emails)
+    write_raw(:mail, _email.nil? ? secondary_emails : [_email] + secondary_emails)
     @cache[:email] = nil
   end
 
