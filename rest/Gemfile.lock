@@ -69,14 +69,6 @@ GEM
       simpleidn (~> 0.1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    elasticsearch (7.10.1)
-      elasticsearch-api (= 7.10.1)
-      elasticsearch-transport (= 7.10.1)
-    elasticsearch-api (7.10.1)
-      multi_json
-    elasticsearch-transport (7.10.1)
-      faraday (~> 1)
-      multi_json
     erubi (1.10.0)
     faraday (1.3.0)
       faraday-net_http (~> 1.0)
@@ -279,7 +271,6 @@ DEPENDENCIES
   byebug
   colorize
   dnsruby
-  elasticsearch
   gettext
   gettext_i18n_rails
   gibberish
