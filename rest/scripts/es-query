@@ -1,2 +1,0 @@
-#!/bin/sh
-exec bundle exec ruby scripts/es-query.rb "$@"
