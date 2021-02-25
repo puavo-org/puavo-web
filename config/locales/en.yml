@@ -100,11 +100,9 @@ en:
     create: Create
     users: Users
     groups: Groups
-    roles: Roles
     lists: Username lists
     add: Add
     remove: Remove
-    new_role: New role
     new_user: New user...
     delete_user: "Delete user"
     lock_users_marked_for_deletion: "Lock all users who are marked for deletion"
@@ -113,7 +111,7 @@ en:
     change_password: Change password
     new_school: New school...
     new_ldap_service: New...
-    rename_groups: Rename groups and roles...
+    rename_groups: Rename groups...
     devices: Device list
     device_statistics: Device statistics
     delete_device: "Delete device"
@@ -261,7 +259,6 @@ en:
   search:
     search_result:
       title_user: Users
-      title_role: Roles
       title_group: Groups
       title_device: Devices
     no_matches: "(No matches)"
@@ -397,10 +394,6 @@ en:
       owner_removed: "%{user} is no longer an owner of this organisation"
       cant_remove_self: "You can't remove yourself from the owners. Another owner-level user must remove you from the owners."
     group:
-      role_added: Role was added to group.
-      role_added_failed: Failed to add.
-      role_removed: Role was removed from the group.
-      role_removed_failed: Failed to delete.
       empty_group: "There are no members in this group, nothing was done"
       create_username_list_ok: "A new username list was created from the members in the group \"%{name}\""
       create_username_list_failed: "Could not create a new username list"
@@ -411,16 +404,6 @@ en:
       groupless_marked: "%{ok} users marked for deletion, %{failed} could not be marked"
       group_emptied_ok: "All members removed from the group"
       group_emptied_failed: "Not all members could be removed"
-    role:
-      group_added: Group was added to role.
-      group_added_failed: Failed to add
-      group_removed: Group was removed from the role.
-      group_remove_failed: Failed to delete.
-      users_removed: Users was successfully removed!
-      users_remove_failed: "Users deletion was stopped! Failed to remove user: '%{username}'."
-      create_failed: Failed to create role!
-      save_failed: Role cannot be saved!
-      destroyed_failed: You can not remove role (%{name}) because it contains users
     user:
       save_failed: User cannot be saved!
       save_failed_organsation_owner_removal: "Save failed: user could not be removed from the organisation owners before the admin role was removed. Try removing the ownership manually."
@@ -479,8 +462,7 @@ en:
       wrong_user_type: School management access rights can be added only if the type of the user is admin
       save_failed: Failed to save access rights
       destroyed_failed: The school was not removed. Its users, groups, devices and boot servers must be removed first.
-      roles_not_found: Cannot find any roles!
-      no_roles_nor_groups: This school has no roles nor groups that could be renamed.
+      no_groups: This school has no groups that could be renamed.
       wlan_updated: WLAN settings successfully updated
       wlan_save_failed: WLAN settings could not be saved!
     profile:
@@ -678,7 +660,6 @@ en:
       admins: Admins
       wlan: WLAN
     admins:
-    admins:
       title: "School Administrators"
       current: "Current administrators"
       available: "Add administrator rights"
@@ -788,7 +769,6 @@ en:
       user: User
       role: Role
       select_new_school: Select the new school
-      no_roles: "The selected school has no roles!"
       no_groups: "The selected school has no groups!"
       no_teaching_groups: "The selected school has no teaching groups!"
       no_admin_groups: "The selected school has no administrative groups!"
@@ -798,7 +778,6 @@ en:
       user: User
       role: Role
       new_school: The selected school
-      select_new_role: "Select the new role"
       select_new_group_student: Select the new teaching group
       select_new_group_teacher: Select the new administrative group
       submit: Change the school
@@ -861,33 +840,6 @@ en:
       password: Password
       group: Group
 
-  # Legacy roles editing
-  roles:
-    index:
-      actions: Actions
-    show:
-      other_groups: Other groups
-      change_school: Move users to another school
-      destroy_users: Remove all users
-      confirm_destroy_users: Removing all users (%{count} users) from the system that belong to the role '%{name}'. Are you sure? These users cannot be restored to the system!
-    new:
-      title: New role
-    edit:
-      title: Edit role
-    select_school:
-      title: Users transfer
-      select_new_school: Select the new school
-      no_roles: "The selected school has no roles!"
-      no_groups: "The selected school has no groups!"
-      no_teaching_groups: "The selected school has no teaching groups!"
-      submit: Next
-    select_role:
-      title: Users transfer
-      new_school: Selected school
-      select_new_role: "Select the new role"
-      select_new_group: "Select the new group"
-      submit: Move users
-
   # Groups editing
   groups:
     index:
@@ -900,8 +852,6 @@ en:
           title: "Delete"
     show:
       title: Group information
-      roles_and_members: Roles and members
-      other_roles: Other roles
       add_user_title: Add users to this group
       description: To add new users to this group, write a part of their name in the box below, then click the "Add" buttons on the search results.
       placeholder_for_search: Name of the user
@@ -1219,7 +1169,6 @@ en:
           unsupported_value_types: "Unsupported types in PuavoConf values"
     models:
       group: Group
-      role: Role
       user: User
       school: School
       ldap_service: LDAP service
@@ -1315,11 +1264,8 @@ en:
         password: Password
         mail: Email
         telephoneNumber: Telephone number
-        puavoEduPersonAffiliationDeprecated: User type
         puavoEduPersonAffiliation: Role
         markedForDeletion: Marked for deletion
-        role_ids: Role
-        role_name: Role
         roles: Roles
         preferredLanguage: Language
         new_password: New password
@@ -1341,10 +1287,6 @@ en:
         administrative_groups: Administrative groups
         year_class: Year class
         learner_id: "Learner ID"
-      role:
-        displayName: Role name
-        members: Members
-        groups: Members groups
       group:
         displayName: Group name
         cn: Abbreviation
@@ -1529,5 +1471,4 @@ en:
   # Used in script/create_organisation_owner
   create_organisation_owner:
     school_name: Administration
-    role_name: Maintenance
     group_name: Maintenance

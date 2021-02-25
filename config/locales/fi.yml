@@ -100,11 +100,9 @@ fi:
     create: Luo
     users: "Käyttäjät"
     groups: "Ryhmät"
-    roles: Roolit
     lists: Käyttäjätunnuslistat
     add: "Lisää"
     remove: Poista
-    new_role: Uusi rooli
     new_user: "Uusi käyttäjä..."
     delete_user: "Poista käyttäjä"
     lock_users_marked_for_deletion: "Lukitse kaikki poistettavaksi merkityt käyttäjät"
@@ -261,7 +259,6 @@ fi:
   search:
     search_result:
       title_user: "Käyttäjät"
-      title_role: Roolit
       title_group: "Ryhmät"
       title_device: Laitteet
     no_matches: "(Ei osumia)"
@@ -397,10 +394,6 @@ fi:
       owner_removed: "%{user} ei ole enää omistajana tässä organisaatiossa"
       cant_remove_self: "Et voi poistaa itseltäsi omistajaoikeuksia. Jonkun muun omistajatason käyttäjän on poistettava sinut omistajista."
     group:
-      role_added: "Rooli lisättiin ryhmään."
-      role_added_failed: "Lisäys epäonnistui."
-      role_removed: "Rooli poistettiin ryhmästä."
-      role_removed_failed: "Poistaminen epäonnistui."
       empty_group: "Ryhmässä ei ole jäseniä, mitään ei tehty"
       create_username_list_ok: "Ryhmän \"%{name}\" jäsenistä luotiin onnistuneesti uusi käyttäjätunnuslista"
       create_username_list_failed: "Käyttäjätunnuslistan luonti ei onnistunut"
@@ -411,16 +404,6 @@ fi:
       groupless_marked: "%{ok} käyttäjää merkitty poistettavaksi, %{failed} käyttäjän merkintä epäonnistui"
       group_emptied_ok: "Kaikki jäsenet poistettu ryhmästä"
       group_emptied_failed: "Kaikkia jäseniä ei voitu poistaa"
-    role:
-      group_added: "Ryhmä lisättiin rooliin."
-      group_added_failed: "Lisäys epäonnistui"
-      group_removed: "Ryhmä poistettiin roolista."
-      group_remove_failed: "Poistaminen epäonnistui."
-      users_removed: "Käyttäjien poisto onnistui!"
-      users_remove_failed: "Käyttäjien poisto keskeytettiin! Ei voitu poistaa käyttäjää: '%{username}'."
-      create_failed: "Roolin lisääminen epäonnistui!"
-      save_failed: Roolia ei voitu tallentaa!
-      destroyed_failed: "Roolia (%{name}) ei voitu poistaa, koska siihen on liitetty käyttäjiä."
     user:
       save_failed: "Käyttäjää ei voitu tallentaa!"
       save_failed_organsation_owner_removal: "Tallennus epäonnistui: käyttäjää ei voitu poistaa organisaation omistajista ennen ylläpitäjä-roolin poistoa. Yritä poistaa omistajuus ensin käsin."
@@ -479,8 +462,7 @@ fi:
       wrong_user_type: "Ylläpito-oikeudet voidaan antaa vain admin -käyttäjille"
       save_failed: Oikeuksien tallennus epäonnistui
       destroyed_failed: Koulua ei poistettu. Sen käyttäjät, ryhmät, laitteet ja boot-palvelimet on poistettava ensin.
-      roles_not_found: Yhtään roolia ei ole määritetty
-      no_roles_nor_groups: Tässä koulussa ei ole yhtään roolia eikä ryhmää, joita voisi siirtää.
+      no_groups: Tässä koulussa ei ole yhtään ryhmää jota voisi siirtää.
       wlan_updated: WLAN-asetukset päivitetty
       wlan_save_failed: WLAN-asetusten tallennus epäonnistui
     profile:
@@ -787,7 +769,6 @@ fi:
       user: Käyttäjä
       role: Rooli
       select_new_school: Valitse uusi koulu
-      no_roles: "Valitussa koulussa ei ole yhtään roolia!"
       no_groups: "Valitussa koulussa ei ole yhtään ryhmää!"
       no_teaching_groups: "Valitussa koulussa ei ole yhtään opetusryhmää!"
       no_admin_groups: "Valitussa koulussa ei ole yhtään hallinnollista ryhmää!"
@@ -797,7 +778,6 @@ fi:
       user: Käyttäjä
       role: Rooli
       new_school: Valittu koulu
-      select_new_role: Valitse uusi rooli
       select_new_group_student: Valitse uusi opetusryhmä
       select_new_group_teacher: Valitse uusi hallinnollinen ryhmä
       submit: Vaihda koulua
@@ -860,33 +840,6 @@ fi:
       password: Salasana
       group: Ryhmä
 
-  # Legacy roles editing
-  roles:
-    index:
-      actions: Toiminnot
-    show:
-      other_groups: "Muut ryhmät"
-      change_school: "Siirrä käyttäjät toiseen kouluun"
-      destroy_users: Poista kaikki käyttäjät
-      confirm_destroy_users: Poistetaan järjestelmästä kaikki käyttäjät (%{count} kpl), jotka kuuluvat rooliin '%{name}'. Oletko varma, että haluat poistaa käyttäjät? Tämän jälkeen käyttäjiä ei voida enää palauttaa takaisin järjestelmään!
-    new:
-      title: Uusi rooli
-    edit:
-      title: Muokkaa roolia
-    select_school:
-      title: "Käyttäjien siirto"
-      select_new_school: Valitse uusi koulu
-      no_roles: "Valitussa koulussa ei ole yhtään roolia!"
-      no_groups: "Valitussa koulussa ei ole yhtään ryhmää!"
-      no_teaching_groups: "Valitussa koulussa ei ole yhtään opetusryhmää!"
-      submit: Seuraava
-    select_role:
-      title: "Käyttäjien siirto"
-      new_school: Valittu koulu
-      select_new_role: Valitse uusi rooli
-      select_new_group: Valitse uusi ryhmä
-      submit: "Siirrä käyttäjät"
-
   # Groups editing
   groups:
     index:
@@ -899,8 +852,6 @@ fi:
           title: "Poista"
     show:
       title: Ryhmän tiedot
-      roles_and_members: "Roolit ja jäsenet"
-      other_roles: Muut roolit
       add_user_title: Lisää käyttäjiä ryhmään
       description: Lisätäksesi uusia käyttäjiä ryhmään kirjoita käyttäjän nimi seuraavaan hakukenttään ja paina "Liitä ryhmään" -painikkeita.
       placeholder_for_search: Kirjoita käyttäjän nimi tai osa siitä
@@ -1218,7 +1169,6 @@ fi:
           unsupported_value_types: "PuavoConfin arvoissa ei-tuettuja tyyppejä"
     models:
       group: "Ryhmä"
-      role: Rooli
       user: "Käyttäjä"
       school: Koulu
       ldap_service: LDAP-palvelu
@@ -1314,11 +1264,8 @@ fi:
         password: Salasana
         mail: "Sähköpostiosoite"
         telephoneNumber: Puhelinnumero
-        puavoEduPersonAffiliationDeprecated: "Käyttäjätyyppi"
         puavoEduPersonAffiliation: Rooli
         markedForDeletion: Merkitty poistettavaksi
-        role_ids: Rooli
-        role_name: Rooli
         roles: Roolit
         preferredLanguage: Kieli
         new_password: Uusi salasana
@@ -1340,10 +1287,6 @@ fi:
         administrative_groups: Hallinnolliset ryhmät
         year_class: Vuosiluokka
         learner_id: "Oppijanumero"
-      role:
-        displayName: Roolin nimi
-        members: "Jäsenet"
-        groups: "Roolin ryhmät"
       group:
         displayName: "Ryhmän nimi"
         cn: Lyhenne
@@ -1528,5 +1471,4 @@ fi:
   # Used by script/create_organisation_owner
   create_organisation_owner:
     school_name: Hallinto
-    role_name: "Ylläpito"
     group_name: "Ylläpito"

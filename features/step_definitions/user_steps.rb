@@ -49,7 +49,6 @@ Given(/^the following users:$/) do |users|
     end
 
     user.groups = groups if groups  # XXX must be after .save! due to weird APIs
-    user.update_associations
   end
 end
 

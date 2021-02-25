@@ -21,18 +21,8 @@ Rails.application.routes.draw do
     resource :organisation_external_services
 
     scope :path => ':school_id' do
-      match 'roles/:id/select_school' => 'roles#select_school', :as => :select_school_role, :via => :get
-      match 'roles/:id/select_role' => 'roles#select_role', :as => :select_role_role, :via => :post
-      match 'roles/:id/add_group/:group_id' => 'roles#add_group', :as => :add_group_role, :via => :put
-      match 'roles/:id/remove_group/:group_id' => 'roles#remove_group', :as => :remove_group_role, :via => :put
-      match 'roles/:id/remove_users' => 'roles#remove_users', :as => :remove_users_role, :via => :put
-    end
-
-    scope :path => ':school_id' do
       resource :rename_groups
-      resources :roles
     end
-    resources :roles
 
     namespace :schools do
       scope :path => ':school_id' do
@@ -78,10 +68,7 @@ Rails.application.routes.draw do
       get 'groups/find_groupless_users' => 'groups#find_groupless_users', :as => :find_groupless_users
       put 'groups/mark_groupless_users_for_deletion' => 'groups#mark_groupless_users_for_deletion', :as => :mark_groupless_users_for_deletion
 
-      put 'groups/:id/add_role/:role_id' => 'groups#add_role'
-      match 'groups/:id/add_role/:role_id' => 'groups#add_role', :as => :add_role_group, :via => :put
       get 'groups/:id/members' => 'groups#members'
-      match 'groups/:id/delete_role/:role_id' => 'groups#delete_role', :as => :delete_role_group, :via => :put
 
       post 'users/lock_marked_users' => 'users#lock_marked_users', :as => :lock_marked_users
       delete 'users/delete_marked_users' => 'users#delete_marked_users', :as => :delete_marked_users
