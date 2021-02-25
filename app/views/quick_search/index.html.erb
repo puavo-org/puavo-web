@@ -7,13 +7,6 @@
 
 <%= render( :partial => "search_result",
             :locals => {
-              :objects => @roles,
-              :model => 'role',
-              :path => lambda { |school_id, id| role_path(school_id, id) },
-              :attributes => ["displayName"] } ) %>
-
-<%= render( :partial => "search_result",
-            :locals => {
               :objects => @groups,
               :model => 'group',
               :path => lambda { |school_id, id| group_path(school_id, id) },

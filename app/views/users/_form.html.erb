@@ -69,11 +69,7 @@
 
     <tr>
       <th class="requiredField">
-      <% if new_group_management?(@school) %>
-        <%= f.label :puavoEduPersonAffiliation %>
-      <% else %>
-        <%= f.label :puavoEduPersonAffiliationDeprecated %>
-      <% end %>
+      <%= f.label :puavoEduPersonAffiliation %>
       </th>
       <td>
         <% User.puavoEduPersonAffiliation_list.map do |a| %>
@@ -87,20 +83,6 @@
     <%= render :partial => "teaching_group", :locals => { :f => f } %>
 
     <%= render :partial => "administrative_groups", :locals => { :f => f } %>
-
-    <% unless new_group_management?(@school) %>
-    <tr>
-      <th class="requiredField"><%= f.label :role_ids %></th>
-      <td>
-        <% @roles.each do |p| %>
-        <div>
-          <label><input<%= @user_roles.include?(p) ? ' checked="checked"' : "" %> id="role_<%= p.displayName.to_s.downcase.gsub(/ /, '_') %>" name="user[role_ids][]" type="checkbox" value="<%= p.id %>"  /><%=h p.displayName %></label>
-        </div>
-        <% end %>
-        <%= field_error_text_span(f.object, :role_ids) %>
-      </td>
-    </tr>
-    <% end %>
 
     <tr>
       <th><%= f.label :puavoLocale %></th>

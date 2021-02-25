@@ -40,8 +40,6 @@
             <td data-title="<%= t('activeldap.attributes.group.displayName')%>">
             <% if user.groups && user.groups.first %>
               <%= user.groups.first.displayName %>
-            <% elsif user.roles && user.roles.first %>
-              <%= user.roles.first.displayName %>
             <% else %>
               ?
             <% end %>

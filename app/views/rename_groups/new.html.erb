@@ -4,84 +4,27 @@
 
 <h1>Vuosiluokkasiirrot</h1>
 
-<% if @do_only_groups %>
-  <h4>Ryhmien massauudelleennimeäminen</h4>
-<% else %>
-  <h4>Roolien ja ryhmien massauudelleennimeäminen</h4>
-<% end %>
+<h4>Ryhmien massauudelleennimeäminen</h4>
 
 <%= form_for("renamge_groups", :url => rename_groups_path(@school) ) do |f| %>
 
-<% unless @do_only_groups %>
-  <fieldset><legend>Roolit</legend>
-
-  <% if @roles.empty? %>
-    <p>Tässä koulussa ei ole yhtään roolia, joka täsmäisi hakuehtoihin!</p>
-  <% else %>
-    <input type="checkbox" id="do_roles" name="do_roles"/>
-    <label for="do_roles">Käsittele roolit</label>
-
-    <p>Koulun luokka-asteet: <b><%= @first_class_number %> - <%= @last_class_number %></b></p>
-    <p>Kaikki luokat-asteet <%=  @all_class_found ? "löytyivät" : "<b>eivät löytyneet</b>".html_safe %></p>
-
-    <table class="editForm renameGroupsTable">
-      <tr>
-        <th>Vanha nimi</th>
-        <th>Uusi nimi</th>
-      </tr>
-
-      <% @roles.each do |role| %>
-        <tr>
-          <td><%= role.displayName %></td>
-          <td>
-            <%= hidden_field_tag "role_puavo_id[]", role.puavoId %>
-
-            <% if role.displayName.match(/\d+/)[0].to_i == @last_class_number %>
-              <% new_name = Time.now.year.to_s + " poistuvat, " + role.displayName %>
-            <% else %>
-              <% new_name = increase_numeric_value_of_string(role.displayName) %>
-            <% end %>
-
-            <%= text_field_tag "role_display_name[]", new_name, size: 40 %>
-          </td>
-        </tr>
-      <% end %>
-    </table>
-
-    <h4>Luodaan seuraavat uudet roolit uudelleen nimeämisen jälkeen:</h4>
-    <% @first_class_roles.each do |role| %>
-      <%= text_field_tag "new_roles[]", role.displayName %><br/>
-    <% end %>
-  <% end %>
-
-  </fieldset>
-<% end %>
-
-<% unless @do_only_groups %>
-  <fieldset>
-  <legend>Ryhmät</legend>
-<% end %>
+<fieldset>
+<legend>Ryhmät</legend>
 
 <% if @groups.empty? %>
   <p>Tässä koulussa ei ole yhtään ryhmää, joka täsmäisi hakuehtoihin!</p>
 <% else %>
-  <% unless @do_only_groups %>
-    <input type="checkbox" id="do_groups" name="do_groups" checked/>
-    <label for="do_groups">Käsittele ryhmät</label>
-  <% end %>
 
   <p>Koulun luokka-asteet: <b><%= @first_group_class_number %> - <%= @last_group_class_number %></b></p>
   <p>Kaikki luokat-asteet <%=  @all_group_class_found ? "löytyivät" : "<b>eivät löytyneet</b>".html_safe %></p>
 
-  <% unless @roles.empty? %>
-    <p>Ryhmien ja roolien luokka-asteet
-    <% if @first_class_number == @first_group_class_number && @last_class_number == @last_group_class_number %>
-      täsmäävät
-    <% else %>
-      <b>eivät täsmää</b>
-    <% end %>
-    </p>
+  <p>Ryhmien luokka-asteet
+  <% if @first_class_number == @first_group_class_number && @last_class_number == @last_group_class_number %>
+    täsmäävät
+  <% else %>
+    <b>eivät täsmää</b>
   <% end %>
+  </p>
 
   <table class="editForm massGroupRenameTable">
     <tr>

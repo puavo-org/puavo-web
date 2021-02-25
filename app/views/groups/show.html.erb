@@ -1,7 +1,5 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.groups'), @group.displayName %>
 
-<% if new_group_management?(@school) %>
-
 <%= render :partial => 'integration_warnings', :locals => { :school => @school, :group => @group } %>
 
 <% if !current_user.organisation_owner? && @num_hidden > 0 %>
@@ -78,51 +76,6 @@
     </tr>
   </table>
 <%= end_box %>
-
-<% else %>
-
-<p>
-  <b><%= t('activeldap.attributes.group.displayName') %>:</b>
-  <%=h @group.displayName %>
-</p>
-
-<p>
-  <b><%= t('activeldap.attributes.group.cn') %>:</b>
-  <%=h @group.cn %>
-</p>
-
-<p>
-  <b><%= t('activeldap.attributes.group.gidNumber') %>:</b>
-  <%=h @group.gidNumber %>
-</p>
-
-<p>
-  <b><%= t('.roles_and_members') %>:</b><br />
-  <span id="roles_and_members">
-    <% @roles.each do |p| %>
-      <%= "#{p.displayName} (#{p.school.displayName})" %>
-      <%= link_to t('link.remove'), delete_role_group_path(@school, @group, p), method: :put, id: "remove_role_#{p.id}" %>
-      <ul>
-        <% p.members.each do |m| %>
-          <li><%= link_to m.displayName, user_path(@school, m) %></li>
-        <% end %>
-      </ul>
-    <% end %>
-  </span>
-</p>
-
-<p>
-  <b><%= t('.other_roles') %>:</b><br />
-  <span id="other_roles">
-  <% @other_roles.each do |r| %>
-    <%= "#{r.displayName} (#{r.school.displayName})" %>
-    <%= link_to t('link.add'), add_role_group_path(@school, @group, r), method: :put, id: "add_role_#{r.id}" %>
-    <br />
-  <% end %>
-  </span>
-</p>
-
-<% end %>
 
 <% content_for :tools do %>
 <ul>
@@ -221,7 +174,6 @@
 </ul>
 <% end %>
 
-<% if new_group_management?(@school) %>
 <script>
     // Setup group members searching
     $(document).ready(function() {
@@ -235,4 +187,3 @@
         });
     });
 </script>
-<% end %>

@@ -39,25 +39,16 @@
     <p class="infoTitle"><%= t('activeldap.attributes.user.uid') %></p>
     <p class="infoValue"><%= h @user.uid %></p>
 
-    <% if new_group_management?(@school) %>
     <p class="infoTitle"><%= t('activeldap.attributes.user.puavoEduPersonAffiliation') %></p>
-    <% else %>
-    <p class="infoTitle"><%= t('activeldap.attributes.user.puavoEduPersonAffiliationDeprecated') %></p>
-    <% end %>
     <p class="infoValue"><%= Array(@user.puavoEduPersonAffiliation).map { |value| t('puavoEduPersonAffiliation_' + value) }.join(', ') %></p>
 
-    <% if new_group_management?(@school) && @user.puavoEduPersonAffiliation.include?('student') %>
+    <% if @user.puavoEduPersonAffiliation.include?('student') %>
     <p class="infoTitle"><%= t('activeldap.attributes.user.teaching_group') %></p>
     <p class="infoValue"><%= @user.teaching_group['name'].nil? ? t('missing_data') : (h @user.teaching_group['name']) %></p>
     <% if school_has_integration?(@organisation_name, @school.id.to_i, 'primus') %>
     <p class="infoTitle"><%= t('activeldap.attributes.user.year_class') %></p>
     <p class="infoValue"><%= @user.year_class['name'].nil? ? t('missing_data') : (h @user.year_class['name']) %></p>
     <% end %>
-    <% end %>
-
-    <% unless new_group_management?(@school) %>
-    <p class="infoTitle"><%= t('activeldap.attributes.user.roles') %></p>
-    <p class="infoValue"><%=h @user.roles.map{ |r| r.displayName }.join(", ") %></p>
     <% end %>
 
     <% if @learner_id %>

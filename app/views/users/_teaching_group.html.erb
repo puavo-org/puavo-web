@@ -1,5 +1,5 @@
     <!-- FIXME: enable (javascript) teaching group on the form if user select student type on the form -->
-    <% if new_group_management?(@school) && !@user.new_entry? && Array(@user.puavoEduPersonAffiliation).include?("student") %>
+    <% if !@user.new_entry? && Array(@user.puavoEduPersonAffiliation).include?("student") %>
     <tr>
       <th class="requiredField"><%= f.label :teaching_group %></th>
       <td>

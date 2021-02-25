@@ -1,5 +1,5 @@
     <!-- FIXME: enable (javascript) administrative groups on the form if user select eq. teacher type on the form -->
-    <% if new_group_management?(@school) && !@user.new_entry? && (Array(@user.puavoEduPersonAffiliation) - ["student"]).count > 0 %>
+    <% if !@user.new_entry? && (Array(@user.puavoEduPersonAffiliation) - ["student"]).count > 0 %>
     <tr>
       <th class="requiredField"><%= f.label :administrative_groups %></th>
       <td class="administrativeGroups">

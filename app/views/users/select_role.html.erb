@@ -25,14 +25,10 @@
 
   <tr>
     <th>
-      <% if @use_groups %>
       <%= label_tag :new_role, @user.puavoEduPersonAffiliation == 'student' ? t('.select_new_group_student') : t('.select_new_group_teacher') %>
-      <% else %>
-      <%= label_tag :new_role, t('.select_new_role') %>
-      <% end %>
     </th>
     <td>
-      <%= select_tag :new_role, options_from_collection_for_select(@roles_or_groups, "puavoId", "displayName") %>
+      <%= select_tag :new_role, options_from_collection_for_select(@groups, "puavoId", "displayName") %>
       <div class="genericNotice">
         <% if @user.puavoEduPersonAffiliation == 'student' %>
           <%= t('.group_help_students') %>
