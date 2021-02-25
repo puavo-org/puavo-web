@@ -6,7 +6,6 @@ class QuickSearchController < ApplicationController
     words = params[:query]
 
     @users = []
-    @roles = []
     @groups = []
     @devices = []
 
@@ -47,7 +46,7 @@ class QuickSearchController < ApplicationController
       @groups.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
 
       respond_to do |format|
-        if @users.length == 0 && @roles.length == 0 && @groups.length == 0 && @devices.length == 0
+        if @users.length == 0 && @groups.length == 0 && @devices.length == 0
           format.html { render :inline => "<p>#{t('search.no_matches')}</p>" }
         else
           format.html # index.html.erb

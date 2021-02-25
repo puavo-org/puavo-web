@@ -137,9 +137,6 @@ class GroupsController < ApplicationController
 
     @members, @num_hidden = get_and_sort_group_members(@group)
 
-    @roles = @group.roles.sort
-    @other_roles = Role.all.delete_if do |p| @roles.include?(p) end
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @group }
@@ -500,38 +497,6 @@ class GroupsController < ApplicationController
     respond_to do |format|
       format.html { render :plain => "OK" }
       format.js
-    end
-  end
-
-  def add_role
-    @group = Group.find(params[:id])
-    @role = Role.find(params[:role_id])
-
-    respond_to do |format|
-      if @role.groups << @group && @group.save
-        @role.update_associations
-        flash[:notice] =  t('flash.group.role_added')
-        format.html { redirect_to( group_path(@school, @group) ) }
-      else
-        flash[:notice] = t('flash.group.role_added')
-        format.html { redirect_to( group_path(@school, @group) ) }
-      end
-    end
-  end
-
-  def delete_role
-    @group = Group.find(params[:id])
-    @role = Role.find(params[:role_id])
-
-    respond_to do |format|
-      if @role.groups.delete(@group) && @group.save
-        @role.update_associations
-        flash[:notice] =  t('flash.group.role_removed')
-        format.html { redirect_to( group_path(@school, @group) ) }
-      else
-        flash[:alert] =  t('flash.group.role_removed_failed')
-        format.html { redirect_to( group_path(@school, @group) ) }
-      end
     end
   end
 

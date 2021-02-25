@@ -11,11 +11,6 @@ class Group < BaseGroup
               :foreign_key => 'puavoSchool',
               :primary_key => 'dn' )
 
-  belongs_to( :roles,
-              :class_name => "Role",
-              :many => "puavoMemberGroup",
-              :primary_key => "dn" )
-
   validate :validate
 
   def validate
@@ -31,7 +26,7 @@ class Group < BaseGroup
   def to_s
     self.displayName
   end
-  
+
   def remove_user(user)
     begin
       self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},

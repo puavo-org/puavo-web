@@ -5,20 +5,6 @@ module Puavo
       LdapOrganisation.current.rest_proxy(*args)
     end
 
-    def new_group_management?(school)
-      new_group_management = Puavo::Organisation.
-        find(LdapOrganisation.current.cn).
-        value_by_key("new_group_management")
-
-      return false unless new_group_management
-
-      return false if new_group_management["enable"] != true
-
-      return true unless new_group_management["only_of_schools"]
-
-      new_group_management["only_of_schools"].include?(school.puavoId)
-    end
-
     # Returns true if the specified user (in the current organisation) has any
     # extra permissions granted for them
     def can_schooladmin_do_this?(username, action)

@@ -67,11 +67,6 @@ class LDAPTestEnv
         s.destroy
       end
     end
-    Role.all.each do |p|
-      unless p.displayName == "Maintenance"
-        p.destroy
-      end
-    end
 
     Server.all.each do |s|
       s.destroy

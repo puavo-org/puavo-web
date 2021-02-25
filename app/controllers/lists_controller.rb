@@ -78,7 +78,7 @@ class ListsController < ApplicationController
   def download
     @list = List.by_id(params[:id])
 
-    # First group users by their group or role. Filter out missing users.
+    # First group users by their group. Filter out missing users.
     @users_by_group = {}
 
     @list.users.each do |user_id|
@@ -92,40 +92,23 @@ class ListsController < ApplicationController
         next
       end
 
-      # group users by their group or role
+      # group users by their group
       group_name = "<?>"
 
-      if new_group_management?(@school)
-        # prioritise groups over roles
-        if Array(user.puavoEduPersonAffiliation).include?("student")
-          grp = user.teaching_group
+      if Array(user.puavoEduPersonAffiliation).include?("student")
+        grp = user.teaching_group
 
-          if grp.nil? || grp.empty?
-            # teaching group is not set, use the first group then
-            if user.groups && user.groups.first
-              group_name = user.groups.first.displayName
-            end
-          else
-            group_name = user.teaching_group["name"]
+        if grp.nil? || grp.empty?
+          # teaching group is not set, use the first group then
+          if user.groups && user.groups.first
+            group_name = user.groups.first.displayName
           end
         else
-          # assume that users who aren't students are teachers...
-          group_name = I18n.t("puavoEduPersonAffiliation_teacher")
+          group_name = user.teaching_group["name"]
         end
       else
-        # If the user has no roles, then get groups, doesn't matter as
-        # long as they're grouped *somehow*...
-
-        if user.roles && user.roles.first
-          # have a role
-          group_name = user.roles.first.displayName
-        elsif user.teaching_group
-          # no role, try the teaching group
-          group_name = user.teaching_group["name"]
-        elsif user.groups && user.groups.first
-          # no role, no teaching group, use the first group
-          group_name = user.groups.first["name"]
-        end
+        # assume that users who aren't students are teachers...
+        group_name = I18n.t("puavoEduPersonAffiliation_teacher")
       end
 
       @users_by_group[group_name] ||= []

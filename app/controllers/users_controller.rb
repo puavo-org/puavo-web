@@ -572,8 +572,6 @@ class UsersController < ApplicationController
   def new
     @user = User.new
     @groups = @school.groups
-    @roles = @school.roles
-    @user_roles =  []
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
@@ -592,8 +590,6 @@ class UsersController < ApplicationController
     return if @user.nil?
 
     @groups = @school.groups
-    @roles = @school.roles
-    @user_roles =  @user.roles || []
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
@@ -608,8 +604,6 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     @groups = @school.groups
-    @roles = @school.roles
-    @user_roles =  []
 
     # TODO: should we use the filtered hash returned by "user_params" here
     # instead of modifying the raw unfiltered "params" object?
@@ -626,17 +620,10 @@ class UsersController < ApplicationController
         unless @user.save
           raise UserError, I18n.t('flash.user.create_failed')
         end
-        if new_group_management?(@school)
-          format.html { redirect_to( group_user_path(@school,@user) ) }
-          format.json { render :json => nil }
-        else
-          flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))
-          format.html { redirect_to( user_path(@school,@user) ) }
-          format.json { render :json => nil }
-        end
+        format.html { redirect_to( group_user_path(@school,@user) ) }
+        format.json { render :json => nil }
       rescue UserError => e
         logger.info "Create user, Exception: " + e.to_s
-        @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
         error_message_and_render(format, 'new', e.message)
       end
     end
@@ -649,8 +636,6 @@ class UsersController < ApplicationController
     return if @user.nil?
 
     @groups = @school.groups
-    @roles = @school.roles
-    @user_roles =  @user.roles || []
 
     params[:user][:puavoEduPersonAffiliation] ||= []
     @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
@@ -707,14 +692,12 @@ class UsersController < ApplicationController
           raise UserError, I18n.t('flash.user.save_failed')
         end
 
-        if new_group_management?(@school)
-          if params["teaching_group"]
-            @user.teaching_group = params["teaching_group"]
-          end
-          if params["administrative_groups"]
-            @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == "0" }
-            params["user"].delete("administrative_groups")
-          end
+        if params["teaching_group"]
+          @user.teaching_group = params["teaching_group"]
+        end
+        if params["administrative_groups"]
+          @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == "0" }
+          params["user"].delete("administrative_groups")
         end
 
         # Save new password to session otherwise next request does not work
@@ -726,7 +709,6 @@ class UsersController < ApplicationController
         flash[:notice] = t('flash.updated', :item => t('activeldap.models.user'))
         format.html { redirect_to( user_path(@school,@user) ) }
       rescue UserError => e
-        @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
         get_user_groups
         error_message_and_render(format, 'edit',  e.message)
       end
@@ -822,38 +804,27 @@ class UsersController < ApplicationController
   def change_school
     @new_school = School.find(params[:new_school])
 
-    use_groups = new_group_management?(@school)
-    @role_or_group = use_groups ? Group.find(params[:new_role]) : Role.find(params[:new_role])
+    @group = Group.find(params[:new_role])
 
     params[:user_ids].each do |user_id|
       @user = User.find(user_id)
       @user.change_school(@new_school.dn.to_s)
 
-      if use_groups
-        if @user.puavoEduPersonAffiliation == 'student'
-          # User.teaching_group=() wants the group ID, not the object
-          @user.teaching_group = @role_or_group.id
-        else
-          # This method accepts arrays, but here we only permit one administrative group.
-          # The user editor form lets you assign multiple administrative groups.
-          @user.administrative_groups = Array(@role_or_group.id)
-        end
+      if @user.puavoEduPersonAffiliation == 'student'
+        # User.teaching_group=() wants the group ID, not the object
+        @user.teaching_group = @group.id
       else
-        @user.role_ids = Array(@role_or_group.id)
+        # This method accepts arrays, but here we only permit one administrative group.
+        # The user editor form lets you assign multiple administrative groups.
+        @user.administrative_groups = Array(@group.id)
       end
 
       @user.save
     end
 
     respond_to do |format|
-      if Array(params[:user_ids]).length > 1
-        format.html { redirect_to( role_path( @new_school,
-                                              @role_or_group ),
-                                   :notice => t("flash.user.school_changed") ) }
-      else
-        format.html { redirect_to( user_path(@new_school, @user),
-                                   :notice => t("flash.user.school_changed") ) }
-      end
+      format.html { redirect_to( user_path(@new_school, @user),
+                                 :notice => t("flash.user.school_changed") ) }
     end
   end
 
@@ -876,32 +847,25 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @new_school = School.find(params[:new_school])
 
-    @use_groups = new_group_management?(@school)
-    @roles_or_groups = @use_groups ? @new_school.groups : @new_school.roles
+    @groups = @new_school.groups
     @is_a_student = false
 
-    if @use_groups
-      # only show certain kinds of groups, based on the user's type
-      if @user.puavoEduPersonAffiliation == 'student'
-        # display only teaching groups for students
-        @roles_or_groups.select! { |g| g.puavoEduGroupType == 'teaching group' }
-        is_a_student = true
-      else
-        # for everyone else, teachers or not, display only administrative groups
-        @roles_or_groups.select! { |g| g.puavoEduGroupType == 'administrative group' }
-      end
+    # only show certain kinds of groups, based on the user's type
+    if @user.puavoEduPersonAffiliation == 'student'
+      # display only teaching groups for students
+      @groups.select! { |g| g.puavoEduGroupType == 'teaching group' }
+      is_a_student = true
+    else
+      # for everyone else, teachers or not, display only administrative groups
+      @groups.select! { |g| g.puavoEduGroupType == 'administrative group' }
     end
 
-    if @roles_or_groups.nil? || @roles_or_groups.empty?
+    if @groups.nil? || @groups.empty?
       if is_a_student
         # special message for students
         flash[:alert] = t('users.select_school.no_teaching_groups')
       else
-        if @use_groups
-          flash[:alert] = t('users.select_school.no_admin_groups')
-        else
-          flash[:alert] = t('users.select_school.no_roles')
-        end
+        flash[:alert] = t('users.select_school.no_admin_groups')
       end
 
       redirect_back fallback_location: users_path(@school)
@@ -1115,8 +1079,7 @@ class UsersController < ApplicationController
           :new_password_confirmation,
           :mail=>[],
           :telephoneNumber=>[],
-          :puavoEduPersonAffiliation=>[],
-          :role_ids=>[]).to_hash
+          :puavoEduPersonAffiliation=>[]).to_hash
 
       # deduplicate arrays, as LDAP really does not like duplicate entries...
       u["mail"].uniq! if u.key?("mail")

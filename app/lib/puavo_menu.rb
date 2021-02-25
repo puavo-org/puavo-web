@@ -50,7 +50,6 @@ class PuavoMenu < MetaMenu
     link { users_path(@school) }
     active_on UsersController
     active_on GroupsController
-    active_on RolesController
     active_on ListsController
     active_on ImportToolController
     owners_only { false }
@@ -67,14 +66,6 @@ class PuavoMenu < MetaMenu
       link { groups_path(@school) }
       owners_only { false }
       active_on GroupsController
-    end
-
-    child do
-      title { t('link.roles') }
-      link { roles_path(@school) }
-      active_on RolesController
-      owners_only { false }
-      hide_when { new_group_management?(@school) }
     end
 
     child do
