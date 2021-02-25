@@ -927,7 +927,7 @@ class Users < PuavoSinatra
                             request_id)
 
       unless json_params.include?('request_id')
-        $rest_flog.error("got a PUT /v3/users/password without \"request_id\" in the parameters, ignoring")
+        $rest_log.error("got a PUT /v3/users/password without \"request_id\" in the parameters, ignoring")
 
         return json({
           :exit_status => 1,
@@ -963,7 +963,7 @@ class Users < PuavoSinatra
         raise 'either actor_dn or actor_username parameter must be set'
       end
     rescue StandardError => e
-      $rest_flog.error("[#{request_id}] #{e}")
+      $rest_log.error("[#{request_id}] #{e}")
 
       return json({
         :exit_status => 1,
@@ -974,7 +974,7 @@ class Users < PuavoSinatra
       })
     end
 
-    $rest_flog.info(
+    $rest_log.info(
       "[#{request_id}] \"PUT /v3/users/password\" starting " \
       "for user \"#{json_params['target_user_username']}\""
     )
@@ -983,7 +983,7 @@ class Users < PuavoSinatra
       username = json_params['target_user_username']
 
       if too_many_password_change_attempts(username)
-        $rest_flog.error("[#{request_id}] password change rate limit hit for user \"#{username}\"")
+        $rest_log.error("[#{request_id}] password change rate limit hit for user \"#{username}\"")
 
         return json({
           :exit_status => 1,
@@ -1013,9 +1013,9 @@ class Users < PuavoSinatra
           "#{res[:exit_status]}"
 
     if res[:exit_status] == 0
-      $rest_flog.info(msg)
+      $rest_log.info(msg)
     else
-      $rest_flog.error(msg)
+      $rest_log.error(msg)
     end
 
     return json(res)
@@ -1140,7 +1140,7 @@ class Users < PuavoSinatra
       begin
         JSON.parse(data)
       rescue StandardError => e
-        $rest_flog.error("can't set external data for user \"#{params["username"]}\" because the JSON is not valid: #{e}")
+        $rest_log.error("can't set external data for user \"#{params["username"]}\" because the JSON is not valid: #{e}")
         return 400, 'user external data must be either an empty string (to clear it), or valid JSON'
       end
 

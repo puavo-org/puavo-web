@@ -12,7 +12,7 @@ require "redlock"
 
 require_relative "./lib/ldap_converters"
 require_relative "./lib/helpers"
-require_relative "./lib/fluent"
+require_relative "./lib/logger"
 require_relative "./lib/ldapmodel"
 require_relative "./lib/hash_helpers"
 require_relative "./middleware/suppress_json_errors"

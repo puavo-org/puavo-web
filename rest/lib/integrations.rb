@@ -175,11 +175,11 @@ module Puavo
       request = Net::HTTP::Post.new(uri.request_uri)
       request.body = req_data.to_json
 
-      $rest_flog.info("[#{request_id}] do_operation(): sending network request")
+      $rest_log.info("[#{request_id}] do_operation(): sending network request")
 
       response = http.request(request)
 
-      $rest_flog.info("[#{request_id}] do_operation(): network request complete")
+      $rest_log.info("[#{request_id}] do_operation(): network request complete")
 
       # --------------------------------------------------------------------------------------------
       # Process the response
@@ -188,8 +188,8 @@ module Puavo
       code = response.code.to_i
       body = response.body
 
-      $rest_flog.info("[#{request_id}]   Raw response code: \"#{code}\"")
-      $rest_flog.info("[#{request_id}]   Raw response body: \"#{body}\"")
+      $rest_log.info("[#{request_id}]   Raw response code: \"#{code}\"")
+      $rest_log.info("[#{request_id}]   Raw response body: \"#{body}\"")
 
       if code == 400
         raise OperationError, 'bad_request'
@@ -215,20 +215,20 @@ module Puavo
              reply_data.include?('reply_timestamp') && reply_data.include?('request_id') &&
              reply_data.include?('request_timestamp') && reply_data.include?('success') &&
              reply_data.include?('code')
-        $rest_flog.error("[#{request_id}] Incomplete reply, not all required fields are present")
+        $rest_log.error("[#{request_id}] Incomplete reply, not all required fields are present")
         raise OperationError, 'malformed_reply'
       end
 
-      $rest_flog.info("[#{request_id}] Received a reply with ID \"#{reply_data['reply_id']}\"")
-      $rest_flog.info("[#{request_id}] Request roundtrip time: #{now - reply_data['request_timestamp']} seconds")
+      $rest_log.info("[#{request_id}] Received a reply with ID \"#{reply_data['reply_id']}\"")
+      $rest_log.info("[#{request_id}] Request roundtrip time: #{now - reply_data['request_timestamp']} seconds")
 
       if reply_data['request_id'] != request_id
-        $rest_flog.error("[#{request_id}] Reply request ID (#{reply_data['request_id']}) is not the one we sent!")
+        $rest_log.error("[#{request_id}] Reply request ID (#{reply_data['request_id']}) is not the one we sent!")
         raise OperationError, 'malformed_reply'
       end
 
       if reply_data['version'] != 0
-        $rest_flog.error("[#{request_id}] Invalid reply version (#{reply_data['version']})")
+        $rest_log.error("[#{request_id}] Invalid reply version (#{reply_data['version']})")
         raise OperationError, 'unknown_version'
       end
 
@@ -239,7 +239,7 @@ module Puavo
       code = reply_data['code']
 
       unless SYSTEM_REPLY_CODES.include?(code) || OPERATION_REPLY_CODES.include?(code)
-        $rest_flog.error("[#{request_id}] Unknown reply code \"#{code}\"")
+        $rest_log.error("[#{request_id}] Unknown reply code \"#{code}\"")
         raise OperationError, 'malformed_reply'
       end
 
@@ -273,18 +273,18 @@ module Puavo
     def self.azure_change_password(request_id, params, args)
       # verify our parameters
       unless params.include?('url')
-        $rest_flog.error("[#{request_id}] azure_change_password(): missing server URL in 'params'")
+        $rest_log.error("[#{request_id}] azure_change_password(): missing server URL in 'params'")
         raise OperationError, 'configuration_error'
       end
 
       unless args.include?(:organisation) && args.include?(:user) && args.include?(:new_password)
-        $rest_flog.error("[#{request_id}] azure_change_password(): missing required arguments")
+        $rest_log.error("[#{request_id}] azure_change_password(): missing required arguments")
         raise OperationError, 'configuration_error'
       end
 
       url = params['url']
 
-      $rest_flog.info("[#{request_id}] azure_change_password(): sending a request to \"#{url}\"")
+      $rest_log.info("[#{request_id}] azure_change_password(): sending a request to \"#{url}\"")
 
       response = do_operation(request_id, url, :change_password, 'azure', {
         organisation: args[:organisation],
@@ -299,7 +299,7 @@ module Puavo
 
       if response[:code] == 'user_not_found'
         # whatever
-        $rest_flog.info("[#{request_id}] azure_change_password(): ignoring a missing user, assuming everything is OK")
+        $rest_log.info("[#{request_id}] azure_change_password(): ignoring a missing user, assuming everything is OK")
         return true, nil
       end
 
@@ -309,18 +309,18 @@ module Puavo
     def self.google_change_password(request_id, params, args)
       # verify our parameters
       unless params.include?('url')
-        $rest_flog.error("[#{request_id}] google_change_password(): missing server URL in 'params'")
+        $rest_log.error("[#{request_id}] google_change_password(): missing server URL in 'params'")
         raise OperationError, 'configuration_error'
       end
 
       unless args.include?(:organisation) && args.include?(:user) && args.include?(:new_password)
-        $rest_flog.error("[#{request_id}] google_change_password(): missing required arguments")
+        $rest_log.error("[#{request_id}] google_change_password(): missing required arguments")
         raise OperationError, 'configuration_error'
       end
 
       url = params['url']
 
-      $rest_flog.info("[#{request_id}] google_change_password(): sending a request to \"#{url}\"")
+      $rest_log.info("[#{request_id}] google_change_password(): sending a request to \"#{url}\"")
 
       response = do_operation(request_id, url, :change_password, 'google', {
         organisation: args[:organisation],
@@ -335,7 +335,7 @@ module Puavo
 
       if response[:code] == 'user_not_found'
         # whatever
-        $rest_flog.info("[#{request_id}] google_change_password(): ignoring a missing user, assuming everything is OK")
+        $rest_log.info("[#{request_id}] google_change_password(): ignoring a missing user, assuming everything is OK")
         return true, nil
       end
 
@@ -360,7 +360,7 @@ module Puavo
     # to the user.
     def self.do_synchronous_action(action, system, request_id, params, **args)
       unless SYNCHRONOUS_ACTIONS.include?(action)
-        $rest_flog.error(
+        $rest_log.error(
           "[#{request_id}] do_synchronous_action(): action \"#{action}\" has not " \
           "been defined at all"
         )
@@ -369,7 +369,7 @@ module Puavo
       end
 
       unless SYNCHRONOUS_ACTIONS[action].include?(system)
-        $rest_flog.error(
+        $rest_log.error(
           "[#{request_id}] do_synchronous_action(): no system \"#{system}\" defined " \
           "for action \"#{action}\""
         )
@@ -377,22 +377,22 @@ module Puavo
         return false, 'configuration_error'
       end
 
-      $rest_flog.info("[#{request_id}] do_synchronous_action(): starting action")
+      $rest_log.info("[#{request_id}] do_synchronous_action(): starting action")
 
       begin
         status, message = send(SYNCHRONOUS_ACTIONS[action][system], request_id, params, args)
         return status, message
       rescue Errno::ECONNREFUSED => e
-        $rest_flog.error("[#{request_id}] do_synchronous_action(): caught ECONNREFUSED: #{e}")
+        $rest_log.error("[#{request_id}] do_synchronous_action(): caught ECONNREFUSED: #{e}")
         return false, 'network_error'
       rescue OperationError => e
-        $rest_flog.error("[#{request_id}] do_synchronous_action(): caught OperationError: #{e}")
+        $rest_log.error("[#{request_id}] do_synchronous_action(): caught OperationError: #{e}")
         return false, e.to_s
       rescue StandardError => e
-        $rest_flog.error("[#{request_id}] do_synchronous_action(): caught StandardError: #{e}")
+        $rest_log.error("[#{request_id}] do_synchronous_action(): caught StandardError: #{e}")
 
         if e.to_s == 'execution expired'
-          $rest_flog.error("[#{request_id}]   -> this is a network timeout, can't contact the synchronisation server")
+          $rest_log.error("[#{request_id}]   -> this is a network timeout, can't contact the synchronisation server")
           return false, 'network_error'
         end
 

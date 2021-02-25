@@ -42,7 +42,7 @@ class RestLogger
     return unless message
 
     # Prevent the puavo-rest test runner from logging messages
-    return if !(ENV["FLUENTD_STDOUT"] || (ENV["RACK_ENV"] != "test") || (ENV["RAILS_ENV"] != "test"))
+    return if !((ENV["RACK_ENV"] != "test") || (ENV["RAILS_ENV"] != "test"))
 
     record = {
       :meta => clean(@base_attrs)

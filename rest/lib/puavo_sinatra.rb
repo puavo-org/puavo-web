@@ -17,13 +17,13 @@ class PuavoSinatra < Sinatra::Base
   # Get request specific {RestLogger} instance
   # @return RestLogger
   def flog
-    Thread.current[:fluent]
+    Thread.current[:logger]
   end
 
   # Set {RestLogger} instance for the request
   # @param logger [RestLogger]
   def flog=(logger)
-    Thread.current[:fluent] = logger
+    Thread.current[:logger] = logger
   end
 
   # Respond with a text content

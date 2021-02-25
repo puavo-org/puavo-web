@@ -13,7 +13,7 @@ class SyncLog
 end
 
 # necessary for routing ExternalLogin logging to stdout/stderr
-$rest_flog = SyncLog.new
+$rest_log = SyncLog.new
 
 topdomain = IO.read('/etc/puavo/topdomain').chomp
 

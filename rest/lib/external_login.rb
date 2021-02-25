@@ -35,7 +35,7 @@ module PuavoRest
     def initialize
       # Parse config with relevant information for doing external logins.
 
-      @flog = $rest_flog
+      @flog = $rest_log
 
       all_external_login_configs = CONFIG['external_login']
       unless all_external_login_configs then
