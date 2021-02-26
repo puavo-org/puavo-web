@@ -39,14 +39,14 @@ module PuavoRest
           message = 'attempting external login to service' \
                       + " '#{ login_service.service_name }' by user" \
                       + " '#{ username }'"
-          flog.info(message)
+          rlog.info(message)
           userinfo = login_service.login(username, password)
         rescue ExternalLoginUserMissing => e
-          flog.info("user does not exist in external LDAP: #{e.message}")
+          rlog.info("user does not exist in external LDAP: #{e.message}")
           remove_user_if_found = true
           userinfo = nil
         rescue ExternalLoginWrongCredentials => e
-          flog.info("user provided wrong username/password: #{e.message}")
+          rlog.info("user provided wrong username/password: #{e.message}")
           wrong_credentials = true
           userinfo = nil
         rescue ExternalLoginError => e
@@ -67,7 +67,7 @@ module PuavoRest
           # keep user uids stable on our side.
           user_to_remove = User.by_username(username)
           if user_to_remove && user_to_remove.mark_for_removal! then
-            flog.info("puavo user '#{ user_to_remove.username }' is marked" \
+            rlog.info("puavo user '#{ user_to_remove.username }' is marked" \
                         + ' for removal')
           end
         end
@@ -93,7 +93,7 @@ module PuavoRest
                                                                new_password)
           if pw_update_status == ExternalLoginStatus::UPDATED then
             msg = 'user password invalidated'
-            flog.info("user password invalidated for #{ username }")
+            rlog.info("user password invalidated for #{ username }")
             return json(ExternalLogin.status_updated_but_fail(msg))
           end
         end
@@ -102,7 +102,7 @@ module PuavoRest
           msg = 'could not login to external service' \
                   + " '#{ login_service.service_name }' by user" \
                   + " '#{ username }', username or password was wrong"
-          flog.info(msg)
+          rlog.info(msg)
           raise ExternalLoginWrongCredentials, msg
         end
 
@@ -110,7 +110,7 @@ module PuavoRest
 
         message = 'successful login to external service' \
                     + " by user '#{ userinfo['username'] }'"
-        flog.info(message)
+        rlog.info(message)
 
         begin
           extlogin_status = external_login.update_user_info(userinfo,
@@ -126,7 +126,7 @@ module PuavoRest
                   raise 'unexpected update status from update_user_info()'
               end
         rescue StandardError => e
-          flog.warn("error updating user information: #{ e.message }")
+          rlog.warn("error updating user information: #{ e.message }")
           return json(ExternalLogin.status_updateerror(e.message))
         end
 
@@ -134,13 +134,13 @@ module PuavoRest
         # this means there was a problem with Puavo credentials (admin dn)
         user_status = ExternalLogin.status_configerror(e.message)
       rescue ExternalLoginConfigError => e
-        flog.info("external login configuration error: #{ e.message }")
+        rlog.info("external login configuration error: #{ e.message }")
         user_status = ExternalLogin.status_configerror(e.message)
       rescue ExternalLoginNotConfigured => e
-        flog.info("external login is not configured: #{ e.message }")
+        rlog.info("external login is not configured: #{ e.message }")
         user_status = ExternalLogin.status_notconfigured(e.message)
       rescue ExternalLoginUnavailable => e
-        flog.warn("external login is unavailable: #{ e.message }")
+        rlog.warn("external login is unavailable: #{ e.message }")
         user_status = ExternalLogin.status_unavailable(e.message)
       rescue ExternalLoginWrongCredentials => e
         user_status = ExternalLogin.status_badusercreds(e.message)
@@ -149,7 +149,7 @@ module PuavoRest
       end
 
       json_user_status = json(user_status)
-      flog.info("returning external login status #{ json_user_status }")
+      rlog.info("returning external login status #{ json_user_status }")
       return json_user_status
     end
   end

@@ -103,7 +103,7 @@ class Sessions < PuavoSinatra
 
       msg = 'authoritative session requested,' \
               + ' setting up ldap connection to ldapmaster'
-      flog.info(msg)
+      rlog.info(msg)
       LdapModel.disconnect()
       auth :basic_auth, :server_auth, :kerberos
       LdapModel.setup(:ldap_server => CONFIG['ldapmaster'])
@@ -216,7 +216,7 @@ class Sessions < PuavoSinatra
       end
     end
 
-    flog.info("created new session #{ session["uuid"] }")
+    rlog.info("created new session #{ session["uuid"] }")
     session["printer_queues"].uniq!{ |pq| pq.dn.downcase }
     session["organisation"] = Organisation.current.domain
     session.save

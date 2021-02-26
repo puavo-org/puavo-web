@@ -12,7 +12,7 @@ HOSTNAME = Socket.gethostname
 FQDN = Socket.gethostbyname(Socket.gethostname).first
 
 # Use $rest_log only when not in sinatra routes.
-# Sinatra routes have a "flog" method which automatically
+# Sinatra routes have a "rlog" method which automatically
 # logs the route and user.
 $rest_log_base = RestLogger.new(
   :hostname => HOSTNAME,
@@ -91,8 +91,8 @@ class BeforeFilters < PuavoSinatra
       log_meta[:organisation_key] = Organisation.current.organisation_key
     end
 
-    self.flog = $rest_log = $rest_log_base.merge(log_meta)
-    flog.info('handling request...')
+    self.rlog = $rest_log = $rest_log_base.merge(log_meta)
+    rlog.info('handling request...')
   end
 
   after do
@@ -100,14 +100,14 @@ class BeforeFilters < PuavoSinatra
     LdapModel::PROF.reset
 
     request_duration = (Time.now - @req_start).to_f
-    self.flog = self.flog.merge :request_duration => request_duration
+    self.rlog = self.rlog.merge :request_duration => request_duration
 
     unhandled_exception = nil
 
     if env["sinatra.error"]
       err = env["sinatra.error"]
       if err.kind_of?(JSONError) || err.kind_of?(Sinatra::NotFound)
-        flog.warn("... request rejected (in #{ request_duration } seconds): #{ err.message }")
+        rlog.warn("... request rejected (in #{ request_duration } seconds): #{ err.message }")
       else
         unhandled_exception = {
           :error => {
@@ -117,19 +117,19 @@ class BeforeFilters < PuavoSinatra
           }
         }
 
-        flog.error("UNHANDLED EXCEPTION (UUID #{unhandled_exception[:error][:uuid]}): #{err.message}")
+        rlog.error("UNHANDLED EXCEPTION (UUID #{unhandled_exception[:error][:uuid]}): #{err.message}")
 
         Array(err.backtrace).reverse.each do |b|
-          flog.error(b)
+          rlog.error(b)
         end
       end
     else
-      flog.info("... request done (in #{ request_duration } seconds).")
+      rlog.info("... request done (in #{ request_duration } seconds).")
     end
 
     LdapModel.clear_setup
     LocalStore.close_connection
-    self.flog = nil
+    self.rlog = nil
     if unhandled_exception then
       halt 500, json(unhandled_exception)
     end

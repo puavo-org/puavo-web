@@ -35,7 +35,7 @@ module PuavoRest
     def initialize
       # Parse config with relevant information for doing external logins.
 
-      @flog = $rest_log
+      @rlog = $rest_log
 
       all_external_login_configs = CONFIG['external_login']
       unless all_external_login_configs then
@@ -100,14 +100,14 @@ module PuavoRest
       # If we do not have a user with this username, that username slot is
       # available for external logins.
       unless user then
-        @flog.info("username '#{ username }' is available for external logins")
+        @rlog.info("username '#{ username }' is available for external logins")
         return true
       end
 
       unless user.external_id.to_s.empty? then
         # User is managed by external logins, if external_id is set to a
         # non-empty value.
-        @flog.info("username '#{ username }' has non-empty external id, ok")
+        @rlog.info("username '#{ username }' has non-empty external id, ok")
         return true
       end
 
@@ -119,7 +119,7 @@ module PuavoRest
     def new_external_service_handler()
       @external_login_class.new(@external_login_params,
                                 @login_service_name,
-                                @flog)
+                                @rlog)
     end
 
     def set_puavo_password(username, external_id, password, new_password,
@@ -130,7 +130,7 @@ module PuavoRest
         if !user then
           msg = "user with external id '#{ external_id }' (#{ username }?)" \
                   + ' not found in Puavo, can not change/invalidate password'
-          @flog.info(msg)
+          @rlog.info(msg)
           return ExternalLoginStatus::NOCHANGE
         elsif users.count > 1
           raise "multiple users with the same external id: #{ external_id }"
@@ -191,7 +191,7 @@ module PuavoRest
 
           if [ 'teaching group', 'year class' ].include?(ext_group_type) then
             if external_groups.count > 1 then
-              @flog.warn("trying to add '#{ user.username }' to"             \
+              @rlog.warn("trying to add '#{ user.username }' to"             \
                            + " #{ external_groups.count } groups of type"    \
                            + " '#{ ext_group_type }', which is not allowed," \
                            + ' not proceeding, check your external_login'    \
@@ -205,7 +205,7 @@ module PuavoRest
                    .select { |pg| pg.external_id }
 
           external_groups.each do |ext_group_name, ext_group_displayname|
-            @flog.info("making sure user '#{ user.username }' belongs to" \
+            @rlog.info("making sure user '#{ user.username }' belongs to" \
                          + " a puavo group '#{ ext_group_name }'" \
                          + " / #{ ext_group_displayname }")
 
@@ -214,7 +214,7 @@ module PuavoRest
               next unless candidate_puavo_group.abbreviation == ext_group_name
               puavo_group = candidate_puavo_group
               if puavo_group.name != ext_group_displayname then
-                @flog.info('updating group name'                \
+                @rlog.info('updating group name'                \
                              + " for '#{ puavo_group.abbreviation }'" \
                              + " from '#{ puavo_group.name }'"        \
                              + " to '#{ ext_group_displayname }'")
@@ -226,7 +226,7 @@ module PuavoRest
             end
 
             unless puavo_group then
-              @flog.info('creating a new puavo group of type'           \
+              @rlog.info('creating a new puavo group of type'           \
                            + " '#{ ext_group_type }' to school"         \
                            + " '#{ school.abbreviation }'"              \
                            + " with abbreviation '#{ ext_group_name }'" \
@@ -243,7 +243,7 @@ module PuavoRest
             end
 
             unless puavo_group.has?(user) then
-              @flog.info("adding user '#{ user.username }'" \
+              @rlog.info("adding user '#{ user.username }'" \
                            + " to group '#{ ext_group_displayname }'")
               puavo_group.add_member(user)
               puavo_group.save!
@@ -254,7 +254,7 @@ module PuavoRest
           puavo_group_list.each do |puavo_group|
             unless external_groups.has_key?(puavo_group.abbreviation) then
               if puavo_group.has?(user) then
-                @flog.info("removing user '#{ user.username }' from group" \
+                @rlog.info("removing user '#{ user.username }' from group" \
                              + " '#{ puavo_group.abbreviation }'")
                 puavo_group.remove_member(user)
                 puavo_group.save!
@@ -309,7 +309,7 @@ module PuavoRest
         if !user then
           user = User.new(userinfo)
           user.save!
-          @flog.info("created a new user '#{ userinfo['username'] }'")
+          @rlog.info("created a new user '#{ userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::UPDATED
         elsif users.count > 1 then
           raise 'multiple users with the same external id: ' \
@@ -318,7 +318,7 @@ module PuavoRest
           user.update!(userinfo)
           user.removal_request_time = nil
           user.save!
-          @flog.info("updated user information for '#{ userinfo['username'] }'")
+          @rlog.info("updated user information for '#{ userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::UPDATED
         else
           if user.removal_request_time then
@@ -326,7 +326,7 @@ module PuavoRest
             user.save!
           end
 
-          @flog.info('no change in user information for' \
+          @rlog.info('no change in user information for' \
                        + " '#{ userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::NOCHANGE
         end
@@ -403,15 +403,15 @@ module PuavoRest
   class ExternalLoginService
     attr_reader :service_name
 
-    def initialize(service_name, flog)
-      @flog         = flog
+    def initialize(service_name, rlog)
+      @rlog         = rlog
       @service_name = service_name
     end
   end
 
   class ExternalLdapService < ExternalLoginService
-    def initialize(ldap_config, service_name, flog)
-      super(service_name, flog)
+    def initialize(ldap_config, service_name, rlog)
+      super(service_name, rlog)
 
       # this is a reference to configuration, do not modify!
       @ldap_config = ldap_config
@@ -516,7 +516,7 @@ module PuavoRest
       op_time = Benchmark.realtime do
         result = @ldap.send(method, *args)
       end
-      @flog.info("#{ oplabel } to external ldap took" \
+      @rlog.info("#{ oplabel } to external ldap took" \
                    + " #{ sprintf('%.3f', op_time) } seconds")
 
       return result
@@ -536,7 +536,7 @@ module PuavoRest
                 + ' user and/or password is wrong'
       end
 
-      @flog.info('authentication to ldap succeeded')
+      @rlog.info('authentication to ldap succeeded')
 
       get_userinfo(username)
     end
@@ -862,7 +862,7 @@ module PuavoRest
      teaching_group_regex = get_add_groups_param(params, 'teaching_group_regex')
      match = ldap_attribute_value.match(teaching_group_regex)
      unless match && match.size == 2 then
-       @flog.warn('unexpected format in ldap attribute' \
+       @rlog.warn('unexpected format in ldap attribute' \
                     + " '#{ teaching_group_field }':" \
                     + " '#{ ldap_attribute_value }'" \
                     + " (expecting a match with '#{ teaching_group_regex }'" \
@@ -879,7 +879,7 @@ module PuavoRest
      classnum_regex = get_add_groups_param(params, 'classnumber_regex')
      match = ldap_attribute_value.match(classnum_regex)
      unless match && match.size == 2 then
-       @flog.warn('unexpected format in ldap attribute' \
+       @rlog.warn('unexpected format in ldap attribute' \
                     + " '#{ teaching_group_field }':" \
                     + " '#{ ldap_attribute_value }'" \
                     + " (expecting a match with '#{ classnum_regex }'" \
@@ -985,7 +985,7 @@ module PuavoRest
         raise ExternalLoginUnavailable, 'ldap search returned too many entries'
       end
 
-      @flog.info("looked up user '#{ username }' from external ldap")
+      @rlog.info("looked up user '#{ username }' from external ldap")
 
       set_ldapuserinfo(username, ldap_entries.first)
     end

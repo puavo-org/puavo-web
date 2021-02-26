@@ -221,8 +221,8 @@ class SSO < PuavoSinatra
 
 
     url = @external_service.generate_login_url(user, return_to)
-    flog.info('SSO login ok')
-    flog.info("redirecting SSO auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
+    rlog.info('SSO login ok')
+    rlog.info("redirecting SSO auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
     redirect url
   end
 
@@ -235,9 +235,9 @@ class SSO < PuavoSinatra
       @error_message = error_message
 
       if err
-        flog.warn("sso error: #{error_message} (err: #{err.inspect})")
+        rlog.warn("sso error: #{error_message} (err: #{err.inspect})")
       else
-        flog.warn("sso error: #{error_message}")
+        rlog.warn("sso error: #{error_message}")
       end
     end
 
@@ -280,20 +280,20 @@ class SSO < PuavoSinatra
 
     org_name = nil
 
-    flog.info('Trying to figure out the organisation name for this SSO request')
+    rlog.info('Trying to figure out the organisation name for this SSO request')
 
     if request['organisation']
       # Find the organisation that matches this request
       req_organisation = request['organisation']
 
-      flog.info("The request includes organisation name \"#{req_organisation}\"")
+      rlog.info("The request includes organisation name \"#{req_organisation}\"")
 
       # If external domains are specified, then try doing a reverse lookup
       # (ie. convert the external domain back into an organisation name)
       if CONFIG.include?('external_domain')
         CONFIG['external_domain'].each do |name, external|
           if external == req_organisation
-            flog.info("Found a reverse mapping from external domain \"#{external}\" " \
+            rlog.info("Found a reverse mapping from external domain \"#{external}\" " \
                       "to \"#{name}\", using it instead")
             req_organisation = name
             break
@@ -304,13 +304,13 @@ class SSO < PuavoSinatra
       # Find the organisation
       if ORGANISATIONS.include?(req_organisation)
         # This name probably came from the reverse mapping above
-        flog.info("Organisation \"#{req_organisation}\" exists, using it")
+        rlog.info("Organisation \"#{req_organisation}\" exists, using it")
         org_name = req_organisation
       else
         # Look for LDAP host names
         ORGANISATIONS.each do |name, data|
           if data['host'] == req_organisation
-            flog.info("Found a configured organisation \"#{name}\"")
+            rlog.info("Found a configured organisation \"#{name}\"")
             org_name = name
             break
           end
@@ -318,22 +318,22 @@ class SSO < PuavoSinatra
       end
 
       unless org_name
-        flog.warn("Did not find the request organisation \"#{req_organisation}\" in organisations.yml")
+        rlog.warn("Did not find the request organisation \"#{req_organisation}\" in organisations.yml")
       end
 
     else
-      flog.warn('There is no organisation name in the request')
+      rlog.warn('There is no organisation name in the request')
     end
 
     # No organisation? Is this a development/testing environment?
     unless org_name
       if ORGANISATIONS.include?('hogwarts')
-        flog.info('This appears to be a development environment, using hogwarts')
+        rlog.info('This appears to be a development environment, using hogwarts')
         org_name = 'hogwarts'
       end
     end
 
-    flog.info("Final organisation name is \"#{org_name}\"")
+    rlog.info("Final organisation name is \"#{org_name}\"")
 
     begin
       # Any per-organisation login screen customisations?
@@ -344,7 +344,7 @@ class SSO < PuavoSinatra
     end
 
     unless customisations.empty?
-      flog.info("Organisation \"#{org_name}\" has login screen customisations enabled")
+      rlog.info("Organisation \"#{org_name}\" has login screen customisations enabled")
     end
 
     # Apply per-customer customisations
@@ -418,7 +418,7 @@ class SSO < PuavoSinatra
     end
 
     if !params["username"].include?("@") && params["organisation"].nil?
-      flog.error("SSO error: organisation missing from username: #{ params['username'] }")
+      rlog.error("SSO error: organisation missing from username: #{ params['username'] }")
       render_form(t.sso.organisation_missing)
     end
 
@@ -427,7 +427,7 @@ class SSO < PuavoSinatra
     if params["username"].include?("@")
       _, user_org = params["username"].split("@")
       if Organisation.by_domain(ensure_topdomain(user_org)).nil?
-        flog.info("SSO error: could not find organisation for domain #{ user_org }")
+        rlog.info("SSO error: could not find organisation for domain #{ user_org }")
         render_form(t.sso.bad_username_or_pw)
       end
     end

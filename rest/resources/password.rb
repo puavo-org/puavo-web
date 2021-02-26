@@ -101,7 +101,7 @@ class Password < PuavoSinatra
                               json_params['new_password'],
                               '???')    # no request ID
 
-    flog.info("changed user password for '#{ user.username }' (DN #{user.dn.to_s})")
+    rlog.info("changed user password for '#{ user.username }' (DN #{user.dn.to_s})")
 
     if res[:exit_status] != 0
       status 404

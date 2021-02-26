@@ -89,7 +89,7 @@ module PuavoRest
         raise InternalError, errmsg
       end
 
-      flog.info("updated DNS records for host #{client_fqdn} (IP #{client_ip}, MAC #{client_mac})")
+      rlog.info("updated DNS records for host #{client_fqdn} (IP #{client_ip}, MAC #{client_mac})")
 
       json({ :status => 'successfully', :client_fqdn => client_fqdn })
     end

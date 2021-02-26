@@ -39,7 +39,7 @@ class BootConfigurations < PuavoSinatra
       :type => host.type,
     }
 
-    flog.info("boot done by '#{ host.hostname }', duration #{host.boot_duration}, host type #{host.type}")
+    rlog.info("boot done by '#{ host.hostname }', duration #{host.boot_duration}, host type #{host.type}")
     json res
   end
 
@@ -69,7 +69,7 @@ class BootConfigurations < PuavoSinatra
       host.save_boot_time
     end
 
-    flog.info("sending boot configuration for '#{ host.hostname }', MAC '#{params["mac_address"]}'")
+    rlog.info("sending boot configuration for '#{ host.hostname }', MAC '#{params["mac_address"]}'")
 
     host
   end
