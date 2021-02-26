@@ -11,6 +11,7 @@ User=puavo
 Group=puavo
 WorkingDirectory=/var/app/puavo-web
 Environment="RAILS_ENV=production"
+Environment="STRICT_SAMESITE_COOKIES=1"
 ExecStart=/bin/sh -c "bundle exec unicorn_rails -c ./config/unicorn.rb"
 Restart=on-abnormal
 RestartSec=30s
