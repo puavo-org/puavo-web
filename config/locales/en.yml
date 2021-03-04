@@ -141,6 +141,7 @@ en:
       search_title: User, group and device search by name
       extended_search_title: Extended search. Search using multiple names simultaneously, choose which fields are searched and how they are matched.
       owners: Owners
+      your_account: Your account
     forms:
       required_field: "* = Required field"
     sessions:

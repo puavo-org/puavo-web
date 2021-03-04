@@ -19,42 +19,42 @@ I18n.locale = "<%= I18n.locale %>";
 </head>
 
 <body>
-<div id="topbarWrapper">
-  <ul id="topbar">
-    <li id="left">
-      <!-- Organisation and school dropdown menus (ie. "navigation") -->
-      <nav>
-        <% if current_user %>
-        <ul>
-          <% if current_user.organisation_owner? %>
-          <li class="haveDropdown"><span><%= current_organisation.name %></span>
-            <ul class="dropdown">
-              <li><%= link_to t('.about'),  organisation_path %></li>
-              <li><%= link_to t('external_services.title'),  organisation_external_services_path %></li>
-              <li><%= link_to t('.ldap_services'),  ldap_services_path %></li>
-              <% if Puavo::EXTERNAL_FILES %>
-              <li><%= link_to t('.external_files'), external_files_path %></li>
-              <% end %>
-              <% if Puavo::CONFIG %>
-              <li><%= link_to t('.printers'), "/devices/printers" %></li>
-              <li><%= link_to t('.servers'), "/devices/servers" %></li>
-              <li><%= link_to t('.device_statistics'), "/device_statistics" %></li>
-              <% end %>
-              <li><%= link_to t('.wlan'),  wlan_organisation_path %></li>
-              <li><%= link_to t('.owners'),  owners_organisation_path %></li>
-            </ul>
-          </li>
-          <% else %>
-          <li class="noDropdown"><span><%= current_organisation.name %></span></li>
-          <% end %>
 
-          <li class="haveDropdown"><span><%= t('.schools') %></span><ul class="dropdown">
+<div id="topbar">
+  <nav>
+    <div id="left">
+      <% if current_user %>
+      <ul class="asFlex">
+        <% unless current_user.organisation_owner? %>
+        <li class="asFlex noDropdown"><span class="menuTitle"><%= current_organisation.name %></span></li>
+        <% else %>
+        <li class="asFlex haveDropdown"><span class="menuTitle"><%= current_organisation.name %></span>
+          <ul class="dropdown">
+            <li><%= link_to t('.about'),  organisation_path %></li>
+            <li><%= link_to t('external_services.title'),  organisation_external_services_path %></li>
+            <li><%= link_to t('.ldap_services'),  ldap_services_path %></li>
+            <% if Puavo::EXTERNAL_FILES %>
+            <li><%= link_to t('.external_files'), external_files_path %></li>
+            <% end %>
+            <% if Puavo::CONFIG %>
+            <li><%= link_to t('.printers'), "/devices/printers" %></li>
+            <li><%= link_to t('.servers'), "/devices/servers" %></li>
+            <li><%= link_to t('.device_statistics'), "/device_statistics" %></li>
+            <% end %>
+            <li><%= link_to t('.wlan'),  wlan_organisation_path %></li>
+            <li><%= link_to t('.owners'),  owners_organisation_path %></li>
+          </ul>
+        </li>
+        <% end %>
+
+        <li class="asFlex haveDropdown"><span class="menuTitle"><%= t('.schools') %></span>
+          <ul class="dropdown separators">
             <% if current_user.organisation_owner? %>
             <li><a href="/users"><%= t('.index') %></a></li>
             <% end %>
             <% school_list.each do |school| %>
             <% next if school.puavoTag.include?("hidden")%>
-            <li><%= link_to school.displayName, school_path(school) %>
+            <li><span class="schoolTitle"><%= link_to school.displayName, school_path(school) %></span>
               <ul class="schoolLinks">
                 <li><%= link_to t('.users'), users_path(school) %></li>
                 <li><%= link_to t('.groups'), groups_path(school) %></li>
@@ -62,15 +62,14 @@ I18n.locale = "<%= I18n.locale %>";
               </ul>
             </li>
             <% end %>
-          </ul></li>
-        </ul>
-        <% end %>
-      </nav>
-    </li>
+          </ul>
+        </li>
+      </ul>
+      <% end %>
+    </div>
 
-    <li id="middle">
+    <div id="middle">
       <div>
-      <!-- The search box -->
       <%= text_field_tag('search',
                          nil,
                          class: 'quickSearch',
@@ -83,21 +82,23 @@ I18n.locale = "<%= I18n.locale %>";
         <img src="<%= image_path('magnifier.png', skip_pipeline: true) %>"></a>
       <% end %>
       </div>
-    </li>
+    </div>
 
-    <li id="right">
-      <span id="loggedInName"><%= h current_user.displayName %></span>
-
-      <!-- Two logout buttons: one for desktop, one for mobile. -->
-      <%= link_to logout_path, method: :delete, class: 'logoutButton desktopLogoutButton' do %>
-        <i class="icon-logout"></i> <%= t('.logout') %>
-      <% end %>
-
-      <%= link_to logout_path, method: :delete, class: 'logoutButton mobileLogoutButton' do %>
-        <i class="icon-logout"></i>
-      <% end %>
-    </li>
-  </ul>
+    <div id="right">
+      <ul class="asFlex">
+        <li class="asFlex haveDropdown"><span class="menuTitle" id="loggedInName"><%= h current_user.displayName %></span>
+          <ul class="dropdown dropRight">
+            <li><%= link_to t('.your_account'), user_path(current_user.school.id, current_user) %></li>
+            <li>
+              <%= link_to logout_path, method: :delete, class: 'logoutButton' do %>
+                <i class="icon-logout"></i> <%= t('.logout') %>
+              <% end %>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
 </div>
 
 <div id="pageWrapper">

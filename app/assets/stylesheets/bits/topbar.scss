@@ -3,48 +3,45 @@
 */
 
 /* Top-level wrapper, for positioning and sizing */
-#topbarWrapper {
-  padding: 0;
+#topbar {
+  position: fixed;
   display: relative;
-
   top: 0;
   width: 100%;
   z-index: 10;
-  position: fixed;
+  padding: 0;
   margin: 0;
-
-  min-width: 400px;   /* currently a three-row layout isn't supported */
-
   background: $topbarWrapperBack;
   box-shadow: 0 4px 6px $defaultBoxShadow;
+  min-width: 400px;
 }
 
-/* Inner top bar list container */
-#topbar {
-  list-style-type: none;
-  padding: 0;
-  margin: 0 auto;
+/* The navigation block inside the wrapper */
+#topbar nav {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap;    /* allow multiple rows */
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
   font-size: 80%;
 
-  > li {
-    display: inline;
+  > div {
+    display: inline-block;
     margin: 0;
 
-    /* Keep this zero, the dropdown toplevel menubar entries must be full-height
-       and non-zero padding here will break them! */
+    /*
+      Non-zero padding here will break the dropdown menubar entries,
+      as they must be full-height (Fitts' law)
+    */
     padding: 0;
   }
 
   #left {
-    text-align: left;
-    flex: 0 0 auto;
-    margin: auto;
     padding-right: 10px;
   }
 
   #middle {
+    flex-grow: 2;
     margin: auto;
 
     div {
@@ -54,9 +51,7 @@
     }
 
     #search {
-      flex-grow: 2;
       display: inline;
-
       margin: 0;
       padding: 5px 30px 5px 10px;
       border: 1px solid $formElementBorderColor;
@@ -86,146 +81,54 @@
   }
 
   #right {
-    text-align: right;
-    flex-grow: 1;
-    margin: auto 5px;
   }
 
-  #loggedInName {
-    color: $topbarUsernameFore;
-    padding: 0;
-    font-size: 90%;
-  }
-
-  .logoutButton {
-    margin: 0 0 0 10px;
-    padding: 4px 12px;
-    text-decoration: none;
-    font-weight: normal;
-    background: $buttonDangerBack;
-    border-radius: 2px;
-
-    /* Reuse "btn-danger" colors */
-    color: $buttonDangerFore;
-    background: $buttonDangerBack;
-
-    &:hover, &:focus {
-      color: $buttonDangerFore;
-      background: $buttonDangerHoverBack;
-    }
-
-    @media #{$screen-breakpoint-one} {
-      padding: 4px 8px;
-    }
-  }
-
-  .desktopLogoutButton {
-    display: inline-block;
-  }
-
-  .mobileLogoutButton {
-    display: none;
-  }
-
-  li:nth-child(1) { order: 1; }
-  li:nth-child(2) { order: 2; }
-  li:nth-child(3) { order: 3; }
-}
-
-@media #{$screen-breakpoint-one} {
-  #topbarWrapper {
-    /* don't cover any content */
-    position: relative;
-    top: auto;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    box-shadow: 0 4px 6px $defaultBoxShadow;
-  }
-
-  #topbar {
-    width: 100%;
-    padding: 0;
-
-    #right {
-      margin: auto;
-    }
-
-    /* Swap the logout buttons */
-    .desktopLogoutButton {
-      display: none;
-    }
-
-    .mobileLogoutButton {
-      display: inline-block;
-    }
-  }
-
-  /* reorder the elements */
-  #topbar li:nth-child(1) { order: 2; }
-  #topbar li:nth-child(2) { order: 1; flex-basis: 100%;  }
-  #topbar li:nth-child(3) { order: 3; }
-
-  #topbar #search {
-    margin: 2px auto;
-  }
-
-  #topbar #left, #topbar #right {
-    max-width: none;
-  }
-}
-
-@media #{$screen-breakpoint-two} {
-  #loggedInName {
-    /* There's no room for the name. It could be displayed if, for example, the name
-       is a dropdown menu that contains the logout button. (The same menu could contain
-       a link to the logged-in user's user page.) */
-    display: none;
-
-    /* Actually, this isn't very good. Very long names still can force the logout
-       button onto its own row, turning the two-row intended layout into three rows. */
-  }
-}
-
-/* Topbar dropdown menus */
-nav {
   ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
   }
 
+  ul.asFlex {
+    display: flex;
+  }
+
   li {
     background: $topbarNavLinkBack;
     color: $topbarNavLinkFore;
+  }
+
+  li.asFlex {
+    display: inline;
+  }
+
+  .menuTitle {
     font-weight: bold;
   }
 
   .haveDropdown, .noDropdown {
-    /* Make the menu buttons (dropdowns or not) span the entire height of the topbar. */
+    /*
+      Make the dropdown menus and titles big. This padding actually controls the
+      overall height of the entire top menu bar.
+    */
     padding: 10px;
-
-    /* Float the top-level menu items, but not their child lists */
-    float: left;
   }
 
   .haveDropdown:after {
-    content: " ▼";
+    content: "▼";
   }
 
   .dropdown {
     display: none;
     position: absolute;
-    left: auto;
-    margin: 10px 0 0 -11px;   /* position the dropdown in relation to the parent */
-    padding: 5px;
-    min-width: 250px;         /* wide items are easier to hit */
+    padding: 3px;
     max-height: 600px;
     overflow-y: auto;
     z-index: 11;              /* topbar is 10 */
     background: $topbarNavDropdownBack;
     box-shadow: 0 10px 10px $defaultBoxShadow;
     list-style-type: none;
+    margin: 10px 0 0 -11px;   /* position the dropdown in relation to the parent */
   }
 
   .haveDropdown:hover {
@@ -239,25 +142,30 @@ nav {
     display: block;
   }
 
-  .dropdown li {
-    display: list-item;
-    padding: 2px 0;   /* "outer" padding between items */
+  .dropRight {
+    right: 0;
+    left: auto;
+    min-width: 150px;
+  }
+
+  .separators li {
+    padding: 4px 0;
     margin: 0;
     border-bottom: 1px solid $topbarNavSeparators;
   }
 
-  .dropdown li:first-of-type {
-    padding: 0 0 2px 0;
+  .separators li:first-of-type {
+    padding: 0 0 4px 0;
   }
 
-  .dropdown li:last-of-type {
-    padding: 2px 0 0 0;
+  .separators li:last-of-type {
+    padding: 4px 0 0 0;
     border: none;
   }
 
   ul a {
     display: block;
-    padding: 10px;   /* "inner" padding within items, affects ALL links in the menu! */
+    padding: 5px 10px;
     color: $topbarNavLinkFore;
     background: $topbarNavLinkBack;
     text-decoration: none;
@@ -269,8 +177,12 @@ nav {
   }
 
   /* The per-school quick link list */
+  .schoolTitle {
+    font-weight: bold;
+  }
+
   .schoolLinks {
-    margin: 0 0 0 20px;
+    margin: 0 20px 0 20px;
     padding: 0;
     display: inline-block;
 
@@ -291,4 +203,53 @@ nav {
       display: none;
     }
   }
+
+  #loggedInName {
+    color: $topbarUsernameFore;
+  }
+
+  .logoutButton {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    padding: 2px;
+    text-decoration: none;
+    background: $buttonDangerBack;
+    border-radius: 2px;
+
+    /* Reuse "btn-danger" colors */
+    color: $buttonDangerFore;
+    background: $buttonDangerBack;
+
+    &:hover, &:focus {
+      color: $buttonDangerFore;
+      background: $buttonDangerHoverBack;
+    }
+  }
+}
+
+@media #{$screen-breakpoint-one} {
+  #topbar {
+    /* don't cover any content */
+    position: relative;
+    top: auto;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: 0 4px 6px $defaultBoxShadow;
+  }
+
+  #topbar nav {
+    width: 100%;
+    padding: 0;
+  }
+
+  #topbar #search {
+    flex-grow: 2;
+  }
+
+  /* Reorder the elements. Move the search bar at the top. */
+  #topbar nav > div:nth-child(1) { order: 2; flex-grow: 2; }
+  #topbar nav > div:nth-child(2) { order: 1; flex-basis: 100%;  }
+  #topbar nav > div:nth-child(3) { order: 3; }
 }

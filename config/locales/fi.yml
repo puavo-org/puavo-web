@@ -141,6 +141,7 @@ fi:
       search_title: Käyttäjien, ryhmien ja laitteden haku nimellä
       extended_search_title: Laajennettu haku. Etsi useita nimiä yhtä aikaa, valitse mistä kentistä etsitään ja miten täsmäys tehdään.
       owners: Omistajat
+      your_account: Oma tunnuksesi
     forms:
       required_field: "* = Pakollinen kenttä"
     sessions:
