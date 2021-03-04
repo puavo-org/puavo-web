@@ -86,6 +86,10 @@ I18n.locale = "<%= I18n.locale %>";
 
     <div id="right">
       <ul class="asFlex">
+        <% if show_language_selector? %>
+        <%= topbar_language_selector %>
+        <% end %>
+
         <li class="asFlex haveDropdown"><span class="menuTitle" id="loggedInName"><%= h current_user.displayName %></span>
           <ul class="dropdown dropRight">
             <li><%= link_to t('.your_account'), user_path(current_user.school.id, current_user) %></li>

@@ -25,8 +25,9 @@ class ApplicationController < ActionController::Base
     response.headers["X-puavo-web-version"] = "#{ PuavoUsers::VERSION } #{ PuavoUsers::GIT_COMMIT }"
   end
 
-  before_action :set_gettext_language
-
+  # NOTICE: Don't do anything important in this method. The language is overridden later in
+  # the require_login() method. This method exists, more or less, just to pacify the FastGettext
+  # gem. If it's not called, the gem brings the server down.
   def set_gettext_language
     FastGettext.available_locales = ['en', 'fi', 'sv', 'de']  # 'en' must be first, otherwise tests can fail
     FastGettext.text_domain = 'puavoweb'
@@ -35,6 +36,7 @@ class ApplicationController < ActionController::Base
     session[:locale] = I18n.locale = FastGettext.locale
   end
 
+  before_action :set_gettext_language
   before_action :set_initial_locale
   before_action :setup_authentication
   before_action :require_login

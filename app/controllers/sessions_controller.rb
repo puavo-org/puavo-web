@@ -68,6 +68,27 @@ class SessionsController < ApplicationController
     # Remove dn and plaintext password values from session
     session.delete :password_plaintext
     session.delete :uid
+
+    # Forget language changes
+    session.delete :user_locale
+
     redirect_to login_path
+  end
+
+  # Temporarily override the language defined in organisations.yml. The override
+  # lasts until logout.
+  def change_language
+    unless params.include?(:lang) && Rails.configuration.available_ui_locales.include?(params[:lang])
+      flash[:alert] = t('flash.session.invalid_language')
+    else
+      # If the new language is the organisation default, remove the custom key
+      if params[:lang] == current_organisation.locale
+        session.delete :user_locale
+      else
+        session[:user_locale] = params[:lang]
+      end
+    end
+
+    redirect_back(fallback_location: "/users")
   end
 end

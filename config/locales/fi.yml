@@ -438,6 +438,7 @@ fi:
       login_successful: Kirjautuminen onnistui!
       failed: "Kirjautuminen epäonnistui!"
       logout_successful: Uloskirjautuminen onnistui!
+      invalid_language: "Virheellinen tai puuttuva kielikoodi. Käyttöliittymän kieltä ei vaihdettu."
     password:
       successful: "Salasanan vaihto onnistui!"
       failed: "Salasanan vaihto epäonnistui. Ikävä kyllä lisätietoja ei ole saatavilla. Ota yhteys tukeen."

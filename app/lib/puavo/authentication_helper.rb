@@ -91,8 +91,14 @@ module Puavo
       # Authenticate above credentials
       @authentication.authenticate
 
-      # Set locale from user's organisation
-      I18n.locale = current_organisation.locale
+      # If we are already logged in and the user has changed the UI language,
+      # don't set the language from organisations.yml
+      if session && session[:user_locale]
+        I18n.locale = session[:user_locale]
+      else
+        # No custom language, use the organisation default
+        I18n.locale = current_organisation.locale
+      end
 
       return true
     end

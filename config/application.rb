@@ -78,6 +78,10 @@ module PuavoUsers
     I18n.config.available_locales = [:en, :fi, :sv, :de]
     config.i18n.default_locale = :en
 
+    # These locales are listed in language selectors, in the order they're specified.
+    # Very bad things will happen if this list is not correct.
+    config.available_ui_locales = ['en', 'fi']
+
     # Enable deflate/gzip compression
     config.middleware.use Rack::Deflater
   end

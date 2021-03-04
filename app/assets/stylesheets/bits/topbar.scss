@@ -226,6 +226,11 @@
       background: $buttonDangerHoverBack;
     }
   }
+
+  svg.flag {
+    width: 32px;
+    height: 14px;
+  }
 }
 
 @media #{$screen-breakpoint-one} {

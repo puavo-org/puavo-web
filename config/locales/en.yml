@@ -438,6 +438,7 @@ en:
       login_successful: Login successful!
       failed: Login failed!
       logout_successful: Logout successful!
+      invalid_language: "Invalid or missing language code. Interface langage not changed."
     password:
       successful: "Password changed successfully!"
       failed: "Password change failed. Unfortunately no extra information is available. Please contact support."

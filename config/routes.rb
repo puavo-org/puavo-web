@@ -12,6 +12,9 @@ Rails.application.routes.draw do
   get '/device_statistics' => 'device_statistics#organisation_statistics'
   get '/get_organisation_devices_list' => 'organisations#get_organisation_devices_list'
 
+  # On-the-fly UI language changing
+  get '/change_language' => 'sessions#change_language'
+
   scope :path => "restproxy" do
     match '(*url)' => 'rest#proxy', :via => [:get, :post, :put], :format => false
   end

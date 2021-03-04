@@ -28,6 +28,10 @@ module Puavo
       end
     end
 
+    def show_language_selector?
+      Puavo::Organisation.find(LdapOrganisation.current.cn).value_by_key('show_language_selector') || true
+    end
+
     # Used to detect testing environments. Unfortunately there are some legacy tests that simply
     # won't work with the new JavaScript -based indexes and tools, and we must serve them the old
     # legacy indexes and pages. This is something that should be fixed with new tests, but I gave
