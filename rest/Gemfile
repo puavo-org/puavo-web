@@ -23,7 +23,7 @@ gem "rack", "2.1.2"   # 2.2.x breaks some VirtualHostBase tests
 gem "addressable"
 gem "jwt"
 gem "json"
-gem "gssapi", :git => "https://github.com/opinsys/gssapi.git", :branch => "gss_krb5_copy_ccache"
+gem "gssapi"
 gem "sinatra-r18n"
 gem "pry"
 gem "redis"
