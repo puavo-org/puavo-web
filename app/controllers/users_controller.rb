@@ -513,6 +513,8 @@ class UsersController < ApplicationController
 
     @permit_user_deletion = false
 
+    @own_page = current_user.id == @user.id
+
     if @viewer_is_an_owner
       # Owners can always delete users
       @permit_user_deletion = true
@@ -643,8 +645,19 @@ class UsersController < ApplicationController
     @is_new_user = false
     setup_integrations_for_form(@school, false)
 
+    if @user.puavoDoNotDelete && params[:user].include?('puavoLocked')
+      # Undeletable users cannot be locked, ever
+      params[:user]['puavoLocked'] = false
+    end
+
     respond_to do |format|
       begin
+
+        if current_user.id == @user.id &&
+           params[:user].include?('puavoLocked') &&
+           params[:user]['puavoLocked'] == '1'
+          raise UserError, I18n.t('flash.user.you_cant_lock_yourself')
+        end
 
         # Detect admin role changes
         was_admin = @user.puavoEduPersonAffiliation.include?("admin")
@@ -742,7 +755,9 @@ class UsersController < ApplicationController
     @user = get_user(params[:id])
     return if @user.nil?
 
-    if @user.puavoDoNotDelete
+    if current_user.id == @user.id
+      flash[:alert] = t('flash.user.cant_delete_yourself')
+    elsif @user.puavoDoNotDelete
       flash[:alert] = t('flash.user_deletion_prevented')
     else
       # Remove the user from external systems first
@@ -912,7 +927,9 @@ class UsersController < ApplicationController
   def mark_for_deletion
     @user = User.find(params[:id])
 
-    if @user.puavoDoNotDelete
+    if current_user.id == @user.id
+      flash[:alert] = t('flash.user.cant_mark_yourself_for_deletion')
+    elsif @user.puavoDoNotDelete
       flash[:alert] = t('flash.user_deletion_prevented')
     else
       if @user.puavoRemovalRequestTime.nil?
@@ -953,6 +970,7 @@ class UsersController < ApplicationController
 
     @user.puavoDoNotDelete = true
     @user.puavoRemovalRequestTime = nil
+    @user.puavoLocked = false   # can't be locked if they cannot be deleted
     @user.save
 
     flash[:notice] = t('flash.user.deletion_prevented')

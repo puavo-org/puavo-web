@@ -1161,6 +1161,12 @@ class Users < PuavoSinatra
     auth :basic_auth, :kerberos
     user = User.by_username!(params["username"])
 
+    uname = LdapModel.settings.dig(:credentials, :username)
+
+    if uname && user.username == uname
+      return 403, 'you cannot mark yourself for deletion'
+    end
+
     if user.do_not_delete.nil?
       if user.removal_request_time.nil?
         # This call cannot change an already set time

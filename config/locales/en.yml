@@ -420,6 +420,9 @@ en:
       marked_users_locked: "%{succeed} users locked"
       marked_users_locked_with_fail: "%{succeed} users locked, %{failed} not locked"
       marked_users_locked_none: "There were no unlocked users"
+      you_cant_lock_yourself: "You can't lock your own account"
+      cant_mark_yourself_for_deletion: "You can't mark yourself for deletion"
+      cant_delete_yourself: "You can't delete yourself"
       import:
         dupplicate_column_name_error: Duplicate column name
         require_error: Given name and surname are required fields

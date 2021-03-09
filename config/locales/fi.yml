@@ -420,6 +420,9 @@ fi:
       marked_users_locked: "%{succeed} käyttäjän lukitseminen onnistui"
       marked_users_locked_with_fail: "%{succeed} käyttäjän lukitseminen onnistui, %{failed} epäonnistui"
       marked_users_locked_none: "Lukitsemattomia käyttäjiä ei ollut"
+      you_cant_lock_yourself: "Et voi lukita omaa tunnustasi"
+      cant_mark_yourself_for_deletion: "Et voi merkitä itseäsi poistettavaksi"
+      cant_delete_yourself: "Et voi poistaa itseäsi"
       import:
         dupplicate_column_name_error: "Kahdelle sarakkeelle on valittu sama kenttätieto"
         require_error: "Käyttäjälle on syötettävä etu- ja sukunimi"

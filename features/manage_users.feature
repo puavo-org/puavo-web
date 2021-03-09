@@ -33,6 +33,12 @@ Feature: Manage users
     And I should not see "The user is an owner of this organisation"
     And I should see "Delete user"
 
+  Scenario: You should not be able to delete yourself or mark yourself for deletion
+    Given I am logged in as "admin" with password "secret"
+    And I am on the show user page with "admin"
+    And I should not see "Mark for deletion"
+    And I should not see "Delete user"
+
   Scenario: Non-owners should not see any delete buttons on the user list page
     # This scenario is not test everything. User deletion buttons are always
     # visible in the legacy index, but since it cannot be used outside of the
@@ -475,11 +481,48 @@ Feature: Manage users
     #
     When I follow "Mark for deletion"
     Then I should see "This user has been marked for deletion"
+    And I should see "User is locked"
     #
     When I follow "Prevent deletion"
     Then I should see "User deletion has been prevented."
     And I should see "This user cannot be deleted"
     And I should not see "This user has been marked for deletion"
+    And I should not see "Prevent deletion"
+    And I should not see "Delete user"
+    And I should not see "User is locked"
+
+  Scenario: Trying to lock a non-deletable user will not succeed
+    Given the following users:
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
+      | Donald    | Duck    | donald | 313      | visitor                   |
+    Then I am on the show user page with "donald"
+    When I follow "Prevent deletion"
+    Then I should see "User deletion has been prevented."
+    And I should see "This user cannot be deleted"
+    And I should not see "User is locked"
+    When I follow "Edit..."
+    Then I am on the edit user page with "donald"
+    And I fill in "Surname" with "Ducky"
+    And I check "User is locked"
+    And I press "Update"
+    Then I should see "User was successfully updated."
+    And I should see "Donald Ducky"
+    And I should not see "User is locked"
+
+
+  Scenario: Preventing user deletion must clear existing deletion marks
+    Given the following users:
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
+      | Donald    | Duck    | donald | 313      | visitor                   |
+    Then I am on the show user page with "donald"
+    When I follow "Mark for deletion"
+    Then I should see "This user has been marked for deletion"
+    And I should see "User is locked"
+    And I should see "Prevent deletion"
+    When I follow "Prevent deletion"
+    Then I should see "User deletion has been prevented."
+    And I should see "This user cannot be deleted"
+    And I should not see "User is locked"
     And I should not see "Prevent deletion"
     And I should not see "Delete user"
 

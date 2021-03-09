@@ -118,6 +118,12 @@ describe PuavoRest::Users do
       assert_equal 403, last_response.status
     end
 
+    it "user cannot mark themselves for deletion" do
+      basic_authorize "poistettava.kayttaja", "trustno1"
+      put "/v3/users/poistettava.kayttaja/mark_for_deletion"
+      assert_equal 403, last_response.status
+    end
+
     it "non-admin cannot delete someone else" do
       basic_authorize "poistettava.kayttaja", "trustno1"
       delete "/v3/users/bob"

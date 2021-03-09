@@ -230,7 +230,7 @@
         </li>
       </ul>
       <% else %>
-      <% unless @user.puavoDoNotDelete %>
+      <% if !@own_page && !@user.puavoDoNotDelete %>
       <ul>
         <li>
           <%= link_to mark_user_for_deletion_path(@school, @user) do %>
@@ -241,7 +241,7 @@
       <% end %>
       <% end %>
 
-      <% if @permit_user_deletion %>
+      <% if !@own_page && @permit_user_deletion %>
       <% unless @user.puavoDoNotDelete %>
       <ul>
         <li>
