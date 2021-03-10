@@ -15,6 +15,7 @@ class LdapModel
     conn.sasl_quiet = true
     conn.start_tls
     KRB_LOCK.synchronize do
+      kg = nil
       begin
         kg = Krb5Gssapi.new(CONFIG["fqdn"], CONFIG["keytab"])
         kg.copy_ticket(ticket)
@@ -32,7 +33,7 @@ class LdapModel
         raise KerberosError, :user =>
           "Credentials are not delegated! \'--delegation always\' missing?"
       ensure
-        kg.clean_up
+        kg.clean_up if kg
       end
     end
     conn
