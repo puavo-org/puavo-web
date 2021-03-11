@@ -3,6 +3,9 @@ Encoding.default_external = Encoding::UTF_8
 require_relative "./puavo-rest"
 require_relative "./lib/mailer"
 
+# for generating /tmp/ruby-uuid at startup
+require 'uuid'
+
 module PuavoRest
 DEB_PACKAGE = Array(`dpkg -l | grep puavo-rest`.split())[2]
 VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
@@ -33,6 +36,10 @@ end
 def self.test_boot_server_dn=(dn)
   @@test_boot_server_dn = dn
 end
+
+# Initialize UUID generator so that /tmp/ruby-uuid gets generated at
+# startup with the correct ownership and permissions.
+UUID.generator
 
 UUID_ALPHABET = ('a'..'z').to_a.freeze
 
