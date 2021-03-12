@@ -17,6 +17,7 @@ class Host < LdapModel
   ldap_map :puavoDeviceBootImage, :preferred_boot_image
   ldap_map :puavoDeviceBootMode, :boot_mode
   ldap_map :puavoDeviceCurrentImage, :current_image, LdapConverters::SingleValue
+  ldap_map :puavoDeviceHWInfo, :hw_info
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoDeviceKernelArguments, :kernel_arguments
   ldap_map :puavoDeviceKernelVersion, :kernel_version
@@ -30,7 +31,6 @@ class Host < LdapModel
   ldap_map :puavoKeyboardVariant, :keyboard_variant
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
   ldap_map :puavoTimezone, :timezone
-
 
   def netboot?
     object_classes.include?("puavoNetbootDevice")
@@ -172,5 +172,30 @@ class Host < LdapModel
     return if newvalue.nil?
     @extended_puavoconf[key] = newvalue.to_s
   end
+
+  def save_hwinfo!(sysinfo_json)
+    if sysinfo_json.to_s.empty? then
+      raise 'no sysinfo parameter or it is empty'
+    end
+
+    data = JSON.parse(sysinfo_json)
+
+    # Do some basic sanity checking on the data
+    unless data['timestamp'] && data['this_image'] && data['this_release']
+      raise 'received data failed basic sanity checks'
+    end
+
+    # Strip network info; we don't need it and it can contain sensitive
+    # information.
+    data.delete('network_interfaces')
+
+    # We can't assume the source device's clock is correct, but we can assume
+    # the server's clock is. Replace the timestamp.
+    data['timestamp'] = Time.now.to_i
+
+    self.hw_info = data.to_json
+    self.save!
+  end
+
 end
 end

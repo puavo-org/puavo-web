@@ -141,5 +141,27 @@ class BootServers < PuavoSinatra
     json printer_queues.uniq { |printer_queue| printer_queue.name }
   end
 
+  # Hardware info receiver
+  post '/v3/boot_servers/:hostname/sysinfo' do
+    auth :basic_auth
+
+    begin
+      boot_server = BootServer.by_hostname!(params['hostname'])
+      boot_server.save_hwinfo!(params[:sysinfo])
+
+      rlog.info("received sysinfo from boot server '#{params['hostname']}'")
+      json({ :status => 'successfully' })
+    rescue NotFound => e
+      status 404
+      rlog.error("sysinfo receiving failed, could not find boot server by hostname '#{params["hostname"]}'")
+      json({ :status => 'failed',
+             :error  => 'could not find boot server by hostname' })
+    rescue StandardError => e
+      status 404
+      rlog.error("sysinfo receiving failed for boot server '#{params['hostname']}': #{e.message}")
+      json({ :status => 'failed', :error => 'failed due to unknown error' })
+    end
+
+  end
 end
 end

@@ -21,7 +21,6 @@ class Device < Host
   ldap_map :puavoPrinterDeviceURI,         :printer_device_uri
   ldap_map :puavoPrinterQueue,             :printer_queue_dns,        LdapConverters::ArrayValue
   ldap_map :puavoSchool,                   :school_dn
-  ldap_map :puavoDeviceHWInfo,             :hw_info
 
   def self.ldap_base
     "ou=Devices,ou=Hosts,#{ organisation["base"] }"
@@ -490,28 +489,8 @@ class Devices < PuavoSinatra
     end
 
     begin
-      if params[:sysinfo].to_s.empty? then
-        raise 'no sysinfo parameter or it is empty'
-      end
-
-      data = JSON.parse(params[:sysinfo])
-
-      # Do some basic sanity checking on the data
-      unless data['timestamp'] && data['this_image'] && data['this_release']
-        raise 'received data failed basic sanity checks'
-      end
-
-      # Strip network info; we don't need it and it can contain sensitive
-      # information.
-      data.delete('network_interfaces')
-
-      # We can't assume the source device's clock is correct, but we can assume
-      # the server's clock is. Replace the timestamp.
-      data['timestamp'] = Time.now.to_i
-
       device = Device.by_hostname!(params["hostname"])
-      device.hw_info = json(data)
-      device.save!
+      device.save_hwinfo!(params[:sysinfo])
 
       rlog.info("received sysinfo from device '#{params['hostname']}'")
       json({ :status => 'successfully' })

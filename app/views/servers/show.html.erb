@@ -4,6 +4,8 @@
 
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
 
+<%= render :partial => 'devices/hwinfo', :locals => { :rawInfo => @server.puavoDeviceHWInfo } %>
+
 <%= start_box t('.automounts'), extraClass="fullWidth" %>
   <% if Array(@server.puavoExport).empty? %>
   <p class="empty"><%= t('.no_automounts') %></p>
