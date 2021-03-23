@@ -48,7 +48,7 @@ I18n.locale = "<%= I18n.locale %>";
         <% end %>
 
         <li class="asFlex haveDropdown"><span class="menuTitle"><%= t('.schools') %></span>
-          <ul class="dropdown separators">
+          <ul class="dropdown separators schools">
             <% if current_user.organisation_owner? %>
             <li><a href="/users"><%= t('.index') %></a></li>
             <% end %>
