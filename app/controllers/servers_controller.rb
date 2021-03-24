@@ -27,6 +27,9 @@ class ServersController < ApplicationController
   def show
     return if redirected_nonowner_user?
 
+    @server = get_server(params[:id])
+    return if @server.nil?
+
     @server = Server.find(params[:id])
     @server.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @server.get_ca_certificate(current_organisation.organisation_key)
@@ -72,6 +75,9 @@ class ServersController < ApplicationController
   def edit
     return if redirected_nonowner_user?
 
+    @server = get_server(params[:id])
+    return if @server.nil?
+
     @server = Server.find(params[:id])
     @schools = School.all
     @server.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
@@ -116,7 +122,9 @@ class ServersController < ApplicationController
   def update
     return if redirected_nonowner_user?
 
-    @server = Server.find(params[:id])
+    @server = get_server(params[:id])
+    return if @server.nil?
+
     @schools = School.all
 
     sp = server_params
@@ -246,6 +254,16 @@ class ServersController < ApplicationController
 
       return server.merge(device)
 
+    end
+
+    def get_server(id)
+      begin
+        return Server.find(id)
+      rescue ActiveLdap::EntryNotFound => e
+        flash[:alert] = t('flash.invalid_server_id', :id => id)
+        redirect_to servers_path
+        return nil
+      end
     end
 
 end
