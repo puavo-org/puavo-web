@@ -1,15 +1,24 @@
 <!DOCTYPE html>
-<html><head><title>An unexpected error occurred</title></head><body>
+<html><head>
+<style>
+body {
+    background: #f0eee1;
+    font-family: "Noto Sans", "Roboto", "DejaVu Sans", "Ubuntu", "Arial", sans-serif;
+}
+
+</style>
+<title>An unexpected error occurred</title></head><body>
 
 <h1>Sorry, an unexpected error occurred :(</h1>
 
 <p>We apologize for any inconvenience this may have caused. Please contact Opinsys support and give them the following information:</p>
 
 <pre>
-request: <%= @request.method %> <%= @request.url %>
-code: <%= @error.class %>
-message: <%= @error.message %>
-uuid: <%= @error_uuid %>
+Server: <%= Socket.gethostname %>
+UUID: <%= @error_uuid %>
+Request: <%= @request.method %> <%= @request.url %>
+Code: <%= @error.class %>
+Message: <%= @error.message %>
 </pre>
 
 </body></html>

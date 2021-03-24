@@ -49,6 +49,18 @@ class ApplicationController < ActionController::Base
 
   if ENV["RAILS_ENV"] == "production"
     rescue_from Exception do |error|
+      @request = request
+      @error = error
+      @error_uuid = ('a'..'z').to_a.sample(25).join
+
+      logger.error '-' * 50
+      logger.error "UNHANDLED EXCEPTION (UUID #{@error_uuid})"
+      logger.error "REQUEST URL: #{request.url}"
+      logger.error "ERROR MESSAGE: #{@error.message}"
+      logger.error "BACKTRACE:"
+      logger.error @error.backtrace.join("\n")
+      logger.error '-' * 50
+
       render :status => 500, :layout => false, :template => "errors/sorry.html.erb"
     end
   end
