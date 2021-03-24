@@ -220,4 +220,14 @@ class ApplicationController < ActionController::Base
       end
     end
   end
+
+  # Loads the releases.json file if it exists. If it doesn't exist, then no problem.
+  # It's 100% optional anyway. (Why reload it every time? Because it was meant to be hot-replaceable
+  def get_releases
+    begin
+      JSON.parse(File.read("#{Rails.root}/config/releases.json"))
+    rescue
+      {}
+    end
+  end
 end
