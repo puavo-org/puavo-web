@@ -160,14 +160,26 @@
     <% if device.puavoDeviceType == "laptop" %>
     <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceCurrentImage") %></th>
-      <td><%= h device.puavoDeviceCurrentImage %></td>
+      <td>
+        <% if @releases.include?(device.puavoDeviceCurrentImage) %>
+        <%= h device.puavoDeviceCurrentImage %> (<span class="releaseName"><%= @releases[device.puavoDeviceCurrentImage] %></span>)</li>
+        <% else %>
+        <%= h device.puavoDeviceCurrentImage %>
+        <% end %>
+      </td>
     </tr>
     <% end %>
 
     <% if ["thinclient", "fatclient", "laptop", "ltspserver", "bootserver"].include?(device.puavoDeviceType) %>
     <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceImage") %></th>
-      <td><%= h device.puavoDeviceImage %></td>
+      <td>
+        <% if @releases.include?(device.puavoDeviceImage) %>
+        <%= h device.puavoDeviceImage %> (<span class="releaseName"><%= @releases[device.puavoDeviceImage] %></span>)</li>
+        <% else %>
+        <%= h device.puavoDeviceImage %>
+        <% end %>
+      </td>
     </tr>
     <% end %>
 

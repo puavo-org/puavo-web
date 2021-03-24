@@ -36,6 +36,8 @@ class ServersController < ApplicationController
     @server['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @server['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 
+    @releases = get_releases
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @server }

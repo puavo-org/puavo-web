@@ -431,6 +431,8 @@ class DevicesController < ApplicationController
       end
     end
 
+    @releases = get_releases
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @device }
