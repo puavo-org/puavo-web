@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 # gems shared with puavo-rest
-gem "rails", "5.1.7"
+gem "rails", "5.2.4.5"
 gem "sprockets", "3.7.2"    # I'm not going to deal with the manifest.js mess in sprockets 4.x anytime soon
 gem "sqlite3"
 gem "prawn"
