@@ -259,7 +259,9 @@ Rails.application.routes.draw do
     )
   end
 
-  # https://stackoverflow.com/questions/12480497/why-am-i-getting-error-for-apple-touch-icon-precomposed-png
-  get '/:apple_touch_icon' => redirect('/empty.png'), constraints: { apple_touch_icon: /apple-touch-icon(-\d+x\d+)?(-precomposed)?\.png/ }
+  # Final catch-all route, 404 everything from this point on
+  if ENV["RAILS_ENV"] == "production"
+    match "*path", to: "application#send_404", via: :all
+  end
 
 end

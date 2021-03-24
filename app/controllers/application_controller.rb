@@ -65,6 +65,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def send_404
+    respond_to do |format|
+      format.html { render :status => 404, :layout => false, :template => "errors/404.html" }
+      format.all { render :status => 404, text: '404 - not found' }
+    end
+  end
+
   # Cached schools query
   def school_list
     return @school_cache if @school_cache
