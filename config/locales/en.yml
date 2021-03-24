@@ -1390,6 +1390,7 @@ en:
         puavoExport: Path
         image: Image
         puavoDeviceImage: Desktop Image
+        puavoDeviceAvailableImage: Images on the server
         puavoPrinterDeviceURI: Printer device URI
         puavoPrinterPPD: Printer driver file
         puavoDeviceDefaultAudioSource: Default input audio device

@@ -197,6 +197,25 @@
     <% end %>
     <% end %>
 
+    <% if device.puavoDeviceType == "bootserver" %>
+    <tr>
+      <th><%= t('activeldap.attributes.server.puavoDeviceAvailableImage') %></th>
+      <td>
+        <% if device.puavoDeviceAvailableImage %>
+        <ul>
+          <% Array(device.puavoDeviceAvailableImage).sort.each do |i| %>
+          <% if @releases.include?(i) %>
+          <li><%= h i %> (<span class="releaseName"><%= @releases[i] %></span>)</li>
+          <% else %>
+          <li><%= h i %></li>
+          <% end %>
+          <% end %>
+        </ul>
+        <% end %>
+      </td>
+    </tr>
+    <% end %>
+
     <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoImageSeriesSourceURL") %></th>
       <td><%= h value_or_default_value_by_parent(device, "puavoImageSeriesSourceURL") %></td>

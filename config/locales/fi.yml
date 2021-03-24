@@ -1390,6 +1390,7 @@ fi:
         puavoExport: Hakemistopolku
         image: Kuva
         puavoDeviceImage: Työpöytäkuva
+        puavoDeviceAvailableImage: Palvelimella olevat levykuvat
         puavoPrinterDeviceURI: Tulostimen laiteosoite
         puavoPrinterPPD: Tulostimen ajuritiedosto
         puavoDeviceDefaultAudioSource: "Oletusäänilaite (sisään)"
