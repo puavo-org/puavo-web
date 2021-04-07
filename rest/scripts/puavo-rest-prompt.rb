@@ -30,6 +30,21 @@ end
 
 module PuavoRest
 
+  # Setup an ad-hoc $rest_log instance. root.rb is not executed in prompt sessions, so
+  # anything that calls $rest_log will crash. Copied from root.rb and stripped down.
+  VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
+  GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
+  HOSTNAME = Socket.gethostname
+  FQDN = Socket.gethostbyname(Socket.gethostname).first
+
+  $prompt_logger = RestLogger.new(
+    :hostname => HOSTNAME,
+    :fqdn => FQDN,
+    :version => "#{ VERSION } #{ GIT_COMMIT }",
+  )
+
+  $rest_log = $prompt_logger.merge({})
+
   @domain = ask "Organisation domain", :default => PUAVO_ETC.get(:domain)
   @credentials = {}
   u = ask("Username", :default => PUAVO_ETC.get(:ldap_dn))
