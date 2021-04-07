@@ -271,7 +271,7 @@ describe PuavoRest::Sessions do
         data = JSON.parse(last_response.body)
         dn_set = Set.new
         data["printer_queues"].each do |pq|
-          dn = pq["dn"].downcase
+          dn = pq["dn"]
           assert !dn_set.include?(dn), "Duplicate printer queue: #{ pq.inspect }"
           dn_set.add(dn)
         end

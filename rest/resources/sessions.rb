@@ -217,7 +217,7 @@ class Sessions < PuavoSinatra
     end
 
     rlog.info("created new session #{ session["uuid"] }")
-    session["printer_queues"].uniq!{ |pq| pq.dn.downcase }
+    session["printer_queues"].uniq!{ |pq| pq.dn }
     session["organisation"] = Organisation.current.domain
     session.save
 

@@ -52,7 +52,7 @@ class User < LdapModel
   # List of school DNs where the user is school admin
   ldap_map(:puavoAdminOfSchool, :admin_of_school_dns) do |dns|
     Array(dns).map do |dn|
-      dn.downcase
+      dn
     end
   end
 
@@ -354,7 +354,7 @@ class User < LdapModel
   end
 
   def is_school_admin_in?(school)
-    admin_of_school_dns.include?(school.dn.downcase)
+    admin_of_school_dns.include?(school.dn)
   end
 
   def roles_within_school(school)
@@ -378,7 +378,7 @@ class User < LdapModel
 
   computed_attr :unique_id
   def unique_id
-    dn.downcase
+    dn
   end
 
   def self.ldap_base
