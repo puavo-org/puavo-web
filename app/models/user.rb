@@ -309,6 +309,18 @@ class User < LdapBase
         )
       end
     end
+
+    if !self.telephoneNumber.nil? && !self.telephoneNumber.empty?
+      Array(self.telephoneNumber).each do |p|
+        p.strip!
+        if p == '-'
+          errors.add(:telephoneNumber,
+                     I18n.t("activeldap.errors.messages.invalid",
+                            :attribute => I18n.t("activeldap.attributes.user.telephoneNumber")))
+          return false
+        end
+      end
+    end
   end
 
   def change_password_no_upstream

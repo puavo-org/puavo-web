@@ -271,5 +271,18 @@ describe LdapModel do
       assert_equal "Username too long", error[:message]
 
     end
+
+    it "can't set '-' as the telephone number of an existing user" do
+      @user.telephone_number = [ ' - ' ]
+
+      error = assert_raises ValidationError do
+        @user.save!
+      end
+
+      error = error.as_json[:error][:meta][:invalid_attributes][:telephone_number].first
+      assert error
+      assert_equal :telephone_number_invalid, error[:code]
+      assert_equal "A telephone number cannnot be just a '-'", error[:message]
+    end
   end
 end

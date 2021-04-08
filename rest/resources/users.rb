@@ -154,6 +154,14 @@ class User < LdapModel
         add_validation_error(:telephone_number, :telephone_number_invalid,
                              "Invalid telephone number. Allowed characters: A-Z, a-z, 0-9, ', (, ), +, ,, -, ., /, :, ?, space and \"")
       end
+
+      # I'm not touching that regexp above
+      Array(telephone_number || []).each do |n|
+        if n.strip == '-'
+          add_validation_error(:telephone_number, :telephone_number_invalid,
+                               "A telephone number cannnot be just a '-'")
+        end
+      end
     end
 
     # FIXME: Validate external id?

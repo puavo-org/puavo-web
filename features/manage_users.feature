@@ -239,6 +239,32 @@ Feature: Manage users
     And I should not see "The user is an admin of this school"
     And I should not see "The user is an owner of this organisation"
 
+  Scenario: Can't use "-" as a telephone number (new)
+    Given I am on the new user page
+    Then I fill in the following:
+    | Surname                   | Donald                |
+    | Given name                | Duck                  |
+    | Username                  | donald.duck           |
+    | user[telephoneNumber][]   | -                     |
+    And I check "Test user"
+    And I press "Create"
+    Then I should see "Failed to create the user!"
+    And I should see "Telephone number is invalid"
+
+  Scenario: Can't use "-" as a telephone number (edit)
+    Given I am on the new user page
+    Then I fill in the following:
+    | Surname                   | Donald                |
+    | Given name                | Duck                  |
+    | Username                  | donald.duck           |
+    And I check "Test user"
+    And I press "Create"
+    Then I am on the edit user page with "donald.duck"
+    And I fill in the following:
+    | user[telephoneNumber][]   | -                     |
+    And I press "Update"
+    And I should see "Telephone number is invalid"
+
   Scenario: Listing users
     Given the following users:
       | givenName | surname | uid    | password | puavoEduPersonAffiliation |

@@ -83,6 +83,25 @@ describe LdapModel do
       assert_equal "Gryffindor", @user.schools.first.name
     end
 
+    it "Can't use '-' as a phone number" do
+      user = PuavoRest::User.new(
+        :username   => 'phone.number',
+        :first_name => 'Phone',
+        :last_name  => 'Number',
+        :telephone_number => '-',
+        :roles      => ['student'],
+        :school_dns => [@school.dn.to_s],
+      )
+
+      error = assert_raises ValidationError do
+        user.save!
+      end
+
+      error = error.as_json[:error][:meta][:invalid_attributes][:telephone_number].first
+      assert error
+      assert_equal :telephone_number_invalid, error[:code]
+      assert_equal "A telephone number cannnot be just a '-'", error[:message]
+    end
 
     it "has internal samba attributes" do
       assert_equal ["[U]"], @user.get_raw(:sambaAcctFlags)
