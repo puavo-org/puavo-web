@@ -464,7 +464,8 @@ class UsersController < ApplicationController
     Array(@user.puavoAdminOfSchool || []).each do |dn|
       begin
         @admin_in_schools << School.find(dn)
-      rescue
+      rescue StandardError => e
+        logger.error "Unable to find admin school by DN \"#{dn.to_s}\": #{e}"
       end
     end
 
