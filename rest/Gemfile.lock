@@ -31,7 +31,7 @@ GEM
       activemodel (> 4.0.0)
       builder
       gettext
-      gettext_i18n_rails (>= 0)
+      gettext_i18n_rails
       locale
     activemodel (5.2.4.5)
       activesupport (= 5.2.4.5)
@@ -161,7 +161,7 @@ GEM
       nio4r (~> 2.0)
     r18n-core (5.0.1)
     racc (1.5.2)
-    rack (2.1.2)
+    rack (2.1.4)
     rack-protection (2.0.8.1)
       rack
     rack-rewrite (1.5.1)
@@ -292,7 +292,7 @@ DEPENDENCIES
   pry
   puma
   r18n-core
-  rack (= 2.1.2)
+  rack (= 2.1.4)
   rack-rewrite
   rails (= 5.2.4.5)
   redis
