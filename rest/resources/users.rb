@@ -22,6 +22,7 @@ class User < LdapModel
   ldap_map(:mail, :secondary_emails){ |v| _, *other_emails = Array(v); other_emails }
   ldap_map :mail, :email
   ldap_map :puavoSchool, :school_dns, LdapConverters::ArrayValue
+  ldap_map :puavoEduPersonPrimarySchool, :primary_school_dn, LdapConverters::SingleValue
   ldap_map :preferredLanguage, :preferred_language
   ldap_map(:jpegPhoto, :profile_image_link) do |image_data|
     if image_data
