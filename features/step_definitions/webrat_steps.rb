@@ -152,6 +152,10 @@ Then(/^I should see:$/) do |string|
   page.body.should have_content(string, normalize_ws: true)
 end
 
+Then(/^I should not see:$/) do |string|
+  page.body.should_not have_content(string, normalize_ws: true)
+end
+
 Then(/^I should see "([^\"]*)" within "([^\"]*)"$/) do |text, selector|
   within(selector) do
     page.should have_content(text)
