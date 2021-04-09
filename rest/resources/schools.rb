@@ -44,6 +44,8 @@ class School < LdapModel
   ldap_map :puavoDeviceOnHour,           :daytime_start_hour
   ldap_map :puavoDeviceOffHour,          :daytime_end_hour
 
+  ldap_map :puavoSchoolAdmin, :school_admin_dns, LdapConverters::ArrayValue
+
   before :create do
     if Array(object_classes).empty?
       self.object_classes = ['top','posixGroup','puavoSchool','sambaGroupMapping']
