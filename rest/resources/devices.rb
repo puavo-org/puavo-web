@@ -416,6 +416,20 @@ class Device < Host
 end
 
 class Devices < PuavoSinatra
+  def auth_connect_to_ldapmaster(*authlist)
+    if CONFIG['bootserver'] then
+      if !CONFIG['ldapmaster'] then
+        raise InternalError,
+              :user => 'Cannot connect to ldapmaster because it is not known'
+      end
+      LdapModel.disconnect()
+      auth *authlist
+      LdapModel.setup(:credentials => CONFIG['server'],
+                      :ldap_server => CONFIG['ldapmaster'])
+    else
+      auth *authlist
+    end
+  end
 
   get "/v3/devices/_search" do
     auth :basic_auth, :kerberos
@@ -460,7 +474,7 @@ class Devices < PuavoSinatra
 
   # Monitors configuration receiver
   post '/v3/devices/:hostname/monitors' do
-    auth :basic_auth, :kerberos
+    auth_connect_to_ldapmaster :basic_auth, :server_auth, :legacy_server_auth
 
     device = Device.by_hostname!(params['hostname'])
 
@@ -475,18 +489,7 @@ class Devices < PuavoSinatra
 
   # Hardware info receiver
   post '/v3/devices/:hostname/sysinfo' do
-    if CONFIG['bootserver'] then
-      if !CONFIG['ldapmaster'] then
-        raise InternalError,
-              :user => 'Cannot receive sysinfo unless ldapmaster is known'
-      end
-      LdapModel.disconnect()
-      auth :basic_auth, :server_auth, :legacy_server_auth
-      LdapModel.setup(:credentials => CONFIG['server'],
-                      :ldap_server => CONFIG['ldapmaster'])
-    else
-      auth :basic_auth, :server_auth, :legacy_server_auth
-    end
+    auth_connect_to_ldapmaster :basic_auth, :server_auth, :legacy_server_auth
 
     begin
       device = Device.by_hostname!(params["hostname"])
