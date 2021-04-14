@@ -702,12 +702,18 @@ class User < LdapBase
         group.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
       end
     end
-    unless Array(self.school.memberUid).include?(self.uid)
-      self.school.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
-    end
-    unless Array(self.school.member).include?(self.dn)
-      # FIXME
-      self.school.ldap_modify_operation( :add, [{"member" => [self.dn.to_s]}] )
+
+    Array(self.school).each do |school|
+      unless Array(school.memberUid).include?(self.uid)
+        school.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
+      end
+
+      unless Array(school.member).include?(self.dn)
+        # There was a "FIXME" in the original code here, but I don't know what it was for.
+        # As far as I can tell, it was added in commit ec5094a99 back in 2011, but there was
+        # no explanation for what was broken.
+        school.ldap_modify_operation( :add, [{"member" => [self.dn.to_s]}] )
+      end
     end
 
     # Set uid to Domain Users group
@@ -727,7 +733,9 @@ class User < LdapBase
       g.remove_user(self)
     end
 
-    self.school.remove_user(self)
+    Array(self.school).each do |s|
+      s.remove_user(self)
+    end
   end
 
   def delete_kerberos_principal

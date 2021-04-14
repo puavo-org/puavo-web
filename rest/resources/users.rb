@@ -99,10 +99,22 @@ class User < LdapModel
       self.edu_person_principal_name \
         = "#{ username }@#{ organisation.puavo_kerberos_realm }"
     end
+
+    # For some reason, we store school admin states in two separate places: in the
+    # user object and in the school object(s). If you remove an user from a school,
+    # then remove the removed school DNs from the user admin array.
+    new_admin = []
+
+    self.admin_of_school_dns.each do |dn|
+      new_admin << dn if self.school_dns.include?(dn)
+    end
+
+    self.admin_of_school_dns = new_admin
+
+    # Then we hope that remove_from_school below will remove the other associations...
   end
 
   def validate
-
     if username.to_s.strip.empty?
       add_validation_error(:username, :username_empty, "Username is empty")
     else
@@ -262,6 +274,27 @@ class User < LdapModel
     schools.each do |school|
       remove_from_school!(school)
     end
+
+    # Remove from school admin DNs (the user is not a member in these schools, but they admin
+    # them). This is a clumsy and slow loop, but I don't know what else to do.
+    self.admin_of_school_dns.each do |dn|
+      begin
+        school = School.by_dn(dn)
+
+        # Because some values are cached, it is possible this array has already been cleaned
+        # by remove_from_school! above, so we must do an extra check. Otherwise there will
+        # be exceptions.
+        if school.school_admin_dns.include?(self.dn)
+          school.remove(:school_admin_dns, self.dn)
+          school.save!
+        end
+      rescue StandardError => e
+        $rest_log.error e
+      end
+    end
+
+    # There are so many moving parts here that I don't know if this is
+    # how the cleanup should be done :-(
   end
 
   # Just store password locally and handle it in after hook
@@ -890,6 +923,11 @@ class User < LdapModel
     if school.member_dns.include?(dn)
       school.remove(:member_dns, dn)
     end
+
+    if school.school_admin_dns.include?(dn)
+      school.remove(:school_admin_dns, dn)
+    end
+
     school.save!
   end
 
