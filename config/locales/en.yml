@@ -747,7 +747,8 @@ en:
       primus_school_change_warning: "Primus integration has been enabled in this school. Moving a user to another school can interfere with the integration.\n\nAre you sure you want to continue?"
       user_is_an_organisation_owner: "The user is an owner of this organisation"
       user_is_a_school_admin: "This user is an administrator of the school \"%{school_name}\""
-      other_schools: "Other schools this user belongs to"
+      schools: "Schools"
+      primary_school: "(primary school)"
       user_is_locked: User is locked
       user_is_marked_for_deletion: "This user has been marked for deletion"
       user_deletion_prevented: "This user cannot be deleted"

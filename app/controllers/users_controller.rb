@@ -469,19 +469,19 @@ class UsersController < ApplicationController
       end
     end
 
-    # Multiple schools?
-    @other_schools = []
+    # If the user is a member in more than one school, list them all in alphabetical order
+    primary_school = @user.primary_school
+    @primary_school_dn = primary_school.dn
 
-    if Array(@user.puavoSchool).count > 1
-      Array(@user.puavoSchool).each do |dn|
-        @other_schools << School.find(dn)
-      end
-
-      @other_schools.shift
+    if Array(@user.school).count > 1
+      @user_schools = Array(@user.school).sort{ |a, b| a.displayName.downcase <=> b.displayName.downcase }
+    else
+      @user_schools = []
     end
 
     # We only care about synchronised deletions in the primary school
-    get_synchronised_deletions(@organisation_name, Array(@user.school).first.id.to_i)
+    # TODO: Synchronised deletions across multiple schools is potentially a migraine-level headache
+    get_synchronised_deletions(@organisation_name, primary_school.id.to_i)
 
     # find the user's devices
     @user_devices = Device.find(:all,

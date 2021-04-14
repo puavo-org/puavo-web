@@ -56,15 +56,15 @@
     <p class="infoValue"><%= h @learner_id %></p>
     <% end %>
 
-    <% unless @other_schools.empty? %>
-    <p class="infoTitle"><%= t ('.other_schools') %></p>
-    <ul class="infoValue">
+    <% unless @user_schools.empty? %>
+    <p class="infoTitle"><%= t ('.schools') %></p>
+    <ul class="infoValue" id="schoolList">
       <% if @viewer_is_an_owner %>
-      <% @other_schools.each do |s| %>
-        <li><%= link_to(s.displayName, school_path(s)) %></li>
+      <% @user_schools.each do |s| %>
+        <li><%= link_to(s.displayName, school_path(s)) %> <%= s.dn == @primary_school_dn ? t('.primary_school') : '' %></li>
       <% end %>
       <% else %>
-      <% @other_schools.each do |s| %>
+      <% @user_schools.each do |s| %>
         <li><%= s.displayName %></li>
       <% end %>
       <% end %>
