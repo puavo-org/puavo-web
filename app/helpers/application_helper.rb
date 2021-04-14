@@ -154,7 +154,7 @@ module ApplicationHelper
     user = find_user_by_dn(dn)
     return '' unless user
     return link_to("#{user.displayName}",
-                   user_path(:school_id => Array(user.school).first.puavoId,
+                   user_path(:school_id => user.primary_school.puavoId,
                              :id => user.puavoId))
   end
 

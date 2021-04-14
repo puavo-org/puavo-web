@@ -7,20 +7,21 @@
 </header><div class="contents">
 <table>
   <% @members.each do |member| %>
+  <% pri_school = member.primary_school %>
   <% if member.puavoRemovalRequestTime %>
   <tr class="groupUserMarkedForDeletion">
   <% else %>
   <tr>
   <% end %>
     <td>
-      <%= link_to "#{member.displayName} (#{member.uid})", user_path(@school, member) %>
-      [<%= member.school.displayName %>]
+      <%= link_to "#{member.displayName} (#{member.uid})", user_path(pri_school, member) %>
+      [<%= pri_school.displayName %>]
       <% if member.puavoLocked %><i class='icon-lock' title="<%= t('users.show.user_is_locked') %>"></i><% end %>
     </td>
 
     <td>
       <%= link_to(t('.remove'),
-                    remove_user_group_path(school_id: member.school.id,
+                    remove_user_group_path(school_id: pri_school.id,
                                            id: @group.puavoId,
                                            :user_id => member.puavoId),
                     remote: true,

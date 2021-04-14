@@ -164,7 +164,7 @@ class User < LdapBase
     end
 
     if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty? then
-      case get_school_password_requirements(LdapOrganisation.current.cn, self.school.puavoId)
+      case get_school_password_requirements(LdapOrganisation.current.cn, self.primary_school.puavoId)
         when 'Google'
           if self.new_password.size < 8 then
             errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_too_short"))
@@ -321,6 +321,20 @@ class User < LdapBase
         end
       end
     end
+
+    # Fix the primary school DN if it isn't set and it can be fixed
+    unless self.puavoEduPersonPrimarySchool
+      all_schools = Array(self.school)
+
+      if all_schools.count == 1
+        self.puavoEduPersonPrimarySchool = self.school.dn
+      else
+        raise RuntimeError, "user has multiple schools, but puavoEduPersonPrimarySchool is not set"
+      end
+    end
+
+    # Explode loudly if the primary school DN is invalid
+    self.primary_school
   end
 
   def change_password_no_upstream
@@ -537,6 +551,27 @@ class User < LdapBase
     end
   end
 
+  def primary_school
+    all_schools = Array(self.school)
+
+    if self.puavoEduPersonPrimarySchool
+      # Most users have only one school, so this loop should be over quickly
+      all_schools.each do |s|
+        if s.dn.to_s == self.puavoEduPersonPrimarySchool
+          return s
+        end
+      end
+
+      raise RuntimeError, "user::primary_school(): primary school DN \"#{self.puavoEduPersonPrimarySchool}\" points to an invalid school"
+    end
+
+    if all_schools.count != 1
+      raise RuntimeError, "user::primary_school(): user has multiple schools, but puavoEduPersonPrimarySchool is not set"
+    end
+
+    all_schools[0]
+  end
+
   def change_school(new_school_dn)
     school_dn = self.puavoSchool
     LdapBase.ldap_modify_operation( self.puavoSchool,
@@ -602,15 +637,17 @@ class User < LdapBase
   private
 
   def set_special_ldap_value
+    pri_school = self.primary_school
+
     self.displayName = self.givenName + " " + self.sn
     self.cn = self.uid
     self.homeDirectory = "/home/" + self.uid unless self.uid.nil?
-    self.gidNumber = self.school.gidNumber unless self.puavoSchool.nil?
+    self.gidNumber = pri_school.gidNumber
     set_uid_number if self.uidNumber.nil?
     self.puavoId = IdPool.next_puavo_id if self.puavoId.nil?
     set_samba_settings if self.sambaSID.nil?
     unless self.gidNumber.nil? || self.puavoSchool.nil?
-      self.sambaPrimaryGroupSID = "#{SambaDomain.first.sambaSID}-#{self.school.puavoId}"
+      self.sambaPrimaryGroupSID = "#{SambaDomain.first.sambaSID}-#{pri_school.puavoId}"
     end
     self.loginShell = '/bin/bash'
     self.eduPersonPrincipalName = "#{self.uid}@#{LdapOrganisation.current.puavoKerberosRealm}"

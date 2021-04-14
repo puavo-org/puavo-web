@@ -554,7 +554,7 @@ class GroupsController < ApplicationController
         begin
           # This is weird. If I check m.school.nil? it returns false, but accessing m.school
           # immediately afterwards will still fail?
-          m.school.cn
+          m.primary_school.cn
           false
         rescue
           num_hidden += 1

@@ -614,6 +614,7 @@ class UsersController < ApplicationController
     @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
 
     @user.puavoSchool = @school.dn
+    @user.puavoEduPersonPrimarySchool = @school.dn
 
     @is_new_user = true
     setup_integrations_for_form(@school, true)
@@ -1121,9 +1122,10 @@ class UsersController < ApplicationController
     # if 'status' is false, you can display 'message' to the user.
     # See app/lib/puavo/integrations.rb for details
     def delete_user_from_external_systems(user, plaintext_message: false)
-      # Have actions for user deletion?
+      # Have actions for user deletion? Currently we only check the primary school
+      # (this decision will cause trouble later on).
       organisation = LdapOrganisation.current.cn
-      school = user.school
+      school = user.primary_school
 
       unless school_has_sync_actions_for?(organisation, school.id, :delete_user)
         return true, nil

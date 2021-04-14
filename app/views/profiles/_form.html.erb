@@ -19,7 +19,7 @@ html_args[:'data-remote'] = true if @data_remote
         <div id="right">
           <section class="userInfo">
             <p class="userName"><%= current_user.displayName %></p>
-            <p class="userSchool"><%= Array(current_user.school).first.displayName %></p>
+            <p class="userSchool"><%= current_user.primary_school.displayName %></p>
           </section>
 
           <section>
