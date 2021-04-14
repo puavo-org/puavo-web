@@ -817,80 +817,168 @@ class UsersController < ApplicationController
     end
   end
 
-  # POST /:school_id/users/change_school
-  def change_school
-    @new_school = School.find(params[:new_school])
+  def change_schools
+    return if redirected_nonowner_user?
 
-    @group = Group.find(params[:new_role])
+    @user = get_user(params[:id])
+    return if @user.nil?
 
-    params[:user_ids].each do |user_id|
-      @user = User.find(user_id)
-      @user.change_school(@new_school.dn.to_s)
+    @primary_school = @user.primary_school
+    @primary_school_dn = @primary_school.dn
 
-      if @user.puavoEduPersonAffiliation == 'student'
-        # User.teaching_group=() wants the group ID, not the object
-        @user.teaching_group = @group.id
-      else
-        # This method accepts arrays, but here we only permit one administrative group.
-        # The user editor form lets you assign multiple administrative groups.
-        @user.administrative_groups = Array(@group.id)
-      end
+    @current_schools = []
+    current_dns = Set.new
 
-      @user.save
+    # TODO: reuse the user.school array here instead of finding new instances?
+    Array(@user.puavoSchool).each do |dn|
+      s = School.find(dn)
+      @current_schools << s
+      current_dns << s.dn.to_s
     end
 
-    respond_to do |format|
-      format.html { redirect_to( user_path(@new_school, @user),
-                                 :notice => t("flash.user.school_changed") ) }
-    end
+    @available_schools = School.all.reject{ |s| current_dns.include?(s.dn.to_s) }
+
+    @admin_in_schools = Array(@user.puavoAdminOfSchool).map{ |dn| dn.to_s }.to_set
+
+    # As the underlying (LDAP) arrays have no order (that we can trust), we can sort
+    # these nicely. The only thing that matters is the primary school's DN.
+    @current_schools.sort!{ |a, b| a.displayName.downcase <=> b.displayName.downcase }
+    @available_schools.sort!{ |a, b| a.displayName.downcase <=> b.displayName.downcase }
   end
 
-  # GET /:school_id/users/:id/select_school
-  def select_school
-    @user = User.find(params[:id])
-    @schools = School.all_with_permissions current_user
+  def add_to_school
+    return if redirected_nonowner_user?
 
-    # don't show the school the user already is in
-    user_school_id = @user.puavoSchool&.rdns[0]["puavoId"] || -1
-    @schools.reject! { |s| s.id == user_school_id }
+    @user = get_user(params[:id])
+    return if @user.nil?
 
-    respond_to do |format|
-      format.html
+    begin
+      unless @user.puavoEduPersonPrimarySchool
+        # This user has currently one school (at least we hope so!), so
+        # make it the primary school before adding another school
+        @user.puavoEduPersonPrimarySchool = @user.primary_school.dn
+      end
+
+      @target = School.find(params[:school])
+      @user.puavoSchool = Array(@user.puavoSchool) + [@target.dn]
+      @user.save!
+
+      flash[:notice] = t('flash.user.added_to_school', :name => @target.displayName)
+    rescue StandardError => e
+      logger.error('-' * 50)
+      logger.error(e)
+      logger.error('-' * 50)
+      flash[:alert] = t('flash.user.school_adding_failed')
     end
+
+    redirect_to(change_schools_path(@user.primary_school, @user))
   end
 
-  # POST /:school_id/users/:id/select_role
-  def select_role
-    @user = User.find(params[:id])
-    @new_school = School.find(params[:new_school])
+  def remove_from_school
+    return if redirected_nonowner_user?
 
-    @groups = @new_school.groups
-    @is_a_student = false
+    @user = get_user(params[:id])
+    return if @user.nil?
 
-    # only show certain kinds of groups, based on the user's type
-    if @user.puavoEduPersonAffiliation == 'student'
-      # display only teaching groups for students
-      @groups.select! { |g| g.puavoEduGroupType == 'teaching group' }
-      is_a_student = true
-    else
-      # for everyone else, teachers or not, display only administrative groups
-      @groups.select! { |g| g.puavoEduGroupType == 'administrative group' }
-    end
+    begin
+      @target = School.find(params[:school])
 
-    if @groups.nil? || @groups.empty?
-      if is_a_student
-        # special message for students
-        flash[:alert] = t('users.select_school.no_teaching_groups')
-      else
-        flash[:alert] = t('users.select_school.no_admin_groups')
+      if @user.puavoEduPersonPrimarySchool == @target.dn
+        # The UI won't let you do this, but let's check for it anyway before creating a disaster
+        flash[:alert] = t('flash.user.cannot_remove_primary_school')
+        redirect_to(change_schools_path(@user.primary_school, @user))
+        return
       end
 
-      redirect_back fallback_location: users_path(@school)
-    else
-      respond_to do |format|
-        format.html
+      schools = Array(@user.puavoSchool.dup)
+      schools.reject!{ |s| s.to_s == @target.dn.to_s }
+      @user.puavoSchool = (schools.count == 1) ? schools[0] : schools
+
+      # Remove school admin associations if needed
+      Array(@user.puavoAdminOfSchool).each do |dn|
+        if dn.to_s == @target.dn.to_s
+          @user.puavoAdminOfSchool = Array(@user.puavoAdminOfSchool).reject{ |dn| dn.to_s == @target.dn.to_s }
+          @target.puavoSchoolAdmin = Array(@target.puavoSchoolAdmin).reject{ |dn| dn.to_s == @user.dn.to_s }
+          @target.save!
+          break
+        end
       end
+
+      @user.save!
+
+      # The system appears to automatically add the user's UID and DN to the relevant arrays,
+      # but it won't *remove* them
+      LdapBase.ldap_modify_operation(@target.dn, :delete, [{ "member" => [@user.dn.to_s] }])
+      LdapBase.ldap_modify_operation(@target.dn, :delete, [{ "memberUid" => [@user.uid.to_s] }])
+
+      flash[:notice] = t('flash.user.removed_from_school', :name => @target.displayName)
+    rescue StandardError => e
+      logger.error('-' * 50)
+      logger.error(e)
+      logger.error('-' * 50)
+      flash[:alert] = t('flash.user.school_removing_failed')
     end
+
+    redirect_to(change_schools_path(@user.primary_school, @user))
+  end
+
+  def set_primary_school
+    return if redirected_nonowner_user?
+
+    @user = get_user(params[:id])
+    return if @user.nil?
+
+    begin
+      @target = School.find(params[:school])
+
+      # This can only be done if the user already is in the target school.
+      # The UI won't let you do this, but let's verify it.
+      unless Array(@user.puavoSchool).include?(@target.dn)
+        flash[:alert] = t('flash.user.invalid_primary_school', :name => @target.displayName)
+        redirect_to(change_schools_path(@user.primary_school, @user))
+        return
+      end
+
+      @user.puavoEduPersonPrimarySchool = @target.dn
+      @user.save!
+
+      flash[:notice] = t('flash.user.primary_school_changed', :name => @target.displayName)
+    rescue StandardError => e
+      logger.error('-' * 50)
+      logger.error(e)
+      logger.error('-' * 50)
+      flash[:alert] = t('flash.user.primary_school_change_failed')
+    end
+
+    redirect_to(change_schools_path(@user.primary_school, @user))
+  end
+
+  def add_and_set_primary_school
+    return if redirected_nonowner_user?
+
+    @user = get_user(params[:id])
+    return if @user.nil?
+
+    begin
+      @target = School.find(params[:school])
+
+      schools = Array(@user.puavoSchool.dup)
+      #schools.reject!{ |s| s.to_s == @target.dn.to_s }
+      #schools.insert(0, @target.dn)
+      schools << @target.dn
+      @user.puavoSchool = (schools.count == 1) ? schools[0] : schools
+      @user.puavoEduPersonPrimarySchool = @target.dn
+      @user.save!
+
+      flash[:notice] = t('flash.user.primary_school_added_and_changed', :name => @target.displayName)
+    rescue StandardError => e
+      logger.error('-' * 50)
+      logger.error(e)
+      logger.error('-' * 50)
+      flash[:alert] = t('flash.user.primary_school_add_and_change_failed')
+    end
+
+    redirect_to(change_schools_path(@user.primary_school, @user))
   end
 
   # GET /users/:school_id/users/:id/group

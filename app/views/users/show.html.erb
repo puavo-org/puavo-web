@@ -195,19 +195,21 @@
   <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more') %></span>
     <div class="dropdown">
-      <ul>
-        <li>
-          <% if school_has_integration?(@organisation_name, @school.id.to_i, 'primus') %>
-          <%= link_to select_school_user_path(@school, @user), data: { confirm: t('.primus_school_change_warning') } do %>
-            <i class='icon-exchange'></i><%= t('.change_school') %>
-          <% end %>
-          <% else %>
-          <%= link_to select_school_user_path(@school, @user) do %>
-            <i class='icon-exchange'></i><%= t('.change_school') %>
-          <% end %>
-          <% end %>
-        </li>
-      </ul>
+      <% if current_user.organisation_owner? %>
+       <ul>
+        <li class="ownersOnly">
+           <% if school_has_integration?(@organisation_name, @school.id.to_i, 'primus') %>
+          <%= link_to change_schools_path(@school, @user), data: { confirm: t('.primus_school_change_warning') } do %>
+             <i class='icon-exchange'></i><%= t('.change_school') %>
+           <% end %>
+           <% else %>
+          <%= link_to change_schools_path(@school, @user) do %>
+             <i class='icon-exchange'></i><%= t('.change_school') %>
+           <% end %>
+           <% end %>
+         </li>
+       </ul>
+      <% end %>
 
       <% unless @user.puavoDoNotDelete %>
       <% if current_user.organisation_owner? %>
