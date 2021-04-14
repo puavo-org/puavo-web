@@ -66,6 +66,7 @@ describe LdapModel do
     it "are removed after removing school from user" do
       user = PuavoRest::User.by_dn!(@user_dn)
       user.school_dns = [@school_other.dn.to_s]
+      user.primary_school_dn = [@school_other.dn.to_s]
       user.save!
 
       school = PuavoRest::School.by_dn(@school.dn.to_s)

@@ -70,6 +70,7 @@ describe "LdapModel connection management" do
     )
     @alice.set_password "secret2"
     @alice.puavoSchool = @school.dn
+    @alice.puavoEduPersonPrimarySchool = @school.dn   # not sure why primary_school_dn does not work here
     @alice.save!
 
     LdapModel.setup(

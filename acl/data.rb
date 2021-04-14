@@ -35,6 +35,7 @@ def define_basic(env)
       :puavoEduPersonAffiliation => 'teacher',
       :puavoLocale               => 'en_US.UTF-8',
       :puavoSchool               => env.school.dn,
+      :puavoEduPersonPrimarySchool => env.school.dn,
       :sn                        => 'Snape',
       :telephoneNumber           => '234567',
       :uid                       => 'severus.snape')
@@ -54,6 +55,7 @@ def define_basic(env)
       :puavoEduPersonAffiliation => 'admin',
       :puavoLocale               => 'en_US.UTF-8',
       :puavoSchool               => env.school.dn,
+      :puavoEduPersonPrimarySchool => env.school.dn,
       :sn                        => 'McGonagall',
       :telephoneNumber           => '345678',
       :uid                       => 'minerva.mcgonagall')
@@ -96,6 +98,7 @@ def define_basic(env)
     test_image = Magick::Image.read("features/support/test.jpg").first.to_blob
     student = User.new(
       :puavoSchool => env.school.dn,
+      :puavoEduPersonPrimarySchool => env.school.dn,
       :givenName => "Harry",
       :sn => "Potter",
       :mail => "harry@example.com",
@@ -122,6 +125,7 @@ def define_basic(env)
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => 'staff',
       :puavoSchool               => env.school.dn,
+      :puavoEduPersonPrimarySchool => env.school.dn,
       :sn                        => 'Hagrid',
       :uid                       => 'rubeus.hagrid')
     staff.save!
@@ -131,6 +135,7 @@ def define_basic(env)
   env.define :teacher2 do |config|
     teacher2 = User.create(
       :puavoSchool => env.school.dn,
+      :puavoEduPersonPrimarySchool => env.school.dn,
       :givenName => "Gilderoy",
       :sn => "Lockhart",
       :uid => "gilderoy.lockhart",
@@ -143,6 +148,7 @@ def define_basic(env)
   env.define :student2 do |config|
     student2 = User.create(
       :puavoSchool => env.school.dn,
+      :puavoEduPersonPrimarySchool => env.school.dn,
       :givenName => "Ron",
       :mail => "ron@example.com",
       :sn => "Weasley",
@@ -168,6 +174,7 @@ def define_basic(env)
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => 'admin',
       :puavoSchool               => env.other_school.dn,
+      :puavoEduPersonPrimarySchool => env.other_school.dn,
       :sn                        => 'Flamel',
       :uid                       => 'nicolas.flamel')
     config.dn = other_school_admin.dn
@@ -181,6 +188,7 @@ def define_basic(env)
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => 'student',
       :puavoSchool               => env.other_school.dn,
+      :puavoEduPersonPrimarySchool => env.other_school.dn,
       :sn                        => 'Delacour',
       :uid                       => 'fleur.delacour')
     config.dn = other_school_student.dn
@@ -194,6 +202,7 @@ def define_basic(env)
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => 'teacher',
       :puavoSchool               => env.other_school.dn,
+      :puavoEduPersonPrimarySchool => env.other_school.dn,
       :sn                        => 'Maxine',
       :uid                       => 'madame.maxine')
     config.dn = other_school_teacher.dn

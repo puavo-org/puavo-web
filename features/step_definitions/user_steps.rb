@@ -32,6 +32,7 @@ Given(/^the following users:$/) do |users|
 
     user = User.new(u)
     user.puavoSchool = school.dn
+    user.puavoEduPersonPrimarySchool = school.dn
 
     is_school_admin = (u['school_admin'] && u['school_admin'] == 'true')
 

@@ -108,6 +108,9 @@ Given(/^I am on ([^\"]+) with "([^\"]*)"$/) do |page_name, value|
     when /the edit group page/
       visit edit_group_path(@school, group)
     end
+  when /change schools page/
+    @user = User.find(:first, :attribute => "uid", :value => value)
+    visit change_schools_path(@user.primary_school, @user)
   else
     raise "Unknow page: #{page_name}"
   end
