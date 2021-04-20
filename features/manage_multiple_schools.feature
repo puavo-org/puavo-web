@@ -198,6 +198,28 @@ Feature: Manage multiple schools
     And I should not see "Remove from this school" within "#current-school2"
     And I should see "Remove from this school" within "#current-school1"
 
+  Scenario: Move user directly to another school
+    Given I am on the change schools page with "donald"
+    Then I should see "School 2" within "#available-school2"
+    And I should see "Move to this school" within "#available-school2"
+    When I follow "Move to this school" within "#available-school2"
+    Then I should see:
+    """
+    User moved to school "School 2"
+    """
+    And the memberUid should not include "donald" on the "School 1" school
+    And the member should not include "donald" on the "School 1" school
+    And the memberUid should include "donald" on the "School 2" school
+    And the member should include "donald" on the "School 2" school
+
+  Scenario: A user can be moved to another school directly only if they're in only one school
+    Given I am on the change schools page with "donald"
+    Then I should see "School 2" within "#available-school2"
+    And I should see "Move to this school" within "#available-school2"
+    And I should see "Move to this school" within "#available-school3"
+    When I follow "Add to this school" within "#available-school2"
+    Then I should not see "Move to this school" within "#available-school3"
+
   Scenario: Can see the user's admin status on the change schools page
     Given I am on the show user page with "admin"
     Then I should see:
@@ -231,6 +253,20 @@ Feature: Manage multiple schools
     Given I am on the school page with "School 1"
     When I follow "Admins"
     And I should not see "Admin Admin (admin) School 1" on the school admin list
+
+  Scenario: Admin rights are removed when user is moved directly to another school
+    Given I am on the school page with "School 1"
+    When I follow "Admins"
+    And I should see "Admin Admin (admin) School 1" on the school admin list
+    Then I am on the change schools page with "admin"
+    And I follow "Move to this school" within "#available-school2"
+    Then I should see:
+    """
+    User moved to school "School 2"
+    """
+    Then I am on the school page with "School 1"
+    When I follow "Admins"
+    Then I should not see "Admin Admin (admin) School 1" on the school admin list
 
   Scenario: Non-owners can't see or change other user's schools
     Given I am logged in as "admin" with password "admin"

@@ -88,6 +88,7 @@ Rails.application.routes.draw do
       match 'users/:id/change_schools/remove_school/:school' => 'users#remove_from_school', :as => :remove_user_from_school, :via => :get
       match 'users/:id/change_schools/set_primary_school/:school' => 'users#set_primary_school', :as => :set_user_primary_school, :via => :get
       match 'users/:id/change_schools/add_and_set_primary_school/:school' => 'users#add_and_set_primary_school', :as => :add_and_set_user_primary_school, :via => :get
+      match 'users/:id/change_schools/move_to_school/:school' => 'users#move_to_school', :as => :move_to_school, :via => :get
 
       get 'get_school_users_list' => 'users#get_school_users_list'
 

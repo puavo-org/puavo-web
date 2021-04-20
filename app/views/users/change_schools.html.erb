@@ -10,8 +10,6 @@
 <table class="schoolsTable">
   <tr><th colspan="3"><span><%= t('.current_title', :count => @current_schools.count) %></span></th></tr>
 
-  <% not_the_only_school = @current_schools.count > 1 %>
-
   <% @current_schools.each do |s| %>
   <% classes = ["school"] %>
   <% classes << "primary" if s.dn == @primary_school_dn %>
@@ -28,7 +26,11 @@
 
     <td>
       <% if s.dn == @primary_school_dn %>
-      <p><%= t('.cant_remove_from_primary_school').html_safe %></p>
+      <% if @current_schools.count == 1 %>
+      <p><%= t('.cant_remove_from_primary_school_one').html_safe %></p>
+      <% else %>
+      <p><%= t('.cant_remove_from_primary_school_multiple').html_safe %></p>
+      <% end %>
       <% else %>
       <%= link_to remove_user_from_school_path(s, @user, s.puavoId), class: 'btn btn-danger', id: "remove-#{s.cn}" do %><i class='icon-minus'></i><%= t('.remove_from_this_school') %><% end %>
       <%= link_to set_user_primary_school_path(s, @user, s.puavoId), class: 'btn', id: "swap-primary-#{s.cn}" do %><i class='icon-exchange'></i><%= t('.swap_primary_school') %><% end %>
@@ -50,6 +52,9 @@
 
     <td>
       <%= link_to add_user_to_school_path(s, @user, s.puavoId), class: 'btn', id: "add-#{s.cn}" do %><i class='icon-plus'></i><%= t('.add_to_this_school') %><% end %>
+      <% if @current_schools.count == 1 %>
+      <%= link_to move_to_school_path(s, @user, s.puavoId), class: 'btn', id: "set-primary-#{s.cn}" do %><i class='icon-exchange'></i><%= t('.move_to_school') %><% end %>
+      <% end %>
       <%= link_to add_and_set_user_primary_school_path(s, @user, s.puavoId), class: 'btn', id: "set-primary-#{s.cn}" do %><i class='icon-exchange'></i><%= t('.add_as_primary_school') %><% end %>
     </td>
   </tr>

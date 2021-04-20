@@ -963,8 +963,6 @@ class UsersController < ApplicationController
       @target = School.find(params[:school])
 
       schools = Array(@user.puavoSchool.dup)
-      #schools.reject!{ |s| s.to_s == @target.dn.to_s }
-      #schools.insert(0, @target.dn)
       schools << @target.dn
       @user.puavoSchool = (schools.count == 1) ? schools[0] : schools
       @user.puavoEduPersonPrimarySchool = @target.dn
@@ -976,6 +974,58 @@ class UsersController < ApplicationController
       logger.error(e)
       logger.error('-' * 50)
       flash[:alert] = t('flash.user.primary_school_add_and_change_failed')
+    end
+
+    redirect_to(change_schools_path(@user.primary_school, @user))
+  end
+
+  def move_to_school
+    return if redirected_nonowner_user?
+
+    @user = get_user(params[:id])
+    return if @user.nil?
+
+    begin
+      @previous = @user.primary_school
+      @target = School.find(params[:school])
+
+      # Remove school admin associations if needed
+      Array(@user.puavoAdminOfSchool).each do |dn|
+        if dn.to_s == @previous.dn.to_s
+          @user.puavoAdminOfSchool = Array(@user.puavoAdminOfSchool).reject{ |dn| dn.to_s == @previous.dn.to_s }
+          @previous.puavoSchoolAdmin = Array(@previous.puavoSchoolAdmin).reject{ |dn| dn.to_s == @user.dn.to_s }
+          @previous.save!
+          break
+        end
+      end
+
+      # This change must be done in two steps. Something somewhere gets cached and the
+      # school won't change and @user.save! will fail if we do everything in one step.
+      # Or maybe I was just doing it incorrectly?
+
+      # Add the new school
+      schools = Array(@user.puavoSchool.dup)
+      schools << @target.dn
+      @user.puavoSchool = (schools.count == 1) ? schools[0] : schools
+      @user.save!
+
+      # Then swap the primary school and remove the old school
+      @user = get_user(params[:id])
+      @user.puavoSchool = @target.dn
+      @user.puavoEduPersonPrimarySchool = @target.dn
+      @user.save!
+
+      # The system appears to automatically add the user's UID and DN to the relevant arrays,
+      # but it won't *remove* them
+      LdapBase.ldap_modify_operation(@previous.dn, :delete, [{ "member" => [@user.dn.to_s] }])
+      LdapBase.ldap_modify_operation(@previous.dn, :delete, [{ "memberUid" => [@user.uid.to_s] }])
+
+      flash[:notice] = t('flash.user.user_moved_to_school', :name => @target.displayName)
+    rescue StandardError => e
+      logger.error('-' * 50)
+      logger.error(e)
+      logger.error('-' * 50)
+      flash[:alert] = t('flash.user.school_moving_failed')
     end
 
     redirect_to(change_schools_path(@user.primary_school, @user))
