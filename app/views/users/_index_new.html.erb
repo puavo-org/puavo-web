@@ -575,6 +575,13 @@ const MASS_OPERATIONS = [
 ];
 
 const FILTER_PRESETS = {
+    smoketest_users: {
+        title: "<%= t('users.index.filters.smoketest_users') %>",
+        filters: [
+            {"active":true,"column":"uid","operator":"equ","value":"^test.user.[0-9a-fA-F]+$"}
+        ],
+    },
+
     locked: {
         title: "<%= t('users.index.filters.locked_users') %>",
         filters: [

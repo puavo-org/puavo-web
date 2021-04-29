@@ -709,6 +709,7 @@ fi:
       synchronised_deletions: "Käyttäjien poistot synkronoidaan välittömästi seuraaviin ulkoisiin järjestelmiin: %{systems}. Kaikki näihin järjestelmiin tallennetut tiedot poistetaan peruuttamattomasti! Varmista jokainen poisto etukäteen."
 
       filters:
+        smoketest_users: "Poistamattomat smoketest -testitunnukset"
         locked_users: "Lukitut käyttäjät"
         marked_for_deletion: "Merkitty poistettavaksi"
         marked_for_deletion_not_locked: "Merkitty poistettavaksi, ei lukittu"

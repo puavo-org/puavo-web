@@ -709,6 +709,7 @@ en:
       synchronised_deletions: "User deletions are immediately synchronised to these external systems: %{systems}. All data stored in these systems will be irrevocably deleted! Verify all deletions in advance."
 
       filters:
+        smoketest_users: "Smoketest users who haven't been removed"
         locked_users: "Locked users"
         marked_for_deletion: "Is marked for deletion"
         marked_for_deletion_not_locked: "Is marked for deletion, but not locked"
