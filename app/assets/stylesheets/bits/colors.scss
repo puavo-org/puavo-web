@@ -242,72 +242,81 @@ Lists in tables
 $listHeadingBack: linear-gradient($baseOrange, $baseOrangeGradient);
 $listHeadingFore: #000;
 $listHeadingBorder: #888;
-$listSortableColumnHeaderBorder: #999;
-$listSortableColumnHover: linear-gradient(darken($baseOrange, 5%), darken($baseOrangeGradient, 5%));
 $listOddRowBack: #ebebeb;
 $listEvenRowBack: #fafafa;
 $listRowHoverBack: #f9f7e6;
 $listRowBorder: #c8c8c8;
 $listFore: #000;
 
-$listSelectedOddBack: #60ffff;
-$listSelectedEvenBack: #90ffff;
-$listSelectedHoverBack: #b0ffff;
-$listOKOddBack: #60ff60;
-$listOKEvenBack: #90ff90;
-$listOKHoverBack: #b0ffb0;
-$listFailedOddBack: #ff6060;
-$listFailedEvenBack: #ff9090;
-$listFailedHoverBack: #ffb0b0;
-
-$checkboxBorder: #ccc;
-$checkboxBack: #fff;
-$checkboxHoverBack: #ddd;
-
-$massOpSettingsBack: #f0f0f0;
-$massOpSettingsBorder: #ccc;
-$massOpStatusNormal: #000;
-$massOpStatusSelected: #00f;
-$massOpStatusOK: #080;
-$massOpStatusFailed: #f00;
-
-$massSelectMenuBack: #fff;
-$massSelectMenuBorder: #888;
-$massSelectMenuShadow: rgba(0, 0, 0, 0.5);
-$massSelectMenuFore: #000;
-$massSelectMenuHighlightFore: #000;
-$massSelectMenuHighlightBack: $baseOrangeGradient;
-
-$listPreviousRow: #000;
-
 $markedForDeletionOddRowBack: #faa;
 $markedForDeletionEvenRowBack: #fcc;
 $markedForDeletionRowHoverBack: #fdd;
+$markedForDeletionBackground: #f66;
+$adminOwner: #00f;
 
 /*
 --------------------------------------------------------------------------------
-Supertables (shares styles with normal lists)
+Supertables
 --------------------------------------------------------------------------------
 */
 
-$supertableNetworkErrorBack: #f00;
-$supertableNetworkErrorFore: #fff;
+$stTabsBorder: #aaa;
+$stTabDisabledForeground: #aaa;
+$stTabDisabledBackground: #ddd;
+$stTabBackground: #ddd;
+$stTabHoverBackground: #eee;
+$stTabSelectedBackground: #fff;
 
-$supertableFilterControlBack: #f0f0f0;
-$supertableFilterControlBorder: #ccc;
+$stColumnListHoverBackground: #ccc;
+$stColumnListHoverForeground: #000;
+$stColumnListSelected: #bbb;
+$stColumnListDisabled: #888;
 
-$supertableFilterListFilterHover: #f4f4f4;
+$stFiltersRowBorder: #ccc;
+$stFiltersInvalidColumn: #ffa;
+$stFiltersInvalidFilter: #faa;
+$stFiltersRowHoverBackground: #e0e0e0;
+$stFiltersOperator: #080;
+$stFiltersValue: #00f;
 
-$supertableTermInvalidBack: #f88;
+$stFiltersPopupBorder: #aaa;
+$stFiltersPopupShadow: rgba(0, 0, 0, 1.0);
+$stFiltersPopupBackground: #fff;
+$stFiltersPopupHeaderBackground: #ccc;
+$stFiltersPopupHeaderBorder: #888;
+$filterPopupMissingColumn: #888;
 
-$supertableFilterAddBack: #7fba00;
-$supertableFilterAddFore: #000;
-$supertableFilterAddHoverBack: #8fcb11;
-$supertableFilterAddBorder: #5dae76;
-$supertableFilterRemoveBack: #f25022;
-$supertableFilterRemoveFore: #000;
-$supertableFilterRemoveHoverBack: #f36133;
-$supertableFilterRemoveBorder: #e5392b;
+$stStatusBorder: $stTabsBorder;
+$stStatusSuccess: #6f6;
+$stStatusFail: #f66;
+
+$stErrorBorder: $genericErrorBorder;
+$stErrorBackground: #f44;
+$stErrorForeground: #fff;
+
+$stTableBorder: #888;
+$stTableHeaderBackground: $listHeadingBack;
+$stTableHeaderForeground: #000;
+$stTableHeaderHoverBackground: linear-gradient(darken($baseOrange, 10%), darken($baseOrangeGradient, 10%));
+$stTableRowHoverBackground: #f9f7e6;
+$stTableSortedColumnBackground: #e0e0e0;
+$stTableSortedColumnHoverBackground: darken(#f9f7e6, 10%);
+$stTableCheckboxColumnBack: #fff;
+
+$stTableSuccessRowBackground: #afa;
+$stTableSuccessRowHoverBackground: #8f8;
+$stTableSuccessRowSortedBackground: #80ff80;
+$stTableSuccessRowHoverSortedBackground: #6f6;
+
+$stTableFailRowBackground: #faa;
+$stTableFailRowHoverBackground: #f88;
+$stTableFailRowSortedBackground: #ff8080;
+$stTableFailRowHoverSortedBackground: #f66;
+
+$stTablePreviousRowBorder: #000;
+
+$stTableDragHeaderShadow: #000;
+$stTableDragHeaderMarker: #00f;
 
 /*
 --------------------------------------------------------------------------------

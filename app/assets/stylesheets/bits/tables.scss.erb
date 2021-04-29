@@ -42,131 +42,16 @@ th {
   }
 
   tr {
-    /* NORMAL ROWS */
     &:nth-child(odd) {
       background: $listOddRowBack;
-
-      .selectedColumn {
-        background: darken($listOddRowBack, 5%);
-      }
     }
 
     &:nth-child(even) {
       background: $listEvenRowBack;
-
-      .selectedColumn {
-        background: darken($listEvenRowBack, 5%);
-      }
     }
 
     &:hover {
       background: $listRowHoverBack;
-
-      .selectedColumn {
-        background: darken($listRowHoverBack, 5%);
-      }
-    }
-
-    /* SELECTED ROWS */
-    &.selectedRow:nth-child(odd) {
-      background: $listSelectedOddBack;
-
-      .selectedColumn {
-        background: darken($listSelectedOddBack, 10%);
-      }
-    }
-
-    &.selectedRow:nth-child(even) {
-      background: $listSelectedEvenBack;
-
-      .selectedColumn {
-        background: darken($listSelectedEvenBack, 10%);
-      }
-    }
-
-    &.selectedRow:hover {
-      background: $listSelectedHoverBack;
-
-      .selectedColumn {
-        background: darken($listSelectedHoverBack, 5%);
-      }
-    }
-
-    /* ROWS THAT DID NOT FAIL */
-    &.processingSuccessfull:nth-child(odd) {
-      background: $listOKOddBack;
-
-      .selectedColumn {
-        background: darken($listOKOddBack, 10%);
-      }
-    }
-
-    &.processingSuccessfull:nth-child(even) {
-      background: $listOKEvenBack;
-
-      .selectedColumn {
-        background: darken($listOKEvenBack, 10%);
-      }
-    }
-
-    &.processingSuccessfull:hover {
-      background: $listOKHoverBack;
-
-      .selectedColumn {
-        background: darken($listOKHoverBack, 5%);
-      }
-    }
-
-    /* ROWS THAT DID FAIL */
-    &.processingFailed:nth-child(odd) {
-      background: $listFailedOddBack;
-
-      .selectedColumn {
-        background: darken($listFailedOddBack, 10%);
-      }
-    }
-
-    &.processingFailed:nth-child(even) {
-      background: $listFailedEvenBack;
-
-      .selectedColumn {
-        background: darken($listFailedEvenBack, 10%);
-      }
-    }
-
-    &.processingFailed:hover {
-      background: $listFailedHoverBack;
-
-      .selectedColumn {
-        background: darken($listFailedHoverBack, 5%);
-      }
-    }
-  }
-
-  /* Users who are marked for later deletion */
-  tr.deleted {
-    &:nth-child(odd) {
-      background-color: $markedForDeletionOddRowBack;
-
-      .selectedColumn {
-        background: darken($markedForDeletionOddRowBack, 5%);
-      }
-    }
-
-    &:nth-child(even) {
-      background-color: $markedForDeletionEvenRowBack;
-
-      .selectedColumn {
-        background: darken($markedForDeletionEvenRowBack, 5%);
-      }
-    }
-
-    &:hover {
-      background: $markedForDeletionRowHoverBack;
-
-      .selectedColumn {
-        background: darken($markedForDeletionRowHoverBack, 5%) !important;
-      }
     }
   }
 
@@ -252,613 +137,559 @@ th {
   }
 }
 
-/* Sortable column headers. Each TH element contains a flexbox DIV that
-   contains two spans: one for the title, one for the sort direction
-   arrow. Flexbox is used because I want to right-align the sort arrow
-   and a flexbox is the only way to do that even somewhat reliably. */
-.sortHeader {
-  cursor: pointer;
-
-  &:hover {
-    background: $listSortableColumnHover;
-  }
-
-  /* The container DIV */
-  div {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-
-    /*
-      What JavaScript taketh, CSS giveth. What a mess...
-      https://css-tricks.com/slightly-careful-sub-elements-clickable-things/
-    */
-    pointer-events: none;
-
-    /* The child spans */
-    .title {
-      display: inline;
-    }
-
-    .arrow {
-      display: inline;
-      margin-left: auto;    /* right-align the arrow */
-    }
-  }
-}
-
-/* Setup the sort direction arrows */
-/* TODO: The arrows should be changed in the JavaScript code, not here. */
-@mixin sortCommon($padding) {
-  font-family: puavo-icons;
-  font-size: 120%;
-  font-weight: normal;
-  padding-left: $padding;
-  padding-right: 10px;
-};
-
-.orderAscending, .orderDescending {
-  background: $listSortableColumnHover !important;
-}
-
-.orderNone .arrow:after {
-  @include sortCommon(10px);
-  content: "\f0dc";       /* up arrow, down arrow */
-}
-
-.typeString.orderAscending .arrow:after {
-  @include sortCommon(5px);
-  content: " \f15d";      /* A -> Z */
-}
-
-.typeString.orderDescending .arrow:after {
-  @include sortCommon(5px);
-  content: " \f15e";      /* Z -> A */
-}
-
-.typeNumeric.orderAscending .arrow:after {
-  @include sortCommon(6px);
-  content: " \f162";      /* 1 -> 9 */
-}
-
-.typeNumeric.orderDescending .arrow:after {
-  @include sortCommon(6px);
-  content: " \f163";      /* 9 -> 1 */
-}
-
-/* Alternate colors for the "marked for deletion" users table */
-.usersMarkedForDeletion {
-  tr:nth-child(even) {
-    background-color: $markedForDeletionEvenRowBack;
-  }
-
-  tr:nth-child(odd) {
-    background-color: $markedForDeletionOddRowBack;
-  }
-
-  tr:hover {
-    background: $markedForDeletionRowHoverBack;
-  }
-
-  tr:nth-child(odd) .selectedColumn {
-    background: darken($markedForDeletionOddRowBack, 5%);
-  }
-
-  tr:nth-child(even) .selectedColumn {
-    background: darken($markedForDeletionEvenRowBack, 5%);
-  }
-
-  tr:hover .selectedColumn {
-    background: darken($markedForDeletionRowHoverBack, 5%) !important;
-  }
-}
-
 /*
 ----------------------------------------------------------------------------------------------------
 SUPERTABLES
 ----------------------------------------------------------------------------------------------------
 */
 
+#modalDialogBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+  align-items: center;
+  justify-content: center;
+}
+
+/* Some composable style classes */
+.minimize-width { width: 1px; white-space: nowrap; }
+.width-0 { width: 0; }
+.cursor-not-allowed { cursor: not-allowed !important; }
+.cursor-pointer { cursor: pointer; }
+.cursor-default { cursor: default; }
+.cursor-grabbing { cursor: grabbing; }
+.hidden { display: none !important; }
+.not-visible { visibility: hidden; }
+.margin-left-25 { margin-left: 25px; }
+.margin-top-5 { margin-top: 5px; }
+.width-100p { width: 100%; }
+.nowrap { white-space: nowrap; }
+.flex { display: flex; }
+.flex-vcenter { align-items: center; }
+.no-text-selection { user-select: none; }
+.no-pointer-events { pointer-events: none; }
+.margin-right-10 { margin-right: 10px; }
+.sticky { position: sticky; top: 0; }
+
+.stUserMarkedForDeletion {
+  background: $markedForDeletionBackground;
+  padding: 2px;
+}
+
+.stAdmin {
+  color: $adminOwner;
+}
+
+/* Wraps the supertable and its controls */
 .superTable {
-  /* Used when the table is empty, or everything in it has been filtered away */
-  .empty {
-    font-style: italic;
-  }
-
-  .checkbox {
-    cursor: pointer;
-    width: 0;
-
-    /* Prevent text/table cell selections when checkboxes are clicked. */
-    user-select: none;
-
-    span {
-      pointer-events: none;   /* the parent TD has the event handler */
-      margin: 0 auto;
-      display: block;
-      width: 25px;
-      height: 25px;
-      border: 2px solid $checkboxBorder;
-      background: $checkboxBack;
-    }
-
-    &:active span {
-      background: $checkboxHoverBack;
-    }
-
-    @media #{$screen-breakpoint-one} {
-      /* you can't shift-click on mobile, so don't bother */
-      width: auto;
-    }
-  }
-
-  .selected span {
-    background: url("<%= image_path('checkbox.svg') %>") no-repeat $checkboxBack;
-    background-size: cover;
-  }
-
-  .selected:active span {
-    background: url("<%= image_path('checkbox.svg') %>") no-repeat $checkboxHoverBack;
-    background-size: cover;
-  }
-
-  .adminUsers {
-    color: $importantBasicInfo;
-  }
-}
-
-.disabledTable {
-  opacity: 0.5;
-}
-
-/* Supertable controls */
-.tableControls {
-  color: $listHeadingFore;
-  margin-bottom: 5px;
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
 
-  .disabledOption {
-    display: none;
+  > div {
+    margin-bottom: 10px;
   }
 
-  /* Column editor, CSV download, etc. buttons and status/stats messages */
-  .controls {
-    display: flex;
-    align-items: center;
-
-    @media #{$screen-breakpoint-one} {
-      flex-direction: column;
-
-      .btn {
-        width: 100%;
-        text-align: center;
-      }
-    }
-
-    p {
-      display: inline;
-      margin: 0;
-      padding: 5px 10px;
-      font-weight: bold;
-
-      @media #{$screen-breakpoint-one} {
-        padding: 5px 0 0 0;
-        margin: 0;
-      }
-    }
-
-    .status {
-      font-style: italic;
-    }
-
-    .good {
-    }
-
-    .failed {
-      background: $supertableNetworkErrorBack !important;
-      color: $supertableNetworkErrorFore !important;
-      font-weight: bold;
-      font-style: normal;
-    }
+  button {
+    margin-right: 5px;
+    padding: 2px 5px;
+    font-family: "Arial", "sans-serif";
+    font-size: 100%;
   }
 
-  /* Wraps everything related to table filters */
-  .filters {
-    width: 100%;
-    border: 1px solid $contentBoxBorder;
-    margin: 5px 0 0 0;
+  select {
+    font-family: "Arial", "sans-serif";
+    font-size: 100%;
+    padding: 1px 5px;
+  }
+
+  label {
+  }
+
+  fieldset legend {
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  button:hover:disabled {
+    cursor: not-allowed;
+  }
+
+  /* The supertable tab bar */
+  ul.tabs {
+    list-style-type: none;
+    margin: 0;
     padding: 0;
-
     display: flex;
-    flex-direction: column;
+    z-index: 2;
   }
 
-  /* Table filter control buttons */
-  .filterControl {
-    display: flex;
-    flex-direction: row;
-    text-align: left;
-
-    /* Wrap checkboxes and their labels in DIVs so they can be handled as blocks */
-    div {
-      padding: 0;
-      margin: 0;
-      display: flex;
-      align-items: center;
-    }
-
-    /* Master filtering enable checkbox */
-    .filteringEnabled {
-      font-weight: bold;
-      margin: 0 1em 0 0;
-    }
-
-    label {
-      margin-right: 1em;
-    }
-
-    @media #{$screen-breakpoint-one} {
-      display: flex;
-      flex-direction: column;
-    }
+  ul.tabs li {
+    border: 1px solid $stTabsBorder;
+    display: inline;
+    padding: 5px 20px;
+    border-radius: 3px 3px 0 0;
+    margin-right: 2px;
+    min-width: 150px;
+    text-align: center;
   }
 
-  /* Main container for the table filters */
-  .filterList {
-    flex-direction: row;
-    flex-wrap: wrap;
-
-    /* Container for each filter term */
-    .filter {
-      display: flex;
-      align-items: center;
-      padding: 2px 10px;
-      margin: 0;
-
-      @media #{$screen-breakpoint-one} {
-        flex-wrap: wrap;
-      }
-
-      &:hover {
-        background: $supertableFilterListFilterHover;
-      }
-
-      /* Wrapper for term "controls" (activation checkbox, target column, operator) */
-      .control {
-        margin-right: 10px;
-
-        /* vertical centering */
-        display: flex;
-        align-items: center;
-
-        select {
-          margin-left: 5px;
-        }
-      }
-
-      /*
-          Wrapper for the filtering term, whatever it may be. Some have a text input box, some have
-          radio buttons, some something else.
-      */
-      .term {
-        display: inline;
-
-        min-width: 250px;
-        min-height: 30px;   /* try to equalize heights (HACK) */
-        padding: 2px;
-        margin-right: 10px;
-
-        ::placeholder {
-          font-style: italic;
-        }
-
-        @media #{$screen-breakpoint-one} {
-          min-width: auto;
-        }
-
-        /* A term with only one input element, use all available width */
-        .single {
-          width: 100%;
-        }
-
-        input {
-          padding: 5px;   /* Chrome, why are you like that? Firefox plays along nicely, why can't you? */
-        }
-
-        /* Boolean terms */
-        .boolean {
-          display: flex;        /* a hacky attempt to center the checkbox and its label */
-          align-items: center;
-          padding-top: 2px;
-
-          input, label {
-            display: inline;
-          }
-
-          label {
-            padding-left: 5px;
-          }
-        }
-
-        /* Unixtime terms */
-        .year {
-          font-family: monospace;
-          width: 4em;
-        }
-
-        .month, .day, .hour, .minute {
-          font-family: monospace;
-          width: 3em;
-        }
-      }
-
-      /* Invalid terms */
-      .invalid {
-        background: $supertableTermInvalidBack;
-      }
-
-      /* Container for the add/remove buttons */
-      .buttons {
-        display: inline;
-
-        @media #{$screen-breakpoint-one} {
-          margin-left: 30px;
-        }
-
-        span {
-          display: inline-block;
-          padding: 3px 9px;
-          text-align: center;
-          cursor: pointer;
-
-          @media #{$screen-breakpoint-one} {
-            padding: 2px 15px;
-          }
-        }
-
-        .add {
-          color: $supertableFilterAddFore;
-          background: $supertableFilterAddBack;
-          border: 1px solid $supertableFilterAddBorder;
-          margin-right: 10px;
-
-          &:hover {
-            background: $supertableFilterAddHoverBack;
-          }
-        }
-
-        .remove {
-          color: $supertableFilterRemoveFore;
-          background: $supertableFilterRemoveBack;
-          border: 1px solid $supertableFilterRemoveBorder;
-
-          &:hover {
-            background: $supertableFilterRemoveHoverBack;
-          }
-        }
-      }
-    }
+  ul.tabs li.unselected {
+    background: $stTabBackground;
+    cursor: pointer;
   }
-}
 
-.tableToolbox {
-  margin-top: 5px;
-  padding: 0;
-  border: 1px solid $contentBoxBorder;
-  box-shadow: 3px 3px 0 $contentBoxShadow;
+  ul.tabs li.unselected:hover {
+    background: $stTabHoverBackground;
+  }
 
-  header {
-    padding: 5px 10px;
-    background: $contentBoxHeaderBack;
-    color: $contentBoxHeaderFore;
-    border-bottom: 1px solid $contentBoxBorder;
+  ul.tabs li.selected {
+    background: $stTabSelectedBackground;
+    cursor: default;
+    border-bottom: 1px solid $stTabSelectedBackground;
     font-weight: bold;
   }
 
-  section {
+  ul.tabs li.disabled {
+    color: $stTabDisabledForeground !important;
+    cursor: not-allowed !important;
+  }
+
+  ul.tabs li.disabled:hover {
+    color: $stTabDisabledForeground !important;
+    background: $stTabDisabledBackground !important;
+    cursor: not-allowed !important;
+  }
+
+  /* Tab container DIV */
+  .tab {
+    z-index: 1;
+    margin-top: -1px;
+    border: 1px solid $stTabsBorder;
     padding: 10px;
   }
-}
 
-/* Mass operations */
-.massOperation {
-  .selector {
+  .tab p {
+    margin: 0;
+  }
+
+  /* Column editing */
+  span.unsavedWarning {
+    color: $pceError;   /* eugh */
+  }
+
+  .columnTable {
+    border: 0;
+    margin-top: 5px;
+  }
+
+  .columnTable td {
+    padding: 0;
+    margin: 0;
+  }
+
+  .columnTable button {
+    width: 100%;
+    margin-bottom: 5px;
+    margin-left: 5px;
+  }
+
+  .columnList {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%;
+    max-height: 250px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border: 1px solid $stTabsBorder;
+  }
+
+  .columnList .column {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    cursor: pointer;
+    color: $pageContentFore;
+  }
+
+  .columnList .column:hover {
+    background: $stColumnListHoverBackground;
+    color: $stColumnListHoverForeground;
+  }
+
+  .columnList .selected { background: $stColumnListSelected; }
+  .columnList .disabled { color: $stColumnListDisabled; cursor: not-allowed; }
+  .columnList .selected.disabled { color: $stColumnListDisabled; }
+  .columnList .selected:hover { background: $stColumnListSelected; }
+  .columnList .disabled:hover { background: none; }
+  .columnList .selected.disabled:hover { background: $stColumnListSelected; }
+
+  .columnList .column input {
+    pointer-events: none;       /* The checkbox is there just for the looks */
+    margin-right: 10px;
+  }
+
+  /* Supertable filtering */
+  .filters .ui {
+    margin-top: 5px;
+  }
+
+  .filters .mainButtons {
+    margin-bottom: 5px;
+  }
+
+  .filters textarea {
+    width: 100%;
+    margin-bottom: 5px;
+    padding: 5px;
+  }
+
+  .filters .invalidJSON {
+    border: 1px solid $genericErrorBorder;
+  }
+
+  .filters .table {
+    border-collapse: collapse;
+    border: none;
+  }
+
+  .filters .table td {
+    margin: 0;
+    padding: 1px;
+    border: none;
+  }
+
+  .filters .table tr {
+    border-top: 1px solid $stFiltersRowBorder;
+    border-bottom: 1px solid $stFiltersRowBorder;
+  }
+
+  .filters .table tr:last-of-type {
+    border-bottom: none;
+  }
+
+  .filters .table div.explanation {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 3px;
+    min-width: 250px;
+  }
+
+  .filters .table .invalidColumn { background: $stFiltersInvalidColumn; }
+  .filters .table .invalidFilter { background: $stFiltersInvalidFilter; }
+
+  .filters .table div.explanation:hover {
+    background: $stFiltersRowHoverBackground;
+  }
+
+  .filters .table div.explanation:hover > span {
+    background: none;
+  }
+
+  .filters .filterBeingEdited {
+    outline: 2px dashed #080;
+  }
+
+  .table .explanation span {
+    display: inline;
+    padding: 2px 5px;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .table span.column {
+    font-weight: bold;
+  }
+
+  .table span.op {
+    font-weight: bold;
+    color: $stFiltersOperator;
+  }
+
+  .table span.value {
+    color: $stFiltersValue;
+  }
+
+  .table button.new {
+    margin-top: 5px;
+  }
+
+  .table span.notification {
+    flex-grow: 2;
+    text-align: right;
+    font-style: italic;
+  }
+
+  /* Mass tools */
+  .mass .mainButtons {
+  }
+
+  .mass .controls {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .mass .controls > * {
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  .mass .controls progress {
+    min-width: 250px;
+  }
+
+  .mass .controls .counter {
+    font-weight: bold;
+    font-size: 100%;
+  }
+
+  .mass fieldset {
+    border: none;
+    border-top: 1px solid $formFieldsetBorderColor;
+    padding: 10px 0;
+    margin: 0;
+  }
+
+  .mass fieldset legend {
+    margin-left: 10px;
+    padding: 0 5px;
+  }
+
+  .mass .ui {
+    padding: 0;
+    margin: 0;
+  }
+
+  .mass .ui fieldset {
+    border: 1px solid $formFieldsetBorderColor;
+  }
+
+  .mass .ui .mobileTitle {
+    display: none;
+  }
+
+  @media #{$screen-breakpoint-one} {
+    .mobileTitle {
+      display: block;
+      font-weight: bold;
+    }
+  }
+
+  /* The status box */
+  .status {
+    border: 1px solid $stStatusBorder;
+    padding: 5px;
+  }
+
+  /* Mass processing status success/fail counters */
+  .status .success { background: $stStatusSuccess; }
+  .status .fail { background: $stStatusFail; }
+
+  /* The update error message */
+  .error {
+    background: $stErrorBackground;
+    color: $stErrorForeground;
+    border: 1px solid $stErrorBorder;
+    padding: 5px;
+    border-radius: 3px;
+  }
+
+  /* The supertable itself */
+  .table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  .table td, .table th {
+    border: 1px solid $stTableBorder;
+    padding: 5px;
+  }
+
+  .table th {
+    text-align: left;
+    background: $stTableHeaderBackground;
+    padding: 10px;
+    color: $stTableHeaderForeground;
+  }
+
+  .table th.sortable:hover {
+    background: $stTableHeaderHoverBackground;
+  }
+
+  /* Supertable sort header cells */
+  .table th div {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
-
-    > * {
-      display: inline;
-    }
-
-    p {
-      margin: 0;
-      padding: 0 10px 0 0;
-    }
-
-    select {
-      margin-right: 10px;
-    }
-
-    @media #{$screen-breakpoint-one} {
-      flex-wrap: wrap;
-    }
+    pointer-events: none;
   }
 
-  progress {
-    margin-left: 10px;
-    margin-right: 10px;
-    width: 300px;
-    visibility: hidden;
+  .table th div span {
+    display: inline;
   }
 
-  .progressCount {
-    font-family: monospace;
-    font-weight: bold;
-    font-size: 150%;
+  .table th div span.arrow {
+    margin-left: auto;
+    font-family: puavo-icons;
+    font-size: 100%;
+    font-weight: normal;
+    padding-left: 5px;
   }
 
-  /* Container for the mass operation settings child */
-  .settings {
-    margin: 10px 0 0 0;
-    padding: 5px;
-    background: $massOpSettingsBack;
-    border: 1px solid $massOpSettingsBorder;
-
-    @media #{$screen-breakpoint-one} {
-      margin-top: 0;
-    }
+  .table th.sorted {
+    background: $stTableHeaderHoverBackground;
   }
 
-  .settingsChild {
-    .mobileTitle {
-      display: none;
-    }
-
-    th {
-      font-size: 100%;
-      text-align: right;
-    }
-
-    input[type="text"] {
-      width: 500px;
-    }
-
-    p.validityWarning {
-      margin: 0;
-      padding: 2px;
-      font-style: italic;
-    }
-
-    @media #{$screen-breakpoint-one} {
-      width: 100%;
-
-      .thead, th {
-        display: none;
-      }
-
-      tbody > tr:last-child {
-        border-bottom: none;
-      }
-
-      tr {
-        display: block;
-        padding: 2px;
-      }
-
-      td {
-        display: block;
-        padding: 2px;
-        border: none;
-      }
-
-      input[type="text"] {
-        width: 100%;
-      }
-
-      .mobileTitle {
-        display: block;
-        font-weight: bold;
-      }
-    }
+  .table tbody tr:hover {
+    background: $stTableRowHoverBackground;
   }
 
-  /* Selection status message / counters */
-  .status {
-    margin: 10px 0 0 0;
+  .table .sorted { background: $stTableSortedColumnBackground; }
 
-    /* individual parts of the message */
-    .total { color: $massOpStatusNormal; }
-    .selected { color: $massOpStatusSelected; }
-    .ok { color: $massOpStatusOK; }
-    .failed { color: $massOpStatusFailed; }
+  .table tbody tr { background: $pageContentBack; }
+
+  .table tbody tr.success { background: $stTableSuccessRowBackground; }
+  .table tbody tr.success:hover { background: $stTableSuccessRowHoverBackground !important; }
+  .table tbody tr.success .sorted { background: $stTableSuccessRowSortedBackground; }
+  .table tbody tr.success:hover .sorted { background: $stTableSuccessRowHoverSortedBackground !important; }
+
+  .table tbody tr.fail { background: $stTableFailRowBackground; }
+  .table tbody tr.fail:hover { background: $stTableFailRowHoverBackground !important; }
+  .table tbody tr.fail .sorted { background: $stTableFailRowSortedBackground; }
+  .table tbody tr.fail:hover .sorted { background: $stTableFailRowHoverSortedBackground !important; }
+
+  .table tbody tr:hover .sorted {
+    background: $stTableSortedColumnHoverBackground;
   }
 
-  .hiddenWarning {
-    /* Partially copied from the generic error class */
-    color: $genericErrorFore;
-    background: $genericErrorBack;
-    border: 2px solid $genericErrorBorder;
-    padding: 5px;
-    margin-top: 10px;
+  .table .previousRow {
+    outline: 2px dotted $stTablePreviousRowBorder;
+  }
+
+  /* Row checkboxes */
+  .table .checkbox {
+    /* Prevent text/table cell selections during range selections */
+    user-select: none;
+  }
+
+  .table .checkbox span {
+    border: 1px solid $stTableBorder;
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: $stTableCheckboxColumnBack;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    pointer-events: none;
+  }
+
+  .table .checkbox span.checked {
+    background-image: url("<%= image_path('cross.svg') %>");
+    background-color: $stTableCheckboxColumnBack;
+    background-size: 80%;
+  }
+
+  .table .updating {
+    opacity: 0.5;
   }
 }
 
-.massSelectMenu {
-  margin: 5px 5px 10px 0;
+.filterPopup {
+  display: none;    /* changed to "flex" when displaying the popup */
+  border: 2px solid $stFiltersPopupBorder;
   padding: 0;
-  display: block;
-  float: left;
-  width: 25px;
-  height: 25px;
-
-  border: 2px solid $massSelectMenuBorder;
-  background: url("<%= image_path('checkbox.svg') %>") no-repeat 50% 50% $baseOrangeGradient;
-  background-size: contain;
-
-  /* FIXME: If the page is not tall enough, the bottom of this menu gets cut off by the footer! */
-  ul {
-    display: none;
-
-    background: $massSelectMenuBack;
-    border: 2px solid $massSelectMenuBorder;
-    padding: 5px;
-    margin: 0;
-
-    position: absolute;
-    top: auto;
-    left: auto;
-    margin-left: 21px;
-    margin-top: -2px;
-    width: 300px;
-
-    box-shadow: 0 10px 10px $massSelectMenuShadow;
-
-    list-style: none;
-
-    li {
-      margin: 0;
-      padding: 0;
-    }
-
-    li.sep {
-      border-bottom: 1px solid $massSelectMenuBorder;
-      margin: 5px 0;
-    }
-  }
-
-  a {
-    display: block;
-    padding: 5px 10px;
-    color: $massSelectMenuFore !important;
-    font-weight: normal !important;
-    text-decoration: none;
-    cursor: pointer;
-    outline: none;
-  }
-
-  a:hover {
-    color: $massSelectMenuHighlightFore !important;
-    background: $massSelectMenuHighlightBack !important;
-  }
-
-  &:hover ul {
-    display: block;
-  }
+  margin: 0;
+  min-width: 500px;
+  max-width: 500px;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  background: $stFiltersPopupBackground;
+  box-shadow: 0 0 10px $stFiltersPopupShadow;
 }
 
-/* Previously clicked row indicator */
-.previousRow {
-  .checkbox {
-    outline: 1px dotted $listPreviousRow;
+.filterPopup .upper {
+  display: flex;
+  background: $stFiltersPopupHeaderBackground;
+  border-bottom: 1px solid $stFiltersPopupHeaderBorder;
+  align-items: center;
+}
 
-    @media #{$screen-breakpoint-one} {
-      /* you can't shift-click on mobile, so don't bother */
-      outline: none;
-    }
-  }
+.filterPopup .upper > div {
+  display: inline;
+  padding: 5px;
+}
+
+.filterPopup .upper .title {
+  font-size: 90%;
+  font-weight: bold;
+}
+
+.filterPopup .upper .buttons {
+  display: flex;
+  flex-grow: 2;
+  justify-content: flex-end;
+}
+
+.filterPopup .upper .buttons > button {
+  padding: 0 15px;
+  font-size: 90%;
+  margin-left: 5px;
+}
+
+.filterPopup .btn-save { color: #080; }
+.filterPopup .btn-cancel { color: #800; }
+
+.filterPopup .lower {
+  font-size: 75%;
+}
+
+.filterPopup .lower th {
+}
+
+.filterPopup .lower p {
+  margin: 0;
+  padding: 0;
+}
+
+.filterPopup select {
+  width: 100%;
+  font-size: 100%;
+  padding: 2px;
+}
+
+/* Supertable cell header drag item */
+div.dragHeader {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  border: 1px solid $stTableBorder;
+  padding: 5px;
+  margin: 0;
+  font-weight: bold;
+  background: $stTableHeaderHoverBackground;
+  color: $stTableHeaderForeground;
+  z-index: 10;
+  font-size: 90%;
+  cursor: grabbing;
+  user-select: none;
+  box-shadow: 0 0 5px $stTableDragHeaderShadow;
+}
+
+/* Supertable drop target position indicator */
+div.dropMarker {
+  position: absolute;
+  display: block;
+  border: none;
+  background: $stTableDragHeaderMarker;
+  z-index: 9;
 }
