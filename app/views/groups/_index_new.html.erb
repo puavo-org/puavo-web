@@ -1,163 +1,212 @@
-<div id="groupsList"></div>
+<div class="superTable" id="tableGroups"></div>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js", skip_pipeline: true %>
-<%= javascript_include_tag 'modal_dialog', skip_pipeline: true %>
-<%= javascript_include_tag 'supertable', skip_pipeline: true %>
+<%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
+<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
+<%= javascript_include_tag 'supertable2', skip_pipeline: true %>
 <% end %>
 
 <% content_for :post_load_javascript do %>
 <script>
+"use strict;"
 
 // Table column definitions
-const GROUP_COLUMN_DEFS = {
+const COLUMN_DEFINITIONS = {
     id: {
         key: "id",
-        title: "<%= t('columns.puavoid') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_INTEGER,
+        type: ColumnType.INTEGER,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     name: {
         key: "name",
-        title: "<%= t('columns.groups.name') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
-        subType: COLUMN_SUBTYPE_GROUP_NAME,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        defaultOperator: FilterOperator.EQU,
     },
 
     abbr: {
         key: "abbr",
-        title: "<%= t('columns.groups.abbreviation') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     type: {
         key: "type",
-        title: "<%= t('columns.groups.type') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
-        subType: COLUMN_SUBTYPE_GROUP_TYPE,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        defaultOperator: FilterOperator.EQU,
     },
 
     eid: {
         key: "eid",
-        title: "<%= t('columns.groups.eid') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     created: {
         key: "created",
-        title: "<%= t('columns.created') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_UNIXTIME,
-        defaultOperator: OPERATOR_GREATER_OR_EQUAL,
+        type: ColumnType.UNIXTIME,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.GTE,
     },
 
     modified: {
         key: "modified",
-        title: "<%= t('columns.modified') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_UNIXTIME,
-        defaultOperator: OPERATOR_LESS_OR_EQUAL,
+        type: ColumnType.UNIXTIME,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.LTE,
     },
 };
 
-// Default visible columns and their order
-const DEFAULT_GROUP_COLUMNS = [
-    ["id", false],
-    ["name", true],
-    ["abbr", true],
-    ["type", true],
-    ["eid", false],
-    ["created", false],
-    ["modified", false],
+// Localized column titles. The keys must be same as in the keys in the column
+// definitions object above.
+const COLUMN_TITLES = {
+    id: "<%= t('columns.puavoid') %>",
+    name: "<%= t('columns.groups.name') %>",
+    abbr: "<%= t('columns.groups.abbreviation') %>",
+    eid: "<%= t('columns.groups.eid') %>",
+    type: "<%= t('columns.groups.type') %>",
+    created: "<%= t('columns.created') %>",
+    modified: "<%= t('columns.modified') %>",
+};
+
+// Localized group types
+const GROUP_TYPES = {
+    "teaching group": "<%= t('group_type.teaching group') %>",
+    "course group": "<%= t('group_type.course group') %>",
+    "year class": "<%= t('group_type.year class') %>",
+    "administrative group": "<%= t('group_type.administrative group') %>",
+    "archive users": "<%= t('group_type.archive users') %>",
+    "other groups": "<%= t('group_type.other groups') %>",
+};
+
+const DEFAULT_COLUMNS = ["name", "abbr", "type", "eid"];
+const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
+
+// The default order for columns. "DEFAULT_COLUMNS" above does not have to be in this order.
+const COLUMN_ORDER = [
+    "id",
+    "name",
+    "abbr",
+    "type",
+    "eid",
+    "created",
+    "modified",
 ];
 
-class MassGroupDeletion extends MassOperationBase {
+const USER_TRANSFORM_FUNCTIONS = {
+    name: function(entry) {
+        return [
+            `<a href="${entry.link}">${escapeHTML(entry.name)}</a> (${entry.members})`,
+            entry.name
+        ];
+    },
+
+    type: function(entry) {
+        return [
+            entry.type in GROUP_TYPES ? GROUP_TYPES[entry.type] : "?",
+            entry.type
+        ];
+    },
+};
+
+class MassGroupDeletion extends MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
     }
 
+    canProceed()
+    {
+        return true;
+    }
+
+    start()
+    {
+    }
+
+    finish()
+    {
+    }
+
     processItem(item)
     {
-        return doSingleNetworkPost(
+        return doPOST(
             "/users/<%= @school.id %>/mass_op_group_delete",
-            { id: item.id }
+            { id: item.id[0] }
         );
     }
 };
 
 // JavaScript class fields support is so poor that I can't really
 // define titles, IDs and other things in classes, they must be here
-let massOperations = {
-    "delete": {
+const MASS_OPERATIONS = [
+    {
+        id: "delete",
         title: "<%= t('groups.index.mass_operations.delete.title') %>",
-        hasSettings: false,
-        clazz: MassGroupDeletion
+        flags: 0,
+        cls: MassGroupDeletion
     },
-};
+];
 
-// The current columns, initially the defaults
-var currentColumns = DEFAULT_GROUP_COLUMNS;
+function userActions(item)
+{
+    let html = "";
 
-$(document).ready(function() {
-    new SuperTable({
-        // Unique ID for this table
+    html += `<a href="${item['link']}/edit" class="btn"><%= t('link.edit') %></a> `;
+
+    let message = "<%= t('general_confirm') %>";
+
+    html += `<a href="${item['link']}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+
+    return html;
+}
+
+window.onload = function(e) {
+
+new SuperTable(
+    // Main container DIV
+    document.getElementById("tableGroups"),
+
+    // Settings
+    {
         id: "groups",
+        csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-groups`,
 
-        // Organisation and school names, used during CSV exports
-        organisationName: "<%= LdapOrganisation.current.o %>",
-        schoolName: "<%= @school.cn %>",
-
-        // The URL used to dynamically retrieve table data from
-        url: "/users/<%= @school.id %>/get_school_groups_list",
-
-        // Where to save the table settings
-        localstoreKey: "supertable-groups",
-
-        // Which locale will be used when sorting strings?
-        sortLocale: "<%= supertable_sorting_locale %>",
-
-        // Container for the table and its controls
-        container: document.getElementById("groupsList"),
-
-        // Main table flags
-<% if current_user && current_user.organisation_owner? %>
-        flags: TABLE_FLAG_GROUPS | TABLE_FLAG_ENABLE_SELECTION,
+<% if @is_owner %>
+        flags: TableFlag.ALLOW_SELECTION | TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
 <% else %>
-        flags: TABLE_FLAG_GROUPS,
+        flags: TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
 <% end %>
-        // All possible columns, their titles, keys, flags, etc.
-        columnDefs: GROUP_COLUMN_DEFS,
 
-        // Which columns to display and in which order. You need at least one.
-        currentColumns: currentColumns,
+        locale: "<%= supertable_sorting_locale %>",
 
-        // Default columns for this table. Used with the column editor.
-        defaultColumns: DEFAULT_GROUP_COLUMNS,
+        columnDefinitions: COLUMN_DEFINITIONS,
+        columnTitles: COLUMN_TITLES,
+        columnOrder: COLUMN_ORDER,
+        userTransforms: USER_TRANSFORM_FUNCTIONS,
+        actions: userActions,
 
-        // The column that's initially selected on new filter rows
+<% if @is_owner %>
+        massOperations: MASS_OPERATIONS,
+<% end %>
+
+        defaultColumns: DEFAULT_COLUMNS,
+        defaultSorting: DEFAULT_SORTING,
+        initialFilters: null,
         defaultFilterColumn: "name",
 
-        // Initially sorted column and its order (only SORT_ORDER_ASCENDING and SORT_ORDER_DESCENDING
-        // are valid here, any other value will be ignored and the order is assumed to be ascending).
-        // If the column does not exist, then the initial sort will be ignored completely.
-        initialSort: { column: "name", order: SORT_ORDER_ASCENDING },
+        // The URL to get the data from
+        source: "/users/<%= @school.id %>/get_school_groups_list",
+    }
+);
 
-        // Mass operation definitions
-        massOperations: massOperations,
+};
 
-        // Name of the objects the table contains. Currently always a plural.
-        itemName: "<%= t('groups.index.groups') %>",
-
-        // Column editor subtitle
-        columnEditorSubtitle: "<%= t('layouts.application.groups') %>",
-    });
-});
 </script>
 <% end %>
 

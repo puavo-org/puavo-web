@@ -50,12 +50,17 @@ class GroupsController < ApplicationController
 
   # New AJAX-based index for non-test environments
   def new_cool_groups_index
+    @is_owner = is_owner?
+
     respond_to do |format|
       format.html # index.html.erb
     end
   end
 
   def get_school_groups_list
+    # Given that out of the eight possible attributes, four are required,
+    # it's easier to just fetch them all
+
     attributes = [
       'puavoId',
       'displayName',
@@ -78,7 +83,7 @@ class GroupsController < ApplicationController
       @groups << {
         id: grp['puavoId'][0].to_i,
         name: grp['displayName'][0],
-        type: grp['puavoEduGroupType'] ? t('group_type.' + grp['puavoEduGroupType'][0]) : nil,
+        type: grp['puavoEduGroupType'] ? grp['puavoEduGroupType'][0] : nil,
         abbr: grp['cn'][0],
         eid: grp['puavoExternalId'] ? grp['puavoExternalId'][0] : nil,
         members: grp['memberUid'] ? grp['memberUid'].count : 0,
