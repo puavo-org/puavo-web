@@ -151,6 +151,7 @@ fi:
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
   destroy_confirm_admin: "Tämä käyttäjä on omistaja ja/tai koulun ylläpitäjä. Oletko varma?"
+  destroy_sync_waring: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\tSYSTEM_NAMES_HERE\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
   ldap_create_time: Luotu (LDAP)
   ldap_modify_time: Muokattu (LDAP)
   actions: Toiminnot
@@ -164,6 +165,9 @@ fi:
   puavoEduPersonAffiliation_parent: Huoltaja
   puavoEduPersonAffiliation_admin: "Ylläpitäjä"
   puavoEduPersonAffiliation_testuser: Testitunnus
+  school_admin_role: "Koulun ylläpitäjä"
+  organisation_owner_role: "Organisaation omistaja"
+  unknown_role: "(Tuntematon)"
 
   language_fi_FI: Suomi
   language_en_US: Englanti (Yhdysvallat)
@@ -202,12 +206,13 @@ fi:
       uid: "Käyttäjätunnus"
       eid: "Ulkoinen ID"
       learner_id: "Oppijanumero"
-      type: "Rooli"
+      role: "Rooli"
       phone: "Puhelin"
       email: "Email"
       pnumber: "Henkilönumero"
       home_dir: "Kotihakemisto"
       rrt: "Poistomerkintä tehty"
+      dnd: "Poisto estetty?"
       is_locked: "Lukittu?"
 
     groups:
@@ -736,6 +741,7 @@ fi:
             eid: "Ulkoinen ID"
             email: "Email"
             telephone: "Puhelinnumero"
+            learner_id: "Oppijanumero"
         username_list:
           title: "Luo käyttäjätunnuslista"
 

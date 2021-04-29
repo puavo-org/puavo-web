@@ -151,6 +151,7 @@ en:
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
   destroy_confirm_admin: "This user is an owner and/or a school admin. Are you sure?"
+  destroy_sync_waring: "The user will also be removed from these external systems:\n\n\tSYSTEM_NAMES_HERE\n\nPlease verify that this is what you intended to do."
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
   actions: Actions
@@ -164,6 +165,9 @@ en:
   puavoEduPersonAffiliation_parent: Parent
   puavoEduPersonAffiliation_admin: Admin
   puavoEduPersonAffiliation_testuser: Test user
+  school_admin_role: "School admin"
+  organisation_owner_role: "Organisation owner"
+  unknown_role: "(Unknown)"
 
   language_fi_FI: Finnish
   language_en_US: English (United States)
@@ -202,12 +206,13 @@ en:
       uid: "Username"
       eid: "External ID"
       learner_id: "Learner ID"
-      type: "Role"
+      role: "Role"
       phone: "Phone"
       email: "Email"
       pnumber: "Personnel number"
       home_dir: "Home directory"
       rrt: "When marked for deletion"
+      dnd: "Do not delete?"
       is_locked: "Locked?"
 
     groups:

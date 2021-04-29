@@ -2,239 +2,292 @@
 <p class="genericWarning"><%= t('users.index.synchronised_deletions', :systems => @synchronised_deletions.join(', ')) %></p>
 <% end %>
 
-<div id="usersList"></div>
+<div class="superTable" id="tableUsers"></div>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js", skip_pipeline: true %>
-<%= javascript_include_tag 'modal_dialog', skip_pipeline: true %>
-<%= javascript_include_tag 'supertable', skip_pipeline: true %>
+<%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
+<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
+<%= javascript_include_tag 'supertable2', skip_pipeline: true %>
 <% end %>
 
 <% content_for :post_load_javascript do %>
 <script>
+"use strict;"
 
-// Table column definitions
-const USER_COLUMN_DEFS = {
+// All available columns, their names and types and other parameters
+const COLUMN_DEFINITIONS = {
     id: {
         key: "id",
-        title: "<%= t('columns.puavoid') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_INTEGER,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.INTEGER,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     first: {
         key: "first",
-        title: "<%= t('columns.users.first_names') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     last: {
         key: "last",
-        title: "<%= t('columns.users.last_name') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     name: {
         key: "name",
-        title: "<%= t('columns.users.full_name') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
-        subType: COLUMN_SUBTYPE_USER_USERNAME,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        defaultOperator: FilterOperator.EQU,
     },
 
     uid: {
         key: "uid",
-        title: "<%= t('columns.users.uid') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     eid: {
         key: "eid",
-        title: "<%= t('columns.users.eid') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     learner_id: {
         key: "learner_id",
-        title: "<%= t('columns.users.learner_id') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
-        defaultOperator: OPERATOR_LESS_OR_EQUAL,
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
     },
 
-    type: {
-        key: "type",
-        title: "<%= t('columns.users.type') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
-        subType: COLUMN_SUBTYPE_USER_ROLES,
-        defaultOperator: OPERATOR_EQUAL,
+    role: {
+        key: "role",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        defaultOperator: FilterOperator.EQU,
     },
 
     phone: {
         key: "phone",
-        title: "<%= t('columns.users.phone') %>",
-        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
-        type: COLUMN_TYPE_STRING,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
+        defaultOperator: FilterOperator.EQU,
     },
 
     email: {
         key: "email",
-        title: "<%= t('columns.users.email') %>",
-        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
-        type: COLUMN_TYPE_STRING,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
+        defaultOperator: FilterOperator.EQU,
     },
 
     pnumber: {
         key: "pnumber",
-        title: "<%= t('columns.users.pnumber') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     home: {
         key: "home",
-        title: "<%= t('columns.users.home_dir') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_STRING,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     rrt: {
         key: "rrt",
-        title: "<%= t('columns.users.rrt') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_UNIXTIME,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.UNIXTIME,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    dnd: {
+        key: "dnd",
+        type: ColumnType.BOOL,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     locked: {
         key: "locked",
-        title: "<%= t('columns.users.is_locked') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_BOOLEAN,
-        defaultOperator: OPERATOR_EQUAL,
+        type: ColumnType.BOOL,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
     },
 
     created: {
         key: "created",
-        title: "<%= t('columns.created') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_UNIXTIME,
-        defaultOperator: OPERATOR_GREATER_OR_EQUAL,
+        type: ColumnType.UNIXTIME,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.GTE,
     },
 
     modified: {
         key: "modified",
-        title: "<%= t('columns.modified') %>",
-        flags: COLUMN_FLAG_SORTABLE,
-        type: COLUMN_TYPE_UNIXTIME,
-        defaultOperator: OPERATOR_LESS_OR_EQUAL,
+        type: ColumnType.UNIXTIME,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.LTE,
     },
 };
 
-// Default visible columns and their order
-const DEFAULT_USER_COLUMNS = [
-    ["id", false],
-    ["name", true],
-    ["first", false],
-    ["last", false],
-    ["uid", true],
-    ["type", true],
-    ["eid", false],
-    ["learner_id", false],
-    ["phone", false],
-    ["email", false],
-    ["pnumber", false],
-    ["home", false],
-    ["locked", false],
-    ["rrt", false],
-    ["created", false],
-    ["modified", false],
+// Localized column titles. The keys must be same as in the keys in the column
+// definitions object above.
+const COLUMN_TITLES = {
+    id: "<%= t('columns.puavoid') %>",
+    first: "<%= t('columns.users.first_names') %>",
+    last: "<%= t('columns.users.last_name') %>",
+    name: "<%= t('columns.users.full_name') %>",
+    uid: "<%= t('columns.users.uid') %>",
+    eid: "<%= t('columns.users.eid') %>",
+    learner_id: "<%= t('columns.users.learner_id') %>",
+    role: "<%= t('columns.users.role') %>",
+    phone: "<%= t('columns.users.phone') %>",
+    email: "<%= t('columns.users.email') %>",
+    pnumber: "<%= t('columns.users.pnumber') %>",
+    home: "<%= t('columns.users.home_dir') %>",
+    rrt: "<%= t('columns.users.rrt') %>",
+    dnd: "<%= t('columns.users.dnd') %>",
+    locked: "<%= t('columns.users.is_locked') %>",
+    created: "<%= t('columns.created') %>",
+    modified: "<%= t('columns.modified') %>",
+};
+
+// Default visible columns and sorting. The SuperTable code has been written with the assumption
+// that if there is no stored settings, or they're invalid, then these can be used as-is without
+// validating them. So if you put invalid or missing columns here, or the sorting column does
+// not exist, then it is your fault when the table code crashes or displays garbage.
+// You have been warned.
+const DEFAULT_COLUMNS = ["uid", "name", "role", "eid"];
+const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
+
+// The default order for columns. "DEFAULT_COLUMNS" above does not have to be in this order.
+const COLUMN_ORDER = [
+    "id",
+    "name",
+    "first",
+    "last",
+    "uid",
+    "role",
+    "eid",
+    "learner_id",
+    "phone",
+    "email",
+    "pnumber",
+    "home",
+    "rrt",
+    "dnd",
+    "locked",
+    "created",
+    "modified",
 ];
 
-const PRESETS = [
-    {
-        title: "<%= t('users.index.filters.locked_users') %>",
-        id: "locked",
-        filters: [
-            [true, "locked", OPERATOR_EQUAL, true],
-        ],
+// Localized user role names
+const USER_ROLES = {
+    owner: "<%= t('organisation_owner_role') %>",
+    admin: "<%= t('school_admin_role') %>",
+    teacher: "<%= t('puavoEduPersonAffiliation_teacher') %>",
+    student: "<%= t('puavoEduPersonAffiliation_student') %>",
+    staff: "<%= t('puavoEduPersonAffiliation_staff') %>",
+    testuser: "<%= t('puavoEduPersonAffiliation_testuser') %>",
+    parent: "<%= t('puavoEduPersonAffiliation_parent') %>",
+    visitor: "<%= t('puavoEduPersonAffiliation_visitor') %>",
+    unknown: "<%= t('unknown_role') %>",
+};
+
+/*
+Each transformation function must return an array of two values:
+    1. The displayable value for this table cell. Assumed to be valid HTML.
+    2. A plain entry that can be used to compare this to other cells during sorting.
+
+Never return NULLs! If there is no value, return the default value for that
+cell, be it an empty string, the number zero, or something else. Never NULL.
+*/
+const USER_TRANSFORM_FUNCTIONS = {
+    name: function(entry) {
+        let s = "";
+
+        if (entry.rrt)
+            s += `<span class="stUserMarkedForDeletion">`;
+
+        s += `<a href="${entry.link}">${escapeHTML(entry.name)}</a>`;
+
+        if (entry.locked) {
+            s += `<i class="icon-lock"></i>`;
+            //s += ` [L]`;
+        }
+
+        if (entry.rrt)
+            s += `</span>`;
+
+        return [
+            s,
+            entry.name
+        ];
     },
 
-    {
-        title: "<%= t('users.index.filters.marked_for_deletion') %>",
-        id: "marked_for_deletion",
-        filters: [
-            [true, "rrt", OPERATOR_GREATER_OR_EQUAL, [2010]],
-        ],
+    rrt: function(entry) {
+        if (entry.rrt === undefined || entry.rrt === null || entry.rrt === 0)
+            return ["", 0];
+
+        const [valid, t] = convertTimestamp(entry.rrt);
+
+        if (!valid)
+            return ["?", 0];
+
+        return [t, entry.rrt];
     },
 
-    {
-        title: "<%= t('users.index.filters.marked_for_deletion_not_locked') %>",
-        id: "unlocked_deleted",
-        filters: [
-            [true, "locked", OPERATOR_NOT_EQUAL, true],
-            [true, "rrt", OPERATOR_GREATER_OR_EQUAL, [2010]],
-            [false, "eid", OPERATOR_NOT_EQUAL, "^$"],
-        ],
-    },
+    role: function(entry) {
+        let values = [];
 
-    {
-        title: "<%= t('users.index.filters.marked_3months') %>",
-        id: "marked_for_3months",
-        filters: [
-            [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 90],
-            [false, "eid", OPERATOR_NOT_EQUAL, "^$"],
-        ],
-    },
+        // Translate user roles
+        for (let i = 0; i < entry.role.length; i++) {
+            const r = entry.role[i];
 
-    {
-        title: "<%= t('users.index.filters.marked_6months') %>",
-        id: "marked_for_6months",
-        filters: [
-            [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 180],
-            [false, "eid", OPERATOR_NOT_EQUAL, "^$"],
-        ],
-    },
+            if (r in USER_ROLES) {
+                if (r == "owner" || r == "admin")
+                    values.push(`<span class="stAdmin">${USER_ROLES[r]}</span>`);
+                else values.push(USER_ROLES[r]);
+            } else values.push(USER_ROLES['unknown']);
+        }
 
-    {
-        title: "<%= t('users.index.filters.marked_9months') %>",
-        id: "marked_for_9months",
-        filters: [
-            [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 270],
-            [false, "eid", OPERATOR_NOT_EQUAL, "^$"],
-        ],
+        return [
+            values.join("<br>"),
+            entry.role.join()
+        ];
     },
-
-    {
-        title: "<%= t('users.index.filters.marked_12months') %>",
-        id: "marked_for_12months",
-        filters: [
-            [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 365],
-            [false, "eid", OPERATOR_NOT_EQUAL, "^$"],
-        ],
-    },
-];
+};
 
 <% if @is_owner %>
-class MassUserDeletion extends MassOperationBase {
+class MassUserDeletion extends MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
+    }
+
+    canProceed()
+    {
+        // Show an extra warning if there are synchronised deletions
+        if (SYNC_DELETIONS.length == 0)
+            return true;
+
+        const message = `<%= t('destroy_sync_waring') %>`.replace("SYSTEM_NAMES_HERE", SYNC_DELETIONS.join(", "));
+
+        return window.confirm(message);
+    }
+
+    start()
+    {
+    }
+
+    finish()
+    {
     }
 
     processItem(item)
@@ -243,36 +296,39 @@ class MassUserDeletion extends MassOperationBase {
         // All of these tests are also done on the server end in case the
         // user tries to cheat by, for example, adjusting their system time.
 
-        if (item.dnd)
-            return itemProcessingFailed("<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
+        if (item.dnd && item.dnd[0] === true)
+            return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
 
-        if (item.rrt === null)
-            return itemProcessingFailed("<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>");
+        if (item.rrt && item.rrt[0] === 0)
+            return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>");
 
         const now = Math.floor(Date.now() / 1000);
         const next = item.rrt + (60 * 60 * 24 * 7);     // 7 days in seconds
 
         if (next > now)
-            return itemProcessingFailed("<%= t('users.index.mass_operations.delete.marked_too_recently') %>");
+            return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.marked_too_recently') %>");
 
         // Good to go
-        return doSingleNetworkPost(
+        return doPOST(
             "/users/<%= @school.id %>/mass_op_user_delete",
-            { id: item.id }
+            { id: item.id[0] }
         );
     }
 };
 <% end %>
 
-class MassUserLocking extends MassOperationBase {
+class MassUserLocking extends MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
 
-        // the default state (lock)
+        // The default state (lock)
         this.lock = true;
+    }
 
-        container.innerHTML =
+    buildInterface()
+    {
+        this.container.innerHTML =
 `<form>
 <table class="settingsChild">
 <tr>
@@ -287,39 +343,54 @@ class MassUserLocking extends MassOperationBase {
 </table>
 </form>`;
 
-        container.querySelector("#mul_action_lock")
+        this.container.querySelector("#mul_action_lock")
             .addEventListener("click", event => this.setLockState(event, true));
-        container.querySelector("#mul_action_unlock")
+        this.container.querySelector("#mul_action_unlock")
             .addEventListener("click", event => this.setLockState(event, false));
+    }
+
+    start()
+    {
+        this.container.querySelector("#mul_action_lock").disabled = true;
+        this.container.querySelector("#mul_action_unlock").disabled = true;
+    }
+
+    finish()
+    {
+        this.container.querySelector("#mul_action_lock").disabled = false;
+        this.container.querySelector("#mul_action_unlock").disabled = false;
+    }
+
+    processItem(item)
+    {
+        // Do nothing if the user is already in the desired locking state
+        if (item.locked && item.locked[0] == this.lock)
+            return itemProcessedStatus(true);
+
+        return doPOST(
+            "/users/<%= @school.id %>/mass_op_user_lock",
+            { id: item.id[0], lock: this.lock }
+        );
     }
 
     setLockState(event, state)
     {
         this.lock = state;
     }
-
-    processItem(item)
-    {
-        // Do nothing if the user is already in the desired locking state
-        if (item.locked == this.lock)
-            return itemProcessingOK();
-
-        return doSingleNetworkPost(
-            "/users/<%= @school.id %>/mass_op_user_lock",
-            { id: item.id, lock: this.lock }
-        );
-    }
 };
 
-class MassUserMarkForDeletion extends MassOperationBase {
+class MassUserMarkForDeletion extends MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
 
-        // the default operation (mark for deletion if not marked yet)
+        // The default operation (mark for deletion if not marked yet)
         this.operation = 0;
+    }
 
-        container.innerHTML =
+    buildInterface()
+    {
+        this.container.innerHTML =
 `<form>
 <table class="settingsChild">
 <tr>
@@ -336,11 +407,11 @@ class MassUserMarkForDeletion extends MassOperationBase {
 </table>
 </form>`;
 
-        container.querySelector("#mass_user_mark_mark")
+        this.container.querySelector("#mass_user_mark_mark")
             .addEventListener("click", event => this.setOperation(event, 0));
-        container.querySelector("#mass_user_mark_mark_force")
+        this.container.querySelector("#mass_user_mark_mark_force")
             .addEventListener("click", event => this.setOperation(event, 1));
-        container.querySelector("#mass_user_mark_unmark")
+        this.container.querySelector("#mass_user_mark_unmark")
             .addEventListener("click", event => this.setOperation(event, 2));
     }
 
@@ -349,39 +420,56 @@ class MassUserMarkForDeletion extends MassOperationBase {
         this.operation = op;
     }
 
+    start()
+    {
+        this.container.querySelector("#mass_user_mark_mark").disabled = true;
+        this.container.querySelector("#mass_user_mark_mark_force").disabled = true;
+        this.container.querySelector("#mass_user_mark_unmark").disabled = true;
+    }
+
+    finish()
+    {
+        this.container.querySelector("#mass_user_mark_mark").disabled = false;
+        this.container.querySelector("#mass_user_mark_mark_force").disabled = false;
+        this.container.querySelector("#mass_user_mark_unmark").disabled = false;
+    }
+
     processItem(item)
     {
         // Pre-filter users, avoid useless network requests. All of these checks
         // are also done on the server end.
 
-        if (item.dnd) {
+        if (item.dnd && item.dnd[0] === true) {
             // deletion prevented
-            return itemProcessingFailed("<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
+            return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
         }
 
-        if (item.rrt === null && this.operation == 2) {
+        if (item.rrt && item.rrt[0] === 0 && this.operation == 2) {
             // already unlocked
-            return itemProcessingOK();
+            return itemProcessedStatus(true);
         }
 
-        if (item.rrt !== null && this.operation == 0) {
+        if (item.rrt && item.rrt[0] !== 0 && this.operation == 0) {
             // already locked and not forced mode
-            return itemProcessingOK();
+            return itemProcessedStatus(true);
         }
 
-        return doSingleNetworkPost(
+        return doPOST(
             "/users/<%= @school.id %>/mass_op_user_mark",
-            { id: item.id, operation: this.operation }
+            { id: item.id[0], operation: this.operation }
         );
     }
 };
 
-class MassUserClearColumn extends MassOperationBase {
+class MassUserClearColumn extends MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
+    }
 
-        container.innerHTML =
+    buildInterface()
+    {
+        this.container.innerHTML =
 `<form>
 <table class="settingsChild">
 <tr>
@@ -392,7 +480,9 @@ class MassUserClearColumn extends MassOperationBase {
         <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_email">
         <label for="mass_user_clear_column_email"><%= t('users.index.mass_operations.clear_column.columns.email') %></label><br>
         <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_telephone">
-        <label for="mass_user_clear_column_telephone"><%= t('users.index.mass_operations.clear_column.columns.telephone') %></label>
+        <label for="mass_user_clear_column_telephone"><%= t('users.index.mass_operations.clear_column.columns.telephone') %></label><br>
+        <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_learner_id">
+        <label for="mass_user_clear_column_learner_id"><%= t('users.index.mass_operations.clear_column.columns.learner_id') %></label>
     </td>
 </tr>
 </table>
@@ -400,12 +490,14 @@ class MassUserClearColumn extends MassOperationBase {
 
         this.column = "eid";
 
-        container.querySelector("#mass_user_clear_column_eid")
+        this.container.querySelector("#mass_user_clear_column_eid")
             .addEventListener("click", event => this.setColumn(event, "eid"));
-        container.querySelector("#mass_user_clear_column_email")
+        this.container.querySelector("#mass_user_clear_column_email")
             .addEventListener("click", event => this.setColumn(event, "email"));
-        container.querySelector("#mass_user_clear_column_telephone")
+        this.container.querySelector("#mass_user_clear_column_telephone")
             .addEventListener("click", event => this.setColumn(event, "telephone"));
+        this.container.querySelector("#mass_user_clear_column_learner_id")
+            .addEventListener("click", event => this.setColumn(event, "learner_id"));
     }
 
     setColumn(event, col)
@@ -415,37 +507,17 @@ class MassUserClearColumn extends MassOperationBase {
 
     processItem(item)
     {
-        // Pre-filter
-        let value = null;
-
-        if (this.column == "eid")
-            value = item.eid;
-        else if (this.column == "email")
-            value = item.email;
-        else value = item.phone;
-
-        if (value === null || value === "") {
-            // already missing/empty
-            return itemProcessingOK();
-        }
-
-        return doSingleNetworkPost(
+        return doPOST(
             "/users/<%= @school.id %>/mass_op_user_clear_column",
-            { id: item.id, column: this.column }
+            { id: item.id[0], column: this.column }
         );
     }
 };
 
-class MassUsernameList extends MassOperationBase {
+class MassUsernameList extends MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
-    }
-
-    // This mass tool is special: it does everything in one call
-    isSingleShot()
-    {
-        return true;
     }
 
     processAllItems(items)
@@ -454,117 +526,194 @@ class MassUsernameList extends MassOperationBase {
         let id = [];
 
         for (const i of items)
-            id.push(i.id);
+            id.push(i[0].id[0]);
 
-        return doSingleNetworkPost(
+        return doPOST(
             "/users/<%= @school.id %>/mass_op_username_list",
-            { user_ids: id }
+            { user_ids: id, creator: "<%= current_user.uid %>" }
         );
     }
 };
 
-// JavaScript class fields support is so poor that I can't really
-// define titles, IDs and other things in classes, they must be here
-let massOperations = {
-    "lock": {
-        title: "<%= t('users.index.mass_operations.lock.title') %>",
-        hasSettings: true,
-        clazz: MassUserLocking
-    },
-
-    "mark_for_deletion": {
-        title: "<%= t('users.index.mass_operations.mark.title') %>",
-        hasSettings: true,
-        clazz: MassUserMarkForDeletion
-    },
-
+const MASS_OPERATIONS = [
 <% if @is_owner %>
-    "delete": {
+    {
+        id: "delete",
         title: "<%= t('users.index.mass_operations.delete.title') %>",
-        hasSettings: false,
-        clazz: MassUserDeletion
+        //flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: MassUserDeletion,
     },
 <% end %>
 
-    "clear_columm": {
-        title: "<%= t('users.index.mass_operations.clear_column.title') %>",
-        hasSettings: true,
-        clazz: MassUserClearColumn
+    {
+        id: "lock",
+        title: "<%= t('users.index.mass_operations.lock.title') %>",
+        flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: MassUserLocking
     },
 
-    "create_username_list": {
+    {
+        id: "mark_for_deletion",
+        title: "<%= t('users.index.mass_operations.mark.title') %>",
+        flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: MassUserMarkForDeletion
+    },
+
+    {
+        id: "clear_columm",
+        title: "<%= t('users.index.mass_operations.clear_column.title') %>",
+        flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: MassUserClearColumn
+    },
+
+    {
+        id: "create_username_list",
         title: "<%= t('users.index.mass_operations.username_list.title') %>",
-        hasSettings: false,
-        clazz: MassUsernameList
+        flags: MassOperationFlags.SINGLESHOT,
+        cls: MassUsernameList
+    },
+];
+
+const FILTER_PRESETS = {
+    locked: {
+        title: "<%= t('users.index.filters.locked_users') %>",
+        filters: [
+            {"active":true,"column":"locked","operator":"equ","value":true}
+        ],
+    },
+
+    marked_for_deletion: {
+        title: "<%= t('users.index.filters.marked_for_deletion') %>",
+        filters: [
+            {"active":true,"column":"rrt","operator":"gte","value":"2010-01-01 00:00:00"}
+        ],
+    },
+
+    unlocked_deleted: {
+        title: "<%= t('users.index.filters.marked_for_deletion_not_locked') %>",
+        filters: [
+            {"active":true,"column":"locked","operator":"neq","value":true},
+            {"active":true,"column":"rrt","operator":"equ","value":"2010-01-01 00:00:00"},
+            {"active":false,"column":"eid","operator":"equ","value":"^$"},
+        ],
+    },
+
+    marked_for_3months: {
+        title: "<%= t('users.index.filters.marked_3months') %>",
+        filters: [
+            {"active":true,"column":"rrt","operator":"lte","value":-60 * 60 * 24 * 90},
+            {"active":false,"column":"eid","operator":"equ","value":"^$"},
+        ],
+    },
+
+    marked_for_6months: {
+        title: "<%= t('users.index.filters.marked_6months') %>",
+        filters: [
+            {"active":true,"column":"rrt","operator":"lte","value":-60 * 60 * 24 * 180},
+            {"active":false,"column":"eid","operator":"equ","value":"^$"},
+        ],
+    },
+
+    marked_for_9months: {
+        title: "<%= t('users.index.filters.marked_9months') %>",
+        filters: [
+            {"active":true,"column":"rrt","operator":"lte","value":-60 * 60 * 24 * 270},
+            {"active":false,"column":"eid","operator":"equ","value":"^$"},
+        ],
+    },
+
+    marked_for_12months: {
+        title: "<%= t('users.index.filters.marked_12months') %>",
+        filters: [
+            {"active":true,"column":"rrt","operator":"lte","value":-60 * 60 * 24 * 365},
+            {"active":false,"column":"eid","operator":"equ","value":"^$"},
+        ],
     },
 };
 
-// The current columns, initially the defaults
-var currentColumns = DEFAULT_USER_COLUMNS;
+const SYNC_DELETIONS = <%= raw @synchronised_deletions %>;
 
-$(document).ready(function() {
-    new SuperTable({
-        // Unique ID for this table
-        id: "users",
+function userActions(item)
+{
+    let html = "";
 
-        // Organisation and school names, used during CSV exports
-        organisationName: "<%= LdapOrganisation.current.o %>",
-        schoolName: "<%= @school.cn %>",
+    html += `<a href="${item['link']}/edit" class="btn"><%= t('link.edit') %></a> `;
 
-        // The URL used to dynamically retrieve table data from
-        url: "/users/<%= @school.id %>/get_school_users_list",
-
-        // Where to save the table settings
-        localstoreKey: "supertable-users",
-
-        // Which locale will be used when sorting strings?
-        sortLocale: "<%= supertable_sorting_locale %>",
-
-        // Container for the table and its controls
-        container: document.getElementById("usersList"),
-
-        // Main table flags
-<% if @is_owner %>
-        flags: TABLE_FLAG_USERS | TABLE_FLAG_ENABLE_SELECTION,
-<% else %>
-        flags: TABLE_FLAG_USERS,
-<% end %>
-        // All possible columns, their titles, keys, flags, etc.
-        columnDefs: USER_COLUMN_DEFS,
-
-        // Which columns to display and in which order. You need at least one.
-        currentColumns: currentColumns,
-
-        // Default columns for this table. Used with the column editor.
-        defaultColumns: DEFAULT_USER_COLUMNS,
-
-        // The column that's initially selected on new filter rows
-        defaultFilterColumn: "name",
-
-        // Initially sorted column and its order (only SORT_ORDER_ASCENDING and SORT_ORDER_DESCENDING
-        // are valid here, any other value will be ignored and the order is assumed to be ascending).
-        // If the column does not exist, then the initial sort will be ignored completely.
-        initialSort: { column: "name", order: SORT_ORDER_ASCENDING },
-
-        // Premade filter presets
-        filterPresets: PRESETS,
-
-        // Mass operation definitions
-        massOperations: massOperations,
-
-        // Name of the objects the table contains. Currently always a plural.
-        itemName: "<%= t('users.index.users') %>",
-
+    if (item.dnd && item.dnd[0] !== true) {
 <% if @is_owner || @permit_single_user_deletion %>
-        permitUserDeletion: true,
+        let isAdmin = false,
+            message = null;
+
+        // Extra warning when deleting owners/admins
+        for (let t of item.role[0].split(",")) {
+            if (t == "owner" || t == "admin") {
+                isAdmin = true;
+                break;
+            }
+        }
+
+        if (isAdmin)
+            message = "<%= t('destroy_confirm_admin') %>";
+        else message = "<%= t('general_confirm') %>";
+
+        if (SYNC_DELETIONS.length > 0) {
+            // Extra warning about deletion synchronisations. "SYSTEM_NAMES_HERE" is the only
+            // placeholder I could came up with to stop JavaScript's string interpolation from
+            // throwing up because it couldn't find the placeholder. I tried ${name}, $(name)
+            // and a bunch of others. Of course it attempted to process them all. I need to
+            // use `` for the string because it's the only way to have multiline strings in
+            // JavaScript.
+            message += "\n\n";
+            message += `<%= t('destroy_sync_waring') %>`.replace("SYSTEM_NAMES_HERE", SYNC_DELETIONS.join(", "));
+        }
+
+        html += `<a href="${item['link']}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+<% end %>
+    }
+
+    return html;
+}
+
+window.onload = function(e) {
+
+new SuperTable(
+    // Main container DIV
+    document.getElementById("tableUsers"),
+
+    // Settings
+    {
+        id: "users",
+        csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-users`,
+
+<% if @is_owner %>
+        flags: TableFlag.ALLOW_SELECTION | TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
+<% else %>
+        flags: TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
 <% end %>
 
-        synchronisedDeletions: <%= raw @synchronised_deletions %>,
+        locale: "<%= supertable_sorting_locale %>",
 
-        // Column editor subtitle
-        columnEditorSubtitle: "<%= t('layouts.application.users') %>",
-    });
-});
+        columnDefinitions: COLUMN_DEFINITIONS,
+        columnTitles: COLUMN_TITLES,
+        columnOrder: COLUMN_ORDER,
+        userTransforms: USER_TRANSFORM_FUNCTIONS,
+        actions: userActions,
+
+<% if @is_owner %>
+        massOperations: MASS_OPERATIONS,
+<% end %>
+
+        defaultColumns: DEFAULT_COLUMNS,
+        defaultSorting: DEFAULT_SORTING,
+        filterPresets: FILTER_PRESETS,
+        initialFilters: null,
+        defaultFilterColumn: "uid",
+
+        // The URL to get the data from
+        source: "/users/<%= @school.id %>/get_school_users_list",
+    }
+);
+};
 
 </script>
 
