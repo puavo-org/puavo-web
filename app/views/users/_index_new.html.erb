@@ -593,7 +593,7 @@ const FILTER_PRESETS = {
         title: "<%= t('users.index.filters.marked_for_deletion_not_locked') %>",
         filters: [
             {"active":true,"column":"locked","operator":"neq","value":true},
-            {"active":true,"column":"rrt","operator":"equ","value":"2010-01-01 00:00:00"},
+            {"active":true,"column":"rrt","operator":"gte","value":"2010-01-01 00:00:00"},
             {"active":false,"column":"eid","operator":"equ","value":"^$"},
         ],
     },
