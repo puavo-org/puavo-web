@@ -46,6 +46,8 @@ class DevicesController < ApplicationController
 
   # New AJAX-based index for non-test environments
   def new_cool_devices_index
+    @is_owner = is_owner?
+
     @device = Device.new
 
     # Get a list of schools for the mass tool. I wanted to do this with AJAX
@@ -69,46 +71,79 @@ class DevicesController < ApplicationController
   end
 
   def get_school_devices_list
-    @raw = DevicesHelper.get_devices_in_school(@school.dn)
+    # Which attributes to retrieve? These are the defaults, they're always
+    # sent even when not requested, because basic functionality can break
+    # without them.
+    requested = Set.new(['id', 'hn', 'type', 'link'])
 
-    # convert the raw data into something we can easily parse in JavaScript
-    @devices = []
+    # Extra attributes (columns)
+    if params.include?(:fields)
+      requested += Set.new(params[:fields].split(','))
+    end
 
-    @raw.each do |dn, dev|
+    # Do the query
+    attributes = DevicesHelper.convert_requested_device_column_names(requested)
+
+    # Don't get hardware info if nothing from it was requested
+    hw_attributes = Set.new
+    want_hw_info = false
+
+    if (requested & DevicesHelper::HWINFO_ATTRS).any?
+      attributes << 'puavoDeviceHWInfo'
+      hw_attributes = DevicesHelper.convert_requested_hwinfo_column_names(requested)
+      want_hw_info = true
+    end
+
+    raw = DevicesHelper.get_devices_in_school(@school.dn, attributes)
+
+    # Convert the raw data into something we can easily parse in JavaScript
+    devices = []
+
+    raw.each do |dn, dev|
       data = {}
 
-      # common data for all devices
-      data.merge!(DevicesHelper.build_common_device_properties(dev))
+      # Mandatory
+      data[:id] = dev['puavoId'][0].to_i
+      data[:hn] = dev['puavoHostname'][0]
+      data[:type] = dev['puavoDeviceType'][0]
+      data[:link] = device_path(@school, dev['puavoId'][0])
 
-      # hardware info
-      if dev['puavoDeviceHWInfo']
-        data.merge!(DevicesHelper.extract_hardware_info(dev['puavoDeviceHWInfo']))
+      # Optional, common parts
+      data.merge!(DevicesHelper.build_common_device_properties(dev, requested))
+
+      # Hardware info
+      if want_hw_info && dev['puavoDeviceHWInfo']
+        data.merge!(DevicesHelper.extract_hardware_info(dev['puavoDeviceHWInfo'], hw_attributes))
       end
 
-      # link "template" for view/edit/delete hyperlinks
-      data.merge!({
-        link: device_path(@school, dev['puavoId'][0]),
-      })
+      # Device primary user
+      if requested.include?('user') && data[:user]
+        dn = data[:user]
 
-      # device primary user
-      if data[:user]
-        u = User.find(data[:user])
+        begin
+          u = User.find(dn)
 
-        if u
           data[:user] = {
-            link: user_path(@school, u),
-            title: "#{u[0].uid} (#{u[0].givenName} #{u[0].sn})"
+            valid: true,
+            link: user_path(school, u),
+            title: "#{u.uid} (#{u.givenName} #{u.sn})"
           }
-        else
-          data.delete(:user)
+        rescue
+          # Not found
+          data[:user] = {
+            valid: false,
+            dn: dn,
+          }
         end
       end
 
+      # Purge empty fields to minimize the amount of transferred data
       data.delete_if{ |k, v| v.nil? }
-      @devices << data
+
+      devices << data
     end
 
-    render :json => @devices
+    render :json => devices
   end
 
   # ------------------------------------------------------------------------------------------------

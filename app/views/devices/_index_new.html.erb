@@ -1,90 +1,31 @@
-<div id="devicesList"></div>
+<div class="superTable" id="tableDevices"></div>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js", skip_pipeline: true %>
-<%= javascript_include_tag 'modal_dialog', skip_pipeline: true %>
-<%= javascript_include_tag 'supertable', skip_pipeline: true %>
+<%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
+<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
+<%= javascript_include_tag 'supertable2', skip_pipeline: true %>
 <% end %>
+
+<% @is_organisation = false %>
 
 <% content_for :post_load_javascript do %>
 <script>
+"use strict;"
 
-// Table column definitions
-const DEVICE_COLUMN_DEFS = {
-<%= render :partial => 'shared/device_columns.js' %>
-};
+<%= render :partial => 'shared/device_tables_common.js' %>
 
-// Default visible columns and their order
-const DEFAULT_DEVICE_COLUMNS = [
-    ["id", false],
-    ["hn", true],
-    ["type", true],
-    ["tags", false],
-    ["mfer", true],
-    ["model", true],
-    ["serial", true],
-    ["mac", true],
-    ["desc", false],
-    ["image", true],
-    ["current_image", true],
-    ["krn_args", false],
-    ["krn_ver", false],
-    ["created", false],
-    ["modified", false],
-    ["conf", false],
-    ["user", false],
-    ["hw_time", false],
-    ["ram", false],
-    ["hd", false],
-    ["hd_ssd", false],
-    ["df_home", false],
-    ["cpu", false],
-    ["bios_vendor", false],
-    ["bios_version", false],
-    ["bios_date", false],
-    ["bat_vendor", false],
-    ["bat_serial", false],
-    ["bat_cap", false],
-    ["bat_pcnt", false],
-    ["bat_volts", false],
-    ["wifi", false],
-    ["xrandr", false],
-    ["monitors_xml", false],
-    ["abitti_version", false],
-    ["windows_license", false],
-    ["purchase_date", false],
-    ["purchase_warranty", false],
-    ["purchase_loc", false],
-    ["purchase_url", false],
-    ["purchase_support", false],
-    ["location", false],
-];
+const DEFAULT_COLUMNS = ["hn", "type", "tags", "mac", "image", "current_image", "mfer", "model", "serial"];
+const DEFAULT_SORTING = { column: "hn", dir: SortOrder.ASCENDING };
 
-const PRESETS = [
-<%= render :partial => 'shared/device_presets.js' %>
-];
-
-class MassDeviceDeletion extends MassOperationBase {
+class MassDeviceSetFieldValue extends MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
     }
 
-    processItem(item)
+    buildInterface()
     {
-        return doSingleNetworkPost(
-            "/devices/<%= @school.id %>/mass_op_device_delete",
-            { id: item.id }
-        );
-    }
-};
-
-class MassDeviceSetFieldValue extends MassOperationBase {
-    constructor(parent, container)
-    {
-        super(parent, container);
-
-        container.innerHTML = `
+        this.container.innerHTML = `
 <form>
 <table class="settingsChild">
 <tr>
@@ -114,16 +55,16 @@ class MassDeviceSetFieldValue extends MassOperationBase {
 </table>
 </form>`;
 
-        this.field = container.querySelector("#mass_device_set_field_name");
-        this.value = container.querySelector("#mass_device_set_field_value");
+        this.field = this.container.querySelector("#mass_device_set_field_name");
+        this.value = this.container.querySelector("#mass_device_set_field_value");
     }
 
     processItem(item)
     {
-        return doSingleNetworkPost(
+        return doPOST(
             "/devices/<%= @school.id %>/mass_op_device_set_field",
             {
-                id: item.id,
+                id: item.id[0],
                 field: this.field.value,
                 value: this.value.value
             }
@@ -131,148 +72,15 @@ class MassDeviceSetFieldValue extends MassOperationBase {
     }
 };
 
-class MassDevicePuavoconfEditor extends MassOperationBase {
+class MassDevicePurchaseInfo extends MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
-
-        container.innerHTML =
-`<form>
-<table class="settingsChild">
-<tr>
-    <th><label for="mass_device_pc_key"><%= t('devices.index.mass_operations.puavoconf.key') %></label></th>
-    <td>
-        <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.key') %></div>
-        <input type="text" id="mass_device_pc_key">
-    </td>
-</tr>
-<tr>
-    <th><label for="mass_device_pc_value"><%= t('devices.index.mass_operations.puavoconf.value') %></label></th>
-    <td>
-        <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.value') %></div>
-        <input type="text" id="mass_device_pc_value">
-        <p class="validityWarning"><%= t('devices.index.mass_operations.puavoconf.validity_warning') %></p>
-    </td>
-</tr>
-<tr>
-    <th><%= t('devices.index.mass_operations.puavoconf.type') %></th>
-    <td>
-        <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.type') %></div>
-        <input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_string" checked>
-        <label for="mass_device_pc_type_string"><%= t('devices.index.mass_operations.puavoconf.type_string') %></label>
-        <input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_int">
-        <label for="mass_device_pc_type_int"><%= t('devices.index.mass_operations.puavoconf.type_int') %></label>
-        <input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_bool">
-        <label for="mass_device_pc_type_bool"><%= t('devices.index.mass_operations.puavoconf.type_bool') %></label>
-    </td>
-</tr>
-<tr>
-    <th><%= t('devices.index.mass_operations.puavoconf.action') %></th>
-    <td>
-        <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.action') %></div>
-        <input type="radio" name="mass_device_pc_action" id="mass_device_pc_action_add" checked>
-        <label for="mass_device_pc_action_add"><%= t('devices.index.mass_operations.puavoconf.add') %></label><br>
-        <input type="radio" name="mass_device_pc_action" id="mass_device_pc_action_remove">
-        <label for="mass_device_pc_action_remove"><%= t('devices.index.mass_operations.puavoconf.remove') %></label>
-    </td>
-</tr>
-</table>
-</form>`;
-
-        this.key = container.querySelector("#mass_device_pc_key");
-        this.value = container.querySelector("#mass_device_pc_value");
-        this.action = 0;
-        this.type = "string";
-
-        container.querySelector("#mass_device_pc_action_add")
-            .addEventListener("click", event => this.setAction(event, 0));
-        container.querySelector("#mass_device_pc_action_remove")
-            .addEventListener("click", event => this.setAction(event, 1));
-
-        container.querySelector("#mass_device_pc_type_string")
-            .addEventListener("click", event => this.setType(event, "string"));
-        container.querySelector("#mass_device_pc_type_int")
-            .addEventListener("click", event => this.setType(event, "int"));
-        container.querySelector("#mass_device_pc_type_bool")
-            .addEventListener("click", event => this.setType(event, "bool"));
     }
 
-    setAction(event, action)
+    buildInterface()
     {
-        this.action = action;
-    }
-
-    setType(event, type)
-    {
-        this.type = type;
-    }
-
-    processItem(item)
-    {
-        return doSingleNetworkPost(
-            "/devices/<%= @school.id %>/mass_op_device_edit_puavoconf",
-            {
-                id: item.id,
-                key: this.key.value,
-                value: this.value.value,
-                type: this.type,
-                action: this.action
-            }
-        );
-    }
-};
-
-class MassDeviceChangeSchool extends MassOperationBase {
-    constructor(parent, container)
-    {
-        super(parent, container);
-
-        container.innerHTML =
-`<form>
-<table class="settingsChild">
-<tr>
-    <th><label for="mass_device_change_school"><%= t('devices.index.mass_operations.change_school.school_title') %></label></th>
-    <td>
-        <div class="mobileTitle"><%= t('devices.index.mass_operations.change_school.school_title') %></div>
-        <select id="mass_device_change_school">
-<% @school_list.each do |s| %>
-            <option data-dn="<%= s[0] %>"><%= s[1] %> (<%= s[2] %>)</option>
-<% end%>
-        </select>
-    </td>
-</tr>
-</table>
-</form>`;
-
-        this.newSchoolDN = "<%= @school_list.first[0] %>";
-
-        container.querySelector("#mass_device_change_school")
-            .addEventListener("change", event => this.changeNewSchool(event));
-    }
-
-    changeNewSchool(event)
-    {
-        this.newSchoolDN = event.target.children[event.target.selectedIndex].dataset.dn;
-    }
-
-    processItem(item)
-    {
-        return doSingleNetworkPost(
-            "/devices/<%= @school.id %>/mass_op_device_change_school",
-            {
-                id: item.id,
-                school_dn: this.newSchoolDN
-            }
-        );
-    }
-};
-
-class MassDevicePurchaseInfo extends MassOperationBase {
-    constructor(parent, container)
-    {
-        super(parent, container);
-
-        container.innerHTML = `
+        this.container.innerHTML = `
 <form>
 <p style="margin: 0; padding: 10px; font-weight: bold;"><%= t('devices.index.mass_operations.purchase_info.validity_warning') %></p>
 <table class="settingsChild">
@@ -339,34 +147,34 @@ class MassDevicePurchaseInfo extends MassOperationBase {
         };
 
         // setup event handling
-        container.querySelector("#mass_device_purchase_info_purchase_date")
+        this.container.querySelector("#mass_device_purchase_info_purchase_date")
             .addEventListener("click", event => this.checkboxClicked(event, "purchaseDate"));
 
-        container.querySelector("#mass_device_purchase_info_warranty_end_date")
+        this.container.querySelector("#mass_device_purchase_info_warranty_end_date")
             .addEventListener("click", event => this.checkboxClicked(event, "purchaseWarranty"));
 
-        container.querySelector("#mass_device_purchase_info_purchase_location")
+        this.container.querySelector("#mass_device_purchase_info_purchase_location")
             .addEventListener("click", event => this.checkboxClicked(event, "purchaseLocation"));
 
-        container.querySelector("#mass_device_purchase_info_purchase_url")
+        this.container.querySelector("#mass_device_purchase_info_purchase_url")
             .addEventListener("click", event => this.checkboxClicked(event, "purchaseUrl"));
 
-        container.querySelector("#mass_device_purchase_info_contact")
+        this.container.querySelector("#mass_device_purchase_info_contact")
             .addEventListener("click", event => this.checkboxClicked(event, "purchaseSupport"));
 
-        container.querySelector("#mass_device_purchase_info_purchase_date_value")
+        this.container.querySelector("#mass_device_purchase_info_purchase_date_value")
             .addEventListener("input", event => this.dateChanged(event, "purchaseDate"));
 
-        container.querySelector("#mass_device_purchase_info_warranty_end_date_value")
+        this.container.querySelector("#mass_device_purchase_info_warranty_end_date_value")
             .addEventListener("input", event => this.dateChanged(event, "purchaseWarranty"));
 
-        container.querySelector("#mass_device_purchase_info_purchase_location_value")
+        this.container.querySelector("#mass_device_purchase_info_purchase_location_value")
             .addEventListener("input", event => this.textChanged(event, "purchaseLocation"));
 
-        container.querySelector("#mass_device_purchase_info_purchase_url_value")
+        this.container.querySelector("#mass_device_purchase_info_purchase_url_value")
             .addEventListener("input", event => this.textChanged(event, "purchaseUrl"));
 
-        container.querySelector("#mass_device_purchase_info_contact_value")
+        this.container.querySelector("#mass_device_purchase_info_contact_value")
             .addEventListener("input", event => this.textChanged(event, "purchaseSupport"));
     }
 
@@ -454,115 +262,267 @@ class MassDevicePurchaseInfo extends MassOperationBase {
 
         if (!mustSendRequest) {
             // nothing actually changed (or nothing was checked?)
-            return itemProcessingOK();
+            return itemProcessedStatus(true);
         }
 
         //console.log(mustSendRequest, params);
 
-        return doSingleNetworkPost(
+        return doPOST(
             "/devices/<%= @school.id %>/mass_op_device_purchase_info",
             {
-                id: item.id,
+                id: item.id[0],
                 purchase_params: params
             }
         );
     }
 };
 
-// JavaScript class fields support is so poor that I can't really
-// define titles, IDs and other things in classes, they must be here
-let massOperations = {
-    "change_school": {
-        title: "<%= t('devices.index.mass_operations.change_school.title') %>",
-        hasSettings: true,
-        clazz: MassDeviceChangeSchool
-    },
+class MassDevicePuavoconfEditor extends MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+    }
 
-    "puavoconf_edit": {
-        title: "<%= t('devices.index.mass_operations.puavoconf.title') %>",
-        hasSettings: true,
-        clazz: MassDevicePuavoconfEditor
-    },
+    buildInterface()
+    {
+        this.container.innerHTML =
+`<form>
+<table class="settingsChild">
+<tr>
+    <th><label for="mass_device_pc_key"><%= t('devices.index.mass_operations.puavoconf.key') %></label></th>
+    <td>
+        <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.key') %></div>
+        <input type="text" id="mass_device_pc_key">
+    </td>
+</tr>
+<tr>
+    <th><label for="mass_device_pc_value"><%= t('devices.index.mass_operations.puavoconf.value') %></label></th>
+    <td>
+        <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.value') %></div>
+        <input type="text" id="mass_device_pc_value">
+        <p class="validityWarning"><%= t('devices.index.mass_operations.puavoconf.validity_warning') %></p>
+    </td>
+</tr>
+<tr>
+    <th><%= t('devices.index.mass_operations.puavoconf.type') %></th>
+    <td>
+        <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.type') %></div>
+        <input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_string" checked>
+        <label for="mass_device_pc_type_string"><%= t('devices.index.mass_operations.puavoconf.type_string') %></label>
+        <input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_int">
+        <label for="mass_device_pc_type_int"><%= t('devices.index.mass_operations.puavoconf.type_int') %></label>
+        <input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_bool">
+        <label for="mass_device_pc_type_bool"><%= t('devices.index.mass_operations.puavoconf.type_bool') %></label>
+    </td>
+</tr>
+<tr>
+    <th><%= t('devices.index.mass_operations.puavoconf.action') %></th>
+    <td>
+        <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.action') %></div>
+        <input type="radio" name="mass_device_pc_action" id="mass_device_pc_action_add" checked>
+        <label for="mass_device_pc_action_add"><%= t('devices.index.mass_operations.puavoconf.add') %></label><br>
+        <input type="radio" name="mass_device_pc_action" id="mass_device_pc_action_remove">
+        <label for="mass_device_pc_action_remove"><%= t('devices.index.mass_operations.puavoconf.remove') %></label>
+    </td>
+</tr>
+</table>
+</form>`;
 
-    "set_field": {
-        title: "<%= t('devices.index.mass_operations.set_field.title') %>",
-        hasSettings: true,
-        clazz: MassDeviceSetFieldValue
-    },
+        this.key = this.container.querySelector("#mass_device_pc_key");
+        this.value = this.container.querySelector("#mass_device_pc_value");
+        this.action = 0;
+        this.type = "string";
 
-    "purchase_info": {
-        title: "<%= t('devices.index.mass_operations.purchase_info.title') %>",
-        hasSettings: true,
-        clazz: MassDevicePurchaseInfo
-    },
+        this.container.querySelector("#mass_device_pc_action_add")
+            .addEventListener("click", event => this.setAction(event, 0));
+        this.container.querySelector("#mass_device_pc_action_remove")
+            .addEventListener("click", event => this.setAction(event, 1));
 
-    "delete": {
-        title: "<%= t('devices.index.mass_operations.delete.title') %>",
-        hasSettings: false,
-        clazz: MassDeviceDeletion
-    },
+        this.container.querySelector("#mass_device_pc_type_string")
+            .addEventListener("click", event => this.setType(event, "string"));
+        this.container.querySelector("#mass_device_pc_type_int")
+            .addEventListener("click", event => this.setType(event, "int"));
+        this.container.querySelector("#mass_device_pc_type_bool")
+            .addEventListener("click", event => this.setType(event, "bool"));
+    }
+
+    setAction(event, action)
+    {
+        this.action = action;
+    }
+
+    setType(event, type)
+    {
+        this.type = type;
+    }
+
+    processItem(item)
+    {
+        return doPOST(
+            "/devices/<%= @school.id %>/mass_op_device_edit_puavoconf",
+            {
+                id: item.id[0],
+                key: this.key.value,
+                value: this.value.value,
+                type: this.type,
+                action: this.action
+            }
+        );
+    }
 };
 
-// The current columns, initially the defaults
-var currentColumns = DEFAULT_DEVICE_COLUMNS;
+class MassDeviceChangeSchool extends MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+    }
 
-$(document).ready(function() {
-    new SuperTable({
-        // Unique ID for this table
+    buildInterface()
+    {
+        this.container.innerHTML =
+`<form>
+<table class="settingsChild">
+<tr>
+    <th><label for="mass_device_change_school"><%= t('devices.index.mass_operations.change_school.school_title') %></label></th>
+    <td>
+        <div class="mobileTitle"><%= t('devices.index.mass_operations.change_school.school_title') %></div>
+        <select id="mass_device_change_school">
+<% @school_list.each do |s| %>
+            <option data-dn="<%= s[0] %>"><%= s[1] %> (<%= s[2] %>)</option>
+<% end%>
+        </select>
+    </td>
+</tr>
+</table>
+</form>`;
+
+        this.newSchoolDN = "<%= @school_list.first[0] %>";
+
+        this.container.querySelector("#mass_device_change_school")
+            .addEventListener("change", event => this.changeNewSchool(event));
+    }
+
+    changeNewSchool(event)
+    {
+        this.newSchoolDN = event.target.children[event.target.selectedIndex].dataset.dn;
+    }
+
+    processItem(item)
+    {
+        return doPOST(
+            "/devices/<%= @school.id %>/mass_op_device_change_school",
+            {
+                id: item.id[0],
+                school_dn: this.newSchoolDN
+            }
+        );
+    }
+};
+
+class MassDeviceDeletion extends MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+    }
+
+    processItem(item)
+    {
+        return doPOST(
+            "/devices/<%= @school.id %>/mass_op_device_delete",
+            { id: item.id[0] }
+        );
+    }
+};
+
+const MASS_OPERATIONS = [
+    {
+        id: "set_field",
+        title: "<%= t('devices.index.mass_operations.set_field.title') %>",
+        flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: MassDeviceSetFieldValue
+    },
+
+    {
+        id: "purchase_info",
+        title: "<%= t('devices.index.mass_operations.purchase_info.title') %>",
+        flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: MassDevicePurchaseInfo
+    },
+
+    {
+        id: "puavoconf_edit",
+        title: "<%= t('devices.index.mass_operations.puavoconf.title') %>",
+        flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: MassDevicePuavoconfEditor
+    },
+
+    {
+        id: "change_school",
+        title: "<%= t('devices.index.mass_operations.change_school.title') %>",
+        flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: MassDeviceChangeSchool
+    },
+
+    {
+        id: "delete",
+        title: "<%= t('devices.index.mass_operations.delete.title') %>",
+        cls: MassDeviceDeletion
+    },
+];
+
+function userActions(item)
+{
+    let html = "";
+
+    html += `<a href="${item['link']}/edit" class="btn"><%= t('link.edit') %></a> `;
+
+    let message = "<%= t('general_confirm') %>";
+
+    html += `<a href="${item['link']}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+
+    return html;
+}
+
+window.onload = function(e) {
+
+new SuperTable(
+    // Main container DIV
+    document.getElementById("tableDevices"),
+
+    // Settings
+    {
         id: "devices",
+        csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-devices`,
 
-        // Organisation and school names, used during CSV exports
-        organisationName: "<%= LdapOrganisation.current.o %>",
-        schoolName: "<%= @school.cn %>",
-
-        // The URL used to dynamically retrieve table data from
-        url: "/devices/<%= @school.id %>/get_school_devices_list",
-
-        // Where to save the table settings
-        localstoreKey: "supertable-devices",
-
-        // Which locale will be used when sorting strings?
-        sortLocale: "<%= supertable_sorting_locale %>",
-
-        // Container for the table and its controls
-        container: document.getElementById("devicesList"),
-
-        // Main table flags
-<% if current_user && current_user.organisation_owner? %>
-        flags: TABLE_FLAG_DEVICES | TABLE_FLAG_ENABLE_SELECTION,
+<% if @is_owner %>
+        flags: TableFlag.ALLOW_SELECTION | TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
 <% else %>
-        flags: TABLE_FLAG_DEVICES,
+        flags: TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
 <% end %>
-        // All possible columns, their titles, keys, flags, etc.
-        columnDefs: DEVICE_COLUMN_DEFS,
 
-        // Which columns to display and in which order. You need at least one.
-        currentColumns: currentColumns,
+        locale: "<%= supertable_sorting_locale %>",
 
-        // Default columns for this table. Used with the column editor.
-        defaultColumns: DEFAULT_DEVICE_COLUMNS,
+        columnDefinitions: COLUMN_DEFINITIONS,
+        columnTitles: COLUMN_TITLES,
+        columnOrder: COLUMN_ORDER,
+        userTransforms: USER_TRANSFORM_FUNCTIONS,
+        actions: userActions,
 
-        // The column that's initially selected on new filter rows
+<% if @is_owner %>
+        massOperations: MASS_OPERATIONS,
+<% end %>
+
+        defaultColumns: DEFAULT_COLUMNS,
+        defaultSorting: DEFAULT_SORTING,
+        filterPresets: FILTER_PRESETS,
+        initialFilters: null,
         defaultFilterColumn: "hn",
 
-        // Initially sorted column and its order (only SORT_ORDER_ASCENDING and SORT_ORDER_DESCENDING
-        // are valid here, any other value will be ignored and the order is assumed to be ascending).
-        // If the column does not exist, then the initial sort will be ignored completely.
-        initialSort: { column: "hn", order: SORT_ORDER_ASCENDING },
-
-        // Premade filter presets
-        filterPresets: PRESETS,
-
-        // Mass operation definitions
-        massOperations: massOperations,
-
-        // Name of the objects the table contains. Currently always a plural.
-        itemName: "<%= t('devices.index.devices') %>",
-
-        // Column editor subtitle
-        columnEditorSubtitle: "<%= t('layouts.application.devices') %>",
-    });
-});
+        // The URL to get the data from
+        source: "/devices/<%= @school.id %>/get_school_devices_list",
+    }
+);
+};
 
 </script>
 <% end %>

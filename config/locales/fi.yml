@@ -896,6 +896,8 @@ fi:
         have_monitors_xml: "Laitteella on näyttöasetuksia (XML)"
         have_xrandr: "Laitteella on xrandr-asetuksia"
         have_hwinfo: "Laitteesta on saatu laitetiedot"
+        has_primary_user: "Laitteelle on määritetty ensisijainen käyttäjä"
+        has_invalid_primary_user: "Laitteelle on määritetty virheellinen ensisijainen käyttäjä"
       mass_operations:
         change_school:
           title: "Vaihda koulua..."
@@ -961,6 +963,11 @@ fi:
       server: Palvelin
       netstand: Nettikulma
       infotv: Info-tv
+      switch: Kytkin
+      printer: Tulostin
+      projector: Projektori
+      webcam: Webcam
+      other: Muu
 
   # Device hardware info
   hwinfo:

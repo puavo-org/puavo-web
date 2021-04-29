@@ -230,7 +230,7 @@ en:
       kernel_args: "Kernel arguments"
       kernel_version: "Kernel version"
       primary_user: "Primary User"
-      hwinfo_time: "Hardware info received"
+      hwinfo_time: "Hardware info received at"
       hwinfo_ram_size: "RAM"
       hwinfo_hd_size: "Hard drive"
       hwinfo_is_ssd: "SSD?"
@@ -896,6 +896,8 @@ en:
         have_monitors_xml: "Device has display settings (XML)"
         have_xrandr: "Device has xrandr settings"
         have_hwinfo: "Have received hardware information"
+        has_primary_user: "Device has a primary user"
+        has_invalid_primary_user: "Device has an invalid primary user"
       mass_operations:
         change_school:
           title: "Change school..."
@@ -961,6 +963,11 @@ en:
       server: Server
       netstand: Netstand
       infotv: Info-tv
+      switch: Switch
+      printer: Printer
+      projector: Projector
+      webcam: Webcam
+      other: Other
 
   # Device hardware info
   hwinfo:

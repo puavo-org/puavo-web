@@ -1,0 +1,633 @@
+// Table column definitions
+const COLUMN_DEFINITIONS = {
+    abitti_version: {
+        key: "abitti_version",
+        title: "<%= t('columns.devices.abitti_version') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.INTEGER,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    bat_cap: {
+        key: "bat_cap",
+        title: "<%= t('columns.devices.bat_cap') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.INTEGER,
+        defaultOperator: FilterOperator.LTE,
+    },
+
+    bat_pcnt: {
+        key: "bat_pcnt",
+        title: "<%= t('columns.devices.bat_pcnt') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.FLOAT,
+        defaultOperator: FilterOperator.LTE,
+    },
+
+    bat_volts: {
+        key: "bat_volts",
+        title: "<%= t('columns.devices.bat_volts') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.FLOAT,
+        defaultOperator: FilterOperator.LTE,
+    },
+
+    bat_serial: {
+        key: "bat_serial",
+        title: "<%= t('columns.devices.bat_serial') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    bat_vendor: {
+        key: "bat_vendor",
+        title: "<%= t('columns.devices.bat_vendor') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    bios_date: {
+        key: "bios_date",
+        title: "<%= t('columns.devices.bios_date') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    bios_vendor: {
+        key: "bios_vendor",
+        title: "<%= t('columns.devices.bios_vendor') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    bios_version: {
+        key: "bios_version",
+        title: "<%= t('columns.devices.bios_version') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    conf: {
+        key: "conf",
+        title: "<%= t('columns.puavoconf') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    cpu: {
+        key: "cpu",
+        title: "<%= t('columns.devices.cpu') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    created: {
+        key: "created",
+        title: "<%= t('columns.created') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.UNIXTIME,
+        defaultOperator: FilterOperator.GTE,
+    },
+
+    current_image: {
+        key: "current_image",
+        title: "<%= t('columns.devices.current_image') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+    },
+
+    desc: {
+        key: "desc",
+        title: "<%= t('columns.devices.description') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    df_home: {
+        key: "df_home",
+        title: "<%= t('columns.devices.df_home') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.INTEGER,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    hd: {
+        key: "hd",
+        title: "<%= t('columns.devices.hwinfo_hd_size') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.INTEGER,
+        defaultOperator: FilterOperator.LT,
+    },
+
+    hd_ssd: {
+        key: "hd_ssd",
+        title: "<%= t('columns.devices.hwinfo_is_ssd') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.BOOL,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    hn: {
+        key: "hn",
+        title: "<%= t('columns.devices.hostname') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    hw_time: {
+        key: "hw_time",
+        title: "<%= t('columns.devices.hwinfo_time') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.UNIXTIME,
+        defaultOperator: FilterOperator.LTE,
+    },
+
+    id: {
+        key: "id",
+        title: "<%= t('columns.puavoid') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.INTEGER,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    image: {
+        key: "image",
+        title: "<%= t('columns.devices.image') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    krn_args: {
+        key: "krn_args",
+        title: "<%= t('columns.devices.kernel_args') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    krn_ver: {
+        key: "krn_ver",
+        title: "<%= t('columns.devices.kernel_version') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    location: {
+        key: "location",
+        title: "<%= t('columns.devices.location') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    mac: {
+        key: "mac",
+        title: "<%= t('columns.devices.mac') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    mfer: {
+        key: "mfer",
+        title: "<%= t('columns.devices.manufacturer') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    model: {
+        key: "model",
+        title: "<%= t('columns.devices.model') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    modified: {
+        key: "modified",
+        title: "<%= t('columns.modified') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.UNIXTIME,
+        defaultOperator: FilterOperator.LTE,
+    },
+
+    monitors_xml: {
+        key: "monitors_xml",
+        title: "<%= t('columns.devices.monitors_xml') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+<% if @is_organisation %>
+    school: {
+        key: "school",
+        title: "<%= t('columns.school') %>",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        defaultOperator: FilterOperator.EQU,
+    },
+<% end %>
+
+    user: {
+        key: "user",
+        title: "<%= t('columns.devices.primary_user') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    purchase_date: {
+        key: "purchase_date",
+        title: "<%= t('columns.devices.purchase_date') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.UNIXTIME,
+        defaultOperator: FilterOperator.LTE,
+    },
+
+    purchase_loc: {
+        key: "purchase_loc",
+        title: "<%= t('columns.devices.purchase_loc') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    purchase_support: {
+        key: "purchase_support",
+        title: "<%= t('columns.devices.purchase_support') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    purchase_url: {
+        key: "purchase_url",
+        title: "<%= t('columns.devices.purchase_url') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    purchase_warranty: {
+        key: "purchase_warranty",
+        title: "<%= t('columns.devices.purchase_warranty') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.UNIXTIME,
+        defaultOperator: FilterOperator.LTE,
+    },
+
+    ram: {
+        key: "ram",
+        title: "<%= t('columns.devices.hwinfo_ram_size') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.INTEGER,
+        defaultOperator: FilterOperator.LT,
+    },
+
+    serial: {
+        key: "serial",
+        title: "<%= t('columns.devices.serial') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    tags: {
+        key: "tags",
+        title: "<%= t('columns.devices.tags') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    type: {
+        key: "type",
+        title: "<%= t('columns.devices.type') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    wifi: {
+        key: "wifi",
+        title: "<%= t('columns.devices.wifi') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    windows_license: {
+        key: "windows_license",
+        title: "<%= t('columns.devices.has_windows_license') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.BOOL,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    xrandr: {
+        key: "xrandr",
+        title: "<%= t('columns.devices.xrandr') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+};
+
+// Localized column titles
+const COLUMN_TITLES = {
+    abitti_version: "<%= t('columns.devices.abitti_version') %>",
+    bat_cap: "<%= t('columns.devices.bat_cap') %>",
+    bat_pcnt: "<%= t('columns.devices.bat_pcnt') %>",
+    bat_volts: "<%= t('columns.devices.bat_volts') %>",
+    bat_serial: "<%= t('columns.devices.bat_serial') %>",
+    bat_vendor: "<%= t('columns.devices.bat_vendor') %>",
+    bios_date: "<%= t('columns.devices.bios_date') %>",
+    bios_vendor: "<%= t('columns.devices.bios_vendor') %>",
+    bios_version: "<%= t('columns.devices.bios_version') %>",
+    conf: "<%= t('columns.puavoconf') %>",
+    cpu: "<%= t('columns.devices.cpu') %>",
+    created: "<%= t('columns.created') %>",
+    current_image: "<%= t('columns.devices.current_image') %>",
+    desc: "<%= t('columns.devices.description') %>",
+    df_home: "<%= t('columns.devices.df_home') %>",
+    hd: "<%= t('columns.devices.hwinfo_hd_size') %>",
+    hd_ssd: "<%= t('columns.devices.hwinfo_is_ssd') %>",
+    hn: "<%= t('columns.devices.hostname') %>",
+    hw_time: "<%= t('columns.devices.hwinfo_time') %>",
+    id: "<%= t('columns.puavoid') %>",
+    image: "<%= t('columns.devices.image') %>",
+    krn_args: "<%= t('columns.devices.kernel_args') %>",
+    krn_ver: "<%= t('columns.devices.kernel_version') %>",
+    location: "<%= t('columns.devices.location') %>",
+    mac: "<%= t('columns.devices.mac') %>",
+    mfer: "<%= t('columns.devices.manufacturer') %>",
+    model: "<%= t('columns.devices.model') %>",
+    modified: "<%= t('columns.modified') %>",
+    monitors_xml: "<%= t('columns.devices.monitors_xml') %>",
+<% if @is_organisation %>
+    school: "<%= t('columns.school') %>",
+<% end %>
+    user: "<%= t('columns.devices.primary_user') %>",
+    purchase_date: "<%= t('columns.devices.purchase_date') %>",
+    purchase_loc: "<%= t('columns.devices.purchase_loc') %>",
+    purchase_support: "<%= t('columns.devices.purchase_support') %>",
+    purchase_url: "<%= t('columns.devices.purchase_url') %>",
+    purchase_warranty: "<%= t('columns.devices.purchase_warranty') %>",
+    ram: "<%= t('columns.devices.hwinfo_ram_size') %>",
+    serial: "<%= t('columns.devices.serial') %>",
+    tags: "<%= t('columns.devices.tags') %>",
+    type: "<%= t('columns.devices.type') %>",
+    wifi: "<%= t('columns.devices.wifi') %>",
+    windows_license: "<%= t('columns.devices.has_windows_license') %>",
+    xrandr: "<%= t('columns.devices.xrandr') %>",
+};
+
+// The default order for columns
+const COLUMN_ORDER = [
+<% if @is_organisation %>
+    "school",
+    "hw_time",
+<% end %>
+    "id",
+    "hn",
+    "type",
+    "tags",
+    "mfer",
+    "model",
+    "serial",
+    "mac",
+    "desc",
+    "image",
+    "current_image",
+    "krn_args",
+    "krn_ver",
+    "created",
+    "modified",
+    "conf",
+    "user",
+<% unless @is_organisation %>
+    "hw_time",
+<% end %>
+    "ram",
+    "hd",
+    "hd_ssd",
+    "df_home",
+    "cpu",
+    "bios_vendor",
+    "bios_version",
+    "bios_date",
+    "bat_vendor",
+    "bat_serial",
+    "bat_cap",
+    "bat_pcnt",
+    "bat_volts",
+    "wifi",
+    "xrandr",
+    "monitors_xml",
+    "abitti_version",
+    "windows_license",
+    "purchase_date",
+    "purchase_warranty",
+    "purchase_loc",
+    "purchase_url",
+    "purchase_support",
+    "location",
+];
+
+// Localized device types
+const DEVICE_TYPES = {
+    thinclient: "<%= t('host.types.thinclient') %>",
+    fatclient: "<%= t('host.types.fatclient') %>",
+    laptop: "<%= t('host.types.laptop') %>",
+    workstation: "<%= t('host.types.workstation') %>",
+    server: "<%= t('host.types.server') %>",
+    netstand: "<%= t('host.types.netstand') %>",
+    infotv: "<%= t('host.types.infotv') %>",
+    switch: "<%= t('host.types.switch') %>",
+    printer: "<%= t('host.types.printer') %>",
+    projector: "<%= t('host.types.projector') %>",
+    webcam: "<%= t('host.types.webcam') %>",
+    other: "<%= t('host.types.other') %>",
+};
+
+const USER_TRANSFORM_FUNCTIONS = {
+    abitti_version: function(entry) {
+        const v = entry.abitti_version;
+        let display, value;
+
+        if (v == "latest") {
+            display = "latest";
+            value = 9999999;        // CSV exporting unfortunately reveals this hack
+        } else {
+            display = v;
+            value = parseInt(v, 10);
+        }
+
+        return [display, value];
+    },
+
+    bat_cap: function(entry) {
+        return [
+            `${entry.bat_cap}%`,
+            entry.bat_cap,
+        ];
+    },
+
+    bat_pcnt: function(entry) {
+        return [
+            `${entry.bat_cap}%`,
+            entry.bat_cap,
+        ];
+    },
+
+    bat_volts: function(entry) {
+        return [
+            `${entry.bat_volts}V`,
+            entry.bat_volts,
+        ];
+    },
+
+    desc: function(entry) {
+        return [
+            escapeHTML(entry.desc),
+            entry.desc,
+        ]
+    },
+
+    hn: function(entry) {
+        return [
+            `<a href="${entry.link}">${escapeHTML(entry.hn)}</a>`,
+            entry.hn
+        ];
+    },
+
+    purchase_date: function(entry) {
+        const ts = convertTimestampDateOnly(entry.purchase_date);
+
+        return [
+            ts[0] === true ? ts[1] : "?",
+            entry.purchase_date
+        ];
+    },
+
+    purchase_warranty: function(entry) {
+        const ts = convertTimestampDateOnly(entry.purchase_warranty);
+
+        return [
+            ts[0] === true ? ts[1] : "?",
+            entry.purchase_warranty
+        ];
+    },
+
+    school: function(entry) {
+        // Makes filtering by school name work as expected, but the exported CSV
+        // will contain display names. Can't have everything.
+        return [
+            entry.school[1],
+            entry.school[1]
+        ];
+    },
+
+    type: function(entry) {
+        if (entry.type in DEVICE_TYPES)
+            return [DEVICE_TYPES[entry.type], entry.type];
+
+        return [entry.type, entry.type];
+    },
+
+    user: function(entry) {
+        if (entry.user.valid) {
+            return [
+                `<a href="${entry.user.link}">${entry.user.title}</a>`,
+                entry.user.title,
+            ]
+        } else {
+            return [
+                `<span class="missingData">${entry.user.dn}</span>`,
+                entry.user.dn,
+            ]
+        }
+    },
+};
+
+const FILTER_PRESETS = [
+    {
+        title: "<%= t('devices.index.filters.uses_trusty') %>",
+        id: "uses_trusty",
+        filters: [
+            {"active":true,"column":"current_image","operator":"equ","value":"trusty"},
+            {"active":false,"column":"image","operator":"equ","value":"^$"}
+        ],
+    },
+
+    {
+        title: "<%= t('devices.index.filters.uses_stretch') %>",
+        id: "uses_stretch",
+        filters: [
+            {"active":true,"column":"current_image","operator":"equ","value":"stretch"},
+            {"active":false,"column":"image","operator":"equ","value":"^$"}
+        ],
+    },
+
+    {
+        title: "<%= t('devices.index.filters.uses_buster') %>",
+        id: "uses_buster",
+        filters: [
+            {"active":true,"column":"current_image","operator":"equ","value":"buster"},
+            {"active":false,"column":"image","operator":"equ","value":"^$"}
+        ],
+    },
+
+    {
+        title: "<%= t('devices.index.filters.have_monitors_xml') %>",
+        id: "has_monitors_xml",
+        filters: [
+            {"active":true,"column":"monitors_xml","operator":"neq","value":"^$"},
+        ],
+    },
+
+    {
+        title: "<%= t('devices.index.filters.have_xrandr') %>",
+        id: "has_xrandr",
+        filters: [
+            {"active":true,"column":"xrandr","operator":"neq","value":"^$"},
+        ],
+    },
+
+    {
+        title: "<%= t('devices.index.filters.have_hwinfo') %>",
+        id: "has_hwinfo",
+        filters: [
+            {"active":true,"column":"hw_time","operator":"gte","value":"2010-01-01 00:00:00"},
+        ],
+    },
+
+    {
+        title: "<%= t('devices.index.filters.has_primary_user') %>",
+        id: "has_hwinfo",
+        filters: [
+            {"active":true,"column":"user","operator":"neq","value":"^$"},
+        ],
+    },
+
+    {
+        title: "<%= t('devices.index.filters.has_invalid_primary_user') %>",
+        id: "has_hwinfo",
+        filters: [
+            {"active":true,"column":"user","operator":"equ","value":"puavoId="},
+        ],
+    },
+];
