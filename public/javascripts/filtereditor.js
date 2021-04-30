@@ -524,7 +524,7 @@ validateFilters()
                 case ColumnType.STRING: {
                     let v = filter.value.toString().trim();
 
-                    if (v.length == 0 || filter == "^$")
+                    if (v.length == 0 || v == "^$")
                         v = _tr('empty');
 
                     filter.displayValue = v;
