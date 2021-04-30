@@ -2841,7 +2841,7 @@ buildTable()
         // This empty checkbox column in the header would be a nice place for some
         // button. But all the relevant buttons are already located in the control
         // box above. So for now, it's empty. Reserved for the future.
-        html += `<th class="width-0"></th>`;
+        html += `<th class="width-0 stStickyHeader"></th>`;
     }
 
     const currentColumn = this.settings.sorting.column;
@@ -2860,6 +2860,8 @@ buildTable()
         const def = this.settings.columnDefinitions[key];
         let classes = [],
             data = [];
+
+        classes.push("stStickyHeader");
 
         // What CSS classes to add?
         if (def.flags & ColumnFlag.SORTABLE) {
@@ -2914,7 +2916,7 @@ buildTable()
 
     if (haveActions) {
         // The actions column is always the last. It cannot be sorted or dragged around.
-        html += `<th>${_tr('column_actions')}</th>`;
+        html += `<th class="stStickyHeader">${_tr('column_actions')}</th>`;
     }
 
     html += "</tr></thead>";

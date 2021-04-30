@@ -174,7 +174,18 @@ SUPERTABLES
 .no-text-selection { user-select: none; }
 .no-pointer-events { pointer-events: none; }
 .margin-right-10 { margin-right: 10px; }
-.sticky { position: sticky; top: 0; }
+
+.stStickyHeader {
+  position: sticky;
+  top: 38px;  /* WARNING! Empirically determined! Will break in the future! */
+}
+
+@media #{$screen-breakpoint-one} {
+  .stStickyHeader {
+    position: sticky;
+    top: 0;
+  }
+}
 
 .stUserMarkedForDeletion {
   background: $markedForDeletionBackground;
