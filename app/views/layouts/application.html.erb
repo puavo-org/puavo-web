@@ -30,19 +30,23 @@ I18n.locale = "<%= I18n.locale %>";
         <% else %>
         <li class="asFlex haveDropdown"><span class="menuTitle"><%= current_organisation.name %></span>
           <ul class="dropdown">
-            <li><%= link_to t('.about'),  organisation_path %></li>
-            <li><%= link_to t('external_services.title'),  organisation_external_services_path %></li>
-            <li><%= link_to t('.ldap_services'),  ldap_services_path %></li>
-            <% if Puavo::EXTERNAL_FILES %>
-            <li><%= link_to t('.external_files'), external_files_path %></li>
-            <% end %>
+            <li><%= link_to t('.about'), organisation_path %></li>
+            <li class="org-separator"></li>
             <% if Puavo::CONFIG %>
-            <li><%= link_to t('.printers'), "/devices/printers" %></li>
             <li><%= link_to t('.servers'), "/devices/servers" %></li>
+            <li><%= link_to t('.printers'), "/devices/printers" %></li>
             <li><%= link_to t('.device_statistics'), "/device_statistics" %></li>
             <% end %>
             <li><%= link_to t('.wlan'),  wlan_organisation_path %></li>
-            <li><%= link_to t('.owners'),  owners_organisation_path %></li>
+            <li class="org-separator"></li>
+            <li><%= link_to t('.owners'), owners_organisation_path %></li>
+            <li class="org-separator"></li>
+            <li><%= link_to t('external_services.title'),  organisation_external_services_path %></li>
+            <% if Puavo::EXTERNAL_FILES %>
+            <li><%= link_to t('.external_files'), external_files_path %></li>
+            <% end %>
+            <li class="org-separator"></li>
+            <li><%= link_to t('.ldap_services'),  ldap_services_path %></li>
           </ul>
         </li>
         <% end %>
