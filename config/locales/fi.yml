@@ -68,8 +68,9 @@ fi:
     ldap_services: "LDAP-palvelut"
     external_services: "Ulkoiset palvelut"
     external_files: "Ulkoiset tiedostot"
-    device_statistics_organisation: "Organisaation laitetilastot"
-    device_statistics_school: "Koulun käytössä olevat työpöytäkuvat"
+    all_devices: "Organisaation kaikki laitteet"
+    all_images: "Organisaation käytössä olevat työpöytäkuvat"
+    school_images: "Koulun käytössä olevat työpöytäkuvat"
     servers: "Palvelimet"
     printers: "Tulostimet"
     wlan: "Langattomat verkot"
@@ -113,7 +114,7 @@ fi:
     new_ldap_service: Uusi...
     rename_groups: Vuosiluokkasiirto...
     devices: Laitelista
-    device_statistics: "Työpöytäkuvatilastot"
+    image_statistics: "Työpöytäkuvatilastot"
     delete_device: "Poista laite"
     set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
     set_install_mode_server: "Poista sertifikaatti ja aseta palvelin asennustilaan"
@@ -133,7 +134,8 @@ fi:
       servers: Palvelimet
       ldap_services: LDAP -palvelut
       external_files: Ulkoiset tiedostot
-      device_statistics: Laitetilastot
+      all_devices: "Kaikki laitteet"
+      all_images: "Kaikki työpöytäkuvat"
       wlan: Langattomat verkot
       about: Tietoja
       printers: Tulostimet
@@ -628,27 +630,16 @@ fi:
       device_header_text: "Tulostaminen on sallittu seuraavilta yksittäisiltä laitteilta:"
       device_footer_text: Laitekohtaiset tulostusoikeudet asetetaan laitteen tiedoista
 
-  # Organisation and school device statistics
-  device_statistics:
-    organisation_devices_tab: "Laitteet"
-    organisation_images_tab: "Työpöytäkuvat"
-
-    organisation:
-      title: "Organisaation laitetilastot"
-      no_devices: "Organisaatiossa ei ole yhtään laitetta."
-      no_devices_with_hardware_info: "Organisaatiossa on laitteita, mutta yksikään niistä ei ole lähettänyt laitetietojaan."
-
-    school:
-      title: "Koulun käytössä olevat työpöytäkuvat"
-      no_devices: "Tässä koulussa ei ole yhtään laitetta joista laitetietoja voisi saada."
-      no_devices_with_hardware_info: "Tässä koulussa on laitteita, mutta yksikään niistä ei ole lähettänyt laitetietojaan."
-
-    # Used on school and organisation device images statistics pages
-    images:
-      title: "Käytössä olevat työpöytäkuvat"
-      header: "Yhteensä %{total} laitetta on lähettänyt laitteistotietonsa; työpöytäkuvia on käytössä %{count}. Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista. Lista on lajiteltu kuvan nimen mukaan."
-      device: "laite"
-      devices: "laitetta"
+  # Organisation and school desktop image statistics
+  image_statistics:
+    explanation_organisation: "Sivu sisältää tilastoja työpöytäkuvien nimistä. Ne on kerätty organisaation laitteiden lähettämistä laitetiedoista."
+    explanation_school: "Sivu sisältää tilastoja työpöytäkuvien nimistä. Ne on kerätty koulun laitteiden lähettämistä laitetiedoista."
+    total_devices: "Yhteensä %{total_devices} laitetta on lähettänyt laitetietonsa"
+    image_count: "Käytössä on %{image_count} eri työpöytäkuvaa"
+    instructions: "Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista. Lista on lajiteltu kuvan nimen mukaan."
+    no_images: "Laitetietoja ei ole vastaanotettu mistään laitteesta"
+    device: "laite"
+    devices: "laitetta"
 
   # Schools editing
   schools:

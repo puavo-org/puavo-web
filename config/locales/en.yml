@@ -68,8 +68,9 @@ en:
     ldap_services: "LDAP services"
     external_services: "External services"
     external_files: "External files"
-    device_statistics_organisation: "Organisation device statistics"
-    device_statistics_school: "Desktop image statistics"
+    all_devices: "All devices in the organisation"
+    all_images: "All desktop images used in this organisation"
+    school_images: "All desktop images used in this school"
     servers: "Servers"
     printers: "Printers"
     wlan: "Wireless Networks"
@@ -113,7 +114,7 @@ en:
     new_ldap_service: New...
     rename_groups: Rename groups...
     devices: Device list
-    device_statistics: Device statistics
+    image_statistics: Image Statistics
     delete_device: "Delete device"
     set_install_mode: "Remove certificate and set the device to install mode"
     set_install_mode_server: "Remove certificate and set the server to install mode"
@@ -133,7 +134,8 @@ en:
       servers: Servers
       ldap_services: LDAP services
       external_files: External files
-      device_statistics: Device statistics
+      all_devices: "All Devices"
+      all_images: "All Desktop Images"
       wlan: Wireless networks
       about: About
       printers: Printers
@@ -628,27 +630,16 @@ en:
       device_header_text: "Printer is allowed for the these devices:"
       device_footer_text: "Printers for devices are set from the device edit page."
 
-  # Organisation and school device statistics
-  device_statistics:
-    organisation_devices_tab: "Devices"
-    organisation_images_tab: "Desktop images"
-
-    organisation:
-      title: "Organisation device statistics"
-      no_devices: "This organisation has no devices at all."
-      no_devices_with_hardware_info: "This organisation has devices, but no hardware information has been received from any of them."
-
-    school:
-      title: "Desktop images used in this school"
-      no_devices: "This school has no devices that could send their hardware information."
-      no_devices_with_hardware_info: "This school has devices, but no hardware information has been received from any of them."
-
-    # Used on school and organisation device images statistics pages
-    images:
-      title: "Desktop images used in this school"
-      header: "A total of %{total} devices have sent their hardware information; %{count} different desktop images in use. Click on image names to see a list of devices using that image. The list is sorted by image names."
-      device: "laite"
-      devices: "laitetta"
+  # Organisation and school desktop image statistics
+  image_statistics:
+    explanation_organisation: "This page contains desktop image name statistics. They were collected from the hardware infos sent by the devices in this organisation."
+    explanation_school: "This page contains desktop image name statistics. They were collected from the hardware infos sent by the devices in this school."
+    total_devices: "A total of %{total_devices} devices have sent their hardware information"
+    image_count: "There are %{image_count} different desktop images in use"
+    instructions: "Click on image names to see a list of devices using that image. The list is sorted by image names."
+    no_images: "No hardware information has been received from any device"
+    device: "device"
+    devices: "devices"
 
   # Schools editing
   schools:

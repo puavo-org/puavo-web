@@ -52,91 +52,6 @@ class OrganisationsController < ApplicationController
     end
   end
 
-  def get_organisation_devices_list
-    # Se devices_controller.rb method get_school_devices_list() for details
-    requested = Set.new(['school', 'id', 'hn', 'type', 'link'])
-
-    if params.include?(:fields)
-      requested += Set.new(params[:fields].split(','))
-    end
-
-    attributes = DevicesHelper.convert_requested_device_column_names(requested)
-
-    # Don't get hardware info if nothing from it was requested
-    hw_attributes = Set.new
-    want_hw_info = false
-
-    if (requested & DevicesHelper::HWINFO_ATTRS).any?
-      attributes << 'puavoDeviceHWInfo'
-      hw_attributes = DevicesHelper.convert_requested_hwinfo_column_names(requested)
-      want_hw_info = true
-    end
-
-    # Get the devices from every school in this organisation
-    raw = []
-
-    School.all.each do |school|
-      school_raw = DevicesHelper.get_devices_in_school(school.dn, attributes)
-
-      school_raw.each do |sd|
-        # include the school in the array, we'll need it for generating links and other things
-        raw << [sd, school]
-      end
-    end
-
-    # Convert the raw data into something we can easily parse in JavaScript
-    devices = []
-
-    raw.each do |dev_temp, school|
-      dev = dev_temp[1]   # dev_temp[0] is the device's DN
-
-      data = {}
-
-      # Mandatory
-      data[:school] = [school.cn, school.displayName]
-      data[:id] = dev['puavoId'][0].to_i
-      data[:hn] = dev['puavoHostname'][0]
-      data[:type] = dev['puavoDeviceType'][0]
-      data[:link] = device_path(school, dev['puavoId'][0])
-
-      # Optional, common parts
-      data.merge!(DevicesHelper.build_common_device_properties(dev, requested))
-
-      # Hardware info
-      if want_hw_info && dev['puavoDeviceHWInfo']
-        data.merge!(DevicesHelper.extract_hardware_info(dev['puavoDeviceHWInfo'], hw_attributes))
-      end
-
-      # Device primary user
-      if requested.include?('user') && data[:user]
-        dn = data[:user]
-
-        begin
-          u = User.find(dn)
-
-          data[:user] = {
-            valid: true,
-            link: user_path(school, u),
-            title: "#{u.uid} (#{u.givenName} #{u.sn})"
-          }
-        rescue
-          # Not found
-          data[:user] = {
-            valid: false,
-            dn: dn,
-          }
-        end
-      end
-
-      # Purge empty fields to minimize the amount of transferred data
-      data.delete_if{ |k, v| v.nil? }
-
-      devices << data
-    end
-
-    render :json => devices
-  end
-
   # GET /organisation/wlan
   def wlan
     return if redirected_nonowner_user?
@@ -254,6 +169,99 @@ class OrganisationsController < ApplicationController
       end
       format.html { redirect_to(owners_organisation_path) }
     end
+  end
+
+  def all_devices
+    return if redirected_nonowner_user?
+
+    respond_to do |format|
+      format.html   # all_devices.html.erb
+    end
+  end
+
+  def get_all_devices
+    # Se devices_controller.rb method get_school_devices_list() for details
+    requested = Set.new(['school', 'id', 'hn', 'type', 'link'])
+
+    if params.include?(:fields)
+      requested += Set.new(params[:fields].split(','))
+    end
+
+    attributes = DevicesHelper.convert_requested_device_column_names(requested)
+
+    # Don't get hardware info if nothing from it was requested
+    hw_attributes = Set.new
+    want_hw_info = false
+
+    if (requested & DevicesHelper::HWINFO_ATTRS).any?
+      attributes << 'puavoDeviceHWInfo'
+      hw_attributes = DevicesHelper.convert_requested_hwinfo_column_names(requested)
+      want_hw_info = true
+    end
+
+    # Get the devices from every school in this organisation
+    raw = []
+
+    School.all.each do |school|
+      school_raw = DevicesHelper.get_devices_in_school(school.dn, attributes)
+
+      school_raw.each do |sd|
+        # include the school in the array, we'll need it for generating links and other things
+        raw << [sd, school]
+      end
+    end
+
+    # Convert the raw data into something we can easily parse in JavaScript
+    devices = []
+
+    raw.each do |dev_temp, school|
+      dev = dev_temp[1]   # dev_temp[0] is the device's DN
+
+      data = {}
+
+      # Mandatory
+      data[:school] = [school.cn, school.displayName]
+      data[:id] = dev['puavoId'][0].to_i
+      data[:hn] = dev['puavoHostname'][0]
+      data[:type] = dev['puavoDeviceType'][0]
+      data[:link] = device_path(school, dev['puavoId'][0])
+
+      # Optional, common parts
+      data.merge!(DevicesHelper.build_common_device_properties(dev, requested))
+
+      # Hardware info
+      if want_hw_info && dev['puavoDeviceHWInfo']
+        data.merge!(DevicesHelper.extract_hardware_info(dev['puavoDeviceHWInfo'], hw_attributes))
+      end
+
+      # Device primary user
+      if requested.include?('user') && data[:user]
+        dn = data[:user]
+
+        begin
+          u = User.find(dn)
+
+          data[:user] = {
+            valid: true,
+            link: user_path(school, u),
+            title: "#{u.uid} (#{u.givenName} #{u.sn})"
+          }
+        rescue
+          # Not found
+          data[:user] = {
+            valid: false,
+            dn: dn,
+          }
+        end
+      end
+
+      # Purge empty fields to minimize the amount of transferred data
+      data.delete_if{ |k, v| v.nil? }
+
+      devices << data
+    end
+
+    render :json => devices
   end
 
   # GET /users/find_all_users_marked_for_deletion

@@ -1,55 +1,21 @@
-<% page_title t('titles.organisation'), t('titles.device_statistics_organisation') %>
+<% page_title t('titles.organisation'), t('titles.all_devices') %>
 
 <% content_for :javascript do %>
 <%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
 <%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
 <%= javascript_include_tag 'supertable2', skip_pipeline: true %>
-<%= javascript_include_tag 'inpage_tabs', skip_pipeline: true %>
 <% end %>
 
-<h1><%= t('device_statistics.organisation.title') %></h1>
+<h1><%= t('titles.all_devices') %></h1>
 
-<% if @total_devices == 0 %>
-<p class="genericNotice"><%= t('device_statistics.organisation.no_devices') %></p>
-<% else %>
-
-<div class="tabBar" id="devStatsTabs">
-  <ul>
-    <li>
-        <a href="#withInfoTab"><%= t('device_statistics.organisation_devices_tab') %></a>
-    </li>
-
-    <li>
-        <a href="#imageStatisticsTab"><%= t('device_statistics.organisation_images_tab') %></a>
-    </li>
-  </ul>
-</div>
-
-<div class="tabContentsWrapper">
-
-<div class="tabContentsVisible" id="withInfoTab">
 <div class="superTable" id="tableDevices"></div>
-</div>
-
-<div class="tabContentsInvisible" id="imageStatisticsTab">
-<% if @image_stats.count == 0 %>
-<p class="genericNotice"><%= t('device_statistics.organisation.no_devices_with_hardware_info') %></p>
-<% else %>
-<%= render :partial => 'images', :locals => { :image_stats => @image_stats, :show_school_links => true } %>
-<% end %>
-</div>
-
-</div>
-
-<% end %>
 
 <% @is_organisation = true %>
 
 <% content_for :post_load_javascript do %>
-
 <script>
-
 "use strict;"
+
 <%= render :partial => 'shared/device_tables_common.js' %>
 
 const DEFAULT_COLUMNS = ["school", "hw_time", "hn", "type", "tags", "mac", "current_image", "ram", "hd", "cpu"];
@@ -69,8 +35,6 @@ function userActions(item)
 }
 
 window.onload = function(e) {
-    new Tabs("devStatsTabs", 0);
-
     new SuperTable(
         // Main container DIV
         document.getElementById("tableDevices"),
@@ -97,10 +61,9 @@ window.onload = function(e) {
             defaultFilterColumn: "hn",
 
             // The URL to get the data from
-            source: "/get_organisation_devices_list",
+            source: "/get_all_devices",
         }
     );
 };
-
 </script>
 <% end %>

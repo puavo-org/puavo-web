@@ -1,10 +1,20 @@
-<p><%= t('device_statistics.images.header', :total => @total_devices, :count => @image_stats.count) %></p>
+<p>
+  <ul>
+    <li><%= t('image_statistics.total_devices', :total_devices => @total_devices) %></li>
+    <li><%= t('image_statistics.image_count', :image_count => @image_stats.count) %></li>
+  </ul>
+</p>
+
+<% if @image_stats.empty? %>
+<p class="genericNotice"><%= t('image_statistics.no_images') %></p>
+<% else %>
+<p><%= t('image_statistics.instructions') %></p>
 
 <table class="imageStats">
   <% @image_stats.each_with_index do |image| %>
   <tr class="header">
     <td class="nameCol">
-      <strong><%= image[:name] %></strong> (<%= image[:uses] %> <%= image[:uses] == 1 ? t('device_statistics.images.device') : t('device_statistics.images.devices') %>, <%= image[:percentage] %>%)
+      <strong><%= image[:name] %></strong> (<%= image[:uses] %> <%= image[:uses] == 1 ? t('image_statistics.device') : t('image_statistics.devices') %>, <%= image[:percentage] %>%)
       <% if image[:release] %><span class="releaseName"><%= image[:release] %></span><% end %>
     </td>
 
@@ -42,3 +52,5 @@ $(document).ready(function() {
   });
 });
 </script>
+
+<% end %>

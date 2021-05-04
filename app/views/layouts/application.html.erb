@@ -35,7 +35,8 @@ I18n.locale = "<%= I18n.locale %>";
             <% if Puavo::CONFIG %>
             <li><%= link_to t('.servers'), "/devices/servers" %></li>
             <li><%= link_to t('.printers'), "/devices/printers" %></li>
-            <li><%= link_to t('.device_statistics'), "/device_statistics" %></li>
+            <li><%= link_to t('.all_devices'), "/all_devices" %></li>
+            <li><%= link_to t('.all_images'), "/all_images" %></li>
             <% end %>
             <li><%= link_to t('.wlan'),  wlan_organisation_path %></li>
             <li class="org-separator"></li>

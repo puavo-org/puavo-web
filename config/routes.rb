@@ -9,8 +9,9 @@ Rails.application.routes.draw do
   get '/extended_search' => 'extended_search#index'
   post '/extended_search' => 'extended_search#do_search', via: [:options]
 
-  get '/device_statistics' => 'device_statistics#organisation_statistics'
-  get '/get_organisation_devices_list' => 'organisations#get_organisation_devices_list'
+  get '/all_devices' => 'organisations#all_devices'
+  get '/get_all_devices' => 'organisations#get_all_devices'
+  get '/all_images' => 'image_statistics#all_images'
 
   # On-the-fly UI language changing
   get '/change_language' => 'sessions#change_language'
@@ -189,7 +190,7 @@ Rails.application.routes.draw do
       match 'devices/:id/change_school' => 'devices#change_school', :as => 'change_school_device', :via => :post
       match 'devices/:id/image' => 'devices#image', :as => 'image_device', :via => :get
 
-      get 'devices/device_statistics' => 'device_statistics#school_statistics', :as => 'school_device_statistics'
+      get 'devices/device_statistics' => 'image_statistics#school_images', :as => 'school_image_statistics'
 
       get 'get_school_devices_list' => 'devices#get_school_devices_list'
 
