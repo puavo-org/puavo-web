@@ -50,14 +50,7 @@ class DevicesController < ApplicationController
 
     @device = Device.new
 
-    # Get a list of schools for the mass tool. I wanted to do this with AJAX
-    # calls, getting the list from puavo-rest with the new V4 API, but fetch()
-    # and CORS and other domains just won't cooperate...
-    @school_list = School.search_as_utf8(:filter => '', :attributes => ['displayName', 'cn']).collect do |s|
-        [s[0], s[1]['displayName'][0], s[1]['cn'][0]]
-    end.sort do |a, b|
-        a[1].downcase <=> b[1].downcase
-    end
+    @school_list = DevicesHelper.device_school_change_list()
 
     if request.format == 'text/html'
       # list of new device types

@@ -174,6 +174,8 @@ class OrganisationsController < ApplicationController
   def all_devices
     return if redirected_nonowner_user?
 
+    @school_list = DevicesHelper.device_school_change_list()
+
     respond_to do |format|
       format.html   # all_devices.html.erb
     end
