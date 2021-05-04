@@ -221,6 +221,7 @@ class OrganisationsController < ApplicationController
 
       # Mandatory
       data[:school] = [school.cn, school.displayName]
+      data[:school_id] = school.id.to_i
       data[:id] = dev['puavoId'][0].to_i
       data[:hn] = dev['puavoHostname'][0]
       data[:type] = dev['puavoDeviceType'][0]

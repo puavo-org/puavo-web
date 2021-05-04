@@ -74,7 +74,7 @@ class DevicesController < ApplicationController
     # Which attributes to retrieve? These are the defaults, they're always
     # sent even when not requested, because basic functionality can break
     # without them.
-    requested = Set.new(['id', 'hn', 'type', 'link'])
+    requested = Set.new(['id', 'hn', 'type', 'link', 'school_id'])
 
     # Extra attributes (columns)
     if params.include?(:fields)
@@ -107,6 +107,7 @@ class DevicesController < ApplicationController
       data[:hn] = dev['puavoHostname'][0]
       data[:type] = dev['puavoDeviceType'][0]
       data[:link] = device_path(@school, dev['puavoId'][0])
+      data[:school_id] = @school.id.to_i
 
       # Optional, common parts
       data.merge!(DevicesHelper.build_common_device_properties(dev, requested))

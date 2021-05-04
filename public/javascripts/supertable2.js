@@ -352,11 +352,17 @@ function transformRawData(columnDefinitions, visibleColumns, userTransforms, raw
     for (const raw of rawData) {
         let cleaned = {};
 
+        // The Puavo ID is *always* required. No exceptions.
+        cleaned.id = [raw.id];
+
         // The link is a special field. It's not a separate column, but many user
         // transform functions require it, so specifically include it.
         // There are some other "required" fields, but they're always included in
         // the server's response so they don't need special handling. (I hope.)
         cleaned.link = [raw.link];
+
+        // Another widely needed piece of information is the school ID
+        cleaned.school_id = [raw.school_id];
 
         // Process everything the server sends
         const actualKeys = setUnion(required, new Set(Object.keys(raw)))

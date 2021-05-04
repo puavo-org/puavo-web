@@ -97,7 +97,7 @@ class UsersController < ApplicationController
     # Which attributes to retrieve? These are the defaults, they're always
     # sent even when not requested, because basic functionality can break
     # without them.
-    requested = Set.new(['id', 'name', 'role', 'uid', 'dnd', 'locked', 'rrt'])
+    requested = Set.new(['id', 'name', 'role', 'uid', 'dnd', 'locked', 'rrt', 'school_id'])
 
     # Extra attributes (columns)
     if params.include?(:fields)
@@ -180,6 +180,7 @@ class UsersController < ApplicationController
       u[:dnd] = usr['puavoDoNotDelete'] ? true : false
       u[:locked] = usr['puavoLocked'] ? (usr['puavoLocked'][0] == 'TRUE' ? true : false) : false
       u[:link] = user_path(@school, usr['puavoId'][0])
+      u[:school_id] = @school.id.to_i
 
       # Optional
       if want_first

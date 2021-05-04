@@ -90,6 +90,7 @@ class GroupsController < ApplicationController
         created: convert_ldap_time(grp['createTimestamp']),
         modified: convert_ldap_time(grp['modifyTimestamp']),
         link: group_path(@school, grp['puavoId'][0]),
+        school_id: @school.id.to_i,
       }
     end
 
