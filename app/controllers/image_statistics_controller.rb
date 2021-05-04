@@ -2,6 +2,7 @@ class ImageStatisticsController < ApplicationController
   before_action :find_school
 
   ACCEPTED_TYPES = ['fatclient', 'thinclient', 'laptop'].freeze
+  CUSTOM_ATTRIBUTES = ['puavoId', 'puavoHostname', 'puavoDeviceType', 'puavoDeviceHWInfo'].freeze
 
   # GET /device_statistics
   def index
@@ -13,34 +14,14 @@ class ImageStatisticsController < ApplicationController
   def all_images
     return if redirected_nonowner_user?
 
-    @total_devices = 0
-    @devices = []
+    devices = []
 
     School.all.each do |school|
-      raw = DevicesHelper.get_devices_in_school(
-        school.dn,
-        custom_attributes=['puavoId', 'puavoHostname', 'puavoDeviceType', 'puavoDeviceHWInfo'])
-
-      # Remove those we don't care about
-      raw.reject! { |d| !ACCEPTED_TYPES.include?(d[1]['puavoDeviceType'][0]) }
-
-      # Remove those without device information
-      raw.reject! { |d| !d[1].include?('puavoDeviceHWInfo') }
-      @total_devices += raw.count
-
-      # Convert the raw device array into something that can be counted more easily
-      raw.each do |dn, r|
-        @devices << {
-          id: r['puavoId'][0],
-          name: r['puavoHostname'][0],
-          image: JSON.parse(r['puavoDeviceHWInfo'][0])['this_image'],
-          school: school,
-        }
-      end
+      devices += process_school_devices(school)
     end
 
-    # Count the images
-    @image_stats = count_images(@devices)
+    @total_devices = devices.count
+    @image_stats = count_images(devices)
 
     respond_to do |format|
       format.html   # all_images.html.erb
@@ -49,31 +30,9 @@ class ImageStatisticsController < ApplicationController
 
   # GET /schools/:id/images
   def school_images
-    raw = DevicesHelper.get_devices_in_school(
-      @school.dn,
-      custom_attributes=['puavoId', 'puavoHostname', 'puavoDeviceType', 'puavoDeviceHWInfo'])
-
-    # Remove those we don't care about
-    raw.reject! { |d| !ACCEPTED_TYPES.include?(d[1]['puavoDeviceType'][0]) }
-
-    # Remove those without device information
-    raw.reject! { |d| !d[1].include?('puavoDeviceHWInfo') }
-    @total_devices = raw.count
-
-    # Convert the raw device array into something that can be counted more easily
-    @devices = []
-
-    raw.each do |dn, r|
-      @devices << {
-        id: r['puavoId'][0],
-        name: r['puavoHostname'][0],
-        image: JSON.parse(r['puavoDeviceHWInfo'][0])['this_image'],
-        school: school,
-      }
-    end
-
-    # Count the images
-    @image_stats = count_images(@devices)
+    devices = process_school_devices(@school)
+    @total_devices = devices.count
+    @image_stats = count_images(devices)
 
     respond_to do |format|
       format.html   # school_images.html.erb
@@ -81,6 +40,24 @@ class ImageStatisticsController < ApplicationController
   end
 
   private
+
+  def process_school_devices(school)
+    out = []
+
+    DevicesHelper.get_devices_in_school(school.dn, CUSTOM_ATTRIBUTES).each do |d|
+      next unless ACCEPTED_TYPES.include?(d[1]['puavoDeviceType'][0])
+      next unless d[1].include?('puavoDeviceHWInfo')
+
+      out << {
+        id: d[1]['puavoId'][0],
+        name: d[1]['puavoHostname'][0],
+        image: JSON.parse(d[1]['puavoDeviceHWInfo'][0])['this_image'],
+        school: school,
+      }
+    end
+
+    out
+  end
 
   def count_images(devices)
     return [] if devices.empty?
