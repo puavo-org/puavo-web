@@ -6,11 +6,11 @@
 <%= javascript_include_tag 'supertable2', skip_pipeline: true %>
 <% end %>
 
+<% @is_organisation = true %>
+
 <h1><%= t('titles.all_devices') %></h1>
 
 <div class="superTable" id="tableDevices"></div>
-
-<% @is_organisation = true %>
 
 <% content_for :post_load_javascript do %>
 <script>
@@ -44,7 +44,7 @@ window.onload = function(e) {
             id: "orgDevices",
             csvPrefix: `<%= LdapOrganisation.current.o %>-devices`,
 
-            flags: TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
+            flags: TableFlag.ALLOW_SELECTION | TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
 
             locale: "<%= supertable_sorting_locale %>",
 
@@ -53,6 +53,8 @@ window.onload = function(e) {
             columnOrder: COLUMN_ORDER,
             userTransforms: USER_TRANSFORM_FUNCTIONS,
             actions: userActions,
+
+            massOperations: MASS_OPERATIONS,
 
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
