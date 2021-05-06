@@ -67,7 +67,7 @@ class DevicesController < ApplicationController
     # Which attributes to retrieve? These are the defaults, they're always
     # sent even when not requested, because basic functionality can break
     # without them.
-    requested = Set.new(['id', 'hn', 'type', 'link', 'school_id'])
+    requested = Set.new(['id', 'hn', 'type'])
 
     # Extra attributes (columns)
     if params.include?(:fields)

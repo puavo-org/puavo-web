@@ -183,7 +183,7 @@ class OrganisationsController < ApplicationController
 
   def get_all_devices
     # Se devices_controller.rb method get_school_devices_list() for details
-    requested = Set.new(['school', 'id', 'hn', 'type', 'link'])
+    requested = Set.new(['id', 'hn', 'type'])
 
     if params.include?(:fields)
       requested += Set.new(params[:fields].split(','))
@@ -222,12 +222,12 @@ class OrganisationsController < ApplicationController
       data = {}
 
       # Mandatory
-      data[:school] = [school.cn, school.displayName]
-      data[:school_id] = school.id.to_i
       data[:id] = dev['puavoId'][0].to_i
       data[:hn] = dev['puavoHostname'][0]
       data[:type] = dev['puavoDeviceType'][0]
       data[:link] = device_path(school, dev['puavoId'][0])
+      data[:school] = [school.cn, school.displayName]
+      data[:school_id] = school.id.to_i
 
       # Optional, common parts
       data.merge!(DevicesHelper.build_common_device_properties(dev, requested))
