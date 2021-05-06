@@ -71,6 +71,7 @@ fi:
     all_devices: "Organisaation kaikki laitteet"
     all_images: "Organisaation käytössä olevat työpöytäkuvat"
     school_images: "Koulun käytössä olevat työpöytäkuvat"
+    all_users: "Organisaation kaikki käyttäjät"
     servers: "Palvelimet"
     printers: "Tulostimet"
     wlan: "Langattomat verkot"
@@ -136,6 +137,7 @@ fi:
       external_files: Ulkoiset tiedostot
       all_devices: "Kaikki laitteet"
       all_images: "Kaikki työpöytäkuvat"
+      all_users: "Kaikki käyttäjät"
       wlan: Langattomat verkot
       about: Tietoja
       printers: Tulostimet
@@ -200,6 +202,7 @@ fi:
     modified: "Muokattu"
     puavoconf: "PuavoConf"
     school: "Koulu"
+    primary_school: "Pääkoulu"
 
     users:
       first_names: "Etunimet"

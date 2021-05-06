@@ -71,6 +71,7 @@ en:
     all_devices: "All devices in the organisation"
     all_images: "All desktop images used in this organisation"
     school_images: "All desktop images used in this school"
+    all_users: "All users in the organisation"
     servers: "Servers"
     printers: "Printers"
     wlan: "Wireless Networks"
@@ -136,6 +137,7 @@ en:
       external_files: External files
       all_devices: "All Devices"
       all_images: "All Desktop Images"
+      all_users: "All Users"
       wlan: Wireless networks
       about: About
       printers: Printers
@@ -200,6 +202,7 @@ en:
     modified: "Modified"
     puavoconf: "PuavoConf"
     school: "School"
+    primary_school: "Primary school"
 
     users:
       first_names: "First names"

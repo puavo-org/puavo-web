@@ -267,6 +267,182 @@ class OrganisationsController < ApplicationController
     render :json => devices
   end
 
+  def all_users
+    return if redirected_nonowner_user?
+
+    # You can't get here unless you're an owner
+    @is_owner = true
+
+    # Yes, you can
+    @permit_single_user_deletion = true
+
+    # TODO: Is there a way to do synchronised deletions here?
+    @synchronised_deletions = []
+
+    respond_to do |format|
+      format.html   # all_users.html.erb
+    end
+  end
+
+  def get_all_users
+    # Which attributes to retrieve? These are the defaults, they're always
+    # sent even when not requested, because basic functionality can break
+    # without them.
+    requested = Set.new(['id', 'name', 'role', 'uid', 'dnd', 'locked', 'rrt', 'school'])
+
+    # Extra attributes (columns)
+    if params.include?(:fields)
+      requested += Set.new(params[:fields].split(','))
+    end
+
+    want_id = requested.include?('id')
+    want_last = requested.include?('last')
+    want_first = requested.include?('first')
+    want_uid = requested.include?('uid')
+    want_role = requested.include?('role')
+    want_eid = requested.include?('eid')
+    want_learner_id = requested.include?('learner_id')
+    want_phone = requested.include?('phone')
+    want_name = requested.include?('name')
+    want_home = requested.include?('home')
+    want_email = requested.include?('email')
+    want_pnumber = requested.include?('pnumber')
+    want_rrt = requested.include?('rrt')
+    want_dnd = requested.include?('dnd')
+    want_locked = requested.include?('locked')
+    want_created = requested.include?('created')
+    want_modified = requested.include?('modified')
+    want_school = requested.include?('school')
+
+    # Do the query
+    attributes = []
+    attributes << 'puavoId' if want_id
+    attributes << 'sn' if want_last
+    attributes << 'givenName' if want_first
+    attributes << 'uid' if want_uid
+    attributes << 'puavoEduPersonAffiliation' if want_role
+    attributes << 'puavoExternalId' if want_eid
+    attributes << 'puavoExternalData' if want_learner_id
+    attributes << 'telephoneNumber' if want_phone
+    attributes << 'displayName' if want_name
+    attributes << 'homeDirectory' if want_home
+    attributes << 'mail' if want_email
+    attributes << 'puavoEduPersonPersonnelNumber' if want_pnumber
+    attributes << 'puavoRemovalRequestTime' if want_rrt
+    attributes << 'puavoDoNotDelete' if want_dnd
+    attributes << 'puavoLocked' if want_locked
+    attributes << 'createTimestamp' if want_created
+    attributes << 'modifyTimestamp' if want_modified
+    attributes << 'puavoSchool' if want_school
+
+    raw = []
+
+    # Get a list of organisation owners and school admins
+    organisation_owners = LdapOrganisation.current.owner.each
+      .select { |dn| dn != "uid=admin,o=puavo" }
+      .map{ |o| o.to_s }
+
+    if organisation_owners.nil?
+      organisation_owners = []
+    end
+
+    organisation_owners = Set.new(organisation_owners)
+
+    school_admins = []
+
+    all_schools = School.all
+
+    schools_by_dn = {}
+
+    all_schools.each do |school|
+      school_admins += school.user_school_admins.each.map{ |a| a.dn.to_s }
+      schools_by_dn[school.dn.to_s] = school
+    end
+
+    school_admins = Set.new(school_admins)
+
+    # Get a list of all users in all schools
+    users = []
+
+    raw = User.search_as_utf8(:filter => "(puavoSchool=*)",
+                              :scope => :one,
+                              :attributes => attributes)
+
+    raw.each do |dn, usr|
+      school = schools_by_dn[usr['puavoSchool'][0]]
+
+      u = {}
+
+      # Mandatory
+      u[:id] = usr['puavoId'][0].to_i
+      u[:uid] = usr['uid'][0]
+      u[:name] = usr['displayName'] ? usr['displayName'][0] : nil
+      u[:role] = Array(usr['puavoEduPersonAffiliation'])
+      u[:rrt] = convert_ldap_time(usr['puavoRemovalRequestTime'])
+      u[:dnd] = usr['puavoDoNotDelete'] ? true : false
+      u[:locked] = usr['puavoLocked'] ? (usr['puavoLocked'][0] == 'TRUE' ? true : false) : false
+      u[:link] = user_path(school, usr['puavoId'][0])
+      u[:school] = [school.cn, school.displayName]
+      u[:school_id] = school.id.to_i
+
+      # Optional
+      if want_first
+        u[:first] = usr['givenName'] ? usr['givenName'][0] : nil
+      end
+
+      if want_last
+        u[:last] = usr['sn'] ? usr['sn'][0] : nil
+      end
+
+      if want_eid
+        u[:eid] = usr['puavoExternalId'] ? usr['puavoExternalId'][0] : nil
+      end
+
+      if want_phone
+        u[:phone] = usr['telephoneNumber'] ? Array(usr['telephoneNumber']) : nil
+      end
+
+      if want_home
+        u[:home] = usr['homeDirectory'][0]
+      end
+
+      if want_email
+        u[:email] = usr['mail'] ? Array(usr['mail']) : nil
+      end
+
+      if want_pnumber
+        u[:pnumber] = usr['puavoEduPersonPersonnelNumber'] ? usr['puavoEduPersonPersonnelNumber'][0] : nil
+      end
+
+      if want_created
+        u[:created] = convert_ldap_time(usr['createTimestamp'])
+      end
+
+      if want_modified
+        u[:modified] = convert_ldap_time(usr['modifyTimestamp'])
+      end
+
+      # Highlight organisation owners (school admins have already an "admin" role set)
+      u[:role] << 'owner' if organisation_owners.include?(dn)
+
+      # Learner ID, if present. I wonder what kind of performance impact this
+      # kind of repeated JSON parsing has?
+      if want_learner_id && usr.include?('puavoExternalData')
+        begin
+          ed = JSON.parse(usr['puavoExternalData'][0])
+          if ed.include?('learner_id') && ed['learner_id']
+            u[:learner_id] = ed['learner_id']
+          end
+        rescue
+        end
+      end
+
+      users << u
+    end
+
+    render :json => users
+  end
+
   # GET /users/find_all_users_marked_for_deletion
   # (A button on the organisation info page)
   def find_all_users_marked_for_deletion
