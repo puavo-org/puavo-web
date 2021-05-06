@@ -21,19 +21,6 @@
 const DEFAULT_COLUMNS = ["school", "hw_time", "hn", "type", "tags", "mac", "current_image", "ram", "hd", "cpu"];
 const DEFAULT_SORTING = { column: "hw_time", dir: SortOrder.DESCENDING };
 
-function userActions(item)
-{
-    let html = "";
-
-    html += `<a href="${item['link']}/edit" class="btn"><%= t('link.edit') %></a> `;
-
-    let message = "<%= t('general_confirm') %>";
-
-    html += `<a href="${item['link']}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
-
-    return html;
-}
-
 window.onload = function(e) {
     new SuperTable(
         // Main container DIV

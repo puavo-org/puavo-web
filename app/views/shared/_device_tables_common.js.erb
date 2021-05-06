@@ -1084,3 +1084,16 @@ const MASS_OPERATIONS = [
         cls: MassDeviceDeletion
     },
 ];
+
+function userActions(item)
+{
+    let html = "";
+
+    html += `<a href="${item['link']}/edit" class="btn"><%= t('link.edit') %></a> `;
+
+    let message = "<%= t('general_confirm') %>";
+
+    html += `<a href="${item['link']}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+
+    return html;
+}
