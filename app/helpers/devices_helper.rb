@@ -328,23 +328,23 @@ module DevicesHelper
       end
 
       if info['battery']
-        if requested.include?('bat_vendor')
+        if requested.include?(:bat_vendor)
           out[:bat_vendor] = info['battery']['vendor']
         end
 
-        if requested.include?('bat_serial')
+        if requested.include?(:bat_serial)
           out[:bat_serial] = info['battery']['serial']
         end
 
-        if requested.include?('bat_cap') && info['battery']['capacity']
+        if requested.include?(:bat_cap) && info['battery']['capacity']
           out[:bat_cap] = self.mangle_percentage_number(info['battery']['capacity']).to_i
         end
 
-        if requested.include?('bat_pcnt') && info['battery']['percentage']
+        if requested.include?(:bat_pcnt) && info['battery']['percentage']
           out[:bat_pcnt] = self.mangle_percentage_number(info['battery']['percentage']).to_i
         end
 
-        if requested.include?('bat_volts') && info['battery']['voltage']
+        if requested.include?(:bat_volts) && info['battery']['voltage']
           out[:bat_volts] = self.mangle_battery_voltage(info['battery']['voltage'])
         end
       end
