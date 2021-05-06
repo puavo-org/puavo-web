@@ -234,7 +234,6 @@ const COLUMN_DEFINITIONS = {
 <% if @is_organisation %>
     school: {
         key: "school",
-        title: "<%= t('columns.school') %>",
         type: ColumnType.STRING,
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         defaultOperator: FilterOperator.EQU,
