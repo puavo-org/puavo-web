@@ -44,6 +44,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
             enabled: "Enable filtering",
             reverse: "Reverse matching",
             presets: "Presets",
+            preset_append: "Append the selected filter preset at the end of the current filter",
         },
 
         // MASS TOOLS

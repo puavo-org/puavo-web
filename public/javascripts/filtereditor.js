@@ -424,9 +424,10 @@ setColumns(columns)
     this.updateJSON();
 }
 
-loadFilters(filters)
+loadFilters(filters, append)
 {
-    this.filters = [];
+    if (!append)
+        this.filters = [];
 
     if (Array.isArray(filters)) {
         // Convert the filters into "cooked" format. They contain the same data, but
@@ -993,8 +994,6 @@ openFilterEditor(e)
             window.alert(`Invalid filter index ${node.dataset.index}. The filter cannot be edited.`);
             return;
         }
-
-        console.log(index);
 
         this.editFilterIndex = index;
 

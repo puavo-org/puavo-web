@@ -799,6 +799,7 @@ constructor(container, settings)
         effectiveFilters: [],                   // ditto
         defaultFilterColumn: settings.defaultFilterColumn,
         filterPresets: settings.filterPresets || null,
+        filtersPresetAppends: false,
         filtersEnabled: false,
         filtersReverse: false,
 
@@ -894,6 +895,7 @@ constructor(container, settings)
             enabled: null,
             reverse: null,
             presets: null,
+            presetAppends: null,
         },
 
         mass: {
@@ -1018,6 +1020,9 @@ loadSettings()
     if ("filtersReverse" in stored && typeof(stored.filtersReverse) == 'boolean')
         this.settings.filtersReverse = stored.filtersReverse;
 
+    if ("filtersPresetAppends" in stored && typeof(stored.filtersPresetAppends) == 'boolean')
+        this.settings.filtersPresetAppends = stored.filtersPresetAppends;
+
     return true;
 }
 
@@ -1031,6 +1036,7 @@ saveSettings()
         currentTab: this.settings.currentTab,
         filtersEnabled: this.settings.filtersEnabled,
         filtersReverse: this.settings.filtersReverse,
+        filtersPresetAppends: this.settings.filtersPresetAppends,
     }
 
     localStorage.setItem(key, JSON.stringify(settings));
@@ -1236,6 +1242,9 @@ buildUI()
                 html += `<option data-id="${i[1]}">${this.settings.filterPresets[i[1]].title}</option>`;
 
             html += `</select>`;
+
+            html += `<input type="checkbox" id="st-filters-appends-${this.id}">`;
+            html += `<label for="st-filters-appends-${this.id}">${_tr('tabs.filtering.preset_append')}</label>`;
         }
 
         html += `</div><div class="ui"></div>`;
@@ -1245,6 +1254,7 @@ buildUI()
 
         this.ui.filter.enabled = container.querySelector(`input#st-filters-enabled-${this.id}`);
         this.ui.filter.reverse = container.querySelector(`input#st-filters-reverse-${this.id}`);
+        this.ui.filter.presetAppends = container.querySelector(`input#st-filters-appends-${this.id}`);
 
         if (this.settings.filterPresets) {
             this.ui.filter.presets = container.querySelector(`select#st-filters-presets-${this.id}`);
@@ -1253,9 +1263,11 @@ buildUI()
 
         this.ui.filter.enabled.addEventListener("click", () => this.toggleFiltersEnabled());
         this.ui.filter.reverse.addEventListener("click", () => this.toggleFiltersReverse());
+        this.ui.filter.presetAppends.addEventListener("click", () => this.toggleFiltersPresetAppends());
 
         this.ui.filter.enabled.disabled = true;
         this.ui.filter.reverse.disabled = true;
+        this.ui.filter.presetAppends.disabled = true;
 
         if (this.ui.filter.presets)
             this.ui.filter.presets.disabled = true;
@@ -1263,6 +1275,7 @@ buildUI()
         // Restore settings
         this.ui.filter.enabled.checked = this.settings.filtersEnabled;
         this.ui.filter.reverse.checked = this.settings.filtersReverse;
+        this.ui.filter.presetAppends.checked = this.settings.filtersPresetAppends;
 
         this.filterEditor = new FilterEditor(this,
                                              container.querySelector("div.ui"),
@@ -1447,6 +1460,7 @@ enableUI(state)
         if (this.settings.flags & TableFlag.ALLOW_FILTERING) {
             this.ui.filter.enabled.disabled = true;
             this.ui.filter.reverse.disabled = true;
+            this.ui.filter.presetAppends.disabled = true;
 
             if (this.ui.filter.presets)
                 this.ui.filter.presets.disabled = true;
@@ -1473,6 +1487,7 @@ enableUI(state)
         if (this.settings.flags & TableFlag.ALLOW_FILTERING) {
             this.ui.filter.enabled.disabled = false;
             this.ui.filter.reverse.disabled = false;
+            this.ui.filter.presetAppends.disabled = false;
 
             if (this.ui.filter.presets)
                 this.ui.filter.presets.disabled = false;
@@ -2150,6 +2165,18 @@ toggleFiltersReverse()
     }
 }
 
+toggleFiltersPresetAppends()
+{
+    if (!(this.settings.flags & TableFlag.ALLOW_FILTERING))
+        return;
+
+    if (this.updating || this.processing)
+        return;
+
+    this.settings.filtersPresetAppends = this.ui.filter.presetAppends.checked;
+    this.saveSettings();
+}
+
 loadFilterPreset(e)
 {
     if (!(this.settings.flags & TableFlag.ALLOW_FILTERING))
@@ -2161,8 +2188,8 @@ loadFilterPreset(e)
     const key = e.target.options[e.target.selectedIndex].dataset.id,
           preset = this.settings.filterPresets[key].filters;
 
-    this.filterEditor.loadFilters(preset);
-    this.setFilters(preset, true);
+    this.filterEditor.loadFilters(preset, this.settings.filtersPresetAppends);
+    this.setFilters(this.filterEditor.getFilters(), true);
     this.updateTable();
 }
 

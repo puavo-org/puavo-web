@@ -44,6 +44,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
             enabled: "Suodatus päällä",
             reverse: "Käänteinen täsmäys",
             presets: "Suodatinpohjia",
+            preset_append: "Liitä valittu suodatinpohja nykyisen suodattimen loppuun",
         },
 
         // MASS TOOLS
