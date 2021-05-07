@@ -41,5 +41,13 @@ module Puavo
       ENV['RAILS_ENV'] == 'test'
     end
 
+    # Converts LDAP operational timestamp attribute (received with search_as_utf8() call)
+    # to unixtime. Expects the timestamp to be nil or a single-element array. Used in
+    # users, groups and devices controllers when retrieving data with AJAX calls.
+    def self.convert_ldap_time(t)
+      return nil unless t
+      Time.strptime(t[0], '%Y%m%d%H%M%S%z').to_i
+    end
+
   end
 end

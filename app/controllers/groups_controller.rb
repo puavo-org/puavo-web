@@ -3,6 +3,7 @@ require 'csv'
 
 class GroupsController < ApplicationController
   include Puavo::MassOperations
+  include Puavo::Helpers
 
   # GET /:school_id/groups/:id/members
   def members
@@ -87,8 +88,8 @@ class GroupsController < ApplicationController
         abbr: grp['cn'][0],
         eid: grp['puavoExternalId'] ? grp['puavoExternalId'][0] : nil,
         members: grp['memberUid'] ? grp['memberUid'].count : 0,
-        created: convert_ldap_time(grp['createTimestamp']),
-        modified: convert_ldap_time(grp['modifyTimestamp']),
+        created: Puavo::Helpers::convert_ldap_time(grp['createTimestamp']),
+        modified: Puavo::Helpers::convert_ldap_time(grp['modifyTimestamp']),
         link: group_path(@school, grp['puavoId'][0]),
         school_id: @school.id.to_i,
       }

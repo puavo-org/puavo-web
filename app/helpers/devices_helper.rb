@@ -1,4 +1,5 @@
 module DevicesHelper
+  include Puavo::Helpers
 
   def classes(device)
     classes = Device.allowed_classes
@@ -43,16 +44,6 @@ module DevicesHelper
       return match_data[1].lstrip.gsub("\"", "")
     end
     return I18n.t('helpers.ppd_file.cannot_detect_filetype')
-  end
-
-  # Converts LDAP operational timestamp attribute (received with search_as_utf8() call)
-  # to unixtime. Expects the timestamp to be nil or a single-element array. Used in
-  # users, groups and devices controllers when retrieving data with AJAX calls.
-  # TODO: GET RID OF THIS FUNCTION. It was copy-pasted from application_helper.rb because
-  # I can't get Ruby to find it from there. Argh!
-  def self.convert_ldap_time(t)
-    return nil unless t
-    Time.strptime(t[0], '%Y%m%d%H%M%S%z').to_i
   end
 
   DEVICE_ATTRIBUTES = [
@@ -194,11 +185,11 @@ module DevicesHelper
     end
 
     if requested.include?('created')
-      d[:created] = self.convert_ldap_time(dev['createTimestamp'])
+      d[:created] = Puavo::Helpers::convert_ldap_time(dev['createTimestamp'])
     end
 
     if requested.include?('modified')
-      d[:modified] = self.convert_ldap_time(dev['modifyTimestamp'])
+      d[:modified] = Puavo::Helpers::convert_ldap_time(dev['modifyTimestamp'])
     end
 
     if requested.include?('desc')
@@ -234,11 +225,11 @@ module DevicesHelper
     end
 
     if requested.include?('purchase_date')
-      d[:purchase_date] = dev['puavoPurchaseDate'] ? self.convert_ldap_time(dev['puavoPurchaseDate']) : nil
+      d[:purchase_date] = dev['puavoPurchaseDate'] ? Puavo::Helpers::convert_ldap_time(dev['puavoPurchaseDate']) : nil
     end
 
     if requested.include?('purchase_warranty')
-      d[:purchase_warranty] = dev['puavoWarrantyEndDate'] ? self.convert_ldap_time(dev['puavoWarrantyEndDate']) : nil
+      d[:purchase_warranty] = dev['puavoWarrantyEndDate'] ? Puavo::Helpers::convert_ldap_time(dev['puavoWarrantyEndDate']) : nil
     end
 
     if requested.include?('purchase_loc')
