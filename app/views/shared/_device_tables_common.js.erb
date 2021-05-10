@@ -985,6 +985,7 @@ class MassDevicePuavoconfEditor extends MassOperation {
     }
 };
 
+<% if @is_owner %>
 class MassDeviceChangeSchool extends MassOperation {
     constructor(parent, container)
     {
@@ -1032,6 +1033,7 @@ class MassDeviceChangeSchool extends MassOperation {
         );
     }
 };
+<% end %>
 
 class MassDeviceDeletion extends MassOperation {
     constructor(parent, container)
@@ -1070,12 +1072,14 @@ const MASS_OPERATIONS = [
         cls: MassDevicePuavoconfEditor
     },
 
+<% if @is_owner %>
     {
         id: "change_school",
         title: "<%= t('devices.index.mass_operations.change_school.title') %>",
         flags: MassOperationFlags.HAVE_SETTINGS,
         cls: MassDeviceChangeSchool
     },
+<% end %>
 
     {
         id: "delete",
