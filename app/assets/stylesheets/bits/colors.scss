@@ -350,11 +350,9 @@ $hwInfoTitleBack: #eee;
 
 /* Image usage statistics */
 $deviceStatsImageHeaderFore: #000;
-$deviceStatsImageHeaderBack: transparent;
-$deviceStatsImageHeaderHoverFore: #000;
-$deviceStatsImageHeaderHoverBack: #ccc;
-$deviceStatsPercentageBorder: #666;
-$deviceStatsPercentageBack: #ddd;
+$deviceStatsImageHeaderBack: $listOddRowBack;
+$deviceStatsPercentageBorder: #000;
+$deviceStatsPercentageBack: #fff;
 $deviceStatsPercentageFore: #080;
-$deviceStatsDeviceListBorder: #ccc;
+$deviceStatsDeviceListBorder: #aaa;
 $deviceStatsReleaseName: #088;

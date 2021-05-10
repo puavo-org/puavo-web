@@ -1,56 +1,183 @@
+<% if @stats.nil? || @stats.empty? %>
+<p class="genericNotice"><%= t('image_statistics.no_images') %></p>
+<% else %>
+
 <p>
   <ul>
-    <li><%= t('image_statistics.total_devices', :total_devices => @total_devices) %></li>
-    <li><%= t('image_statistics.image_count', :image_count => @image_stats.count) %></li>
+    <li><%= t('image_statistics.total_devices', :total_devices => @stats['total_devices']) %></li>
+    <li><%= t('image_statistics.image_count', :image_count => @stats['images'].count) %></li>
   </ul>
 </p>
 
-<% if @image_stats.empty? %>
-<p class="genericNotice"><%= t('image_statistics.no_images') %></p>
-<% else %>
+<p><a href="#" id="download" class="btn"><%= t('image_statistics.download') %></a></p>
+
+<fieldset><legend><%= t('image_statistics.sorting') %></legend>
+  <form autocomplete="off">
+    <input type="radio" name="sort" id="sortByImage" checked><label for="sortByImage"><%= t('image_statistics.sort_by_image') %></label><br>
+    <input type="radio" name="sort" id="sortByUsage"><label for="sortByUsage"><%= t('image_statistics.sort_by_usage') %></label>
+  </form>
+</fieldset>
+
 <p><%= t('image_statistics.instructions') %></p>
 
-<table class="imageStats">
-  <% @image_stats.each_with_index do |image| %>
-  <tr class="header">
-    <td class="nameCol">
-      <strong><%= image[:name] %></strong> (<%= image[:uses] %> <%= image[:uses] == 1 ? t('image_statistics.device') : t('image_statistics.devices') %>, <%= image[:percentage] %>%)
-      <% if image[:release] %><span class="releaseName"><%= image[:release] %></span><% end %>
-    </td>
-
-    <td class="barCol">
-      <div class="barOuter">
-        <div class="barInner" style="width: <%= image[:percentage] %>%;">&nbsp;</div>
-      </div>
-    </td>
-  </tr>
-
-  <tr class="deviceListRow" style="display: none;">
-    <td colspan="2">
-      <ul>
-        <% image[:devices].each do |device| %>
-        <li>
-          <a href="/devices/<%= device[:school].id %>/devices/<%= device[:id] %>"><%= device[:name] %></a>
-          <% if show_school_links %>
-          (<%= link_to device[:school].displayName, school_path(device[:school]) %>)
-          <% end %>
-        </li>
-        <% end %>
-      </ul>
-    </td>
-  </tr>
-  <% end %>
-</table>
+<div id="output"></div>
 
 <script>
-// Make the image headers toggleable
-$(document).ready(function() {
-  $(".deviceListRow").hide();
+// Raw statistics, generated server-side
+const STATISTICS = <%= raw JSON.pretty_generate(@stats) %>;
 
-  $(".imageStats .header").click(function(event) {
-    $(this).next(".deviceListRow").toggle();
-  });
-});
+const SCHOOLS = STATISTICS['schools'],
+      IMAGES = STATISTICS['images'];
+
+let collator = new Intl.Collator(
+    // I guess this is a "neutral" sorting locale, because image names and
+    // device hostnames don't have (should not have) anything outside of the
+    // basic 7-bit ASCII
+    "en-US", {
+        usage: "sort",
+        sensitivity: "accent",
+        ignorePunctuation: true,
+        numeric: true,
+    }
+);
+
+let formatter = Intl.NumberFormat("<%= supertable_sorting_locale %>", { style: "percent", minimumFractionDigits: 1 });
+
+function buildTable(images, sorting)
+{
+    const totalDevices = STATISTICS['total_devices'];
+
+    let html = "";
+
+    html += `<table class="imageStats">`;
+    html += `<tr><th><%= t('image_statistics.image_name_column').html_safe %></th>`;
+    html += `<th colspan="2" class="border"><%= t('image_statistics.usage_column') %></th></tr>`;
+    html += `<tbody>`;
+
+    for (const imageName of images) {
+        const image = IMAGES[imageName];
+
+        html += `<tr class="header">`;
+        html += `<td class="minimize-width">`;
+        html += `<strong>${imageName}</strong>`;
+
+        // Known release names
+        if (image.release !== null)
+            html += `<span class="releaseName">${image.release}</span>`;
+
+        html += "</td>";
+
+        const fraction = image.devices.length / totalDevices;
+
+        // Bar graph
+        html += `<td class="minimize-width border">${image.devices.length}/${totalDevices} (${formatter.format(fraction)})</td>`;
+        html += `<td class="barCol"><div class="barOuter">`;
+        html += `<div class="barInner" style="width: ${fraction * 100.0}%;">&nbsp;</div>`;
+        html += "</div></td>";
+        html += `</tr>`;
+
+        // List all devices using this image
+        const sortedDevices = image.devices.sort((a, b) => {
+            return collator.compare(a.name, b.name);
+        });
+
+        html += `<tr class="deviceListRow" style="display: none;">`;
+        html += `<td colspan="3"><ul>`;
+
+        for (const device of sortedDevices) {
+            const school = SCHOOLS[device.school];
+
+            html += `<li><a href="${device.link}">${device.name}</a> (<a href="${school.link}">${school.name}</a>)</li>`;
+        }
+
+        html += "</ul></tr>";
+    }
+
+    html += "</tbody></table>";
+
+    document.getElementById("output").innerHTML = html;
+
+    // Setup collapsible header events
+    // TODO: Is this doable with <details>...</details>?
+    $(".imageStats .header").click(function(event) {
+        $(this).next(".deviceListRow").toggle();
+    });
+}
+
+function sortByUsage(raw)
+{
+    // Simply sort the images by their usage count
+    let images = [];
+
+    for (const image of Object.keys(raw))
+        images.push([image, raw[image].devices.length]);
+
+    return images.sort(function(a, b) {
+        if (a[1] == b[1]) {
+            // compare image names to resolve the tie (and stabilize the sort a bit)
+            return collator.compare(a[0], b[0]);
+        }
+
+        return b[1] - a[1];
+    }).map(i => i[0]);          // reduce to 1D array
+}
+
+function sortByImage(raw)
+{
+    // Split into multiple arrays based on the image name, sort them separately
+    // and finally concatenate
+    function sortImages(what)
+    {
+        return what.sort(function(a, b) {
+            return collator.compare(a, b) * -1;     // -1 = reverse the order
+        });
+    }
+
+    let bullseye = [],
+        buster = [],
+        stretch = [],
+        other = [];
+
+    for (const image of Object.keys(raw)) {
+        if (image.indexOf("bullseye") != -1)
+            buster.push(image);
+        else if (image.indexOf("buster") != -1)
+            buster.push(image);
+        else if (image.indexOf("stretch") != -1)
+            stretch.push(image);
+        else other.push(image);
+    }
+
+    bullseye = sortImages(bullseye);
+    buster = sortImages(buster);
+    stretch = sortImages(stretch);
+    other = sortImages(other);
+
+    return [].concat(bullseye, buster, stretch, other);
+}
+
+function download()
+{
+    const b = new Blob([JSON.stringify(STATISTICS, null, "  ")], { type: "text/json" });
+
+    let a = window.document.createElement("a");
+    a.href = window.URL.createObjectURL(b);
+
+    a.download = `images.json`;
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// Initial update
+buildTable(sortByImage(IMAGES));
+
+document.getElementById("sortByImage").onclick = function() { buildTable(sortByImage(IMAGES)) };
+document.getElementById("sortByUsage").onclick = function() { buildTable(sortByUsage(IMAGES)) };
+
+document.getElementById("download").addEventListener("click", () => download());
+
 </script>
 
 <% end %>

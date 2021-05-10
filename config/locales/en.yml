@@ -635,14 +635,18 @@ en:
 
   # Organisation and school desktop image statistics
   image_statistics:
-    explanation_organisation: "This page contains desktop image name statistics. They were collected from the hardware infos sent by the devices in this organisation."
-    explanation_school: "This page contains desktop image name statistics. They were collected from the hardware infos sent by the devices in this school."
+    explanation_organisation: "This page contains desktop image usage statistics. They were collected from the hardware infos sent by the devices in this organisation."
+    explanation_school: "This page contains desktop image usage statistics. They were collected from the hardware infos sent by the devices in this school."
     total_devices: "A total of %{total_devices} devices have sent their hardware information"
     image_count: "There are %{image_count} different desktop images in use"
-    instructions: "Click on image names to see a list of devices using that image. The list is sorted by image names."
+    instructions: "Click on image names to see a list of devices using that image."
     no_images: "No hardware information has been received from any device"
-    device: "device"
-    devices: "devices"
+    sorting: "Sorting"
+    download: "Download the raw data in JSON format..."
+    sort_by_image: "Image base name (bullseye, buster, stretch, others) and release timestamp (newest first)"
+    sort_by_usage: "Number of devices using the image"
+    image_name_column: "Image name (<span class=\"releaseName\">release</span>, if known)"
+    usage_column: "Device count / total devices (%)"
 
   # Schools editing
   schools:

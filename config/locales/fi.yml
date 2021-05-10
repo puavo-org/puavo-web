@@ -635,14 +635,18 @@ fi:
 
   # Organisation and school desktop image statistics
   image_statistics:
-    explanation_organisation: "Sivu sisältää tilastoja työpöytäkuvien nimistä. Ne on kerätty organisaation laitteiden lähettämistä laitetiedoista."
-    explanation_school: "Sivu sisältää tilastoja työpöytäkuvien nimistä. Ne on kerätty koulun laitteiden lähettämistä laitetiedoista."
+    explanation_organisation: "Sivu sisältää tilastoja työpöytäkuvien käytöstä. Ne on kerätty organisaation laitteiden lähettämistä laitetiedoista."
+    explanation_school: "Sivu sisältää tilastoja työpöytäkuvien käytöstä. Ne on kerätty koulun laitteiden lähettämistä laitetiedoista."
     total_devices: "Yhteensä %{total_devices} laitetta on lähettänyt laitetietonsa"
     image_count: "Käytössä on %{image_count} eri työpöytäkuvaa"
-    instructions: "Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista. Lista on lajiteltu kuvan nimen mukaan."
     no_images: "Laitetietoja ei ole vastaanotettu mistään laitteesta"
-    device: "laite"
-    devices: "laitetta"
+    download: "Lataa raakadata JSON-muodossa..."
+    sorting: "Lajittelu"
+    sort_by_image: "Kuvan pohjanimi (bullseye, buster, stretch, muut) ja julkaisuaika (uusin ensin)"
+    sort_by_usage: "Kuvaa käyttävien koneiden määrä"
+    instructions: "Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista."
+    image_name_column: "Kuvan nimi (<span class=\"releaseName\">julkaisun</span>, jos tunnettu)"
+    usage_column: "Koneiden määrä / koneita yhteensä (%)"
 
   # Schools editing
   schools:

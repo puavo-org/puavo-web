@@ -20,8 +20,7 @@ class ImageStatisticsController < ApplicationController
       devices += process_school_devices(school)
     end
 
-    @total_devices = devices.count
-    @image_stats = count_images(devices)
+    make_stats(devices)
 
     respond_to do |format|
       format.html   # all_images.html.erb
@@ -30,9 +29,7 @@ class ImageStatisticsController < ApplicationController
 
   # GET /schools/:id/images
   def school_images
-    devices = process_school_devices(@school)
-    @total_devices = devices.count
-    @image_stats = count_images(devices)
+    make_stats(process_school_devices(@school))
 
     respond_to do |format|
       format.html   # school_images.html.erb
@@ -40,6 +37,11 @@ class ImageStatisticsController < ApplicationController
   end
 
   private
+
+  def make_stats(devices)
+    @total_devices = devices.count
+    @image_stats = count_images(devices)
+  end
 
   def process_school_devices(school)
     out = []
@@ -62,50 +64,44 @@ class ImageStatisticsController < ApplicationController
   def count_images(devices)
     return [] if devices.empty?
 
-    # split by image name
+    # get_releases() is defined in application_helper.rb. It reads the (optional)
+    # releases.json which contains official Opinsys desktop image release names.
+    releases = get_releases()
+
+    schools = {}
     images = {}
 
     devices.each do |d|
       img = d[:image]
 
-      unless images.include?(img)
-        images[img] = {
-          uses: 0,
-          devices: []
+      school = d[:school]
+
+      unless schools.include?(school.cn)
+        schools[school.cn] = {
+          name: school.displayName,
+          link: school_path(school),
         }
       end
 
-      images[img][:uses] += 1
-      images[img][:devices] << d    # copy the devices so we can list them
-    end
+      unless images.include?(img)
+        images[img] = {
+          release: releases[img.gsub('.img', '')] || nil,
+          devices: [],
+        }
+      end
 
-    total = devices.count.to_f
-
-    releases = get_releases()
-
-    # convert the hash to array
-    out = []
-
-    images.each do |name, stats|
-      out << {
-        name: name,
-        release: releases[name.gsub('.img', '')] || nil,
-        uses: stats[:uses],
-        percentage: ((stats[:uses].to_f / total) * 100.0).round(1),
-        devices: stats[:devices]
+      images[img][:devices] << {
+        name: d[:name],
+        link: "/devices/#{d[:school].id}/devices/#{d[:id]}",
+        school: school.cn,
       }
     end
 
-    # sort the images by their name (they have a Y-M-D timestamp)
-    out.sort! do |a, b|
-      b[:name] <=> a[:name]
-    end
+    @stats = {
+      'schools' => schools,
+      'images' => images,
+      'total_devices' => devices.count,
+    }
 
-    # also sort the devices under each image by their hostname
-    out.each do |o|
-      o[:devices].sort! do |da, db|
-        da[:name].downcase <=> db[:name].downcase
-      end
-    end
   end
 end
