@@ -176,13 +176,7 @@ new SuperTable(
     {
         id: "groups",
         csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-groups`,
-
-<% if @is_owner %>
         flags: TableFlag.ALLOW_SELECTION | TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
-<% else %>
-        flags: TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
-<% end %>
-
         locale: "<%= supertable_sorting_locale %>",
 
         columnDefinitions: COLUMN_DEFINITIONS,
@@ -190,11 +184,7 @@ new SuperTable(
         columnOrder: COLUMN_ORDER,
         userTransforms: USER_TRANSFORM_FUNCTIONS,
         actions: userActions,
-
-<% if @is_owner %>
         massOperations: MASS_OPERATIONS,
-<% end %>
-
         defaultColumns: DEFAULT_COLUMNS,
         defaultSorting: DEFAULT_SORTING,
         initialFilters: null,
