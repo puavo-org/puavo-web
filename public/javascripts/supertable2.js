@@ -1254,28 +1254,29 @@ buildUI()
 
         this.ui.filter.enabled = container.querySelector(`input#st-filters-enabled-${this.id}`);
         this.ui.filter.reverse = container.querySelector(`input#st-filters-reverse-${this.id}`);
-        this.ui.filter.presetAppends = container.querySelector(`input#st-filters-appends-${this.id}`);
 
         if (this.settings.filterPresets) {
             this.ui.filter.presets = container.querySelector(`select#st-filters-presets-${this.id}`);
             this.ui.filter.presets.addEventListener("change", (e) => this.loadFilterPreset(e));
+            this.ui.filter.presetAppends = container.querySelector(`input#st-filters-appends-${this.id}`);
         }
 
         this.ui.filter.enabled.addEventListener("click", () => this.toggleFiltersEnabled());
         this.ui.filter.reverse.addEventListener("click", () => this.toggleFiltersReverse());
-        this.ui.filter.presetAppends.addEventListener("click", () => this.toggleFiltersPresetAppends());
 
         this.ui.filter.enabled.disabled = true;
         this.ui.filter.reverse.disabled = true;
-        this.ui.filter.presetAppends.disabled = true;
 
-        if (this.ui.filter.presets)
+        if (this.ui.filter.presets) {
             this.ui.filter.presets.disabled = true;
+            this.ui.filter.presetAppends.addEventListener("click", () => this.toggleFiltersPresetAppends());
+            this.ui.filter.presetAppends.disabled = true;
+            this.ui.filter.presetAppends.checked = this.settings.filtersPresetAppends;
+        }
 
         // Restore settings
         this.ui.filter.enabled.checked = this.settings.filtersEnabled;
         this.ui.filter.reverse.checked = this.settings.filtersReverse;
-        this.ui.filter.presetAppends.checked = this.settings.filtersPresetAppends;
 
         this.filterEditor = new FilterEditor(this,
                                              container.querySelector("div.ui"),
@@ -1460,10 +1461,11 @@ enableUI(state)
         if (this.settings.flags & TableFlag.ALLOW_FILTERING) {
             this.ui.filter.enabled.disabled = true;
             this.ui.filter.reverse.disabled = true;
-            this.ui.filter.presetAppends.disabled = true;
 
-            if (this.ui.filter.presets)
+            if (this.ui.filter.presets) {
                 this.ui.filter.presets.disabled = true;
+                this.ui.filter.presetAppends.disabled = true;
+            }
 
             this.filterEditor.disable();
         }
@@ -1487,10 +1489,11 @@ enableUI(state)
         if (this.settings.flags & TableFlag.ALLOW_FILTERING) {
             this.ui.filter.enabled.disabled = false;
             this.ui.filter.reverse.disabled = false;
-            this.ui.filter.presetAppends.disabled = false;
 
-            if (this.ui.filter.presets)
+            if (this.ui.filter.presets) {
                 this.ui.filter.presets.disabled = false;
+                this.ui.filter.presetAppends.disabled = false;
+            }
 
             this.filterEditor.enable();
         }
