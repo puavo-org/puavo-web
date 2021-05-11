@@ -26,11 +26,6 @@ server
     sudo stop puavo-web
     make server
 
-If you need to hack on the worker process
-
-    sudo stop puavo-web-worker
-    bundle exec rake resque:work QUEUE='*' VERBOSE=true
-
 Access ActiveLdap console
 
     bundle exec rails runner script/puavo-web-prompt.rb

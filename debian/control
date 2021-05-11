@@ -70,11 +70,3 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
 Description: puavo-web
  Upstart script for the web application server
  .
-
-Package: puavo-web-worker
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
- puavo-web-core
-Description: puavo-web-worker
- Resque worker upstart script for puavo-web
- .

@@ -48,15 +48,11 @@ debian/puavo-rest
 debian/puavo-rest-bootserver
 debian/puavo-web
 debian/puavo-web-core
-debian/puavo-web-worker
 debian/*.substvars
 debian/tmp
 
 tags
 rest/tags
-
-config/resque_worker_private_key
-config/resque_worker_public_key
 
 .byebug_history
 greenletters.log

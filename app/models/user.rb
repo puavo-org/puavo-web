@@ -408,14 +408,6 @@ class User < LdapBase
     return true
   end
 
-  def self.import_columns
-    columns = ["givenName", "sn", "uid", "new_password"]
-
-    columns.push("puavoEduPersonAffiliation")
-
-    return columns
-  end
-
   # FIXME, where is better location on this method? Using same code also on other model?
   def self.human_attribute_name(*args)
     if I18n.t("activeldap.attributes").has_key?(:user) &&
