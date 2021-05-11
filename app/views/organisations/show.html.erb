@@ -130,14 +130,6 @@
       <i class="icon-pencil"></i> <%= t('link.edit') %>
     <% end %>
   </li>
-
-  <% if current_user.organisation_owner? %>
-  <li class="ownersOnly">
-    <%= link_to find_all_users_marked_for_deletion_path, class: "btn" do%>
-      <i class="icon-search"></i><%= t('organisations.show.find_all_users_marked_for_deletion') %>
-    <% end %>
-  </li>
-  <% end %>
 </ul>
 
 <% end %>
