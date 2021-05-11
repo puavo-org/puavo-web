@@ -237,6 +237,19 @@ class DevicesController < ApplicationController
             device.serialNumber = value
             changed = true
           end
+
+        when 'primary_user'
+          if value.nil? || value.empty?
+            # Allow the primary user to be cleared
+            value = nil
+          else
+            value = User.find(:first, :attribute => "uid", :value => value).dn.to_s
+          end
+
+          if device.puavoDevicePrimaryUser != value
+            device.puavoDevicePrimaryUser = value
+            changed = true
+          end
       end
 
       if changed
