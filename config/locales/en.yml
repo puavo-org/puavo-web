@@ -694,12 +694,7 @@ en:
   users:
     index:
       actions: Actions
-      users_marked_for_deletion_title: Users marked for later deletion
-      normal_users_title: Normal users
       users: users
-      do_not_delete: "(Can't be removed)"
-      jump_to_marked: "⇈ Show users to be deleted"
-      jump_to_normal: "⇊ Show normal users"
       synchronised_deletions: "User deletions are immediately synchronised to these external systems: %{systems}. All data stored in these systems will be irrevocably deleted! Verify all deletions in advance."
 
       filters:

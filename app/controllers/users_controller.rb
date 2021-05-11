@@ -50,13 +50,11 @@ class UsersController < ApplicationController
     if request.format == 'application/json'
       @users = @users.map{ |u| User.build_hash_for_to_json(u) }
     else
-      # Split the user list in two halves: one for normal users, one for users who have
-      # been marked for deletion. Both arrays are displayed in their own table.
-      @users, @users_marked_for_deletion = @users.partition { |u| u["puavoRemovalRequestTime"].nil? }
-
       now = Time.now.utc
 
-      @users_marked_for_deletion.each do |u|
+      @users.each do |u|
+        next if u["puavoRemovalRequestTime"].nil?
+
         # The timestamp is a Net::BER::BerIdentifiedString, convert it into
         # an actual UTC timestamp
         timestamp = Time.strptime(u["puavoRemovalRequestTime"], '%Y%m%d%H%M%S%z')

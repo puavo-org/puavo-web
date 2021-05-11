@@ -1,26 +1,41 @@
-<% unless @users_marked_for_deletion.empty? %>
+<p><%= @users.size %> <%= t('users.index.users') %></p>
+<% unless @users.empty? %>
+<table class="list" id="users_list">
+  <tr class="thead">
+    <th><%= sortable_list_column_header(t('activeldap.attributes.user.displayName')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.user.uid')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.user.puavoExternalId')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.user.puavoEduPersonAffiliation')) %></th>
+    <th><%= sortable_list_column_header(t('users.show.marked_for_removal')) %></th>
+    <th><%= t('users.index.actions') %></th>
+  </tr>
+<% @users.each do |user| %>
+  <tr>
+    <td data-title="<%= t('activeldap.attributes.user.displayName') %>">
+      <%= link_to "#{user['sn']} #{user['givenName']}", user_path(@school, user["puavoId"]) %>
+      <% if user["puavoLocked"] == "TRUE" %><i class='icon-lock' title="<%= t('users.show.user_is_locked') %>"></i><% end %>
+    </td>
+    <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%= h user["uid"] %></td>
+    <td data-title="t('activeldap.attributes.user.puavoExternalId') %>"><%= h user["puavoExternalId"] %></td>
+    <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>"><%=h t('puavoEduPersonAffiliation_' + user["puavoEduPersonAffiliation"].to_s) %></td>
+    <td data-title="<%= t('activeldap.attributes.user.markedForDeletion') %>" data-sort-key="<%= user["puavoExactRemovalTimeRaw"] %>"><abbr title="<%= user["puavoExactRemovalTime"] %>"><%= user["puavoFuzzyRemovalTime"] %></abbr></td>
+    <td data-title="<%= t('users.index.actions')%>" class="tableActions">
+      <%= link_to edit_user_path(@school, user["puavoId"]), class: "btn" do%>
+        <i class='icon-pencil'></i><%= t('link.edit') %>
+      <% end %>
 
-<h3 id="marked"><%= t('users.index.users_marked_for_deletion_title') %> [ <a href="#normal"><%= t('users.index.jump_to_normal') %></a> ]</h3>
-
-<%= render :partial => 'users_list', :locals => {
-  :table_id => 'markedForDeletionUsers',
-  :source => @users_marked_for_deletion,
-  :table_classes => "list usersMarkedForDeletion",
-  :have_primus => false,
-  :is_deleted => true
-} %>
-
-<hr><br>
-<h3 id="normal"><%= t('users.index.normal_users_title') %> [ <a href="#marked"><%= t('users.index.jump_to_marked') %></a> ]</h3>
+      <% if user["puavoDoNotDelete"].to_s == "" || user["puavoDoNotDelete"] == "FALSE" %>
+        <%= link_to user_path(@school, user["puavoId"]),
+          data: { confirm: t('destroy_confirm', object_name: user['sn']) },
+          method: :delete, class: "btn btn-danger" do%>
+          <i class='icon-trash'></i><%= t('link.destroy')%>
+        <% end %>
+      <% end %>
+    </td>
+  </tr>
 <% end %>
-
-<%= render :partial => 'users_list', :locals => {
-  :table_id => 'normalUsers',
-  :source => @users,
-  :table_classes => "list",
-  :have_primus => false,
-  :is_deleted => false
-} %>
+</table>
+<% end %>
 
 <% content_for :tools do %>
 <ul>

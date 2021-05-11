@@ -694,12 +694,7 @@ fi:
   users:
     index:
       actions: Toiminnot
-      users_marked_for_deletion_title: Poistettavaksi merkityt käyttäjät
-      normal_users_title: Normaalit käyttäjät
       users: käyttäjää
-      do_not_delete: "(Ei voi poistaa)"
-      jump_to_marked: "⇈ Näytä poistettavat käyttäjät"
-      jump_to_normal: "⇊ Näytä normaalit käyttäjät"
       synchronised_deletions: "Käyttäjien poistot synkronoidaan välittömästi seuraaviin ulkoisiin järjestelmiin: %{systems}. Kaikki näihin järjestelmiin tallennetut tiedot poistetaan peruuttamattomasti! Varmista jokainen poisto etukäteen."
 
       filters:
