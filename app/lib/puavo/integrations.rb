@@ -274,6 +274,20 @@ module Puavo
       end
     end
 
+    # Returns a list of external systems where user deletions are synchronised to
+    def list_school_synchronised_deletion_systems(organisation, school_id)
+      names = get_school_integration_names(organisation, school_id)
+      deletions = Set.new
+
+      get_school_sync_actions(organisation, school_id, :delete_user)&.each do |name, _|
+        if names.include?(name)
+          deletions << names[name]
+        end
+      end
+
+      return deletions
+    end
+
     # Off-line synchronisation schedules
     def get_school_single_integration_next_update(organisation, school_id, integration_name, now)
       schedule = cache_school_integration_data(organisation, school_id)[:schedule]

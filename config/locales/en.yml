@@ -153,7 +153,7 @@ en:
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
   destroy_confirm_admin: "This user is an owner and/or a school admin. Are you sure?"
-  destroy_sync_waring: "The user will also be removed from these external systems:\n\n\tSYSTEM_NAMES_HERE\n\nPlease verify that this is what you intended to do."
+  destroy_exact_sync_warning: "The user will also be removed from these external systems:\n\n\tSYSTEM_NAMES_HERE\n\nPlease verify that this is what you intended to do."
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
   actions: Actions

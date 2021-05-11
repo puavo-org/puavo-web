@@ -153,7 +153,7 @@ fi:
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
   destroy_confirm_admin: "Tämä käyttäjä on omistaja ja/tai koulun ylläpitäjä. Oletko varma?"
-  destroy_sync_waring: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\tSYSTEM_NAMES_HERE\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
+  destroy_exact_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\tSYSTEM_NAMES_HERE\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
   ldap_create_time: Luotu (LDAP)
   ldap_modify_time: Muokattu (LDAP)
   actions: Toiminnot

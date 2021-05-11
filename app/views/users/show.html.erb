@@ -252,9 +252,9 @@
             confirm_msg = t('destroy_confirm', object_name: @user.displayName)
           end
 
-          unless @synchronised_deletions.empty?
+          if !@synchronised_deletions.empty? && @synchronised_deletions.include?(@user.school.id.to_i)
             confirm_msg += "\n\n"
-            confirm_msg += t('users.show.deletion_sync_warning', :systems => @synchronised_deletions.join(', '))
+            confirm_msg += t('users.show.deletion_sync_warning', :systems => @synchronised_deletions[@user.school.id.to_i].join(', '))
           end
 
           %>

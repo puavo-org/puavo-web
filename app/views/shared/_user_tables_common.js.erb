@@ -272,12 +272,10 @@ class MassUserDeletion extends MassOperation {
     canProceed()
     {
         // Show an extra warning if there are synchronised deletions
-        if (SYNC_DELETIONS.length == 0)
+        if (Object.keys(SYNC_DELETIONS).length == 0)
             return true;
 
-        const message = `<%= t('destroy_sync_waring') %>`.replace("SYSTEM_NAMES_HERE", SYNC_DELETIONS.join(", "));
-
-        return window.confirm(message);
+        return window.confirm(`<%= t('destroy_generic_sync_warning') %>`);
     }
 
     start()
@@ -640,7 +638,7 @@ const FILTER_PRESETS = {
     },
 };
 
-const SYNC_DELETIONS = <%= raw @synchronised_deletions %>;
+const SYNC_DELETIONS = <%= raw JSON.pretty_generate(@synchronised_deletions) %>;
 
 function userActions(item)
 {
@@ -665,7 +663,9 @@ function userActions(item)
             message = "<%= t('destroy_confirm_admin') %>";
         else message = "<%= t('general_confirm') %>";
 
-        if (SYNC_DELETIONS.length > 0) {
+        const school_id = item.school_id[0];
+
+        if (school_id in SYNC_DELETIONS && SYNC_DELETIONS[school_id].length > 0) {
             // Extra warning about deletion synchronisations. "SYSTEM_NAMES_HERE" is the only
             // placeholder I could came up with to stop JavaScript's string interpolation from
             // throwing up because it couldn't find the placeholder. I tried ${name}, $(name)
@@ -673,7 +673,8 @@ function userActions(item)
             // use `` for the string because it's the only way to have multiline strings in
             // JavaScript.
             message += "\n\n";
-            message += `<%= t('destroy_sync_waring') %>`.replace("SYSTEM_NAMES_HERE", SYNC_DELETIONS.join(", "));
+            message += `<%= t('destroy_exact_sync_warning') %>`
+                       .replace("SYSTEM_NAMES_HERE", SYNC_DELETIONS[school_id].join(", "));
         }
 
         html += `<a href="${item['link']}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
