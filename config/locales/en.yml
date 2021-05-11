@@ -153,6 +153,7 @@ en:
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
   destroy_confirm_admin: "This user is an owner and/or a school admin. Are you sure?"
+  destroy_generic_sync_warning: "Deletions will potentially be synchronised to one or more external systems.\nAre you sure you want to continue?"
   destroy_exact_sync_warning: "The user will also be removed from these external systems:\n\n\tSYSTEM_NAMES_HERE\n\nPlease verify that this is what you intended to do."
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
@@ -537,6 +538,9 @@ en:
       missing_date: "Missing date!"
       users_deleted_ok: "%{count} users removed, no errors"
       users_deleted_fail: "%{count} users removed, not all could be removed"
+    all_users:
+      sync_deletion_1: "<strong>WARNING:</strong> The following schools have enabled synchronised user deletions to various external systems:"
+      sync_deletion_2: "Perform user deletions (either individually or by en masse) in the above schools very carefully. You might end up deleting more than what you intended to, for example, user email accounts with their contents!"
 
   # LDAP services
   ldap_services:

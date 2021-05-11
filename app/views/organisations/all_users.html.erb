@@ -10,6 +10,26 @@
 
 <h1><%= t('titles.all_users') %></h1>
 
+<% unless @synchronised_deletions_by_school.empty? %>
+
+<div class="genericWarning">
+<%= t('organisations.all_users.sync_deletion_1').html_safe %>
+
+<ul>
+<% @synchronised_deletions_by_school.each do |school_name, systems| %>
+  <li><%= school_name %><ul>
+    <% systems.each do |s| %>
+    <li><%= s %></li>
+    <% end %>
+  </ul></li>
+<% end %>
+</ul>
+
+<%= t('organisations.all_users.sync_deletion_2') %>
+</div>
+
+<% end %>
+
 <div class="superTable" id="tableUsers"></div>
 
 <% content_for :post_load_javascript do %>

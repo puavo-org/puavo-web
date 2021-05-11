@@ -1,4 +1,5 @@
 class OrganisationsController < ApplicationController
+  include Puavo::Integrations
 
   # GET /organisation
   def show
@@ -276,8 +277,19 @@ class OrganisationsController < ApplicationController
     # Yes, you can
     @permit_single_user_deletion = true
 
-    # TODO: Is there a way to do synchronised deletions here?
-    @synchronised_deletions = []
+    # Make a list of synchronised deletions in ALL schools. Because every user has
+    # a school ID in their row data, we can display precise warning messages about
+    # each and every operation, but only if we know about per-school deletions.
+    @synchronised_deletions = {}
+    @synchronised_deletions_by_school = {}
+
+    School.all.each do |s|
+      deletions = list_school_synchronised_deletion_systems(@organisation_name, s.id.to_i)
+      next if deletions.empty?
+
+      @synchronised_deletions[s.id.to_i] = deletions.to_a.sort
+      @synchronised_deletions_by_school[s.displayName] = deletions.to_a.sort
+    end
 
     respond_to do |format|
       format.html   # all_users.html.erb

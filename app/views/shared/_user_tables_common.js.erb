@@ -262,7 +262,7 @@ const USER_TRANSFORM_FUNCTIONS = {
     },
 };
 
-<% if @is_owner && !@is_organisation %>
+<% if @is_owner %>
 class MassUserDeletion extends MassOperation {
     constructor(parent, container)
     {
@@ -534,7 +534,7 @@ class MassUsernameList extends MassOperation {
 <% end %>
 
 const MASS_OPERATIONS = [
-<% if @is_owner && !@is_organisation %>
+<% if @is_owner %>
     {
         id: "delete",
         title: "<%= t('users.index.mass_operations.delete.title') %>",

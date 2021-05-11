@@ -153,6 +153,7 @@ fi:
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
   destroy_confirm_admin: "Tämä käyttäjä on omistaja ja/tai koulun ylläpitäjä. Oletko varma?"
+  destroy_generic_sync_warning: "Poistot synkronoidaan mahdollisesti yhteen tai useampaan ulkoiseen järjestelmään.\nOletko varma, että haluat jatkaa?"
   destroy_exact_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\tSYSTEM_NAMES_HERE\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
   ldap_create_time: Luotu (LDAP)
   ldap_modify_time: Muokattu (LDAP)
@@ -537,6 +538,9 @@ fi:
       missing_date: "Päivämäärää ei määritetty!"
       users_deleted_ok: "%{count} käyttäjää poistettu, ei virheitä"
       users_deleted_fail: "%{count} käyttäjää poistettu, joitain ei voitu poistaa"
+    all_users:
+      sync_deletion_1: "<strong>VAROITUS:</strong> Seuraavissa kouluissa on käytössä käyttäjien synkronoituja poistoja eri ulkoisiin järjestelmiin:"
+      sync_deletion_2: "Tee ylläolevien koulujen käyttäjien poistoja (yksittäin tai massana) hyvin varovasti. Saatat poistaa enemmän kuin mitä aioit, kuten käyttäjien sähköpostitilit sisältöineen! "
 
   # LDAP services
   ldap_services:
