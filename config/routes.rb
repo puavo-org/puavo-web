@@ -76,8 +76,6 @@ Rails.application.routes.draw do
 
       get 'groups/:id/members' => 'groups#members'
 
-      post 'users/lock_marked_users' => 'users#lock_marked_users', :as => :lock_marked_users
-      delete 'users/delete_marked_users' => 'users#delete_marked_users', :as => :delete_marked_users
       match 'users/:id/select_school' => 'users#select_school', :as => :select_school_user, :via => :get
       match 'users/:id/select_role' => 'users#select_role', :as => :select_role_user, :via => :post
       match 'users/change_school' => 'users#change_school', :as => :change_school_users, :via => :post

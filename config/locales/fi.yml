@@ -107,8 +107,6 @@ fi:
     remove: Poista
     new_user: "Uusi käyttäjä..."
     delete_user: "Poista käyttäjä"
-    lock_users_marked_for_deletion: "Lukitse kaikki poistettavaksi merkityt käyttäjät"
-    delete_users_marked_for_deletion: "Poista poistettavaksi merkityt käyttäjät"
     continue: Jatka
     change_password: Vaihda salasana
     new_school: Uusi koulu...
@@ -702,8 +700,6 @@ fi:
       do_not_delete: "(Ei voi poistaa)"
       jump_to_marked: "⇈ Näytä poistettavat käyttäjät"
       jump_to_normal: "⇊ Näytä normaalit käyttäjät"
-      lock_marked_users: "Haluatko varmasti lukita kaikki poistettavaksi merkityt käyttäjät?"
-      delete_marked_users: "Haluatko varmasti poistaa kaikki poistettavaksi merkityt käyttäjät?"
       synchronised_deletions: "Käyttäjien poistot synkronoidaan välittömästi seuraaviin ulkoisiin järjestelmiin: %{systems}. Kaikki näihin järjestelmiin tallennetut tiedot poistetaan peruuttamattomasti! Varmista jokainen poisto etukäteen."
 
       filters:

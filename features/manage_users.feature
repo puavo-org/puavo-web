@@ -39,21 +39,6 @@ Feature: Manage users
     And I should not see "Mark for deletion"
     And I should not see "Delete user"
 
-  Scenario: Non-owners should not see any delete buttons on the user list page
-    # This scenario is not test everything. User deletion buttons are always
-    # visible in the legacy index, but since it cannot be used outside of the
-    # test environment, we are not testing for their presence/absence.
-    # Part 1: an admin
-    Given I am logged in as "admin" with password "secret"
-    And I am on the school users list page
-    Then I should not see "Delete users who are marked for deletion"
-
-    # Part 2: an owner
-    # Another issue: this tests another school than what's used above
-    Given I am logged in as "cucumber" with password "cucumber"
-    And I am on the school users list page
-    Then I should see "Delete users who are marked for deletion"
-
   Scenario: Create new user by staff
     Given I follow "Logout"
     And I am logged in as "pavel" with password "secret"
@@ -551,29 +536,6 @@ Feature: Manage users
     And I should not see "User is locked"
     And I should not see "Prevent deletion"
     And I should not see "Delete user"
-
-  Scenario: Delete users who are marked for deletion
-    Given the following users:
-      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
-      | Donald    | Duck    | donald | 313      | visitor                   |
-      | Daisy     | Duck    | daisy  | 314      | visitor                   |
-    Then I am on the show user page with "donald"
-    And I should see "Delete user"
-    And I should see "Mark for deletion"
-    When I follow "Mark for deletion"
-    Then I should see "This user has been marked for deletion"
-    #
-    When I follow "School 1" within "#left"
-    And I follow "Users" within "#pageContainer"
-    Then I should see "Users marked for later deletion"
-    And I should see "Duck Donald" within "#pageContainer"
-    And I should see "Duck Daisy" within "#pageContainer"
-    And I should see "Delete users who are marked for deletion"
-    #
-    When I follow "Delete users who are marked for deletion"
-    Then I should see "1 users removed"
-    And I should not see "Duck Donald" within "#pageContainer"
-    And I should see "Duck Daisy" within "#pageContainer"
 
   # It tooke me almost an hour to write this test. I hope it never has to be changed.
   Scenario: Removing the admin role removes the user from school admins and organisation owners

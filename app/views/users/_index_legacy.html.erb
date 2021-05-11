@@ -29,19 +29,5 @@
       <i class='icon-plus'></i><%= t('link.new_user')%>
     <% end %>
   </li>
-
-  <li>
-    <%= link_to lock_marked_users_path, data: { confirm: t('users.index.lock_marked_users') }, method: :post, class: 'btn btn-danger' do %>
-      <i class='icon-lock'></i><%= t('link.lock_users_marked_for_deletion')%>
-    <% end %>
-  </li>
-
-  <% if current_user.organisation_owner? %>
-  <li class="ownersOnly">
-    <%= link_to delete_marked_users_path, data: { confirm: t('users.index.delete_marked_users') }, method: :delete, class: 'btn btn-danger' do %>
-      <i class='icon-trash'></i><%= t('link.delete_users_marked_for_deletion')%>
-    <% end %>
-  </li>
-  <% end %>
 </ul>
 <% end %>

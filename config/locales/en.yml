@@ -107,8 +107,6 @@ en:
     remove: Remove
     new_user: New user...
     delete_user: "Delete user"
-    lock_users_marked_for_deletion: "Lock all users who are marked for deletion"
-    delete_users_marked_for_deletion: "Delete users who are marked for deletion"
     continue: Continue
     change_password: Change password
     new_school: New school...
@@ -702,8 +700,6 @@ en:
       do_not_delete: "(Can't be removed)"
       jump_to_marked: "⇈ Show users to be deleted"
       jump_to_normal: "⇊ Show normal users"
-      lock_marked_users: "Are you sure you want to lock all users who are marked for deletion?"
-      delete_marked_users: "Are you sure you want to delete all users who are marked for deletion?"
       synchronised_deletions: "User deletions are immediately synchronised to these external systems: %{systems}. All data stored in these systems will be irrevocably deleted! Verify all deletions in advance."
 
       filters:
