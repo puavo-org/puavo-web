@@ -2,9 +2,6 @@
 class User < LdapBase
   include Puavo::Integrations
 
-  # When using user mass import we have to store uids which are already been taken. See validate method.
-  @@reserved_uids = Array.new
-
   include Puavo::AuthenticationMixin
   include Puavo::Locale
   include Puavo::Helpers
@@ -45,7 +42,6 @@ class User < LdapBase
      :password,
      :new_password,
      :uid_has_changed,
-     :mass_import,
      :image,
      :earlier_user,
      :new_password_confirmation,
@@ -53,8 +49,6 @@ class User < LdapBase
   ]
 
   attr_accessor(*@@extra_attributes)
-
-  cattr_accessor :reserved_uids
 
   OVERWRITE_CHARACTERS = {
     "Ä" => "a",
@@ -271,14 +265,6 @@ class User < LdapBase
       end
     end
 
-    # mass import uid validation
-    if self.mass_import
-      if @@reserved_uids.include?(self.uid)
-        errors.add :uid, I18n.t("activeldap.errors.messages.taken",
-                                :attribute => I18n.t("activeldap.attributes.user.uid") )
-      end
-    end
-
     emailFailed = false
 
     if !self.mail.nil? && !self.mail.empty?
@@ -421,54 +407,6 @@ class User < LdapBase
       return I18n.t("activeldap.attributes.user.#{args[0]}")
     end
     super(*args)
-  end
-
-  #
-  # Retruns the array (users).
-  #
-  # Example of Data: {"0"=>["Wilk", "Mabey"], "1"=>["Ben", "Joseph"], "2"=>["Class 4", "Class 4"]}
-  # Example of Columns: {"0" => "Lastname", "1" => "Given names", "2" => "Group" }
-  #
-  def self.hash_array_data_to_user(data, columns, school)
-    users = []
-    max_data_column_number = (columns.count - 1).to_s
-    # Row contains one user data (row number == user_index)
-    0.upto data["0"].length-1 do |user_index|
-      next if Array(data[ (max_data_column_number.to_i + 1).to_s ]).include?(user_index.to_s)
-      user = Hash.new
-      0.upto max_data_column_number.to_i do |column_index|
-        unless columns[column_index].nil?
-          user[columns[column_index]] = data[column_index.to_s][user_index]
-        end
-      end
-      new_user = User.new(user)
-      new_user.puavoSchool = school.dn
-      new_user.mass_import = true
-      if data[(max_data_column_number.to_i + 1).to_s] && data[(max_data_column_number.to_i + 1).to_s][user_index.to_s]
-        new_user.earlier_user = User.find(data[(max_data_column_number.to_i + 1).to_s][user_index.to_s])
-      end
-      users.push new_user
-    end
-
-    return users
-  end
-
-  def self.validate_users(users)
-    valid = []
-    invalid = []
-    User.reserved_uids = []
-
-    users.each do |user|
-      if  user.uid.nil? or user.uid.empty?
-        user.generate_username
-      end
-      if user.puavoId.nil?
-        user.puavoId = "0"
-      end
-      user.valid? ? (valid.push user) : (invalid.push user)
-      User.reserved_uids.push user.uid
-    end
-    return valid, invalid
   end
 
   def generate_password(size=8)
