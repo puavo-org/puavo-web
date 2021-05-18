@@ -131,9 +131,12 @@ test-acceptance:
 test:
 	bundle exec rspec --format documentation
 	bundle exec rails runner acl/runner.rb
+	AUTOMATIC_EMAIL_ADDRESSES=enabled bundle exec cucumber --color --tags @automatic_email \
+			features/enforced_email_addresses.feature --format=message \
+			--out log/cucumber-tests-automatic-email-addresses.json
 	bundle exec cucumber --color --tags @start_test_server \
 		--format=message --out log/cucumber-tests-TS.json
-	bundle exec cucumber --color --tags "not @start_test_server" \
+	bundle exec cucumber --color --tags "not @start_test_server" --tags "not @automatic_email" \
 		--format=message --out log/cucumber-tests-notTS.json
 
 seed:

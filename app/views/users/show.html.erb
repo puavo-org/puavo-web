@@ -74,7 +74,7 @@
 </div>
 
 <%= start_box t('.contact_information') %>
-<table>
+<table id="contactInformation">
   <tr>
   <th><%= t('activeldap.attributes.user.mail') %></th>
   <td class="noWrap"><%= h Array(@user.mail).map{ |mail| mail }.join("<br>").html_safe %></td>

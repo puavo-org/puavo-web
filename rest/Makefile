@@ -51,6 +51,8 @@ install:
 
 .PHONY: test
 test:
+	# Run the enforced email tests separately
+	bundle exec ruby test/enforced_email_addresses.rb
 	bundle exec ruby test/all.rb
 
 server:

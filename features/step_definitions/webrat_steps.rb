@@ -220,6 +220,11 @@ Then(/^show me the page$/) do
   save_and_open_page
 end
 
+Then(/^I should not see element "([^\"]*)"$/) do |elem|
+  # I don't know if this works with *any* element or just input elements
+  lambda { find_field(elem) }.should raise_error(Capybara::ElementNotFound)
+end
+
 Then(/^I debug$/) do
   debugger
   "" # Avoid returning the debugger to wrong context

@@ -44,6 +44,12 @@ module Puavo
     # Returns [true, domain] if automatic (enforced) email addresses are enabled in this organisation.
     # If enabled, all email addresses are formatted as "username@domain".
     def get_automatic_email_addresses
+      if test_environment? && ENV['AUTOMATIC_EMAIL_ADDRESSES'] == 'enabled'
+        # Since this is organisation-wide, we cannot enable it in all tests. Tests for
+        # these are run with separate commands that temporarily enable these.
+        return [true, 'hogwarts.magic']
+      end
+
       automatic = Puavo::Organisation.find(LdapOrganisation.current.cn).
         value_by_key('automatic_email_addresses')
 
