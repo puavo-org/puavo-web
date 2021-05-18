@@ -119,6 +119,30 @@ const COLUMN_DEFINITIONS = {
         defaultOperator: FilterOperator.EQU,
     },
 
+    df_images: {
+        key: "df_home",
+        title: "<%= t('columns.devices.df_images') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.INTEGER,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    df_state: {
+        key: "df_home",
+        title: "<%= t('columns.devices.df_state') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.INTEGER,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    df_tmp: {
+        key: "df_home",
+        title: "<%= t('columns.devices.df_tmp') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.INTEGER,
+        defaultOperator: FilterOperator.EQU,
+    },
+
     hd: {
         key: "hd",
         title: "<%= t('columns.devices.hwinfo_hd_size') %>",
@@ -362,6 +386,9 @@ const COLUMN_TITLES = {
     current_image: "<%= t('columns.devices.current_image') %>",
     desc: "<%= t('columns.devices.description') %>",
     df_home: "<%= t('columns.devices.df_home') %>",
+    df_images: "<%= t('columns.devices.df_images') %>",
+    df_state: "<%= t('columns.devices.df_state') %>",
+    df_tmp: "<%= t('columns.devices.df_tmp') %>",
     hd: "<%= t('columns.devices.hwinfo_hd_size') %>",
     hd_ssd: "<%= t('columns.devices.hwinfo_is_ssd') %>",
     hn: "<%= t('columns.devices.hostname') %>",
@@ -424,6 +451,9 @@ const COLUMN_ORDER = [
     "hd",
     "hd_ssd",
     "df_home",
+    "df_images",
+    "df_state",
+    "df_tmp",
     "cpu",
     "bios_vendor",
     "bios_version",

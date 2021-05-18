@@ -83,6 +83,9 @@ module DevicesHelper
     "hd",
     "hd_ssd",
     "df_home",
+    "df_images",
+    "df_state",
+    "df_tmp",
     "cpu",
     "current_image",
     "bio_vendor",
@@ -138,6 +141,9 @@ module DevicesHelper
     attributes << :hd if requested.include?('hd')
     attributes << :hd_ssd if requested.include?('hd_ssd')
     attributes << :df_home if requested.include?('df_home')
+    attributes << :df_images if requested.include?('df_images')
+    attributes << :df_state if requested.include?('df_state')
+    attributes << :df_tmp if requested.include?('df_tmp')
     attributes << :current_image if requested.include?('current_image')
     attributes << :cpu if requested.include?('cpu')
     attributes << :bios_vendor if requested.include?('bios_vendor')
@@ -351,12 +357,17 @@ module DevicesHelper
         end
       end
 
-      if requested.include?(:df_home)
-        # Free disk space on various partitions
+      if requested.include?(:df_home) || requested.include?(:df_images) ||
+         requested.include?(:df_state) || requested.include?(:df_tmp)
+        # Free disk space on various partitions. Retrieve them all even if only one
+        # of them was requested, because it takes a lot of effort to dig them up.
         if info['free_space']
           df = info['free_space']
 
           out[:df_home] = df.include?('/home') ? (df['/home'].to_i / megabytes) : nil
+          out[:df_images] = df.include?('/images') ? (df['/images'].to_i / megabytes) : nil
+          out[:df_state] = df.include?('/state') ? (df['/state'].to_i / megabytes) : nil
+          out[:df_tmp] = df.include?('/tmp') ? (df['/tmp'].to_i / megabytes) : nil
         end
       end
     rescue
