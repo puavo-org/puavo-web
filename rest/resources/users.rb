@@ -77,6 +77,20 @@ class User < LdapModel
 
   before :update, :create do
     write_raw(:displayName, [first_name.to_s + " " + last_name.to_s])
+
+    auto_email, domain = get_automatic_email(User.current.organisation_name)
+
+    if auto_email
+      mail = "#{self.username}@#{domain}"
+
+      if self.email != mail || self.secondary_emails != []
+        # Attempting to change self.email or self.secondary_emails here will cause
+        # a "LDAP::ResultError: Type or value exists" error. I'm not sure why.
+        # But this appears to work. It even updates self.email and self.secondary_emails.
+        # I'm not sure how...
+        write_raw(:mail, [mail])
+      end
+    end
   end
 
   before :destroy do

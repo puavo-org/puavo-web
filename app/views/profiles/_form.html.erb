@@ -23,8 +23,13 @@ html_args[:'data-remote'] = true if @data_remote
           </section>
 
           <section>
+<% if @automatic_email_addresses %>
+            <%= f.label t('users.edit.automatic_email'), nil %>
+            <div class="automaticEmail"><%= Array(@user.mail).first %></div>
+<% else %>
             <%= f.label :mail, nil %>
             <%= f.text_field :mail, :placeholder => t('activeldap.attributes.user.mail') %>
+<% end %>
           </section>
 
           <section>

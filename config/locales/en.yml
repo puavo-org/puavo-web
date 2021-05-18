@@ -747,6 +747,7 @@ en:
       title: New user
     edit:
       title: Edit user
+      automatic_email: "Email (automatic)"
     form:
       add_email: Add another email
       add_telephone_number: Add another telephone number

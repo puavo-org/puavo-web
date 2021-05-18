@@ -748,6 +748,7 @@ fi:
       title: "Lisää uusi käyttäjä"
     edit:
       title: "Muokkaa käyttäjää"
+      automatic_email: "Sähköpostiosoite (automaattinen)"
     form:
       add_email: "Lisää sähköpostiosoitteita"
       add_telephone_number: "Lisää puhelinnumeroita"

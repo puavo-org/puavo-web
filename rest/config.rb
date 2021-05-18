@@ -100,3 +100,8 @@ begin
 rescue => e
   ORGANISATIONS = {}
 end
+
+def get_automatic_email(organisation_name)
+  conf = ORGANISATIONS.fetch(organisation_name, {}).fetch('automatic_email_addresses', {})
+  return [conf.fetch('enabled', false), conf.fetch('domain', nil)]
+end

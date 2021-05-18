@@ -30,6 +30,14 @@
     </tr>
 
     <tr>
+    <% if @automatic_email_addresses %>
+      <th><%= f.label t('users.edit.automatic_email'), nil %></th>
+      <% if @is_new_user %>
+      <td><span id="automaticEmail"><%= @user.mail %></span></td>
+      <% else %>
+      <td><span id="automaticEmail"><%= Array(@user.mail).first %></span></td>
+      <% end %>
+    <% else %>
       <th><%= f.label :mail, nil, for: "user_mail_0" %></th>
       <td>
         <div>
@@ -46,6 +54,7 @@
         <% end %>
         <%= field_error_text_span(f.object, :mail) %>
       </td>
+    <% end %>
     </tr>
 
     <tr>
@@ -171,5 +180,29 @@
 <% unless @is_admin_school %>
 <% content_for :post_load_javascript do %>
 <%= setup_password_validator(@organisation_name, @school.id) %>
+<% end %>
+<% end %>
+
+<% if @automatic_email_addresses %>
+<% content_for :post_load_javascript do %>
+<script>
+// Automatically generate the email address. This is only for the show, the actual
+// address is generated server-side, using same logic.
+const DOMAIN = "<%= @automatic_email_domain %>";
+
+let uid = document.getElementById("user_uid"),
+    email = document.getElementById("automaticEmail");
+
+function autogenerateEmailAddress()
+{
+    const v = uid.value.trim();
+
+    if (v.length == 0)
+        email.innerText = "";
+    else email.innerText = `${v}@${DOMAIN}`;
+}
+
+uid.addEventListener("input", e => autogenerateEmailAddress());
+</script>
 <% end %>
 <% end %>

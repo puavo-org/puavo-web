@@ -8,6 +8,8 @@ class ProfilesController < ApplicationController
 
     @data_remote = true if params[:'data-remote']
 
+    @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
+
     setup_language
 
     respond_to do |format|
@@ -22,15 +24,19 @@ class ProfilesController < ApplicationController
 
     @user = current_user
 
-    current_confirm_emails = Array(@user.mail)
-    @new_emails = params[:user][:mail].empty? ? [] : Array(params[:user][:mail])
+    @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
 
-    # If params not include old email, user like to remove it
-    current_confirm_emails.delete_if{ |email| not @new_emails.include?(email) }
-    params[:user][:mail] = current_confirm_emails
+    unless @automatic_email_addresses
+      current_confirm_emails = Array(@user.mail)
+      @new_emails = params[:user][:mail].empty? ? [] : Array(params[:user][:mail])
 
-    # List of new email addresses. Require user confirm
-    @new_emails.delete_if{ |email| current_confirm_emails.include?(email) }
+      # If params not include old email, user like to remove it
+      current_confirm_emails.delete_if{ |email| not @new_emails.include?(email) }
+      params[:user][:mail] = current_confirm_emails
+
+      # List of new email addresses. Require user confirm
+      @new_emails.delete_if{ |email| current_confirm_emails.include?(email) }
+    end
 
     # Create params for ldap replace operation.
     modify_params = profile_params.select do |key, value|
@@ -61,18 +67,20 @@ class ProfilesController < ApplicationController
 
     respond_to do |format|
       if @user.ldap_modify_operation( :replace, modify_params )
-        # Send confirm message to all new email address
-        email_confirm_url = password_management_host + "/email_confirm"
-        @new_emails.each do |email|
-          rest_response = HTTP.headers("Host" => request.host.to_s.gsub(/^staging\-/, ""),
-                                            "Accept-Language" => locale)
-            .post(email_confirm_url,
-                  :form => {
-                    :username => @user.uid,
-                    :email => email
-                  })
+        unless @automatic_email_addresses
+          # Send confirm message to all new email address
+          email_confirm_url = password_management_host + "/email_confirm"
+          @new_emails.each do |email|
+            rest_response = HTTP.headers("Host" => request.host.to_s.gsub(/^staging\-/, ""),
+                                              "Accept-Language" => locale)
+              .post(email_confirm_url,
+                    :form => {
+                      :username => @user.uid,
+                      :email => email
+                    })
 
-          raise RestConnectionError if rest_response.status != 200
+            raise RestConnectionError if rest_response.status != 200
+          end
         end
 
         flash[:notice] = t('flash.profile.updated')

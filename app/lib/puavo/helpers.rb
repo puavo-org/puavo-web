@@ -41,6 +41,18 @@ module Puavo
       ENV['RAILS_ENV'] == 'test'
     end
 
+    # Returns [true, domain] if automatic (enforced) email addresses are enabled in this organisation.
+    # If enabled, all email addresses are formatted as "username@domain".
+    def get_automatic_email_addresses
+      automatic = Puavo::Organisation.find(LdapOrganisation.current.cn).
+        value_by_key('automatic_email_addresses')
+
+      return [false, nil] unless automatic
+
+      # Make the domain nil by default, so if it hasn't been specified, things will crash
+      return [automatic.fetch('enabled', false), automatic.fetch('domain', nil)]
+    end
+
     # Converts LDAP operational timestamp attribute (received with search_as_utf8() call)
     # to unixtime. Expects the timestamp to be nil or a single-element array. Used in
     # users, groups and devices controllers when retrieving data with AJAX calls.

@@ -473,8 +473,10 @@ class MassUserClearColumn extends MassOperation {
     <td>
         <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_eid" checked>
         <label for="mass_user_clear_column_eid"><%= t('users.index.mass_operations.clear_column.columns.eid') %></label><br>
+<% unless @automatic_email_addresses %>
         <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_email">
         <label for="mass_user_clear_column_email"><%= t('users.index.mass_operations.clear_column.columns.email') %></label><br>
+<% end %>
         <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_telephone">
         <label for="mass_user_clear_column_telephone"><%= t('users.index.mass_operations.clear_column.columns.telephone') %></label><br>
         <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_learner_id">
@@ -488,8 +490,10 @@ class MassUserClearColumn extends MassOperation {
 
         this.container.querySelector("#mass_user_clear_column_eid")
             .addEventListener("click", event => this.setColumn(event, "eid"));
+<% unless @automatic_email_addresses %>
         this.container.querySelector("#mass_user_clear_column_email")
             .addEventListener("click", event => this.setColumn(event, "email"));
+<% end %>
         this.container.querySelector("#mass_user_clear_column_telephone")
             .addEventListener("click", event => this.setColumn(event, "telephone"));
         this.container.querySelector("#mass_user_clear_column_learner_id")

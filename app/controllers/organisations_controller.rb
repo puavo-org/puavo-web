@@ -277,6 +277,8 @@ class OrganisationsController < ApplicationController
     # Yes, you can
     @permit_single_user_deletion = true
 
+    @automatic_email_addresses, _ = get_automatic_email_addresses
+
     # Make a list of synchronised deletions in ALL schools. Because every user has
     # a school ID in their row data, we can display precise warning messages about
     # each and every operation, but only if we know about per-school deletions.

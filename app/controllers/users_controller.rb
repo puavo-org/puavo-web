@@ -84,6 +84,8 @@ class UsersController < ApplicationController
       end
     end
 
+    @automatic_email_addresses, _ = get_automatic_email_addresses
+
     # List of systems where user deletions are synchronised
     @synchronised_deletions = {}
     deletions = list_school_synchronised_deletion_systems(@organisation_name, school.id.to_i)
@@ -561,6 +563,8 @@ class UsersController < ApplicationController
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
+    @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
+
     @is_new_user = true
     setup_integrations_for_form(@school, true)
 
@@ -579,6 +583,8 @@ class UsersController < ApplicationController
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
+    @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
+
     @is_new_user = false
     setup_integrations_for_form(@school, false)
 
@@ -590,6 +596,13 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     @groups = @school.groups
+
+    # Automatically generate the email address
+    @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
+
+    if @automatic_email_addresses
+      @user.mail = "#{@user.uid.strip}@#{@automatic_email_domain}"
+    end
 
     # TODO: should we use the filtered hash returned by "user_params" here
     # instead of modifying the raw unfiltered "params" object?
@@ -685,7 +698,19 @@ class UsersController < ApplicationController
           end
         end
 
-        unless @user.update_attributes(user_params)
+        up = user_params()
+
+        # Automatically update the email address. We have to manipulate the user_params
+        # array, because the actual update logic happens inside @user.update_attributes()
+        # and we can't easily change it (the base method comes from the activeldap gem).
+        # So instead simulate the email address field being edited.
+        @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
+
+        if @automatic_email_addresses
+          up['mail'] = ["#{up['uid'].strip}@#{@automatic_email_domain}"]
+        end
+
+        unless @user.update_attributes(up)
           raise UserError, I18n.t('flash.user.save_failed')
         end
 
