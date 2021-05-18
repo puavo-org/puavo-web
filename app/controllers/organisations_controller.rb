@@ -202,23 +202,35 @@ class OrganisationsController < ApplicationController
       want_hw_info = true
     end
 
-    # Get the devices from every school in this organisation
+    # Get the devices from every school in this organisation. Use raw queries throughout,
+    # because we don't need most of the data the objects contain. Plus, object construction
+    # is significantly slower and here speed >> code cleanliness or length.
     raw = []
 
-    School.all.each do |school|
-      school_raw = DevicesHelper.get_devices_in_school(school.dn, attributes)
+    schools = []
 
-      school_raw.each do |sd|
-        # include the school in the array, we'll need it for generating links and other things
-        raw << [sd, school]
+    School.search_as_utf8(:filter => '',
+                          :attributes=>['cn', 'displayName', 'puavoId']).each do |dn, school|
+      schools << {
+        dn: dn,
+        id: school['puavoId'][0].to_i,
+        cn: school['cn'][0],
+        name: school['displayName'][0]
+      }
+
+      school_index = schools.count - 1
+
+      DevicesHelper.get_devices_in_school(dn, attributes).each do |d|
+        # the school is required when generating links and other things
+        raw << [d[1], school_index]
       end
     end
 
     # Convert the raw data into something we can easily parse in JavaScript
     devices = []
 
-    raw.each do |dev_temp, school|
-      dev = dev_temp[1]   # dev_temp[0] is the device's DN
+    raw.each do |dev, school_index|
+      school = schools[school_index]
 
       data = {}
 
@@ -226,9 +238,9 @@ class OrganisationsController < ApplicationController
       data[:id] = dev['puavoId'][0].to_i
       data[:hn] = dev['puavoHostname'][0]
       data[:type] = dev['puavoDeviceType'][0]
-      data[:link] = device_path(school, dev['puavoId'][0])
-      data[:school] = [school.cn, school.displayName]
-      data[:school_id] = school.id.to_i
+      data[:link] = "/devices/#{school[:id]}/devices/#{dev['puavoId'][0]}"
+      data[:school] = [school[:cn], school[:name]]
+      data[:school_id] = school[:id]
 
       # Optional, common parts
       data.merge!(DevicesHelper.build_common_device_properties(dev, requested))
@@ -247,7 +259,7 @@ class OrganisationsController < ApplicationController
 
           data[:user] = {
             valid: true,
-            link: user_path(school, u),
+            link: "/users/#{school[:id]}/users/#{u.id}",
             title: "#{u.uid} (#{u.givenName} #{u.sn})"
           }
         rescue
