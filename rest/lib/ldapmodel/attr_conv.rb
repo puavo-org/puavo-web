@@ -580,8 +580,10 @@ class LdapModel
   # @param [String] LDAP key string
   # @param [Array<String>] Value for the key
   def add_mod(mod, key, val)
+    # Remove existing mods for this key. LDAP really, *really*, does not like
+    # duplicate attribute modifications.
+    @pending_mods.delete_if {|p| p[1] == key }
+
     @pending_mods.push([mod, key, val])
   end
-
-
 end

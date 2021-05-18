@@ -329,5 +329,19 @@ describe LdapModel do
 
       assert @daisy.save!
     end
+
+    it "duplicate attributes do not cause problems" do
+      user = PuavoRest::User.new
+      user.first_name = 'Duplicate'
+      user.last_name = 'Attribute'
+      user.username = 'dulpicate.attribute'   # oops, typo'd the name
+      user.username = 'duplicate.attribute'   # there, much better
+      user.roles = ['testuser']
+      user.school_dns = [@school.dn.to_s]
+      assert user.save!
+
+      user = PuavoRest::User.by_dn!(user.dn)
+      assert_equal user.username, 'duplicate.attribute'
+    end
   end
 end
