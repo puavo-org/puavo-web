@@ -157,7 +157,7 @@ class UsersController < ApplicationController
       user[:role] << 'owner' if organisation_owners.include?(dn)
 
       # Optional, common parts
-      user.merge!(UsersHelper.build_common_user_properties(usr, @school, requested))
+      user.merge!(UsersHelper.build_common_user_properties(usr, requested))
 
       users << user
     end

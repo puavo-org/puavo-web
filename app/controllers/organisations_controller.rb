@@ -324,18 +324,24 @@ class OrganisationsController < ApplicationController
 
     organisation_owners = Set.new(organisation_owners)
 
-    school_admins = []
-
-    all_schools = School.all
-
+    # Perform the admin search as a raw query. In some organisations, "Schools.all"
+    # can be *very* slow (like 4-5 seconds per call) and we don't even need 99% of
+    # the data it returns. But this raw search is nearly instantaneous. We'll lose
+    # user_path() because we don't have School objects anymore, but it's no big
+    # deal, we can format the URL by hand.
     schools_by_dn = {}
+    school_admins = Set.new
 
-    all_schools.each do |school|
-      school_admins += school.user_school_admins.each.map{ |a| a.dn.to_s }
-      schools_by_dn[school.dn.to_s] = school
+    School.search_as_utf8(:filter => '',
+                          :attributes=>['cn', 'displayName', 'puavoId', 'puavoSchoolAdmin']).each do |dn, school|
+      schools_by_dn[dn] = {
+        id: school['puavoId'][0].to_i,
+        cn: school['cn'][0],
+        name: school['displayName'][0],
+      }
+
+      Array(school['puavoSchoolAdmin'] || []).each{ |dn| school_admins << dn }
     end
-
-    school_admins = Set.new(school_admins)
 
     # Get a list of all users in all schools
     users = []
@@ -357,15 +363,15 @@ class OrganisationsController < ApplicationController
       user[:rrt] = Puavo::Helpers::convert_ldap_time(usr['puavoRemovalRequestTime'])
       user[:dnd] = usr['puavoDoNotDelete'] ? true : false
       user[:locked] = usr['puavoLocked'] ? (usr['puavoLocked'][0] == 'TRUE' ? true : false) : false
-      user[:link] = user_path(school, usr['puavoId'][0])
-      user[:school] = [school.cn, school.displayName]
-      user[:school_id] = school.id.to_i
+      user[:link] = "/users/#{school[:id]}/users/#{usr['puavoId'][0]}"
+      user[:school] = [school[:cn], school[:name]]
+      user[:school_id] = school[:id]
 
       # Highlight organisation owners (school admins have already an "admin" role set)
       user[:role] << 'owner' if organisation_owners.include?(dn)
 
       # Optional, common parts
-      user.merge!(UsersHelper.build_common_user_properties(usr, school, requested))
+      user.merge!(UsersHelper.build_common_user_properties(usr, requested))
 
       users << user
     end

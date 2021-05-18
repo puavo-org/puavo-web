@@ -34,7 +34,7 @@ module UsersHelper
     return attributes
   end
 
-  def self.build_common_user_properties(user, school, requested)
+  def self.build_common_user_properties(user, requested)
     u = {}
 
     if requested.include?('first')
