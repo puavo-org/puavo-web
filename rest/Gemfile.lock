@@ -31,7 +31,7 @@ GEM
       activemodel (> 4.0.0)
       builder
       gettext
-      gettext_i18n_rails (>= 0)
+      gettext_i18n_rails
       locale
     activemodel (5.2.4.5)
       activesupport (= 5.2.4.5)
@@ -131,7 +131,7 @@ GEM
       nokogiri (~> 1)
       rake
     mini_mime (1.1.0)
-    mini_portile2 (2.5.0)
+    mini_portile2 (2.5.1)
     minitest (5.14.4)
     mono_logger (1.1.1)
     multi_json (1.15.0)
@@ -143,7 +143,7 @@ GEM
       connection_pool (~> 2.2)
     net-ldap (0.17.0)
     nio4r (2.5.7)
-    nokogiri (1.11.3)
+    nokogiri (1.11.4)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     ntlm-http (0.1.1)
