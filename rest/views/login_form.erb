@@ -64,10 +64,10 @@
 
     <div id="help">
         <% if @login_content['support_info'] %>
-        <p class="support-info"><%= raw(@login_content['support_info']) %> </p>
+        <p class="support-info" id="support"><%= raw(@login_content['support_info']) %> </p>
         <% end %>
 
-        <details>
+        <details id="help">
             <summary><%= @login_content['text_help'] %></summary>
         <% if @login_content['organisation'] %>
             <p><%= @login_content['text_username_help'] %></p>
@@ -76,7 +76,7 @@
         <% end %>
         </details>
 
-        <details>
+        <details id="developers">
             <summary><%= @login_content['text_developers'] %></summary>
             <p><%= raw(@login_content['text_developers_info']) %> </p>
         </details>
