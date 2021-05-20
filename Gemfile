@@ -34,7 +34,7 @@ gem "parse-cron"
 group :test do
   gem "capybara"
   gem "colorize"
-  gem "cucumber"
+  gem "cucumber", "5.3.0"   # cucumber-rails is not compatible with cucumber 6
   gem "cucumber-rails"
   gem "greenletters"
   gem "rspec"
