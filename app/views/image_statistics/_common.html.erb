@@ -158,12 +158,14 @@ function sortByImage(raw)
 
 function download()
 {
+    const timestamp = I18n.strftime(new Date(), "%Y-%m-%d-%H-%M-%S")
+
     const b = new Blob([JSON.stringify(STATISTICS, null, "  ")], { type: "text/json" });
 
     let a = window.document.createElement("a");
     a.href = window.URL.createObjectURL(b);
 
-    a.download = `images.json`;
+    a.download = `<%= LdapOrganisation.current.o %>-images-${timestamp}.json`;
 
     document.body.appendChild(a);
     a.click();
