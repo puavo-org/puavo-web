@@ -266,7 +266,7 @@ const COLUMN_DEFINITIONS = {
     monitors_xml: {
         key: "monitors_xml",
         title: "<%= t('columns.devices.monitors_xml') %>",
-        flags: ColumnFlag.SORTABLE,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
     },
@@ -609,6 +609,11 @@ const USER_TRANSFORM_FUNCTIONS = {
                 entry.user.dn,
             ]
         }
+    },
+
+    monitors_xml: function(entry) {
+        // It's actually XML, but HTML escaping can handle it
+        return ["<pre>" + escapeHTML(entry.monitors_xml[0]) + "</pre>", entry.monitors_xml];
     },
 };
 
