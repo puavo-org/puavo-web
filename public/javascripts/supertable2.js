@@ -179,6 +179,7 @@ const ColumnFlag = {
     SORTABLE: 0x01,         // this column can be sorted
     ARRAY: 0x02,            // the column values are actually arrays of zero or more values
     USER_TRANSFORM: 0x04,   // call a user-defined callback function to get the actual value
+    CUSTOM_CSS: 0x08,       // add a custom CSS class name to the column TD (remember to specify it!)
 };
 
 const SortOrder = {
@@ -2882,6 +2883,8 @@ buildTable()
 
     const currentColumn = this.settings.sorting.column;
 
+    let customCSSColumns = new Map();
+
     // Arrow unicode characters and padding values (their widths vary slightly,
     // so try to unify them). The padding values were determined empirically.
     const arrows = {
@@ -2948,6 +2951,9 @@ buildTable()
         }
 
         html += "</th>";
+
+        if (def.flags & ColumnFlag.CUSTOM_CSS)
+            customCSSColumns.set(key, def.cssClass);
     }
 
     if (haveActions) {
@@ -2982,9 +2988,16 @@ buildTable()
 
             for (const column of this.settings.columns) {
                 const value = row[column];
+                let classes = [];
 
                 if (column == currentColumn)
-                    html += "<td class=\"sorted\">";
+                    classes.push("sorted");
+
+                if (customCSSColumns.has(column))
+                    classes.push(customCSSColumns.get(column));
+
+                if (classes.length > 0)
+                    html += `<td class=\"${classes.join(' ')}\">`;
                 else html += "<td>";
 
                 if (value.length == 1)
