@@ -97,7 +97,9 @@ module DevicesHelper
     "bat_pcnt",
     "bat_volts",
     "windows_license",
-    "wifi"
+    "wifi",
+    "lsusb",
+    "lspci",
   ]).freeze
 
   def self.convert_requested_device_column_names(requested)
