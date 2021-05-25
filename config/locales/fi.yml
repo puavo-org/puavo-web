@@ -267,6 +267,8 @@ fi:
       purchase_url: "Hankinta-URL"
       purchase_support: "Tukiyhteyshenkilö"
       location: "Sijainti"
+      lspci: "lspci -arvoja"
+      lsusb: "lsusb"
 
   # Quick search
   search:

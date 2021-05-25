@@ -267,6 +267,8 @@ en:
       purchase_url: "Purchase URL"
       purchase_support: "Support contract"
       location: "Location"
+      lspci: "lspci values"
+      lsusb: "lsusb"
 
   # Quick search
   search:
@@ -1003,9 +1005,9 @@ en:
       device: "Machine"
       mainboard: "Mainboard"
     lspci:
-      title: "Some lspci values"
+      title: "lspci values"
     lsusb:
-      title: "LSUSB"
+      title: "lsusb"
     xrandr:
       title: "xrandr output"
       no_xrandr: "(Empty)"

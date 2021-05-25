@@ -156,6 +156,8 @@ module DevicesHelper
     attributes << :bat_volts if requested.include?('bat_volts')
     attributes << :windows_license if requested.include?('windows_license')
     attributes << :wifi if requested.include?('wifi')
+    attributes << :lspci if requested.include?('lspci')
+    attributes << :lsusb if requested.include?('lsusb')
 
     attributes
   end
@@ -381,6 +383,16 @@ module DevicesHelper
       else
         out[:windows_license] = false
       end
+    end
+
+    if requested.include?(:lspci)
+      # lspci listing
+      out[:lspci] = info['lspci_values']
+    end
+
+    if requested.include?(:lsusb)
+      # lsusb listing
+      out[:lsusb] = info['lsusb_values']
     end
 
     return out

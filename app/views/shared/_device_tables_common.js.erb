@@ -215,6 +215,22 @@ const COLUMN_DEFINITIONS = {
         defaultOperator: FilterOperator.EQU,
     },
 
+    lspci: {
+        key: "lspci",
+        title: "<%= t('columns.devices.lspci') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    lsusb: {
+        key: "lsusb",
+        title: "<%= t('columns.devices.lsusb') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
     mac: {
         key: "mac",
         title: "<%= t('columns.devices.mac') %>",
@@ -398,6 +414,8 @@ const COLUMN_TITLES = {
     krn_args: "<%= t('columns.devices.kernel_args') %>",
     krn_ver: "<%= t('columns.devices.kernel_version') %>",
     location: "<%= t('columns.devices.location') %>",
+    lspci: "<%= t('columns.devices.lspci') %>",
+    lsusb: "<%= t('columns.devices.lsusb') %>",
     mac: "<%= t('columns.devices.mac') %>",
     mfer: "<%= t('columns.devices.manufacturer') %>",
     model: "<%= t('columns.devices.model') %>",
@@ -466,6 +484,8 @@ const COLUMN_ORDER = [
     "wifi",
     "xrandr",
     "monitors_xml",
+    "lspci",
+    "lsusb",
     "abitti_version",
     "windows_license",
     "purchase_date",
