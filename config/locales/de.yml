@@ -86,3 +86,7 @@ de:
     show:
       message: "Your profile has been successfully updated."
       email_confirm_info: "A confirmation message will be soon sent to your new email address. Click it to verify your address."
+
+  users:
+    edit:
+      automatic_email: "E-Mail (automatisch)"
