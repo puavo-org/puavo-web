@@ -212,6 +212,8 @@ Rails.application.routes.draw do
            :via => :delete )
     resources :servers
 
+    get 'get_servers_list' => 'servers#get_servers_list'
+
     namespace :api do
       namespace :v2 do
         match( 'devices/by_hostname/:hostname' => 'devices#by_hostname',

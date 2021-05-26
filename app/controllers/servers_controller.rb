@@ -1,7 +1,17 @@
 class ServersController < ApplicationController
+
   # GET /servers
   # GET /servers.xml
   def index
+    if test_environment? || ['application/json', 'application/xml'].include?(request.format)
+      old_legacy_devices_index
+    else
+      new_cool_devices_index
+    end
+  end
+
+  # Old "legacy" index used during tests
+  def old_legacy_devices_index
     return if redirected_nonowner_user?
 
     @servers = Server.all
@@ -20,6 +30,111 @@ class ServersController < ApplicationController
         end
       end
     end
+  end
+
+  # New AJAX-based index for non-test environments
+  def new_cool_devices_index
+    @is_owner = is_owner?
+
+    respond_to do |format|
+      format.html # index.html.erb
+    end
+  end
+
+  def get_servers_list
+    # Which attributes to retrieve? These are the defaults, they're always
+    # sent even when not requested, because basic functionality can break
+    # without them.
+    requested = Set.new(['id', 'hn', 'type'])
+
+    # Extra attributes (columns)
+    if params.include?(:fields)
+      requested += Set.new(params[:fields].split(','))
+    end
+
+    # Do the query
+    attributes = DevicesHelper.convert_requested_device_column_names(requested, is_server=true)
+
+    # Don't get hardware info if nothing from it was requested
+    hw_attributes = Set.new
+    want_hw_info = false
+
+    if (requested & DevicesHelper::HWINFO_ATTRS).any?
+      attributes << 'puavoDeviceHWInfo'
+      hw_attributes = DevicesHelper.convert_requested_hwinfo_column_names(requested)
+      want_hw_info = true
+    end
+
+    raw = Server.search_as_utf8(:attributes => attributes)
+
+    releases = get_releases()
+
+    school_cache = {}
+
+    # Convert the raw data into something we can easily parse in JavaScript
+    servers = []
+
+    raw.each do |dn, srv|
+      data = {}
+
+      # Mandatory
+      data[:id] = srv['puavoId'][0].to_i
+      data[:hn] = srv['puavoHostname'][0]
+      data[:type] = srv['puavoDeviceType'][0]
+      data[:link] = server_path(srv['puavoId'][0])
+      data[:school_id] = -1
+      data[:schools] = []
+      data[:available_images] = []
+
+      # Optional, common parts
+      data.merge!(DevicesHelper.build_common_device_properties(srv, requested))
+
+      # Hardware info
+      if want_hw_info && srv['puavoDeviceHWInfo']
+        data.merge!(DevicesHelper.extract_hardware_info(srv['puavoDeviceHWInfo'], hw_attributes))
+      end
+
+      if requested.include?('available_images') && srv.include?('puavoDeviceAvailableImage')
+        srv['puavoDeviceAvailableImage'].each do |image|
+          data[:available_images] << {
+            file: image,
+            release: releases.fetch(image, nil),
+          }
+        end
+      end
+
+      if requested.include?('schools') && srv.include?('puavoSchool')
+        srv['puavoSchool'].each do |dn|
+          # Database lookups are slow, so cache the schools
+          unless school_cache.include?(dn)
+            begin
+              s = School.find(dn)
+
+              school_cache[dn] = {
+                valid: true,
+                link: school_path(s),
+                title: s.displayName,
+              }
+            rescue
+              # Not found
+              school_cache[dn] = {
+                valid: false,
+                dn: dn,
+              }
+            end
+          end
+
+          data[:schools] << school_cache[dn]
+        end
+      end
+
+      # Purge empty fields to minimize the amount of transferred data
+      data.delete_if{ |k, v| v.nil? }
+
+      servers << data
+    end
+
+    render :json => servers
   end
 
   # GET /servers/1

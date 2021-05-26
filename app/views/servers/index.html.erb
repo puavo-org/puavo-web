@@ -2,51 +2,8 @@
 
 <h1><%= t('.title') %></h1>
 
-<table class="list" id="servers">
-  <tr class="thead">
-    <th><%= sortable_list_column_header(t('activeldap.attributes.server.puavoHostname')) %></th>
-    <th><%= sortable_list_column_header(t('activeldap.attributes.server.puavoDeviceManufacturer')) %></th>
-    <th><%= sortable_list_column_header(t('activeldap.attributes.server.puavoDeviceModel')) %></th>
-    <th><%= sortable_list_column_header(t('activeldap.attributes.server.serialNumber')) %></th>
-    <th><%= t('actions') %></th>
-  </tr>
-
-  <% @servers.each do |server| %>
-  <tr>
-    <td data-title="<%= t('activeldap.attributes.server.puavoHostname') %>"><%= link_to server.puavoHostname, server_path(server) %></td>
-    <td data-title="<%= t('activeldap.attributes.server.puavoDeviceManufacturer') %>"><%= h server.puavoDeviceManufacturer %></td>
-    <td data-title="<%= t('activeldap.attributes.server.puavoDeviceModel') %>"><%= h server.puavoDeviceModel %></td>
-    <td data-title="<%= t('activeldap.attributes.server.serialNumber') %>"><%= h server.serialNumber %></td>
-    <td data-title="<%= t('actions') %>" class="tableActions">
-      <%= link_to edit_server_path(server), class: 'btn' do %>
-        <i class="icon-pencil"></i><%= t('link.edit') %>
-      <% end %>
-
-      <%= link_to server_path(server), data: { confirm: t('destroy_confirm', object_name: server.puavoHostname) }, method: :delete, class: 'btn btn-danger' do %>
-        <i class="icon-trash"></i><%= t('link.destroy') %>
-      <% end %>
-    </td>
-  </tr>
-  <% end %>
-</table>
-
-<% content_for :javascript do %>
-<%= javascript_include_tag 'sortable_table', skip_pipeline: true %>
+<% if test_environment? %>
+<%= render :partial => 'index_legacy' %>
+<% else %>
+<%= render :partial => 'index_new' %>
 <% end %>
-
-<script>
-$(document).ready(function() {
-    new SortableTable(
-        "servers",
-        [
-            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
-            [ ],                                        // manufacturer
-            [ ],                                        // model
-            [ ],                                        // serial number
-            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
-        ],
-        "fi",
-        "<%= "#{LdapOrganisation.current.o}-servers" %>"
-    );
-});
-</script>

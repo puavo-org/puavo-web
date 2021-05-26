@@ -270,6 +270,10 @@ en:
       lspci: "lspci values"
       lsusb: "lsusb"
 
+    servers:
+      available_images: "Available images"
+      schools: "School limits?"
+
   # Quick search
   search:
     search_result:

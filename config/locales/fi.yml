@@ -270,6 +270,10 @@ fi:
       lspci: "lspci -arvoja"
       lsusb: "lsusb"
 
+    servers:
+      available_images: "Tarjolla olevat kuvatiedostot"
+      schools: "Koulurajoitus?"
+
   # Quick search
   search:
     search_result:

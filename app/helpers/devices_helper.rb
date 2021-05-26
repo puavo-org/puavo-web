@@ -102,7 +102,7 @@ module DevicesHelper
     "lspci",
   ]).freeze
 
-  def self.convert_requested_device_column_names(requested)
+  def self.convert_requested_device_column_names(requested, is_server=false)
     attributes = []
 
     attributes << 'puavoId' if requested.include?('id')
@@ -130,6 +130,12 @@ module DevicesHelper
     attributes << 'puavoPurchaseURL' if requested.include?('purchase_url')
     attributes << 'puavoSupportContract' if requested.include?('purchase_support')
     attributes << 'puavoLocationName' if requested.include?('location')
+
+    if is_server
+      # Boot server attributes only
+      attributes << 'puavoSchool' if requested.include?('schools')
+      attributes << 'puavoDeviceAvailableImage' if requested.include?('available_images')
+    end
 
     return attributes
   end
