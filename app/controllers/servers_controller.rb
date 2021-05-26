@@ -18,22 +18,15 @@ class ServersController < ApplicationController
     @servers = @servers.sort{ |a, b| a.puavoHostname.downcase <=> b.puavoHostname.downcase }
 
     respond_to do |format|
-      if current_user.organisation_owner?
-        format.html # index.html.erb
-        format.xml  { render :xml => @servers }
-      else
-        @schools = School.all_with_permissions
-        if @schools.count > 1 && Puavo::CONFIG["school"]
-          format.html { redirect_to( "/users/schools" ) }
-        else
-          format.html { redirect_to( devices_path(@schools.first) ) }
-        end
-      end
+      format.html # index.html.erb
+      format.xml  { render :xml => @servers }
     end
   end
 
   # New AJAX-based index for non-test environments
   def new_cool_devices_index
+    return if redirected_nonowner_user?
+
     @is_owner = is_owner?
 
     respond_to do |format|
