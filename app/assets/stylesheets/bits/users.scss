@@ -3,6 +3,32 @@
   margin: 8px 5px;
 }
 
+/* Schools editing page */
+.schoolsTable {
+  th span {
+    font-size: 120%;
+  }
+
+  tr.school {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+  }
+
+  tr.school:hover {
+    background: $listRowHoverBack;
+  }
+
+  tr.primary {
+    background: #eee;
+    border: 2px solid #ccc;
+  }
+
+  /* argh, this needs to be its own class */
+  .admin {
+    color: $importantBasicInfo;
+  }
+}
+
 /* The deletion timestamp on user "show" pages */
 .userMarkedForDeletion {
   color: $deletionMarkTimestamp;

@@ -113,10 +113,22 @@ class User < LdapModel
       self.edu_person_principal_name \
         = "#{ username }@#{ organisation.puavo_kerberos_realm }"
     end
+
+    # For some reason, we store school admin states in two separate places: in the
+    # user object and in the school object(s). If you remove an user from a school,
+    # then remove the removed school DNs from the user admin array.
+    new_admin = []
+
+    self.admin_of_school_dns.each do |dn|
+      new_admin << dn if self.school_dns.include?(dn)
+    end
+
+    self.admin_of_school_dns = new_admin
+
+    # Then we hope that remove_from_school below will remove the other associations...
   end
 
   def validate
-
     if username.to_s.strip.empty?
       add_validation_error(:username, :username_empty, "Username is empty")
     else
@@ -186,6 +198,24 @@ class User < LdapModel
 
     validate_unique(:email)
     # XXX validate secondary emails too!!
+
+    # Set/validate the primary school DN. If it's unset (for example, when creating a new user)
+    # then we can fix it automagically if there's only one school.
+    all_schools = Array(school_dns)
+
+    if self.primary_school_dn.nil?
+      if all_schools.count == 1
+        self.primary_school_dn = all_schools[0]
+      else
+        add_validation_error(:primary_school_dn, :primary_school_dn_unset,
+                             "primary_school_dn is unset and the user has multiple (#{all_schools.count}) schools")
+      end
+    else
+      unless all_schools.include?(self.primary_school_dn)
+        add_validation_error(:primary_school_dn, :primary_school_dn_not_valid,
+                             "primary_school_dn points to a school that isn't in the school_dns array")
+      end
+    end
   end
 
 
@@ -258,6 +288,27 @@ class User < LdapModel
     schools.each do |school|
       remove_from_school!(school)
     end
+
+    # Remove from school admin DNs (the user is not a member in these schools, but they admin
+    # them). This is a clumsy and slow loop, but I don't know what else to do.
+    self.admin_of_school_dns.each do |dn|
+      begin
+        school = School.by_dn(dn)
+
+        # Because some values are cached, it is possible this array has already been cleaned
+        # by remove_from_school! above, so we must do an extra check. Otherwise there will
+        # be exceptions.
+        if school.school_admin_dns.include?(self.dn)
+          school.remove(:school_admin_dns, self.dn)
+          school.save!
+        end
+      rescue StandardError => e
+        $rest_log.error e
+      end
+    end
+
+    # There are so many moving parts here that I don't know if this is
+    # how the cleanup should be done :-(
   end
 
   # Just store password locally and handle it in after hook
@@ -352,7 +403,16 @@ class User < LdapModel
   # Fix the gid number when moving user to another school
   def school_dns=(_dn)
     write_raw(:puavoSchool, Array(_dn))
-    write_raw(:gidNumber, Array(School.by_dn(Array(_dn)[0]).gid_number.to_s))
+
+    if primary_school_dn
+      # Unfortunately it is not possible to validate the DN here. It can be momentarily
+      # invalid before it gets fixed, or it could have been left to an invalid value
+      # accidentally. There just is no way for us to know here.
+      write_raw(:gidNumber, [School.by_dn(primary_school_dn).gid_number.to_s])
+    else
+      # Let's hope for the best...
+      write_raw(:gidNumber, Array(School.by_dn(Array(_dn)[0]).gid_number.to_s))
+    end
   end
 
   def username=(_username)
@@ -381,7 +441,7 @@ class User < LdapModel
   end
 
   def roles_within_school(school)
-    _roles = roles
+    _roles = roles.dup    # dup because we modify the array
     if is_school_admin_in?(school)
       _roles.push("schooladmin")
     end
@@ -468,14 +528,31 @@ class User < LdapModel
 
   computed_attr :school_dn
   def school_dn
-    Array(school_dns).first
+    primary_school_dn
   end
 
   # Primary school
   def school
     return @school if @school
-    return if school_dn.nil?
-    @school = School.by_dn(school_dn)
+
+    # This method is sometimes called before the object has been fully constructed, so
+    # the school DN array hasn't been populated yet. Crazy, but it does happen. For
+    # example, almost all of the REST user tests will fail without this check.
+    return if school_dns.nil? || school_dns.empty?
+
+    all_schools = Array(self.school_dns)
+    dn = primary_school_dn
+
+    if dn.nil?
+      if all_schools.count == 1
+        dn = all_schools[0]
+      else
+        raise InternalError, "user #{self.username} has multiple schools but no primary school DN"
+      end
+    end
+
+    # TODO: reuse the schools array, it already exists
+    @school = School.by_dn(dn)
   end
 
   computed_attr :primary_school_id
@@ -860,6 +937,11 @@ class User < LdapModel
     if school.member_dns.include?(dn)
       school.remove(:member_dns, dn)
     end
+
+    if school.school_admin_dns.include?(dn)
+      school.remove(:school_admin_dns, dn)
+    end
+
     school.save!
   end
 
@@ -1268,9 +1350,10 @@ class Users < PuavoSinatra
     'personnel_number'   => 'puavoEduPersonPersonnelNumber',
     'phone'              => 'telephoneNumber',
     'preferred_language' => 'preferredLanguage',
+    'primary_school_id'  => 'puavoEduPersonPrimarySchool',
     'removal_mark_time'  => 'puavoRemovalRequestTime',
     'role'               => 'puavoEduPersonAffiliation',
-    'school_id'          => 'puavoSchool',
+    'school_ids'         => 'puavoSchool',
     'ssh_public_key'     => 'puavoSshPublicKey',
     'uid_number'         => 'uidNumber',
     'username'           => 'uid',
@@ -1289,13 +1372,14 @@ class Users < PuavoSinatra
     'puavoDoNotDelete'              => { name: 'do_not_delete', type: :boolean },
     'puavoEduPersonAffiliation'     => { name: 'role' },
     'puavoEduPersonPersonnelNumber' => { name: 'personnel_number' },
+    'puavoEduPersonPrimarySchool'   => { name: 'primary_school_id', type: :id_from_dn },
     'puavoExternalId'               => { name: 'external_id' },
     'puavoExternalData'             => { name: 'external_data', type: :json },
     'puavoId'                       => { name: 'id', type: :integer },
     'puavoLocale'                   => { name: 'locale' },
     'puavoLocked'                   => { name: 'locked', type: :boolean },
     'puavoRemovalRequestTime'       => { name: 'removal_mark_time', type: :ldap_timestamp },
-    'puavoSchool'                   => { name: 'school_id', type: :id_from_dn },
+    'puavoSchool'                   => { name: 'school_ids', type: :id_from_dn },
     'puavoSshPublicKey'             => { name: 'ssh_public_key' },
     'sn'                            => { name: 'last_name' },
     'telephoneNumber'               => { name: 'phone' },
@@ -1335,7 +1419,7 @@ class Users < PuavoSinatra
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
-      out = v4_ensure_is_array(out, 'role', 'email', 'phone', 'admin_school_id')
+      out = v4_ensure_is_array(out, 'role', 'email', 'phone', 'admin_school_id', 'school_ids')
 
       return 200, json({
         status: 'ok',

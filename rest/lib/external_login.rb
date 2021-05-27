@@ -834,6 +834,10 @@ module PuavoRest
           userinfo[attr] = @user_mapping_defaults[attr]
         end
       end
+
+      userinfo['primary_school_dn'] = (!added_school_dns.empty? \
+                                         ? added_school_dns     \
+                                         : userinfo['school_dns']).first
     end
 
     def get_add_groups_param(params, param_name)

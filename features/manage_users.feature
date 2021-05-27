@@ -342,37 +342,6 @@ Feature: Manage users
     | +35814123123123 |
     | Class 6B        |
 
-  Scenario: Move user to another school
-    Given the following users:
-    | givenName | sn     | uid  | password | puavoEduPersonAffiliation |
-    | Joe       | Bloggs | joe  | secret   | student                   |
-    | Jane      | Doe    | jane | secret   | student                   |
-    And a new school and group with names "Example school 2", "Class 5" on the "example" organisation
-    And "pavel" is a school admin on the "Example school 2" school
-    And I am on the show user page with "pavel"
-    And I should see:
-      """
-      This user is an administrator of the school "Example school 2"
-      """
-    And I am on the show user page with "jane"
-    When I follow "Change school"
-    And I select "Example school 2" from "new_school"
-    And I press "Continue"
-    And I press "Change the school"
-    Then I should see "User(s) school has been changed!"
-    And the sambaPrimaryGroupSID attribute should contain "Example school 2" of "jane"
-    And the homeDirectory attribute should contain "Example school 2" of "jane"
-    And the gidNumber attribute should contain "Example school 2" of "jane"
-    And the puavoSchool attribute should contain "Example school 2" of "jane"
-    And the memberUid should include "jane" on the "Example school 2" school
-    And the member should include "jane" on the "Example school 2" school
-    And the memberUid should not include "jane" on the "School 1" school
-    And the member should not include "jane" on the "School 1" school
-    And the memberUid should include "jane" on the "Class 5" group
-    And the member should include "jane" on the "Class 5" group
-    And the memberUid should not include "jane" on the "Class 4" group
-    And the member should not include "jane" on the "Class 4" group
-
   Scenario: Lock user
     Given the following users:
       | givenName | surname | uid    | password | puavoEduPersonAffiliation |

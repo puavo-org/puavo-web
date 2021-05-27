@@ -76,9 +76,6 @@ Rails.application.routes.draw do
 
       get 'groups/:id/members' => 'groups#members'
 
-      match 'users/:id/select_school' => 'users#select_school', :as => :select_school_user, :via => :get
-      match 'users/:id/select_role' => 'users#select_role', :as => :select_role_user, :via => :post
-      match 'users/change_school' => 'users#change_school', :as => :change_school_users, :via => :post
       match 'users/:id/group' => 'users#group', :as => :group_user, :via => :get
       match 'users/:id/add_group' => 'users#add_group', :as => :add_group_user, :via => :put
       match 'import_tool' => 'import_tool#index', :via => :get
@@ -86,6 +83,13 @@ Rails.application.routes.draw do
       match 'users/:id/mark_user_for_deletion' => 'users#mark_for_deletion', :as => :mark_user_for_deletion, :via => :get
       match 'users/:id/unmark_user_for_deletion' => 'users#unmark_for_deletion', :as => :unmark_user_for_deletion, :via => :get
       match 'users/:id/prevent_deletion' => 'users#prevent_deletion', :as => :prevent_deletion, :via => :get
+
+      match 'users/:id/change_schools' => 'users#change_schools', :as => :change_schools, :via => :get
+      match 'users/:id/change_schools/add_school/:school' => 'users#add_to_school', :as => :add_user_to_school, :via => :get
+      match 'users/:id/change_schools/remove_school/:school' => 'users#remove_from_school', :as => :remove_user_from_school, :via => :get
+      match 'users/:id/change_schools/set_primary_school/:school' => 'users#set_primary_school', :as => :set_user_primary_school, :via => :get
+      match 'users/:id/change_schools/add_and_set_primary_school/:school' => 'users#add_and_set_primary_school', :as => :add_and_set_user_primary_school, :via => :get
+      match 'users/:id/change_schools/move_to_school/:school' => 'users#move_to_school', :as => :move_to_school, :via => :get
 
       get 'get_school_users_list' => 'users#get_school_users_list'
 

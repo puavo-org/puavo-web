@@ -3,7 +3,7 @@
 <div class="basicInfo">
   <div class="basicInfoImage">
     <%= image_tag(default_image_or_user_image_path(
-                  image_user_path(Array(@user.school).first.id, @user),
+                  image_user_path(@user.primary_school.id, @user),
                   @user), class: 'image', skip_pipeline: true ) %>
   </div>
 
@@ -56,15 +56,15 @@
     <p class="infoValue"><%= h @learner_id %></p>
     <% end %>
 
-    <% unless @other_schools.empty? %>
-    <p class="infoTitle"><%= t ('.other_schools') %></p>
-    <ul class="infoValue">
+    <% unless @user_schools.empty? %>
+    <p class="infoTitle"><%= t ('.schools') %></p>
+    <ul class="infoValue" id="schoolList">
       <% if @viewer_is_an_owner %>
-      <% @other_schools.each do |s| %>
-        <li><%= link_to(s.displayName, school_path(s)) %></li>
+      <% @user_schools.each do |s| %>
+        <li><%= link_to(s.displayName, school_path(s)) %> <%= s.dn == @primary_school_dn ? t('.primary_school') : '' %></li>
       <% end %>
       <% else %>
-      <% @other_schools.each do |s| %>
+      <% @user_schools.each do |s| %>
         <li><%= s.displayName %></li>
       <% end %>
       <% end %>
@@ -195,19 +195,21 @@
   <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more') %></span>
     <div class="dropdown">
-      <ul>
-        <li>
-          <% if school_has_integration?(@organisation_name, @school.id.to_i, 'primus') %>
-          <%= link_to select_school_user_path(@school, @user), data: { confirm: t('.primus_school_change_warning') } do %>
-            <i class='icon-exchange'></i><%= t('.change_school') %>
-          <% end %>
-          <% else %>
-          <%= link_to select_school_user_path(@school, @user) do %>
-            <i class='icon-exchange'></i><%= t('.change_school') %>
-          <% end %>
-          <% end %>
-        </li>
-      </ul>
+      <% if current_user.organisation_owner? %>
+       <ul>
+        <li class="ownersOnly">
+           <% if school_has_integration?(@organisation_name, @school.id.to_i, 'primus') %>
+          <%= link_to change_schools_path(@school, @user), data: { confirm: t('.primus_school_change_warning') } do %>
+             <i class='icon-exchange'></i><%= t('.change_school') %>
+           <% end %>
+           <% else %>
+          <%= link_to change_schools_path(@school, @user) do %>
+             <i class='icon-exchange'></i><%= t('.change_school') %>
+           <% end %>
+           <% end %>
+         </li>
+       </ul>
+      <% end %>
 
       <% unless @user.puavoDoNotDelete %>
       <% if current_user.organisation_owner? %>

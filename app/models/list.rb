@@ -10,7 +10,7 @@ class List
     return if user_ids.nil?
 
     user = User.find(user_ids.first)
-    self.school_id = Array(user.school).first.puavoId
+    self.school_id = user.primary_school.puavoId
 
     super(user_ids, creator)
   end

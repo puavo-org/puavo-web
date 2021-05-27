@@ -98,7 +98,7 @@ I18n.locale = "<%= I18n.locale %>";
 
         <li class="asFlex haveDropdown"><span class="menuTitle" id="loggedInName"><%= h current_user.displayName %></span>
           <ul class="dropdown dropRight">
-            <li><%= link_to t('.your_account'), user_path(current_user.school.id, current_user) %></li>
+            <li><%= link_to t('.your_account'), user_path(current_user.primary_school.id, current_user) %></li>
             <li>
               <%= link_to logout_path, method: :delete, class: 'logoutButton' do %>
                 <i class="icon-logout"></i> <%= t('.logout') %>

@@ -86,6 +86,7 @@ group.save!
   user = User.new(attrs)
   user.set_password 'secret'
   user.puavoSchool = school.dn
+  user.puavoEduPersonPrimarySchool = school.dn
   user.save!
   user.teaching_group = group   # XXX weird that this must be here
   if user.puavoEduPersonAffiliation == 'admin' then
@@ -284,6 +285,7 @@ group.save!
   user = User.new(attrs)
   user.set_password "secret"
   user.puavoSchool = school.dn
+  user.puavoEduPersonPrimarySchool = school.dn
   user.save!
   user.teaching_group = group   # XXX weird that this must be here
   if user.puavoEduPersonAffiliation == 'admin' then
@@ -433,6 +435,7 @@ group.save!
   user = User.new(attrs)
   user.set_password "secret"
   user.puavoSchool = school.dn
+  user.puavoEduPersonPrimarySchool = school.dn
   user.save!
   user.teaching_group = group   # XXX weird that this must be here
   if user.puavoEduPersonAffiliation == 'admin' then

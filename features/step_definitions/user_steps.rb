@@ -32,6 +32,7 @@ Given(/^the following users:$/) do |users|
 
     user = User.new(u)
     user.puavoSchool = school.dn
+    user.puavoEduPersonPrimarySchool = school.dn
 
     is_school_admin = (u['school_admin'] && u['school_admin'] == 'true')
 
@@ -167,7 +168,7 @@ Then(/^I should see image of "(.*?)"$/) do |uid|
   set_ldap_admin_connection
   user = User.find(:first, :attribute => 'uid', :value => uid)
 
-  page.should have_xpath("//img[@src='/users/#{ Array(user.school).first.puavoId }/users/#{ user.puavoId }/image']")
+  page.should have_xpath("//img[@src='/users/#{ user.primary_school.puavoId }/users/#{ user.puavoId }/image']")
 end
 
 When(/^I change "(.*?)" user type to "(.*?)"$/) do |uid, user_type|
