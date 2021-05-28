@@ -90,3 +90,17 @@ de:
   users:
     edit:
       automatic_email: "E-Mail (automatisch)"
+
+  # Login screen
+  sessions:
+    new:
+      external_service_name: Puavo
+      login_to: Einloggen in den Service
+      password: Passwort
+      username_help: "Der Benutzername ist derselbe den Sie für die Anmeldung an Opinsys-Computern verwenden."
+      organisation_help: "Der Benutzername muss in folgender Form angeben werden:  <em>benutzername</em>@<em>organisation</em>.opinsys.fi. Der Benutzername ist derselbe den Sie für die Anmeldung an Opinsys-Computern verwenden. Die Organisation entspricht der Stadt / Gemeinde in der sich Ihrer Schule befindet. Der Benutzername besteht nur aus Kleinbuchstaben und alle diakritische Zeichen sowie Akzente müssen entfernt werden.  Wenn Sie beispielsweise aus dem Harz kommen und Ihr Opinsys-Benutzername ’max.mustermann’ lautet, ist die Organisation <em>’harz’</em>. Somit melden Sie sich mit der Benutzerkennung <em>’max.mustermann@harz.opinsys.fi’</em> an."
+      developers: Entwickler
+      developers_info: "Lesen Sie <a href=\"/v3/sso/developers\" target=\"_blank\">dieses</a> Dokument, wenn Sie Interesse an der Implementierung der Opinsys-Authentifizierung haben."
+      username_placeholder: Benutzername
+      login: Einloggen
+      help: Hinweis

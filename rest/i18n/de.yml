@@ -1,0 +1,35 @@
+sso:
+  title: Opinsys-Authentifikation
+  username: Benutzername
+  organisation: Organisation
+  password: Passwort
+  bad_username_or_pw: Falscher Benutzername oder falsches Passwort
+  kerberos_error: Kerberos -Fehler
+  no_organisation: Organisation ist nicht angelegt worden
+  organisation_missing: "Oranisation fehlt im Benutzernamen. Geben Sie bitte den Benutzernamen in folgender Form ein: benutzername@organisation.opinsys.fi"
+  invalid_username: Falscher Benutzername
+  login_to: Einloggen in den Service
+  login: Einloggen
+  error: Fehler
+  help: Hinweis
+  developers: Entwickler
+  developers_info: "Lesen Sie <a href=\"/v3/sso/developers\" target=\"_blank\">dieses</a> Dokument, wenn Sie Interesse an der Implementierung der Opinsys-Authentifizierung haben."
+  username_help: "Der Benutzername ist derselbe den Sie für die Anmeldung an Opinsys-Computern verwenden."
+  organisation_help: "Der Benutzername muss in folgender Form angeben werden:  <em>benutzername</em>@<em>organisation</em>.opinsys.fi. Der Benutzername ist derselbe den Sie für die Anmeldung an Opinsys-Computern verwenden. Die Organisation entspricht der Stadt / Gemeinde in der sich Ihrer Schule befindet. Der Benutzername besteht nur aus Kleinbuchstaben und alle diakritische Zeichen sowie Akzente müssen entfernt werden.  Wenn Sie beispielsweise aus dem Harz kommen und Ihr Opinsys-Benutzername ’max.mustermann’ lautet, ist die Organisation <em>’harz’</em>. Somit melden Sie sich mit der Benutzerkennung <em>’max.mustermann@harz.opinsys.fi’</em> an."
+  service_not_activated: Dieser Service ist nicht aktiviert. Bitte nehmen Sie Kontakt zu dem Administrator ihrer Schule auf.
+  support_info: "Wenn Sie Probleme mit der Anmeldung haben, können Sie den Support von OpinSys kontaktieren: <a href=\"maito:kontakt@opinsys.de\">kontakt@opinsys.de</a> oder <a href=\"tel:+358 14 4591 625\">+358 14 4591 625</a>."
+
+password_management:
+  subject: Reset your password
+  hello: Hello
+  message_head: "You recently requested a password reset."
+  message: "Your username is '%1'. To change your password, paste the following link into your browser: %2"
+  footer: The link will expire in 10 minutes, so be sure to use it right away.
+  password_has_been_reset_message: You've successfully changed your Opinsys password.
+
+email_confirm:
+  subject: Confirm your email address
+  hello: "Hello %1"
+  head: ""
+  message: "To confirm your email address, paste the following link into your browser: %1"
+  footer: ""
