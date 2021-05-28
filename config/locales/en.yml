@@ -585,8 +585,9 @@ en:
     active: Active
     additional_info: Additional info...
     save: Save
-    organisation: organisation
-    disabled_description: This service is activated from the %{organisation}.
+    disabled_description: This service is activated on the %{organisation} level for all schools.
+    disabled_description_no_link: This service is activated on the organisation level for all schools.
+    organisation: organisation level
 
   # Organisation/external files
   external_files:

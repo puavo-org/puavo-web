@@ -586,8 +586,9 @@ fi:
     active: Aktiivinen
     additional_info: Lisätietoja...
     save: Tallenna
-    disabled_description: Tämä palvelu on aktivoitu %{organisation}.
-    organisation: organisaatiosta
+    disabled_description: Tämä palvelu on aktivoitu %{organisation} kaikkiin kouluihin.
+    disabled_description_no_link: Tämä palvelu on aktivoitu organisaatiotasolla kaikkiin kouluihin.
+    organisation: organisaatiotasolla
 
   # Organisation/external files
   external_files:

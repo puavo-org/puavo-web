@@ -8,7 +8,18 @@
     <% if is_disabled?(external_service) %>
     <div class="disabledExternalService">
     <% end %>
-    <h2><%= external_service.cn %></h2>
+    <h2 class="margin-0 padding-0"><%= external_service.cn %></h2>
+
+    <% if is_disabled?(external_service) %>
+      <p class="genericNotice">
+      <% if @is_owner %>
+      <%= t("external_services.disabled_description",
+            :organisation => link_to(t("external_services.organisation"), organisation_external_services_path)).html_safe %>
+      <% else %>
+      <%= t("external_services.disabled_description_no_link") %>
+      <% end %>
+      </p>
+    <% end %>
 
     <p><%= external_service.description %></p>
 
@@ -45,15 +56,10 @@
     </table>
 
     <% if is_disabled?(external_service) %>
-      <p class="organisation-active-notice">
-      <%= t("external_services.disabled_description",
-            :organisation => link_to(t("external_services.organisation"), organisation_external_services_path)).html_safe %>
-      </p>
-    <% end %>
-
-    <% if is_disabled?(external_service) %>
     </div>
     <% end %>
+
+    <br>
   <% end %>
 
   <br>

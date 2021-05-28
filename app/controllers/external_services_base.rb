@@ -10,6 +10,8 @@ class ExternalServicesBase < ApplicationController
 
     @external_services.sort!{|a, b| a.cn.downcase <=> b.cn.downcase }
 
+    @is_owner = is_owner?
+
     respond_to do |format|
       format.html # show.html.erb
     end
