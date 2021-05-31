@@ -1,7 +1,7 @@
 sso:
   title: Opinsys-Authentifikation
-  username: Benutzername
-  organisation: Organisation
+  username: benutzername
+  organisation: organisation
   password: Passwort
   bad_username_or_pw: Falscher Benutzername oder falsches Passwort
   kerberos_error: Kerberos -Fehler
