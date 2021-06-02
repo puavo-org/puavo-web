@@ -150,7 +150,7 @@ private
           page_title: 'Koulun oppilaslista',
           # -----
           users: 'käyttäjää',
-          ungrouped: 'Opetysryhmättömät',
+          ungrouped: 'Opetusryhmättömät',
           # -----
           search_placeholder: 'Etsi nimellä...',
           no_matches: 'Ei osumia',

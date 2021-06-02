@@ -1,5 +1,33 @@
 /* Styles for the "my school users" list for teachers, staff and admins */
 
+:root {
+    --page-background: #f0eee1;
+
+    --generic-border: #ccc;
+    --generic-border-darker: #888;
+
+    --search-background-color: #fff;
+
+    --footer-fore: #777;
+
+    --header-background: #fe9749;
+    --header-background-hover: #ffa850;
+    --button-border-hi: #fff;
+    --button-border-lo: #888;
+    --button-back: #ccc;
+    --button-fore: #000;
+    --button-back-hover: #ddd;
+    --button-fore-hover: #000;
+
+    --users-header-back: #41786b;
+    --users-header-fore: #fff;
+    --users-row-odd-back: #5cb59f;
+    --users-row-even-back: #6dc6af;
+    --users-row-hover-back: #7ed7bf;
+
+    --fonts: "Noto Sans", "Roboto", "Ubuntu", "DejaVu Sans", "Arial", sans-serif;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -15,16 +43,16 @@ html, body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    font-family: "Noto Sans", "Roboto", "DejaVu Sans", "Ubuntu", "Arial", sans-serif;
-    background: #f0eee1;
+    font-family: var(--fonts);
+    background: var(--page-background);
 }
 
 header {
     text-align: center;
     margin: 0;
     padding: 10px 0;
-    border-top: 1px solid #888;
-    border-bottom: 1px dashed #888;
+    border-top: 1px solid var(--generic-border-darker);
+    border-bottom: 1px dashed var(--generic-border-darker);
 }
 
 header h1 {
@@ -49,17 +77,22 @@ main {
 
 #searchArea input {
     display: block;
+    font-family: var(--fonts);
     font-size: 110%;
     margin: 0 auto;
     padding: 5px 5px 5px 32px;
-    border: 1px solid #ccc;
-    background: url("/img/search.svg") no-repeat 1% center #fff;
+    border: 1px solid var(--generic-border);
+    background: url("/img/search.svg") no-repeat 1% center var(--search-background-color);
     background-size: 24px;
 }
 
 #searchArea #numMatches {
     text-align: center;
     display: none;
+    font-style: italic;
+}
+
+#searchArea ::placeholder {
     font-style: italic;
 }
 
@@ -72,13 +105,13 @@ main {
     font-weight: bold;
     padding: 5px 10px;
     margin-top: 20px;
-    background: #fe9749;
+    background: var(--header-background);
     display: flex;
     align-items: center;
 }
 
 .groupHeader:hover {
-    background: #ffa850;
+    background: var(--header-background-hover);
     cursor: pointer;
 }
 
@@ -113,43 +146,41 @@ main {
 }
 
 .users th {
-    background: #41786b;
+    background: var(--users-header-back);
+    color: var(--users-header-fore);
     text-align: left;
-    color: #fff;
 }
 
 .users tr:nth-child(odd) {
-    background: #5cb59f;
+    background: var(--users-row-odd-back);
 }
 
 .users tr:nth-child(even) {
-    background: #6dc6af;
+    background: var(--users-row-even-back);
 }
 
 .users tr:hover {
-    background: #7ed7bf;
+    background: var(--users-row-hover-back);
 }
 
 .button {
-    border-top: 2px solid #fff;
-    border-left: 2px solid #fff;
-    border-right: 2px solid #888;
-    border-bottom: 2px solid #888;
+    background: var(--button-back);
+    color: var(--button-fore);
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--button-border-hi) var(--button-border-lo)
+                  var(--button-border-lo) var(--button-border-hi);
     padding: 3px 10px;
-    background: #ccc;
     text-decoration: none;
-    color: #000;
 }
 
 .button:hover {
-    background: #ddd;
+    background: var(--button-back-hover);
 }
 
 .button:active {
-      border-top: 2px solid #888;
-      border-left: 2px solid #888;
-      border-right: 2px solid #fff;
-      border-bottom: 2px solid #fff;
+    border-color: var(--button-border-lo) var(--button-border-hi)
+                  var(--button-border-hi) var(--button-border-lo);
 }
 
 .button img {
@@ -161,10 +192,10 @@ main {
 footer {
     margin-top: 20px;
     padding-top: 10px;
-    border-top: 1px solid #888;
+    border-top: 1px solid var(--generic-border-darker);
     text-align: center;
     font-size: 75%;
-    color: #777;
+    color: var(--footer-fore);
 }
 
 /* Clumsy media queries. No idea if these actually work on mobile. */
@@ -189,16 +220,16 @@ footer {
     }
 
     .button {
-        border: 1px solid #888;
-        background: #ccc;
-        text-decoration: none;
-        color: #000;
+        background: var(--button-back);
+        color: var(--button-fore);
+        border: 1px solid var(--button-border-lo);
         padding: 2px 5px;
+        text-decoration: none;
     }
 
     .button:active {
-        border: 1px solid #888;
-        background: #aaa;
+        border: 1px solid var(--button-border-lo);
+        background: var(--button-back-hover);
     }
 }
 
