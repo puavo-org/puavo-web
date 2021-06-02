@@ -3,6 +3,27 @@ require 'sinatra/r18n'
 module PuavoRest
 
 class MySchoolUsers < PuavoSinatra
+
+  # Attributes to fetch in raw queries
+  USER_ATTRIBUTES = [
+    'puavoId'.freeze,
+    'givenName'.freeze,
+    'sn'.freeze,
+    'uid'.freeze,
+    'puavoEduPersonAffiliation'.freeze,
+    'puavoSchool'.freeze,
+    'puavoEduPersonPrimarySchool'.freeze,
+    'puavoRemovalRequestTime'.freeze,
+  ].freeze
+
+  GROUP_ATTRIBUTES = [
+    'cn'.freeze,
+    'displayName'.freeze,
+    'puavoSchool'.freeze,
+    'puavoEduGroupType'.freeze,
+    'memberUid'.freeze,
+  ].freeze
+
   get '/v3/my_school_users' do
     auth :basic_auth, :kerberos
 
@@ -14,40 +35,81 @@ class MySchoolUsers < PuavoSinatra
     end
 
     school = viewer.school
+    target_school_dn = school.dn.to_s
 
     groups_by_id = {}   # IDs are group abbreviations
     ungrouped = []      # students who are not in any group
     group_num = 0
 
-    # split users into groups
-    school.member_dns&.each do |m|
-      begin
-        u = User.by_dn!(m)
-      rescue
-        next
+    # Iterating over school.member_dns is handy but slooooow. So instead do some raw searches,
+    # then filter and combine data ourselves. It's a lot more code, but the speedup is worth it.
+    base = Organisation.current['base']
+
+    groups_by_dn = {}
+    groups_by_username = {}   # fast user groups lookup
+
+    Group.raw_filter("ou=Groups,#{base}",
+                     "(&(objectClass=puavoEduGroup)(puavoSchool=#{target_school_dn})(puavoEduGroupType=teaching group))",
+                     GROUP_ATTRIBUTES).each do |raw_group|
+
+      dn = raw_group['dn'][0].force_encoding('UTF-8')
+
+      Array(raw_group['memberUid'] || []).each do |uid|
+        uid.force_encoding('UTF-8')
+        groups_by_username[uid] ||= Set.new
+        groups_by_username[uid] << dn
       end
 
-      # list only students
-      next unless (u.user_type || '').include?('student')
+      groups_by_dn[dn] = {
+        abbr: raw_group['cn'][0].force_encoding('UTF-8'),
+        name: raw_group['displayName'][0].force_encoding('UTF-8'),
+      }
+    end
 
-      # don't show students who have been marked for deletion
-      next unless u.removal_request_time.nil?
+    User.raw_filter("ou=People,#{base}",
+                    "(objectClass=*)",
+                    USER_ATTRIBUTES).each do |raw_user|
+
+      # List only students
+      next if !raw_user.include?('puavoEduPersonAffiliation') ||
+              !raw_user['puavoEduPersonAffiliation'].include?('student')
+
+      # Don't show students who have been marked for deletion
+      next if raw_user.include?('puavoRemovalRequestTime') && raw_user['puavoRemovalRequestTime'] != nil
+
+      # School filtering
+      if raw_user.include?('puavoEduPersonPrimarySchool')
+        primary_school = raw_user['puavoEduPersonPrimarySchool'][0]
+      else
+        primary_school = Array(raw_user['puavoSchool'])[0]
+      end
+
+      primary_school.force_encoding('UTF-8')
+      next unless primary_school == target_school_dn
+
+      uid = raw_user['uid'][0].force_encoding('UTF-8')
 
       u_data = {
-        first: u.first_name,
-        last: u.last_name,
-        username: u.username,
+        first: raw_user['givenName'][0].force_encoding('UTF-8'),
+        last: raw_user['sn'][0].force_encoding('UTF-8'),
+        username: uid,
       }
 
-      # use the teaching group if it exists and it's not empty...
-      u_group = u.teaching_group
+      teaching_group = nil
 
-      if u_group && !u_group.empty?
-        id = u_group.abbreviation
+      if groups_by_username.include?(uid)
+        # In theory, users should not be in multiple teaching groups at the same time.
+        # But this is an artificial restriction, so pick the first we have and hope
+        # for the best.
+        teaching_group = groups_by_dn[groups_by_username[uid].first]
+      end
+
+      if teaching_group
+        id = teaching_group[:abbr]
 
         unless groups_by_id.include?(id)
           groups_by_id[id] = {
-            name: u_group.name,
+            name: teaching_group[:name],
             id: "#{id}-#{group_num}",
             users: []
           }
@@ -57,7 +119,6 @@ class MySchoolUsers < PuavoSinatra
 
         groups_by_id[id][:users] << u_data
       else
-        # ...otherwise the user is ungrouped
         ungrouped << u_data
       end
     end
