@@ -3,6 +3,7 @@
     <tr>
       <th class="requiredField"><%= f.label :administrative_groups %></th>
       <td class="administrativeGroups">
+        <% if @administrative_groups_by_school %>
         <% @administrative_groups_by_school.each do |school_id, data| %>
         <header><%= data["school_name"] %></header>
         <% data["groups"].each do |group| %>
@@ -10,6 +11,7 @@
           <%= check_box_tag "administrative_groups[]", group["id"], group_member?(group, @user), :id => "administrative_groups_#{ group["id"] }" %>
           <%= label_tag "administrative_groups_#{ group["id"] }", group["name"] %>
           <br>
+        <% end %>
         <% end %>
         <% end %>
       </td>
