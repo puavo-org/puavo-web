@@ -99,7 +99,6 @@ class OrganisationsController < ApplicationController
         @current_owners << {
           user: User.find(dn),
           schools: [],
-          primary: nil,
         }
 
         current_dn << dn
@@ -117,7 +116,6 @@ class OrganisationsController < ApplicationController
       {
         user: u,
         schools: [],
-        primary: nil,
       }
     end
 
@@ -404,7 +402,6 @@ class OrganisationsController < ApplicationController
         Array(o[:user].puavoSchool).each do |dn|
           schools_cache[dn] = School.find(dn) unless schools_cache.include?(dn)
           o[:schools] << schools_cache[dn]
-          o[:primary] = schools_cache[dn] unless o[:primary]
         end
       end
     end
