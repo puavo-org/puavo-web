@@ -2,4 +2,5 @@
         <% if user.puavoLocked %><i class="icon-lock"></i><% end %><br>
         <% schools.each do |s| %>
         <%= link_to(s.displayName, school_path(s)) %>
+        <% if s == user.primary_school %><%= t('users.show.primary_school') %><% end %>
         <% end %>
