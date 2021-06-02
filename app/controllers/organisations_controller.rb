@@ -403,6 +403,9 @@ class OrganisationsController < ApplicationController
           schools_cache[dn] = School.find(dn) unless schools_cache.include?(dn)
           o[:schools] << schools_cache[dn]
         end
+
+        # sort the schools alphabetically
+        o[:schools].sort!{ |a, b| a.displayName.downcase <=> b.displayName.downcase }
       end
     end
 
