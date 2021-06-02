@@ -1,4 +1,7 @@
         <%= link_to "#{user.displayName} (#{user.uid})", user_path(user.primary_school, user) %>
+        <% if @current_owners.include?(user.dn.to_s) %>
+        <span class="adminOrOwner">(<%= t('organisation_owner_role') %>)</span>
+        <% end %>
         <% if user.puavoLocked %><i class="icon-lock"></i><% end %><br>
         <% schools.each do |s| %>
         <%= link_to(s.displayName, school_path(s)) %>

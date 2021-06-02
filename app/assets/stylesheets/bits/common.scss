@@ -22,6 +22,10 @@
   border: 1px dashed $ownersOnlyBorder !important;
 }
 
+.adminOrOwner {
+  color: $adminOwner;
+}
+
 /* Wraps everything on the page below the topmenu */
 #pageWrapper {
   margin: 0;
