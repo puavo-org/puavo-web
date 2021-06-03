@@ -226,6 +226,7 @@ fi:
       type: "Tyyppi"
       abbreviation: "Lyhenne"
       eid: "Ulkoinen ID"
+      members_count: "Jäseniä"
 
     devices:
       hostname: "Verkkonimi"

@@ -35,6 +35,13 @@ const COLUMN_DEFINITIONS = {
         defaultOperator: FilterOperator.LTE,
     },
 
+    members_count: {
+        key: "members_count",
+        type: ColumnType.INTEGER,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.LTE,
+    },
+
     name: {
         key: "name",
         type: ColumnType.STRING,
@@ -67,6 +74,7 @@ const COLUMN_TITLES = {
     eid: "<%= t('columns.groups.eid') %>",
     id: "<%= t('columns.puavoid') %>",
     modified: "<%= t('columns.modified') %>",
+    members_count: "<%= t('columns.groups.members_count') %>",
     name: "<%= t('columns.groups.name') %>",
 <% if @is_organisation %>
     school: "<%= t('columns.school') %>",
@@ -93,6 +101,7 @@ const COLUMN_ORDER = [
     "name",
     "abbr",
     "type",
+    "members_count",
     "eid",
     "created",
     "modified",
@@ -101,7 +110,7 @@ const COLUMN_ORDER = [
 const USER_TRANSFORM_FUNCTIONS = {
     name: function(entry) {
         return [
-            `<a href="${entry.link}">${escapeHTML(entry.name)}</a> (${entry.members})`,
+            `<a href="${entry.link}">${escapeHTML(entry.name)}</a>`,
             entry.name
         ];
     },

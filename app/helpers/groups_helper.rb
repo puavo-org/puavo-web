@@ -25,7 +25,7 @@ module GroupsHelper
       type: group['puavoEduGroupType'] ? group['puavoEduGroupType'][0] : nil,
       abbr: group['cn'][0],
       eid: group['puavoExternalId'] ? group['puavoExternalId'][0] : nil,
-      members: group['memberUid'] ? group['memberUid'].count : 0,
+      members_count: group['memberUid'] ? group['memberUid'].count : 0,
       created: Puavo::Helpers::convert_ldap_time(group['createTimestamp']),
       modified: Puavo::Helpers::convert_ldap_time(group['modifyTimestamp'])
     }

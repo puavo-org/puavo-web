@@ -226,6 +226,7 @@ en:
       type: "Type"
       abbreviation: "Abbreviation"
       eid: "External ID"
+      members_count: "Members"
 
     devices:
       hostname: "Hostname"
