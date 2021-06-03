@@ -162,6 +162,7 @@ en:
   actions: Actions
   missing_data: "(Missing/unset)"
   default_select_value: Select
+  language_selector_title: "Select the user interface language. Your choice is remembered until you log out, or your session expires."
 
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff

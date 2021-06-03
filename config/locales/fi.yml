@@ -162,6 +162,7 @@ fi:
   actions: Toiminnot
   missing_data: "(Puuttuu/ei asetettu)"
   default_select_value: Valitse
+  language_selector_title: "Valitse käyttöliittymän kieli. Valinta muistetaan kunnes kirjaudut ulos, tai istunto vanhenee."
 
   puavoEduPersonAffiliation_teacher: Opettaja
   puavoEduPersonAffiliation_staff: "Henkilökunta"

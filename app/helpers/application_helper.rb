@@ -318,7 +318,7 @@ module ApplicationHelper
     # This isn't a template, so img_tag and such aren't available. Fortunately this works.
     prefix = "/images/language_flags.svg"
 
-    html += "<li class=\"asFlex haveDropdown\"><svg class=\"flag current\"><use xlink:href=\"#{prefix}##{current}\"></use></svg>\n"
+    html += "<li class=\"asFlex haveDropdown\" title=\"#{I18n.t('language_selector_title')}\"><svg class=\"flag current\"><use xlink:href=\"#{prefix}##{current}\"></use></svg>\n"
     html += "<ul class=\"dropdown\">\n"
 
     Rails.configuration.available_ui_locales.each do |l|
