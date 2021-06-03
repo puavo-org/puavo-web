@@ -212,8 +212,8 @@ class OrganisationsController < ApplicationController
       schools << {
         dn: dn,
         id: school['puavoId'][0].to_i,
-        cn: school['cn'][0],
-        name: school['displayName'][0]
+        cn: school['cn'][0].force_encoding('UTF-8'),
+        name: school['displayName'][0].force_encoding('UTF-8')
       }
 
       school_index = schools.count - 1
@@ -346,8 +346,8 @@ class OrganisationsController < ApplicationController
                           :attributes=>['cn', 'displayName', 'puavoId', 'puavoSchoolAdmin']).each do |dn, school|
       schools_by_dn[dn] = {
         id: school['puavoId'][0].to_i,
-        cn: school['cn'][0],
-        name: school['displayName'][0],
+        cn: school['cn'][0].force_encoding('UTF-8'),
+        name: school['displayName'][0].force_encoding('UTF-8'),
       }
 
       Array(school['puavoSchoolAdmin'] || []).each{ |dn| school_admins << dn }
