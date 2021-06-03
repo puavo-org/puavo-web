@@ -652,11 +652,6 @@ class User < LdapModel
       }
     end
 
-    # Append supplementary schools. This cannot be done with computed_attr,
-    # because these schools must be part of the 'schools' array, not a
-    # completely new attribute.
-    out += self.hash_supplementary_schools()
-
     return out
   end
 
@@ -840,57 +835,6 @@ class User < LdapModel
     self.save!
 
     return mark_set
-  end
-
-  def list_supplementary_schools
-    begin
-      return JSON.parse(self.external_data).fetch('supplementary_schools', [])
-    rescue
-    end
-
-    return []
-  end
-
-  def hash_supplementary_schools
-    supplementary_schools = []
-
-    list_supplementary_schools.each do |school_id, data|
-      supp_school = School.by_attr(:id, school_id.to_i)
-      next unless supp_school
-
-      roles = []
-
-      if data && data.include?('roles')
-        roles = data['roles']
-        roles = [] if roles.nil? || roles.empty?
-      end
-
-      result = {
-        'id' => school_id,
-        'dn' => supp_school.dn.to_s,
-        'name' => supp_school.name,
-        'abbreviation' => supp_school.abbreviation,
-        'school_code' => supp_school.school_code,
-        'roles' => roles,
-        'groups' => [],
-      }
-
-      # Add groups from this school
-      self.groups&.each do |grp|
-        if grp.school_id == school_id
-          result['groups'] << {
-            'id': grp.id,
-            'name': grp.name,
-            'abbreviation': grp.abbreviation,
-            'type': grp.type,
-          }
-        end
-      end
-
-      supplementary_schools << result
-    end
-
-    supplementary_schools
   end
 
   # For MPASS integration. See https://wiki.eduuni.fi/display/CSCMPASSID/Data+models

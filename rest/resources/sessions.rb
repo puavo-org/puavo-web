@@ -183,11 +183,6 @@ class Sessions < PuavoSinatra
       # because from our system's POV a school *is* a group.
       raw_groups = user.schools
 
-      user.list_supplementary_schools.each do |school_id, _|
-        s = School.by_id(school_id)
-        raw_groups << s if s
-      end
-
       raw_groups += user.groups
 
       groups = []
