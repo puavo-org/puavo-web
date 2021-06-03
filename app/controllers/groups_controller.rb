@@ -59,43 +59,28 @@ class GroupsController < ApplicationController
   end
 
   def get_school_groups_list
-    # Given that out of the eight possible attributes, four are required,
-    # it's easier to just fetch them all
+    # The "requested" parameter is ignored here on purpose. There are only few columns,
+    # just get them all every time.
+    attributes = GroupsHelper.convert_requested_group_column_names([])
 
-    attributes = [
-      'puavoId',
-      'displayName',
-      'cn',
-      'puavoEduGroupType',
-      'puavoExternalId',
-      'memberUid',
-      'createTimestamp',    # LDAP operational attribute
-      'modifyTimestamp'     # LDAP operational attribute
-    ]
+    raw = Group.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
+                               :scope => :one,
+                               :attributes => attributes)
 
-    # convert the raw data into something we can easily parse in JavaScript
-    @raw = Group.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
-                                :scope => :one,
-                                :attributes => attributes)
+    groups = []
 
-    @groups = []
+    # Convert the raw data into something we can easily parse in JavaScript
+    raw.each do |dn, grp|
+      g = {}
 
-    @raw.each do |dn, grp|
-      @groups << {
-        id: grp['puavoId'][0].to_i,
-        name: grp['displayName'][0],
-        type: grp['puavoEduGroupType'] ? grp['puavoEduGroupType'][0] : nil,
-        abbr: grp['cn'][0],
-        eid: grp['puavoExternalId'] ? grp['puavoExternalId'][0] : nil,
-        members: grp['memberUid'] ? grp['memberUid'].count : 0,
-        created: Puavo::Helpers::convert_ldap_time(grp['createTimestamp']),
-        modified: Puavo::Helpers::convert_ldap_time(grp['modifyTimestamp']),
-        link: group_path(@school, grp['puavoId'][0]),
-        school_id: @school.id.to_i,
-      }
+      g.merge!(GroupsHelper.build_common_group_properties(grp, []))
+      g[:link] = group_path(@school, grp['puavoId'][0])
+      g[:school_id] = @school.id.to_i
+
+      groups << g
     end
 
-    render :json => @groups
+    render :json => groups
   end
 
   # ------------------------------------------------------------------------------------------------

@@ -14,6 +14,8 @@ Rails.application.routes.draw do
   get '/all_images' => 'image_statistics#all_images'
   get '/all_users' => 'organisations#all_users'
   get '/get_all_users' => 'organisations#get_all_users'
+  get '/all_groups' => 'organisations#all_groups'
+  get '/get_all_groups' => 'organisations#get_all_groups'
 
   # On-the-fly UI language changing
   get '/change_language' => 'sessions#change_language'

@@ -72,6 +72,7 @@ fi:
     all_images: "Organisaation käytössä olevat työpöytäkuvat"
     school_images: "Koulun käytössä olevat työpöytäkuvat"
     all_users: "Organisaation kaikki käyttäjät"
+    all_groups: "Organisaation kaikki ryhmät"
     servers: "Palvelimet"
     printers: "Tulostimet"
     wlan: "Langattomat verkot"
@@ -136,6 +137,7 @@ fi:
       all_devices: "Kaikki laitteet"
       all_images: "Kaikki työpöytäkuvat"
       all_users: "Kaikki käyttäjät"
+      all_groups: "Kaikki ryhmät"
       wlan: Langattomat verkot
       about: Tietoja
       printers: Tulostimet

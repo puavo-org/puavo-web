@@ -1,0 +1,176 @@
+// Table column definitions
+const COLUMN_DEFINITIONS = {
+    abbr: {
+        key: "abbr",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    created: {
+        key: "created",
+        type: ColumnType.UNIXTIME,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.GTE,
+    },
+
+    eid: {
+        key: "eid",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    id: {
+        key: "id",
+        type: ColumnType.INTEGER,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    modified: {
+        key: "modified",
+        type: ColumnType.UNIXTIME,
+        flags: ColumnFlag.SORTABLE,
+        defaultOperator: FilterOperator.LTE,
+    },
+
+    name: {
+        key: "name",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+<% if @is_organisation %>
+    school: {
+        key: "school",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        defaultOperator: FilterOperator.EQU,
+    },
+<% end %>
+
+    type: {
+        key: "type",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        defaultOperator: FilterOperator.EQU,
+    },
+};
+
+// Localized column titles. The keys must be same as in the keys in the column
+// definitions object above.
+const COLUMN_TITLES = {
+    abbr: "<%= t('columns.groups.abbreviation') %>",
+    created: "<%= t('columns.created') %>",
+    eid: "<%= t('columns.groups.eid') %>",
+    id: "<%= t('columns.puavoid') %>",
+    modified: "<%= t('columns.modified') %>",
+    name: "<%= t('columns.groups.name') %>",
+<% if @is_organisation %>
+    school: "<%= t('columns.school') %>",
+<% end %>
+    type: "<%= t('columns.groups.type') %>",
+};
+
+// Localized group types
+const GROUP_TYPES = {
+    "teaching group": "<%= t('group_type.teaching group') %>",
+    "course group": "<%= t('group_type.course group') %>",
+    "year class": "<%= t('group_type.year class') %>",
+    "administrative group": "<%= t('group_type.administrative group') %>",
+    "archive users": "<%= t('group_type.archive users') %>",
+    "other groups": "<%= t('group_type.other groups') %>",
+};
+
+// The default order for columns. "DEFAULT_COLUMNS" above does not have to be in this order.
+const COLUMN_ORDER = [
+<% if @is_organisation %>
+    "school",
+<% end %>
+    "id",
+    "name",
+    "abbr",
+    "type",
+    "eid",
+    "created",
+    "modified",
+];
+
+const USER_TRANSFORM_FUNCTIONS = {
+    name: function(entry) {
+        return [
+            `<a href="${entry.link}">${escapeHTML(entry.name)}</a> (${entry.members})`,
+            entry.name
+        ];
+    },
+
+    type: function(entry) {
+        return [
+            entry.type in GROUP_TYPES ? GROUP_TYPES[entry.type] : "?",
+            entry.type
+        ];
+    },
+
+    school: function(entry) {
+        // Makes filtering by school name work as expected, but the exported CSV
+        // will contain display names. Can't have everything.
+        return [
+            entry.school[1],
+            entry.school[1]
+        ];
+    },
+};
+
+class MassGroupDeletion extends MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+    }
+
+    canProceed()
+    {
+        return true;
+    }
+
+    start()
+    {
+    }
+
+    finish()
+    {
+    }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/mass_op_group_delete`,
+            { id: item.id[0] }
+        );
+    }
+};
+
+// JavaScript class fields support is so poor that I can't really
+// define titles, IDs and other things in classes, they must be here
+const MASS_OPERATIONS = [
+    {
+        id: "delete",
+        title: "<%= t('groups.index.mass_operations.delete.title') %>",
+        flags: 0,
+        cls: MassGroupDeletion
+    },
+];
+
+function userActions(item)
+{
+    let html = "";
+
+    html += `<a href="${item['link']}/edit" class="btn"><%= t('link.edit') %></a> `;
+
+    let message = "<%= t('general_confirm') %>";
+
+    html += `<a href="${item['link']}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+
+    return html;
+}

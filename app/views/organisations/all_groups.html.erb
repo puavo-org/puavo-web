@@ -1,4 +1,4 @@
-<div class="superTable" id="tableGroups"></div>
+<% page_title t('titles.organisation'), t('titles.all_groups') %>
 
 <% content_for :javascript do %>
 <%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
@@ -6,13 +6,19 @@
 <%= javascript_include_tag 'supertable2', skip_pipeline: true %>
 <% end %>
 
+<% @is_organisation = true %>
+
+<h1><%= t('titles.all_groups') %></h1>
+
+<div class="superTable" id="tableGroups"></div>
+
 <% content_for :post_load_javascript do %>
 <script>
 "use strict;"
 
 <%= render :partial => 'shared/group_tables_common.js' %>
 
-const DEFAULT_COLUMNS = ["name", "abbr", "type", "eid"];
+const DEFAULT_COLUMNS = ["school", "name", "abbr", "type", "eid", "created", "modified"];
 const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
 
 window.onload = function(e) {
@@ -24,7 +30,7 @@ new SuperTable(
     // Settings
     {
         id: "groups",
-        csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-groups`,
+        csvPrefix: `<%= LdapOrganisation.current.o %>-groups`,
         flags: TableFlag.ALLOW_SELECTION | TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
         locale: "<%= supertable_sorting_locale %>",
 
@@ -40,27 +46,11 @@ new SuperTable(
         defaultFilterColumn: "name",
 
         // The URL to get the data from
-        source: "/users/<%= @school.id %>/get_school_groups_list",
+        source: "/get_all_groups",
     }
 );
 
 };
 
 </script>
-<% end %>
-
-<% content_for :tools do %>
-<ul>
-  <li>
-    <%= link_to new_group_path(@school), class: 'btn' do %>
-      <i class='icon-plus'></i><%= t('link.new_group') %>
-    <% end %>
-  </li>
-
-  <li>
-    <%= link_to find_groupless_users_path(@school), class: 'btn' do %>
-      <i class='icon-search'></i><%= t('link.find_groupless_users') %>
-    <% end %>
-  </li>
-</ul>
 <% end %>

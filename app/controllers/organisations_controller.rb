@@ -389,6 +389,56 @@ class OrganisationsController < ApplicationController
     render :json => users
   end
 
+  def all_groups
+    return if redirected_nonowner_user?
+
+    # You can't get here unless you're an owner
+    @is_owner = true
+
+    respond_to do |format|
+      format.html   # all_groups.html.erb
+    end
+  end
+
+  def get_all_groups
+    # The "requested" parameter is ignored here on purpose. There are only few columns,
+    # just get them all every time.
+    attributes = GroupsHelper.convert_requested_group_column_names([])
+
+    schools_by_dn = {}
+
+    School.search_as_utf8(:filter => '',
+                          :attributes=>['cn', 'displayName', 'puavoId']).each do |dn, school|
+      schools_by_dn[dn] = {
+        id: school['puavoId'][0].to_i,
+        cn: school['cn'][0].force_encoding('UTF-8'),
+        name: school['displayName'][0].force_encoding('UTF-8'),
+      }
+    end
+
+    raw = Group.search_as_utf8(:filter => "(puavoSchool=*)",
+                               :scope => :one,
+                               :attributes => attributes)
+
+    # Convert the raw data into something we can easily parse in JavaScript
+    groups = []
+
+    raw.each do |dn, grp|
+      g = {}
+
+      g.merge!(GroupsHelper.build_common_group_properties(grp, []))
+
+      school = schools_by_dn[grp['puavoSchool'][0]]
+      g[:link] = "/users/#{school[:id]}/groups/#{grp['puavoId'][0]}"
+      g[:school] = [school[:cn], school[:name]]
+      g[:school_id] = school[:id]
+
+      groups << g
+    end
+
+    render :json => groups
+  end
+
   private
     def sort_users(l)
       l.sort! do |a, b|

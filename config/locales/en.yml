@@ -72,6 +72,7 @@ en:
     all_images: "All desktop images used in this organisation"
     school_images: "All desktop images used in this school"
     all_users: "All users in the organisation"
+    all_groups: "All groups in the organisation"
     servers: "Servers"
     printers: "Printers"
     wlan: "Wireless Networks"
@@ -136,6 +137,7 @@ en:
       all_devices: "All Devices"
       all_images: "All Desktop Images"
       all_users: "All Users"
+      all_groups: "All groups"
       wlan: Wireless networks
       about: About
       printers: Printers
