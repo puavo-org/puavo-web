@@ -529,10 +529,10 @@ Feature: Manage users
     And I should not see "Thomas Anderson (neo) School 1" within "#availableAdmins"
     Then I am on the school page with "School 1"
     When I follow "Admins"
-    Then I should see "Thomas Anderson (neo) School 1" within "#other_admin_users"
+    Then I should see "Thomas Anderson (neo) (Organisation owner) School 1" within "#other_admin_users"
     And I follow "Add" on the "Thomas Anderson" user
     Then I should see "Thomas Anderson (School 1) is now an admin user"
-    And I should see "Thomas Anderson (neo) School 1" on the school admin list
+    And I should see "Thomas Anderson (neo) (Organisation owner) School 1" on the school admin list
     Then I am on the show user page with "neo"
     And I should see:
       """
