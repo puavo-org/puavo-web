@@ -54,6 +54,14 @@ class ExternalService < LdapModel
   def filtered_user_hash(user)
     schools_hash = user.schools_hash()    # Does not call json()
 
+    primary_school_id = user.primary_school_id
+
+    # Remove everything that isn't the user's primary school. It would be nice
+    # to include all schools in the hash, but URLs have maximum lengths and if
+    # you have too many schools and groups in it, systems will start rejecting
+    # it and logins will fail.
+    schools_hash.delete_if{ |s| s["id"] != primary_school_id }
+
     # Remove DNs, they only take up space and aren't on the spec anyway
     schools_hash.each do |s|
       s.delete('dn')
@@ -83,7 +91,7 @@ class ExternalService < LdapModel
       'first_name' => user.first_name,
       'last_name' => user.last_name,
       'email' => user.email,
-      'primary_school_id' => user.primary_school_id,
+      'primary_school_id' => primary_school_id,
       'year_class' => yc_name,
       'organisation_name' => user.organisation_name,
       'organisation_domain' => user.organisation_domain,
