@@ -130,6 +130,7 @@ databases.each do |database|
     user = User.new
     user.uid = owner_uid
     user.puavoSchool = school.dn
+    user.puavoEduPersonPrimarySchool = school.dn
   end
 
   user.givenName = owner_given_name
