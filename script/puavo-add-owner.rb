@@ -101,7 +101,7 @@ if databases.nil? || databases.empty?
   exit
 end
 
-databases.each do |database|
+databases.each_with_index do |database, index|
   # Skip o=puavo database
   next if database == "o=puavo"
   next if Puavo::Organisation.all.values.select{ |o| o["ldap_base"] == database }.empty?
@@ -122,32 +122,38 @@ databases.each do |database|
 
   LdapBase.setup_connection( new_configuration )
 
-  if user = User.find(:first, :attribute => "uid", :value => owner_uid )
-    puts "User already exists: #{ owner_uid } (#{ database }). Changing the password."
-  else
-    puts "Creating new user: #{ owner_uid } (#{ database })."
-    school = School.find(:first, :attribute => "displayName", :value => "Administration")
-    user = User.new
-    user.uid = owner_uid
-    user.puavoSchool = school.dn
-    user.puavoEduPersonPrimarySchool = school.dn
-  end
-
-  user.givenName = owner_given_name
-  user.sn = owner_surname
-  user.new_password = owner_password
-  user.new_password_confirmation = owner_password
-  user.password_change_mode = :no_upstream
-  user.puavoEduPersonAffiliation = "admin"
-  user.puavoSshPublicKey = owner_ssh_public_key
-  try_save_user(user)
+  puts "(#{index+1}/#{databases.count}) #{database}"
 
   begin
-    ldap_organisation = LdapOrganisation.first
-    ldap_organisation.ldap_modify_operation( :add, [{ "owner" => [user.dn.to_s] }] )
-    puts "\tUser is now an organisation owner"
-  rescue ActiveLdap::LdapError::TypeOrValueExists
-    puts "\tUser is already an organisation owner"
+    if user = User.find(:first, :attribute => "uid", :value => owner_uid )
+      puts "  User already exists, updating account information"
+    else
+      puts "  Creating new user"
+      school = School.find(:first, :attribute => "displayName", :value => "Administration")
+      user = User.new
+      user.uid = owner_uid
+      user.puavoSchool = school.dn
+      user.puavoEduPersonPrimarySchool = school.dn
+    end
+
+    user.givenName = owner_given_name
+    user.sn = owner_surname
+    user.new_password = owner_password
+    user.new_password_confirmation = owner_password
+    user.password_change_mode = :no_upstream
+    user.puavoEduPersonAffiliation = "admin"
+    user.puavoSshPublicKey = owner_ssh_public_key
+    try_save_user(user)
+
+    begin
+      ldap_organisation = LdapOrganisation.first
+      ldap_organisation.ldap_modify_operation( :add, [{ "owner" => [user.dn.to_s] }] )
+      puts "  User is now an organisation owner"
+    rescue ActiveLdap::LdapError::TypeOrValueExists
+      puts "  User is already an organisation owner"
+    end
+  rescue => e
+    puts "  ERROR: #{e}"
   end
 
   # wait a bit so we do not hit puavo-rest password change rate limiter

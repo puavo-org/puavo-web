@@ -52,7 +52,7 @@ databases =  ActiveLdap::Base.search( :filter => "(objectClass=*)",
 
 owner_uid = ask("Remove following owner user:")
 
-databases.each do |database|
+databases.each_with_index do |database, index|
   # Skip o=puavo database
   next if database == "o=puavo"
 
@@ -72,11 +72,19 @@ databases.each do |database|
 
   LdapBase.setup_connection( new_configuration )
 
+  puts "(#{index+1}/#{databases.count}) #{database}"
+
   if user = User.find(:first, :attribute => "uid", :value => owner_uid )
-    puts "Removing user: #{ user.uid } (#{ database })."
-    user.destroy
+    begin
+      user.destroy
+    rescue => e
+      puts "  ERROR: #{e}"
+    end
   else
-    puts "Can't find the user: #{ owner_uid } (#{ database })."
+    puts "  Can't find the user"
+    next
   end
 
+  # Don't trigger password change timeouts (FIXME this shouldn't happen but it happens anyway!)
+  sleep 11
 end
