@@ -7,9 +7,9 @@ require_relative '../puavo-rest'
 require 'yaml'
 
 class SyncLog
-  def error(terse_msg, detailed_msg); Kernel::warn(detailed_msg); end
-  def info(terse_msg, detailed_msg) ; Kernel::puts(detailed_msg); end
-  def warn(terse_msg, detailed_msg) ; Kernel::warn(detailed_msg); end
+  def error(msg); Kernel::warn(msg); end
+  def info(msg) ; Kernel::puts(msg); end
+  def warn(msg) ; Kernel::warn(msg); end
 end
 
 # necessary for routing ExternalLogin logging to stdout/stderr
