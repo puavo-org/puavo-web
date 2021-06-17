@@ -1,5 +1,4 @@
 require 'date'
-require 'net/ldap'
 require 'securerandom'
 
 require_relative '../lib/external_login'

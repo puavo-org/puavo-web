@@ -1,4 +1,6 @@
 require 'benchmark'
+require 'net/ldap'
+require 'openssl'
 
 # ExternalLoginError means some error occurred on our side
 # ExternalLoginConfigError means external logins were badly configured
@@ -419,11 +421,28 @@ module PuavoRest
       raise ExternalLoginConfigError, 'ldap base not configured' \
         unless @ldap_config['base']
 
-      raise ExternalLoginConfigError, 'ldap bind dn not configured' \
-        unless @ldap_config['bind_dn']
+      raise ExternalLoginConfigError, 'authentication method not configured' \
+        unless @ldap_config['authentication_method']
 
-      raise ExternalLoginConfigError, 'ldap bind password not configured' \
-        unless @ldap_config['bind_password']
+      case @ldap_config['authentication_method']
+        when 'certificate'
+          raise ExternalLoginConfigError,
+                'ldap connection certificate not configured' \
+            unless @ldap_config['connection_cert']
+          raise ExternalLoginConfigError,
+                'ldap connection certificatge key not configured' \
+            unless @ldap_config['connection_key']
+        when 'user_credentials'
+          raise ExternalLoginConfigError, 'ldap bind dn not configured' \
+            unless @ldap_config['bind_dn']
+          raise ExternalLoginConfigError, 'ldap bind password not configured' \
+            unless @ldap_config['bind_password']
+        else
+          errmsg = 'unsupported authentication method' \
+                     + " '#{ @ldap_config['authentication_method'] }'" \
+                     + ' to external ldap'
+          raise ExternalLoginConfigError, errmsg
+      end
 
       raise ExternalLoginConfigError, 'ldap server not configured' \
         unless @ldap_config['server']
@@ -475,12 +494,23 @@ module PuavoRest
         :base => @ldap_config['base'].to_s,
         :host => @ldap_config['server'].to_s,
         :port => (Integer(@ldap_config['port']) rescue 389),
-        :auth => {
-          :method   => :simple,
-          :username => bind_dn.to_s,
-          :password => bind_password.to_s,
-        }
       }
+
+      case @ldap_config['authentication_method']
+        when 'certificate'
+          connection_args[:auth] = {
+            :method             => :sasl,
+            :mechanism          => 'EXTERNAL',
+            :challenge_response => lambda { '' },
+            :initial_credential => '',
+          }
+        when 'user_credentials'
+          connection_args[:auth] = {
+            :method   => :simple,
+            :username => bind_dn,
+            :password => bind_password,
+          }
+      end
 
       # XXX the use of OpenSSL::SSL::VERIFY_NONE is not so good
       # XXX see http://www.rubydoc.info/github/ruby-ldap/ruby-net-ldap/Net%2FLDAP:initialize
@@ -504,6 +534,13 @@ module PuavoRest
           raise ExternalLoginConfigError,
                 'unsupported encryption method:' \
                   + " '#{ @ldap_config['encryption_method'] }'"
+      end
+
+      if @ldap_config['authentication_method'] == 'certificate' then
+        cert = OpenSSL::X509::Certificate.new(@ldap_config['connection_cert'])
+        key  = OpenSSL::PKey::RSA.new(@ldap_config['connection_key'])
+        connection_args[:encryption][:tls_options][:cert] = cert
+        connection_args[:encryption][:tls_options][:key]  = key
       end
 
       @ldap = Net::LDAP.new(connection_args)
@@ -566,13 +603,17 @@ module PuavoRest
       raise ExternalLoginPasswordChangeError,
             'could not find actor user dn in external ldap' \
         unless actor_dn.kind_of?(String)
-      setup_ldap_connection(actor_dn, actor_password)
 
       # these raise exceptions if password change fails
       case @external_password_change['api']
+        when 'google'
+          raise ExternalLoginPasswordChangeError,
+                'password change to google systems is not supported'
         when 'microsoft-ad'
+          setup_ldap_connection(actor_dn, actor_password)
           change_microsoft_ad_password(target_dn, target_user_password)
         when 'openldap'
+          setup_ldap_connection(actor_dn, actor_password)
           bind_user = ext_ldapop('change_password/search',
                                  :search,
                                  :filter   => user_ldapfilter(actor_username),
