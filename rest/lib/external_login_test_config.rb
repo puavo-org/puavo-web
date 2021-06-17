@@ -55,6 +55,7 @@ module PuavoRest
           'admin_password' => organisations['external']['owner_pw'],
           'service'        => 'external_ldap',
           'external_ldap'  => {
+            'authentication_method'   => 'user_credentials',
             'base'                    => 'dc=edu,dc=heroes,dc=net',
             'bind_dn'                 => bind_dn,
             'bind_password'           => organisations['heroes']['owner_pw'],
