@@ -308,6 +308,8 @@ module PuavoRest
                              userinfo['external_id'],
                              :multiple => true)
         user = users.first
+        userinfo = adjust_userinfo(user, userinfo)
+
         if !user then
           user = User.new(userinfo)
           user.save!
@@ -356,6 +358,20 @@ module PuavoRest
 
       return ExternalLoginStatus::NOCHANGE
     end
+
+    def adjust_userinfo(user, userinfo)
+      return userinfo unless user
+
+      # We want to get "student" and "teacher" roles from the
+      # external login information, but others such as "admin"-role
+      # we want to maintain ourselves.
+      new_user_roles = user.roles.reject do |role|
+                         %w(student teacher).include?(role)
+                       end + userinfo['roles']
+      userinfo['roles'] = new_user_roles.sort.uniq
+
+      userinfo
+   end
 
     def self.status(status_string, msg)
       { 'msg' => msg, 'status' => status_string }
