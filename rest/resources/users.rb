@@ -47,8 +47,7 @@ class User < LdapModel
   # puavoEduPersonAffiliation will used as the roles from now on
   ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
 
-  # Roles does not make much sense without a school
-  skip_serialize :roles, :external_data
+  skip_serialize :external_data
 
   # List of school DNs where the user is school admin
   ldap_map(:puavoAdminOfSchool, :admin_of_school_dns) do |dns|
