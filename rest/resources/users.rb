@@ -801,13 +801,7 @@ class User < LdapModel
         next
       end
 
-      # "roles"-attribute needs special handling because of role/group changes
-      if attribute == 'roles' && !old_userinfo.has_key?('roles') then
-        old_value = [ old_userinfo['user_type'] ]
-      else
-        old_value = old_userinfo[attribute]
-      end
-
+      old_value = old_userinfo[attribute]
       if old_value != new_value then
         return true
       end
