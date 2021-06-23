@@ -126,6 +126,10 @@ EOF
           // (as a side-effect restarts puavo-rest and puavo-web).
           sh 'script/test-install.sh'
 
+          // must wait a while before puavo-rest is ready (?!?)
+          // ("PUAVO_WEB_CUCUMBER_TESTS"-environment variable not effective otherwise)
+          sh 'sleep 5'
+
           // Force organisations refresh...
           sh '''
             curl --noproxy localhost -d foo=bar \
