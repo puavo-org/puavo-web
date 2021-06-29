@@ -261,7 +261,7 @@ module DevicesHelper
     end
 
     if requested.include?('location')
-      d[:location] = dev['puavoLocationName'] ? dev['puavoLocationName'][0] : nil
+      d[:location] = dev['puavoLocationName'] ? Array(dev['puavoLocationName'][0].split("\n")) : nil
     end
 
     return d

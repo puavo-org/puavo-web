@@ -1332,7 +1332,7 @@ en:
         jpegPhoto: Photo
         puavoLatitude: Latitude
         puavoLongitude: Longitude
-        puavoLocationName: Location name
+        puavoLocationName: Location
         puavoRole: Role
         puavoDeviceStatus: Status
         puavoDeviceBootMode: Boot mode

@@ -186,7 +186,7 @@ const COLUMN_DEFINITIONS = {
     location: {
         key: "location",
         title: "<%= t('columns.devices.location') %>",
-        flags: ColumnFlag.SORTABLE,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
     },

@@ -1205,7 +1205,7 @@ fi:
         description: Kuvaus
         telephoneNumber: Puhelinnumero
         facsimileTelephoneNumber: Faxin numero
-        l: Sijainnin nimi
+        l: Sijainti
         street: Katuosoite
         postOfficeBox: Postilokero
         postalAddress: Postiosoite
@@ -1334,7 +1334,7 @@ fi:
         jpegPhoto: Valokuva
         puavoLatitude: Leveysaste
         puavoLongitude: Pituusaste
-        puavoLocationName: Sijainnin nimi
+        puavoLocationName: Sijainti
         puavoRole: Rooli
         puavoDeviceStatus: Tila
         puavoDeviceBootMode: "Käynnistymistapa"
@@ -1389,7 +1389,7 @@ fi:
         jpegPhoto: Valokuva
         puavoLatitude: Leveysaste
         puavoLongitude: Pituusaste
-        puavoLocationName: Sijainnin nimi
+        puavoLocationName: Sijainti
         puavoRole: Rooli
         puavoDeviceStatus: Tila
         description: Kuvaus
