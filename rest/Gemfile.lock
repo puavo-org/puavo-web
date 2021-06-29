@@ -314,6 +314,3 @@ DEPENDENCIES
   webmock
   yajl-ruby
   yard
-
-BUNDLED WITH
-   1.17.3

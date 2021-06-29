@@ -351,6 +351,3 @@ DEPENDENCIES
   unicorn
   uuid
   webmock
-
-BUNDLED WITH
-   1.17.3
