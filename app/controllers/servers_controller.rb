@@ -80,11 +80,11 @@ class ServersController < ApplicationController
       data[:available_images] = []
 
       # Optional, common parts
-      data.merge!(DevicesHelper.build_common_device_properties(srv, requested))
+      data.merge!(DevicesHelper.build_common_device_properties(srv, requested, releases))
 
       # Hardware info
       if want_hw_info && srv['puavoDeviceHWInfo']
-        data.merge!(DevicesHelper.extract_hardware_info(srv['puavoDeviceHWInfo'], hw_attributes))
+        data.merge!(DevicesHelper.extract_hardware_info(srv['puavoDeviceHWInfo'], hw_attributes, releases))
       end
 
       if requested.include?('available_images') && srv.include?('puavoDeviceAvailableImage')

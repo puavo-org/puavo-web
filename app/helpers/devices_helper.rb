@@ -177,7 +177,18 @@ module DevicesHelper
                                  :attributes => custom_attributes ? custom_attributes : DEVICE_ATTRIBUTES)
   end
 
-  def self.build_common_device_properties(dev, requested)
+  def self.get_release_name(image_file_name, releases)
+    return nil unless image_file_name
+
+    image_file_name.gsub!('.img', '')
+
+    {
+      file: image_file_name,
+      release: releases.fetch(image_file_name, nil),
+    }
+  end
+
+  def self.build_common_device_properties(dev, requested, releases)
     d = {}
 
     if requested.include?('mac')
@@ -221,7 +232,7 @@ module DevicesHelper
     end
 
     if requested.include?('image')
-      d[:image] = dev['puavoDeviceImage'] ? dev['puavoDeviceImage'] : nil
+      d[:image] = self.get_release_name(dev['puavoDeviceImage'], releases)
     end
 
     if requested.include?('xrandr')
@@ -279,7 +290,7 @@ module DevicesHelper
   end
 
   # Extracts the pieces we care about from puavoDeviceHWInfo field
-  def self.extract_hardware_info(raw_hw_info, requested)
+  def self.extract_hardware_info(raw_hw_info, requested, releases)
     megabytes = 1024 * 1024
     gigabytes = megabytes * 1024
 
@@ -294,7 +305,7 @@ module DevicesHelper
 
       # we have puavoImage and puavoCurrentImage fields in the database, but
       # they aren't always reliable
-      out[:current_image] = info['this_image']
+      out[:current_image] = self.get_release_name(info['this_image'], releases)
 
       if requested.include?(:ram)
         out[:ram] = (info['memory'] || []).sum { |slot| slot['size'].to_i }

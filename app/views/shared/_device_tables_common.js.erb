@@ -109,7 +109,7 @@ const COLUMN_DEFINITIONS = {
     current_image: {
         key: "current_image",
         title: "<%= t('columns.devices.current_image') %>",
-        flags: ColumnFlag.SORTABLE,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
     },
 
@@ -196,7 +196,7 @@ const COLUMN_DEFINITIONS = {
     image: {
         key: "image",
         title: "<%= t('columns.devices.image') %>",
-        flags: ColumnFlag.SORTABLE,
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
     },
@@ -603,6 +603,17 @@ const USER_TRANSFORM_FUNCTIONS = {
         ];
     },
 
+    current_image: function(entry) {
+        let display = "",
+            value = entry.current_image.file;
+
+        if (entry.current_image.release)
+            display = `${entry.current_image.file} <span class="releaseName">(${entry.current_image.release})</span>`;
+        else display = entry.current_image.file;
+
+        return [display, value];
+    },
+
     desc: function(entry) {
         return [
             escapeHTML(entry.desc),
@@ -615,6 +626,17 @@ const USER_TRANSFORM_FUNCTIONS = {
             `<a href="${entry.link}">${escapeHTML(entry.hn)}</a>`,
             entry.hn
         ];
+    },
+
+    image: function(entry) {
+        let display = "",
+            value = entry.image.file;
+
+        if (entry.image.release)
+            display = `${entry.image.file} <span class="releaseName">(${entry.image.release})</span>`;
+        else display = entry.image.file;
+
+        return [display, value];
     },
 
     purchase_date: function(entry) {

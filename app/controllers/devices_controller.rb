@@ -89,6 +89,8 @@ class DevicesController < ApplicationController
 
     raw = DevicesHelper.get_devices_in_school(@school.dn, attributes)
 
+    releases = get_releases()
+
     # Convert the raw data into something we can easily parse in JavaScript
     devices = []
 
@@ -103,11 +105,11 @@ class DevicesController < ApplicationController
       data[:school_id] = @school.id.to_i
 
       # Optional, common parts
-      data.merge!(DevicesHelper.build_common_device_properties(dev, requested))
+      data.merge!(DevicesHelper.build_common_device_properties(dev, requested, releases))
 
       # Hardware info
       if want_hw_info && dev['puavoDeviceHWInfo']
-        data.merge!(DevicesHelper.extract_hardware_info(dev['puavoDeviceHWInfo'], hw_attributes))
+        data.merge!(DevicesHelper.extract_hardware_info(dev['puavoDeviceHWInfo'], hw_attributes, releases))
       end
 
       # Device primary user
