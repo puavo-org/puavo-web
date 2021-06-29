@@ -92,7 +92,7 @@ class OrganisationsController < ApplicationController
     @current_owners = []
     current_dn = Set.new
 
-    LdapOrganisation.current.owner.each.select do |dn|
+    Array(LdapOrganisation.current.owner).each.select do |dn|
       dn != "uid=admin,o=puavo"
     end.each do |dn|
       begin
@@ -324,7 +324,7 @@ class OrganisationsController < ApplicationController
     raw = []
 
     # Get a list of organisation owners and school admins
-    organisation_owners = LdapOrganisation.current.owner.each
+    organisation_owners = Array(LdapOrganisation.current.owner).each
       .select { |dn| dn != "uid=admin,o=puavo" }
       .map{ |o| o.to_s }
 

@@ -158,7 +158,7 @@ class ServersController < ApplicationController
   # GET /servers/1/image
   def image
     # NEEDS TO BE EXPLICITLY TESTED
-    #return 403 unless current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+    #return 403 unless current_user && Array(LdapOrganisation.current.owner).include?(current_user.dn)
 
     @server = Server.find(params[:id])
 
@@ -195,7 +195,7 @@ class ServersController < ApplicationController
   # POST /servers.xml
   def create
     # NEEDS TO BE EXPLICITLY TESTED
-    #return 403 unless current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+    #return 403 unless current_user && Array(LdapOrganisation.current.owner).include?(current_user.dn)
 
     sp = server_params
 

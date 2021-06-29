@@ -199,12 +199,12 @@ class ApplicationController < ActionController::Base
 
   # Returns true if the current user is an organisation owner
   def is_owner?
-    current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+    current_user && Array(LdapOrganisation.current.owner).include?(current_user.dn)
   end
 
   # Returns true if a non-owner was redirected away from the page they were trying to view
   def redirected_nonowner_user?
-    return false if current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+    return false if current_user && Array(LdapOrganisation.current.owner).include?(current_user.dn)
 
     flash[:alert] = t('flash.you_must_be_an_owner')
     redirect_to schools_path

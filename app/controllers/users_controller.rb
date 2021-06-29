@@ -118,7 +118,7 @@ class UsersController < ApplicationController
                               :attributes => attributes)
 
     # Get a list of organisation owners and school admins
-    organisation_owners = LdapOrganisation.current.owner.each
+    organisation_owners = Array(LdapOrganisation.current.owner).each
       .select { |dn| dn != "uid=admin,o=puavo" }
       .map{ |o| o.to_s }
 
@@ -433,7 +433,7 @@ class UsersController < ApplicationController
     end
 
     # Is the user an organisation owner?
-    organisation_owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" } || []
+    organisation_owners = Array(LdapOrganisation.current.owner).each.select { |dn| dn != "uid=admin,o=puavo" } || []
     @user_is_owner = organisation_owners.include?(@user.dn)
 
     # List schools where this user is an admin in
@@ -665,7 +665,7 @@ class UsersController < ApplicationController
           # we must remove them from those lists.
 
           # Copy-pasted from the "destroy" method below
-          organisation_owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }
+          organisation_owners = Array(LdapOrganisation.current.owner).each.select { |dn| dn != "uid=admin,o=puavo" }
 
           if organisation_owners && organisation_owners.include?(@user.dn)
             begin
@@ -782,7 +782,7 @@ class UsersController < ApplicationController
       if @user.puavoEduPersonAffiliation && @user.puavoEduPersonAffiliation.include?('admin')
         # if an admin user is also an organisation owner, remove the ownership
         # automatically before deletion
-        owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }.map{ |o| o.to_s }
+        owners = Array(LdapOrganisation.current.owner).each.select { |dn| dn != "uid=admin,o=puavo" }.map{ |o| o.to_s }
 
         if owners && owners.include?(@user.dn.to_s)
           if !LdapOrganisation.current.remove_owner(@user)

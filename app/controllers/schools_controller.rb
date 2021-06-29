@@ -157,7 +157,7 @@ class SchoolsController < ApplicationController
     return if redirected_nonowner_user?
 
     # List of (admin) users who currently ARE the owners of this organisation
-    @current_owners = LdapOrganisation.current.owner.each.map { |dn| dn.to_s }.to_set
+    @current_owners = Array(LdapOrganisation.current.owner).each.map { |dn| dn.to_s }.to_set
 
     @school = School.find(params[:id])
 
