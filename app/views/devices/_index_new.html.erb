@@ -7,6 +7,7 @@
 <% end %>
 
 <% @is_organisation = false %>
+<% @is_servers = false %>
 
 <% content_for :post_load_javascript do %>
 <script>
@@ -14,7 +15,7 @@
 
 <%= render :partial => 'shared/device_tables_common.js' %>
 
-const DEFAULT_COLUMNS = ["hn", "type", "tags", "mac", "image", "current_image", "mfer", "model", "serial"];
+const DEFAULT_COLUMNS = ["hn", "type", "tags", "mac", "mfer", "model", "serial", "image", "current_image"];
 const DEFAULT_SORTING = { column: "hn", dir: SortOrder.ASCENDING };
 
 window.onload = function(e) {

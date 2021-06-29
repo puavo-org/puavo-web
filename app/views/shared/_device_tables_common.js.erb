@@ -8,6 +8,16 @@ const COLUMN_DEFINITIONS = {
         defaultOperator: FilterOperator.EQU,
     },
 
+<% if @is_servers %>
+    available_images: {
+        key: "available_images",
+        title: "<%= t('columns.servers.available_images') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+<% end %>
+
     bat_cap: {
         key: "bat_cap",
         title: "<%= t('columns.devices.bat_cap') %>",
@@ -280,6 +290,16 @@ const COLUMN_DEFINITIONS = {
     },
 <% end %>
 
+<% if @is_servers %>
+    schools: {
+        key: "schools",
+        title: "<%= t('columns.servers.schools') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+<% end %>
+
     user: {
         key: "user",
         title: "<%= t('columns.devices.primary_user') %>",
@@ -388,6 +408,7 @@ const COLUMN_DEFINITIONS = {
 // Localized column titles
 const COLUMN_TITLES = {
     abitti_version: "<%= t('columns.devices.abitti_version') %>",
+    available_images: "<%= t('columns.servers.available_images') %>",
     bat_cap: "<%= t('columns.devices.bat_cap') %>",
     bat_pcnt: "<%= t('columns.devices.bat_pcnt') %>",
     bat_volts: "<%= t('columns.devices.bat_volts') %>",
@@ -424,6 +445,9 @@ const COLUMN_TITLES = {
 <% if @is_organisation %>
     school: "<%= t('columns.school') %>",
 <% end %>
+<% if @is_servers %>
+    schools: "<%= t('columns.servers.schools') %>",
+<% end %>
     user: "<%= t('columns.devices.primary_user') %>",
     purchase_date: "<%= t('columns.devices.purchase_date') %>",
     purchase_loc: "<%= t('columns.devices.purchase_loc') %>",
@@ -447,12 +471,20 @@ const COLUMN_ORDER = [
 <% end %>
     "id",
     "hn",
+<% if @is_servers %>
+    "schools",
+    "available_images",
+    "location",
+    "mac",
+<% end %>
     "type",
     "tags",
+<% unless @is_servers %>
+    "mac",
+<% end %>
     "mfer",
     "model",
     "serial",
-    "mac",
     "desc",
     "image",
     "current_image",
@@ -463,6 +495,9 @@ const COLUMN_ORDER = [
     "conf",
     "user",
 <% unless @is_organisation %>
+    "hw_time",
+<% end %>
+<% if @is_servers %>
     "hw_time",
 <% end %>
     "ram",
@@ -493,7 +528,9 @@ const COLUMN_ORDER = [
     "purchase_loc",
     "purchase_url",
     "purchase_support",
+<% unless @is_servers %>
     "location",
+<% end %>
 ];
 
 // Localized device types
@@ -527,6 +564,23 @@ const USER_TRANSFORM_FUNCTIONS = {
 
         return [display, value];
     },
+
+<% if @is_servers %>
+    available_images: function(entry) {
+        let display = [],
+            value = [];
+
+        for (const i of entry.available_images) {
+            if (i.release)
+                display.push(`${i.file} <span class="releaseName">(${i.release})</span>`);
+            else display.push(`${i.file}`);
+
+            value.push(i.file);
+        }
+
+        return [display.join('<br>'), value.join(',')];
+    },
+<% end %>
 
     bat_cap: function(entry) {
         return [
@@ -589,6 +643,25 @@ const USER_TRANSFORM_FUNCTIONS = {
             entry.school[1]
         ];
     },
+
+<% if @is_servers %>
+    schools: function(entry) {
+        let display = [],
+            value = [];
+
+        for (const sch of entry.schools) {
+            if (sch.valid) {
+                display.push(`<a href="${sch.link}">${sch.title}</a>`);
+                value.push(sch.title);
+            } else {
+                display.push(`<span class="missingData">${sch.dn}</span>`);
+                value.push('?');
+            }
+        }
+
+        return [display.join("<br>"), value.join(',')];
+    },
+<% end %>
 
     type: function(entry) {
         if (entry.type in DEVICE_TYPES)
@@ -686,6 +759,7 @@ const FILTER_PRESETS = [
     },
 ];
 
+<% unless @is_servers %>
 class MassDeviceSetFieldValue extends MassOperation {
     constructor(parent, container)
     {
@@ -1143,6 +1217,8 @@ const MASS_OPERATIONS = [
         cls: MassDeviceDeletion
     },
 ];
+
+<% end %>
 
 function userActions(item)
 {
