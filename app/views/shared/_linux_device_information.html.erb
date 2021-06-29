@@ -188,13 +188,6 @@
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceBootImage") %></th>
       <td><%= h device.puavoDeviceBootImage %></td>
     </tr>
-
-    <% if current_user.organisation_owner? %>
-    <tr>
-      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoPreferredServer") %></th>
-      <td><%= h @preferred_server_name %></td>
-    </tr>
-    <% end %>
     <% end %>
 
     <% if device.puavoDeviceType == "bootserver" %>

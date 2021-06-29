@@ -1365,7 +1365,6 @@ en:
         puavoDeviceCurrentImage: Current Desktop Image
         puavoDeviceImage: Desktop Image
         puavoDeviceBootImage: Device boot image
-        puavoPreferredServer: Preferred LTSP server
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal device
         puavoPrinterDeviceURI: Printer device URI

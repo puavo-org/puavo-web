@@ -17,7 +17,6 @@ class Device < Host
   ldap_map :puavoMountpoint,               :mountpoints,              LdapConverters::ArrayValue
   ldap_map :puavoPersonalDevice,           :personal_device,          LdapConverters::StringBoolean
   ldap_map :puavoPersonallyAdministered,   :personally_administered,  LdapConverters::StringBoolean
-  ldap_map :puavoPreferredServer,          :preferred_server
   ldap_map :puavoPrinterDeviceURI,         :printer_device_uri
   ldap_map :puavoPrinterQueue,             :printer_queue_dns,        LdapConverters::ArrayValue
   ldap_map :puavoSchool,                   :school_dn
@@ -640,7 +639,6 @@ class Devices < PuavoSinatra
     'monitors_xml'            => 'puavoDeviceMonitorsXML',
     'personal_device'         => 'puavoPersonalDevice',
     'personally_administered' => 'puavoPersonallyAdministered',
-    'preferred_server'        => 'puavoPreferredServer',
     'primary_user_id'         => 'puavoDevicePrimaryUser',
     'printer_queue'           => 'puavoPrinterQueue',
     'puavoconf'               => 'puavoConf',
@@ -694,7 +692,6 @@ class Devices < PuavoSinatra
     'puavoLongitude'                => { name: 'location_lon' },
     'puavoPersonalDevice'           => { name: 'personal_device', type: :boolean },
     'puavoPersonallyAdministered'   => { name: 'personally_administered', type: :boolean },
-    'puavoPreferredServer'          => { name: 'preferred_server' },
     'puavoPrinterQueue'             => { name: 'printer_queue' },
     'puavoPurchaseDate'             => { name: 'purchase_date' },
     'puavoPurchaseLocation'         => { name: 'purchase_location' },

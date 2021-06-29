@@ -467,12 +467,6 @@ class DevicesController < ApplicationController
     @device.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @device.get_ca_certificate(current_organisation.organisation_key)
 
-    if @device.attributes.include?("puavoPreferredServer") && @device.puavoPreferredServer
-      if preferred_server = Server.find(@device.puavoPreferredServer)
-        @preferred_server_name = preferred_server.puavoHostname
-      end
-    end
-
     @releases = get_releases
 
     respond_to do |format|
@@ -818,7 +812,6 @@ class DevicesController < ApplicationController
       :puavoDeviceMonitorsXML,
       :puavoDeviceImage,
       :puavoDeviceBootImage,
-      :puavoPreferredServer,
       :puavoDeviceKernelVersion,
       :puavoDeviceKernelArguments,
       :puavoPrinterDeviceURI,

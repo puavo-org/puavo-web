@@ -1367,7 +1367,6 @@ fi:
         puavoDeviceCurrentImage: Käytössä oleva työpöytäkuva
         puavoDeviceImage: Työpöytäkuva
         puavoDeviceBootImage: Käynnistyslevykuva
-        puavoPreferredServer: Ensisijainen LTSP-palvelin
         puavoAllowGuest: Vieraskirjautuminen sallittu
         puavoPersonalDevice: Henkilökohtainen laite
         puavoPrinterDeviceURI: Tulostimen laiteosoite
