@@ -231,8 +231,8 @@ module DevicesHelper
       d[:krn_ver] = dev['puavoDeviceKernelVersion'] ? dev['puavoDeviceKernelVersion'][0] : nil
     end
 
-    if requested.include?('image')
-      d[:image] = self.get_release_name(dev['puavoDeviceImage'], releases)
+    if requested.include?('image') && dev['puavoDeviceImage']
+      d[:image] = self.get_release_name(dev['puavoDeviceImage'][0], releases)
     end
 
     if requested.include?('xrandr')
