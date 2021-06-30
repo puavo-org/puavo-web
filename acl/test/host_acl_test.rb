@@ -1,5 +1,26 @@
 env = LDAPTestEnv.new
 
-env.validate "laptop" do
+env.validate "host" do
   laptop.can_modify laptop, [ :replace, :puavoDevicePrimaryUser, [ owner.dn ] ]
+
+  laptop.can_read admin, [ :dn, :uid, :givenName, :sn ]
+  laptop.can_read other_school_admin, [ :dn, :uid, :givenName, :sn ]
+
+  laptop.can_read student, [ :dn, :uid ]
+  laptop.can_read teacher, [ :dn, :uid ]
+  laptop.can_read other_school_student, [ :dn, :uid ]
+  laptop.can_read other_school_teacher, [ :dn, :uid ]
+
+  laptop.cannot_read student, [ :givenName, :sn ], InsufficientAccessRights
+  laptop.cannot_read teacher, [ :givenName, :sn ], InsufficientAccessRights
+  laptop.cannot_read other_school_student, [ :givenName, :sn ],
+                                           InsufficientAccessRights
+  laptop.cannot_read other_school_teacher, [ :givenName, :sn ],
+                                           InsufficientAccessRights
+
+  admin.can_read              fatclient, [ :dn, :puavoHostname ]
+  other_school_admin.can_read fatclient, [ :dn, :puavoHostname ]
+
+  admin.can_read              laptop, [ :dn, :puavoHostname ]
+  other_school_admin.can_read laptop, [ :dn, :puavoHostname ]
 end
