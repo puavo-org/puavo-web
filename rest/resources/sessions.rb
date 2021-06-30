@@ -218,45 +218,5 @@ class Sessions < PuavoSinatra
 
     json session
   end
-
-
-
-  # Return all sessions
-  #
-  # @!macro route
-  get "/v3/sessions" do
-    auth :server_auth, :legacy_server_auth
-
-    session_hostnames = Session.keys.map do |key|
-      key.split(":")[1]
-    end
-
-    json limit session_hostnames
-  end
-
-  get "/v3/sessions/:uuid" do
-    auth :server_auth
-    session = Session.by_uuid!(params["uuid"])
-    json session
-  end
-
-  # Delete session by hostname and uuid
-  #
-  # @!macro route
-  delete "/v3/sessions/:uuid" do
-    session = Session.by_uuid!(params["uuid"])
-    session.destroy
-    json :ok => true
-  end
-
-  # Delete session by uuid
-  #
-  # @!macro route
-  delete "/v3/sessions/:uuid" do
-    session = Session.by_uuid!(params["uuid"])
-    session.destroy
-    json :ok => true
-  end
-
 end
 end
