@@ -15,7 +15,6 @@ describe PuavoRest::DeviceImages do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
-    PuavoRest::Session.local_store.flushdb
 
     @school1 = School.create(
       :cn => "school1",

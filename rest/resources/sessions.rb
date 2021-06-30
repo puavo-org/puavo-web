@@ -1,83 +1,4 @@
-require "uuid"
-require_relative "../lib/local_store"
-
 module PuavoRest
-
-class Session < Hash
-  include LocalStore
-
-  # Clear sessions after after 12 hours if they are not manually cleared during
-  # logout. Ie. on crash
-  MAX_AGE = 60 * 60 * 12
-
-  UUID_CHARS = [*'a'..'z', *'A'..'Z', *'0'..'9'].freeze
-
-  def self.generate_uuid
-    UUID_CHARS.sample(50).join
-  end
-
-  def hostname_key
-    self.class.hostname_key("#{ self["device"]["hostname"] }")
-  end
-
-  def self.hostname_key(hostname)
-    "session:hostname:#{ hostname }"
-  end
-
-  def self.uuid_key(uuid)
-    "session:uuid:#{ uuid }"
-  end
-
-  def uuid_key
-    self.class.uuid_key("#{ self["uuid"] }")
-  end
-
-  def device?
-    !self["device"].nil?
-  end
-
-  def save
-    local_store.set(uuid_key, self.to_json)
-    local_store.expire(uuid_key, MAX_AGE)
-
-    if device?
-      local_store.set(hostname_key, self["uuid"])
-      local_store.expire(hostname_key, MAX_AGE)
-    end
-  end
-
-  def destroy
-    local_store.del(uuid_key)
-    local_store.del(hostname_key) if device?
-  end
-
-  def self.by_hostname!(hostname)
-    uuid = local_store.get(hostname_key(hostname))
-    if uuid.nil?
-      raise NotFound, :user => "Cannot find session for hostname: #{ hostname }"
-    end
-    by_uuid!(uuid)
-  end
-
-  def self.by_uuid!(uuid)
-    json = local_store.get(uuid_key(uuid))
-    if json.nil?
-      raise NotFound, :user => "Cannot find session for uuid: #{ uuid }"
-    end
-    new.merge(JSON.parse(json))
-  end
-
-  def self.keys
-    local_store.keys("session:hostname:*")
-  end
-
-  def self.all
-    keys.map do |k|
-      new.merge! JSON.parse(local_store.get(k))
-    end
-  end
-
-end
 
 # Desktop login sessions
 class Sessions < PuavoSinatra
@@ -112,12 +33,10 @@ class Sessions < PuavoSinatra
             :user => 'Not a bootserver or cloud instance, what are we?'
     end
 
-    session = Session.new
-    session.merge!(
-      "uuid" => Session.generate_uuid,
+    session = {
       "created" => Time.now.to_i,
       "printer_queues" => []
-    )
+    }
 
     if json_params["hostname"]
       # Normal user has no permission to read device attributes so force server
@@ -211,10 +130,8 @@ class Sessions < PuavoSinatra
       end
     end
 
-    rlog.info("created new session #{ session["uuid"] }")
     session["printer_queues"].uniq!{ |pq| pq.dn }
     session["organisation"] = Organisation.current.domain
-    session.save
 
     json session
   end
