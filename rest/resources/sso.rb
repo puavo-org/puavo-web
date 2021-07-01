@@ -1,16 +1,11 @@
 require "jwt"
 require "addressable/uri"
 require "sinatra/r18n"
-require "gibberish"
 require_relative "./users"
-
-require_relative "../lib/local_store"
 
 module PuavoRest
 
 class ExternalService < LdapModel
-  include LocalStore
-
 
   ldap_map(:dn, :dn){ |dn| Array(dn).first.downcase.strip }
   ldap_map :cn, :name
@@ -120,41 +115,10 @@ class ExternalService < LdapModel
     return_to_url.query_values = (return_to_url.query_values || {}).merge("jwt" => jwt)
     return return_to_url.to_s
   end
-
-  def self.secret_by_share_once_token(token)
-    encrypt_secret = self.new.local_store_get(token)
-
-    return if encrypt_secret.nil?
-
-    self.new.local_store_del(token)
-    cipher = Gibberish::AES.new(token)
-    cipher.dec(encrypt_secret)
-  end
-
-  def share_once_token=(token)
-    cipher = Gibberish::AES.new(token)
-    local_store_set(token, cipher.enc(self.secret))
-    local_store_expire(token, 60*60*24*7)
-  end
-
-  def instance_key
-    "external_service:"
-  end
-
 end
 
 class SSO < PuavoSinatra
   register Sinatra::R18n
-
-  get "/v3/sso/share_once/:key" do
-    content_type :txt
-
-    if secret = ExternalService.secret_by_share_once_token(params["key"])
-      secret
-    else
-      halt 404, "no such key"
-    end
-  end
 
   def return_to
     # Support "return_to" and "return"
