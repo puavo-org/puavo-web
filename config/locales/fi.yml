@@ -88,6 +88,7 @@ fi:
     edit: Muokkaa...
     cancel: "Peruuta"
     destroy: Poista
+    back: "Takaisin"
     delete_school: "Poista koulu"
     new_group: "Uusi ryhmä..."
     delete_group: "Poista ryhmä"
@@ -119,6 +120,7 @@ fi:
     set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
     set_install_mode_server: "Poista sertifikaatti ja aseta palvelin asennustilaan"
     printer_permissions: Tulostinoikeudet
+    show_printer_permissions: Listaa tulostinoikeudet...
 
   # Main application layout
   layouts:
@@ -625,6 +627,7 @@ fi:
     by_groups: Ryhmittäin
     by_devices: Laitteittain
     where: koulussa
+    none: "(Ei rajoituksia)"
 
   # Printer permissions (accessed through school devices)
   printer_permissions:
@@ -1419,7 +1422,6 @@ fi:
         printerDescription: Tulostimen nimi
         printerMakeAndModel: Valmistaja ja malli
         printerLocation: Sijainti
-        puavoRule: "Käyttöoikeudet"
         printerType: Tyyppi
         printerURI: Polku
         puavoPrinterPPD: Ajuritiedosto (PPD)

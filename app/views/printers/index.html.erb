@@ -20,7 +20,7 @@
     <td data-title="<%= t("activeldap.attributes.printer.printerLocation") %>"><%= h printer.printerLocation %></td>
     <td data-title="<%= t("actions") %>" class="tableActions">
       <%= link_to edit_printer_path(printer), class: 'btn' do %>
-        <i class="icon-pencil"></i><%= t('link.edit') %>
+        <i class="icon-pencil"></i><%= t('link.show_printer_permissions') %>
       <% end %>
 
       <%= link_to printer_path(printer), data: { confirm: t('destroy_confirm', object_name: printer.printerDescription) }, method: :delete, class: 'btn btn-danger' do %>

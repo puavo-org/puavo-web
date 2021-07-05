@@ -88,6 +88,7 @@ en:
     edit: Edit...
     cancel: "Cancel"
     destroy: Remove
+    back: "Back"
     delete_school: "Delete school"
     new_group: New group...
     delete_group: "Remove group"
@@ -119,6 +120,7 @@ en:
     set_install_mode: "Remove certificate and set the device to install mode"
     set_install_mode_server: "Remove certificate and set the server to install mode"
     printer_permissions: Printing permissions
+    show_printer_permissions: List printing premissions...
 
   # Main application layout
   layouts:
@@ -618,12 +620,13 @@ en:
 
   # Printer permissions editing
   printing_permissions_list:
-    title: Printing permitted
+    title: Printing permissions for
     by_schools: By school
     by_wireless: By schools as wireless
     by_groups: By groups
     by_devices: By devices
     where: in
+    none: "(No limitations)"
 
   # Printer permissions (accessed through school devices)
   printer_permissions:
@@ -1417,7 +1420,6 @@ en:
         printerDescription: Printer name
         printerMakeAndModel: Manufacturer and model
         printerLocation: Location
-        puavoRule: Access
         printerType: Type
         printerURI: URI
         puavoPrinterPPD: Driver file (PPD)
