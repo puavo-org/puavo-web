@@ -28,7 +28,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
         // COLUMNS
         columns: {
             title: "Columns",
-            help: "Check the columns and press the \"Save\" button to alter the visible columns. Press \"Default\" if you want to reset the columns. You can reorder the columns by dragging their headers with the mouse. Please note that adding or removing visible columns will refresh the table contents. Also, filters that target columns that aren't visible are ignored. You can restore the columns to an internal \"default order\" by clicking the \"Sort the columns in default order\" button.",
+            help: "Please note that you can reorder the columns by dragging their headers with the mouse (ie. click=sort, drag=reorder).",
             selected: "Selected",
             total: "columns",
             unsaved_changes: "(Unsaved changes present)",

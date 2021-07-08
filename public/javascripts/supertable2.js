@@ -267,7 +267,7 @@ function setUnion(a, b)
 // Filtering and sorting work better when there are no NULLs in the data and all columns
 // are present. The data we generate is purely presentational, intended for humans.
 // These transformed values are never fed back into the database.
-function transformRawData(columnDefinitions, visibleColumns, userTransforms, rawData)
+function transformRawData(columnDefinitions, userTransforms, rawData)
 {
     function transformItem(raw, key)
     {
@@ -344,34 +344,25 @@ function transformRawData(columnDefinitions, visibleColumns, userTransforms, raw
         return [sortable, displayable];
     };
 
+    const columnKeys = Object.keys(columnDefinitions);
+
     let out = [];
 
-    // These are the IDs of the currently visible columns. They *MUST* be included
-    // in the transformed data, even if their values are empty/defaults.
-    const required = new Set(visibleColumns);
-
     for (const raw of rawData) {
+        // The Puavo ID is *always* required. No exceptions.
+        if (!("id" in raw))
+            continue;
+
+        // The school ID is also mandatory
+        if (!("school_id" in raw))
+            continue;
+
         let cleaned = {};
 
-        // The Puavo ID is *always* required. No exceptions.
-        cleaned.id = [raw.id];
+        cleaned.school_id = raw.school_id;
 
-        // The link is a special field. It's not a separate column, but many user
-        // transform functions require it, so specifically include it.
-        // There are some other "required" fields, but they're always included in
-        // the server's response so they don't need special handling. (I hope.)
-        cleaned.link = [raw.link];
-
-        // Another widely needed piece of information is the school ID
-        cleaned.school_id = [raw.school_id];
-
-        // Process everything the server sends
-        const actualKeys = setUnion(required, new Set(Object.keys(raw)))
-
-        for (const key of actualKeys) {
-            if (!(key in columnDefinitions))
-                continue;
-
+        // Process every column, even if it's not visible
+        for (const key of columnKeys) {
             const [sortable, displayable] = transformItem(raw, key);
 
             if (sortable === displayable)
@@ -1592,7 +1583,6 @@ parseServerResponse(textData)
 
     this.data.transformed = transformRawData(
         this.settings.columnDefinitions,
-        this.settings.columns,
         this.settings.userTransforms,
         json
     );
@@ -1834,7 +1824,7 @@ saveColumns()
     this.unsavedColumns = false;
     this.updateColumnEditor();
     this.saveSettings();
-    this.fetchDataAndUpdate();
+    this.updateTable();
 }
 
 resetColumns()
