@@ -9,82 +9,108 @@ module UsersHelper
     end
   end
 
-  def self.convert_requested_user_column_names(requested)
-    attributes = []
-
-    attributes << 'puavoId' if requested.include?('id')
-    attributes << 'sn' if requested.include?('last')
-    attributes << 'givenName' if requested.include?('first')
-    attributes << 'uid' if requested.include?('uid')
-    attributes << 'puavoEduPersonAffiliation' if requested.include?('role')
-    attributes << 'puavoExternalId' if requested.include?('eid')
-    attributes << 'puavoExternalData' if requested.include?('learner_id')
-    attributes << 'telephoneNumber' if requested.include?('phone')
-    attributes << 'displayName' if requested.include?('name')
-    attributes << 'homeDirectory' if requested.include?('home')
-    attributes << 'mail' if requested.include?('email')
-    attributes << 'puavoEduPersonPersonnelNumber' if requested.include?('pnumber')
-    attributes << 'puavoRemovalRequestTime' if requested.include?('rrt')
-    attributes << 'puavoDoNotDelete' if requested.include?('dnd')
-    attributes << 'puavoLocked' if requested.include?('locked')
-    attributes << 'createTimestamp' if requested.include?('created')
-    attributes << 'modifyTimestamp' if requested.include?('modified')
-    attributes << 'puavoSchool' if requested.include?('school')
-
-    return attributes
+  def self.get_user_attributes()
+    # Which attributes to query? We could get *everything* with ["*"], but it would also
+    # return attributes like jpegPhoto which are useless for us (we're NOT transferring
+    # profile pictures here!).
+    return [
+      'puavoId',
+      'sn',
+      'givenName',
+      'uid',
+      'puavoEduPersonAffiliation',
+      'puavoExternalId',
+      'puavoExternalData',
+      'telephoneNumber',
+      'displayName',
+      'homeDirectory',
+      'mail',
+      'puavoEduPersonPersonnelNumber',
+      'puavoRemovalRequestTime',
+      'puavoDoNotDelete',
+      'puavoLocked',
+      'createTimestamp',
+      'modifyTimestamp',
+      'puavoSchool',
+    ].freeze
   end
 
-  def self.build_common_user_properties(user, requested)
-    u = {}
+  def self.convert_raw_user(dn, raw, organisation_owners, school_admins)
+    out = {}
 
-    if requested.include?('first')
-      u[:first] = user['givenName'] ? user['givenName'][0] : nil
+    out[:id] = raw['puavoId'][0].to_i
+
+    out[:uid] = raw['uid'][0]
+
+    out[:first] = raw['givenName'][0]
+
+    out[:last] = raw['sn'][0]
+
+    out[:name] = raw['displayName'][0]
+
+    out[:role] = Array(raw['puavoEduPersonAffiliation'])
+    out[:role].unshift('schooladmin') if school_admins.include?(dn)
+    out[:role].unshift('owner') if organisation_owners.include?(dn)
+
+    if raw['puavoRemovalRequestTime']
+      out[:rrt] = Puavo::Helpers::convert_ldap_time(raw['puavoRemovalRequestTime'])
     end
 
-    if requested.include?('last')
-      u[:last] = user['sn'] ? user['sn'][0] : nil
+    out[:dnd] = raw['puavoDoNotDelete'] ? true : false
+
+    if raw['puavoLocked']
+      out[:locked] = raw['puavoLocked'][0] == 'TRUE' ? true : false
     end
 
-    if requested.include?('eid')
-      u[:eid] = user['puavoExternalId'] ? user['puavoExternalId'][0] : nil
+    if raw.include?('puavoExternalId')
+      out[:eid] = raw['puavoExternalId'][0]
     end
 
-    if requested.include?('phone')
-      u[:phone] = user['telephoneNumber'] ? Array(user['telephoneNumber']) : nil
+    if raw.include?('telephoneNumber')
+      a = Array(raw['telephoneNumber'])
+
+      if a.count > 0
+        out[:phone] = a
+      end
     end
 
-    if requested.include?('home')
-      u[:home] = user['homeDirectory'][0]
+    if raw.include?('homeDirectory')
+      out[:home] = raw['homeDirectory'][0]
     end
 
-    if requested.include?('email')
-      u[:email] = user['mail'] ? Array(user['mail']) : nil
+    if raw.include?('mail')
+      a = Array(raw['mail'])
+
+      if a.count > 0
+        out[:email] = a
+      end
     end
 
-    if requested.include?('pnumber')
-      u[:pnumber] = user['puavoEduPersonPersonnelNumber'] ? user['puavoEduPersonPersonnelNumber'][0] : nil
+    if raw.include?('puavoEduPersonPersonnelNumber')
+      out[:pnumber] = raw['puavoEduPersonPersonnelNumber'][0]
     end
 
-    if requested.include?('created')
-      u[:created] = Puavo::Helpers::convert_ldap_time(user['createTimestamp'])
+    if raw.include?('createTimestamp')
+      out[:created] = Puavo::Helpers::convert_ldap_time(raw['createTimestamp'])
     end
 
-    if requested.include?('modified')
-      u[:modified] = Puavo::Helpers::convert_ldap_time(user['modifyTimestamp'])
+    if raw.include?('createTimestamp')
+      out[:modified] = Puavo::Helpers::convert_ldap_time(raw['modifyTimestamp'])
     end
 
     # Learner ID, if present. I wonder what kind of performance impact this
     # kind of repeated JSON parsing has?
-    if requested.include?('learner_id') && user.include?('puavoExternalData')
+    if raw.include?('puavoExternalData')
       begin
-        ed = JSON.parse(user['puavoExternalData'][0])
+        ed = JSON.parse(raw['puavoExternalData'][0])
+
         if ed.include?('learner_id') && ed['learner_id']
-          u[:learner_id] = ed['learner_id']
+          out[:learner_id] = ed['learner_id']
         end
       rescue
       end
     end
 
-    return u
+    return out
   end
 end

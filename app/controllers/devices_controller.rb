@@ -63,80 +63,34 @@ class DevicesController < ApplicationController
     end
   end
 
+  # AJAX call
   def get_school_devices_list
-    # Which attributes to retrieve? These are the defaults, they're always
-    # sent even when not requested, because basic functionality can break
-    # without them.
-    requested = Set.new(['id', 'hn', 'type'])
+    # Get a raw list of devices in this school
+    raw = Device.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
+                                :scope => :one,
+                                :attributes => DevicesHelper.get_device_attributes())
 
-    # Extra attributes (columns)
-    if params.include?(:fields)
-      requested += Set.new(params[:fields].split(','))
-    end
-
-    # Do the query
-    attributes = DevicesHelper.convert_requested_device_column_names(requested)
-
-    # Don't get hardware info if nothing from it was requested
-    hw_attributes = Set.new
-    want_hw_info = false
-
-    if (requested & DevicesHelper::HWINFO_ATTRS).any?
-      attributes << 'puavoDeviceHWInfo'
-      hw_attributes = DevicesHelper.convert_requested_hwinfo_column_names(requested)
-      want_hw_info = true
-    end
-
-    raw = DevicesHelper.get_devices_in_school(@school.dn, attributes)
-
+    # Known image release names
     releases = get_releases()
 
     # Convert the raw data into something we can easily parse in JavaScript
+    school_id = @school.id.to_i
     devices = []
 
     raw.each do |dn, dev|
-      data = {}
+      # Common attributes
+      device = DevicesHelper.convert_raw_device(dev, releases)
 
-      # Mandatory
-      data[:id] = dev['puavoId'][0].to_i
-      data[:hn] = dev['puavoHostname'][0]
-      data[:type] = dev['puavoDeviceType'][0]
-      data[:link] = device_path(@school, dev['puavoId'][0])
-      data[:school_id] = @school.id.to_i
+      # Special attributes
+      device[:link] = "/devices/#{school[:id]}/devices/#{device[:id]}"
+      device[:school_id] = school[:id]
 
-      # Optional, common parts
-      data.merge!(DevicesHelper.build_common_device_properties(dev, requested, releases))
-
-      # Hardware info
-      if want_hw_info && dev['puavoDeviceHWInfo']
-        data.merge!(DevicesHelper.extract_hardware_info(dev['puavoDeviceHWInfo'], hw_attributes, releases))
+      # Figure out the primary user
+      if device[:user]
+        device[:user] = DevicesHelper.format_device_primary_user(device[:user], school_id)
       end
 
-      # Device primary user
-      if requested.include?('user') && data[:user]
-        dn = data[:user]
-
-        begin
-          u = User.find(dn)
-
-          data[:user] = {
-            valid: true,
-            link: user_path(school, u),
-            title: "#{u.uid} (#{u.givenName} #{u.sn})"
-          }
-        rescue
-          # Not found
-          data[:user] = {
-            valid: false,
-            dn: dn,
-          }
-        end
-      end
-
-      # Purge empty fields to minimize the amount of transferred data
-      data.delete_if{ |k, v| v.nil? }
-
-      devices << data
+      devices << device
     end
 
     render :json => devices

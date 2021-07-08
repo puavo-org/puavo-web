@@ -58,26 +58,26 @@ class GroupsController < ApplicationController
     end
   end
 
+  # AJAX call
   def get_school_groups_list
-    # The "requested" parameter is ignored here on purpose. There are only few columns,
-    # just get them all every time.
-    attributes = GroupsHelper.convert_requested_group_column_names([])
-
+    # Get a raw list of groups in this school
     raw = Group.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
                                :scope => :one,
-                               :attributes => attributes)
-
-    groups = []
+                               :attributes => GroupsHelper.get_group_attributes())
 
     # Convert the raw data into something we can easily parse in JavaScript
+    school_id = @school.id.to_i
+    groups = []
+
     raw.each do |dn, grp|
-      g = {}
+      # Common attributes
+      group = GroupsHelper.convert_raw_group(dn, grp)
 
-      g.merge!(GroupsHelper.build_common_group_properties(grp, []))
-      g[:link] = group_path(@school, grp['puavoId'][0])
-      g[:school_id] = @school.id.to_i
+      # Special attributes
+      group[:link] = "/users/#{@school.id}/groups/#{group[:id]}"
+      group[:school_id] = school_id
 
-      groups << g
+      groups << group
     end
 
     render :json => groups

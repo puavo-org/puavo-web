@@ -99,65 +99,33 @@ class UsersController < ApplicationController
     end
   end
 
+  # AJAX call
   def get_school_users_list
-    # Which attributes to retrieve? These are the defaults, they're always
-    # sent even when not requested, because basic functionality can break
-    # without them.
-    requested = Set.new(['id', 'name', 'role', 'uid', 'dnd', 'locked', 'rrt'])
+    # Get lists of organisation owners and school admins (DNs)
+    organisation_owners = Array(LdapOrganisation.current.owner)
+                          .reject { |dn| dn == 'uid=admin,o=puavo' }
+                          .collect { |o| o.to_s }
 
-    # Extra attributes (columns)
-    if params.include?(:fields)
-      requested += Set.new(params[:fields].split(','))
-    end
+    organisation_owners = Array(organisation_owners || []).to_set
 
-    attributes = UsersHelper.convert_requested_user_column_names(requested)
+    school_admins = Array(@school.user_school_admins || []).collect { |a| a.dn.to_s }.to_set
 
-    # Do the query
+    # Get a raw list of users in this school
     raw = User.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
                               :scope => :one,
-                              :attributes => attributes)
-
-    # Get a list of organisation owners and school admins
-    organisation_owners = Array(LdapOrganisation.current.owner).each
-      .select { |dn| dn != "uid=admin,o=puavo" }
-      .map{ |o| o.to_s }
-
-    if organisation_owners.nil?
-      organisation_owners = []
-    end
-
-    organisation_owners = Set.new(organisation_owners)
-
-    if @school
-      school_admins = @school.user_school_admins.each.map{ |a| a.dn.to_s }
-    else
-      school_admins = []
-    end
-
-    school_admins = Set.new(school_admins)
+                              :attributes => UsersHelper.get_user_attributes())
 
     # Convert the raw data into something we can easily parse in JavaScript
+    school_id = @school.id.to_i
     users = []
 
     raw.each do |dn, usr|
-      user = {}
+      # Common attributes
+      user = UsersHelper.convert_raw_user(dn, usr, organisation_owners, school_admins)
 
-      # Mandatory
-      user[:id] = usr['puavoId'][0].to_i
-      user[:uid] = usr['uid'][0]
-      user[:name] = usr['displayName'] ? usr['displayName'][0] : nil
-      user[:role] = Array(usr['puavoEduPersonAffiliation'])
-      user[:rrt] = Puavo::Helpers::convert_ldap_time(usr['puavoRemovalRequestTime'])
-      user[:dnd] = usr['puavoDoNotDelete'] ? true : false
-      user[:locked] = usr['puavoLocked'] ? (usr['puavoLocked'][0] == 'TRUE' ? true : false) : false
-      user[:link] = user_path(school, usr['puavoId'][0])
-      user[:school_id] = school.id.to_i
-
-      # Highlight organisation owners (school admins have already an "admin" role set)
-      user[:role] << 'owner' if organisation_owners.include?(dn)
-
-      # Optional, common parts
-      user.merge!(UsersHelper.build_common_user_properties(usr, requested))
+      # Special attributes
+      user[:link] = "/users/#{school.id}/users/#{user[:id]}"
+      user[:school_id] = school_id
 
       users << user
     end

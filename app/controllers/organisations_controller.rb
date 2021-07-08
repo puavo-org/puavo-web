@@ -170,116 +170,6 @@ class OrganisationsController < ApplicationController
     end
   end
 
-  def all_devices
-    return if redirected_nonowner_user?
-
-    @school_list = DevicesHelper.device_school_change_list()
-
-    respond_to do |format|
-      format.html   # all_devices.html.erb
-    end
-  end
-
-  def get_all_devices
-    # Se devices_controller.rb method get_school_devices_list() for details
-    requested = Set.new(['id', 'hn', 'type'])
-
-    if params.include?(:fields)
-      requested += Set.new(params[:fields].split(','))
-    end
-
-    attributes = DevicesHelper.convert_requested_device_column_names(requested)
-
-    # Don't get hardware info if nothing from it was requested
-    hw_attributes = Set.new
-    want_hw_info = false
-
-    if (requested & DevicesHelper::HWINFO_ATTRS).any?
-      attributes << 'puavoDeviceHWInfo'
-      hw_attributes = DevicesHelper.convert_requested_hwinfo_column_names(requested)
-      want_hw_info = true
-    end
-
-    # Get the devices from every school in this organisation. Use raw queries throughout,
-    # because we don't need most of the data the objects contain. Plus, object construction
-    # is significantly slower and here speed >> code cleanliness or length.
-    raw = []
-
-    schools = []
-
-    School.search_as_utf8(:filter => '',
-                          :attributes=>['cn', 'displayName', 'puavoId']).each do |dn, school|
-      schools << {
-        dn: dn,
-        id: school['puavoId'][0].to_i,
-        cn: school['cn'][0].force_encoding('UTF-8'),
-        name: school['displayName'][0].force_encoding('UTF-8')
-      }
-
-      school_index = schools.count - 1
-
-      DevicesHelper.get_devices_in_school(dn, attributes).each do |d|
-        # the school is required when generating links and other things
-        raw << [d[1], school_index]
-      end
-    end
-
-    releases = get_releases()
-
-    # Convert the raw data into something we can easily parse in JavaScript
-    devices = []
-
-    raw.each do |dev, school_index|
-      school = schools[school_index]
-
-      data = {}
-
-      # Mandatory
-      data[:id] = dev['puavoId'][0].to_i
-      data[:hn] = dev['puavoHostname'][0]
-      data[:type] = dev['puavoDeviceType'][0]
-      data[:link] = "/devices/#{school[:id]}/devices/#{dev['puavoId'][0]}"
-      data[:school] = [school[:cn], school[:name]]
-      data[:school_id] = school[:id]
-
-      # Optional, common parts
-      data.merge!(DevicesHelper.build_common_device_properties(dev, requested, releases))
-
-      # Hardware info
-      if want_hw_info && dev['puavoDeviceHWInfo']
-        data.merge!(DevicesHelper.extract_hardware_info(dev['puavoDeviceHWInfo'], hw_attributes, releases))
-      end
-
-      # Device primary user
-      if requested.include?('user') && data[:user]
-        dn = data[:user]
-
-        begin
-          u = User.find(dn)
-
-          data[:user] = {
-            valid: true,
-            link: "/users/#{school[:id]}/users/#{u.id}",
-            title: "#{u.uid} (#{u.givenName} #{u.sn})"
-          }
-        rescue
-          # Not found
-          data[:user] = {
-            valid: false,
-            dn: dn,
-          }
-        end
-      end
-
-      # Purge empty fields to minimize the amount of transferred data
-      data.delete_if{ |k, v| v.nil? }
-
-      devices << data
-    end
-
-    render :json => devices
-  end
-
   def all_users
     return if redirected_nonowner_user?
 
@@ -310,80 +200,53 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  # AJAX call
   def get_all_users
-    # Which attributes to retrieve? These are the defaults, they're always
-    # sent even when not requested, because basic functionality can break
-    # without them.
-    requested = Set.new(['id', 'name', 'role', 'uid', 'dnd', 'locked', 'rrt', 'school'])
-
-    # Extra attributes (columns)
-    if params.include?(:fields)
-      requested += Set.new(params[:fields].split(','))
-    end
-
-    attributes = UsersHelper.convert_requested_user_column_names(requested)
-
-    raw = []
-
     # Get a list of organisation owners and school admins
-    organisation_owners = Array(LdapOrganisation.current.owner).each
-      .select { |dn| dn != "uid=admin,o=puavo" }
-      .map{ |o| o.to_s }
+    organisation_owners = Array(LdapOrganisation.current.owner)
+                          .reject { |dn| dn == 'uid=admin,o=puavo' }
+                          .collect { |o| o.to_s }
 
-    if organisation_owners.nil?
-      organisation_owners = []
-    end
-
-    organisation_owners = Set.new(organisation_owners)
+    organisation_owners = Array(organisation_owners || []).to_set
 
     # Perform the admin search as a raw query. In some organisations, "Schools.all"
-    # can be *very* slow (like 4-5 seconds per call) and we don't even need 99% of
-    # the data it returns. But this raw search is nearly instantaneous. We'll lose
-    # user_path() because we don't have School objects anymore, but it's no big
-    # deal, we can format the URL by hand.
+    # can be *very* slow (I've seen 4-5 seconds per call) and we don't even need
+    # 99% of the data it returns. But this raw search is nearly instantaneous. We'll
+    # lose user_path() because we don't have School objects anymore, but it's no big
+    # deal, we can format URLs by hand. The same pattern repeats in all of these
+    # AJAX endpoints in this controller.
     schools_by_dn = {}
     school_admins = Set.new
 
     School.search_as_utf8(:filter => '',
-                          :attributes=>['cn', 'displayName', 'puavoId', 'puavoSchoolAdmin']).each do |dn, school|
+                          :attributes => ['cn', 'displayName', 'puavoId', 'puavoSchoolAdmin']).each do |dn, school|
       schools_by_dn[dn] = {
         id: school['puavoId'][0].to_i,
-        cn: school['cn'][0].force_encoding('UTF-8'),
-        name: school['displayName'][0].force_encoding('UTF-8'),
+        cn: school['cn'][0],
+        name: school['displayName'][0],
       }
 
       Array(school['puavoSchoolAdmin'] || []).each{ |dn| school_admins << dn }
     end
 
-    # Get a list of all users in all schools
-    users = []
-
-    raw = User.search_as_utf8(:filter => "(puavoSchool=*)",
+    # Get a raw list of all users in all schools
+    raw = User.search_as_utf8(:filter => '(puavoSchool=*)',
                               :scope => :one,
-                              :attributes => attributes)
+                              :attributes => UsersHelper.get_user_attributes())
+
+    # Convert the raw data into something we can easily parse in JavaScript
+    users = []
 
     raw.each do |dn, usr|
       school = schools_by_dn[usr['puavoSchool'][0]]
 
-      user = {}
+      # Common attributes
+      user = UsersHelper.convert_raw_user(dn, usr, organisation_owners, school_admins)
 
-      # Mandatory
-      user[:id] = usr['puavoId'][0].to_i
-      user[:uid] = usr['uid'][0]
-      user[:name] = usr['displayName'] ? usr['displayName'][0] : nil
-      user[:role] = Array(usr['puavoEduPersonAffiliation'])
-      user[:rrt] = Puavo::Helpers::convert_ldap_time(usr['puavoRemovalRequestTime'])
-      user[:dnd] = usr['puavoDoNotDelete'] ? true : false
-      user[:locked] = usr['puavoLocked'] ? (usr['puavoLocked'][0] == 'TRUE' ? true : false) : false
-      user[:link] = "/users/#{school[:id]}/users/#{usr['puavoId'][0]}"
+      # Special attributes
+      user[:link] = "/users/#{school[:id]}/users/#{user[:id]}"
       user[:school] = [school[:cn], school[:name]]
       user[:school_id] = school[:id]
-
-      # Highlight organisation owners (school admins have already an "admin" role set)
-      user[:role] << 'owner' if organisation_owners.include?(dn)
-
-      # Optional, common parts
-      user.merge!(UsersHelper.build_common_user_properties(usr, requested))
 
       users << user
     end
@@ -402,43 +265,102 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  # AJAX call
   def get_all_groups
-    # The "requested" parameter is ignored here on purpose. There are only few columns,
-    # just get them all every time.
-    attributes = GroupsHelper.convert_requested_group_column_names([])
-
+    # See the explanation in get_all_users() if you're wondering why we're
+    # doing a raw school search instead of School.all
     schools_by_dn = {}
 
     School.search_as_utf8(:filter => '',
-                          :attributes=>['cn', 'displayName', 'puavoId']).each do |dn, school|
+                          :attributes => ['cn', 'displayName', 'puavoId']).each do |dn, school|
       schools_by_dn[dn] = {
         id: school['puavoId'][0].to_i,
-        cn: school['cn'][0].force_encoding('UTF-8'),
-        name: school['displayName'][0].force_encoding('UTF-8'),
+        cn: school['cn'][0],
+        name: school['displayName'][0],
       }
     end
 
-    raw = Group.search_as_utf8(:filter => "(puavoSchool=*)",
+    # Get a raw list of all groups in all schools
+    raw = Group.search_as_utf8(:filter => '(puavoSchool=*)',
                                :scope => :one,
-                               :attributes => attributes)
+                               :attributes => GroupsHelper.get_group_attributes())
 
     # Convert the raw data into something we can easily parse in JavaScript
     groups = []
 
     raw.each do |dn, grp|
-      g = {}
-
-      g.merge!(GroupsHelper.build_common_group_properties(grp, []))
-
       school = schools_by_dn[grp['puavoSchool'][0]]
-      g[:link] = "/users/#{school[:id]}/groups/#{grp['puavoId'][0]}"
-      g[:school] = [school[:cn], school[:name]]
-      g[:school_id] = school[:id]
 
-      groups << g
+      # Common attributes
+      group = GroupsHelper.convert_raw_group(dn, grp)
+
+      # Special attributes
+      group[:link] = "/users/#{school[:id]}/groups/#{group[:id]}"
+      group[:school] = [school[:cn], school[:name]]
+      group[:school_id] = school[:id]
+
+      groups << group
     end
 
     render :json => groups
+  end
+
+  def all_devices
+    return if redirected_nonowner_user?
+
+    @school_list = DevicesHelper.device_school_change_list()
+
+    respond_to do |format|
+      format.html   # all_devices.html.erb
+    end
+  end
+
+  # AJAX call
+  def get_all_devices
+    # See the explanation in get_all_users() if you're wondering why we're
+    # doing a raw school search instead of School.all
+    schools_by_dn = {}
+
+    School.search_as_utf8(:filter => '',
+                          :attributes => ['cn', 'displayName', 'puavoId']).each do |dn, school|
+      schools_by_dn[dn] = {
+        id: school['puavoId'][0].to_i,
+        cn: school['cn'][0],
+        name: school['displayName'][0],
+      }
+    end
+
+    # Get a raw list of all devices in all schools
+    raw = Device.search_as_utf8(:filter => "(puavoSchool=*)",
+                                :scope => :one,
+                                :attributes => DevicesHelper.get_device_attributes())
+
+    # Known image release names
+    releases = get_releases()
+
+    # Convert the raw data into something we can easily parse in JavaScript
+    devices = []
+
+    raw.each do |dn, dev|
+      school = schools_by_dn[dev['puavoSchool'][0]]
+
+      # Common attributes
+      device = DevicesHelper.convert_raw_device(dev, releases)
+
+      # Special attributes
+      device[:link] = "/devices/#{school[:id]}/devices/#{device[:id]}"
+      device[:school] = [school[:cn], school[:name]]
+      device[:school_id] = school[:id]
+
+      # Figure out the primary user
+      if device[:user]
+        device[:user] = DevicesHelper.format_device_primary_user(device[:user], school[:id])
+      end
+
+      devices << device
+    end
+
+    render :json => devices
   end
 
   private

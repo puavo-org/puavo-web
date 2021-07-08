@@ -46,135 +46,40 @@ module DevicesHelper
     return I18n.t('helpers.ppd_file.cannot_detect_filetype')
   end
 
-  DEVICE_ATTRIBUTES = [
-    'puavoId',
-    'puavoHostname',
-    'puavoDeviceType',
-    'puavoDeviceImage',
-    'puavoDeviceCurrentImage',
-    'macAddress',
-    'serialNumber',
-    'puavoDeviceManufacturer',
-    'puavoDeviceModel',
-    'puavoDeviceKernelArguments',
-    'puavoDeviceKernelVersion',
-    'puavoDeviceMonitorsXML',
-    'puavoDeviceXrandr',
-    'puavoTag',
-    'puavoConf',
-    'description',
-    'puavoDevicePrimaryUser',
-    'puavoDeviceHWInfo',
-    'puavoPurchaseDate',
-    'puavoWarrantyEndDate',
-    'puavoPurchaseLocation',
-    'puavoPurchaseURL',
-    'puavoSupportContract',
-    'puavoLocationName',
-    'createTimestamp',    # LDAP operational attribute
-    'modifyTimestamp'     # LDAP operational attribute
-  ]
-
-  # If any of these columns are requested, then we have to parse the hwinfo JSON
-  HWINFO_ATTRS = Set.new([
-    "abitti_version",
-    "hw_time",
-    "ram",
-    "hd",
-    "hd_ssd",
-    "df_home",
-    "df_images",
-    "df_state",
-    "df_tmp",
-    "cpu",
-    "current_image",
-    "bio_vendor",
-    "bios_version",
-    "bios_date",
-    "bat_vendor",
-    "bat_serial",
-    "bat_cap",
-    "bat_pcnt",
-    "bat_volts",
-    "windows_license",
-    "wifi",
-    "lsusb",
-    "lspci",
-  ]).freeze
-
-  def self.convert_requested_device_column_names(requested, is_server=false)
-    attributes = []
-
-    attributes << 'puavoId' if requested.include?('id')
-    attributes << 'puavoHostname' if requested.include?('hn')
-    attributes << 'puavoDeviceType' if requested.include?('type')
-    attributes << 'puavoTag' if requested.include?('tags')
-    attributes << 'puavoDeviceManufacturer' if requested.include?('mfer')
-    attributes << 'puavoDeviceModel' if requested.include?('model')
-    attributes << 'serialNumber' if requested.include?('serial')
-    attributes << 'macAddress' if requested.include?('mac')
-    attributes << 'description' if requested.include?('desc')
-    attributes << 'puavoDeviceImage' if requested.include?('image')
-    attributes << 'puavoDeviceCurrentImage' if requested.include?('current_image')
-    attributes << 'puavoDeviceKernelArguments' if requested.include?('krn_args')
-    attributes << 'puavoDeviceKernelVersion' if requested.include?('krn_ver')
-    attributes << 'createTimestamp' if requested.include?('created')
-    attributes << 'modifyTimestamp' if requested.include?('modified')
-    attributes << 'puavoConf' if requested.include?('conf')
-    attributes << 'puavoDevicePrimaryUser' if requested.include?('user')
-    attributes << 'puavoDeviceMonitorsXML' if requested.include?('monitors_xml')
-    attributes << 'puavoDeviceXrandr' if requested.include?('xrandr')
-    attributes << 'puavoPurchaseDate' if requested.include?('purchase_date')
-    attributes << 'puavoWarrantyEndDate' if requested.include?('purchase_warranty')
-    attributes << 'puavoPurchaseLocation' if requested.include?('purchase_loc')
-    attributes << 'puavoPurchaseURL' if requested.include?('purchase_url')
-    attributes << 'puavoSupportContract' if requested.include?('purchase_support')
-    attributes << 'puavoLocationName' if requested.include?('location')
-
-    if is_server
-      # Boot server attributes only
-      attributes << 'puavoSchool' if requested.include?('schools')
-      attributes << 'puavoDeviceAvailableImage' if requested.include?('available_images')
-    end
-
-    return attributes
+  def self.get_device_attributes()
+    return [
+      'puavoId',
+      'puavoHostname',
+      'puavoDeviceType',
+      'puavoDeviceImage',
+      'puavoDeviceCurrentImage',
+      'macAddress',
+      'serialNumber',
+      'puavoDeviceManufacturer',
+      'puavoDeviceModel',
+      'puavoDeviceKernelArguments',
+      'puavoDeviceKernelVersion',
+      'puavoDeviceMonitorsXML',
+      'puavoDeviceXrandr',
+      'puavoTag',
+      'puavoConf',
+      'description',
+      'puavoDevicePrimaryUser',
+      'puavoDeviceHWInfo',
+      'puavoPurchaseDate',
+      'puavoWarrantyEndDate',
+      'puavoPurchaseLocation',
+      'puavoPurchaseURL',
+      'puavoSupportContract',
+      'puavoLocationName',
+      'puavoSchool',
+      'createTimestamp',    # LDAP operational attribute
+      'modifyTimestamp'     # LDAP operational attribute
+    ].freeze
   end
 
-  def self.convert_requested_hwinfo_column_names(requested)
-    attributes = []
-
-    attributes << :abitti_version if requested.include?('abitti_version')
-    attributes << :hw_time if requested.include?('hw_time')
-    attributes << :ram if requested.include?('ram')
-    attributes << :hd if requested.include?('hd')
-    attributes << :hd_ssd if requested.include?('hd_ssd')
-    attributes << :df_home if requested.include?('df_home')
-    attributes << :df_images if requested.include?('df_images')
-    attributes << :df_state if requested.include?('df_state')
-    attributes << :df_tmp if requested.include?('df_tmp')
-    attributes << :current_image if requested.include?('current_image')
-    attributes << :cpu if requested.include?('cpu')
-    attributes << :bios_vendor if requested.include?('bios_vendor')
-    attributes << :bios_version if requested.include?('bios_version')
-    attributes << :bios_date if requested.include?('bios_date')
-    attributes << :bat_vendor if requested.include?('bat_vendor')
-    attributes << :bat_serial if requested.include?('bat_serial')
-    attributes << :bat_cap if requested.include?('bat_cap')
-    attributes << :bat_pcnt if requested.include?('bat_pcnt')
-    attributes << :bat_volts if requested.include?('bat_volts')
-    attributes << :windows_license if requested.include?('windows_license')
-    attributes << :wifi if requested.include?('wifi')
-    attributes << :lspci if requested.include?('lspci')
-    attributes << :lsusb if requested.include?('lsusb')
-
-    attributes
-  end
-
-  # Retrieves a list of all devices in the specified school
-  def self.get_devices_in_school(school_dn, custom_attributes=nil)
-    return Device.search_as_utf8(:filter => "(puavoSchool=#{school_dn})",
-                                 :scope => :one,
-                                 :attributes => custom_attributes ? custom_attributes : DEVICE_ATTRIBUTES)
+  def self.get_server_attributes()
+    return (self.get_device_attributes() + ["puavoDeviceAvailableImage"] - ["puavoDevicePrimaryUser"]).freeze
   end
 
   def self.get_release_name(image_file_name, releases)
@@ -188,94 +93,141 @@ module DevicesHelper
     }
   end
 
-  def self.build_common_device_properties(dev, requested, releases)
-    d = {}
+  def self.format_device_primary_user(dn, school_id)
+    begin
+      u = User.find(dn)
 
-    if requested.include?('mac')
-      d[:mac] = dev['macAddress'] ? Array(dev['macAddress']) : nil
+      # The DN is valid
+      return {
+        valid: true,
+        link: "/users/#{school_id}/users/#{u.id}",
+        title: "#{u.uid} (#{u.givenName} #{u.sn})"
+      }
+    rescue
+      # The DN is not valid, indicate it on the table
+      return {
+        valid: false,
+        dn: dn,
+      }
+    end
+  end
+
+  def self.convert_raw_device(dev, releases)
+    out = {}
+
+    out[:id] = dev['puavoId'][0].to_i
+
+    out[:hn] = dev['puavoHostname'][0]
+
+    out[:type] = dev['puavoDeviceType'][0]
+
+    if dev.include?('macAddress')
+      a = Array(dev['macAddress'])
+
+      if a.count > 0
+        out[:mac] = a
+      end
     end
 
-    if requested.include?('serial')
-      d[:serial] = dev['serialNumber'] ? dev['serialNumber'][0] : nil
+    if dev.include?('serialNumber')
+      out[:serial] = dev['serialNumber'][0]
     end
 
-    if requested.include?('mfer')
-      d[:mfer] = dev['puavoDeviceManufacturer'] ? dev['puavoDeviceManufacturer'][0] : nil
+    if dev.include?('puavoDeviceManufacturer')
+      out[:mfer] = dev['puavoDeviceManufacturer'][0]
     end
 
-    if requested.include?('model')
-      d[:model] = dev['puavoDeviceModel'] ? dev['puavoDeviceModel'][0] : nil
+    if dev.include?('puavoDeviceModel')
+      out[:model] = dev['puavoDeviceModel'][0]
     end
 
-    if requested.include?('tags')
-      d[:tags] = dev['puavoTag'] ? dev['puavoTag'] : nil
+    if dev.include?('puavoTag')
+      out[:tags] = dev['puavoTag']
     end
 
-    if requested.include?('created')
-      d[:created] = Puavo::Helpers::convert_ldap_time(dev['createTimestamp'])
+    if dev.include?('createTimestamp')
+      out[:created] = Puavo::Helpers::convert_ldap_time(dev['createTimestamp'])
     end
 
-    if requested.include?('modified')
-      d[:modified] = Puavo::Helpers::convert_ldap_time(dev['modifyTimestamp'])
+    if dev.include?('modifyTimestamp')
+      out[:modified] = Puavo::Helpers::convert_ldap_time(dev['modifyTimestamp'])
     end
 
-    if requested.include?('desc')
-      d[:desc] = dev['description'] ? dev['description'][0] : nil
+    if dev.include?('description')
+      out[:desc] = dev['description'][0]
     end
 
-    if requested.include?('krn_args')
-      d[:krn_args] = dev['puavoDeviceKernelArguments'] ? dev['puavoDeviceKernelArguments'][0] : nil
+    if dev.include?('puavoDeviceKernelArguments')
+      out[:krn_args] = dev['puavoDeviceKernelArguments'][0]
     end
 
-    if requested.include?('krn_ver')
-      d[:krn_ver] = dev['puavoDeviceKernelVersion'] ? dev['puavoDeviceKernelVersion'][0] : nil
+    if dev.include?('puavoDeviceKernelVersion')
+      out[:krn_ver] = dev['puavoDeviceKernelVersion'][0]
     end
 
-    if requested.include?('image') && dev['puavoDeviceImage']
-      d[:image] = self.get_release_name(dev['puavoDeviceImage'][0], releases)
+    if dev.include?('puavoDeviceImage') && dev['puavoDeviceImage']
+      out[:image] = self.get_release_name(dev['puavoDeviceImage'][0], releases)
     end
 
-    if requested.include?('xrandr')
-      d[:xrandr] = dev['puavoDeviceXrandr'] ? Array(dev['puavoDeviceXrandr']) : nil
+    if dev.include?('puavoDeviceXrandr')
+      a = Array(dev['puavoDeviceXrandr'])
+
+      if a.count > 0
+        out[:xrandr] = a
+      end
     end
 
-    if requested.include?('monitors_xml')
-      d[:monitors_xml] = dev['puavoDeviceMonitorsXML'] ? Array(dev['puavoDeviceMonitorsXML']) : nil
+    if dev.include?('puavoDeviceMonitorsXML')
+      a = Array(dev['puavoDeviceMonitorsXML'])
+
+      if a.count > 0
+        out[:monitors_xml] = a
+      end
     end
 
-    if requested.include?('conf')
-      d[:conf] = dev['puavoConf'] ? JSON.parse(dev['puavoConf'][0]).collect{|k, v| "\"#{k}\"=\"#{v}\"" } : nil
+    if dev.include?('puavoConf')
+      out[:conf] = JSON.parse(dev['puavoConf'][0]).collect{ |k, v| "#{k} = #{v}" }
     end
 
-    if requested.include?('user')
-      d[:user] = dev['puavoDevicePrimaryUser'] ? dev['puavoDevicePrimaryUser'][0] : nil
+    if dev.include?('puavoDevicePrimaryUser')
+      # We don't know yet if this DN is valid, it will be dealt with elsewhere
+      out[:user] = dev['puavoDevicePrimaryUser'][0]
     end
 
-    if requested.include?('purchase_date')
-      d[:purchase_date] = dev['puavoPurchaseDate'] ? Puavo::Helpers::convert_ldap_time(dev['puavoPurchaseDate']) : nil
+    if dev.include?('puavoPurchaseDate')
+      out[:purchase_date] = Puavo::Helpers::convert_ldap_time(dev['puavoPurchaseDate'])
     end
 
-    if requested.include?('purchase_warranty')
-      d[:purchase_warranty] = dev['puavoWarrantyEndDate'] ? Puavo::Helpers::convert_ldap_time(dev['puavoWarrantyEndDate']) : nil
+    if dev.include?('puavoWarrantyEndDate')
+      out[:purchase_warranty] = Puavo::Helpers::convert_ldap_time(dev['puavoWarrantyEndDate'])
     end
 
-    if requested.include?('purchase_loc')
-      d[:purchase_loc] = dev['puavoPurchaseLocation'] ? dev['puavoPurchaseLocation'][0] : nil
+    if dev.include?('puavoPurchaseLocation')
+      out[:purchase_loc] = dev['puavoPurchaseLocation'][0]
     end
 
-    if requested.include?('purchase_url')
-      d[:purchase_url] = dev['puavoPurchaseURL'] ? dev['puavoPurchaseURL'][0] : nil
+    if dev.include?('puavoPurchaseURL')
+      out[:purchase_url] = dev['puavoPurchaseURL'][0]
     end
 
-    if requested.include?('purchase_support')
-      d[:purchase_support] = dev['puavoSupportContract'] ? dev['puavoSupportContract'][0] : nil
+    if dev.include?('puavoSupportContract')
+      out[:purchase_support] = dev['puavoSupportContract'][0]
     end
 
-    if requested.include?('location')
-      d[:location] = dev['puavoLocationName'] ? Array(dev['puavoLocationName'][0].split("\n")) : nil
+    if dev.include?('puavoLocationName')
+      a = dev['puavoLocationName'][0].split("\n")
+
+      if a.count > 0
+        out[:location] = a
+      end
     end
 
-    return d
+    # Parse the hardware information
+    if dev.include?('puavoDeviceHWInfo')
+      out.merge!(self.extract_hardware_info(dev['puavoDeviceHWInfo'][0], releases))
+    end
+
+    return out
   end
 
   def self.mangle_percentage_number(s)
@@ -290,128 +242,92 @@ module DevicesHelper
   end
 
   # Extracts the pieces we care about from puavoDeviceHWInfo field
-  def self.extract_hardware_info(raw_hw_info, requested, releases)
+  def self.extract_hardware_info(raw_hw_info, releases)
     megabytes = 1024 * 1024
-    gigabytes = megabytes * 1024
 
     out = {}
 
     begin
-      info = JSON.parse(raw_hw_info[0])
+      info = JSON.parse(raw_hw_info)
 
-      if requested.include?(:hw_time)
-        out[:hw_time] = info['timestamp'].to_i
-      end
+      # Receiving timestamp
+      out[:hw_time] = info['timestamp'].to_i
 
-      # we have puavoImage and puavoCurrentImage fields in the database, but
+      # We have puavoImage and puavoCurrentImage fields in the database, but
       # they aren't always reliable
       out[:current_image] = self.get_release_name(info['this_image'], releases)
 
-      if requested.include?(:ram)
-        out[:ram] = (info['memory'] || []).sum { |slot| slot['size'].to_i }
+      out[:ram] = (info['memory'] || []).sum { |slot| slot['size'].to_i }
 
-        # Some machines have no memory slot info, so use the "raw" number instead
-        out[:ram] = (info['memorysize_mb'] || 0).to_i if out[:ram] == 0
+      # Some machines have no memory slot info, so use the "raw" number instead
+      if out[:ram] == 0
+        out[:ram] = ((info['memorysize_mb'] || 0).to_i / megabytes).to_i
       end
 
-      if requested.include?(:hd)
-        out[:hd] = ((info['blockdevice_sda_size'] || 0).to_i / megabytes).to_i
-      end
+      out[:hd] = ((info['blockdevice_sda_size'] || 0).to_i / megabytes).to_i
 
-      if requested.include?(:hd_ssd)
-        out[:hd_ssd] = info['ssd'] ? (info['ssd'] == '1') : false   # why oh why did I put a string in this field and not an integer?
-      end
+      out[:hd_ssd] = info['ssd'] ? (info['ssd'] == '1') : false   # why oh why did I put a string in this field and not an integer?
 
-      if requested.include?(:wifi)
-        out[:wifi] = info['wifi']
-      end
+      out[:wifi] = info['wifi']
 
-      if requested.include?(:bios_vendor)
-        out[:bios_vendor] = info['bios_vendor']
-      end
+      out[:bios_vendor] = info['bios_vendor']
 
-      if requested.include?(:bios_version)
-        out[:bios_version] = info['bios_version']
-      end
+      out[:bios_version] = info['bios_version']
 
-      if requested.include?(:bios_date)
-        out[:bios_date] = info['bios_release_date']
-      end
+      out[:bios_date] = info['bios_release_date']
 
-      if requested.include?(:cpu)
-        if info['processor0'] && info['processorcount']
-          # combine CPU core count and name
-          out[:cpu] = "#{info['processorcount']}×#{info['processor0']}"
-        end
+      if info['processor0'] && info['processorcount']
+        # combine CPU core count and name
+        out[:cpu] = "#{info['processorcount']}×#{info['processor0']}"
       end
 
       if info['battery']
-        if requested.include?(:bat_vendor)
-          out[:bat_vendor] = info['battery']['vendor']
-        end
+        out[:bat_vendor] = info['battery']['vendor']
 
-        if requested.include?(:bat_serial)
-          out[:bat_serial] = info['battery']['serial']
-        end
+        out[:bat_serial] = info['battery']['serial']
 
-        if requested.include?(:bat_cap) && info['battery']['capacity']
+        if info['battery']['capacity']
           out[:bat_cap] = self.mangle_percentage_number(info['battery']['capacity']).to_i
         end
 
-        if requested.include?(:bat_pcnt) && info['battery']['percentage']
+        if info['battery']['percentage']
           out[:bat_pcnt] = self.mangle_percentage_number(info['battery']['percentage']).to_i
         end
 
-        if requested.include?(:bat_volts) && info['battery']['voltage']
+        if info['battery']['voltage']
           out[:bat_volts] = self.mangle_battery_voltage(info['battery']['voltage'])
         end
       end
 
-      if requested.include?(:abitti_version)
+      if info['extra_system_contents']
+        extra = info['extra_system_contents']
+
         # Current Abitti version
-        if info['extra_system_contents']
-          extra = info['extra_system_contents']
-
-          if extra['Abitti']
-            out[:abitti_version] = extra['Abitti']
-          end
+        if extra['Abitti']
+          out[:abitti_version] = extra['Abitti']
         end
       end
 
-      if requested.include?(:df_home) || requested.include?(:df_images) ||
-         requested.include?(:df_state) || requested.include?(:df_tmp)
-        # Free disk space on various partitions. Retrieve them all even if only one
-        # of them was requested, because it takes a lot of effort to dig them up.
-        if info['free_space']
-          df = info['free_space']
+      # Free disk space on various partitions. Retrieve them all even if only one
+      # of them was requested, because it takes a lot of effort to dig them up.
+      if info['free_space']
+        df = info['free_space']
 
-          out[:df_home] = df.include?('/home') ? (df['/home'].to_i / megabytes) : nil
-          out[:df_images] = df.include?('/images') ? (df['/images'].to_i / megabytes) : nil
-          out[:df_state] = df.include?('/state') ? (df['/state'].to_i / megabytes) : nil
-          out[:df_tmp] = df.include?('/tmp') ? (df['/tmp'].to_i / megabytes) : nil
-        end
+        out[:df_home] = (df['/home'].to_i / megabytes).to_i if df.include?('/home')
+        out[:df_images] = (df['/images'].to_i / megabytes).to_i if df.include?('/home')
+        out[:df_state] = (df['/state'].to_i / megabytes).to_i if df.include?('/home')
+        out[:df_tmp] = (df['/tmp'].to_i / megabytes).to_i if df.include?('/home')
       end
-    rescue
-      # oh well
-    end
 
-    if requested.include?(:windows_license)
       # Windows license info (boolean exists/does not exist)
-      if info.include?('windows_license') && !info['windows_license'].nil?
-        out[:windows_license] = true
-      else
-        out[:windows_license] = false
-      end
-    end
+      out[:windows_license] = info.include?('windows_license') && !info['windows_license'].nil?
 
-    if requested.include?(:lspci)
-      # lspci listing
       out[:lspci] = info['lspci_values']
-    end
 
-    if requested.include?(:lsusb)
-      # lsusb listing
       out[:lsusb] = info['lsusb_values']
+    rescue => e
+      # oh dear
+      puts e
     end
 
     return out

@@ -1533,7 +1533,7 @@ fetchDataAndUpdate()
 
     let networkError = null;
 
-    let url = this.settings.source + "?fields=" + this.settings.columns.join(",");
+    let url = this.settings.source; // + "?fields=" + this.settings.columns.join(",");
 
     fetch(url)
         .then(response => {
