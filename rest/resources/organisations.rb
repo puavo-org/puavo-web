@@ -144,49 +144,6 @@ class Organisation < LdapModel
     end.compact
   end
 
-  def printer_queue_map(pq_dn, attribute, schools_only=false)
-    queuemap = {}
-    queuemap['schools'] = School.by_attr(attribute, pq_dn, :multiple => true) \
-                                .map { |s| s.abbreviation }
-    return queuemap if schools_only
-
-    queuemap['devices'] = Device.by_attr(attribute, pq_dn, :multiple => true) \
-                                .map { |d| d.hostname }
-    queuemap['groups'] = Group.by_attr(attribute, pq_dn, :multiple => true) \
-                              .map { |g| g.abbreviation }
-    queuemap
-  end
-
-  computed_attr :printer_restrictions
-  def printer_restrictions
-    restrictions = {}
-
-    PrinterQueue.all.each do |pq|
-      restrictions[pq.name] = {}
-
-      # If printer is marked as "open" in some school, it is probably
-      # intended to be open for all.
-      open_schools = School.by_attr(:wireless_printer_queue_dns,
-                                    pq.dn,
-                                    :multiple => true)
-      restrictions[pq.name]['open'] = !open_schools.empty? ? true : false
-
-      restrictions[pq.name]['schools'] \
-        = School.by_attr(:printer_queue_dns, pq.dn, :multiple => true) \
-                .map { |s| s.abbreviation }
-
-      restrictions[pq.name]['groups'] \
-        = Group.by_attr(:printer_queue_dns, pq.dn, :multiple => true) \
-               .map { |s| s.abbreviation }
-
-      restrictions[pq.name]['devices'] \
-        = Device.by_attr(:printer_queue_dns, pq.dn, :multiple => true) \
-                .map { |s| s.hostname }
-    end
-
-    restrictions
-  end
-
   # Customized to_hash method for stripping down the returned data to only bare essentials
   def to_hash
     out = {
@@ -232,8 +189,6 @@ class Organisation < LdapModel
         }
       end
     end
-
-    out[:printers] = { :restrictions => self.printer_restrictions }
 
     return out
   end
