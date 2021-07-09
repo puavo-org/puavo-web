@@ -63,6 +63,66 @@ class Device < Host
     school.preferred_language
   end
 
+  computed_attr :printers
+  def printers
+    restrictions = {}
+
+    PrinterQueue.all.each do |pq|
+      if school.wireless_printer_queue_dns.include?(pq.dn) then
+        restrictions[pq.name] = {
+          :allow     => '*',
+          :rationale => 'printer is open in the school this device belongs to',
+        }
+        next
+      end
+
+      printer_schools = School.by_attr(:wireless_printer_queue_dns,
+                                       pq.dn,
+                                       :multiple => true)
+      if !printer_schools.empty? then
+        restrictions[pq.name] = {
+          :allow     => '*',
+          :rationale => 'printer is open in some school',
+        }
+        next
+      end
+
+      if school.printer_queue_dns.include?(pq.dn) then
+        restrictions[pq.name] = {
+          :allow     => '*',
+          :rationale =>
+            'printer is restricted to school this device belongs to',
+        }
+        next
+      end
+
+      if printer_queue_dns.include?(pq.dn) then
+        restrictions[pq.name] = {
+          :allow     => '*',
+          :rationale =>
+            'this specific device is allowed access to this printer',
+        }
+        next
+      end
+
+      groups = Group.by_attr(:printer_queue_dns, pq.dn, :multiple => true)
+      if !groups.empty? then
+        restrictions[pq.name] = {
+          :allow     => groups.map { |g| "@#{ g.abbreviation }" }.join(','),
+          :rationale => 'access to printer is allowed for these groups',
+        }
+        next
+      end
+
+      restrictions[pq.name] = {
+        :deny      => '*',
+        :rationale => 'no suitable permissions could be found',
+      }
+    end
+
+    { :restrictions => restrictions }
+  end
+
   computed_attr :locale
   def locale
     school.locale
