@@ -160,14 +160,30 @@ class Organisation < LdapModel
   computed_attr :printer_restrictions
   def printer_restrictions
     restrictions = {}
+
     PrinterQueue.all.each do |pq|
-      restrictions[pq.name] = {
-        'puavo-only' => printer_queue_map(pq.dn, :printer_queue_dns),
-        'open'       => printer_queue_map(pq.dn,
-                                          :wireless_printer_queue_dns,
-                                          true),
-      }
+      restrictions[pq.name] = {}
+
+      # If printer is marked as "open" in some school, it is probably
+      # intended to be open for all.
+      open_schools = School.by_attr(:wireless_printer_queue_dns,
+                                    pq.dn,
+                                    :multiple => true)
+      restrictions[pq.name]['open'] = !open_schools.empty? ? true : false
+
+      restrictions[pq.name]['schools'] \
+        = School.by_attr(:printer_queue_dns, pq.dn, :multiple => true) \
+                .map { |s| s.abbreviation }
+
+      restrictions[pq.name]['groups'] \
+        = Group.by_attr(:printer_queue_dns, pq.dn, :multiple => true) \
+               .map { |s| s.abbreviation }
+
+      restrictions[pq.name]['devices'] \
+        = Device.by_attr(:printer_queue_dns, pq.dn, :multiple => true) \
+                .map { |s| s.hostname }
     end
+
     restrictions
   end
 
