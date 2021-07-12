@@ -31,7 +31,7 @@ GEM
       activemodel (> 4.0.0)
       builder
       gettext
-      gettext_i18n_rails (>= 0)
+      gettext_i18n_rails
       locale
     activemodel (5.2.4.5)
       activesupport (= 5.2.4.5)
@@ -48,7 +48,7 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    addressable (2.7.0)
+    addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     arel (9.0.0)
     builder (3.2.4)
