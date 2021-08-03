@@ -941,6 +941,7 @@ fi:
           model: "Malli"
           serial: "Sarjanumero"
           primary_user: "Ensisijainen käyttäjä (käyttäjänimi)"
+          description: "Kuvaus"
           validity_warning: "Tämän tekstijonon oikeellisuutta ei varmisteta mitenkään! Laatikon sisältö tallennetaan tietokantaan sellaisenaan."
         delete:
           title: "Poista"

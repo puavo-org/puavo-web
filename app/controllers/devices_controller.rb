@@ -206,6 +206,12 @@ class DevicesController < ApplicationController
             device.puavoDevicePrimaryUser = value
             changed = true
           end
+
+        when 'description'
+          if device.description != value
+            device.description = value
+            changed = true
+          end
       end
 
       if changed

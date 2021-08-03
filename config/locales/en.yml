@@ -939,6 +939,7 @@ en:
           model: "Model"
           serial: "Serial number"
           primary_user: "Primary user (username)"
+          description: "Description"
           validity_warning: "This string is not validated in any way! Anything you put in the box above is stored in the database as-is."
         delete:
           title: "Delete"
