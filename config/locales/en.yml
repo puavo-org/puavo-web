@@ -471,6 +471,7 @@ en:
           part3: "You can retry again later. If you want more information, please contact Opinsys support and give them this code: %{code}."
 
     password_set_failed: Failed to change password! Try again!
+
     session:
       login_successful: Login successful!
       failed: Login failed!
@@ -747,6 +748,7 @@ en:
             eid: "External ID"
             email: "Email"
             telephone: "Telephone number"
+            learner_id: "Learner ID"
         username_list:
           title: "Create username list"
 
