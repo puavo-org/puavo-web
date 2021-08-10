@@ -1198,11 +1198,13 @@ function userActions(item)
 {
     let html = "";
 
-    html += `<a href="${item['link']}/edit" class="btn"><%= t('link.edit') %></a> `;
+    const link = `/devices/${item.school_id}/devices/${item.id}`;
+
+    html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
     let message = "<%= t('general_confirm') %>";
 
-    html += `<a href="${item['link']}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+    html += `<a href="${link}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
 
     return html;
 }

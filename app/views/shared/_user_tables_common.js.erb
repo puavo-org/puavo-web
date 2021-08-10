@@ -649,7 +649,9 @@ function userActions(item)
 {
     let html = "";
 
-    html += `<a href="${item['link']}/edit" class="btn"><%= t('link.edit') %></a> `;
+    const link = `/users/${item.school_id}/users/${item.id}`;
+
+    html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
     if (item.dnd && item.dnd[0] !== true) {
 <% if @is_owner || @permit_single_user_deletion %>
@@ -682,7 +684,7 @@ function userActions(item)
                        .replace("SYSTEM_NAMES_HERE", SYNC_DELETIONS[school_id].join(", "));
         }
 
-        html += `<a href="${item['link']}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+        html += `<a href="${link}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
 <% end %>
     }
 
