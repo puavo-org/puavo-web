@@ -3,13 +3,17 @@ env = LDAPTestEnv.new
 env.validate "host" do
   laptop.can_modify laptop, [ :replace, :puavoDevicePrimaryUser, [ owner.dn ] ]
 
-  laptop.can_read admin, [ :dn, :uid, :givenName, :sn ]
-  laptop.can_read other_school_admin, [ :dn, :uid, :givenName, :sn ]
+  # Laptops must be able to read uid numbers from all users, so it can know
+  # the list of users in an organisation and that data from removed users is
+  # deleted correctly.
 
-  laptop.can_read student, [ :dn, :uid ]
-  laptop.can_read teacher, [ :dn, :uid ]
-  laptop.can_read other_school_student, [ :dn, :uid ]
-  laptop.can_read other_school_teacher, [ :dn, :uid ]
+  laptop.can_read admin, [ :dn, :uid, :uidNumber, :givenName, :sn ]
+  laptop.can_read other_school_admin, [ :dn, :uid, :uidNumber, :givenName, :sn ]
+
+  laptop.can_read student, [ :dn, :uid, :uidNumber ]
+  laptop.can_read teacher, [ :dn, :uid, :uidNumber  ]
+  laptop.can_read other_school_student, [ :dn, :uid, :uidNumber  ]
+  laptop.can_read other_school_teacher, [ :dn, :uid, :uidNumber  ]
 
   laptop.cannot_read student, [ :givenName, :sn ], InsufficientAccessRights
   laptop.cannot_read teacher, [ :givenName, :sn ], InsufficientAccessRights
