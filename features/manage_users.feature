@@ -7,9 +7,10 @@ Feature: Manage users
   Background:
     Given a new school and group with names "School 1", "Class 4" on the "example" organisation
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | staff                     |
-      | Admin     | User   | admin | secret   | true         | staff                     |
+      | givenName | sn     | uid        | password | school_admin | puavoEduPersonAffiliation |
+      | Pavel     | Taylor | pavel      | secret   | true         | staff                     |
+      | Admin     | User   | admin      | secret   | true         | staff                     |
+      | Admin     | Super  | superadmin | secret   | true         | staff                     |
     And I am logged in as "cucumber" with password "cucumber"
 
   Scenario: Non-owners should not see user deletion buttons on user show pages
@@ -43,6 +44,13 @@ Feature: Manage users
     Given I follow "Logout"
     And I am logged in as "pavel" with password "secret"
     When I am on the new user page
+    Then I should see "You do not have enough rights to access that page."
+
+  Scenario: Create new user by staff 2
+    Given I follow "Logout"
+    And I am logged in as "superadmin" with password "secret"
+    When I am on the new user page
+    Then I should not see "You do not have enough rights to access that page."
     Then I should not see "SSH public key"
     When I fill in the following:
     | Surname    | Doe      |
@@ -288,7 +296,7 @@ Feature: Manage users
     When I get on the show user JSON page with "ben"
     Then I should see JSON '{"given_name": "Ben", "surname": "Mabey", "uid": "ben"}'
     When I get on the users JSON page with "School 1"
-    Then I should see JSON '[{"given_name": "Admin", "surname": "User", "uid": "admin"},{"given_name": "Ben", "surname": "Mabey", "uid": "ben"},{"given_name": "Joseph", "surname": "Wilk", "uid": "joseph"}, {"given_name": "Pavel", "surname": "Taylor", "uid": "pavel"}]'
+    Then I should see JSON '[{"given_name": "Admin", "surname": "User", "uid": "admin"},{"given_name": "Admin", "surname": "Super", "uid": "superadmin"},{"given_name": "Ben", "surname": "Mabey", "uid": "ben"},{"given_name": "Joseph", "surname": "Wilk", "uid": "joseph"}, {"given_name": "Pavel", "surname": "Taylor", "uid": "pavel"}]'
 
   Scenario: Check new user special ldap attributes
     Given the following users:

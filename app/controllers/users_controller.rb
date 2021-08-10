@@ -75,6 +75,7 @@ class UsersController < ApplicationController
   def new_cool_users_index
     @is_owner = is_owner?
     @permit_single_user_deletion = false
+    @permit_single_user_creation = false
 
     unless @is_owner
       # This user is not an owner, but they *have* to be a school admin, because only owners
@@ -82,6 +83,14 @@ class UsersController < ApplicationController
       if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
         @permit_single_user_deletion = true
       end
+
+      if can_schooladmin_do_this?(current_user.uid, :create_single_users)
+        @permit_single_user_creation = true
+      end
+    else
+      # Owners can always create and delete users
+      @permit_single_user_creation = true
+      @permit_single_user_deletion = true
     end
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
@@ -525,6 +534,14 @@ class UsersController < ApplicationController
   # GET /:school_id/users/new
   # GET /:school_id/users/new.xml
   def new
+    unless is_owner?
+      unless can_schooladmin_do_this?(current_user.uid, :create_single_users)
+        flash[:alert] = t('flash.you_must_be_an_owner')
+        redirect_to users_path
+        return
+      end
+    end
+
     @user = User.new
     @groups = @school.groups
 
