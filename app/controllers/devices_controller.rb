@@ -82,8 +82,8 @@ class DevicesController < ApplicationController
       device = DevicesHelper.convert_raw_device(dev, releases)
 
       # Special attributes
-      device[:link] = "/devices/#{school[:id]}/devices/#{device[:id]}"
-      device[:school_id] = school[:id]
+      device[:link] = "/devices/#{school_id}/devices/#{device[:id]}"
+      device[:school_id] = school_id
 
       # Figure out the primary user
       if device[:user]
