@@ -670,7 +670,7 @@ function userActions(item)
             message = "<%= t('destroy_confirm_admin') %>";
         else message = "<%= t('general_confirm') %>";
 
-        const school_id = item.school_id[0];
+        const school_id = item.school_id;
 
         if (school_id in SYNC_DELETIONS && SYNC_DELETIONS[school_id].length > 0) {
             // Extra warning about deletion synchronisations. "SYSTEM_NAMES_HERE" is the only
