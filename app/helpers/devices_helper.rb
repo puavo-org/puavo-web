@@ -78,6 +78,13 @@ module DevicesHelper
     ].freeze
   end
 
+  # Retrieves a list of all devices in the specified school
+  def self.get_devices_in_school(school_dn, custom_attributes=nil)
+    return Device.search_as_utf8(:filter => "(puavoSchool=#{school_dn})",
+                                 :scope => :one,
+                                 :attributes => custom_attributes ? custom_attributes : DEVICE_ATTRIBUTES)
+  end
+
   def self.get_server_attributes()
     return (self.get_device_attributes() + ["puavoDeviceAvailableImage"] - ["puavoDevicePrimaryUser"]).freeze
   end
