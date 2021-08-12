@@ -96,7 +96,10 @@
 
     <tr>
       <th><%= t("activeldap.attributes.ldap_organisation.puavoDeviceImage") %></th>
-      <td><%= @organisation.puavoDeviceImage %></td>
+      <td>
+        <%= @organisation.puavoDeviceImage %>
+        <% if @release %> <span class="releaseName">(<%= @release %>)</span><% end %>
+      </td>
     </tr>
 
     <tr>

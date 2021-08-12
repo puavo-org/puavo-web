@@ -9,6 +9,11 @@ class OrganisationsController < ApplicationController
     end
 
     @organisation = LdapOrganisation.current
+    @release = nil
+
+    if @organisation.puavoDeviceImage
+      @release = get_releases().fetch(@organisation.puavoDeviceImage, nil)
+    end
 
     respond_to do |format|
       format.html # show.html.erb
