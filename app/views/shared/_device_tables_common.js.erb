@@ -1198,7 +1198,11 @@ function userActions(item)
 {
     let html = "";
 
+<% if @is_servers %>
+    const link = `/devices/servers/${item.id}`;
+<% else %>
     const link = `/devices/${item.school_id}/devices/${item.id}`;
+<% end %>
 
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
