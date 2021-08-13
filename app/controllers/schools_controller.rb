@@ -332,6 +332,7 @@ class SchoolsController < ApplicationController
         :options=>[]
       ).to_hash
 
+
       # deduplicate arrays, as LDAP really does not like duplicate entries...
       s["puavoTag"] = s["puavoTag"].split.uniq.join(' ') if s.key?("puavoTag")
       s["puavoBillingInfo"].uniq! if s.key?("puavoBillingInfo")
@@ -340,6 +341,9 @@ class SchoolsController < ApplicationController
       strip_img(s)
 
       clear_puavoconf(s)
+
+      s['displayName'].strip! if s.include?('displayName')
+      s['cn'].strip! if s.include?('cn')
 
       return s
     end
