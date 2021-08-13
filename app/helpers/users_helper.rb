@@ -56,7 +56,9 @@ module UsersHelper
       out[:rrt] = Puavo::Helpers::convert_ldap_time(raw['puavoRemovalRequestTime'])
     end
 
-    out[:dnd] = raw['puavoDoNotDelete'] ? true : false
+    if raw['puavoDoNotDelete']
+      out[:dnd] = raw['puavoDoNotDelete'] ? true : false
+    end
 
     if raw['puavoLocked']
       out[:locked] = raw['puavoLocked'][0] == 'TRUE' ? true : false
