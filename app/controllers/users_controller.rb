@@ -499,6 +499,19 @@ class UsersController < ApplicationController
       end
     end
 
+    # Extra permissions
+    @extra_permissions_list = []
+
+    unless @user_is_owner
+      if can_schooladmin_do_this?(@user.uid, :create_single_users)
+        @extra_permissions_list << 'create_single_users'
+      end
+
+      if can_schooladmin_do_this?(@user.uid, :delete_single_users)
+        @extra_permissions_list << 'delete_single_users'
+      end
+    end
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }

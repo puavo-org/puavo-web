@@ -772,6 +772,11 @@ en:
       prevent_removal: Prevent deletion
       prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
       deletion_sync_warning: "The user will also be removed from these external systems:\n\n\t%{systems}\n\nPlease verify that this is what you intended to do."
+      extra_permissions:
+        title: "Additional granted permissions"
+        create_single_users: "can create users"
+        delete_single_users: "can delete users"
+
     new:
       title: New user
     edit:

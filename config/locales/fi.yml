@@ -772,6 +772,10 @@ fi:
       prevent_removal: Estä poisto
       prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
       deletion_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\t%{systems}\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
+      extra_permissions:
+        title: "Sallitut lisätoiminnot"
+        create_single_users: "voi luoda käyttäjiä"
+        delete_single_users: "voi poistaa käyttäjiä"
     new:
       title: "Lisää uusi käyttäjä"
     edit:
