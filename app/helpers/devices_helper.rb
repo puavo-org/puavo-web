@@ -73,6 +73,22 @@ module DevicesHelper
       'puavoSupportContract',
       'puavoLocationName',
       'puavoSchool',
+      'puavoDeviceStatus',
+      'puavoImageSeriesSourceURL',
+      'puavoPrinterDeviceURI',
+      'puavoDefaultPrinter',
+      'puavoDeviceDefaultAudioSource',
+      'puavoDeviceDefaultAudioSink',
+      'puavoDeviceXserver',
+      'puavoAllowGuest',
+      'puavoPersonallyAdministered',
+      'puavoAutomaticImageUpdates',
+      'puavoPersonalDevice',
+      'puavoLatitude',
+      'puavoLongitude',
+      'puavoDeviceAutoPowerOffMode',
+      'puavoDeviceOnHour',
+      'puavoDeviceOffHour',
       'createTimestamp',    # LDAP operational attribute
       'modifyTimestamp'     # LDAP operational attribute
     ].freeze
@@ -227,6 +243,70 @@ module DevicesHelper
       if a.count > 0
         out[:location] = a
       end
+    end
+
+    if dev.include?('puavoLatitude')
+      out[:loc_lat] = dev['puavoLatitude'][0]
+    end
+
+    if dev.include?('puavoLongitude')
+      out[:loc_lon] = dev['puavoLongitude'][0]
+    end
+
+    if dev.include?('puavoDeviceStatus')
+      out[:status] = dev['puavoDeviceStatus'][0]
+    end
+
+    if dev.include?('puavoDeviceAutoPowerOffMode')
+      out[:autopower_mode] = dev['puavoDeviceAutoPowerOffMode'][0]
+    end
+
+    if dev.include?('puavoDeviceOnHour')
+      out[:autopower_on] = dev['puavoDeviceOnHour'][0].to_i
+    end
+
+    if dev.include?('puavoDeviceOffHour')
+      out[:autopower_off] = dev['puavoDeviceOffHour'][0].to_i
+    end
+
+    if dev.include?('puavoImageSeriesSourceURL')
+      out[:image_series] = dev['puavoImageSeriesSourceURL'][0]
+    end
+
+    if dev.include?('puavoPrinterDeviceURI')
+      out[:printer_uri] = dev['puavoPrinterDeviceURI'][0]
+    end
+
+    if dev.include?('puavoDefaultPrinter')
+      out[:default_printer] = dev['puavoDefaultPrinter'][0]
+    end
+
+    if dev.include?('puavoDeviceDefaultAudioSource')
+      out[:audio_src] = dev['puavoDeviceDefaultAudioSource'][0]
+    end
+
+    if dev.include?('puavoDeviceDefaultAudioSink')
+      out[:audio_sink] = dev['puavoDeviceDefaultAudioSink'][0]
+    end
+
+    if dev.include?('puavoDeviceXserver')
+      out[:xserver] = dev['puavoDeviceXserver'][0]
+    end
+
+    if dev.include?('puavoAllowGuest')
+      out[:allow_guest] = dev['puavoAllowGuest'][0] == 'TRUE'
+    end
+
+    if dev.include?('puavoPersonallyAdministered')
+      out[:personal_admin] = dev['puavoPersonallyAdministered'][0] == 'TRUE'
+    end
+
+    if dev.include?('puavoAutomaticImageUpdates')
+      out[:auto_updates] = dev['puavoAutomaticImageUpdates'][0] == 'TRUE'
+    end
+
+    if dev.include?('puavoPersonalDevice')
+      out[:personal_device] = dev['puavoPersonalDevice'][0] == 'TRUE'
     end
 
     # Parse the hardware information
