@@ -73,7 +73,7 @@ class FilterEditInteger extends FilterEditBase {
         let input = this.container.querySelector("input#filter-number-value");
 
         if (input.value.trim().length == 0) {
-            window.alert(_tr('filter.integer_missing_value'));
+            window.alert(_tr('filter_editor.editor.integer_missing_value'));
             return false;
         }
 
