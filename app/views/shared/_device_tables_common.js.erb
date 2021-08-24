@@ -1148,7 +1148,8 @@ class MassDevicePuavoconfEditor extends MassOperation {
     buildInterface()
     {
         this.container.innerHTML =
-`<form>
+`<p><%= t('devices.index.mass_operations.puavoconf.json_warning').html_safe %></p>
+<form>
 <table class="settingsChild">
 <tr>
     <th><label for="mass_device_pc_key"><%= t('devices.index.mass_operations.puavoconf.key') %></label></th>
