@@ -964,7 +964,8 @@ en:
           serial: "Serial number"
           primary_user: "Primary user (username)"
           description: "Description"
-          validity_warning: "This string is not validated in any way! Anything you put in the box above is stored in the database as-is."
+          json: "This must be JSON."
+          validity_warning: "The value you specify here is not validated in any way. If the value is not valid, the server will reject it when it is being saved."
         delete:
           title: "Delete"
         purchase_info:

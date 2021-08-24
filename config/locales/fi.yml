@@ -963,7 +963,8 @@ fi:
           serial: "Sarjanumero"
           primary_user: "Ensisijainen käyttäjä (käyttäjänimi)"
           description: "Kuvaus"
-          validity_warning: "Tämän tekstijonon oikeellisuutta ei varmisteta mitenkään! Laatikon sisältö tallennetaan tietokantaan sellaisenaan."
+          json: "Tämän täytyy olla JSONia."
+          validity_warning: "Tähän antamasi arvon oikeellisuutta ei tarkisteta mitenkään! Jos arvo on virheellinen, se hylätään palvelinpäässä tallennusvaiheessa."
         delete:
           title: "Poista"
         purchase_info:

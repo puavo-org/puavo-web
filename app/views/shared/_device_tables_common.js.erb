@@ -881,54 +881,113 @@ class MassDeviceSetFieldValue extends MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
+
+        this.items = [
+            { title: "<%= t('devices.index.mass_operations.set_field.desktop_image') %>", key: "image", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.kernel_args') %>", key: "kernelargs", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.kernel_version') %>", key: "kernelversion", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.puavoconf_replace') %>", key: "puavoconf", type: "json" },
+            { title: "<%= t('devices.index.mass_operations.set_field.tags_replace') %>", key: "tags", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.manufacturer') %>", key: "manufacturer", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.model') %>", key: "model", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.serial') %>", key: "serial", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.primary_user') %>", key: "primary_user", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.description') %>", key: "description", type: "ms" },
+        ];
     }
 
     buildInterface()
     {
-        this.container.innerHTML = `
-<form>
-<table class="settingsChild">
-<tr>
-    <th><label for="mass_device_set_field_name"><%= t('devices.index.mass_operations.set_field.field') %></label></th>
-    <td>
-        <div class="mobileTitle"><%= t('devices.index.mass_operations.set_field.field') %></div>
-        <select id="mass_device_set_field_name">
-            <option value="image"><%= t('devices.index.mass_operations.set_field.desktop_image') %></option>
-            <option value="kernelargs"><%= t('devices.index.mass_operations.set_field.kernel_args') %></option>
-            <option value="kernelversion"><%= t('devices.index.mass_operations.set_field.kernel_version') %></option>
-            <option value="puavoconf"><%= t('devices.index.mass_operations.set_field.puavoconf_replace') %></option>
-            <option value="tags"><%= t('devices.index.mass_operations.set_field.tags_replace') %></option>
-            <option value="manufacturer"><%= t('devices.index.mass_operations.set_field.manufacturer') %></option>
-            <option value="model"><%= t('devices.index.mass_operations.set_field.model') %></option>
-            <option value="serial"><%= t('devices.index.mass_operations.set_field.serial') %></option>
-            <option value="primary_user"><%= t('devices.index.mass_operations.set_field.primary_user') %></option>
-            <option value="description"><%= t('devices.index.mass_operations.set_field.description') %></option>
-        </select>
-    </td>
-</tr>
-<tr>
-    <th><label for="mass_device_set_field_value"><%= t('devices.index.mass_operations.set_field.value') %></label></th>
-    <td>
-        <div class="mobileTitle"><%= t('devices.index.mass_operations.set_field.value') %></div>
-        <input type="text" id="mass_device_set_field_value">
-        <p class="validityWarning"><%= t('devices.index.mass_operations.set_field.validity_warning') %></p>
-    </td>
-</tr>
-</table>
-</form>`;
+        let html = "";
 
-        this.field = this.container.querySelector("#mass_device_set_field_name");
-        this.value = this.container.querySelector("#mass_device_set_field_value");
+        html +=
+`<form>
+<table class="settingsChild"><tr>
+<th><label for="mass_device_set_field_name"><%= t('devices.index.mass_operations.set_field.field') %></label></th>
+<td><select id="mass_device_set_field_name">`;
+
+        // List the possible fields in alphabetical order
+        let sorted = [];
+
+        for (let i = 0; i < this.items.length; i++)
+            sorted.push([this.items[i].title, i]);
+
+        sorted.sort((a, b) => { return a[0].localeCompare(b[0]) });
+
+        for (const s of sorted) {
+            const item = this.items[s[1]];
+            html += `<option value="${s[1]}">${item.title}</option>`;
+        }
+
+        html +=
+`</select></td></tr>
+<tr>
+<th><label for="mass_device_set_field_value"><%= t('devices.index.mass_operations.set_field.value') %></label></th>
+<td><div id="uiChild"></div>
+<p class="validityWarning"><%= t('devices.index.mass_operations.set_field.validity_warning') %></p>
+</td></tr></table></form>`;
+
+        this.container.innerHTML = html;
+
+        this.container.querySelector("select#mass_device_set_field_name").addEventListener("change",
+            (e) => this.buildChildUI(e.target.selectedOptions[0].value));
+
+        this.currentUI = -1;
+        this.buildChildUI(sorted[0][1]);
+    }
+
+    buildChildUI(index)
+    {
+        const item = this.items[index];
+
+        let ui = "";
+
+        switch (item.type) {
+            case "s":           // String
+            default:
+                ui = `<input type="text" id="mass_device_set_field_value" size="40">`;
+                break;
+
+            case "ms":          // Multiline string
+                ui = `<textarea id="mass_device_set_field_value" rows="5" cols="40"></textarea>`;
+                break;
+
+            case "json":        // Same as multiline string, but displays a note about the JSON
+                ui = `<textarea id="mass_device_set_field_value" rows="5" cols="40"></textarea>` +
+                     `<p><%= t('devices.index.mass_operations.set_field.json') %></p>`;
+                break;
+        }
+
+        this.container.querySelector("div#uiChild").innerHTML = ui;
+        this.currentUI = index;
     }
 
     processItem(item)
     {
+        let ui = this.container.querySelector("div#uiChild");
+
+        // Retrieve the value. There are no event handlers, so dig it from
+        // the DOM directly.
+        let value = null;
+
+        switch (this.items[this.currentUI].type) {
+            case "s":
+            default:
+                value = ui.querySelector("input").value;
+                break;
+
+            case "ms":
+            case "json":
+                value = ui.querySelector("textarea").value;
+                break;
+        }
+
         return doPOST(
             `/devices/${item.school_id}/mass_op_device_set_field`,
             {
                 id: item.id[0],
-                field: this.field.value,
-                value: this.value.value
+                field: this.items[this.currentUI].key,
+                value: value
             }
         );
     }
