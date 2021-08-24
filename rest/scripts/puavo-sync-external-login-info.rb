@@ -15,6 +15,8 @@ end
 # necessary for routing ExternalLogin logging to stdout/stderr
 $rest_log = SyncLog.new
 
+only_this_organisation = ARGV[0]
+
 topdomain = IO.read('/etc/puavo/topdomain').chomp
 
 puavo_rest_base_conf = YAML::load_file('/etc/puavo-rest.yml')
@@ -35,6 +37,8 @@ raise 'no external login configuration' unless extlogin_conf.kind_of?(Hash)
 all_organisations_ok = true
 
 extlogin_conf.each do |organisation, org_conf|
+  next if only_this_organisation && only_this_organisation != organisation
+
   begin
     raise 'organisation is not a string' unless organisation.kind_of?(String)
 
