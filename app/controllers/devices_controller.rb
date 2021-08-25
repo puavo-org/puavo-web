@@ -212,6 +212,139 @@ class DevicesController < ApplicationController
             device.description = value
             changed = true
           end
+
+        when 'status'
+          if value != device.puavoDeviceStatus
+            device.puavoDeviceStatus = value
+            changed = true
+          end
+
+        when 'location'
+          if value != device.puavoLocationName
+            device.puavoLocationName = value
+            changed = true
+          end
+
+        when 'latitude'
+          if value != device.puavoLatitude
+            device.puavoLatitude = value
+            changed = true
+          end
+
+        when 'longitude'
+          if value != device.puavoLongitude
+            device.puavoLongitude = value
+            changed = true
+          end
+
+        when 'allow_guest'
+          if value == -1 && device.puavoAllowGuest != nil
+            device.puavoAllowGuest = nil
+            changed = true
+          elsif value == 0 && device.puavoAllowGuest != false
+            device.puavoAllowGuest = false
+            changed = true
+          elsif value == 1 && device.puavoAllowGuest != true
+            device.puavoAllowGuest = true
+            changed = true
+          end
+
+        when 'personally_administered'
+          if value == -1 && device.puavoPersonallyAdministered != nil
+            device.puavoPersonallyAdministered = nil
+            changed = true
+          elsif value == 0 && device.puavoPersonallyAdministered != false
+            device.puavoPersonallyAdministered = false
+            changed = true
+          elsif value == 1 && device.puavoPersonallyAdministered != true
+            device.puavoPersonallyAdministered = true
+            changed = true
+          end
+
+        when 'automatic_updates'
+          if value == -1 && device.puavoAutomaticImageUpdates != nil
+            device.puavoAutomaticImageUpdates = nil
+            changed = true
+          elsif value == 0 && device.puavoAutomaticImageUpdates != false
+            device.puavoAutomaticImageUpdates = false
+            changed = true
+          elsif value == 1 && device.puavoAutomaticImageUpdates != true
+            device.puavoAutomaticImageUpdates = true
+            changed = true
+          end
+
+        when 'personal_device'
+          if value == -1 && device.puavoPersonalDevice != nil
+            device.puavoPersonalDevice = nil
+            changed = true
+          elsif value == 0 && device.puavoPersonalDevice != false
+            device.puavoPersonalDevice = false
+            changed = true
+          elsif value == 1 && device.puavoPersonalDevice != true
+            device.puavoPersonalDevice = true
+            changed = true
+          end
+
+        when 'automatic_poweroff'
+          if value != device.puavoDeviceAutoPowerOffMode
+            device.puavoDeviceAutoPowerOffMode = value
+            changed = true
+          end
+
+        when 'daytime_start'
+          if value != device.puavoDeviceOnHour
+            device.puavoDeviceOnHour = value
+            changed = true
+          end
+
+        when 'daytime_end'
+          if value != device.puavoDeviceOffHour
+            device.puavoDeviceOffHour = value
+            changed = true
+          end
+
+        when 'audio_source'
+          if value != device.puavoDeviceDefaultAudioSource
+            device.puavoDeviceDefaultAudioSource = value
+            changed = true
+          end
+
+        when 'audio_sink'
+          if value != device.puavoDeviceDefaultAudioSink
+            device.puavoDeviceDefaultAudioSink = value
+            changed = true
+          end
+
+        when 'printer_uri'
+          if value != device.puavoPrinterDeviceURI
+            device.puavoPrinterDeviceURI = value
+            changed = true
+          end
+
+        when 'default_printer'
+          if value != device.puavoDefaultPrinter
+            device.puavoDefaultPrinter = value
+            changed = true
+          end
+
+        when 'image_source_url'
+          if value != device.puavoImageSeriesSourceURL
+            device.puavoImageSeriesSourceURL = value
+            changed = true
+          end
+
+        when 'xserver'
+          if value != device.puavoDeviceXserver
+            device.puavoDeviceXserver = value
+            changed = true
+          end
+
+        when 'monitors_xml'
+          if value != device.puavoDeviceMonitorsXML
+            device.puavoDeviceMonitorsXML = value
+            changed = true
+          end
+
       end
 
       if changed

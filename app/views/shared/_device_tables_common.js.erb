@@ -893,6 +893,24 @@ class MassDeviceSetFieldValue extends MassOperation {
             { title: "<%= t('devices.index.mass_operations.set_field.serial') %>", key: "serial", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.primary_user') %>", key: "primary_user", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.description') %>", key: "description", type: "ms" },
+            { title: "<%= t('devices.index.mass_operations.set_field.status') %>", key: "status", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.location') %>", key: "location", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.latitude') %>", key: "latitude", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.longitude') %>", key: "longitude", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.allow_guest') %>", key: "allow_guest", type: "tfd" },
+            { title: "<%= t('devices.index.mass_operations.set_field.automatic_updates') %>", key: "automatic_updates", type: "tfd" },
+            { title: "<%= t('devices.index.mass_operations.set_field.personal_device') %>", key: "personal_device", type: "tfd" },
+            { title: "<%= t('devices.index.mass_operations.set_field.personally_administered') %>", key: "personally_administered", type: "tfd" },
+            { title: "<%= t('devices.index.mass_operations.set_field.automatic_poweroff') %>", key: "automatic_poweroff", type: "autopoweroff" },
+            { title: "<%= t('devices.index.mass_operations.set_field.daytime_start') %>", key: "day_start", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.daytime_end') %>", key: "day_end", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.audio_source') %>", key: "audio_source", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.audio_sink') %>", key: "audio_sink", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.printer_uri') %>", key: "printer_uri", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.default_printer') %>", key: "default_printer", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.image_source_url') %>", key: "image_source_url", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.xserver') %>", key: "xserver", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.monitors_xml') %>", key: "monitors_xml", type: "ms" },
         ];
     }
 
@@ -923,9 +941,7 @@ class MassDeviceSetFieldValue extends MassOperation {
 `</select></td></tr>
 <tr>
 <th><label for="mass_device_set_field_value"><%= t('devices.index.mass_operations.set_field.value') %></label></th>
-<td><div id="uiChild"></div>
-<p class="validityWarning"><%= t('devices.index.mass_operations.set_field.validity_warning') %></p>
-</td></tr></table></form>`;
+<td><div id="uiChild"></div></td></tr></table></form>`;
 
         this.container.innerHTML = html;
 
@@ -936,8 +952,37 @@ class MassDeviceSetFieldValue extends MassOperation {
         this.buildChildUI(sorted[0][1]);
     }
 
+    canProceed()
+    {
+        if (this.items[this.currentUI].type == "json") {
+            // Does the textarea contain valid JSON? This is the only time we can validate the value.
+            const v = this.getValue();
+
+            if (v.length == 0) {
+                // Empty strings are not valid JSON, but we still let them through
+                // because then the database field can be cleared
+                return true;
+            }
+
+            try {
+                const o = JSON.parse(v);
+
+                if (!o || typeof(o) !== "object")
+                    throw new Error("");        // just display the error message below
+            } catch (e) {
+                window.alert("<%= t('devices.index.mass_operations.set_field.invalid_json') %>");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     buildChildUI(index)
     {
+        const stringWarning = `<p class="validityWarning"><%= t('devices.index.mass_operations.set_field.validity_warning_string') %></p>`,
+              jsonWarning = `<p class="validityWarning"><%= t('devices.index.mass_operations.set_field.validity_warning_json') %></p>`;
+
         const item = this.items[index];
 
         let ui = "";
@@ -945,16 +990,29 @@ class MassDeviceSetFieldValue extends MassOperation {
         switch (item.type) {
             case "s":           // String
             default:
-                ui = `<input type="text" id="mass_device_set_field_value" size="40">`;
+                ui = `<input type="text" id="mass_device_set_field_value" size="40">${stringWarning}`;
                 break;
 
             case "ms":          // Multiline string
-                ui = `<textarea id="mass_device_set_field_value" rows="5" cols="40"></textarea>`;
+                ui = `<textarea id="mass_device_set_field_value" rows="5" cols="80"></textarea>${stringWarning}`;
                 break;
 
             case "json":        // Same as multiline string, but displays a note about the JSON
-                ui = `<textarea id="mass_device_set_field_value" rows="5" cols="40"></textarea>` +
-                     `<p><%= t('devices.index.mass_operations.set_field.json') %></p>`;
+                ui = `<textarea id="mass_device_set_field_value" rows="5" cols="80"></textarea>${jsonWarning}`;
+                break;
+
+            case "tfd":         // Tri-state true/false/default "boolean"
+                ui =
+`<input type="radio" name="value-radio" id="value-radio-default" checked><label for="value-radio-default"><%= t('devices.index.mass_operations.set_field.default') %></label><br>
+<input type="radio" name="value-radio" id="value-radio-yes"><label for="value-radio-yes"><%= t('devices.index.mass_operations.set_field.yes') %></label><br>
+<input type="radio" name="value-radio" id="value-radio-no"><label for="value-radio-no"><%= t('devices.index.mass_operations.set_field.no') %></label>`;
+                break;
+
+            case "autopoweroff":    // Custom UI for the automatic poweroff setting
+                ui =
+`<input type="radio" name="value-radio" id="value-radio-default" checked><label for="value-radio-default"><%= t('devices.index.mass_operations.set_field.default') %></label><br>
+<input type="radio" name="value-radio" id="value-radio-off"><label for="value-radio-off"><%= t('devices.index.mass_operations.set_field.off') %></label><br>
+<input type="radio" name="value-radio" id="value-radio-custom"><label for="value-radio-custom"><%= t('devices.index.mass_operations.set_field.custom') %></label>`;
                 break;
         }
 
@@ -964,32 +1022,48 @@ class MassDeviceSetFieldValue extends MassOperation {
 
     processItem(item)
     {
-        let ui = this.container.querySelector("div#uiChild");
-
-        // Retrieve the value. There are no event handlers, so dig it from
-        // the DOM directly.
-        let value = null;
-
-        switch (this.items[this.currentUI].type) {
-            case "s":
-            default:
-                value = ui.querySelector("input").value;
-                break;
-
-            case "ms":
-            case "json":
-                value = ui.querySelector("textarea").value;
-                break;
-        }
-
         return doPOST(
             `/devices/${item.school_id}/mass_op_device_set_field`,
             {
                 id: item.id[0],
                 field: this.items[this.currentUI].key,
-                value: value
+                value: this.getValue()
             }
         );
+    }
+
+    getValue()
+    {
+        const ui = this.container.querySelector("div#uiChild");
+
+        // Retrieve the value. There are no event handlers, so dig it from
+        // the DOM directly.
+        switch (this.items[this.currentUI].type) {
+            case "s":
+            default:
+                return ui.querySelector("input").value;
+
+            case "ms":
+            case "json":
+                return ui.querySelector("textarea").value;
+
+            case "tfd":
+                if (ui.querySelector("input#value-radio-yes").checked)
+                    return 1;
+                else if (ui.querySelector("input#value-radio-no").checked)
+                    return 0;
+
+                // "default"
+                return -1;
+
+            case "autopoweroff":
+                if (ui.querySelector("input#value-radio-custom").checked)
+                    return "custom";
+                else if (ui.querySelector("input#value-radio-off").checked)
+                    return "off";
+
+                return "default";
+        }
     }
 };
 
