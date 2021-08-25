@@ -937,7 +937,7 @@ fi:
           title: "Vaihda koulua..."
           school_title: "Uusi koulu:"
         puavoconf:
-          json_warning: "Tämä työkalu lisää, poistaa ja muokkaa yksittäisiä PuavoConf-arvoja. Jos haluat korvata ne kaikki yhdellä kertaa ja ne ovat sinulla valmiina JSON-muodossa, valitse Operaatio-listasta <em>\"Aseta tietokannan kentän arvo...\"</em> ja sieltä <em>\"PuavoConf (korvaa kaikki)\"</em>. Se antaa sinun ylikirjoittaa laitteen kaikki puavoconf -arvot yhdellä kertaa halutuiksi.<br><br>"
+          json_warning: "Tämä työkalu lisää, poistaa ja muokkaa <strong>yksittäisiä</strong> PuavoConf-arvoja. Jos haluat korvata ne kaikki yhdellä kertaa ja ne ovat sinulla valmiina JSON-muodossa, valitse Operaatio-listasta <em>\"Aseta tietokannan kentän arvo...\"</em> ja sieltä <em>\"PuavoConf (korvaa kaikki)\"</em>. Se antaa sinun ylikirjoittaa laitteen kaikki puavoconf -arvot yhdellä kertaa halutuiksi.<br><br>"
           title: "PuavoConf-muokkaus..."
           key: "Avain:"
           value: "Uusi arvo:"
@@ -949,6 +949,7 @@ fi:
           type_string: "string"
           type_int: "integer"
           type_bool: "bool"
+          empty_key: "Avaimen nimi ei voi olla tyhjä"
         set_field:
           title: "Aseta tietokannan kentän arvo..."
           field: "Kenttä:"

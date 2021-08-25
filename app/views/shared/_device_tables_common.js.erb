@@ -1214,14 +1214,14 @@ class MassDevicePuavoconfEditor extends MassOperation {
     <th><label for="mass_device_pc_key"><%= t('devices.index.mass_operations.puavoconf.key') %></label></th>
     <td>
         <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.key') %></div>
-        <input type="text" id="mass_device_pc_key">
+        <input type="text" id="mass_device_pc_key" size="50">
     </td>
 </tr>
 <tr>
     <th><label for="mass_device_pc_value"><%= t('devices.index.mass_operations.puavoconf.value') %></label></th>
     <td>
         <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.value') %></div>
-        <input type="text" id="mass_device_pc_value">
+        <input type="text" id="mass_device_pc_value" size="50">
         <p class="validityWarning"><%= t('devices.index.mass_operations.puavoconf.validity_warning') %></p>
     </td>
 </tr>
@@ -1276,6 +1276,16 @@ class MassDevicePuavoconfEditor extends MassOperation {
     setType(event, type)
     {
         this.type = type;
+    }
+
+    canProceed()
+    {
+        if (this.key.value.length == 0 || this.key.value.trim().length == 0) {
+            window.alert("<%= t('devices.index.mass_operations.puavoconf.empty_key') %>");
+            return false;
+        }
+
+        return true;
     }
 
     processItem(item)

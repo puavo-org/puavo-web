@@ -938,7 +938,7 @@ en:
           title: "Change school..."
           school_title: "New school:"
         puavoconf:
-          json_warning: "This tool can add, remove and change individual PuavoConf values. If you want to replace them all at once and you already have them in JSON format, select <em>\"Set database field value...\"</em> from the Operation list, then select <em>\"PuavoConf (replace all)\"</em>. That tool will let you overwrite all PuavoConf values at once.<br><br>"
+          json_warning: "This tool can add, remove and change <strong>single</strong> PuavoConf values. If you want to replace them all at once and you already have them in JSON format, select <em>\"Set database field value...\"</em> from the Operation list, then select <em>\"PuavoConf (replace all)\"</em>. That tool will let you overwrite all PuavoConf values at once.<br><br>"
           title: "PuavoConf editor..."
           key: "Key:"
           value: "New value:"
@@ -950,6 +950,7 @@ en:
           type_string: "string"
           type_int: "integer"
           type_bool: "bool"
+          empty_key: "The key cannot be empty"
         set_field:
           title: "Set database field value..."
           field: "Field:"
