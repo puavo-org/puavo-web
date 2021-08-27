@@ -71,7 +71,7 @@ class Device < Host
       if school.wireless_printer_queue_dns.include?(pq.dn) then
         restrictions[pq.name] = {
           :allow     => '*',
-          :rationale => 'printer is open in the school this device belongs to',
+          :rationale => 'OPENINTHISSCHOOL',
         }
         next
       end
@@ -82,7 +82,7 @@ class Device < Host
       if !printer_schools.empty? then
         restrictions[pq.name] = {
           :allow     => '*',
-          :rationale => 'printer is open in some school',
+          :rationale => 'OPENINSOMESCHOOL',
         }
         next
       end
@@ -90,8 +90,7 @@ class Device < Host
       if school.printer_queue_dns.include?(pq.dn) then
         restrictions[pq.name] = {
           :allow     => '*',
-          :rationale =>
-            'printer is restricted to school this device belongs to',
+          :rationale => 'PRINTERINSAMESCHOOL',
         }
         next
       end
@@ -99,8 +98,7 @@ class Device < Host
       if printer_queue_dns.include?(pq.dn) then
         restrictions[pq.name] = {
           :allow     => '*',
-          :rationale =>
-            'this specific device is allowed access to this printer',
+          :rationale => 'DEVICESPECIFIC',
         }
         next
       end
@@ -109,14 +107,14 @@ class Device < Host
       if !groups.empty? then
         restrictions[pq.name] = {
           :allow     => groups.map { |g| "@#{ g.abbreviation }" }.join(','),
-          :rationale => 'access to printer is allowed for these groups',
+          :rationale => 'GROUPSPECIFIC',
         }
         next
       end
 
       restrictions[pq.name] = {
         :deny      => '*',
-        :rationale => 'no suitable permissions could be found',
+        :rationale => 'NOPERMISSION',
       }
     end
 
