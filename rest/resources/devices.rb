@@ -54,6 +54,8 @@ class Device < Host
     @school ||= School.by_dn(school_dn)
   end
 
+  # XXX deprecated, not needed by recent clients and may be removed
+  # XXX sometime in the future
   def printer_queues
     @printer_queues ||= PrinterQueue.by_dn_array(printer_queue_dns)
   end

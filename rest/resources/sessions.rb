@@ -35,7 +35,7 @@ class Sessions < PuavoSinatra
 
     session = {
       "created" => Time.now.to_i,
-      "printer_queues" => []
+      "printer_queues" => []    # XXX deprecated, not used by recent clients
     }
 
     if json_params["hostname"]
@@ -58,6 +58,9 @@ class Sessions < PuavoSinatra
         session["locale"] = device.locale
 
         session["device"] = device.to_hash
+
+        # XXX deprecated, not used by recent clients and may be removed
+        # XXX sometime in the future
         session["printer_queues"] += device.printer_queues
         session["printer_queues"] += device.school.printer_queues
         session["printer_queues"] += device.school.wireless_printer_queues
@@ -124,13 +127,13 @@ class Sessions < PuavoSinatra
       session["preferred_language"] = user.preferred_language
       session["locale"] = user.locale
 
-      # Needed by 90puavo-setup-printers
+      # XXX deprecated, see comments above
       user.groups.each do |group|
         session["printer_queues"] += group.printer_queues
       end
     end
 
-    session["printer_queues"].uniq!{ |pq| pq.dn }
+    session["printer_queues"].uniq!{ |pq| pq.dn }       # XXX deprecated
     session["organisation"] = Organisation.current.domain
 
     json session
