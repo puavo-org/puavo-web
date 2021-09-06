@@ -225,22 +225,6 @@ For guests
 
     curl --data hostname=$(hostname) --header 'Authorization: Bootserver' $(puavo-resolve-api-server)/v3/sessions
 
-## GET /v3/sessions
-
-Return array device hostnames that have a desktop session
-
-## GET /v3/sessions/:uuid
-
-Get session data by uuid
-
-## DELETE /v3/sessions/:uuid
-
-Delete session
-
-### Examples
-
-    curl --request DELETE $(puavo-resolve-api-server)/v3/sessions/<uuid from post>
-
 ## GET /v3/devices/:hostname/wlan_networks
 
 Configured client WLAN networks.

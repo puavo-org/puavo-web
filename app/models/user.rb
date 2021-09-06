@@ -455,7 +455,7 @@ class User < LdapBase
   end
 
   def organisation_owner?
-    LdapOrganisation.current.owner.include? self.dn
+    Array(LdapOrganisation.current.owner).include? self.dn
   end
 
   def generate_username

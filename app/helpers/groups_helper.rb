@@ -1,33 +1,48 @@
 module GroupsHelper
   include Puavo::Helpers
 
-  def self.convert_requested_group_column_names(requested)
-    # Given that out of the eight possible attributes, four are required,
-    # it's easier to just fetch them all. We don't even touch the
-    # 'requested' argument.
+  def self.get_group_attributes()
     return [
       'puavoId',
       'displayName',
       'cn',
       'puavoEduGroupType',
       'puavoExternalId',
-      'memberUid',
+      'memberUid',          # for listing the members count
       'puavoSchool',
       'createTimestamp',    # LDAP operational attribute
       'modifyTimestamp',    # LDAP operational attribute
     ].freeze
   end
 
-  def self.build_common_group_properties(group, requested)
-    return {
-      id: group['puavoId'][0].to_i,
-      name: group['displayName'][0],
-      type: group['puavoEduGroupType'] ? group['puavoEduGroupType'][0] : nil,
-      abbr: group['cn'][0],
-      eid: group['puavoExternalId'] ? group['puavoExternalId'][0] : nil,
-      members_count: group['memberUid'] ? group['memberUid'].count : 0,
-      created: Puavo::Helpers::convert_ldap_time(group['createTimestamp']),
-      modified: Puavo::Helpers::convert_ldap_time(group['modifyTimestamp'])
-    }
+  def self.convert_raw_group(dn, raw)
+    out = {}
+
+    out[:id] = raw['puavoId'][0].to_i
+
+    out[:name] = raw['displayName'][0]
+
+    out[:abbr] = raw['cn'][0]
+
+    if raw.include?('puavoEduGroupType') && raw['puavoEduGroupType']
+      out[:type] = raw['puavoEduGroupType'][0]
+    end
+
+    if raw.include?('puavoExternalId')
+      out[:eid] = raw['puavoExternalId'][0]
+    end
+
+    # This is just a plain number field, always include it
+    out[:members_count] = raw.include?('memberUid') ? raw['memberUid'].count : 0
+
+    if raw.include?('createTimestamp')
+      out[:created] = Puavo::Helpers::convert_ldap_time(raw['createTimestamp'])
+    end
+
+    if raw.include?('modifyTimestamp')
+      out[:modified] = Puavo::Helpers::convert_ldap_time(raw['modifyTimestamp'])
+    end
+
+    return out
   end
 end

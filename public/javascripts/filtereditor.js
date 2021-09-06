@@ -73,7 +73,7 @@ class FilterEditInteger extends FilterEditBase {
         let input = this.container.querySelector("input#filter-number-value");
 
         if (input.value.trim().length == 0) {
-            window.alert(_tr('filter.integer_missing_value'));
+            window.alert(_tr('filter_editor.editor.integer_missing_value'));
             return false;
         }
 
@@ -454,7 +454,7 @@ getFilters()
     // "Uncook" the filters, ie. the opposite of loadFilters()
     for (const filter of this.filters) {
         plainFilters.push({
-            active: filter.valid && filter.columnValid && filter.active,
+            active: filter.valid && filter.active,
             column: filter.column,
             operator: filter.operator,
             value: filter.value,
@@ -557,7 +557,7 @@ updateJSON()
     // every row contains one filter.
     for (const filter of this.filters) {
         parts.push(JSON.stringify({
-            active: filter.active && filter.valid && filter.columnValid,
+            active: filter.active && filter.valid,
             column: filter.column,
             operator: filter.operator,
             value: filter.value,
@@ -753,7 +753,7 @@ makeFilterRow(filter, index)
     checkbox.checked = filter.active;
     checkbox.title = _tr('filter_editor.list.explanation_is_active');
 
-    if (!filter.valid || !filter.columnValid)
+    if (!filter.valid)
         checkbox.disabled = true;
 
     checkbox.addEventListener("click",

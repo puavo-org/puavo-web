@@ -199,12 +199,12 @@ class ApplicationController < ActionController::Base
 
   # Returns true if the current user is an organisation owner
   def is_owner?
-    current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+    current_user && Array(LdapOrganisation.current.owner).include?(current_user.dn)
   end
 
   # Returns true if a non-owner was redirected away from the page they were trying to view
   def redirected_nonowner_user?
-    return false if current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+    return false if current_user && Array(LdapOrganisation.current.owner).include?(current_user.dn)
 
     flash[:alert] = t('flash.you_must_be_an_owner')
     redirect_to schools_path
@@ -233,7 +233,8 @@ class ApplicationController < ActionController::Base
   end
 
   # Loads the releases.json file if it exists. If it doesn't exist, then no problem.
-  # It's 100% optional anyway. (Why reload it every time? Because it was meant to be hot-replaceable
+  # It's 100% optional anyway. (Why reload it every time? Because it was meant to be
+  # hot-replaceable on purpose.)
   def get_releases
     begin
       JSON.parse(File.read("#{Rails.root}/config/releases.json"))

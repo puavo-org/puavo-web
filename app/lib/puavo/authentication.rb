@@ -253,7 +253,7 @@ module Puavo
       # Authorize organisation owners
       organisation = LdapOrganisation.first
 
-      if organisation && organisation.owner && organisation.owner.include?(dn)
+      if organisation && organisation.owner && Array(organisation.owner).include?(dn)
         logger.info "Authorization ok: Organisation owner #{ dn }"
         return @authorized = true
       end

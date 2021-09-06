@@ -179,7 +179,8 @@ const COLUMN_ORDER = [
 // Localized user role names
 const USER_ROLES = {
     owner: "<%= t('organisation_owner_role') %>",
-    admin: "<%= t('school_admin_role') %>",
+    schooladmin: "<%= t('school_admin_role') %>",
+    admin: "<%= t('puavoEduPersonAffiliation_admin') %>",
     teacher: "<%= t('puavoEduPersonAffiliation_teacher') %>",
     student: "<%= t('puavoEduPersonAffiliation_student') %>",
     staff: "<%= t('puavoEduPersonAffiliation_staff') %>",
@@ -240,7 +241,7 @@ const USER_TRANSFORM_FUNCTIONS = {
             const r = entry.role[i];
 
             if (r in USER_ROLES) {
-                if (r == "owner" || r == "admin")
+                if (r == "owner" || r == "schooladmin")
                     values.push(`<span class="stAdmin">${USER_ROLES[r]}</span>`);
                 else values.push(USER_ROLES[r]);
             } else values.push(USER_ROLES['unknown']);
@@ -648,7 +649,9 @@ function userActions(item)
 {
     let html = "";
 
-    html += `<a href="${item['link']}/edit" class="btn"><%= t('link.edit') %></a> `;
+    const link = `/users/${item.school_id}/users/${item.id}`;
+
+    html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
     if (item.dnd && item.dnd[0] !== true) {
 <% if @is_owner || @permit_single_user_deletion %>
@@ -667,7 +670,7 @@ function userActions(item)
             message = "<%= t('destroy_confirm_admin') %>";
         else message = "<%= t('general_confirm') %>";
 
-        const school_id = item.school_id[0];
+        const school_id = item.school_id;
 
         if (school_id in SYNC_DELETIONS && SYNC_DELETIONS[school_id].length > 0) {
             // Extra warning about deletion synchronisations. "SYSTEM_NAMES_HERE" is the only
@@ -681,7 +684,7 @@ function userActions(item)
                        .replace("SYSTEM_NAMES_HERE", SYNC_DELETIONS[school_id].join(", "));
         }
 
-        html += `<a href="${item['link']}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+        html += `<a href="${link}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
 <% end %>
     }
 

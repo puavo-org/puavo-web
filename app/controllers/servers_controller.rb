@@ -34,97 +34,80 @@ class ServersController < ApplicationController
     end
   end
 
+  # AJAX call
   def get_servers_list
-    # Which attributes to retrieve? These are the defaults, they're always
-    # sent even when not requested, because basic functionality can break
-    # without them.
-    requested = Set.new(['id', 'hn', 'type'])
+    # See the explanation in OrganisationsController::get_all_users() if you're wondering why we're
+    # doing a raw school search instead of School.all
+    schools_by_dn = {}
 
-    # Extra attributes (columns)
-    if params.include?(:fields)
-      requested += Set.new(params[:fields].split(','))
+    School.search_as_utf8(:filter => '',
+                          :attributes => ['cn', 'displayName', 'puavoId']).each do |dn, school|
+      schools_by_dn[dn] = {
+        name: school['displayName'][0],
+        link: "/users/schools/#{school['puavoId'][0]}",
+      }
     end
 
-    # Do the query
-    attributes = DevicesHelper.convert_requested_device_column_names(requested, is_server=true)
+    # Get a raw list of servers in this organisation
+    raw = Server.search_as_utf8(:attributes => DevicesHelper.get_server_attributes())
 
-    # Don't get hardware info if nothing from it was requested
-    hw_attributes = Set.new
-    want_hw_info = false
-
-    if (requested & DevicesHelper::HWINFO_ATTRS).any?
-      attributes << 'puavoDeviceHWInfo'
-      hw_attributes = DevicesHelper.convert_requested_hwinfo_column_names(requested)
-      want_hw_info = true
-    end
-
-    raw = Server.search_as_utf8(:attributes => attributes)
-
+    # Known image release names
     releases = get_releases()
 
-    school_cache = {}
-
     # Convert the raw data into something we can easily parse in JavaScript
+    school_cache = {}
     servers = []
 
     raw.each do |dn, srv|
-      data = {}
+      # Common attributes
+      server = DevicesHelper.convert_raw_device(srv, releases)
 
-      # Mandatory
-      data[:id] = srv['puavoId'][0].to_i
-      data[:hn] = srv['puavoHostname'][0]
-      data[:type] = srv['puavoDeviceType'][0]
-      data[:link] = server_path(srv['puavoId'][0])
-      data[:school_id] = -1
-      data[:schools] = []
-      data[:available_images] = []
+      # Special attributes
+      server[:link] = "/devices/servers/#{server[:id]}"
+      server[:school_id] = -1   # servers are not bound to any specific school
 
-      # Optional, common parts
-      data.merge!(DevicesHelper.build_common_device_properties(srv, requested))
+      if srv.include?('puavoDeviceAvailableImage')
+        images = []
 
-      # Hardware info
-      if want_hw_info && srv['puavoDeviceHWInfo']
-        data.merge!(DevicesHelper.extract_hardware_info(srv['puavoDeviceHWInfo'], hw_attributes))
-      end
-
-      if requested.include?('available_images') && srv.include?('puavoDeviceAvailableImage')
-        srv['puavoDeviceAvailableImage'].each do |image|
-          data[:available_images] << {
+        Array(srv['puavoDeviceAvailableImage'] || []).each do |image|
+          images << {
             file: image,
             release: releases.fetch(image, nil),
           }
         end
-      end
 
-      if requested.include?('schools') && srv.include?('puavoSchool')
-        srv['puavoSchool'].each do |dn|
-          # Database lookups are slow, so cache the schools
-          unless school_cache.include?(dn)
-            begin
-              s = School.find(dn)
-
-              school_cache[dn] = {
-                valid: true,
-                link: school_path(s),
-                title: s.displayName,
-              }
-            rescue
-              # Not found
-              school_cache[dn] = {
-                valid: false,
-                dn: dn,
-              }
-            end
-          end
-
-          data[:schools] << school_cache[dn]
+        if images.count > 0
+          server[:available_images] = images
         end
       end
 
-      # Purge empty fields to minimize the amount of transferred data
-      data.delete_if{ |k, v| v.nil? }
+      # In servers, the puavoSchool attribute lists which schools the server serves
+      if srv.include?('puavoSchool')
+        schools = []
 
-      servers << data
+        Array(srv['puavoSchool'] || []).each do |dn|
+          if schools_by_dn.include?(dn)
+            s = schools_by_dn[dn]
+
+            schools << {
+              valid: true,
+              title: s[:name],
+              link: s[:link],
+            }
+          else
+            schools << {
+              valid: false,
+              dn: dn,
+            }
+          end
+        end
+
+        if schools.count > 0
+          server[:schools] = schools
+        end
+      end
+
+      servers << server
     end
 
     render :json => servers
@@ -158,7 +141,7 @@ class ServersController < ApplicationController
   # GET /servers/1/image
   def image
     # NEEDS TO BE EXPLICITLY TESTED
-    #return 403 unless current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+    #return 403 unless current_user && Array(LdapOrganisation.current.owner).include?(current_user.dn)
 
     @server = Server.find(params[:id])
 
@@ -195,7 +178,7 @@ class ServersController < ApplicationController
   # POST /servers.xml
   def create
     # NEEDS TO BE EXPLICITLY TESTED
-    #return 403 unless current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+    #return 403 unless current_user && Array(LdapOrganisation.current.owner).include?(current_user.dn)
 
     sp = server_params
 
@@ -357,6 +340,8 @@ class ServersController < ApplicationController
       server["macAddress"].uniq! if server.key?("macAddress")
       server["puavoImageSeriesSourceURL"].uniq! if server.key?("puavoImageSeriesSourceURL")
       device["puavoDeviceXrandr"].uniq! if device.key?("puavoDeviceXrandr")
+
+      clear_puavoconf(server)
 
       strip_img(server)
 

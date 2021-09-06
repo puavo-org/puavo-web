@@ -21,6 +21,11 @@
     <% end %>
     <% end %>
 
+    <% if @extra_permissions_list && !@extra_permissions_list.empty? %>
+    <p class="infoTitle infoNotice"><%= t('.extra_permissions.title') %></p>
+    <p class="infoValue infoNotice"><%= @extra_permissions_list.map{ |p| t(".extra_permissions.#{p}") }.join(', ') %></p>
+    <% end %>
+
     <% if @user.puavoLocked == true %>
     <p class="infoWarn"><%= t('.user_is_locked') %></p>
     <% hack_blank = true %>
@@ -183,6 +188,8 @@
   <% end %>
 </table>
 <%= end_box %>
+
+<hr>
 
 <% content_for :tools do %>
 <ul>

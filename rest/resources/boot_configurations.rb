@@ -34,12 +34,11 @@ class BootConfigurations < PuavoSinatra
     host = Host.by_hostname!(params["hostname"])
 
     res = {
-      :boot_duration => host.boot_duration,
       :hostname => host.hostname,
       :type => host.type,
     }
 
-    rlog.info("boot done by '#{ host.hostname }', duration #{host.boot_duration}, host type #{host.type}")
+    rlog.info("boot done by '#{ host.hostname }', host type #{host.type}")
     json res
   end
 
@@ -66,7 +65,6 @@ class BootConfigurations < PuavoSinatra
 
     if not log_attrs[:unregistered]
       log_attrs.merge!(host.to_hash)
-      host.save_boot_time
     end
 
     rlog.info("sending boot configuration for '#{ host.hostname }', MAC '#{params["mac_address"]}'")

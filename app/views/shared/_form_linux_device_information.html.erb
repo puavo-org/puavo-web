@@ -114,7 +114,7 @@
 <table class="editForm">
   <tr>
     <th><%= f.label :puavoLocationName %></th>
-    <td><%= f.text_field :puavoLocationName %></td>
+    <td><%= f.text_area :puavoLocationName, :rows => 5 %></td>
   </tr>
 
   <tr>
@@ -184,13 +184,6 @@
     <th><%= f.label :puavoDeviceBootImage %></th>
     <td><%= f.text_field :puavoDeviceBootImage %></td>
   </tr>
-
-  <% if current_user.organisation_owner? %>
-  <tr class="ownersOnly">
-    <th><%= f.label :puavoPreferredServer %></th>
-    <td><%= f.select( :puavoPreferredServer, [[t('.select'), ""]] + Array(@servers) ) %></td>
-  </tr>
-  <% end %>
   <% end %>
 
   <% if current_user.organisation_owner? %>

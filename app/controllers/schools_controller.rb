@@ -157,7 +157,7 @@ class SchoolsController < ApplicationController
     return if redirected_nonowner_user?
 
     # List of (admin) users who currently ARE the owners of this organisation
-    @current_owners = LdapOrganisation.current.owner.each.map { |dn| dn.to_s }.to_set
+    @current_owners = Array(LdapOrganisation.current.owner).each.map { |dn| dn.to_s }.to_set
 
     @school = School.find(params[:id])
 
@@ -332,6 +332,7 @@ class SchoolsController < ApplicationController
         :options=>[]
       ).to_hash
 
+
       # deduplicate arrays, as LDAP really does not like duplicate entries...
       s["puavoTag"] = s["puavoTag"].split.uniq.join(' ') if s.key?("puavoTag")
       s["puavoBillingInfo"].uniq! if s.key?("puavoBillingInfo")
@@ -340,6 +341,9 @@ class SchoolsController < ApplicationController
       strip_img(s)
 
       clear_puavoconf(s)
+
+      s['displayName'].strip! if s.include?('displayName')
+      s['cn'].strip! if s.include?('cn')
 
       return s
     end

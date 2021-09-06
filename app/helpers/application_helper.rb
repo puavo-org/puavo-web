@@ -152,7 +152,7 @@ module ApplicationHelper
 
   def link_to_user_by_dn(dn)
     user = find_user_by_dn(dn)
-    return '' unless user
+    return "<span class=\"missingData\">#{dn.to_s}</span>".html_safe unless user
     return link_to("#{user.displayName}",
                    user_path(:school_id => user.primary_school.puavoId,
                              :id => user.puavoId))

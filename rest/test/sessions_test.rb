@@ -19,7 +19,6 @@ describe PuavoRest::Sessions do
     Puavo::Test.clean_up_ldap
     setup_ldap_admin_connection()
 
-    PuavoRest::Session.local_store.flushdb
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",

@@ -1,8 +1,6 @@
 
 module PuavoRest
 class Host < LdapModel
-  include LocalStore
-
   ldap_map :dn, :dn
   ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :macAddress, :mac_address
@@ -65,23 +63,6 @@ class Host < LdapModel
     else
       Device.by_dn!(host.dn)
     end
-  end
-
-  def instance_key
-    "host:" + hostname
-  end
-
-  def save_boot_time
-    local_store_set("boottime", Time.now.to_i)
-
-    # Expire boottime log after 1h. If boot takes longer than this we can
-    # assume has been failed for some reason.
-    local_store_expire("boottime", 60 * 60)
-  end
-
-  def boot_duration
-    t = local_store_get("boottime")
-    Time.now.to_i - t.to_i if t
   end
 
   # Cached organisation query

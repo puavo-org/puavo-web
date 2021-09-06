@@ -88,6 +88,7 @@ fi:
     edit: Muokkaa...
     cancel: "Peruuta"
     destroy: Poista
+    back: "Takaisin"
     delete_school: "Poista koulu"
     new_group: "Uusi ryhmä..."
     delete_group: "Poista ryhmä"
@@ -119,6 +120,7 @@ fi:
     set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
     set_install_mode_server: "Poista sertifikaatti ja aseta palvelin asennustilaan"
     printer_permissions: Tulostinoikeudet
+    show_printer_permissions: Listaa tulostinoikeudet...
 
   # Main application layout
   layouts:
@@ -240,6 +242,7 @@ fi:
       description: "Kuvaus"
       image: "Työpöytäkuva"
       current_image: "Nykyinen työpöytäkuva"
+      image_series: "Levykuvasarjan URL"
       kernel_args: "Kernel-parametrit"
       kernel_version: "Kernel-versio"
       primary_user: "Ensisijainen käyttäjä"
@@ -259,6 +262,7 @@ fi:
       wifi: "WiFi"
       monitors_xml: "Näyttöasetukset (XML)"
       xrandr: "Xrandr"
+      xserver: "Näyt. ajuri"
       abitti_version: "Abitti-versio"
       df_home: "Vapaana /home (MiB)"
       df_images: "Vapaana /images (MiB)"
@@ -271,8 +275,22 @@ fi:
       purchase_url: "Hankinta-URL"
       purchase_support: "Tukiyhteyshenkilö"
       location: "Sijainti"
+      loc_lat: "Leveysaste"
+      loc_lon: "Pituusaste"
       lspci: "lspci -arvoja"
       lsusb: "lsusb"
+      status: "Tila"
+      printer_uri: "Tulostimen osoite"
+      default_printer: "Oletustulostin"
+      audio_src: "Äänen sisäänmeno"
+      audio_sink: "Äänen ulostulo"
+      allow_guest: "Vieraskirjautuminen?"
+      personal_admin: "Hlökohtaisesti ylläpidetty?"
+      personal_device: "Henkilökohtainen laite?"
+      auto_updates: "Autom. päivitykset?"
+      autopower_mode: "Automaattisammutuksen tila"
+      autopower_on: "Päivä alkaa"
+      autopower_off: "Päivä loppuu"
 
     servers:
       available_images: "Tarjolla olevat kuvatiedostot"
@@ -625,6 +643,7 @@ fi:
     by_groups: Ryhmittäin
     by_devices: Laitteittain
     where: koulussa
+    none: "(Ei rajoituksia)"
 
   # Printer permissions (accessed through school devices)
   printer_permissions:
@@ -769,6 +788,10 @@ fi:
       prevent_removal: Estä poisto
       prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
       deletion_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\t%{systems}\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
+      extra_permissions:
+        title: "Sallitut lisätoiminnot"
+        create_single_users: "voi luoda käyttäjiä"
+        delete_single_users: "voi poistaa käyttäjiä"
     new:
       title: "Lisää uusi käyttäjä"
     edit:
@@ -914,21 +937,28 @@ fi:
           title: "Vaihda koulua..."
           school_title: "Uusi koulu:"
         puavoconf:
+          json_warning: "Tämä työkalu lisää, poistaa ja muokkaa <strong>yksittäisiä</strong> PuavoConf-arvoja. Jos haluat korvata ne kaikki yhdellä kertaa ja ne ovat sinulla valmiina JSON-muodossa, valitse Operaatio-listasta <em>\"Aseta tietokannan kentän arvo...\"</em> ja sieltä <em>\"PuavoConf (korvaa kaikki)\"</em>. Se antaa sinun ylikirjoittaa laitteen kaikki puavoconf -arvot yhdellä kertaa halutuiksi.<br><br>"
           title: "PuavoConf-muokkaus..."
           key: "Avain:"
           value: "Uusi arvo:"
           validity_warning: "Varmista etukäteen ettei arvo ole virheellinen. Tämä työkalu ei tarkista sitä. Varmista myös, että tyyppi on valittuna oikein alla."
           action: "Toiminto:"
-          add: "Luo tai päivitä avain"
+          add: "Luo tai päivitä avain (jos avain on olemassa, sen arvo päivitetään, muutoin luodaan uusi)"
           remove: "Poista avain arvoineen"
           type: "Datatyyppi:"
           type_string: "string"
           type_int: "integer"
           type_bool: "bool"
+          empty_key: "Avaimen nimi ei voi olla tyhjä"
         set_field:
           title: "Aseta tietokannan kentän arvo..."
-          field: "Vaihdettava kenttä:"
+          field: "Kenttä:"
           value: "Arvo:"
+          "yes": "Kyllä"
+          "no": "Ei"
+          default: "Oletus"
+          "off": "Pois päältä"
+          custom: "Mukautettu"
           desktop_image: "Käytettävä työpöytäkuvatiedosto"
           kernel_args: "Kernel-parametrit"
           kernel_version: "Kernel-versio"
@@ -938,7 +968,28 @@ fi:
           model: "Malli"
           serial: "Sarjanumero"
           primary_user: "Ensisijainen käyttäjä (käyttäjänimi)"
-          validity_warning: "Tämän tekstijonon oikeellisuutta ei varmisteta mitenkään! Laatikon sisältö tallennetaan tietokantaan sellaisenaan."
+          description: "Kuvaus"
+          status: "Tila"
+          location: "Sijainti"
+          latitude: "Leveysaste"
+          longitude: "Pituusaste"
+          allow_guest: "Salli vieraskirjautuminen?"
+          automatic_updates: "Levykuvan automaattinen päivitys?"
+          personal_device: "Henkilökohtainen laite?"
+          personally_administered: "Henkilökohtaisesti ylläpidetty?"
+          automatic_poweroff: "Automaattisammutuksen tila"
+          daytime_start: "Päivä alkaa"
+          daytime_end: "Päivä loppuu"
+          audio_source: "Äänen sisäänmeno"
+          audio_sink: "Äänen ulostulo"
+          printer_uri: "Tulostimen laiteosoite"
+          default_printer: "Oletustulostin"
+          image_source_url: "Levykuvasarjan lähdeosoite"
+          xserver: "Näytönohjaimen ajuri"
+          monitors_xml: "Näyttöasetukset (XML)"
+          invalid_json: "Virheellinen JSON-data"
+          validity_warning_json: "Tämän täytyy olla kunnollista JSONia. Sen oikeellisuus tarkistetaan ennen massaoperaation suorittamista."
+          validity_warning_string: "Tähän antamasi arvon oikeellisuutta ei tarkisteta mitenkään! Jos arvo on virheellinen, se saatetaan hylätä palvelinpäässä tallennusvaiheessa."
         delete:
           title: "Poista"
         purchase_info:
@@ -1205,7 +1256,7 @@ fi:
         description: Kuvaus
         telephoneNumber: Puhelinnumero
         facsimileTelephoneNumber: Faxin numero
-        l: Sijainnin nimi
+        l: Sijainti
         street: Katuosoite
         postOfficeBox: Postilokero
         postalAddress: Postiosoite
@@ -1334,7 +1385,7 @@ fi:
         jpegPhoto: Valokuva
         puavoLatitude: Leveysaste
         puavoLongitude: Pituusaste
-        puavoLocationName: Sijainnin nimi
+        puavoLocationName: Sijainti
         puavoRole: Rooli
         puavoDeviceStatus: Tila
         puavoDeviceBootMode: "Käynnistymistapa"
@@ -1367,7 +1418,6 @@ fi:
         puavoDeviceCurrentImage: Käytössä oleva työpöytäkuva
         puavoDeviceImage: Työpöytäkuva
         puavoDeviceBootImage: Käynnistyslevykuva
-        puavoPreferredServer: Ensisijainen LTSP-palvelin
         puavoAllowGuest: Vieraskirjautuminen sallittu
         puavoPersonalDevice: Henkilökohtainen laite
         puavoPrinterDeviceURI: Tulostimen laiteosoite
@@ -1390,7 +1440,7 @@ fi:
         jpegPhoto: Valokuva
         puavoLatitude: Leveysaste
         puavoLongitude: Pituusaste
-        puavoLocationName: Sijainnin nimi
+        puavoLocationName: Sijainti
         puavoRole: Rooli
         puavoDeviceStatus: Tila
         description: Kuvaus
@@ -1420,7 +1470,6 @@ fi:
         printerDescription: Tulostimen nimi
         printerMakeAndModel: Valmistaja ja malli
         printerLocation: Sijainti
-        puavoRule: "Käyttöoikeudet"
         printerType: Tyyppi
         printerURI: Polku
         puavoPrinterPPD: Ajuritiedosto (PPD)

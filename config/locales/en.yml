@@ -88,6 +88,7 @@ en:
     edit: Edit...
     cancel: "Cancel"
     destroy: Remove
+    back: "Back"
     delete_school: "Delete school"
     new_group: New group...
     delete_group: "Remove group"
@@ -119,6 +120,7 @@ en:
     set_install_mode: "Remove certificate and set the device to install mode"
     set_install_mode_server: "Remove certificate and set the server to install mode"
     printer_permissions: Printing permissions
+    show_printer_permissions: List printing premissions...
 
   # Main application layout
   layouts:
@@ -240,6 +242,7 @@ en:
       description: "Description"
       image: "Image"
       current_image: "Current image"
+      image_series: "Image series URL"
       kernel_args: "Kernel arguments"
       kernel_version: "Kernel version"
       primary_user: "Primary User"
@@ -259,6 +262,7 @@ en:
       wifi: "WiFi"
       monitors_xml: "Display settings (XML)"
       xrandr: "Xrandr"
+      xserver: "Graphics Adapter"
       abitti_version: "Abitti version"
       df_home: "Free /home (MiB)"
       df_images: "Free /images (MiB)"
@@ -273,6 +277,20 @@ en:
       location: "Location"
       lspci: "lspci values"
       lsusb: "lsusb"
+      loc_lat: "Latitude"
+      loc_lon: "Longitude"
+      status: "Status"
+      printer_uri: "Printer URI"
+      default_printer: "Default printer"
+      audio_src: "Audio in"
+      audio_sink: "Audio out"
+      allow_guest: "Guest login?"
+      personal_admin: "Personally administered?"
+      personal_device: "Personal device?"
+      auto_updates: "Automatic updates?"
+      autopower_mode: "Auto power off mode"
+      autopower_on: "Daytime start"
+      autopower_off: "Daytime end"
 
     servers:
       available_images: "Available images"
@@ -469,6 +487,7 @@ en:
           part3: "You can retry again later. If you want more information, please contact Opinsys support and give them this code: %{code}."
 
     password_set_failed: Failed to change password! Try again!
+
     session:
       login_successful: Login successful!
       failed: Login failed!
@@ -618,12 +637,13 @@ en:
 
   # Printer permissions editing
   printing_permissions_list:
-    title: Printing permitted
+    title: Printing permissions for
     by_schools: By school
     by_wireless: By schools as wireless
     by_groups: By groups
     by_devices: By devices
     where: in
+    none: "(No limitations)"
 
   # Printer permissions (accessed through school devices)
   printer_permissions:
@@ -744,6 +764,7 @@ en:
             eid: "External ID"
             email: "Email"
             telephone: "Telephone number"
+            learner_id: "Learner ID"
         username_list:
           title: "Create username list"
 
@@ -767,6 +788,11 @@ en:
       prevent_removal: Prevent deletion
       prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
       deletion_sync_warning: "The user will also be removed from these external systems:\n\n\t%{systems}\n\nPlease verify that this is what you intended to do."
+      extra_permissions:
+        title: "Additional granted permissions"
+        create_single_users: "can create users"
+        delete_single_users: "can delete users"
+
     new:
       title: New user
     edit:
@@ -912,21 +938,28 @@ en:
           title: "Change school..."
           school_title: "New school:"
         puavoconf:
+          json_warning: "This tool can add, remove and change <strong>single</strong> PuavoConf values. If you want to replace them all at once and you already have them in JSON format, select <em>\"Set database field value...\"</em> from the Operation list, then select <em>\"PuavoConf (replace all)\"</em>. That tool will let you overwrite all PuavoConf values at once.<br><br>"
           title: "PuavoConf editor..."
           key: "Key:"
           value: "New value:"
           validity_warning: "Make sure the value is valid! This tool does not validate it. Also check the data type below."
           action: "Action:"
-          add: "Create or update"
+          add: "Create or update (if the key exists, its value will be updated, otherwise it is created)"
           remove: "Remove key and value"
           type: "Data type:"
           type_string: "string"
           type_int: "integer"
           type_bool: "bool"
+          empty_key: "The key cannot be empty"
         set_field:
           title: "Set database field value..."
           field: "Field:"
           value: "Value:"
+          "yes": "Yes"
+          "no": "No"
+          default: "Default"
+          "off": "Off"
+          custom: "Custom"
           desktop_image: "Desired desktop image file"
           kernel_args: "Kernel parameters"
           kernel_version: "Kernel version"
@@ -936,7 +969,28 @@ en:
           model: "Model"
           serial: "Serial number"
           primary_user: "Primary user (username)"
-          validity_warning: "This string is not validated in any way! Anything you put in the box above is stored in the database as-is."
+          description: "Description"
+          status: "Status"
+          location: "Location"
+          latitude: "Latitude"
+          longitude: "Longitude"
+          allow_guest: "Allow guest?"
+          automatic_updates: "Automatic image updates?"
+          personal_device: "Personal device?"
+          personally_administered: "Personally administered?"
+          automatic_poweroff: "Auto power off mode"
+          daytime_start: "Daytime start"
+          daytime_end: "Daytime end"
+          audio_source: "Default input audio device"
+          audio_sink: "Default output audio device"
+          printer_uri: "Printer device URI"
+          default_printer: "Default printer"
+          image_source_url: "Image series source URL"
+          xserver: "Graphic adapter drivers"
+          monitors_xml: "Display settings (XML)"
+          invalid_json: "Invalid JSON data"
+          validity_warning_json: "This must be valid JSON. It will be validated before the mass operation is launched."
+          validity_warning_string: "The value you specify here is not validated in any way. If the value is not valid, the server may reject it when it is being saved."
         delete:
           title: "Delete"
         purchase_info:
@@ -1332,7 +1386,7 @@ en:
         jpegPhoto: Photo
         puavoLatitude: Latitude
         puavoLongitude: Longitude
-        puavoLocationName: Location name
+        puavoLocationName: Location
         puavoRole: Role
         puavoDeviceStatus: Status
         puavoDeviceBootMode: Boot mode
@@ -1365,7 +1419,6 @@ en:
         puavoDeviceCurrentImage: Current Desktop Image
         puavoDeviceImage: Desktop Image
         puavoDeviceBootImage: Device boot image
-        puavoPreferredServer: Preferred LTSP server
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal device
         puavoPrinterDeviceURI: Printer device URI
@@ -1418,7 +1471,6 @@ en:
         printerDescription: Printer name
         printerMakeAndModel: Manufacturer and model
         printerLocation: Location
-        puavoRule: Access
         printerType: Type
         printerURI: URI
         puavoPrinterPPD: Driver file (PPD)

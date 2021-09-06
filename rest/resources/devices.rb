@@ -17,7 +17,6 @@ class Device < Host
   ldap_map :puavoMountpoint,               :mountpoints,              LdapConverters::ArrayValue
   ldap_map :puavoPersonalDevice,           :personal_device,          LdapConverters::StringBoolean
   ldap_map :puavoPersonallyAdministered,   :personally_administered,  LdapConverters::StringBoolean
-  ldap_map :puavoPreferredServer,          :preferred_server
   ldap_map :puavoPrinterDeviceURI,         :printer_device_uri
   ldap_map :puavoPrinterQueue,             :printer_queue_dns,        LdapConverters::ArrayValue
   ldap_map :puavoSchool,                   :school_dn
@@ -55,6 +54,8 @@ class Device < Host
     @school ||= School.by_dn(school_dn)
   end
 
+  # XXX deprecated, not needed by recent clients and may be removed
+  # XXX sometime in the future
   def printer_queues
     @printer_queues ||= PrinterQueue.by_dn_array(printer_queue_dns)
   end
@@ -62,6 +63,64 @@ class Device < Host
   computed_attr :preferred_language
   def preferred_language
     school.preferred_language
+  end
+
+  computed_attr :printers
+  def printers
+    restrictions = {}
+
+    PrinterQueue.all.each do |pq|
+      if school.wireless_printer_queue_dns.include?(pq.dn) then
+        restrictions[pq.name] = {
+          :allow     => '*',
+          :rationale => 'OPENINTHISSCHOOL',
+        }
+        next
+      end
+
+      printer_schools = School.by_attr(:wireless_printer_queue_dns,
+                                       pq.dn,
+                                       :multiple => true)
+      if !printer_schools.empty? then
+        restrictions[pq.name] = {
+          :allow     => '*',
+          :rationale => 'OPENINSOMESCHOOL',
+        }
+        next
+      end
+
+      if school.printer_queue_dns.include?(pq.dn) then
+        restrictions[pq.name] = {
+          :allow     => '*',
+          :rationale => 'PRINTERINSAMESCHOOL',
+        }
+        next
+      end
+
+      if printer_queue_dns.include?(pq.dn) then
+        restrictions[pq.name] = {
+          :allow     => '*',
+          :rationale => 'DEVICESPECIFIC',
+        }
+        next
+      end
+
+      groups = Group.by_attr(:printer_queue_dns, pq.dn, :multiple => true)
+      if !groups.empty? then
+        restrictions[pq.name] = {
+          :allow     => groups.map { |g| "@#{ g.abbreviation }" }.join(','),
+          :rationale => 'GROUPSPECIFIC',
+        }
+        next
+      end
+
+      restrictions[pq.name] = {
+        :deny      => '*',
+        :rationale => 'NOPERMISSION',
+      }
+    end
+
+    { :restrictions => restrictions }
   end
 
   computed_attr :locale
@@ -640,7 +699,6 @@ class Devices < PuavoSinatra
     'monitors_xml'            => 'puavoDeviceMonitorsXML',
     'personal_device'         => 'puavoPersonalDevice',
     'personally_administered' => 'puavoPersonallyAdministered',
-    'preferred_server'        => 'puavoPreferredServer',
     'primary_user_id'         => 'puavoDevicePrimaryUser',
     'printer_queue'           => 'puavoPrinterQueue',
     'puavoconf'               => 'puavoConf',
@@ -694,7 +752,6 @@ class Devices < PuavoSinatra
     'puavoLongitude'                => { name: 'location_lon' },
     'puavoPersonalDevice'           => { name: 'personal_device', type: :boolean },
     'puavoPersonallyAdministered'   => { name: 'personally_administered', type: :boolean },
-    'puavoPreferredServer'          => { name: 'preferred_server' },
     'puavoPrinterQueue'             => { name: 'printer_queue' },
     'puavoPurchaseDate'             => { name: 'purchase_date' },
     'puavoPurchaseLocation'         => { name: 'purchase_location' },

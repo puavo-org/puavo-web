@@ -2,15 +2,71 @@
 const COLUMN_DEFINITIONS = {
     abitti_version: {
         key: "abitti_version",
-        title: "<%= t('columns.devices.abitti_version') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.INTEGER,
         defaultOperator: FilterOperator.EQU,
     },
 
+    allow_guest: {
+        key: "allow_guest",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.BOOL,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    audio_sink: {
+        key: "audio_sink",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    audio_src: {
+        key: "audio_src",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    auto_updates: {
+        key: "auto_updates",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.BOOL,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    autopower_mode: {
+        key: "autopower_mode",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    autopower_on: {
+        key: "autopower_on",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.INTEGER,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    autopower_off: {
+        key: "autopower_off",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.INTEGER,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+<% if @is_servers %>
+    available_images: {
+        key: "available_images",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+<% end %>
+
     bat_cap: {
         key: "bat_cap",
-        title: "<%= t('columns.devices.bat_cap') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.INTEGER,
         defaultOperator: FilterOperator.LTE,
@@ -18,7 +74,6 @@ const COLUMN_DEFINITIONS = {
 
     bat_pcnt: {
         key: "bat_pcnt",
-        title: "<%= t('columns.devices.bat_pcnt') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.FLOAT,
         defaultOperator: FilterOperator.LTE,
@@ -26,7 +81,6 @@ const COLUMN_DEFINITIONS = {
 
     bat_volts: {
         key: "bat_volts",
-        title: "<%= t('columns.devices.bat_volts') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.FLOAT,
         defaultOperator: FilterOperator.LTE,
@@ -34,7 +88,6 @@ const COLUMN_DEFINITIONS = {
 
     bat_serial: {
         key: "bat_serial",
-        title: "<%= t('columns.devices.bat_serial') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -42,7 +95,6 @@ const COLUMN_DEFINITIONS = {
 
     bat_vendor: {
         key: "bat_vendor",
-        title: "<%= t('columns.devices.bat_vendor') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -50,7 +102,6 @@ const COLUMN_DEFINITIONS = {
 
     bios_date: {
         key: "bios_date",
-        title: "<%= t('columns.devices.bios_date') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -58,7 +109,6 @@ const COLUMN_DEFINITIONS = {
 
     bios_vendor: {
         key: "bios_vendor",
-        title: "<%= t('columns.devices.bios_vendor') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -66,7 +116,6 @@ const COLUMN_DEFINITIONS = {
 
     bios_version: {
         key: "bios_version",
-        title: "<%= t('columns.devices.bios_version') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -74,7 +123,6 @@ const COLUMN_DEFINITIONS = {
 
     conf: {
         key: "conf",
-        title: "<%= t('columns.puavoconf') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -82,7 +130,6 @@ const COLUMN_DEFINITIONS = {
 
     cpu: {
         key: "cpu",
-        title: "<%= t('columns.devices.cpu') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -90,7 +137,6 @@ const COLUMN_DEFINITIONS = {
 
     created: {
         key: "created",
-        title: "<%= t('columns.created') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.UNIXTIME,
         defaultOperator: FilterOperator.GTE,
@@ -98,14 +144,19 @@ const COLUMN_DEFINITIONS = {
 
     current_image: {
         key: "current_image",
-        title: "<%= t('columns.devices.current_image') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.STRING,
+    },
+
+    default_printer: {
+        key: "default_printer",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
     },
 
     desc: {
         key: "desc",
-        title: "<%= t('columns.devices.description') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -113,7 +164,6 @@ const COLUMN_DEFINITIONS = {
 
     df_home: {
         key: "df_home",
-        title: "<%= t('columns.devices.df_home') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.INTEGER,
         defaultOperator: FilterOperator.EQU,
@@ -121,7 +171,6 @@ const COLUMN_DEFINITIONS = {
 
     df_images: {
         key: "df_images",
-        title: "<%= t('columns.devices.df_images') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.INTEGER,
         defaultOperator: FilterOperator.EQU,
@@ -129,7 +178,6 @@ const COLUMN_DEFINITIONS = {
 
     df_state: {
         key: "df_state",
-        title: "<%= t('columns.devices.df_state') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.INTEGER,
         defaultOperator: FilterOperator.EQU,
@@ -137,7 +185,6 @@ const COLUMN_DEFINITIONS = {
 
     df_tmp: {
         key: "df_tmp",
-        title: "<%= t('columns.devices.df_tmp') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.INTEGER,
         defaultOperator: FilterOperator.EQU,
@@ -145,7 +192,6 @@ const COLUMN_DEFINITIONS = {
 
     hd: {
         key: "hd",
-        title: "<%= t('columns.devices.hwinfo_hd_size') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.INTEGER,
         defaultOperator: FilterOperator.LT,
@@ -153,7 +199,6 @@ const COLUMN_DEFINITIONS = {
 
     hd_ssd: {
         key: "hd_ssd",
-        title: "<%= t('columns.devices.hwinfo_is_ssd') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.BOOL,
         defaultOperator: FilterOperator.EQU,
@@ -161,7 +206,6 @@ const COLUMN_DEFINITIONS = {
 
     hn: {
         key: "hn",
-        title: "<%= t('columns.devices.hostname') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -169,7 +213,6 @@ const COLUMN_DEFINITIONS = {
 
     hw_time: {
         key: "hw_time",
-        title: "<%= t('columns.devices.hwinfo_time') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.UNIXTIME,
         defaultOperator: FilterOperator.LTE,
@@ -177,7 +220,6 @@ const COLUMN_DEFINITIONS = {
 
     id: {
         key: "id",
-        title: "<%= t('columns.puavoid') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.INTEGER,
         defaultOperator: FilterOperator.EQU,
@@ -185,7 +227,13 @@ const COLUMN_DEFINITIONS = {
 
     image: {
         key: "image",
-        title: "<%= t('columns.devices.image') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    image_series: {
+        key: "image_series",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -193,7 +241,6 @@ const COLUMN_DEFINITIONS = {
 
     krn_args: {
         key: "krn_args",
-        title: "<%= t('columns.devices.kernel_args') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -201,7 +248,6 @@ const COLUMN_DEFINITIONS = {
 
     krn_ver: {
         key: "krn_ver",
-        title: "<%= t('columns.devices.kernel_version') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -209,7 +255,20 @@ const COLUMN_DEFINITIONS = {
 
     location: {
         key: "location",
-        title: "<%= t('columns.devices.location') %>",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    loc_lat: {
+        key: "loc_lat",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    loc_lon: {
+        key: "loc_lon",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -217,7 +276,6 @@ const COLUMN_DEFINITIONS = {
 
     lspci: {
         key: "lspci",
-        title: "<%= t('columns.devices.lspci') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -225,7 +283,6 @@ const COLUMN_DEFINITIONS = {
 
     lsusb: {
         key: "lsusb",
-        title: "<%= t('columns.devices.lsusb') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -233,7 +290,6 @@ const COLUMN_DEFINITIONS = {
 
     mac: {
         key: "mac",
-        title: "<%= t('columns.devices.mac') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -241,7 +297,6 @@ const COLUMN_DEFINITIONS = {
 
     mfer: {
         key: "mfer",
-        title: "<%= t('columns.devices.manufacturer') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -249,7 +304,6 @@ const COLUMN_DEFINITIONS = {
 
     model: {
         key: "model",
-        title: "<%= t('columns.devices.model') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -257,7 +311,6 @@ const COLUMN_DEFINITIONS = {
 
     modified: {
         key: "modified",
-        title: "<%= t('columns.modified') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.UNIXTIME,
         defaultOperator: FilterOperator.LTE,
@@ -265,7 +318,6 @@ const COLUMN_DEFINITIONS = {
 
     monitors_xml: {
         key: "monitors_xml",
-        title: "<%= t('columns.devices.monitors_xml') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -280,17 +332,45 @@ const COLUMN_DEFINITIONS = {
     },
 <% end %>
 
+<% if @is_servers %>
+    schools: {
+        key: "schools",
+        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+<% end %>
+
     user: {
         key: "user",
-        title: "<%= t('columns.devices.primary_user') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    personal_admin: {
+        key: "personal_admin",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.BOOL,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    personal_device: {
+        key: "personal_device",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.BOOL,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    printer_uri: {
+        key: "printer_uri",
+        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
     },
 
     purchase_date: {
         key: "purchase_date",
-        title: "<%= t('columns.devices.purchase_date') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.UNIXTIME,
         defaultOperator: FilterOperator.LTE,
@@ -298,7 +378,6 @@ const COLUMN_DEFINITIONS = {
 
     purchase_loc: {
         key: "purchase_loc",
-        title: "<%= t('columns.devices.purchase_loc') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -306,7 +385,6 @@ const COLUMN_DEFINITIONS = {
 
     purchase_support: {
         key: "purchase_support",
-        title: "<%= t('columns.devices.purchase_support') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -314,7 +392,6 @@ const COLUMN_DEFINITIONS = {
 
     purchase_url: {
         key: "purchase_url",
-        title: "<%= t('columns.devices.purchase_url') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -322,7 +399,6 @@ const COLUMN_DEFINITIONS = {
 
     purchase_warranty: {
         key: "purchase_warranty",
-        title: "<%= t('columns.devices.purchase_warranty') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.UNIXTIME,
         defaultOperator: FilterOperator.LTE,
@@ -330,7 +406,6 @@ const COLUMN_DEFINITIONS = {
 
     ram: {
         key: "ram",
-        title: "<%= t('columns.devices.hwinfo_ram_size') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.INTEGER,
         defaultOperator: FilterOperator.LT,
@@ -338,7 +413,13 @@ const COLUMN_DEFINITIONS = {
 
     serial: {
         key: "serial",
-        title: "<%= t('columns.devices.serial') %>",
+        flags: ColumnFlag.SORTABLE,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    status: {
+        key: "status",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -346,7 +427,6 @@ const COLUMN_DEFINITIONS = {
 
     tags: {
         key: "tags",
-        title: "<%= t('columns.devices.tags') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -354,7 +434,6 @@ const COLUMN_DEFINITIONS = {
 
     type: {
         key: "type",
-        title: "<%= t('columns.devices.type') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -362,7 +441,6 @@ const COLUMN_DEFINITIONS = {
 
     wifi: {
         key: "wifi",
-        title: "<%= t('columns.devices.wifi') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
@@ -370,7 +448,6 @@ const COLUMN_DEFINITIONS = {
 
     windows_license: {
         key: "windows_license",
-        title: "<%= t('columns.devices.has_windows_license') %>",
         flags: ColumnFlag.SORTABLE,
         type: ColumnType.BOOL,
         defaultOperator: FilterOperator.EQU,
@@ -378,8 +455,14 @@ const COLUMN_DEFINITIONS = {
 
     xrandr: {
         key: "xrandr",
-        title: "<%= t('columns.devices.xrandr') %>",
         flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
+        type: ColumnType.STRING,
+        defaultOperator: FilterOperator.EQU,
+    },
+
+    xserver: {
+        key: "xserver",
+        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
         defaultOperator: FilterOperator.EQU,
     },
@@ -388,6 +471,14 @@ const COLUMN_DEFINITIONS = {
 // Localized column titles
 const COLUMN_TITLES = {
     abitti_version: "<%= t('columns.devices.abitti_version') %>",
+    allow_guest: "<%= t('columns.devices.allow_guest') %>",
+    audio_sink: "<%= t('columns.devices.audio_sink') %>",
+    audio_src: "<%= t('columns.devices.audio_src') %>",
+    auto_updates: "<%= t('columns.devices.auto_updates') %>",
+    autopower_mode: "<%= t('columns.devices.autopower_mode') %>",
+    autopower_on: "<%= t('columns.devices.autopower_on') %>",
+    autopower_off: "<%= t('columns.devices.autopower_off') %>",
+    available_images: "<%= t('columns.servers.available_images') %>",
     bat_cap: "<%= t('columns.devices.bat_cap') %>",
     bat_pcnt: "<%= t('columns.devices.bat_pcnt') %>",
     bat_volts: "<%= t('columns.devices.bat_volts') %>",
@@ -400,6 +491,7 @@ const COLUMN_TITLES = {
     cpu: "<%= t('columns.devices.cpu') %>",
     created: "<%= t('columns.created') %>",
     current_image: "<%= t('columns.devices.current_image') %>",
+    default_printer: "<%= t('columns.devices.default_printer') %>",
     desc: "<%= t('columns.devices.description') %>",
     df_home: "<%= t('columns.devices.df_home') %>",
     df_images: "<%= t('columns.devices.df_images') %>",
@@ -411,9 +503,12 @@ const COLUMN_TITLES = {
     hw_time: "<%= t('columns.devices.hwinfo_time') %>",
     id: "<%= t('columns.puavoid') %>",
     image: "<%= t('columns.devices.image') %>",
+    image_series: "<%= t('columns.devices.image_series') %>",
     krn_args: "<%= t('columns.devices.kernel_args') %>",
     krn_ver: "<%= t('columns.devices.kernel_version') %>",
     location: "<%= t('columns.devices.location') %>",
+    loc_lat: "<%= t('columns.devices.loc_lat') %>",
+    loc_lon: "<%= t('columns.devices.loc_lon') %>",
     lspci: "<%= t('columns.devices.lspci') %>",
     lsusb: "<%= t('columns.devices.lsusb') %>",
     mac: "<%= t('columns.devices.mac') %>",
@@ -424,7 +519,14 @@ const COLUMN_TITLES = {
 <% if @is_organisation %>
     school: "<%= t('columns.school') %>",
 <% end %>
+<% if @is_servers %>
+    schools: "<%= t('columns.servers.schools') %>",
+<% end %>
+    status: "<%= t('columns.devices.status') %>",
     user: "<%= t('columns.devices.primary_user') %>",
+    personal_admin: "<%= t('columns.devices.personal_admin') %>",
+    personal_device: "<%= t('columns.devices.personal_device') %>",
+    printer_uri: "<%= t('columns.devices.printer_uri') %>",
     purchase_date: "<%= t('columns.devices.purchase_date') %>",
     purchase_loc: "<%= t('columns.devices.purchase_loc') %>",
     purchase_support: "<%= t('columns.devices.purchase_support') %>",
@@ -437,6 +539,7 @@ const COLUMN_TITLES = {
     wifi: "<%= t('columns.devices.wifi') %>",
     windows_license: "<%= t('columns.devices.has_windows_license') %>",
     xrandr: "<%= t('columns.devices.xrandr') %>",
+    xserver: "<%= t('columns.devices.xserver') %>",
 };
 
 // The default order for columns
@@ -447,15 +550,25 @@ const COLUMN_ORDER = [
 <% end %>
     "id",
     "hn",
+<% if @is_servers %>
+    "schools",
+    "available_images",
+    "location",
+    "mac",
+<% end %>
     "type",
     "tags",
+<% unless @is_servers %>
+    "mac",
+<% end %>
     "mfer",
     "model",
     "serial",
-    "mac",
+    "status",
     "desc",
     "image",
     "current_image",
+    "image_series",
     "krn_args",
     "krn_ver",
     "created",
@@ -463,6 +576,9 @@ const COLUMN_ORDER = [
     "conf",
     "user",
 <% unless @is_organisation %>
+    "hw_time",
+<% end %>
+<% if @is_servers %>
     "hw_time",
 <% end %>
     "ram",
@@ -483,6 +599,7 @@ const COLUMN_ORDER = [
     "bat_volts",
     "wifi",
     "xrandr",
+    "xserver",
     "monitors_xml",
     "lspci",
     "lsusb",
@@ -493,7 +610,22 @@ const COLUMN_ORDER = [
     "purchase_loc",
     "purchase_url",
     "purchase_support",
+<% unless @is_servers %>
     "location",
+<% end %>
+    "loc_lat",
+    "loc_lon",
+    "default_printer",
+    "printer_uri",
+    "audio_src",
+    "audio_sink",
+    "allow_guest",
+    "personal_admin",
+    "personal_device",
+    "auto_updates",
+    "autopower_mode",
+    "autopower_on",
+    "autopower_off",
 ];
 
 // Localized device types
@@ -528,6 +660,23 @@ const USER_TRANSFORM_FUNCTIONS = {
         return [display, value];
     },
 
+<% if @is_servers %>
+    available_images: function(entry) {
+        let display = [],
+            value = [];
+
+        for (const i of entry.available_images) {
+            if (i.release)
+                display.push(`${i.file} <span class="releaseName">(${i.release})</span>`);
+            else display.push(`${i.file}`);
+
+            value.push(i.file);
+        }
+
+        return [display.join('<br>'), value.join(',')];
+    },
+<% end %>
+
     bat_cap: function(entry) {
         return [
             `${entry.bat_cap}%`,
@@ -549,6 +698,17 @@ const USER_TRANSFORM_FUNCTIONS = {
         ];
     },
 
+    current_image: function(entry) {
+        let display = "",
+            value = entry.current_image.file;
+
+        if (entry.current_image.release)
+            display = `${entry.current_image.file} <span class="releaseName">(${entry.current_image.release})</span>`;
+        else display = entry.current_image.file;
+
+        return [display, value];
+    },
+
     desc: function(entry) {
         return [
             escapeHTML(entry.desc),
@@ -561,6 +721,17 @@ const USER_TRANSFORM_FUNCTIONS = {
             `<a href="${entry.link}">${escapeHTML(entry.hn)}</a>`,
             entry.hn
         ];
+    },
+
+    image: function(entry) {
+        let display = "",
+            value = entry.image.file;
+
+        if (entry.image.release)
+            display = `${entry.image.file} <span class="releaseName">(${entry.image.release})</span>`;
+        else display = entry.image.file;
+
+        return [display, value];
     },
 
     purchase_date: function(entry) {
@@ -589,6 +760,25 @@ const USER_TRANSFORM_FUNCTIONS = {
             entry.school[1]
         ];
     },
+
+<% if @is_servers %>
+    schools: function(entry) {
+        let display = [],
+            value = [];
+
+        for (const sch of entry.schools) {
+            if (sch.valid) {
+                display.push(`<a href="${sch.link}">${sch.title}</a>`);
+                value.push(sch.title);
+            } else {
+                display.push(`<span class="missingData">${sch.dn}</span>`);
+                value.push('?');
+            }
+        }
+
+        return [display.join("<br>"), value.join(',')];
+    },
+<% end %>
 
     type: function(entry) {
         if (entry.type in DEVICE_TYPES)
@@ -686,47 +876,148 @@ const FILTER_PRESETS = [
     },
 ];
 
+<% unless @is_servers %>
 class MassDeviceSetFieldValue extends MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
+
+        this.items = [
+            { title: "<%= t('devices.index.mass_operations.set_field.desktop_image') %>", key: "image", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.kernel_args') %>", key: "kernelargs", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.kernel_version') %>", key: "kernelversion", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.puavoconf_replace') %>", key: "puavoconf", type: "json" },
+            { title: "<%= t('devices.index.mass_operations.set_field.tags_replace') %>", key: "tags", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.manufacturer') %>", key: "manufacturer", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.model') %>", key: "model", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.serial') %>", key: "serial", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.primary_user') %>", key: "primary_user", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.description') %>", key: "description", type: "ms" },
+            { title: "<%= t('devices.index.mass_operations.set_field.status') %>", key: "status", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.location') %>", key: "location", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.latitude') %>", key: "latitude", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.longitude') %>", key: "longitude", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.allow_guest') %>", key: "allow_guest", type: "tfd" },
+            { title: "<%= t('devices.index.mass_operations.set_field.automatic_updates') %>", key: "automatic_updates", type: "tfd" },
+            { title: "<%= t('devices.index.mass_operations.set_field.personal_device') %>", key: "personal_device", type: "tfd" },
+            { title: "<%= t('devices.index.mass_operations.set_field.personally_administered') %>", key: "personally_administered", type: "tfd" },
+            { title: "<%= t('devices.index.mass_operations.set_field.automatic_poweroff') %>", key: "automatic_poweroff", type: "autopoweroff" },
+            { title: "<%= t('devices.index.mass_operations.set_field.daytime_start') %>", key: "day_start", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.daytime_end') %>", key: "day_end", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.audio_source') %>", key: "audio_source", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.audio_sink') %>", key: "audio_sink", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.printer_uri') %>", key: "printer_uri", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.default_printer') %>", key: "default_printer", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.image_source_url') %>", key: "image_source_url", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.xserver') %>", key: "xserver", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.monitors_xml') %>", key: "monitors_xml", type: "ms" },
+        ];
     }
 
     buildInterface()
     {
-        this.container.innerHTML = `
-<form>
-<table class="settingsChild">
-<tr>
-    <th><label for="mass_device_set_field_name"><%= t('devices.index.mass_operations.set_field.field') %></label></th>
-    <td>
-        <div class="mobileTitle"><%= t('devices.index.mass_operations.set_field.field') %></div>
-        <select id="mass_device_set_field_name">
-            <option value="image"><%= t('devices.index.mass_operations.set_field.desktop_image') %></option>
-            <option value="kernelargs"><%= t('devices.index.mass_operations.set_field.kernel_args') %></option>
-            <option value="kernelversion"><%= t('devices.index.mass_operations.set_field.kernel_version') %></option>
-            <option value="puavoconf"><%= t('devices.index.mass_operations.set_field.puavoconf_replace') %></option>
-            <option value="tags"><%= t('devices.index.mass_operations.set_field.tags_replace') %></option>
-            <option value="manufacturer"><%= t('devices.index.mass_operations.set_field.manufacturer') %></option>
-            <option value="model"><%= t('devices.index.mass_operations.set_field.model') %></option>
-            <option value="serial"><%= t('devices.index.mass_operations.set_field.serial') %></option>
-            <option value="primary_user"><%= t('devices.index.mass_operations.set_field.primary_user') %></option>
-        </select>
-    </td>
-</tr>
-<tr>
-    <th><label for="mass_device_set_field_value"><%= t('devices.index.mass_operations.set_field.value') %></label></th>
-    <td>
-        <div class="mobileTitle"><%= t('devices.index.mass_operations.set_field.value') %></div>
-        <input type="text" id="mass_device_set_field_value">
-        <p class="validityWarning"><%= t('devices.index.mass_operations.set_field.validity_warning') %></p>
-    </td>
-</tr>
-</table>
-</form>`;
+        let html = "";
 
-        this.field = this.container.querySelector("#mass_device_set_field_name");
-        this.value = this.container.querySelector("#mass_device_set_field_value");
+        html +=
+`<form>
+<table class="settingsChild"><tr>
+<th><label for="mass_device_set_field_name"><%= t('devices.index.mass_operations.set_field.field') %></label></th>
+<td><select id="mass_device_set_field_name">`;
+
+        // List the possible fields in alphabetical order
+        let sorted = [];
+
+        for (let i = 0; i < this.items.length; i++)
+            sorted.push([this.items[i].title, i]);
+
+        sorted.sort((a, b) => { return a[0].localeCompare(b[0]) });
+
+        for (const s of sorted) {
+            const item = this.items[s[1]];
+            html += `<option value="${s[1]}">${item.title}</option>`;
+        }
+
+        html +=
+`</select></td></tr>
+<tr>
+<th><label for="mass_device_set_field_value"><%= t('devices.index.mass_operations.set_field.value') %></label></th>
+<td><div id="uiChild"></div></td></tr></table></form>`;
+
+        this.container.innerHTML = html;
+
+        this.container.querySelector("select#mass_device_set_field_name").addEventListener("change",
+            (e) => this.buildChildUI(e.target.selectedOptions[0].value));
+
+        this.currentUI = -1;
+        this.buildChildUI(sorted[0][1]);
+    }
+
+    canProceed()
+    {
+        if (this.items[this.currentUI].type == "json") {
+            // Does the textarea contain valid JSON? This is the only time we can validate the value.
+            const v = this.getValue();
+
+            if (v.length == 0) {
+                // Empty strings are not valid JSON, but we still let them through
+                // because then the database field can be cleared
+                return true;
+            }
+
+            try {
+                const o = JSON.parse(v);
+
+                if (!o || typeof(o) !== "object")
+                    throw new Error("");        // just display the error message below
+            } catch (e) {
+                window.alert("<%= t('devices.index.mass_operations.set_field.invalid_json') %>");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    buildChildUI(index)
+    {
+        const stringWarning = `<p class="validityWarning"><%= t('devices.index.mass_operations.set_field.validity_warning_string') %></p>`,
+              jsonWarning = `<p class="validityWarning"><%= t('devices.index.mass_operations.set_field.validity_warning_json') %></p>`;
+
+        const item = this.items[index];
+
+        let ui = "";
+
+        switch (item.type) {
+            case "s":           // String
+            default:
+                ui = `<input type="text" id="mass_device_set_field_value" size="40">${stringWarning}`;
+                break;
+
+            case "ms":          // Multiline string
+                ui = `<textarea id="mass_device_set_field_value" rows="5" cols="80"></textarea>${stringWarning}`;
+                break;
+
+            case "json":        // Same as multiline string, but displays a note about the JSON
+                ui = `<textarea id="mass_device_set_field_value" rows="5" cols="80"></textarea>${jsonWarning}`;
+                break;
+
+            case "tfd":         // Tri-state true/false/default "boolean"
+                ui =
+`<input type="radio" name="value-radio" id="value-radio-default" checked><label for="value-radio-default"><%= t('devices.index.mass_operations.set_field.default') %></label><br>
+<input type="radio" name="value-radio" id="value-radio-yes"><label for="value-radio-yes"><%= t('devices.index.mass_operations.set_field.yes') %></label><br>
+<input type="radio" name="value-radio" id="value-radio-no"><label for="value-radio-no"><%= t('devices.index.mass_operations.set_field.no') %></label>`;
+                break;
+
+            case "autopoweroff":    // Custom UI for the automatic poweroff setting
+                ui =
+`<input type="radio" name="value-radio" id="value-radio-default" checked><label for="value-radio-default"><%= t('devices.index.mass_operations.set_field.default') %></label><br>
+<input type="radio" name="value-radio" id="value-radio-off"><label for="value-radio-off"><%= t('devices.index.mass_operations.set_field.off') %></label><br>
+<input type="radio" name="value-radio" id="value-radio-custom"><label for="value-radio-custom"><%= t('devices.index.mass_operations.set_field.custom') %></label>`;
+                break;
+        }
+
+        this.container.querySelector("div#uiChild").innerHTML = ui;
+        this.currentUI = index;
     }
 
     processItem(item)
@@ -735,10 +1026,44 @@ class MassDeviceSetFieldValue extends MassOperation {
             `/devices/${item.school_id}/mass_op_device_set_field`,
             {
                 id: item.id[0],
-                field: this.field.value,
-                value: this.value.value
+                field: this.items[this.currentUI].key,
+                value: this.getValue()
             }
         );
+    }
+
+    getValue()
+    {
+        const ui = this.container.querySelector("div#uiChild");
+
+        // Retrieve the value. There are no event handlers, so dig it from
+        // the DOM directly.
+        switch (this.items[this.currentUI].type) {
+            case "s":
+            default:
+                return ui.querySelector("input").value;
+
+            case "ms":
+            case "json":
+                return ui.querySelector("textarea").value;
+
+            case "tfd":
+                if (ui.querySelector("input#value-radio-yes").checked)
+                    return 1;
+                else if (ui.querySelector("input#value-radio-no").checked)
+                    return 0;
+
+                // "default"
+                return -1;
+
+            case "autopoweroff":
+                if (ui.querySelector("input#value-radio-custom").checked)
+                    return "custom";
+                else if (ui.querySelector("input#value-radio-off").checked)
+                    return "off";
+
+                return "default";
+        }
     }
 };
 
@@ -956,20 +1281,21 @@ class MassDevicePuavoconfEditor extends MassOperation {
     buildInterface()
     {
         this.container.innerHTML =
-`<form>
+`<p><%= t('devices.index.mass_operations.puavoconf.json_warning').html_safe %></p>
+<form>
 <table class="settingsChild">
 <tr>
     <th><label for="mass_device_pc_key"><%= t('devices.index.mass_operations.puavoconf.key') %></label></th>
     <td>
         <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.key') %></div>
-        <input type="text" id="mass_device_pc_key">
+        <input type="text" id="mass_device_pc_key" size="50">
     </td>
 </tr>
 <tr>
     <th><label for="mass_device_pc_value"><%= t('devices.index.mass_operations.puavoconf.value') %></label></th>
     <td>
         <div class="mobileTitle"><%= t('devices.index.mass_operations.puavoconf.value') %></div>
-        <input type="text" id="mass_device_pc_value">
+        <input type="text" id="mass_device_pc_value" size="50">
         <p class="validityWarning"><%= t('devices.index.mass_operations.puavoconf.validity_warning') %></p>
     </td>
 </tr>
@@ -1024,6 +1350,16 @@ class MassDevicePuavoconfEditor extends MassOperation {
     setType(event, type)
     {
         this.type = type;
+    }
+
+    canProceed()
+    {
+        if (this.key.value.length == 0 || this.key.value.trim().length == 0) {
+            window.alert("<%= t('devices.index.mass_operations.puavoconf.empty_key') %>");
+            return false;
+        }
+
+        return true;
     }
 
     processItem(item)
@@ -1144,15 +1480,23 @@ const MASS_OPERATIONS = [
     },
 ];
 
+<% end %>
+
 function userActions(item)
 {
     let html = "";
 
-    html += `<a href="${item['link']}/edit" class="btn"><%= t('link.edit') %></a> `;
+<% if @is_servers %>
+    const link = `/devices/servers/${item.id}`;
+<% else %>
+    const link = `/devices/${item.school_id}/devices/${item.id}`;
+<% end %>
+
+    html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
     let message = "<%= t('general_confirm') %>";
 
-    html += `<a href="${item['link']}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+    html += `<a href="${link}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
 
     return html;
 }

@@ -63,78 +63,34 @@ class DevicesController < ApplicationController
     end
   end
 
+  # AJAX call
   def get_school_devices_list
-    # Which attributes to retrieve? These are the defaults, they're always
-    # sent even when not requested, because basic functionality can break
-    # without them.
-    requested = Set.new(['id', 'hn', 'type'])
+    # Get a raw list of devices in this school
+    raw = Device.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
+                                :scope => :one,
+                                :attributes => DevicesHelper.get_device_attributes())
 
-    # Extra attributes (columns)
-    if params.include?(:fields)
-      requested += Set.new(params[:fields].split(','))
-    end
-
-    # Do the query
-    attributes = DevicesHelper.convert_requested_device_column_names(requested)
-
-    # Don't get hardware info if nothing from it was requested
-    hw_attributes = Set.new
-    want_hw_info = false
-
-    if (requested & DevicesHelper::HWINFO_ATTRS).any?
-      attributes << 'puavoDeviceHWInfo'
-      hw_attributes = DevicesHelper.convert_requested_hwinfo_column_names(requested)
-      want_hw_info = true
-    end
-
-    raw = DevicesHelper.get_devices_in_school(@school.dn, attributes)
+    # Known image release names
+    releases = get_releases()
 
     # Convert the raw data into something we can easily parse in JavaScript
+    school_id = @school.id.to_i
     devices = []
 
     raw.each do |dn, dev|
-      data = {}
+      # Common attributes
+      device = DevicesHelper.convert_raw_device(dev, releases)
 
-      # Mandatory
-      data[:id] = dev['puavoId'][0].to_i
-      data[:hn] = dev['puavoHostname'][0]
-      data[:type] = dev['puavoDeviceType'][0]
-      data[:link] = device_path(@school, dev['puavoId'][0])
-      data[:school_id] = @school.id.to_i
+      # Special attributes
+      device[:link] = "/devices/#{school_id}/devices/#{device[:id]}"
+      device[:school_id] = school_id
 
-      # Optional, common parts
-      data.merge!(DevicesHelper.build_common_device_properties(dev, requested))
-
-      # Hardware info
-      if want_hw_info && dev['puavoDeviceHWInfo']
-        data.merge!(DevicesHelper.extract_hardware_info(dev['puavoDeviceHWInfo'], hw_attributes))
+      # Figure out the primary user
+      if device[:user]
+        device[:user] = DevicesHelper.format_device_primary_user(device[:user], school_id)
       end
 
-      # Device primary user
-      if requested.include?('user') && data[:user]
-        dn = data[:user]
-
-        begin
-          u = User.find(dn)
-
-          data[:user] = {
-            valid: true,
-            link: user_path(school, u),
-            title: "#{u.uid} (#{u.givenName} #{u.sn})"
-          }
-        rescue
-          # Not found
-          data[:user] = {
-            valid: false,
-            dn: dn,
-          }
-        end
-      end
-
-      # Purge empty fields to minimize the amount of transferred data
-      data.delete_if{ |k, v| v.nil? }
-
-      devices << data
+      devices << device
     end
 
     render :json => devices
@@ -250,6 +206,145 @@ class DevicesController < ApplicationController
             device.puavoDevicePrimaryUser = value
             changed = true
           end
+
+        when 'description'
+          if device.description != value
+            device.description = value
+            changed = true
+          end
+
+        when 'status'
+          if value != device.puavoDeviceStatus
+            device.puavoDeviceStatus = value
+            changed = true
+          end
+
+        when 'location'
+          if value != device.puavoLocationName
+            device.puavoLocationName = value
+            changed = true
+          end
+
+        when 'latitude'
+          if value != device.puavoLatitude
+            device.puavoLatitude = value
+            changed = true
+          end
+
+        when 'longitude'
+          if value != device.puavoLongitude
+            device.puavoLongitude = value
+            changed = true
+          end
+
+        when 'allow_guest'
+          if value == -1 && device.puavoAllowGuest != nil
+            device.puavoAllowGuest = nil
+            changed = true
+          elsif value == 0 && device.puavoAllowGuest != false
+            device.puavoAllowGuest = false
+            changed = true
+          elsif value == 1 && device.puavoAllowGuest != true
+            device.puavoAllowGuest = true
+            changed = true
+          end
+
+        when 'personally_administered'
+          if value == -1 && device.puavoPersonallyAdministered != nil
+            device.puavoPersonallyAdministered = nil
+            changed = true
+          elsif value == 0 && device.puavoPersonallyAdministered != false
+            device.puavoPersonallyAdministered = false
+            changed = true
+          elsif value == 1 && device.puavoPersonallyAdministered != true
+            device.puavoPersonallyAdministered = true
+            changed = true
+          end
+
+        when 'automatic_updates'
+          if value == -1 && device.puavoAutomaticImageUpdates != nil
+            device.puavoAutomaticImageUpdates = nil
+            changed = true
+          elsif value == 0 && device.puavoAutomaticImageUpdates != false
+            device.puavoAutomaticImageUpdates = false
+            changed = true
+          elsif value == 1 && device.puavoAutomaticImageUpdates != true
+            device.puavoAutomaticImageUpdates = true
+            changed = true
+          end
+
+        when 'personal_device'
+          if value == -1 && device.puavoPersonalDevice != nil
+            device.puavoPersonalDevice = nil
+            changed = true
+          elsif value == 0 && device.puavoPersonalDevice != false
+            device.puavoPersonalDevice = false
+            changed = true
+          elsif value == 1 && device.puavoPersonalDevice != true
+            device.puavoPersonalDevice = true
+            changed = true
+          end
+
+        when 'automatic_poweroff'
+          if value != device.puavoDeviceAutoPowerOffMode
+            device.puavoDeviceAutoPowerOffMode = value
+            changed = true
+          end
+
+        when 'daytime_start'
+          if value != device.puavoDeviceOnHour
+            device.puavoDeviceOnHour = value
+            changed = true
+          end
+
+        when 'daytime_end'
+          if value != device.puavoDeviceOffHour
+            device.puavoDeviceOffHour = value
+            changed = true
+          end
+
+        when 'audio_source'
+          if value != device.puavoDeviceDefaultAudioSource
+            device.puavoDeviceDefaultAudioSource = value
+            changed = true
+          end
+
+        when 'audio_sink'
+          if value != device.puavoDeviceDefaultAudioSink
+            device.puavoDeviceDefaultAudioSink = value
+            changed = true
+          end
+
+        when 'printer_uri'
+          if value != device.puavoPrinterDeviceURI
+            device.puavoPrinterDeviceURI = value
+            changed = true
+          end
+
+        when 'default_printer'
+          if value != device.puavoDefaultPrinter
+            device.puavoDefaultPrinter = value
+            changed = true
+          end
+
+        when 'image_source_url'
+          if value != device.puavoImageSeriesSourceURL
+            device.puavoImageSeriesSourceURL = value
+            changed = true
+          end
+
+        when 'xserver'
+          if value != device.puavoDeviceXserver
+            device.puavoDeviceXserver = value
+            changed = true
+          end
+
+        when 'monitors_xml'
+          if value != device.puavoDeviceMonitorsXML
+            device.puavoDeviceMonitorsXML = value
+            changed = true
+          end
+
       end
 
       if changed
@@ -466,12 +561,6 @@ class DevicesController < ApplicationController
 
     @device.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @device.get_ca_certificate(current_organisation.organisation_key)
-
-    if @device.attributes.include?("puavoPreferredServer") && @device.puavoPreferredServer
-      if preferred_server = Server.find(@device.puavoPreferredServer)
-        @preferred_server_name = preferred_server.puavoHostname
-      end
-    end
 
     @releases = get_releases
 
@@ -818,7 +907,6 @@ class DevicesController < ApplicationController
       :puavoDeviceMonitorsXML,
       :puavoDeviceImage,
       :puavoDeviceBootImage,
-      :puavoPreferredServer,
       :puavoDeviceKernelVersion,
       :puavoDeviceKernelArguments,
       :puavoPrinterDeviceURI,

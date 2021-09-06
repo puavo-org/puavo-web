@@ -7,7 +7,6 @@ describe PuavoRest::School do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
-    PuavoRest::Session.local_store.flushdb
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",

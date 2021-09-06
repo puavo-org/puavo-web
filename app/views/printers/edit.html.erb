@@ -1,43 +1,44 @@
-<% page_title t('titles.organisation'), t('titles.printers'), @printer.printerDescription, t('titles.edit') %>
+<% page_title t('titles.organisation'), t('titles.printers'), t('titles.printer_permissions'), @printer.printerDescription %>
 
 <div class="formContainer">
 
-<h1><%=html_escape @printer.printerDescription %> (<%= @server.puavoHostname %>)</h1>
+<h1><%= t('printing_permissions_list.title') %>: <%= html_escape @printer.printerDescription %> (<%= @server.puavoHostname %>)</h1>
 
 <%= form_for(@printer, url: printer_path(@printer)) do |f| %>
-
-  <table class="editForm">
-    <tr>
-      <th><%= f.label :puavoRule %></th>
-      <td><%= f.text_field :puavoRule %></td>
-    </tr>
-  </table>
-
-  <h2><%= t('printing_permissions_list.title') %></h2>
-
   <h3><%= t('printing_permissions_list.by_schools') %></h3>
 
   <ul>
+    <% if @schools.nil? || @schools.empty? %>
+      <li><%= t('printing_permissions_list.none') %></li>
+    <% else %>
     <% @schools.each do |school| %>
       <li>
         <%= link_to school.displayName, edit_printer_permission_path(school, @printer) %>
       </li>
+    <% end %>
     <% end %>
   </ul>
 
   <h3><%= t('printing_permissions_list.by_wireless') %></h3>
 
   <ul>
+    <% if @schools_by_wireless.nil? || @schools_by_wireless.empty? %>
+      <li><%= t('printing_permissions_list.none') %></li>
+    <% else %>
     <% @schools_by_wireless.each do |school| %>
       <li>
         <%= link_to school.displayName, edit_printer_permission_path(school, @printer) %>
       </li>
+    <% end %>
     <% end %>
   </ul>
 
   <h3><%= t('printing_permissions_list.by_groups') %></h3>
 
   <ul>
+    <% if @schools_by_groups.nil? || @schools_by_groups.empty? %>
+      <li><%= t('printing_permissions_list.none') %></li>
+    <% else %>
     <% @schools_by_groups.each do |(group, school)| %>
       <li>
         <%= group.displayName %>
@@ -45,11 +46,15 @@
         <%= link_to school.displayName, edit_printer_permission_path(school, @printer) %>
       </li>
     <% end %>
+    <% end %>
   </ul>
 
   <h3><%= t('printing_permissions_list.by_devices') %></h3>
 
   <ul>
+    <% if @schools_by_devices.nil? || @schools_by_devices.empty? %>
+      <li><%= t('printing_permissions_list.none') %></li>
+    <% else %>
     <% @schools_by_devices.each do |(device, school)| %>
       <li>
         <%= link_to device.puavoHostname, edit_device_path(school, device) %>
@@ -57,16 +62,10 @@
         <%= link_to school.displayName, edit_printer_permission_path(school, @printer) %>
       </li>
     <% end %>
+    <% end %>
   </ul>
-
-  <table class="editForm">
-    <tr class="buttonRow">
-      <td>
-        <%= f.submit t('link.update'), class: 'btn' %>
-        <div class="cancel"><%=link_to t('link.cancel'), printers_path, class: 'btn btn-danger' %></div>
-      </td>
-    </tr>
-  </table>
 <% end %>
+
+<%= link_to t('link.back'), printers_path, class: 'btn' %>
 
 </div>

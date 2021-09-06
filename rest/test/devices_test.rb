@@ -86,7 +86,6 @@ describe PuavoRest::Devices do
       @_athin = create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoPreferredServer => @bootserver.dn,
         :puavoDeviceImage => "customimage",
         :puavoSchool => @school.dn,
         :puavoPersonalDevice => false,
