@@ -325,6 +325,9 @@ class UsersController < ApplicationController
           user.puavoExternalData = ed.empty? ? nil : ed.to_json
           user.save!
         end
+      elsif column == 'pnumber' && user.puavoEduPersonPersonnelNumber
+        user.puavoEduPersonPersonnelNumber = nil
+        user.save!
       end
 
       ok = true
