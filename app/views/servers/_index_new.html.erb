@@ -1,9 +1,10 @@
+<img src="/images/spinner.gif" style="opacity: 0; position: absolute; left: -1000px;">
 <div class="superTable" id="tableServers"></div>
 
 <% content_for :javascript do %>
 <%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
-<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
 <%= javascript_include_tag 'supertable2', skip_pipeline: true %>
+<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
 <% end %>
 
 <% @is_organisation = true %>
@@ -28,10 +29,8 @@ new SuperTable(
     {
         id: "servers",
         csvPrefix: `<%= LdapOrganisation.current.o %>-servers`,
-        flags: TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
-
+        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION,
         locale: "<%= supertable_sorting_locale %>",
-
         columnDefinitions: COLUMN_DEFINITIONS,
         columnTitles: COLUMN_TITLES,
         columnOrder: COLUMN_ORDER,
@@ -41,10 +40,6 @@ new SuperTable(
         defaultColumns: DEFAULT_COLUMNS,
         defaultSorting: DEFAULT_SORTING,
         filterPresets: null,
-        initialFilters: null,
-        defaultFilterColumn: "hn",
-
-        // The URL to get the data from
         source: "/devices/get_servers_list",
     }
 );
