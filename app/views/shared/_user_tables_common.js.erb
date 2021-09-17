@@ -2,129 +2,114 @@
 const COLUMN_DEFINITIONS = {
     id: {
         key: "id",
-        type: ColumnType.INTEGER,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
+        type: ColumnType.NUMERIC,
+        alias: ["puavoid"],
     },
 
     first: {
         key: "first",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
+        alias: ["first_name", "fn"],
     },
 
     last: {
         key: "last",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
+        alias: ["last_name", "ln"],
     },
 
     name: {
         key: "name",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 
     uid: {
         key: "uid",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
+        alias: ["username"],
     },
 
     eid: {
         key: "eid",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.F_NULLABLE,
+        alias: ["external_id"]
     },
 
     learner_id: {
         key: "learner_id",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.F_NULLABLE,
+        alias: ["lid"],
     },
 
     role: {
         key: "role",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 
     phone: {
         key: "phone",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.ARRAY | ColumnFlag.F_NULLABLE,
+        alias: ["phone_number"],
     },
 
     email: {
         key: "email",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.ARRAY | ColumnFlag.F_NULLABLE,
     },
 
     pnumber: {
         key: "pnumber",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
     },
 
     home: {
         key: "home",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
     },
 
     rrt: {
         key: "rrt",
         type: ColumnType.UNIXTIME,
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM | ColumnFlag.F_NULLABLE,
+        alias: ["removal_request_time"]
     },
 
     dnd: {
         key: "dnd",
         type: ColumnType.BOOL,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.F_NULLABLE,
+        alias: ["do_not_delete"]
     },
 
     locked: {
         key: "locked",
         type: ColumnType.BOOL,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.F_NULLABLE,
     },
 
     created: {
         key: "created",
         type: ColumnType.UNIXTIME,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.GTE,
+        flags: ColumnFlag.DESCENDING_DEFAULT,
     },
 
     modified: {
         key: "modified",
         type: ColumnType.UNIXTIME,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.LTE,
+        flags: ColumnFlag.DESCENDING_DEFAULT,
     },
 
 <% if @is_organisation %>
     school: {
         key: "school",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 <% end %>
 };
@@ -207,10 +192,8 @@ const USER_TRANSFORM_FUNCTIONS = {
 
         s += `<a href="${entry.link}">${escapeHTML(entry.name)}</a>`;
 
-        if (entry.locked) {
+        if (entry.locked)
             s += `<i class="icon-lock"></i>`;
-            //s += ` [L]`;
-        }
 
         if (entry.rrt)
             s += `</span>`;
@@ -292,15 +275,18 @@ class MassUserDeletion extends MassOperation {
         // Do some pre-filtering here, to prevent useless network traffic.
         // All of these tests are also done on the server end in case the
         // user tries to cheat by, for example, adjusting their system time.
+        const dnd = item.dnd[INDEX_EXISTS] === true && item.dnd[INDEX_FILTERABLE] !== undefined,
+              marked = item.rrt[INDEX_EXISTS] === true && item.rrt[INDEX_FILTERABLE] !== undefined,
+              locked = item.locked[INDEX_EXISTS] === true && item.locked[INDEX_FILTERABLE] === true;
 
-        if (item.dnd && item.dnd[0] === true)
+        if (dnd)
             return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
 
-        if (item.rrt && item.rrt[0] === 0)
+        if (!marked)
             return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>");
 
         const now = Math.floor(Date.now() / 1000);
-        const next = item.rrt + (60 * 60 * 24 * 7);     // 7 days in seconds
+        const next = item.rrt[INDEX_FILTERABLE] + (60 * 60 * 24 * 7);   // 7 days in seconds
 
         if (next > now)
             return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.marked_too_recently') %>");
@@ -308,7 +294,7 @@ class MassUserDeletion extends MassOperation {
         // Good to go
         return doPOST(
             `/users/${item.school_id}/mass_op_user_delete`,
-            { id: item.id[0] }
+            { id: item.id[INDEX_FILTERABLE] }
         );
     }
 };
@@ -361,12 +347,14 @@ class MassUserLocking extends MassOperation {
     processItem(item)
     {
         // Do nothing if the user is already in the desired locking state
-        if (item.locked && item.locked[0] == this.lock)
+        if (item.locked[INDEX_EXISTS] === true && item.locked[INDEX_FILTERABLE] === this.lock) {
+            console.log("already in the desired state");
             return itemProcessedStatus(true);
+        }
 
         return doPOST(
             `/users/${item.school_id}/mass_op_user_lock`,
-            { id: item.id[0], lock: this.lock }
+            { id: item.id[1], lock: this.lock }
         );
     }
 
@@ -435,25 +423,28 @@ class MassUserMarkForDeletion extends MassOperation {
     {
         // Pre-filter users, avoid useless network requests. All of these checks
         // are also done on the server end.
+        const dnd = item.dnd[INDEX_EXISTS] === true && item.dnd[INDEX_FILTERABLE] !== undefined,
+              marked = item.rrt[INDEX_EXISTS] === true && item.rrt[INDEX_FILTERABLE] !== undefined,
+              locked = item.locked[INDEX_EXISTS] === true && item.locked[INDEX_FILTERABLE] === true;
 
-        if (item.dnd && item.dnd[0] === true) {
+        if (dnd) {
             // deletion prevented
             return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
         }
 
-        if (item.rrt && item.rrt[0] === 0 && this.operation == 2) {
+        if (!locked && this.operation == 2) {
             // already unlocked
             return itemProcessedStatus(true);
         }
 
-        if (item.rrt && item.rrt[0] !== 0 && this.operation == 0) {
+        if (locked && marked && this.operation == 0) {
             // already locked and not forced mode
             return itemProcessedStatus(true);
         }
 
         return doPOST(
             `/users/${item.school_id}/mass_op_user_mark`,
-            { id: item.id[0], operation: this.operation }
+            { id: item.id[INDEX_FILTERABLE], operation: this.operation }
         );
     }
 };
@@ -481,7 +472,9 @@ class MassUserClearColumn extends MassOperation {
         <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_telephone">
         <label for="mass_user_clear_column_telephone"><%= t('users.index.mass_operations.clear_column.columns.telephone') %></label><br>
         <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_learner_id">
-        <label for="mass_user_clear_column_learner_id"><%= t('users.index.mass_operations.clear_column.columns.learner_id') %></label>
+        <label for="mass_user_clear_column_learner_id"><%= t('users.index.mass_operations.clear_column.columns.learner_id') %></label><br>
+        <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_pnumber">
+        <label for="mass_user_clear_column_pnumber"><%= t('users.index.mass_operations.clear_column.columns.pnumber') %></label>
     </td>
 </tr>
 </table>
@@ -499,6 +492,8 @@ class MassUserClearColumn extends MassOperation {
             .addEventListener("click", event => this.setColumn(event, "telephone"));
         this.container.querySelector("#mass_user_clear_column_learner_id")
             .addEventListener("click", event => this.setColumn(event, "learner_id"));
+        this.container.querySelector("#mass_user_clear_column_pnumber")
+            .addEventListener("click", event => this.setColumn(event, "pnumber"));
     }
 
     setColumn(event, col)
@@ -510,7 +505,7 @@ class MassUserClearColumn extends MassOperation {
     {
         return doPOST(
             `/users/${item.school_id}/mass_op_user_clear_column`,
-            { id: item.id[0], column: this.column }
+            { id: item.id[INDEX_FILTERABLE], column: this.column }
         );
     }
 };
@@ -528,7 +523,7 @@ class MassUsernameList extends MassOperation {
         let id = [];
 
         for (const i of items)
-            id.push(i[0].id[0]);
+            id.push(i[0].id[INDEX_FILTERABLE]);
 
         return doPOST(
             "/users/<%= @school.id %>/mass_op_username_list",
@@ -579,69 +574,122 @@ const MASS_OPERATIONS = [
 <% end %>
 ];
 
-const FILTER_PRESETS = {
-    smoketest_users: {
-        title: "<%= t('users.index.filters.smoketest_users') %>",
-        filters: [
-            {"active":true,"column":"uid","operator":"equ","value":"^test.user.[0-9a-fA-F]+$"}
-        ],
+const FILTER_PRESETS = [
+    // Traditional
+    {
+        smoketest_users: {
+            title: "<%= t('users.index.filters.smoketest_users') %>",
+            filters: [
+                [1,"uid","=","^test.user.[0-9a-fA-F]+$"]
+            ],
+        },
+
+        locked: {
+            title: "<%= t('users.index.filters.locked_users') %>",
+            filters: [
+                [1,"locked","=","1"]
+            ],
+        },
+
+        marked_for_deletion: {
+            title: "<%= t('users.index.filters.marked_for_deletion') %>",
+            filters: [
+                [1,"rrt",">=","2010-01-01 00:00:00"]
+            ],
+        },
+
+        unlocked_deleted: {
+            title: "<%= t('users.index.filters.marked_for_deletion_not_locked') %>",
+            filters: [
+                [1,"locked","!=","1"],
+                [1,"rrt",">=","2010-01-01 00:00:00"],
+                [0,"eid","=","^$"]
+            ],
+        },
+
+        marked_for_3months: {
+            title: "<%= t('users.index.filters.marked_3months') %>",
+            filters: [
+                [1,"rrt","<","-90d"],
+                [0,"eid","=",""]
+            ],
+        },
+
+        marked_for_6months: {
+            title: "<%= t('users.index.filters.marked_6months') %>",
+            filters: [
+                [1,"rrt","<","-180d"],
+                [0,"eid","=",""]
+            ],
+        },
+
+        marked_for_9months: {
+            title: "<%= t('users.index.filters.marked_9months') %>",
+            filters: [
+                [1,"rrt","<","-270d"],
+                [0,"eid","=",""]
+            ],
+        },
+
+        marked_for_12months: {
+            title: "<%= t('users.index.filters.marked_12months') %>",
+            filters: [
+                [1,"rrt","<","-365d"],
+                [0,"eid","=",""]
+            ],
+        },
+
+        short_uids: {
+            title: "<%= t('users.index.filters.short_uids') %>",
+            filters: [
+                [1,"uid","=","^[a-z0-9-.]{1,5}$"]
+            ],
+        }
     },
 
-    locked: {
-        title: "<%= t('users.index.filters.locked_users') %>",
-        filters: [
-            {"active":true,"column":"locked","operator":"equ","value":true}
-        ],
-    },
+    // Advanced
+    {
+        marked_for_3months: {
+            title: "<%= t('users.index.filters.marked_3months') %>",
+            filter: `rrt !! t && rrt < -90d`,
+        },
 
-    marked_for_deletion: {
-        title: "<%= t('users.index.filters.marked_for_deletion') %>",
-        filters: [
-            {"active":true,"column":"rrt","operator":"gte","value":"2010-01-01 00:00:00"}
-        ],
-    },
+        marked_for_6months: {
+            title: "<%= t('users.index.filters.marked_6months') %>",
+            filter: `rrt !! t && rrt < -180d`,
+        },
 
-    unlocked_deleted: {
-        title: "<%= t('users.index.filters.marked_for_deletion_not_locked') %>",
-        filters: [
-            {"active":true,"column":"locked","operator":"neq","value":true},
-            {"active":true,"column":"rrt","operator":"gte","value":"2010-01-01 00:00:00"},
-            {"active":false,"column":"eid","operator":"equ","value":"^$"},
-        ],
-    },
+        marked_for_9months: {
+            title: "<%= t('users.index.filters.marked_9months') %>",
+            filter: `rrt !! t && rrt < -270d`,
+        },
 
-    marked_for_3months: {
-        title: "<%= t('users.index.filters.marked_3months') %>",
-        filters: [
-            {"active":true,"column":"rrt","operator":"lte","value":-60 * 60 * 24 * 90},
-            {"active":false,"column":"eid","operator":"equ","value":"^$"},
-        ],
-    },
+        marked_for_12months: {
+            title: "<%= t('users.index.filters.marked_12months') %>",
+            filter: `rrt !! t && rrt < -365d`,
+        },
 
-    marked_for_6months: {
-        title: "<%= t('users.index.filters.marked_6months') %>",
-        filters: [
-            {"active":true,"column":"rrt","operator":"lte","value":-60 * 60 * 24 * 180},
-            {"active":false,"column":"eid","operator":"equ","value":"^$"},
-        ],
-    },
+        smoketest_users: {
+            title: "<%= t('users.index.filters.smoketest_users') %>",
+            filter: `uid = /^test.user.[0-9a-fA-F]+$/`,
+        },
 
-    marked_for_9months: {
-        title: "<%= t('users.index.filters.marked_9months') %>",
-        filters: [
-            {"active":true,"column":"rrt","operator":"lte","value":-60 * 60 * 24 * 270},
-            {"active":false,"column":"eid","operator":"equ","value":"^$"},
-        ],
-    },
+        locked: {
+            title: "<%= t('users.index.filters.locked_users') %>",
+            filter: `locked !! t && locked = t`,
+        },
 
-    marked_for_12months: {
-        title: "<%= t('users.index.filters.marked_12months') %>",
-        filters: [
-            {"active":true,"column":"rrt","operator":"lte","value":-60 * 60 * 24 * 365},
-            {"active":false,"column":"eid","operator":"equ","value":"^$"},
-        ],
-    },
-};
+        marked_for_deletion_not_locked: {
+            title: "<%= t('users.index.filters.marked_for_deletion_not_locked') %>",
+            filter: `rrt !! t && rrt > 2010 && locked == f`,
+        },
+
+        short_uids: {
+            title: "<%= t('users.index.filters.short_uids') %>",
+            filter: `uid = /^[a-z0-9-.]{1,5}$/`,
+        }
+    }
+];
 
 const SYNC_DELETIONS = <%= raw JSON.pretty_generate(@synchronised_deletions) %>;
 
@@ -649,17 +697,18 @@ function userActions(item)
 {
     let html = "";
 
-    const link = `/users/${item.school_id}/users/${item.id}`;
+    const link = `/users/${item.school_id}/users/${item.id[INDEX_FILTERABLE]}`;
+    const dnd = item.dnd[INDEX_EXISTS] === true && item.dnd[INDEX_FILTERABLE] !== undefined;
 
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
-    if (item.dnd && item.dnd[0] !== true) {
+    if (!dnd) {
 <% if @is_owner || @permit_single_user_deletion %>
         let isAdmin = false,
             message = null;
 
         // Extra warning when deleting owners/admins
-        for (let t of item.role[0].split(",")) {
+        for (let t of item.role[1].split(",")) {
             if (t == "owner" || t == "admin") {
                 isAdmin = true;
                 break;
