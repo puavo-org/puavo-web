@@ -344,16 +344,19 @@ module DevicesHelper
       # they aren't always reliable
       out[:current_image] = self.get_release_name(info['this_image'], releases)
 
-      out[:ram] = (info['memory'] || []).sum { |slot| slot['size'].to_i }
+      # For some reason, when I wrote the sysinfo collector tool back in 2017, I
+      # used megabytes as the unit, instead of bytes. Too late to change that.
+      out[:ram] = (info['memory'] || []).sum { |slot| slot['size'].to_i } * megabytes
 
       # Some machines have no memory slot info, so use the "raw" number instead
       if out[:ram] == 0
-        out[:ram] = ((info['memorysize_mb'] || 0).to_i / megabytes).to_i
+        out[:ram] = (info['memorysize_mb'] || 0).to_i * megabytes
       end
 
-      out[:hd] = ((info['blockdevice_sda_size'] || 0).to_i / megabytes).to_i
+      out[:hd] = (info['blockdevice_sda_size'] || 0).to_i
 
-      out[:hd_ssd] = info['ssd'] ? (info['ssd'] == '1') : false   # why oh why did I put a string in this field and not an integer?
+      # Why oh why did I put a string in this field and not an integer?
+      out[:hd_ssd] = info['ssd'] ? (info['ssd'] == '1') : false
 
       out[:wifi] = info['wifi']
 
@@ -395,15 +398,14 @@ module DevicesHelper
         end
       end
 
-      # Free disk space on various partitions. Retrieve them all even if only one
-      # of them was requested, because it takes a lot of effort to dig them up.
+      # Free disk space on various partitions
       if info['free_space']
         df = info['free_space']
 
-        out[:df_home] = (df['/home'].to_i / megabytes).to_i if df.include?('/home')
-        out[:df_images] = (df['/images'].to_i / megabytes).to_i if df.include?('/home')
-        out[:df_state] = (df['/state'].to_i / megabytes).to_i if df.include?('/home')
-        out[:df_tmp] = (df['/tmp'].to_i / megabytes).to_i if df.include?('/home')
+        out[:df_home] = df['/home'].to_i if df.include?('/home')
+        out[:df_images] = df['/images'].to_i if df.include?('/home')
+        out[:df_state] = df['/state'].to_i if df.include?('/home')
+        out[:df_tmp] = df['/tmp'].to_i if df.include?('/home')
       end
 
       # Windows license info (boolean exists/does not exist)
