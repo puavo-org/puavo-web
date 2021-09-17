@@ -49,7 +49,6 @@ class PuavoMenu < MetaMenu
     title { t('layouts.application.users')  }
     link { users_path(@school) }
     active_on UsersController
-    active_on GroupsController
     active_on ListsController
     active_on ImportToolController
     owners_only { false }
@@ -59,13 +58,6 @@ class PuavoMenu < MetaMenu
       link { users_path(@school) }
       owners_only { false }
       active_on UsersController
-    end
-
-    child do
-      title { t('link.groups') }
-      link { groups_path(@school) }
-      owners_only { false }
-      active_on GroupsController
     end
 
     child do
@@ -83,7 +75,22 @@ class PuavoMenu < MetaMenu
       owners_only { false }
       active_on ListsController
     end
+  end
 
+  # GROUPS
+  child do
+    title { t('link.groups')  }
+    link { groups_path(@school) }
+    active_on GroupsController
+    owners_only { false }
+
+    # The menu looks weird without this
+    child do
+      title { t('link.groups') }
+      link { groups_path(@school) }
+      owners_only { false }
+      active_on GroupsController
+    end
   end
 
   # DEVICES
