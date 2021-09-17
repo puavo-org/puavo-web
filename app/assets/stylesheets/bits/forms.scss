@@ -13,16 +13,11 @@
 
 fieldset {
   border: 1px solid $formFieldsetBorderColor;
-  padding: 10px;
   margin: 20px 0;
 }
 
 legend {
   padding: 0 5px;
-  font-weight: bold;
-  font-size: 110%;
-  border: 1px solid $formFieldsetBorderColor;
-  border-width: 0 1px;
 }
 
 /* editForms are used for creating and editing users, group, devices,

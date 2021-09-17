@@ -2,6 +2,125 @@
   Base styles that are used on all pages
 */
 
+/* Color variables. Currently only for SuperTable, but eventually they will encompass the whole site. */
+:root {
+    --st-temporary-bg: #faa;
+    --st-temporary-fg: #000;
+    --st-temporary-border: #f00;
+
+    --st-common-border: #888;
+    --st-fieldset-border: #aaa;
+
+    --st-controls-border: #888;
+
+    --st-buttons-border: #999;
+    --st-buttons-back: #eee;
+    --st-buttons-hover-border: #999;
+    --st-buttons-hover-back: #ccc;
+    --st-buttons-disabled: #666;
+    --st-buttons-danger-border: #f99;
+    --st-buttons-danger-back: #fdd;
+    --st-buttons-danger-fore: #f00;
+    --st-buttons-danger-hover-back: #fbb;
+
+    /* Tabs */
+    --st-tab-bg: #ccc;
+    --st-tab-fg: #000;
+    --st-tab-hover-bg: #ddd;
+    --st-tab-hover-fg: #000;
+    --st-tab-active-bg: var(--st-tab-container-bg);
+    --st-tab-active-fg: #000;
+    --st-tab-disabled-bg: #aaa;
+    --st-tab-disabled-fg: #888;
+    --st-tab-container-bg: #fff;
+    --st-tab-container-fg: #000;
+
+    /* Tab contents */
+    --st-summary-bg: #eee;
+    --st-summary-fg: #00f;
+    --st-summary-hover-bg: #e0e0e0;
+    --st-summary-hover-fg: #f00;
+    --st-details-open-bg: #fff;
+    --st-details-open-fg: #000;
+
+    --st-textarea-bg: #fff;
+    --st-textarea-fg: #000;
+    --st-textarea-disabled-bg: #ddd;
+    --st-textarea-disabled-fg: #888;
+
+    --st-commontable-bg: #fff;
+    --st-commontable-fg: #000;
+    --st-commontable-th-bg: #ccc;
+    --st-commontable-th-fg: #000;
+    --st-commontable-border: #888;
+    --st-commontable-code-bg: #ccc;
+    --st-commontable-code-fg: #000;
+
+    --st-columnlist-hover-bg: #ccc;
+    --st-columnlist-disabled-fg: #888;
+
+    --st-columnhelp-invisible-bg: #ff8;
+    --st-columnhelp-invisible-fg: #000;
+
+    --st-filters-unsaved-fg: #f00;
+    --st-filters-error-bg: #f88;
+    --st-filters-error-fg: #000;
+    --st-filters-operator: #080;
+    --st-filters-value: #00f;
+    --st-filters-table-separator: #ccc;
+    --st-filters-pretty-hover-back: #ddd;
+    --st-filters-editorwrapper-back: #eee;
+    --st-filters-open-back: #ddd;
+    --st-filters-save-icon: #0a0;
+    --st-filters-cancel-icon: #f00;
+
+    /* Status bar */
+    --st-status-border: #888;
+    --st-status-bg: #fff;
+    --st-status-fg: #000;
+    --st-status-success-bg: #6f6;
+    --st-status-success-fg: #000;
+    --st-status-fail-bg: #f66;
+    --st-status-fail-fg: #000;
+
+    /* The error message */
+    --st-error-bg: #f44;
+    --st-error-fg: #fff;
+    --st-error-border: #f00;
+
+    /* The table */
+    --st-border: #888;
+
+    --st-bg: #fff;
+    --st-fg: #000;
+
+    --st-header-bg: #bbb;
+    --st-header-fg: #000;
+    --st-sortable-hover-bg: #999;
+    --st-sortable-hover-fg: #000;
+
+    --st-row-hover-bg: #{$listRowHoverBack};
+    --st-row-sorted-column: #e0e0e0;
+    --st-row-sorted-hover-bg: #{$stTableSortedColumnHoverBackground};
+
+    --st-row-processed-fg: #000;
+
+    --st-row-success-bg: #afa;
+    --st-row-success-hover-bg: #8f8;
+    --st-row-success-sorted-bg: #80ff80;
+    --st-row-success-sorted-hover-bg: #6f6;
+    --st-row-fail-bg: #faa;
+    --st-row-fail-hover-bg: #f88;
+    --st-row-fail-sorted-bg: #ff8080;
+    --st-row-fail-sorted-hover-bg: #f66;
+
+    --st-checkbox-border: var(--st-common-border);
+    --st-checkbox-bg: #fff;
+    --st-previous-row: #00f;
+
+    --st-dropmarker: #00f;
+}
+
 * {
   box-sizing: border-box;
 }
