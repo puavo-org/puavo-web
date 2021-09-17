@@ -167,9 +167,11 @@
 footer {
   display: block;
   color: $footerFore;
-  text-align: center;
+  border-top: 1px solid $footerBorder;
+  text-align: right;
   font-size: 70%;
-  margin: 1em;
+  margin: 0;
+  padding: 1em;
 
   @media #{$screen-breakpoint-one} {
     font-size: 60%;
