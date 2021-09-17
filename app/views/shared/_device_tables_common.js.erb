@@ -2,469 +2,376 @@
 const COLUMN_DEFINITIONS = {
     abitti_version: {
         key: "abitti_version",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        type: ColumnType.INTEGER,
-        defaultOperator: FilterOperator.EQU,
+        type: ColumnType.NUMERIC,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 
     allow_guest: {
         key: "allow_guest",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.BOOL,
-        defaultOperator: FilterOperator.EQU,
     },
 
     audio_sink: {
         key: "audio_sink",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     audio_src: {
         key: "audio_src",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     auto_updates: {
         key: "auto_updates",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.BOOL,
-        defaultOperator: FilterOperator.EQU,
     },
 
     autopower_mode: {
         key: "autopower_mode",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     autopower_on: {
         key: "autopower_on",
-        flags: ColumnFlag.SORTABLE,
-        type: ColumnType.INTEGER,
-        defaultOperator: FilterOperator.EQU,
+        type: ColumnType.NUMERIC,
     },
 
     autopower_off: {
         key: "autopower_off",
-        flags: ColumnFlag.SORTABLE,
-        type: ColumnType.INTEGER,
-        defaultOperator: FilterOperator.EQU,
+        type: ColumnType.NUMERIC,
     },
 
 <% if @is_servers %>
     available_images: {
         key: "available_images",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 <% end %>
 
     bat_cap: {
         key: "bat_cap",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        type: ColumnType.INTEGER,
-        defaultOperator: FilterOperator.LTE,
+        type: ColumnType.NUMERIC,
+        flags: ColumnFlag.DESCENDING_DEFAULT,
     },
 
     bat_pcnt: {
         key: "bat_pcnt",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        type: ColumnType.FLOAT,
-        defaultOperator: FilterOperator.LTE,
+        type: ColumnType.NUMERIC,
+        flags: ColumnFlag.DESCENDING_DEFAULT,
     },
 
     bat_volts: {
         key: "bat_volts",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        type: ColumnType.FLOAT,
-        defaultOperator: FilterOperator.LTE,
+        type: ColumnType.NUMERIC,
+        flags: ColumnFlag.DESCENDING_DEFAULT,
     },
 
     bat_serial: {
         key: "bat_serial",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     bat_vendor: {
         key: "bat_vendor",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     bios_date: {
         key: "bios_date",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     bios_vendor: {
         key: "bios_vendor",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     bios_version: {
         key: "bios_version",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     conf: {
         key: "conf",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.ARRAY,
+        alias: ["puavo_conf", "puavoconf"],
     },
 
     cpu: {
         key: "cpu",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     created: {
         key: "created",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.UNIXTIME,
-        defaultOperator: FilterOperator.GTE,
+        flags: ColumnFlag.DESCENDING_DEFAULT,
     },
 
     current_image: {
         key: "current_image",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 
     default_printer: {
         key: "default_printer",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     desc: {
         key: "desc",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
+        alias: ["description"],
     },
 
     df_home: {
         key: "df_home",
-        flags: ColumnFlag.SORTABLE,
-        type: ColumnType.INTEGER,
-        defaultOperator: FilterOperator.EQU,
+        type: ColumnType.NUMERIC,
+        flags: ColumnFlag.USER_TRANSFORM | ColumnFlag.DESCENDING_DEFAULT | ColumnFlag.F_STORAGE,
     },
 
     df_images: {
         key: "df_images",
-        flags: ColumnFlag.SORTABLE,
-        type: ColumnType.INTEGER,
-        defaultOperator: FilterOperator.EQU,
+        type: ColumnType.NUMERIC,
+        flags: ColumnFlag.USER_TRANSFORM | ColumnFlag.DESCENDING_DEFAULT | ColumnFlag.F_STORAGE,
     },
 
     df_state: {
         key: "df_state",
-        flags: ColumnFlag.SORTABLE,
-        type: ColumnType.INTEGER,
-        defaultOperator: FilterOperator.EQU,
+        type: ColumnType.NUMERIC,
+        flags: ColumnFlag.USER_TRANSFORM | ColumnFlag.DESCENDING_DEFAULT | ColumnFlag.F_STORAGE,
     },
 
     df_tmp: {
         key: "df_tmp",
-        flags: ColumnFlag.SORTABLE,
-        type: ColumnType.INTEGER,
-        defaultOperator: FilterOperator.EQU,
+        type: ColumnType.NUMERIC,
+        flags: ColumnFlag.USER_TRANSFORM | ColumnFlag.DESCENDING_DEFAULT | ColumnFlag.F_STORAGE,
     },
 
     hd: {
         key: "hd",
-        flags: ColumnFlag.SORTABLE,
-        type: ColumnType.INTEGER,
-        defaultOperator: FilterOperator.LT,
+        type: ColumnType.NUMERIC,
+        flags: ColumnFlag.USER_TRANSFORM | ColumnFlag.DESCENDING_DEFAULT | ColumnFlag.F_STORAGE,
+        alias: ["hard_drive"],
     },
 
     hd_ssd: {
         key: "hd_ssd",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.BOOL,
-        defaultOperator: FilterOperator.EQU,
     },
 
     hn: {
         key: "hn",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
+        alias: ["hostname"],
     },
 
     hw_time: {
         key: "hw_time",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.UNIXTIME,
-        defaultOperator: FilterOperator.LTE,
+        flags: ColumnFlag.DESCENDING_DEFAULT,
     },
 
     id: {
         key: "id",
-        flags: ColumnFlag.SORTABLE,
-        type: ColumnType.INTEGER,
-        defaultOperator: FilterOperator.EQU,
+        type: ColumnType.NUMERIC,
     },
 
     image: {
         key: "image",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 
     image_series: {
         key: "image_series",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     krn_args: {
         key: "krn_args",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        alias: ["kernel_args"],
     },
 
     krn_ver: {
         key: "krn_ver",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        alias: ["kernel_version"],
     },
 
     location: {
         key: "location",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.ARRAY,
     },
 
     loc_lat: {
         key: "loc_lat",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     loc_lon: {
         key: "loc_lon",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     lspci: {
         key: "lspci",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.ARRAY,
     },
 
     lsusb: {
         key: "lsusb",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.ARRAY,
     },
 
     mac: {
         key: "mac",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.ARRAY,
     },
 
     mfer: {
         key: "mfer",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        alias: ["manufacturer"]
     },
 
     model: {
         key: "model",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     modified: {
         key: "modified",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.UNIXTIME,
-        defaultOperator: FilterOperator.LTE,
+        flags: ColumnFlag.DESCENDING_DEFAULT,
     },
 
     monitors_xml: {
         key: "monitors_xml",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 
 <% if @is_organisation %>
     school: {
         key: "school",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 <% end %>
 
 <% if @is_servers %>
     schools: {
         key: "schools",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 <% end %>
 
     user: {
         key: "user",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 
     personal_admin: {
         key: "personal_admin",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.BOOL,
-        defaultOperator: FilterOperator.EQU,
     },
 
     personal_device: {
         key: "personal_device",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.BOOL,
-        defaultOperator: FilterOperator.EQU,
     },
 
     printer_uri: {
         key: "printer_uri",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     purchase_date: {
         key: "purchase_date",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.UNIXTIME,
-        defaultOperator: FilterOperator.LTE,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 
     purchase_loc: {
         key: "purchase_loc",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     purchase_support: {
         key: "purchase_support",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     purchase_url: {
         key: "purchase_url",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     purchase_warranty: {
         key: "purchase_warranty",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.UNIXTIME,
-        defaultOperator: FilterOperator.LTE,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 
     ram: {
         key: "ram",
-        flags: ColumnFlag.SORTABLE,
-        type: ColumnType.INTEGER,
-        defaultOperator: FilterOperator.LT,
+        type: ColumnType.NUMERIC,
+        flags: ColumnFlag.USER_TRANSFORM | ColumnFlag.DESCENDING_DEFAULT | ColumnFlag.F_STORAGE,
     },
 
     serial: {
         key: "serial",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     status: {
         key: "status",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     tags: {
         key: "tags",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.ARRAY,
     },
 
     type: {
         key: "type",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     wifi: {
         key: "wifi",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 
     windows_license: {
         key: "windows_license",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.BOOL,
-        defaultOperator: FilterOperator.EQU,
     },
 
     xrandr: {
         key: "xrandr",
-        flags: ColumnFlag.SORTABLE | ColumnFlag.ARRAY,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.ARRAY,
     },
 
     xserver: {
         key: "xserver",
-        flags: ColumnFlag.SORTABLE,
         type: ColumnType.STRING,
-        defaultOperator: FilterOperator.EQU,
     },
 };
 
@@ -550,6 +457,9 @@ const COLUMN_ORDER = [
 <% end %>
     "id",
     "hn",
+<% if !@is_organisation || @is_servers %>
+    "hw_time",
+<% end %>
 <% if @is_servers %>
     "schools",
     "available_images",
@@ -575,12 +485,6 @@ const COLUMN_ORDER = [
     "modified",
     "conf",
     "user",
-<% unless @is_organisation %>
-    "hw_time",
-<% end %>
-<% if @is_servers %>
-    "hw_time",
-<% end %>
     "ram",
     "hd",
     "hd_ssd",
@@ -628,85 +532,99 @@ const COLUMN_ORDER = [
     "autopower_off",
 ];
 
-// Localized device types
-const DEVICE_TYPES = {
-    thinclient: "<%= t('host.types.thinclient') %>",
-    fatclient: "<%= t('host.types.fatclient') %>",
-    laptop: "<%= t('host.types.laptop') %>",
-    workstation: "<%= t('host.types.workstation') %>",
-    server: "<%= t('host.types.server') %>",
-    netstand: "<%= t('host.types.netstand') %>",
-    infotv: "<%= t('host.types.infotv') %>",
-    switch: "<%= t('host.types.switch') %>",
-    printer: "<%= t('host.types.printer') %>",
-    projector: "<%= t('host.types.projector') %>",
-    webcam: "<%= t('host.types.webcam') %>",
-    other: "<%= t('host.types.other') %>",
-};
+function doStorage(value)
+{
+    return [(value / 1048576).toFixed(0), value];
+}
+
+function doImage(image)
+{
+    let display = "",
+        value = image.file,
+        filter = "";
+
+    if (image.release) {
+        // Display the release name nicely
+        display = `${image.file} <span class="releaseName">(${image.release})</span>`;
+        filter = `${image.file} ${image.release})`;
+    } else {
+        display = image.file;
+        filter = image.file;
+    }
+
+    return [display, value, filter];
+}
 
 const USER_TRANSFORM_FUNCTIONS = {
     abitti_version: function(entry) {
         const v = entry.abitti_version;
-        let display, value;
+        let display, value, filter;
 
         if (v == "latest") {
             display = "latest";
-            value = 9999999;        // CSV exporting unfortunately reveals this hack
+            value = 9999999;
+            filter = 9999999;
         } else {
             display = v;
             value = parseInt(v, 10);
+
+            if (isNaN(value))
+                value = -1;
+
+            filter = value;
         }
 
-        return [display, value];
+        return [display, value, filter];
     },
 
 <% if @is_servers %>
     available_images: function(entry) {
         let display = [],
-            value = [];
+            value = [],
+            filter = [];
 
         for (const i of entry.available_images) {
-            if (i.release)
+            if (i.release) {
                 display.push(`${i.file} <span class="releaseName">(${i.release})</span>`);
-            else display.push(`${i.file}`);
+                filter.push(`${i.file} ${i.release}`);
+            } else {
+                display.push(i.file);
+                filter.push(i.file);
+            }
 
             value.push(i.file);
         }
 
-        return [display.join('<br>'), value.join(',')];
+        return [display.join('<br>'), value.join(','), filter.join(',')];
     },
 <% end %>
 
-    bat_cap: function(entry) {
-        return [
-            `${entry.bat_cap}%`,
-            entry.bat_cap,
-        ];
+    ram: function(entry) {
+        return doStorage(entry.ram);
     },
 
-    bat_pcnt: function(entry) {
-        return [
-            `${entry.bat_pcnt}%`,
-            entry.bat_pcnt,
-        ];
+    hd: function(entry) {
+        return doStorage(entry.hd);
     },
 
-    bat_volts: function(entry) {
-        return [
-            `${entry.bat_volts}V`,
-            entry.bat_volts,
-        ];
+    df_home: function(entry) {
+        return doStorage(entry.df_home);
+    },
+
+    df_state: function(entry) {
+        return doStorage(entry.df_state);
+    },
+
+    df_images: function(entry) {
+        return doStorage(entry.df_images);
+    },
+
+    df_tmp: function(entry) {
+        return doStorage(entry.df_tmp);
     },
 
     current_image: function(entry) {
-        let display = "",
-            value = entry.current_image.file;
-
-        if (entry.current_image.release)
-            display = `${entry.current_image.file} <span class="releaseName">(${entry.current_image.release})</span>`;
-        else display = entry.current_image.file;
-
-        return [display, value];
+        return doImage(entry.current_image);
     },
 
     desc: function(entry) {
@@ -724,14 +642,7 @@ const USER_TRANSFORM_FUNCTIONS = {
     },
 
     image: function(entry) {
-        let display = "",
-            value = entry.image.file;
-
-        if (entry.image.release)
-            display = `${entry.image.file} <span class="releaseName">(${entry.image.release})</span>`;
-        else display = entry.image.file;
-
-        return [display, value];
+        return doImage(entry.image);
     },
 
     purchase_date: function(entry) {
@@ -776,27 +687,22 @@ const USER_TRANSFORM_FUNCTIONS = {
             }
         }
 
-        return [display.join("<br>"), value.join(',')];
+        return [display.join("<br>"), value.join(','), value.join(',')];
     },
 <% end %>
-
-    type: function(entry) {
-        if (entry.type in DEVICE_TYPES)
-            return [DEVICE_TYPES[entry.type], entry.type];
-
-        return [entry.type, entry.type];
-    },
 
     user: function(entry) {
         if (entry.user.valid) {
             return [
                 `<a href="${entry.user.link}">${entry.user.title}</a>`,
                 entry.user.title,
+                entry.user.title
             ]
         } else {
             return [
                 `<span class="missingData">${entry.user.dn}</span>`,
                 entry.user.dn,
+                entry.user.dn
             ]
         }
     },
@@ -808,72 +714,177 @@ const USER_TRANSFORM_FUNCTIONS = {
 };
 
 const FILTER_PRESETS = [
-    {
-        title: "<%= t('devices.index.filters.uses_trusty') %>",
-        id: "uses_trusty",
-        filters: [
-            {"active":true,"column":"current_image","operator":"equ","value":"trusty"},
-            {"active":false,"column":"image","operator":"equ","value":"^$"}
-        ],
-    },
+    // Traditional
+    [
+        {
+            title: "<%= t('devices.index.filters.uses_stretch') %>",
+            id: "uses_stretch",
+            filters: [
+                [1,"current_image","=","stretch"],
+            ],
+        },
 
-    {
-        title: "<%= t('devices.index.filters.uses_stretch') %>",
-        id: "uses_stretch",
-        filters: [
-            {"active":true,"column":"current_image","operator":"equ","value":"stretch"},
-            {"active":false,"column":"image","operator":"equ","value":"^$"}
-        ],
-    },
+        {
+            title: "<%= t('devices.index.filters.uses_buster') %>",
+            id: "uses_buster",
+            filters: [
+                [1,"current_image","=","buster"],
+            ],
+        },
 
-    {
-        title: "<%= t('devices.index.filters.uses_buster') %>",
-        id: "uses_buster",
-        filters: [
-            {"active":true,"column":"current_image","operator":"equ","value":"buster"},
-            {"active":false,"column":"image","operator":"equ","value":"^$"}
-        ],
-    },
+        {
+            title: "<%= t('devices.index.filters.uses_bullseye') %>",
+            id: "uses_bullseye",
+            filters: [
+                [1,"current_image","=","bullseye"],
+            ],
+        },
 
-    {
-        title: "<%= t('devices.index.filters.have_monitors_xml') %>",
-        id: "has_monitors_xml",
-        filters: [
-            {"active":true,"column":"monitors_xml","operator":"neq","value":"^$"},
-        ],
-    },
+        {
+            title: "<%= t('devices.index.filters.have_monitors_xml') %>",
+            id: "has_monitors_xml",
+            filters: [
+                [1,"monitors_xml","!=","^$"],
+            ],
+        },
 
-    {
-        title: "<%= t('devices.index.filters.have_xrandr') %>",
-        id: "has_xrandr",
-        filters: [
-            {"active":true,"column":"xrandr","operator":"neq","value":"^$"},
-        ],
-    },
+        {
+            title: "<%= t('devices.index.filters.have_xrandr') %>",
+            id: "has_xrandr",
+            filters: [
+                [1,"xrandr","!=","^$"],
+            ],
+        },
 
-    {
-        title: "<%= t('devices.index.filters.have_hwinfo') %>",
-        id: "has_hwinfo",
-        filters: [
-            {"active":true,"column":"hw_time","operator":"gte","value":"2010-01-01 00:00:00"},
-        ],
-    },
+        {
+            title: "<%= t('devices.index.filters.have_hwinfo') %>",
+            id: "has_hwinfo",
+            filters: [
+                [1,"hw_time",">=","2010"],
+            ],
+        },
 
-    {
-        title: "<%= t('devices.index.filters.has_primary_user') %>",
-        id: "has_hwinfo",
-        filters: [
-            {"active":true,"column":"user","operator":"neq","value":"^$"},
-        ],
-    },
+        {
+            title: "<%= t('devices.index.filters.has_primary_user') %>",
+            id: "has_primary_user",
+            filters: [
+                [1,"user","!=","^$"],
+            ],
+        },
 
+        {
+            title: "<%= t('devices.index.filters.has_invalid_primary_user') %>",
+            id: "has_invalid_primary_user",
+            filters: [
+                [1,"user","=","puavoId="],
+            ],
+        },
+
+        {
+            title: "<%= t('devices.index.filters.hdd_500g') %>",
+            id: "hdd_500g",
+            filters: [
+                [1,"hd",">=","500G"],
+            ],
+        },
+
+        {
+            title: "<%= t('devices.index.filters.ram_atleast_16g') %>",
+            id: "ram_atleast_16g",
+            filters: [
+                [1,"ram",">=","16G"],
+            ],
+        },
+
+        {
+            title: "<%= t('devices.index.filters.ram_lt_4g') %>",
+            id: "ram_lt_4g",
+            filters: [
+                [1,"ram","<","4G"],
+            ],
+        },
+
+        {
+            title: "<%= t('devices.index.filters.poor_battery') %>",
+            id: "poor_battery",
+            filters: [
+                [1,"bat_cap","<=","70"],
+            ],
+        },
+    ],
+
+    // Advanced
     {
-        title: "<%= t('devices.index.filters.has_invalid_primary_user') %>",
-        id: "has_hwinfo",
-        filters: [
-            {"active":true,"column":"user","operator":"equ","value":"puavoId="},
-        ],
-    },
+        uses_stretch: {
+            title: "<%= t('devices.index.filters.uses_stretch') %>",
+            filter: "current_image = /stretch/",
+        },
+
+        uses_buster: {
+            title: "<%= t('devices.index.filters.uses_buster') %>",
+            filter: "current_image = /buster/",
+        },
+
+        uses_bullseye: {
+            title: "<%= t('devices.index.filters.uses_bullseye') %>",
+            filter: "current_image = /bullseye/",
+        },
+
+        has_monitors_xml: {
+            title: "<%= t('devices.index.filters.have_monitors_xml') %>",
+            filter: "monitors_xml",
+        },
+
+        has_xrandr: {
+            title: "<%= t('devices.index.filters.have_xrandr') %>",
+            filter: `xrandr != ""`
+        },
+
+        has_hwinfo: {
+            title: "<%= t('devices.index.filters.have_hwinfo') %>",
+            filter: "hw_time > 2010"
+        },
+
+        maybe_unused: {
+            title: "<%= t('devices.index.filters.maybe_unused') %>",
+            filter: `hw_time && hw_time < -1y`,
+        },
+
+        has_primary_user: {
+            title: "<%= t('devices.index.filters.has_primary_user') %>",
+            filter: `user && user != /^puavoId/`,
+        },
+
+        has_invalid_primary_user: {
+            title: "<%= t('devices.index.filters.has_invalid_primary_user') %>",
+            filter: `user && user = /^puavoId/`,
+        },
+
+        hdd_500g: {
+            title: "<%= t('devices.index.filters.hdd_500g') %>",
+            filter: `hd >= 500G`,
+        },
+
+        ram_atleast_16g: {
+            title: "<%= t('devices.index.filters.ram_atleast_16g') %>",
+            filter: `ram >= 16G`,
+        },
+
+        ram_lt_4g: {
+            title: "<%= t('devices.index.filters.ram_lt_4g') %>",
+            filter: `ram < 4G`,
+        },
+
+        home_5g: {
+            title: "<%= t('devices.index.filters.home_5g') %>",
+            filter: `df_home <= 5G`,
+        },
+
+        poor_battery: {
+            title: "<%= t('devices.index.filters.poor_battery') %>",
+            filter: `bat_cap <= 70%`,
+        },
+    }
 ];
 
 <% unless @is_servers %>
@@ -1025,7 +1036,7 @@ class MassDeviceSetFieldValue extends MassOperation {
         return doPOST(
             `/devices/${item.school_id}/mass_op_device_set_field`,
             {
-                id: item.id[0],
+                id: item.id[INDEX_FILTERABLE],
                 field: this.items[this.currentUI].key,
                 value: this.getValue()
             }
@@ -1209,7 +1220,6 @@ class MassDevicePurchaseInfo extends MassOperation {
             b2 = null;
         else b2 = b;
 
-        //console.log(`Comparing |${a2}| and |${b2}|`);
         return a2 !== b2;
     }
 
@@ -1260,12 +1270,10 @@ class MassDevicePurchaseInfo extends MassOperation {
             return itemProcessedStatus(true);
         }
 
-        //console.log(mustSendRequest, params);
-
         return doPOST(
             `/devices/${item.school_id}/mass_op_device_purchase_info`,
             {
-                id: item.id[0],
+                id: item.id[INDEX_FILTERABLE],
                 purchase_params: params
             }
         );
@@ -1367,7 +1375,7 @@ class MassDevicePuavoconfEditor extends MassOperation {
         return doPOST(
             `/devices/${item.school_id}/mass_op_device_edit_puavoconf`,
             {
-                id: item.id[0],
+                id: item.id[INDEX_FILTERABLE],
                 key: this.key.value,
                 value: this.value.value,
                 type: this.type,
@@ -1419,7 +1427,7 @@ class MassDeviceChangeSchool extends MassOperation {
         return doPOST(
             `/devices/${item.school_id}/mass_op_device_change_school`,
             {
-                id: item.id[0],
+                id: item.id[INDEX_FILTERABLE],
                 school_dn: this.newSchoolDN
             }
         );
@@ -1437,7 +1445,7 @@ class MassDeviceDeletion extends MassOperation {
     {
         return doPOST(
             `/devices/${item.school_id}/mass_op_device_delete`,
-            { id: item.id[0] }
+            { id: item.id[INDEX_FILTERABLE] }
         );
     }
 };
@@ -1487,9 +1495,9 @@ function userActions(item)
     let html = "";
 
 <% if @is_servers %>
-    const link = `/devices/servers/${item.id}`;
+    const link = `/devices/servers/${item.id[INDEX_FILTERABLE]}`;
 <% else %>
-    const link = `/devices/${item.school_id}/devices/${item.id}`;
+    const link = `/devices/${item.school_id}/devices/${item.id[INDEX_FILTERABLE]}`;
 <% end %>
 
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;

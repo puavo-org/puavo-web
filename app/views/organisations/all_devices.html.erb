@@ -2,8 +2,8 @@
 
 <% content_for :javascript do %>
 <%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
-<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
 <%= javascript_include_tag 'supertable2', skip_pipeline: true %>
+<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
 <% end %>
 
 <% @is_organisation = true %>
@@ -11,6 +11,7 @@
 
 <h1><%= t('titles.all_devices') %></h1>
 
+<img src="/images/spinner.gif" style="opacity: 0; position: absolute; left: -1000px;">
 <div class="superTable" id="tableDevices"></div>
 
 <% content_for :post_load_javascript do %>
@@ -31,26 +32,17 @@ window.onload = function(e) {
         {
             id: "orgDevices",
             csvPrefix: `<%= LdapOrganisation.current.o %>-devices`,
-
-            flags: TableFlag.ALLOW_SELECTION | TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
-
+            flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION,
             locale: "<%= supertable_sorting_locale %>",
-
             columnDefinitions: COLUMN_DEFINITIONS,
             columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,
             userTransforms: USER_TRANSFORM_FUNCTIONS,
             actions: userActions,
-
             massOperations: MASS_OPERATIONS,
-
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
             filterPresets: FILTER_PRESETS,
-            initialFilters: null,
-            defaultFilterColumn: "hn",
-
-            // The URL to get the data from
             source: "/get_all_devices",
         }
     );
