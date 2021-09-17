@@ -256,9 +256,9 @@ en:
       bios_date: "BIOS date"
       bat_vendor: "Battery vendor"
       bat_serial: "Battery serial"
-      bat_cap: "Battery capacity"
-      bat_pcnt: "Battery percentage"
-      bat_volts: "Battery voltage"
+      bat_cap: "Battery capacity (%)"
+      bat_pcnt: "Battery percentage (%)"
+      bat_volts: "Battery voltage (V)"
       wifi: "WiFi"
       monitors_xml: "Display settings (XML)"
       xrandr: "Xrandr"
@@ -731,14 +731,15 @@ en:
       synchronised_deletions: "User deletions are immediately synchronised to these external systems: %{systems}. All data stored in these systems will be irrevocably deleted! Verify all deletions in advance."
 
       filters:
+        marked_3months: "Has been marked for removal for > 90 days"
+        marked_6months: "Has been marked for removal for > 180 days"
+        marked_9months: "Has been marked for removal for > 270 days"
+        marked_12months: "Has been marked for removal for > 365 days"
         smoketest_users: "Smoketest users who haven't been removed"
-        locked_users: "Locked users"
         marked_for_deletion: "Is marked for deletion"
         marked_for_deletion_not_locked: "Is marked for deletion, but not locked"
-        marked_3months: "Has been marked for removal for ≥ 90 days"
-        marked_6months: "Has been marked for removal for ≥ 180 days"
-        marked_9months: "Has been marked for removal for ≥ 270 days"
-        marked_12months: "Has been marked for removal for ≥ 365 days"
+        locked_users: "Locked users"
+        short_uids: "Usernames that are 1-5 characters long"
 
       mass_operations:
         lock:
@@ -765,6 +766,7 @@ en:
             email: "Email"
             telephone: "Telephone number"
             learner_id: "Learner ID"
+            pnumber: "Personnel number"
         username_list:
           title: "Create username list"
 
@@ -925,14 +927,20 @@ en:
       devices: devices
 
       filters:
-        uses_trusty: "Uses a Trusty image"
-        uses_stretch: "Uses a Stretch image"
-        uses_buster: "Uses a Buster image"
+        uses_stretch: "Uses a Stretch -based image"
+        uses_buster: "Uses a Buster -based image"
+        uses_bullseye: "Uses a Bullseye -based image"
         have_monitors_xml: "Device has display settings (XML)"
         have_xrandr: "Device has xrandr settings"
         have_hwinfo: "Have received hardware information"
+        maybe_unused: "It has been over a year since hardware info was last received"
         has_primary_user: "Device has a primary user"
         has_invalid_primary_user: "Device has an invalid primary user"
+        hdd_500g: "The device hard drive capacity is at least 500 GiB"
+        ram_atleast_16g: "The device has at least 16 GiB of RAM"
+        ram_lt_4g: "The device has less than 4 GiB of RAM"
+        home_5g: "The /home partition has less than 5 GiB of free space"
+        poor_battery: "The battery capacity is 70% or less"
       mass_operations:
         change_school:
           title: "Change school..."
