@@ -3283,7 +3283,7 @@ compileTraditionalFilters()
             if (val.length < 1)
                 continue;
 
-            if (val.length == 4) {
+            if (val.length == 1) {
                 // a single value
                 and.push(`${col} ${op} ${val[0]}`);
             } else {
