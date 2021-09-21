@@ -4,7 +4,7 @@
 SuperTable 2: The 2nd Edition
 It's still a monster, but it's more structured now
 
-Version 2.5
+Version 2.5.1 alpha
 */
 
 // --------------------------------------------------------------------------------------------------
@@ -205,78 +205,78 @@ const INDEX_EXISTS = 0,
       INDEX_FILTERABLE = 2,
       INDEX_SORTABLE = 3;
 
+// Default values for different column types. Used to substitute missing values for sorting.
+const DEFAULT_VALUES = {
+    [ColumnType.BOOL]: false,
+    [ColumnType.NUMERIC]: 0,
+    [ColumnType.UNIXTIME]: 0,
+    [ColumnType.STRING]: ""
+};
+
+function _transformValue(userTransforms, raw, key, coldef, defVal)
+{
+    if (coldef.flags & ColumnFlag.USER_TRANSFORM) {
+        // Apply a user-defined transformation. We assume the user function can deal
+        // with null and undefined values.
+        if (key in userTransforms)
+            return userTransforms[key](raw);
+        else {
+            return [
+                `<span class="data-error">User transform function "${key}" is missing!</span>`,
+                defVal
+            ];
+        }
+    }
+
+    if (raw[key] === null) {
+        // This entry exists, but it's NULL. Use the default value so that sorting works.
+        return [defVal, defVal];
+    }
+
+    // Apply a built-in transformation
+    let value = raw[key];
+
+    switch (coldef.type) {
+        case ColumnType.BOOL:
+            value = (value === true) ? "✔" : "";
+            break;
+
+        case ColumnType.NUMERIC:
+            if (value === null || value == undefined)
+                value = 0;
+
+            break;
+
+        case ColumnType.UNIXTIME:
+            [_, value] = convertTimestamp(value);
+            break;
+
+        default:
+            break;
+    }
+
+    let displayable = null,
+        sortable = null;
+
+    // FIXME: Array values only works with strings
+    if (coldef.flags & ColumnFlag.ARRAY) {
+        displayable = value.map(i => escapeHTML(i)).join("<br>");
+        sortable = value.join();
+    } else {
+        displayable = escapeHTML(value);
+        sortable = raw[key];
+    }
+
+    return [displayable, sortable];
+};
+
 // Apply some transformations to the raw data received from the server. For example,
 // convert timestamps into user's local time, turn booleans into checkmarks, and so on.
 // The data we generate here is purely presentational, intended for humans; it's never
 // fed back into the database.
 function transformRawData(columnDefinitions, userTransforms, rawData)
 {
-    function transformItem(raw, key, coldef, defVal)
-    {
-        if (coldef.flags & ColumnFlag.USER_TRANSFORM) {
-            // Apply a user-defined transformation. We assume the user function can deal
-            // with null and undefined values.
-            if (key in userTransforms)
-                return userTransforms[key](raw);
-            else {
-                return [
-                    `<span class="data-error">User transform function "${key}" is missing!</span>`,
-                    defVal
-                ];
-            }
-        }
-
-        if (raw[key] === null) {
-            // This entry exists, but it's NULL. Use the default value so that sorting works.
-            return [defVal, defVal];
-        }
-
-        // Apply a built-in transformation
-        let value = raw[key];
-
-        switch (coldef.type) {
-            case ColumnType.BOOL:
-                value = (value === true) ? "✔" : "";
-                break;
-
-            case ColumnType.NUMERIC:
-                if (value === null || value == undefined)
-                    value = 0;
-
-                break;
-
-            case ColumnType.UNIXTIME:
-                [_, value] = convertTimestamp(value);
-                break;
-
-            default:
-                break;
-        }
-
-        let displayable = null,
-            sortable = null;
-
-        // FIXME: Array values only works with strings
-        if (coldef.flags & ColumnFlag.ARRAY) {
-            displayable = value.map(i => escapeHTML(i)).join("<br>");
-            sortable = value.join();
-        } else {
-            displayable = escapeHTML(value);
-            sortable = raw[key];
-        }
-
-        return [displayable, sortable];
-    };
-
     const columnKeys = Object.keys(columnDefinitions);
-
-    // Default values for different column types. Used to substitute missing values for sorting.
-    const DEFAULT_VALUE = {
-        [ColumnType.BOOL]: false,
-        [ColumnType.NUMERIC]: 0,
-        [ColumnType.UNIXTIME]: 0,
-        [ColumnType.STRING]: ""
-    };
 
     let out = [];
 
@@ -287,21 +287,21 @@ function transformRawData(columnDefinitions, userTransforms, rawData)
 
         let cleaned = {};
 
-        // This is not a column, so it must be set manually. PuavoID is a column, so it
+        // This is not a column, so it must be copied manually. PuavoID is a column, so it
         // is handled automatically.
         cleaned.school_id = raw.school_id;
 
         // Process every column, even if it's not visible
         for (const key of columnKeys) {
             const coldef = columnDefinitions[key],
-                  defVal = DEFAULT_VALUE[coldef.type];
+                  defVal = DEFAULT_VALUES[coldef.type];
 
-            let clean = [];
+            let clean = [false, null, null, null];
 
             if (key in raw) {
                 // The transformation function can return two or three values; the third is
                 // an optional filterable value. If it's omitted, we use the plain raw value.
-                const [d, s, f] = transformItem(raw, key, coldef, defVal);
+                const [d, s, f] = _transformValue(userTransforms, raw, key, coldef, defVal);
 
                 clean[INDEX_EXISTS] = true;
                 clean[INDEX_DISPLAYABLE] = d;
@@ -351,10 +351,9 @@ function sortData(columnDefinitions, sortBy, collator, data)
     let out = [...data];
 
     switch (columnDefinitions[sortBy.column].type) {
-        case ColumnType.BOOL:
+        case ColumnType.BOOL:                   // not the best choice
         case ColumnType.NUMERIC:
         case ColumnType.UNIXTIME:
-        case ColumnType.BOOL:                   // not the best choice
             out.sort((a, b) => {
                 const n1 = a[key][INDEX_SORTABLE],
                       n2 = b[key][INDEX_SORTABLE];
@@ -475,8 +474,8 @@ function itemProcessedStatus(success, message=null)
     });
 }
 
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
 // THE SUPERTABLE
 
 class SuperTable {
@@ -693,7 +692,7 @@ constructor(container, settings)
             defaults: settings.defaultFilter || [[], []],
             filters: null,                              // overridden if saved settings exist
             string: null,                               // ditto
-            program: null,
+            program: null,                              // the current (compiled) filter program
         },
 
         massOperations: Array.isArray(settings.massOperations) ? settings.massOperations : [],
@@ -739,8 +738,7 @@ constructor(container, settings)
         if (typeof(saved) != "string" || saved == "")
             saved = settings.initialFilter;
 
-        this.ui.filters.editor.setVisibleColumns(this.settings.columns.current);
-        this.ui.filters.editor.setTraditionalFilters(this.settings.filters.filters);
+        this.ui.filters.editor.setFilters(this.settings.filters.filters);
         this.ui.filters.editor.setFilterString(saved);
 
         // Can't call setFilter() here, because it attempts to update the table...
@@ -1584,14 +1582,13 @@ loadSettingsJSON()
 
     this.loadSettingsObject(json);
 
-    this.ui.filters.editor.setVisibleColumns(this.settings.columns.current);
-    this.ui.filters.editor.setTraditionalFilters(this.settings.filters.filters);
+    this.ui.filters.editor.setFilters(this.settings.filters.filters);
     this.ui.filters.editor.setFilterString(this.settings.filters.string);
-    this.ui.filters.editor.toggleAdvancedMode(this.settings.filters.advanced);
-    this.settings.filters.program = this.ui.filters.editor.getFilterProgram();
+    this.ui.filters.editor.toggleMode(this.settings.filters.advanced);
     this.ui.filters.enabled.checked = this.settings.filters.enabled;
     this.ui.filters.reverse.checked = this.settings.filters.reverse;
     this.ui.filters.advanced.checked = this.settings.filters.advanced;
+    this.settings.filters.program = this.ui.filters.editor.getFilterProgram();
 
     this.updateTable();
 }
@@ -1694,9 +1691,6 @@ saveColumns()
         }
     }
 
-    if (this.settings.flags & TableFlag.ENABLE_FILTERING)
-        this.ui.filters.editor.setVisibleColumns(this.settings.columns.current);
-
     this.unsavedColumns = false;
     this.updateColumnEditor();
     this.saveSettings();
@@ -1788,17 +1782,17 @@ enableOrDisableColumnEditor(isEnabled)
 // FILTERS
 
 // Called from the filter editor whenever a change to the filters have been made
-filtersHaveChanged(filters, string)
+saveFilters()
 {
-    this.settings.filters.filters = [...filters];
-    this.settings.filters.string = string;
+    this.settings.filters.filters = this.ui.filters.editor.getFilters();
+    this.settings.filters.string = this.ui.filters.editor.getFilterString();
     this.saveSettings();
 }
 
 // Called when a filtering settings have changed enough to force the table to be updated
-applyFilterProgram(program)
+updateFiltering()
 {
-    this.settings.filters.program = program;
+    this.settings.filters.program = this.ui.filters.editor.getFilterProgram();
     this.doneAtLeastOneOperation = false;
 
     if (this.settings.filters.enabled)
@@ -1842,7 +1836,7 @@ toggleFiltersAdvanced()
     this.settings.filters.advanced = this.ui.filters.advanced.checked;
     this.saveSettings();
 
-    this.ui.filters.editor.toggleAdvancedMode(this.settings.filters.advanced);
+    this.ui.filters.editor.toggleMode(this.settings.filters.advanced);
 
     if (this.settings.filters.enabled) {
         this.doneAtLeastOneOperation = false;

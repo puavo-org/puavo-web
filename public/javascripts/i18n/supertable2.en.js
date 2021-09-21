@@ -139,7 +139,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
 
             column_list: {
                 title: "Column List",
-                hidden_warning: "Columns that are not currently visible have been <span class=\"hiddenColumn\">highlighted with different colors</span>. You can use them in your filters, but because you can't see their contents, they can accidentally show rows you didn't want to, or hide rows you didn't mean to. Certain columns can be completely empty (NULL) in the database, and their completely missing values can mess up comparisons. These columns have been also marked on the table; it is recommended that you use the <code>!!</code> operator to test that they actually have (or don't have) a value before you compare their contents. This way you avoid surprises.",
+                hidden_warning: "Certain columns can be completely empty (NULL) in the database, and their completely missing values can mess up comparisons. These columns have been also marked on the table; it is recommended that you use the <code>!!</code> operator to test that they actually have (or don't have) a value before you compare their contents. This way you avoid surprises.",
                 pretty_name: "Column name",
                 database_name: "Equivalent names in filters<br>(click to add)",
                 type: "Type",
@@ -163,6 +163,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
             pretty: {
                 empty: "(empty)",
                 or: "or",
+                nor: "nor",
                 interval: "between",
                 not_interval: "not between",
             },
@@ -177,7 +178,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
                 multiple: "You can specify multiple values.",
                 one_hit_is_enough: "A single match is enough.",
                 no_hits_allowed: "None of the values must match.",
-                regexp: "All comparisons are done using regular expressions that ignore character case.",
+                regexp: "All comparisons are done using regular expressions that ignore character case. Remember that if you're searching for characters that have special meaning in regexps, you must escape (\\) them.",
                 no_values: "You did not specify any comparison values.",
 
                 bool: {

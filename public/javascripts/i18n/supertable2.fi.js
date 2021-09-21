@@ -139,7 +139,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
 
             column_list: {
                 title: "Sarakelista",
-                hidden_warning: "Sarakkeet jotka eivät ole näkyvissä on <span class=\"hiddenColumn\">merkitty eri väreillä</span>. Voit käyttää niitä suodattimessa, mutta koska et näe niiden sisältöä, ne voivat huomaamattasi näyttää rivejä joita ei tarvita, tai piilottaa rivejä joita tarvitaan. Joidenkin sarakkeiden sisältö voi olla tietokannassa kokonaan tyhjä (NULL), ja niiden puuttuva arvo voi siksi vaikuttaa arvaamattomasti sisältövertailuissa. Sarakkeet jotka voivat olla tyhjiä on merkitty taulukkoon; näiden sarakkeiden kanssa kannattaa käyttää <code>!!</code> -operaattoria testamaan että niille oikeasti on (tai ei ole) annettu arvo ennenkuin varsinaisesti vertailet niiden sisältöä. Näin vältyt yllätyksiltä.",
+                hidden_warning: "Joidenkin sarakkeiden sisältö voi olla tietokannassa kokonaan tyhjä (NULL), ja niiden puuttuva arvo voi siksi vaikuttaa arvaamattomasti sisältövertailuissa. Sarakkeet jotka voivat olla tyhjiä on merkitty taulukkoon; näiden sarakkeiden kanssa kannattaa käyttää <code>!!</code> -operaattoria testamaan että niille oikeasti on (tai ei ole) annettu arvo ennenkuin varsinaisesti vertailet niiden sisältöä. Näin vältyt yllätyksiltä.",
                 pretty_name: "Kohdesarake",
                 database_name: "Lausekkeen vastaavavat nimet<br>(klikkaa lisätäksesi)",
                 type: "Tyyppi",
@@ -163,6 +163,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
             pretty: {
                 empty: "(tyhjä)",
                 or: "tai",
+                nor: "eikä",
                 interval: "väliltä",
                 not_interval: "ei väliltä",
             },
@@ -176,7 +177,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
                 multiple: "Voit määrittää useita arvoja.",
                 one_hit_is_enough: "Yksikin osuma riittää.",
                 no_hits_allowed: "Mikään niistä ei saa osua.",
-                regexp: "Kaikki vertailut ovat regexp-vertailuja jotka eivät välitä kirjainkoosta.",
+                regexp: "Kaikki vertailut ovat regexp-vertailuja jotka eivät välitä kirjainkoosta. Muistathan, että jos etsimässäsi tekstissä esiintyy merkkejä jotka tarkoittavat jotain regexp-lauseissa, sinun on eskapoitava (\\) ne.",
                 no_values: "Et määrittänyt yhtään vertailtavaa arvoa.",
 
                 bool: {

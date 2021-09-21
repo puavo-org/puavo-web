@@ -75,7 +75,7 @@ class ColumnDefinitions {
     }
 };
 
-// A custom message logger that also keeps track of row and column numbers
+// A custom logger that also keeps track of row and column numbers and some other metadata
 class MessageLogger {
     constructor()
     {
@@ -763,7 +763,7 @@ const Associativity = {
 };
 
 // If this table is reordered, you must change the parser above to match the new order
-const OPERATOR_PREC = [
+const SHUNTING_OPERATORS = [
     { op: '!', precedence: 4, assoc: Associativity.LEFT },
     { op: '&', precedence: 3, assoc: Associativity.LEFT },
     { op: '|', precedence: 2, assoc: Associativity.LEFT },
@@ -797,14 +797,14 @@ class CodeGenerator {
                 case "|":
                 {
                     const opIndex = tok[1],
-                          thisOp = OPERATOR_PREC[opIndex];
+                          thisOp = SHUNTING_OPERATORS[opIndex];
 
                     while (ops.length > 0) {
                         const top = ops[ops.length - 1];
 
                         if (top[0] != "(" &&
-                            (OPERATOR_PREC[top[1]].precedence > thisOp.precedence ||
-                                (OPERATOR_PREC[top[1]].precedence == thisOp.precedence &&
+                            (SHUNTING_OPERATORS[top[1]].precedence > thisOp.precedence ||
+                                (SHUNTING_OPERATORS[top[1]].precedence == thisOp.precedence &&
                                     thisOp.assoc == Associativity.LEFT))) {
 
                             output.push(top);
@@ -1400,29 +1400,12 @@ const OPERATORS = {
         multiple: true,
     },
 
-    // reverse closed interval
+    // reverse interval (closed)
     "![]": {
         allowed: new Set([ColumnType.NUMERIC, ColumnType.UNIXTIME]),
         multiple: true,
     },
 };
-
-function humanOperatorName(operator)
-{
-    switch (operator) {
-        case "=": return "=";
-        case "!=": return "≠";
-        case "<": return "<";
-        case "<=": return "≤";
-        case ">": return ">";
-        case ">=": return "≥";
-        case "[]": return _tr("tabs.filtering.pretty.interval");
-        case "![]": return _tr("tabs.filtering.pretty.not_interval");
-
-        default:
-            throw new Error(`humanOperatorName(): invalid operator "${operator}"`);
-    }
-}
 
 const ColumnTypeStrings = {
     [ColumnType.BOOL]: "boolean",
@@ -1430,38 +1413,6 @@ const ColumnTypeStrings = {
     [ColumnType.UNIXTIME]: "unixtime",
     [ColumnType.STRING]: "string",
 };
-
-function humanizeStorage(v)
-{
-    if (v.length == 0)
-        return "";
-
-    let unit = v.slice(v.length - 1);
-
-    if (!"BKMGT".includes(unit))
-        return `${v} B`;
-
-    switch (unit) {
-        case "B": unit = "B"; break;
-        case "K": unit = "KiB"; break;
-        case "M": unit = "MiB"; break;
-        case "G": unit = "GiB"; break;
-        case "T": unit = "TiB"; break;
-    }
-
-    return `${v.slice(0, v.length - 1)} ${unit}`
-}
-
-function humanizeTime(s)
-{
-    const d = parseAbsoluteOrRelativeDate(s);
-
-    if (d === null)
-        return "?";
-
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
-           `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
 
 function makeRandomID()
 {
@@ -1493,7 +1444,24 @@ function showElements()
         arguments[i].classList.remove("hidden");
 }
 
-// Single editable (traditional) filter
+function humanOperatorName(operator)
+{
+    switch (operator) {
+        case "=": return "=";
+        case "!=": return "≠";
+        case "<": return "<";
+        case "<=": return "≤";
+        case ">": return ">";
+        case ">=": return "≥";
+        case "[]": return _tr("tabs.filtering.pretty.interval");
+        case "![]": return _tr("tabs.filtering.pretty.not_interval");
+
+        default:
+            throw new Error(`humanOperatorName(): invalid operator "${operator}"`);
+    }
+}
+
+// Single editable filter
 class EditableFilter {
 constructor()
 {
@@ -2071,36 +2039,32 @@ constructor(parentClass, container, columnDefinitions, columnTitles, filterPrese
     // inside this HTML element.
     this.container = container;
 
-    // Definitions
+    // Column definitions
     this.plainColumnDefinitions = columnDefinitions;
     this.columnDefinitions = new ColumnDefinitions(columnDefinitions);
     this.columnTitles = columnTitles;
 
     this.updateColumnHelp = true;
     this.haveHelp = false;
-
-    this.visibleColumns = [];
+    this.changed = false;
+    this.isAdvanced = isAdvanced;
 
     this.filterPresets = filterPresets;
-
-    this.isAdvanced = isAdvanced;
 
     this.filters = {};      // the traditional filters
     this.showJSON = false;
     this.defaultFilter = filterDefaults[0];
 
-    this.changed = false;
-
-    // The current filter programs
+    // The current filter programs. One for the old-style filters, one for the advanced filter.
     this.comparisons = [];
     this.program = [];
     this.comparisonsAdvanced = [];
     this.programAdvanced = [];
 
     // JS event handling shenanigans
-    this.onDeleteFilterClick = this.onDeleteFilterClick.bind(this);
-    this.onDuplicateFilterClick = this.onDuplicateFilterClick.bind(this);
-    this.onActiveFilterClick = this.onActiveFilterClick.bind(this);
+    this.onDeleteFilter = this.onDeleteFilter.bind(this);
+    this.onDuplicateFilter = this.onDuplicateFilter.bind(this);
+    this.onActiveFilter = this.onActiveFilter.bind(this);
     this.onClickColumnName = this.onClickColumnName.bind(this);
 
     this.buildUI();
@@ -2109,7 +2073,7 @@ constructor(parentClass, container, columnDefinitions, columnTitles, filterPrese
 
 buildUI()
 {
-    const haveTraditionalPresets = Object.keys(this.filterPresets[0]).length > 0,
+    const havePresets = Object.keys(this.filterPresets[0]).length > 0,
           haveAdvancedPresets = Object.keys(this.filterPresets[1]).length > 0;
 
     let html = "";
@@ -2125,7 +2089,7 @@ buildUI()
 <table class="filtersTable"></table>
 <div><button id="new">${_tr("tabs.filtering.new_filter")}</button></div>`;
 
-    if (haveTraditionalPresets) {
+    if (havePresets) {
         const presets = this.filterPresets[0];
 
         html += `<div><details><summary>${_tr('tabs.filtering.presets.title')}</summary>`;
@@ -2209,154 +2173,289 @@ buildUI()
 
     // Initial mode selection
     if (this.isAdvanced)
-        this.container.querySelector("div#traditional").classList.add("hidden");
-    else this.container.querySelector("div#advanced").classList.add("hidden");
+        this.$("div#traditional").classList.add("hidden");
+    else this.$("div#advanced").classList.add("hidden");
 
-    this.container.querySelector("button#deleteAll").addEventListener("click", () => this.onDeleteAllFiltersClick());
-    this.container.querySelector("button#toggleJSON").addEventListener("click", () => this.onToggleJSONClick());
-    this.container.querySelector("button#saveJSON").addEventListener("click", () => this.onSaveJSONClick());
-    this.container.querySelector("button#new").addEventListener("click", () => this.onNewFilterClick());
-    this.container.querySelector("textarea#json").addEventListener("input", () => this.validateJSON());
-
-    this.container.querySelector("button#save").addEventListener("click", () => this.onClickedSave());
-    this.container.querySelector("button#clear").addEventListener("click", () => this.onClickedClear());
-    this.container.querySelector("textarea#filter").addEventListener("input", () => this.onFilterInput());
+    this.$("button#deleteAll").addEventListener("click", () => this.onDeleteAllFilters());
+    this.$("button#toggleJSON").addEventListener("click", () => this.onToggleJSON());
+    this.$("button#saveJSON").addEventListener("click", () => this.onSaveJSON());
+    this.$("button#new").addEventListener("click", () => this.onNewFilter());
+    this.$("textarea#json").addEventListener("input", () => this.validateJSON());
+    this.$("button#save").addEventListener("click", () => this.onSave());
+    this.$("button#clear").addEventListener("click", () => this.onClear());
+    this.$("textarea#filter").addEventListener("input", () => this.onAdvancedInput());
 
     // Make the presets clickable
-    if (haveTraditionalPresets) {
-        for (let i of this.container.querySelectorAll("ul#presets a"))
+    if (havePresets) {
+        for (let i of this.$all("div#traditional ul#presets a"))
             i.addEventListener("click", (e) => this.onLoadPreset(e));
     }
 
     if (haveAdvancedPresets) {
-        for (let i of this.container.querySelectorAll(".presetsTable a"))
+        for (let i of this.$all("div#advanced .presetsTable a"))
             i.addEventListener("click", (e) => this.onLoadPreset(e));
     }
 
     this.generateColumnHelp();
 }
 
+$(selector) { return this.container.querySelector(selector); }
+$all(selector) { return this.container.querySelectorAll(selector); }
+
+// Called from the parent class
 enableOrDisable(isEnabled)
 {
     this.disabled = !isEnabled;
 
-    this.container.querySelector("textarea#filter").disabled = this.disabled;
-    this.container.querySelector("button#save").disabled = this.disabled;
-    this.container.querySelector("button#clear").disabled = this.disabled;
+    this.$("textarea#filter").disabled = this.disabled;
+    this.$("button#save").disabled = this.disabled;
+    this.$("button#clear").disabled = this.disabled;
 }
 
-toggleAdvancedMode(advanced)
+// Switch between traditional and advanced filtering modes
+toggleMode(advanced)
 {
     if (this.isAdvanced == advanced)
         return;
 
     this.isAdvanced = advanced;
 
-    let t = this.container.querySelector("div#traditional"),
-        a = this.container.querySelector("div#advanced");
+    if (this.isAdvanced) {
+        this.$("div#traditional").classList.add("hidden");
+        this.$("div#advanced").classList.remove("hidden");
+    } else {
+        this.$("div#traditional").classList.remove("hidden");
+        this.$("div#advanced").classList.add("hidden");
+    }
+
+    this.parentClass.updateFiltering();
+}
+
+// Load a filter preset
+onLoadPreset(e)
+{
+    e.preventDefault();
+    const id = e.target.dataset.id;
+    const preset = this.filterPresets[this.isAdvanced ? 1 : 0][id];
+
+    if (!preset) {
+        window.alert(`Invalid preset ID "${id}". Please contact Opinsys support.`);
+        return;
+    }
 
     if (this.isAdvanced) {
-        t.classList.add("hidden");
-        a.classList.remove("hidden");
-    } else {
-        t.classList.remove("hidden");
-        a.classList.add("hidden");
-    }
+        let f = preset.filter;
 
-    this.compileTraditionalFilters();
-    this.parentClass.applyFilterProgram(this.getFilterProgram());
+        if (this.$("input#add-parenthesis").checked)
+            f = `(${f})`;
+
+        let box = this.$("textarea#filter");
+
+        if (this.$("input#append-at-end-advanced").checked == false)
+            box.value = f;
+        else {
+            // Append or replace?
+            if (box.value.trim().length == 0)
+                box.value = f;
+            else {
+                box.value += "\n";
+                box.value += f;
+            }
+        }
+
+        this.clearMessages();
+        this.changed = true;
+        this.updateUnsavedWarning();
+    } else {
+        // Append or replace?
+        if (this.$("input#append-at-end").checked == false)
+            this.setFilters(preset.filters);
+        else this.setFilters(this.getFilters().concat(preset.filters));
+
+        this.parentClass.saveFilters();
+        this.parentClass.updateFiltering();
+    }
 }
 
-onDeleteAllFiltersClick()
+// Compiles a filter expression and returns the compiled comparisons and RPN code in an array.
+// This does not actually USE the filter for anything, it only compiles the given string.
+compileFilterExpression(input)
 {
-    if (!window.confirm(_tr("tabs.filtering.delete_all_confirm")))
-        return;
+    console.log("----- Compiling filter string -----");
 
+    console.log("Input:");
+    console.log(input);
+
+    const t0 = performance.now();
+
+    this.clearMessages();
+
+    if (input.trim() == "") {
+        // Do nothing if there's nothing to compile
+        console.log("(Doing nothing to an empty string)");
+        return [[], []];
+    }
+
+    let logger = new MessageLogger();
+
+    // ----------------------------------------------------------------------------------------------
+    // Tokenization
+
+    let t = new Tokenizer();
+
+    console.log("----- Tokenization -----");
+
+    t.tokenize(logger, this.columnDefinitions, input);
+
+    if (!logger.empty()) {
+        for (const m of logger.messages) {
+            if (m.message == "unexpected_end") {
+                // Don't report the same error multiple times
+                this.listMessages(logger);
+                return null;
+            }
+        }
+    }
+
+    console.log("Raw tokens:");
+
+    if (t.tokens.length == 0)
+        console.log("  (NONE)");
+    else console.log(t.tokens);
+
+    // ----------------------------------------------------------------------------------------------
+    // Syntax analysis and comparison extraction
+
+    let p = new Parser();
+
+    console.log("----- Syntax analysis/parsing -----");
+
+    // TODO: Should we abort the compilation if this fails? Now we just cram ahead at full speed
+    // and hope for the best.
+    p.parse(logger, this.columnDefinitions, t.tokens, t.lastRow, t.lastCol);
+
+    console.log("Raw comparisons:");
+
+    if (p.comparisons.length == 0)
+        console.log("  (NONE)");
+    else console.log(p.comparisons);
+
+    console.log("Raw parser output:");
+
+    if (p.output.length == 0)
+        console.log("  (NONE)");
+    else console.log(p.output);
+
+    // ----------------------------------------------------------------------------------------------
+    // Compile the actual comparisons
+
+    let comparisons = [];
+
+    console.log("----- Compiling the comparisons -----");
+
+    let cc = new ComparisonCompiler();
+
+    for (const raw of p.comparisons) {
+        const c = cc.compile(logger, this.columnDefinitions, raw.column, raw.operator, raw.value);
+
+        if (c === null) {
+            // null == the comparison was so invalid it could not even be parsed
+            // log it for debugging
+            console.error(raw);
+            continue;
+        }
+
+        if (c === false) {
+            // false == the comparison was syntactically okay, but it wasn't actually correct
+            console.warn("Could not compile comparison");
+            console.warn(raw);
+            continue;
+        }
+
+        comparisons.push(c);
+    }
+
+    if (!logger.empty()) {
+        this.listMessages(logger);
+
+        if (logger.haveErrors()) {
+            // Warnings won't stop the filter string from saved or used
+            console.error("Comparison compilation failed, no filter program produced");
+            return null;
+        }
+    }
+
+    console.log("Compiled comparisons:");
+    console.log(comparisons);
+
+    let program = [];
+
+    console.log("----- Shunting Yard -----");
+
+    // Generate code
+    let cg = new CodeGenerator();
+
+    program = cg.compile(p.output);
+
+    console.log("Final filter program:");
+
+    if (program.length == 0)
+        console.log("  (Empty)");
+
+    for (let i = 0; i < program.length; i++) {
+        const o = program[i];
+
+        switch (o[0]) {
+            case "!":
+                console.log(`(${i}) NEG`);
+                break;
+
+            case "&":
+                console.log(`(${i}) AND`);
+                break;
+
+            case "|":
+                console.log(`(${i}) OR`);
+                break;
+
+            default: {
+                const cmp = comparisons[o[0]];
+                console.log(`(${i}) CMP [${cmp.column} ${cmp.operator} ${cmp.value.toString()}]`);
+                break;
+            }
+        }
+    }
+
+    const t1 = performance.now();
+
+    console.log(`Filter expression compiled to ${program.length} opcode(s), ${comparisons.length} comparison evaluator(s)`);
+    console.log(`Filter expression compilation: ${t1 - t0} ms`);
+
+    return [comparisons, program];
+}
+
+getFilterProgram()
+{
+    return {
+        comparisons: [...(this.isAdvanced ? this.comparisonsAdvanced : this.comparisons)],
+        program: [...(this.isAdvanced ? this.programAdvanced : this.program)]
+    };
+}
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// "TRADITIONAL" FILTERS
+
+// Loads filters from an array, updates the table and builds the filter program
+setFilters(raw)
+{
     this.filters = {};
-    this.container.querySelector("table.filtersTable").innerHTML = "";
-    this.updateJSON();
 
-    this.compileTraditionalFilters();
-    this.parentClass.filtersHaveChanged(this.getTraditionalFilters(), this.getFilterString());
-    this.parentClass.applyFilterProgram(this.getFilterProgram());
-}
-
-onToggleJSONClick()
-{
-    let box = this.container.querySelector("textarea#json"),
-        save = this.container.querySelector("button#saveJSON");
-
-    if (this.showJSON) {
-        hideElements(box, save);
-        this.showJSON = false;
-    } else {
-        showElements(box, save);
-        this.showJSON = true;
-    }
-
-    this.container.querySelector("button#toggleJSON").innerText =
-        _tr("tabs.filtering." + (this.showJSON ? "hide_json" : "show_json"));
-}
-
-onSaveJSONClick()
-{
-    if (!window.confirm(_tr("tabs.filtering.save_json_confirm")))
-        return;
-
-    try {
-        const raw = JSON.parse(this.container.querySelector("textarea#json").value);
-
-        this.filters = {};
-        this.container.querySelector("table.filtersTable").innerHTML = "";
-        this.loadFilters(raw);
-
-        this.compileTraditionalFilters();
-        this.parentClass.filtersHaveChanged(this.getTraditionalFilters(), this.getFilterString());
-        this.parentClass.applyFilterProgram(this.getFilterProgram());
-    } catch (e) {
-        window.alert(e);
-    }
-}
-
-updateJSON()
-{
-    let out = [];
-
-    for (const row of this.container.querySelectorAll("table.filtersTable tr.row"))
-        out.push(this.filters[row.dataset.id].save());
-
-    this.container.querySelector("textarea#json").value = JSON.stringify(out);
-    this.validateJSON();
-}
-
-validateJSON()
-{
-    let box = this.container.querySelector("textarea#json");
-    let ok = true;
-
-    // Is the JSON parseable or not? We don't care about the actual contents.
-    try {
-        JSON.parse(box.value);
-    } catch (e) {
-        ok = false;
-    }
-
-    if (ok)
-        box.classList.remove("invalidJSON");
-    else box.classList.add("invalidJSON");
-
-    this.container.querySelector("button#saveJSON").disabled = !ok;
-}
-
-loadFilters(initial)
-{
-    // Convert and insert the filters in the table
-    let table = this.container.querySelector("table.filtersTable");
+    let table = this.$("table.filtersTable");
 
     table.innerHTML = "";
-    this.filters = {};
 
-    for (const r of (Array.isArray(initial) ? initial : [])) {
+    for (const r of (Array.isArray(raw) ? raw : [])) {
         let e = new EditableFilter();
 
         if (!e.load(r, this.plainColumnDefinitions))
@@ -2373,9 +2472,91 @@ loadFilters(initial)
     }
 
     this.updateJSON();
-    this.compileTraditionalFilters();
+    this.convertAndCompileFilters();
 }
 
+getFilters()
+{
+    let out = [];
+
+    for (const row of this.$all("table.filtersTable tr.row"))
+        out.push(this.filters[row.dataset.id].save());
+
+    return out;
+}
+
+onDeleteAllFilters()
+{
+    if (!window.confirm(_tr("tabs.filtering.delete_all_confirm")))
+        return;
+
+    this.filters = {};
+    this.$("table.filtersTable").innerHTML = "";
+
+    this.updateJSON();
+    this.convertAndCompileFilters();
+    this.parentClass.saveFilters();
+    this.parentClass.updateFiltering();
+}
+
+onToggleJSON()
+{
+    let box = this.$("textarea#json"),
+        button = this.$("button#saveJSON");
+
+    this.showJSON = !this.showJSON;
+
+    if (this.showJSON)
+        showElements(box, button);
+    else hideElements(box, button);
+
+    this.$("button#toggleJSON").innerText =
+        _tr("tabs.filtering." + (this.showJSON ? "hide_json" : "show_json"));
+}
+
+onSaveJSON()
+{
+    if (!window.confirm(_tr("tabs.filtering.save_json_confirm")))
+        return;
+
+    try {
+        this.setFilters(JSON.parse(this.$("textarea#json").value));
+        this.convertAndCompileFilters();
+        this.parentClass.saveFilters();
+        this.parentClass.updateFiltering();
+    } catch (e) {
+        window.alert(e);
+    }
+}
+
+updateJSON()
+{
+    let out = [];
+
+    for (const row of this.$all("table.filtersTable tr.row"))
+        out.push(this.filters[row.dataset.id].save());
+
+    this.$("textarea#json").value = JSON.stringify(out);
+    this.$("textarea#json").classList.remove("invalidJSON");
+    this.$("button#saveJSON").disabled = false;
+}
+
+validateJSON()
+{
+    let box = this.$("textarea#json");
+
+    // Is the JSON parseable?
+    try {
+        JSON.parse(box.value);
+        box.classList.remove("invalidJSON");
+        this.$("button#saveJSON").disabled = false;
+    } catch (e) {
+        box.classList.add("invalidJSON");
+        this.$("button#saveJSON").disabled = true;
+    }
+}
+
+// Pretty-prints a filter row
 prettyPrintFilter(filter)
 {
     const colDef = this.plainColumnDefinitions[filter.column],
@@ -2383,11 +2564,35 @@ prettyPrintFilter(filter)
 
     function formatValue(v)
     {
-        if (colDef.type == ColumnType.UNIXTIME)
-            return humanizeTime(v);
+        if (colDef.type == ColumnType.UNIXTIME) {
+            const d = parseAbsoluteOrRelativeDate(v);
 
-        if (colDef.flags & ColumnFlag.F_STORAGE)
-            return humanizeStorage(v);
+            if (d === null)
+                return "?";
+
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
+                   `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        }
+
+        if (colDef.flags & ColumnFlag.F_STORAGE) {
+            if (v.length == 0)
+                return "";
+
+            let unit = v.slice(v.length - 1);
+
+            if (!"BKMGT".includes(unit))
+                return `${v} B`;
+
+            switch (unit) {
+                case "B": unit = "B"; break;
+                case "K": unit = "KiB"; break;
+                case "M": unit = "MiB"; break;
+                case "G": unit = "GiB"; break;
+                case "T": unit = "TiB"; break;
+            }
+
+            return `${v.slice(0, v.length - 1)} ${unit}`
+        }
 
         return v;
     }
@@ -2489,9 +2694,9 @@ getRowElem(row, what)
 
 setFilterRowEvents(row)
 {
-    this.getRowElem(row, RowElem.BTN_DELETE).addEventListener("click", e => this.onDeleteFilterClick(e));
-    this.getRowElem(row, RowElem.BTN_DUPLICATE).addEventListener("click", e => this.onDuplicateFilterClick(e));
-    this.getRowElem(row, RowElem.CB_ACTIVE).addEventListener("click", e => this.onActiveFilterClick(e));
+    this.getRowElem(row, RowElem.BTN_DELETE).addEventListener("click", e => this.onDeleteFilter(e));
+    this.getRowElem(row, RowElem.BTN_DUPLICATE).addEventListener("click", e => this.onDuplicateFilter(e));
+    this.getRowElem(row, RowElem.CB_ACTIVE).addEventListener("click", e => this.onActiveFilter(e));
 
     this.getRowElem(row, RowElem.DIV_PRETTY).addEventListener("click", e => {
         let row = this.findTableRow(e.target);
@@ -2501,7 +2706,7 @@ setFilterRowEvents(row)
     });
 }
 
-onDeleteFilterClick(e)
+onDeleteFilter(e)
 {
     let tr = this.findTableRow(e.target);
     const id = tr.dataset.id;
@@ -2512,21 +2717,20 @@ onDeleteFilterClick(e)
     tr.parentNode.removeChild(tr);
 
     this.updateJSON();
-    this.parentClass.filtersHaveChanged(this.getTraditionalFilters(), this.getFilterString());
+    this.parentClass.saveFilters();
 
-    // Disabled filters do not cause table rebuilds
+    // Deleting disabled filters don't trigger table rebuilds
     if (wasActive) {
-        this.compileTraditionalFilters();
-        this.parentClass.applyFilterProgram(this.getFilterProgram());
+        this.convertAndCompileFilters();
+        this.parentClass.updateFiltering();
     }
 }
 
-onDuplicateFilterClick(e)
+onDuplicateFilter(e)
 {
     let tr = this.findTableRow(e.target);
     const id = tr.dataset.id;
 
-    // Duplicate the filter
     let dupe = new EditableFilter();
 
     if (!dupe.load(this.filters[id].save(), this.plainColumnDefinitions)) {
@@ -2540,25 +2744,25 @@ onDuplicateFilterClick(e)
 
     this.filters[newID] = dupe;
 
-    // Update the table
     let newRow = this.buildFilterRow(newID, dupe);
 
     tr.parentNode.insertBefore(newRow, tr.nextSibling);
     this.setFilterRowEvents(newRow);
 
     this.updateJSON();
-    this.compileTraditionalFilters();
-    this.parentClass.filtersHaveChanged(this.getTraditionalFilters(), this.getFilterString());
+    this.parentClass.saveFilters();
+
+    // The duplicated row is disabled, don't update the table
 }
 
-onActiveFilterClick(e)
+onActiveFilter(e)
 {
     this.filters[this.findTableRow(e.target).dataset.id].active ^= 1;
 
     this.updateJSON();
-    this.compileTraditionalFilters();
-    this.parentClass.filtersHaveChanged(this.getTraditionalFilters(), this.getFilterString());
-    this.parentClass.applyFilterProgram(this.getFilterProgram());
+    this.convertAndCompileFilters();
+    this.parentClass.saveFilters();
+    this.parentClass.updateFiltering();
 }
 
 openFilterEditor(row)
@@ -2629,11 +2833,11 @@ openFilterEditor(row)
 
         this.getRowElem(row, RowElem.DIV_PRETTY).innerHTML = this.prettyPrintFilter(this.filters[id]);
         this.updateJSON();
-        this.parentClass.filtersHaveChanged(this.getTraditionalFilters(), this.getFilterString());
+        this.parentClass.saveFilters();
 
         if (this.filters[id].active) {
-            this.compileTraditionalFilters();
-            this.parentClass.applyFilterProgram(this.getFilterProgram());
+            this.convertAndCompileFilters();
+            this.parentClass.updateFiltering();
         }
     });
 
@@ -2721,14 +2925,14 @@ fillOperatorSelector(target, type, initial)
 
             o.innerText = humanOperatorName(opId);
             o.dataset.operator = opId;
-            o.selected = opId == initial;
+            o.selected = (opId == initial);
 
             target.appendChild(o);
         }
     }
 }
 
-onNewFilterClick()
+onNewFilter()
 {
     let f = new EditableFilter();
 
@@ -2750,7 +2954,7 @@ onNewFilterClick()
     let newRow = this.buildFilterRow(newID, f);
 
     this.setFilterRowEvents(newRow);
-    this.container.querySelector("table.filtersTable").appendChild(newRow);
+    this.$("table.filtersTable").appendChild(newRow);
     this.updateJSON();
 
     // Open the newly-created filter for editing
@@ -2758,464 +2962,12 @@ onNewFilterClick()
     this.openFilterEditor(newRow);
 }
 
-// Save the advanced filter string
-onClickedSave()
+// Converts the "traditional" filters into an advanced filter string and compiles it
+convertAndCompileFilters()
 {
-    const result = this.compileFilter(this.container.querySelector("textarea#filter").value);
+    let parts = [];
 
-    if (result === false || result === null)
-        return;
-
-    this.comparisonsAdvanced = result[0];
-    this.programAdvanced = result[1];
-    this.changed = false;
-    this.updateUnsavedWarning();
-    this.parentClass.filtersHaveChanged(this.getTraditionalFilters(), this.getFilterString());
-    this.parentClass.applyFilterProgram(this.getFilterProgram());
-}
-
-// Clear the advanced filter
-onClickedClear()
-{
-    if (window.confirm(_tr('are_you_sure'))) {
-        this.container.querySelector("textarea#filter").value = "";
-        this.clearMessages();
-        this.changed = true;
-        this.updateUnsavedWarning();
-    }
-}
-
-// Advanced filter string has changed
-onFilterInput()
-{
-    this.changed = true;
-    this.updateUnsavedWarning();
-}
-
-// Copy the column name to the advanced filter string box
-onClickColumnName(e)
-{
-    e.preventDefault();
-
-    this.container.querySelector("textarea#filter").value += e.target.dataset.column + " ";
-}
-
-updateUnsavedWarning()
-{
-    let legend = this.container.querySelector("fieldset legend");
-
-    if (!legend)
-        return;
-
-    let html = _tr('tabs.filtering.expression_title');
-
-    if (this.changed)
-        html += ` <span class="unsaved">[${_tr('tabs.filtering.unsaved')}]</span>`;
-
-    legend.innerHTML = html;
-}
-
-generateColumnHelp()
-{
-    const COLUMN_TYPES = {
-        [ColumnType.BOOL]: _tr('tabs.filtering.column_list.type_bool'),
-        [ColumnType.NUMERIC]: _tr('tabs.filtering.column_list.type_numeric'),
-        [ColumnType.UNIXTIME]: _tr('tabs.filtering.column_list.type_unixtime'),
-        [ColumnType.STRING]: _tr('tabs.filtering.column_list.type_string'),
-    };
-
-    let html =
-`<table class="commonTable columnHelp"><thead><tr>
-<th>${_tr('tabs.filtering.column_list.pretty_name')}</th>
-<th>${_tr('tabs.filtering.column_list.database_name')}</th>
-<th>${_tr('tabs.filtering.column_list.type')}</th>
-<th>${_tr('tabs.filtering.column_list.operators')}</th>
-<th>${_tr('tabs.filtering.column_list.nullable')}</th>
-</tr></thead><tbody>`;
-
-    let columnNames = [];
-
-    for (const key of Object.keys(this.plainColumnDefinitions))
-        columnNames.push([key, this.columnTitles[key]]);
-
-    columnNames.sort((a, b) => { return a[1].localeCompare(b[1]) });
-
-    //console.log(this.plainColumnDefinitions);
-
-    for (const col of columnNames) {
-        if (this.visibleColumns.includes(col[0]))
-            html += `<tr>`;
-        else html += `<tr class="hiddenColumn">`;
-
-        html += `<td>${col[1]}</td><td>`;
-
-        const nullable = this.plainColumnDefinitions[col[0]].flags & ColumnFlag.F_NULLABLE;
-
-        let fields = Array.from(this.columnDefinitions.getAliases(col[0]));
-
-        fields.sort();
-        fields.unshift(col[0]);
-
-        html += fields.map((f) => `<a href="#" data-column="${f}">${f}</a>`).join("<br>");
-        html += "</td>";
-
-        const type = this.plainColumnDefinitions[col[0]].type;
-
-        html += `<td>${COLUMN_TYPES[type]}</td>`;
-        html += "<td>";
-
-        const ops = Array.from(ALLOWED_OPERATORS[type]);
-
-        for (let i = 0, j = ops.length; i < j; i++) {
-            if (ops[i] == "!!" && !nullable)
-                continue;
-
-            html += `<code>${escapeHTML(ops[i])}</code>`;
-
-            if (i + 1 < j)
-                html += " ";
-        }
-
-        html += "</td>";
-
-        if (nullable)
-            html += `<td>${_tr('tabs.filtering.column_list.is_nullable')}</td>`;
-        else html += "<td></td>";
-
-        html += "</tr>";
-    }
-
-    html += "</tbody></table>";
-
-    let cont = this.container.querySelector("div#columnList");
-
-    // Remove old event handlers first
-    if (cont.firstChild) {
-        for (let a of cont.querySelectorAll("a"))
-            a.removeEventListener("click", this.onClickColumnName);
-    }
-
-    cont.innerHTML = html;
-
-    // Then set up new event handlers
-    for (let a of cont.querySelectorAll("a"))
-        a.addEventListener("click", this.onClickColumnName);
-}
-
-// Load traditional/advanced filter preset
-onLoadPreset(e)
-{
-    e.preventDefault();
-    const id = e.target.dataset.id;
-    const preset = this.filterPresets[this.isAdvanced ? 1 : 0][id];
-
-    if (!preset) {
-        window.alert(`Invalid preset ID "${id}". Please contact Opinsys support.`);
-        return;
-    }
-
-    if (this.isAdvanced) {
-        let f = preset.filter;
-
-        if (this.container.querySelector("input#add-parenthesis").checked)
-            f = `(${f})`;
-
-        let box = this.container.querySelector("textarea#filter");
-
-        if (this.container.querySelector("input#append-at-end-advanced").checked == false)
-            box.value = f;
-        else {
-            // Append or replace?
-            if (box.value.trim().length == 0)
-                box.value = f;
-            else {
-                box.value += "\n";
-                box.value += f;
-            }
-        }
-
-        this.clearMessages();
-        this.changed = true;
-        this.updateUnsavedWarning();
-    } else {
-        // Append or replace?
-        if (this.container.querySelector("input#append-at-end").checked == false)
-            this.setTraditionalFilters(preset.filters);
-        else this.setTraditionalFilters(this.getTraditionalFilters().concat(preset.filters));
-
-        this.parentClass.filtersHaveChanged(this.getTraditionalFilters(), this.getFilterString());
-        this.parentClass.applyFilterProgram(this.getFilterProgram());
-    }
-}
-
-clearMessages()
-{
-    this.container.querySelector("#messages").innerHTML = `<p class="margin-0 padding-0">${_tr('tabs.filtering.no_messages')}</p>`;
-}
-
-// Update the advanced filter compilation messages box
-listMessages(logger)
-{
-    if (logger.empty())
-        return;
-
-    let html = `<table class="commonTable messages width-100p">`;
-
-    html +=
-`<thead><tr>
-<th>${_tr('tabs.filtering.row')}</th>
-<th>${_tr('tabs.filtering.column')}</th>
-<th>${_tr('tabs.filtering.message')}</th>
-</tr></thead><tbody>`;
-
-    // The messages aren't necessarily in any particular order, sort them
-    const sorted = [...logger.messages].sort(function(a, b) { return a.row - b.row || a.col - b.col });
-
-    for (const e of sorted) {
-        let cls = [];
-
-        if (e.type == 'error')
-            cls.push("error");
-
-        html +=
-`<tr class="${cls.join(' ')}" data-pos="${e.pos}" data-len="${e.len}">
-<td class="minimize-width align-center">${e.row}</td>
-<td class="minimize-width align-center">${e.col}</td>`;
-
-        html += "<td>";
-
-        html += _tr('tabs.filtering.' + e.type) + ": ";
-        html += _tr('tabs.filtering.messages.' + e.message);
-
-        if (e.extra !== null)
-            html += `<br>(${e.extra})`;
-
-        html += "</td></tr>";
-    }
-
-    html += "</tbody></table>";
-
-    this.container.querySelector("#messages").innerHTML = html;
-
-    // Add event listeners. I'm 99% certain this leaks memory, but I'm not sure how to fix it.
-    for (let row of this.container.querySelectorAll(`table.messages tbody tr`))
-        row.addEventListener("click", (e) => this.highlightMessage(e));
-}
-
-highlightMessage(e)
-{
-    // Find the target table row. Using "pointer-events" to pass through clicks works, but
-    // it makes browsers not display the "text" cursor when hovering the table and that is
-    // just wrong.
-    let elem = e.target;
-
-    while (elem && elem.nodeName != "TR")
-        elem = elem.parentNode;
-
-    if (!elem) {
-        console.error("highlightMessage(): can't find the clicked table row");
-        return;
-    }
-
-    // Highlight the target
-    const pos = parseInt(elem.dataset.pos, 10),
-          len = parseInt(elem.dataset.len, 10);
-
-    let t = this.container.querySelector("textarea#filter");
-
-    if (!t) {
-        console.error("highlightMessage(): can't find the textarea element");
-        return;
-    }
-
-    t.focus();
-    t.selectionStart = pos;
-    t.selectionEnd = pos + len;
-}
-
-compileFilter(input)
-{
-    console.log("----- Compiling filter string -----");
-
-    console.log("Input:");
-    console.log(input);
-
-    const t0 = performance.now();
-
-    this.clearMessages();
-
-    if (input.trim() == "") {
-        // Do nothing if there's nothing to compile
-        console.log("(Doing nothing to an empty string)");
-        return [[], []];
-    }
-
-    let logger = new MessageLogger();
-
-    // ----------------------------------------------------------------------------------------------
-    // Tokenization
-
-    let t = new Tokenizer();
-
-    console.log("----- Tokenization -----");
-
-    t.tokenize(logger, this.columnDefinitions, input);
-
-    if (!logger.empty()) {
-        for (const m of logger.messages) {
-            if (m.message == "unexpected_end") {
-                // Don't report the same error multiple times
-                this.listMessages(logger);
-                return null;
-            }
-        }
-    }
-
-    console.log("Raw tokens:");
-
-    if (t.tokens.length == 0)
-        console.log("  (NONE)");
-    else console.log(t.tokens);
-
-    // ----------------------------------------------------------------------------------------------
-    // Syntax analysis and comparison extraction
-
-    let p = new Parser();
-
-    console.log("----- Syntax analysis/parsing -----");
-
-    // TODO: Should we abort the compilation if this fails? Now we just cram ahead at full speed
-    // and hope for the best.
-    p.parse(logger, this.columnDefinitions, t.tokens, t.lastRow, t.lastCol);
-
-    console.log("Raw comparisons:");
-
-    if (p.comparisons.length == 0)
-        console.log("  (NONE)");
-    else console.log(p.comparisons);
-
-    console.log("Raw parser output:");
-
-    if (p.output.length == 0)
-        console.log("  (NONE)");
-    else console.log(p.output);
-
-    // ----------------------------------------------------------------------------------------------
-    // Compile the actual comparisons
-
-    let comparisons = [];
-
-    console.log("----- Compiling the comparisons -----");
-
-    let cc = new ComparisonCompiler();
-
-    for (const raw of p.comparisons) {
-        const c = cc.compile(logger, this.columnDefinitions, raw.column, raw.operator, raw.value);
-
-        if (c === null) {
-            // null == the comparison was so invalid it could not even be parsed
-            // log it for debugging
-            console.error(raw);
-            continue;
-        }
-
-        if (c === false) {
-            // false == the comparison was syntactically okay, but it wasn't actually correct
-            console.warn("Could not compile comparison");
-            console.warn(raw);
-            continue;
-        }
-
-        if (!this.visibleColumns.includes(c.column))
-            logger.warn('column_not_visible', raw.column.row, raw.column.col, raw.column.pos, raw.column.len);
-
-        comparisons.push(c);
-    }
-
-    if (!logger.empty()) {
-        this.listMessages(logger);
-
-        if (logger.haveErrors()) {
-            // Warnings won't stop the filter string from saved or used
-            console.error("Comparison compilation failed, no filter program produced");
-            return null;
-        }
-    }
-
-    console.log("Compiled comparisons:");
-    console.log(comparisons);
-
-    let program = [];
-
-    console.log("----- Shunting Yard -----");
-
-    // Generate code
-    let cg = new CodeGenerator();
-
-    program = cg.compile(p.output);
-
-    console.log("Final filter program:");
-
-    if (program.length == 0)
-        console.log("  (Empty)");
-
-    for (let i = 0; i < program.length; i++) {
-        const o = program[i];
-
-        switch (o[0]) {
-            case "!":
-                console.log(`(${i}) NEG`);
-                break;
-
-            case "&":
-                console.log(`(${i}) AND`);
-                break;
-
-            case "|":
-                console.log(`(${i}) OR`);
-                break;
-
-            default: {
-                const cmp = comparisons[o[0]];
-                console.log(`(${i}) CMP [${cmp.column} ${cmp.operator} ${cmp.value.toString()}]`);
-                break;
-            }
-        }
-    }
-
-    const t1 = performance.now();
-
-    console.log(`Filter expression compiled to ${program.length} opcode(s), ${comparisons.length} comparison evaluator(s)`);
-    console.log(`Filter expression compilation: ${t1 - t0} ms`);
-
-    return [comparisons, program];
-}
-
-setVisibleColumns(columns)
-{
-    this.visibleColumns = [...columns];
-
-    // Reflect changes to the column help table
-    this.generateColumnHelp();
-}
-
-setTraditionalFilters(filters)
-{
-    this.filters = {};
-
-    // Clear or set
-    if (filters === undefined || filters === null || !Array.isArray(filters))
-        this.container.querySelector("table.filtersTable").innerHTML = "";
-    else this.loadFilters(filters);
-
-    this.updateJSON();
-}
-
-compileTraditionalFilters()
-{
-    let and = [];
-
-    for (const f of this.getTraditionalFilters()) {
+    for (const f of this.getFilters()) {
         if (!f[0])          // inactive filter
             continue;
 
@@ -3229,8 +2981,6 @@ compileTraditionalFilters()
         const colDef = this.plainColumnDefinitions[col];
 
         // Convert the value
-        //const isNumeric = colDef.type == ColumnType.NUMERIC;
-
         for (let v of f.slice(3)) {
             switch (colDef.type) {
                 case ColumnType.BOOL:
@@ -3272,40 +3022,40 @@ compileTraditionalFilters()
             if (val.length < 2)
                 continue;
 
-            and.push(`(${col} >= ${val[0]} && ${col} <= ${val[1]})`);
+            parts.push(`(${col} >= ${val[0]} && ${col} <= ${val[1]})`);
         } else if (op == "![]") {
             // exclude (open)
             if (val.length < 2)
                 continue;
 
-            and.push(`(${col} < ${val[0]} || ${col} > ${val[1]})`);
+            parts.push(`(${col} < ${val[0]} || ${col} > ${val[1]})`);
         } else {
             if (val.length < 1)
                 continue;
 
             if (val.length == 1) {
                 // a single value
-                and.push(`${col} ${op} ${val[0]}`);
+                parts.push(`${col} ${op} ${val[0]}`);
             } else {
                 // multiple values, either OR'd or AND'd together depending on the operator
-                let or = [];
+                let sub = [];
 
                 for (const v of val)
-                    or.push(`${col} ${op} ${v}`);
+                    sub.push(`${col} ${op} ${v}`);
 
                 if (op == "=")
-                    or = or.join(" || ");
-                else or = or.join(" && ");
+                    sub = sub.join(" || ");
+                else sub = sub.join(" && ");
 
-                and.push("(" + or + ")");
+                parts.push("(" + sub + ")");
             }
         }
     }
 
     // Join the comparisons together and compile the resulting string
-    const script = and.join(" && ");
+    const script = parts.join(" && ");
 
-    const result = this.compileFilter(script);
+    const result = this.compileFilterExpression(script);
 
     if (result === false || result === null) {
         window.alert("Could not compile the filter. See the console for details, then contact Opinsys support.");
@@ -3316,15 +3066,22 @@ compileTraditionalFilters()
     this.program = result[1];
 }
 
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// ADVANCED FILTERS
+
 setFilterString(filter)
 {
+    let box = this.$("textarea#filter");
+
     if (typeof(filter) != "string")
-        this.container.querySelector("textarea#filter").value = "";
-    else this.container.querySelector("textarea#filter").value = filter;
+        box.value = "";
+    else box.value = filter;
 
-    this.clearFilterProgram();
+    this.comparisonsAdvanced = [];
+    this.programAdvanced = [];
 
-    const result = this.compileFilter(this.container.querySelector("textarea#filter").value);
+    const result = this.compileFilterExpression(box.value);
 
     if (result === false || result === null)
         return;
@@ -3333,33 +3090,227 @@ setFilterString(filter)
     this.programAdvanced = result[1];
 }
 
-clearFilterProgram()
-{
-    this.comparisonsAdvanced = [];
-    this.programAdvanced = [];
-}
-
-getTraditionalFilters()
-{
-    let out = [];
-
-    for (const row of this.container.querySelectorAll("table.filtersTable tr.row"))
-        out.push(this.filters[row.dataset.id].save());
-
-    return out;
-}
-
 getFilterString()
 {
-    return this.container.querySelector("textarea#filter").value;
+    return this.$("textarea#filter").value;
 }
 
-getFilterProgram()
+// Save the advanced filter string
+onSave()
 {
-    return {
-        comparisons: this.isAdvanced ? [...this.comparisonsAdvanced] : [...this.comparisons],
-        program: this.isAdvanced ? [...this.programAdvanced] : [...this.program]
+    const result = this.compileFilterExpression(this.$("textarea#filter").value);
+
+    if (result === false || result === null)
+        return;
+
+    this.comparisonsAdvanced = result[0];
+    this.programAdvanced = result[1];
+    this.changed = false;
+    this.updateUnsavedWarning();
+    this.parentClass.saveFilters();
+    this.parentClass.updateFiltering();
+}
+
+// Clear the advanced filter
+onClear()
+{
+    if (window.confirm(_tr('are_you_sure'))) {
+        this.$("textarea#filter").value = "";
+        this.clearMessages();
+        this.changed = true;
+        this.updateUnsavedWarning();
+    }
+}
+
+// Advanced filter string has changed
+onAdvancedInput()
+{
+    this.changed = true;
+    this.updateUnsavedWarning();
+}
+
+// Copy the column name to the advanced filter string box
+onClickColumnName(e)
+{
+    e.preventDefault();
+    this.$("textarea#filter").value += e.target.dataset.column + " ";
+}
+
+updateUnsavedWarning()
+{
+    let legend = this.$("fieldset legend");
+
+    if (!legend)
+        return;
+
+    let html = _tr('tabs.filtering.expression_title');
+
+    if (this.changed)
+        html += ` <span class="unsaved">[${_tr('tabs.filtering.unsaved')}]</span>`;
+
+    legend.innerHTML = html;
+}
+
+generateColumnHelp()
+{
+    const COLUMN_TYPES = {
+        [ColumnType.BOOL]: _tr('tabs.filtering.column_list.type_bool'),
+        [ColumnType.NUMERIC]: _tr('tabs.filtering.column_list.type_numeric'),
+        [ColumnType.UNIXTIME]: _tr('tabs.filtering.column_list.type_unixtime'),
+        [ColumnType.STRING]: _tr('tabs.filtering.column_list.type_string'),
     };
+
+    let html =
+`<table class="commonTable columnHelp"><thead><tr>
+<th>${_tr('tabs.filtering.column_list.pretty_name')}</th>
+<th>${_tr('tabs.filtering.column_list.database_name')}</th>
+<th>${_tr('tabs.filtering.column_list.type')}</th>
+<th>${_tr('tabs.filtering.column_list.operators')}</th>
+<th>${_tr('tabs.filtering.column_list.nullable')}</th>
+</tr></thead><tbody>`;
+
+    let columnNames = [];
+
+    for (const key of Object.keys(this.plainColumnDefinitions))
+        columnNames.push([key, this.columnTitles[key]]);
+
+    columnNames.sort((a, b) => { return a[1].localeCompare(b[1]) });
+
+    for (const col of columnNames) {
+        html += `<tr><td>${col[1]}</td><td>`;
+
+        const nullable = this.plainColumnDefinitions[col[0]].flags & ColumnFlag.F_NULLABLE;
+
+        let fields = Array.from(this.columnDefinitions.getAliases(col[0]));
+
+        fields.sort();
+        fields.unshift(col[0]);
+
+        html += fields.map((f) => `<a href="#" data-column="${f}">${f}</a>`).join("<br>");
+        html += "</td>";
+
+        const type = this.plainColumnDefinitions[col[0]].type;
+
+        html += `<td>${COLUMN_TYPES[type]}</td>`;
+        html += "<td>";
+
+        const ops = Array.from(ALLOWED_OPERATORS[type]);
+
+        for (let i = 0, j = ops.length; i < j; i++) {
+            if (ops[i] == "!!" && !nullable)
+                continue;
+
+            html += `<code>${escapeHTML(ops[i])}</code>`;
+
+            if (i + 1 < j)
+                html += " ";
+        }
+
+        html += "</td>";
+
+        if (nullable)
+            html += `<td>${_tr('tabs.filtering.column_list.is_nullable')}</td>`;
+        else html += "<td></td>";
+
+        html += "</tr>";
+    }
+
+    html += "</tbody></table>";
+
+    let cont = this.$("div#columnList");
+
+    // Remove old event handlers first
+    if (cont.firstChild)
+        for (let a of cont.querySelectorAll("a"))
+            a.removeEventListener("click", this.onClickColumnName);
+
+    cont.innerHTML = html;
+
+    // Then set up new event handlers
+    for (let a of cont.querySelectorAll("a"))
+        a.addEventListener("click", this.onClickColumnName);
+}
+
+clearMessages()
+{
+    this.$("#messages").innerHTML = `<p class="margin-0 padding-0">${_tr('tabs.filtering.no_messages')}</p>`;
+}
+
+// Update the advanced filter compilation messages box
+listMessages(logger)
+{
+    if (logger.empty())
+        return;
+
+    let html =
+`<table class="commonTable messages width-100p"><thead><tr>
+<th>${_tr('tabs.filtering.row')}</th>
+<th>${_tr('tabs.filtering.column')}</th>
+<th>${_tr('tabs.filtering.message')}</th>
+</tr></thead><tbody>`;
+
+    // The messages aren't necessarily in any particular order, sort them
+    const sorted = [...logger.messages].sort(function(a, b) { return a.row - b.row || a.col - b.col });
+
+    for (const e of sorted) {
+        let cls = [];
+
+        if (e.type == 'error')
+            cls.push("error");
+
+        html +=
+`<tr class="${cls.join(' ')}" data-pos="${e.pos}" data-len="${e.len}">
+<td class="minimize-width align-center">${e.row}</td>
+<td class="minimize-width align-center">${e.col}</td>`;
+
+        html += "<td>";
+        html += _tr('tabs.filtering.' + e.type) + ": ";
+        html += _tr('tabs.filtering.messages.' + e.message);
+
+        if (e.extra !== null)
+            html += `<br>(${e.extra})`;
+
+        html += "</td></tr>";
+    }
+
+    html += "</tbody></table>";
+
+    this.$("#messages").innerHTML = html;
+
+    // Add event listeners. I'm 99% certain this leaks memory, but I'm not sure how to fix it.
+    for (let row of this.$all(`table.messages tbody tr`))
+        row.addEventListener("click", (e) => this.highlightMessage(e));
+}
+
+highlightMessage(e)
+{
+    // Find the target table row. Using "pointer-events" to pass through clicks works, but
+    // it makes browsers not display the "text" cursor when hovering the table and that is
+    // just wrong.
+    let elem = e.target;
+
+    while (elem && elem.nodeName != "TR")
+        elem = elem.parentNode;
+
+    if (!elem) {
+        console.error("highlightMessage(): can't find the clicked table row");
+        return;
+    }
+
+    // Highlight the target
+    const pos = parseInt(elem.dataset.pos, 10),
+          len = parseInt(elem.dataset.len, 10);
+
+    let t = this.$("textarea#filter");
+
+    if (!t) {
+        console.error("highlightMessage(): can't find the textarea element");
+        return;
+    }
+
+    t.focus();
+    t.selectionStart = pos;
+    t.selectionEnd = pos + len;
 }
 
 };  // class FilterEditor
