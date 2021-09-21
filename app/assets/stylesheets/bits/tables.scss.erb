@@ -186,7 +186,9 @@ SUPERTABLES
 }
 
 .stControls button:disabled,
-.stControls button:hover:disabled {
+.stControls button.danger:disabled,
+.stControls button:hover:disabled,
+.stControls button.danger:hover:disabled {
     cursor: not-allowed;
     color: var(--st-buttons-disabled);
 }

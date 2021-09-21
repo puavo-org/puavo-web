@@ -1478,6 +1478,10 @@ constructor()
     this.originalOperator = null;
     this.originalValues = null;
     this.originalFlags = null;
+
+    // True if this is a brand new filter that hasn't been saved yet. Changes how some
+    // operations work (or don't work).
+    this.isNew = false;
 }
 
 beginEditing()
@@ -2479,8 +2483,12 @@ getFilters()
 {
     let out = [];
 
-    for (const row of this.$all("table.filtersTable tr.row"))
-        out.push(this.filters[row.dataset.id].save());
+    for (const row of this.$all("table.filtersTable tr.row")) {
+        const f = this.filters[row.dataset.id];
+
+        if (!f.isNew)
+            out.push(f.save());
+    }
 
     return out;
 }
@@ -2531,12 +2539,7 @@ onSaveJSON()
 
 updateJSON()
 {
-    let out = [];
-
-    for (const row of this.$all("table.filtersTable tr.row"))
-        out.push(this.filters[row.dataset.id].save());
-
-    this.$("textarea#json").value = JSON.stringify(out);
+    this.$("textarea#json").value = JSON.stringify(this.getFilters());
     this.$("textarea#json").classList.remove("invalidJSON");
     this.$("button#saveJSON").disabled = false;
 }
@@ -2654,10 +2657,10 @@ buildFilterRow(id, filter)
 
     tr.innerHTML =
 `<td class="minimize-width"><div class="buttons">
-<button class="danger" title="${_tr("tabs.filtering.remove_title")}">${_tr("tabs.filtering.remove")}</button>
-<button title="${_tr("tabs.filtering.duplicate_title")}">${_tr("tabs.filtering.duplicate")}</button></div></td>
+<button class="danger" title="${_tr("tabs.filtering.remove_title")}" ${filter.isNew ? "disabled" : ""}>${_tr("tabs.filtering.remove")}</button>
+<button title="${_tr("tabs.filtering.duplicate_title")}" ${filter.isNew ? "disabled" : ""}>${_tr("tabs.filtering.duplicate")}</button></div></td>
 <td class="minimize-width" title="${_tr("tabs.filtering.active_title")}">
-<input type="checkbox" class="active" ${filter.active == 1 ? "checked" : ""}>
+<input type="checkbox" class="active" ${filter.active == 1 ? "checked" : ""} ${filter.isNew ? "disabled" : ""}>
 </td><td><div class="flex flex-rows"><div class="pretty" title="${_tr("tabs.filtering.click_to_edit_title")}">
 ${this.prettyPrintFilter(filter)}</div><div></div></td>`;
 
@@ -2829,23 +2832,27 @@ openFilterEditor(row)
         }
 
         this.filters[id].finishEditing();
+        this.filters[id].isNew = false;     // enable normal functionality
         this.closeFilterEditor(row);
 
+        this.getRowElem(row, RowElem.BTN_DELETE).disabled = false;
+        this.getRowElem(row, RowElem.BTN_DUPLICATE).disabled = false;
+        this.getRowElem(row, RowElem.CB_ACTIVE).disabled = false;
         this.getRowElem(row, RowElem.DIV_PRETTY).innerHTML = this.prettyPrintFilter(this.filters[id]);
         this.updateJSON();
         this.parentClass.saveFilters();
-
-        if (this.filters[id].active) {
-            this.convertAndCompileFilters();
-            this.parentClass.updateFiltering();
-        }
     });
 
     wrapper.querySelector("button#cancel").addEventListener("click", (e) => {
         let row = this.findTableRow(e.target);
+        let filter = this.filters[row.dataset.id];
+        const wasNew = filter.isNew;
 
-        this.filters[row.dataset.id].cancelEditing();
-        this.closeFilterEditor(row);
+        filter.cancelEditing();
+
+        if (wasNew)
+            row.parentNode.removeChild(row);
+        else this.closeFilterEditor(row);
     });
 }
 
@@ -2948,6 +2955,8 @@ onNewFilter()
         return;
     }
 
+    f.isNew = true;     // disables certain UI elements and makes the Cancel button remove the filter
+
     const newID = nextFilterID();
 
     this.filters[newID] = f;
@@ -2955,7 +2964,6 @@ onNewFilter()
 
     this.setFilterRowEvents(newRow);
     this.$("table.filtersTable").appendChild(newRow);
-    this.updateJSON();
 
     // Open the newly-created filter for editing
     this.filters[newID].beginEditing();
