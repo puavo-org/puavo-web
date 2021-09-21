@@ -1470,43 +1470,41 @@ constructor()
     this.operator = null;
     this.values = [];
 
-    // Editor child class (see below)
-    this.editor = null;
-
-    // "Backup" copy kept during editing, so changes can be detected and even undone
-    this.originalColumn = null;
-    this.originalOperator = null;
-    this.originalValues = null;
-    this.originalFlags = null;
+    // Current data being edited (the original data is not overwritten until "Save" is pressed)
+    this.editColumn = null;
+    this.editOperator = null;
+    this.editValues = null;
 
     // True if this is a brand new filter that hasn't been saved yet. Changes how some
     // operations work (or don't work).
     this.isNew = false;
+
+    // Editor child class (see below)
+    this.editor = null;
 }
 
 beginEditing()
 {
-    this.originalColumn = this.column;
-    this.originalOperator = this.operator;
-    this.originalValues = [...this.values];
-    this.originalFlags = this.flags;
+    this.editColumn = this.column;
+    this.editOperator = this.operator;
+    this.editValues = [...this.values];
 
     // The editor is created elsewhere
 }
 
 finishEditing()
 {
-    // Column and operator are edited directly, but the type-specific child UI
-    // changes the values
+    // Overwrite old values
+    this.column = this.editColumn;
+    this.operator = this.editOperator;
     this.values = this.editor.getData();
 }
 
 cancelEditing()
 {
-    this.column = this.originalColumn;
-    this.operator = this.originalOperator;
-    this.values = [...this.originalValues]
-    this.flags = this.originalFlags;
+    this.editColumn = null;
+    this.editOperator = null;
+    this.editValues = null;
 
     // The editor is destroyed elsewhere
 }
@@ -1611,9 +1609,6 @@ load(raw, columnDefinitions)
         this.values = [this.values[0]];
     }
 
-    // Various form elements require unique IDs, so we prefix them with this
-    this.id = makeRandomID();
-
     return true;
 }
 
@@ -1627,16 +1622,11 @@ save()
 class FilterEditorBase {
 constructor(container, filter, definition)
 {
-    // Filter data
-    this.column = filter.column;
-    this.operator = filter.operator;
-    this.values = [...filter.values];
+    // Target filter
+    this.filter = filter;
 
     // Does this filter target RAM/HD sizes?
     this.isStorage = (definition.flags & ColumnFlag.F_STORAGE) ? true : false;
-
-    // The column definition (some editors need access to its data)
-    this.definition = definition;
 
     // Where to put the editor interface
     this.container = container;
@@ -1656,13 +1646,12 @@ buildUI()
 
 operatorHasChanged(operator)
 {
-    this.operator = operator;
     this.buildUI();
 }
 
 getData()
 {
-    return this.values;
+    return this.filter.editValues;
 }
 
 // Return [state, message], if state is true then the data is valid, otherwise the
@@ -1764,17 +1753,22 @@ class FilterEditorBoolean extends FilterEditorBase {
 buildUI()
 {
     // HAX!
-    if (this.values.length == 0 || (this.values[0] !== 1 && this.values[0] !== 0))
-        this.values = [1];
+    if (this.filter.editValues.length == 0 || (this.filter.editValues[0] !== 1 && this.filter.editValues[0] !== 0))
+        this.filter.editValues = [1];
 
     this.container.innerHTML =
 `<div class="flex flex-rows flex-gap-5px">
-<span><input type="radio" name="${this.id}-value" id="${this.id}-true" ${this.values[0] === 1 ? "checked" : ""}><label for="${this.id}-true">${_tr('tabs.filtering.ed.bool.t')}</label></span>
-<span><input type="radio" name="${this.id}-value" id="${this.id}-false" ${this.values[0] !== 1 ? "checked" : ""}><label for="${this.id}-false">${_tr('tabs.filtering.ed.bool.f')}</label></span>
+<span><input type="radio" name="${this.id}-value" id="${this.id}-true" ${this.filter.editValues[0] === 1 ? "checked" : ""}><label for="${this.id}-true">${_tr('tabs.filtering.ed.bool.t')}</label></span>
+<span><input type="radio" name="${this.id}-value" id="${this.id}-false" ${this.filter.editValues[0] !== 1 ? "checked" : ""}><label for="${this.id}-false">${_tr('tabs.filtering.ed.bool.f')}</label></span>
 </div>`;
 
-    this.$(`#${this.id}-true`).addEventListener("click", () => { this.values = [1]; });
-    this.$(`#${this.id}-false`).addEventListener("click", () => { this.values = [0]; });
+    this.$(`#${this.id}-true`).addEventListener("click", () => { this.filter.editValues = [1]; });
+    this.$(`#${this.id}-false`).addEventListener("click", () => { this.filter.editValues = [0]; });
+}
+
+getData()
+{
+    return [this.filter.editValues[0] === 1 ? 1 : 0];
 }
 };  // class FilterEditorBoolean
 
@@ -1784,7 +1778,7 @@ buildUI()
     this.container.innerHTML = `<p>${this.getExplanation()}</p><table id="values"></table>`;
     let table = this.$("table#values");
 
-    for (const v of this.values)
+    for (const v of this.filter.editValues)
         table.appendChild(this.createValueRow(v));
 }
 
@@ -1800,7 +1794,6 @@ getData()
 
 operatorHasChanged(operator)
 {
-    this.operator = operator;
     this.$("p").innerHTML = this.getExplanation();
 }
 
@@ -1810,7 +1803,7 @@ getExplanation()
 
     out += _tr("tabs.filtering.ed.multiple");
     out += " ";
-    out += _tr((this.operator == "=") ? "tabs.filtering.ed.one_hit_is_enough" : "tabs.filtering.ed.no_hits_allowed");
+    out += _tr((this.filter.editOperator == "=") ? "tabs.filtering.ed.one_hit_is_enough" : "tabs.filtering.ed.no_hits_allowed");
     out += " ";
     out += _tr("tabs.filtering.ed.regexp");
 
@@ -1831,30 +1824,31 @@ constructor(container, filter, definition)
 buildUI()
 {
     const id = this.id;
+    const opr = this.filter.editOperator;
 
-    if (this.operator == "[]" || this.operator == "![]") {
+    if (opr == "[]" || opr == "![]") {
         let help = "";
 
-        if (this.operator == "[]")
+        if (opr == "[]")
             help += _tr("tabs.filtering.ed.closed");
         else help += _tr("tabs.filtering.ed.open");
 
         this.container.innerHTML = `<p>${help}${this.getExtraHelp()}</p><table id="values"></table>`;
 
-        if (this.values.length == 1) {
+        if (this.filter.editValues.length == 1) {
             // If you change the operator from a single-value to range, there is no second value yet
-            this.values.push(this.values[0]);
+            this.filter.editValues.push(this.filter.editValues[0]);
         }
 
         let table = this.$("table#values");
 
-        table.appendChild(this.createValueRow(this.values[0], false, "Min:"));
-        table.appendChild(this.createValueRow(this.values[1], false, "Max:"));
-    } else if (this.operator == "=" || this.operator == "!=") {
+        table.appendChild(this.createValueRow(this.filter.editValues[0], false, "Min:"));
+        table.appendChild(this.createValueRow(this.filter.editValues[1], false, "Max:"));
+    } else if (opr == "=" || opr == "!=") {
         let html = `<p>${_tr("tabs.filtering.ed.multiple")}`;
 
         html += " ";
-        html += _tr((this.operator == "=") ? "tabs.filtering.ed.one_hit_is_enough" : "tabs.filtering.ed.no_hits_allowed");
+        html += _tr((opr == "=") ? "tabs.filtering.ed.one_hit_is_enough" : "tabs.filtering.ed.no_hits_allowed");
         html += " ";
 
         html += `${this.getExtraHelp()}</p><table id="values"></table>`;
@@ -1863,16 +1857,17 @@ buildUI()
 
         let table = this.$("table#values");
 
-        for (const v of this.values)
+        for (const v of this.filter.editValues)
             table.appendChild(this.createValueRow(v));
     } else {
         this.container.innerHTML = `<p>${_tr("tabs.filtering.ed.single")}${this.getExtraHelp()}</p><table id="values"></table>`;
-        this.$("table#values").appendChild(this.createValueRow(this.values[0], false));
+        this.$("table#values").appendChild(this.createValueRow(this.filter.editValues[0], false));
     }
 }
 
 getData()
 {
+    const interval = (this.filter.editOperator == "[]" || this.filter.editOperator == "![]");
     let values = [];
 
     // This assumes validate() has been called first and the data is actually valid
@@ -1899,7 +1894,7 @@ getData()
 
     // min > max, swap
     // TODO: Make this work with storage
-    if (!this.isStorage && (this.operator == "[]" || this.operator == "![]") && values[0] > values[1])
+    if (!this.isStorage && interval && values[0] > values[1])
         values = [values[1], values[0]];
 
     return values;
@@ -1907,7 +1902,7 @@ getData()
 
 validate()
 {
-    const interval = (this.operator == "[]" || this.operator == "![]");
+    const interval = (this.filter.editOperator == "[]" || this.filter.editOperator == "![]");
     let valid = 0;
 
     for (const i of this.$all(`table#values tr input[type="text"]`)) {
@@ -1988,7 +1983,7 @@ getData()
 
 validate()
 {
-    const interval = (this.operator == "[]" || this.operator == "![]");
+    const interval = (this.filter.editOperator == "[]" || this.filter.editOperator == "![]");
     let valid = 0;
 
     for (const i of this.$all(`table#values tr input[type="text"]`)) {
@@ -2713,7 +2708,6 @@ onDeleteFilter(e)
 {
     let tr = this.findTableRow(e.target);
     const id = tr.dataset.id;
-
     const wasActive = this.filters[id].active;
 
     delete this.filters[id];
@@ -2803,15 +2797,18 @@ openFilterEditor(row)
 
         o.innerText = title;
         o.dataset.column = column;
-        o.selected = (filter.column == column);
+        o.selected = (filter.editColumn == column);
 
         select.appendChild(o);
     }
 
-    const colDef = this.plainColumnDefinitions[filter.column];
+    const colDef = this.plainColumnDefinitions[filter.editColumn];
+
+    console.log(`Initial column: |${filter.editColumn}|`);
+    console.log(`Initial operator: |${filter.editOperator}|`);
 
     this.fillOperatorSelector(wrapper.querySelector("select#operator"),
-                              colDef.type, filter.operator);
+                              colDef.type, filter.editOperator);
 
     // Initial type-specific editor child UI
     this.buildValueEditor(filter, wrapper.querySelector("div#editor"), colDef);
@@ -2890,20 +2887,20 @@ onColumnChanged(e)
     let filter = this.filters[id];
     let wrapper = this.getRowElem(row, RowElem.DIV_EDITOR);
 
-    filter.column = e.target[e.target.selectedIndex].dataset.column;
+    filter.editColumn = e.target[e.target.selectedIndex].dataset.column;
 
     // Is the previous operator still valid for this type? If not, reset it to "=",
     // it's the default (and the safest) operator.
-    const newDef = this.plainColumnDefinitions[filter.column];
+    const newDef = this.plainColumnDefinitions[filter.editColumn];
 
-    if (!OPERATORS[filter.operator].allowed.has(newDef.type))
-        filter.operator = "=";
+    if (!OPERATORS[filter.editOperator].allowed.has(newDef.type))
+        filter.editOperator = "=";
 
     // Refill the operator selector
     // TODO: Don't do this if the new column has the same operators available
     // as the previous column did.
     this.fillOperatorSelector(wrapper.querySelector("select#operator"),
-                              newDef.type, filter.operator);
+                              newDef.type, filter.editOperator);
 
     // Recreate the editor UI
     let editor = wrapper.querySelector("div#editor");
@@ -2917,9 +2914,10 @@ onOperatorChanged(e)
 {
     const row = this.findTableRow(e.target);
     const operator = e.target[e.target.selectedIndex].dataset.operator;
+    let filter = this.filters[row.dataset.id];
 
-    this.filters[row.dataset.id].operator = operator;
-    this.filters[row.dataset.id].editor.operatorHasChanged(operator);
+    filter.editOperator = operator;
+    filter.editor.operatorHasChanged(operator);
 }
 
 fillOperatorSelector(target, type, initial)
