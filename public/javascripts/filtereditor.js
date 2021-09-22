@@ -1674,7 +1674,7 @@ operatorHasChanged(operator)
 
 getData()
 {
-    return this.filter.editValues;
+    throw new Error("you did not override getData()");
 }
 
 // Return [state, message], if state is true then the data is valid, otherwise the
@@ -1716,10 +1716,8 @@ createValueRow(value, showButtons=true, title=null)
         html += `<input type="text" size="${this.fieldSize}" maxlength="${this.maxLength}" value="${value}">`;
     }
 
-    if (showButtons) {
-        html += `<button>+</button>`;
-        html += `<button>-</button>`;
-    }
+    if (showButtons)
+        html += `<button>+</button><button>-</button>`;
 
     html += "</div></td>";
 
@@ -1731,10 +1729,9 @@ createValueRow(value, showButtons=true, title=null)
     return row;
 }
 
-// +/- button click handlers
 addEventHandlers(row)
 {
-    // The button positions change if the unit combo box is on the row
+    // +/- button click handlers. Their positions change if the unit combo box is on the row.
     const add = this.isStorage ? 2 : 1,
           del = this.isStorage ? 3 : 2;
 
@@ -2136,8 +2133,7 @@ buildUI()
 <legend>${_tr('tabs.filtering.messages_title')}</legend>
 <div id="messages"></div>
 </fieldset>
-</div>
-`;
+</div>`;
 
     html += `<div class="flex flex-rows flex-gap-10px margin-top-10px">`;
 
@@ -2817,9 +2813,6 @@ openFilterEditor(row)
     }
 
     const colDef = this.plainColumnDefinitions[filter.editColumn];
-
-    console.log(`Initial column: |${filter.editColumn}|`);
-    console.log(`Initial operator: |${filter.editOperator}|`);
 
     this.fillOperatorSelector(wrapper.querySelector("select#operator"),
                               colDef.type, filter.editOperator);
