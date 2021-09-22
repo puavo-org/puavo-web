@@ -2219,6 +2219,23 @@ enableOrDisable(isEnabled)
     this.$("textarea#filter").disabled = this.disabled;
     this.$("button#save").disabled = this.disabled;
     this.$("button#clear").disabled = this.disabled;
+
+    this.$("button#deleteAll").disabled = this.disabled;
+    this.$("button#toggleJSON").disabled = this.disabled;
+    this.$("button#saveJSON").disabled = this.disabled;
+    this.$("button#new").disabled = this.disabled;
+
+    // Filter editor row elements
+    for (let row of this.$all("table.filtersTable tr.row")) {
+        const f = this.filters[row.dataset.id];
+
+        if (f.isNew)
+            continue;
+
+        row.children[0].children[0].children[0].disabled = this.disabled;   // delete
+        row.children[0].children[0].children[1].disabled = this.disabled;   // duplicate
+        row.children[1].children[0].disabled = this.disabled;               // active
+    }
 }
 
 // Switch between traditional and advanced filtering modes
