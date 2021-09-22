@@ -1712,9 +1712,7 @@ createValueRow(value, showButtons=true, title=null)
             html += `<option data-unit="${u[1]}" ${u[1] == unit ? "selected" : ""}>${u[0]}</option>`;
 
         html += "</select>";
-    } else {
-        html += `<input type="text" size="${this.fieldSize}" maxlength="${this.maxLength}" value="${value}">`;
-    }
+    } else html += `<input type="text" size="${this.fieldSize}" maxlength="${this.maxLength}">`;
 
     if (showButtons)
         html += `<button>+</button><button>-</button>`;
@@ -1722,6 +1720,9 @@ createValueRow(value, showButtons=true, title=null)
     html += "</div></td>";
 
     row.innerHTML = html;
+
+    if (!this.isStorage)
+        row.querySelector(`input[type="text"]`).value = value;
 
     if (showButtons)
         this.addEventHandlers(row);
