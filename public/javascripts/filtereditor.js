@@ -3304,8 +3304,8 @@ listMessages(logger)
 
         html +=
 `<tr class="${cls.join(' ')}" data-pos="${e.pos}" data-len="${e.len}">
-<td class="minimize-width align-center">${e.row}</td>
-<td class="minimize-width align-center">${e.col}</td>`;
+<td class="minimize-width align-center">${e.row == -1 ? "" : e.row}</td>
+<td class="minimize-width align-center">${e.col == -1 ? "" : e.col}</td>`;
 
         html += "<td>";
         html += _tr('tabs.filtering.' + e.type) + ": ";
@@ -3353,8 +3353,14 @@ highlightMessage(e)
     }
 
     t.focus();
-    t.selectionStart = pos;
-    t.selectionEnd = pos + len;
+
+    if (len == -1) {
+        // Move the cursor to the end
+        t.setSelectionRange(t.value.length, t.value.length);
+    } else {
+        t.selectionStart = pos;
+        t.selectionEnd = pos + len;
+    }
 }
 
 };  // class FilterEditor
