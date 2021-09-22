@@ -1461,6 +1461,29 @@ function humanOperatorName(operator)
     }
 }
 
+function getDefaultValue(definition)
+{
+    switch (definition.type) {
+        case ColumnType.BOOL:
+            return true;
+
+        case ColumnType.NUMERIC:
+            if (definition.flags & ColumnFlag.F_STORAGE)
+                return "0M";
+
+            return 0;
+
+        case ColumnType.STRING:
+            return "";
+
+        case ColumnType.UNIXTIME:
+            return 0;
+
+        default:
+            throw new Error("getDefaultValue(): invalid column type");
+    }
+}
+
 // Single editable filter
 class EditableFilter {
 constructor()
@@ -2947,6 +2970,8 @@ onNewFilter()
         // Use the first available column. Probably not the best, but at least the filter will be valid.
         initial = [0, Object.keys(this.plainColumnDefinitions)[0], "=", ""];
     } else initial = [...this.defaultFilter];
+
+    initial[3] = getDefaultValue(this.plainColumnDefinitions[initial[1]]);
 
     if (!f.load(initial, this.plainColumnDefinitions)) {
         window.alert("Filter creation failed. See the console for details.");
