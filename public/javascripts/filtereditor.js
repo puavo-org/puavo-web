@@ -1775,10 +1775,6 @@ removeRow(e)
 class FilterEditorBoolean extends FilterEditorBase {
 buildUI()
 {
-    // HAX!
-    if (this.filter.editValues.length == 0 || (this.filter.editValues[0] !== 1 && this.filter.editValues[0] !== 0))
-        this.filter.editValues = [1];
-
     this.container.innerHTML =
 `<div class="flex flex-rows flex-gap-5px">
 <span><input type="radio" name="${this.id}-value" id="${this.id}-true" ${this.filter.editValues[0] === 1 ? "checked" : ""}><label for="${this.id}-true">${_tr('tabs.filtering.ed.bool.t')}</label></span>
@@ -1857,11 +1853,6 @@ buildUI()
         else help += _tr("tabs.filtering.ed.open");
 
         this.container.innerHTML = `<p>${help}${this.getExtraHelp()}</p><table id="values"></table>`;
-
-        if (this.filter.editValues.length == 1) {
-            // If you change the operator from a single-value to range, there is no second value yet
-            this.filter.editValues.push(this.filter.editValues[0]);
-        }
 
         let table = this.$("table#values");
 
@@ -2861,6 +2852,11 @@ openFilterEditor(row)
         this.getRowElem(row, RowElem.DIV_PRETTY).innerHTML = this.prettyPrintFilter(this.filters[id]);
         this.updateJSON();
         this.parentClass.saveFilters();
+
+        if (this.filters[id].active) {
+            this.convertAndCompileFilters();
+            this.parentClass.updateFiltering();
+        }
     });
 
     wrapper.querySelector("button#cancel").addEventListener("click", (e) => {
@@ -2903,6 +2899,26 @@ buildValueEditor(filter, container, colDef)
     } else throw new Error(`Unknown column type ${colDef.type}`);
 }
 
+// Attempts to preserve the current filter values between operator/column changes and applies
+// fixes to the data to ensure the current operator has enough data to work with
+preserveFilterData(filter)
+{
+    if (!filter.editor) {
+        console.warn("preserveFilterData(): no editor?");
+        return;
+    }
+
+    // Grab the values from the form first
+    filter.editValues = filter.editor.getData();
+
+    // Then ensure there are enough values
+    if (filter.editValues.length == 0)
+        filter.editValues.push(getDefaultValue(this.plainColumnDefinitions[filter.editColumn]));
+
+    if ((filter.editOperator == "[]" || filter.editOperator == "![]") && filter.editValues.length < 2)
+        filter.editValues.push(filter.editValues[0]);
+}
+
 onColumnChanged(e)
 {
     let row = this.findTableRow(e.target);
@@ -2925,6 +2941,8 @@ onColumnChanged(e)
     this.fillOperatorSelector(wrapper.querySelector("select#operator"),
                               newDef.type, filter.editOperator);
 
+    this.preserveFilterData(filter);
+
     // Recreate the editor UI
     let editor = wrapper.querySelector("div#editor");
 
@@ -2940,6 +2958,8 @@ onOperatorChanged(e)
     let filter = this.filters[row.dataset.id];
 
     filter.editOperator = operator;
+    this.preserveFilterData(filter);
+
     filter.editor.operatorHasChanged(operator);
 }
 
