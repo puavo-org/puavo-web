@@ -847,6 +847,12 @@ class User < LdapModel
     ed.fetch('learner_id', nil)
   end
 
+  def learner_id=(new_learner_id)
+    ed = JSON.parse(self.external_data) rescue {}
+    ed['learner_id'] = new_learner_id
+    self.external_data = ed.to_json
+  end
+
   private
 
   # Add this user to the given school. Private method. This is used on {#save!}
