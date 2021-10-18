@@ -78,14 +78,20 @@ class UsersController < ApplicationController
     @permit_single_user_creation = false
 
     unless @is_owner
-      # This user is not an owner, but they *have* to be a school admin, because only owners
-      # and school admins can log in. See if they've been granted any extra permissions.
-      if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
-        @permit_single_user_deletion = true
-      end
+      if has_blocking_integrations?(LdapOrganisation.current.cn, school.id)
+        # This user is not an owner, but they *have* to be a school admin, because only owners
+        # and school admins can log in. See if they've been granted any extra permissions.
+        if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
+          @permit_single_user_deletion = true
+        end
 
-      if can_schooladmin_do_this?(current_user.uid, :create_single_users)
+        if can_schooladmin_do_this?(current_user.uid, :create_single_users)
+          @permit_single_user_creation = true
+        end
+      else
+        # No blocking integrations are enabled in this school, permit user deletion and creation
         @permit_single_user_creation = true
+        @permit_single_user_deletion = true
       end
     else
       # Owners can always create and delete users
@@ -486,7 +492,11 @@ class UsersController < ApplicationController
     else
       # This user is not an owner, but they *have* to be a school admin, because only owners
       # and school admins can log in. See if they've been granted any extra permissions.
-      if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
+      if has_blocking_integrations?(LdapOrganisation.current.cn, school.id)
+        if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
+          @permit_user_deletion = true
+        end
+      else
         @permit_user_deletion = true
       end
     end
@@ -551,10 +561,12 @@ class UsersController < ApplicationController
   # GET /:school_id/users/new.xml
   def new
     unless is_owner?
-      unless can_schooladmin_do_this?(current_user.uid, :create_single_users)
-        flash[:alert] = t('flash.you_must_be_an_owner')
-        redirect_to users_path
-        return
+      if has_blocking_integrations?(LdapOrganisation.current.cn, school.id)
+        unless can_schooladmin_do_this?(current_user.uid, :create_single_users)
+          flash[:alert] = t('flash.you_must_be_an_owner')
+          redirect_to users_path
+          return
+        end
       end
     end
 
@@ -751,7 +763,11 @@ class UsersController < ApplicationController
     else
       # This user is not an owner, but they *have* to be a school admin, because only owners
       # and school admins can log in. See if they've been granted any extra permissions.
-      if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
+      if has_blocking_integrations?(LdapOrganisation.current.cn, school.id)
+        if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
+          permit_user_deletion = true
+        end
+      else
         permit_user_deletion = true
       end
     end
