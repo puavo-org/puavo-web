@@ -2127,6 +2127,7 @@ buildUI()
 <div class="flex flex-columns flex-gap-5px margin-top-5px">
 <button id="save" disabled>${_tr('tabs.filtering.save')}</button>
 <button id="clear" disabled>${_tr('tabs.filtering.clear')}</button>
+<button id="convert" disabled>${_tr('tabs.filtering.convert')}</button>
 </div>
 </fieldset>
 
@@ -2193,6 +2194,7 @@ buildUI()
     this.$("textarea#json").addEventListener("input", () => this.validateJSON());
     this.$("button#save").addEventListener("click", () => this.onSave());
     this.$("button#clear").addEventListener("click", () => this.onClear());
+    this.$("button#convert").addEventListener("click", () => this.onConvertTraditionalFilter());
     this.$("textarea#filter").addEventListener("input", () => this.onAdvancedInput());
 
     // Make the presets clickable
@@ -2220,6 +2222,7 @@ enableOrDisable(isEnabled)
     this.$("textarea#filter").disabled = this.disabled;
     this.$("button#save").disabled = this.disabled;
     this.$("button#clear").disabled = this.disabled;
+    this.$("button#convert").disabled = this.disabled;
 
     this.$("button#deleteAll").disabled = this.disabled;
     this.$("button#toggleJSON").disabled = this.disabled;
@@ -3024,12 +3027,11 @@ onNewFilter()
     this.openFilterEditor(newRow);
 }
 
-// Converts the "traditional" filters into an advanced filter string and compiles it
-convertAndCompileFilters()
+convertTraditionalFilter(filters)
 {
     let parts = [];
 
-    for (const f of this.getFilters()) {
+    for (const f of filters) {
         if (!f[0])          // inactive filter
             continue;
 
@@ -3114,10 +3116,14 @@ convertAndCompileFilters()
         }
     }
 
-    // Join the comparisons together and compile the resulting string
-    const script = parts.join(" && ");
+    // Join the comparisons together
+    return parts.join(" && ");
+}
 
-    const result = this.compileFilterExpression(script);
+// Converts the "traditional" filters into an advanced filter string and compiles it
+convertAndCompileFilters()
+{
+    const result = this.compileFilterExpression(this.convertTraditionalFilter(this.getFilters()));
 
     if (result === false || result === null) {
         window.alert("Could not compile the filter. See the console for details, then contact Opinsys support.");
@@ -3182,6 +3188,32 @@ onClear()
         this.changed = true;
         this.updateUnsavedWarning();
     }
+}
+
+// Convert the traditional (mouse-driven) filter into a filter expression string
+onConvertTraditionalFilter()
+{
+    if (!window.confirm(_tr('are_you_sure')))
+        return;
+
+    const filters = this.getFilters();
+
+    if (filters === null || filters === undefined || filters.length == 0) {
+        window.alert(_tr('traditional_filter_is_empty'));
+        return;
+    }
+
+    const result = this.convertTraditionalFilter(filters);
+
+    if (result === false || result === null) {
+        window.alert("Could not compile the filter. See the console for details, then contact Opinsys support.");
+        return;
+    }
+
+    this.$("textarea#filter").value = result;
+    this.clearMessages();
+    this.changed = true;
+    this.updateUnsavedWarning();
 }
 
 // Advanced filter string has changed

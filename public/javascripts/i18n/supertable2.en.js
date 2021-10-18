@@ -84,6 +84,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
 
             save: "Save",
             clear: "Clear",
+            convert: "Copy and convert the traditional filter",
             cancel: "Cancel",
             unsaved: "changed, not saved",
 
@@ -99,6 +100,8 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
 
             expression_placeholder: "Enter the filter string here",
             no_messages: "(No problems were found in the filter string)",
+
+            traditional_filter_is_empty: "The traditional filter is empty.",
 
             messages: {
                 column_not_visible: "Column is not visible. Be careful, it can show or hide rows it should not.",

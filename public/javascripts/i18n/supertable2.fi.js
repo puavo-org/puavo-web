@@ -84,6 +84,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
 
             save: "Tallenna",
             clear: "Tyhjennä",
+            convert: "Kopioi ja muunna perinteinen suodatin",
             cancel: "Peruuta",
             unsaved: "muutettu, ei tallennettu",
 
@@ -99,6 +100,8 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
 
             expression_placeholder: "Syötä suodatinlauseke tähän",
             no_messages: "(Suodatinlausekkeesta ei löytynyt ongelmia)",
+
+            traditional_filter_is_empty: "Perinteinen suodatin on tyhjä.",
 
             messages: {
                 column_not_visible: "Sarake ei ole näkyvissä. Varo, ettei suodatin näytä tai piilota rivejä joita sen ei pitäisi.",
