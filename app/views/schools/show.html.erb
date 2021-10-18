@@ -142,7 +142,7 @@
 
   <% if @devices_by_type %>
   <!-- Device statistics -->
-  <h3><%= t('.devices') %> <small><%= t('.total_count', :count => @devices_by_type.count) %></small></h3>
+  <h3><%= t('.devices') %> <small><%= t('.total_count', :count => @devices_by_type.values.sum) %></small></h3>
   <table>
   <% @devices_by_type.each do |device_type, count| %>
     <tr>
