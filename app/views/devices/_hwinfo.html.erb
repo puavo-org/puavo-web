@@ -1,3 +1,4 @@
+<!-- view/devices/_hwinfo.html.erb starts -->
 <%= start_box t('hwinfo.title'), extraClass='fullWidth' %>
 <% unless rawInfo %>
 <p class="genericNotice"><%= t('hwinfo.no_info') %></p>
@@ -117,6 +118,131 @@ end
     <% else %>
     <%= t('hwinfo.hard_drive.none') %>
     <% end %>
+  </td>
+</tr>
+
+<!-- SMART data -->
+<tr class="sectionEnd">
+  <th class="main">SMART</th>
+  <td colspan="2">
+
+  <% if @info['blockdevice_sda_smart'] %>
+  <% smart = @info['blockdevice_sda_smart'] %>
+  <h3><%= t('hwinfo.smart.general_title') %></h3>
+  <table class="smart">
+    <tr>
+      <th><%= t('hwinfo.smart.model_name') %></th>
+      <td><%= smart['model_name'] %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.model_family') %></th>
+      <td><%= smart['model_family'] %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.serial_number') %></th>
+      <td><%= smart['serial_number'] %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.firmware_version') %></th>
+      <td><%= smart['firmware_version'] %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.block_size') %></th>
+      <td><%= smart['logical_block_size'] %> / <%= smart['physical_block_size'] %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.wwn') %></th>
+      <td>NAA: <%= smart.dig('wwn', 'naa') %><br>OUI: <%= smart.dig('wwn', 'oui') %><br>ID: <%= smart.dig('wwn', 'id') %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.trim_supported') %></th>
+      <td><%= smart.dig('trim', 'supported') %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.ata_version') %></th>
+      <td><%= smart.dig('ata_version', 'string') %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.sata_version') %></th>
+      <td><%= smart.dig('sata_version', 'string') %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.interface_speed') %></th>
+      <td><%= smart.dig('interface_speed', 'current', 'string') %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.time') %></th>
+      <td><%= smart.dig('local_time', 'asctime') %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.self_test') %></th>
+      <td><%= smart.dig('ata_smart_data', 'self_test', 'status', 'string') %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.power_on_time') %></th>
+      <td><%= smart.dig('power_on_time', 'hours') %>:<%= smart.dig('power_on_time', 'minutes') %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.power_cycles') %></th>
+      <td><%= smart['power_cycle_count'] %></td>
+    </tr>
+    <tr>
+      <th><%= t('hwinfo.smart.temperature') %></th>
+      <td><%= smart.dig('temperature', 'current') %></td>
+    </tr>
+  </table>
+
+  <% if smart['ata_smart_attributes'] %>
+  <br>
+  <h3><%= t('hwinfo.smart.attributes_title') %></h3>
+  <table class="smart">
+  <thead>
+    <tr>
+      <th><%= t('hwinfo.smart.attr_attribute') %></th>
+      <th><%= t('hwinfo.smart.attr_value') %></th>
+      <th><%= t('hwinfo.smart.attr_worst') %></th>
+      <th><%= t('hwinfo.smart.attr_threshold') %></th>
+      <th><%= t('hwinfo.smart.attr_raw') %></th>
+    </tr>
+  </thead>
+  <tbody>
+  <% Array(smart['ata_smart_attributes']['table']).each do |row| %>
+  <tr>
+    <th>(<%= row['id'] %>) <%= row['name'] %></th>
+    <td><%= row['value'] %></td>
+    <td><%= row['worst'] %></td>
+    <td><%= row['thresh'] %></td>
+    <td><%= row.dig('raw', 'string') %></td>
+  </tr>
+  <% end %>
+  </tbody>
+  </table>
+  <% end %>
+
+  <% if smart['nvme_smart_health_information_log'] %>
+  <% health = smart['nvme_smart_health_information_log'] %>
+  <br>
+  <h3><%= t('hwinfo.smart.nvme_title') %></h3>
+  <table class="smart">
+  <thead>
+    <tr>
+      <th><%= t('hwinfo.smart.nvme_attr') %></th>
+      <th><%= t('hwinfo.smart.nvme_value') %></th>
+    </tr>
+  </thead>
+  <tbody>
+  <% health.keys.each do |attr| %>
+  <tr>
+    <th><%= attr %></th>
+    <td><%= health[attr] %></td>
+  </tr>
+  <% end %>
+  </tbody>
+  </table>
+  <% end %>
+<% else %>
+  <%= t('hwinfo.smart.no_data') %>
+<% end %>
   </td>
 </tr>
 
@@ -288,3 +414,4 @@ end
 
 <% end %>
 <%= end_box %>
+<!-- view/devices/_hwinfo.html.erb ends -->

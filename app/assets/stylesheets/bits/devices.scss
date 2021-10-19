@@ -75,6 +75,20 @@
   }
 }
 
+.smart {
+  width: auto !important;
+
+  th {
+    text-align: left !important;
+    padding: 2px 10px !important;
+    width: auto !important;
+  }
+
+  td {
+    padding: 2px 5px !important;
+  }
+}
+
 /* Desktop image statistics on Device Statistics pages */
 .imageStats {
   width: 100%;
