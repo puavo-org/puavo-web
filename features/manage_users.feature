@@ -44,13 +44,6 @@ Feature: Manage users
     Given I follow "Logout"
     And I am logged in as "pavel" with password "secret"
     When I am on the new user page
-    Then I should see "You do not have enough rights to access that page."
-
-  Scenario: Create new user by staff 2
-    Given I follow "Logout"
-    And I am logged in as "superadmin" with password "secret"
-    When I am on the new user page
-    Then I should not see "You do not have enough rights to access that page."
     Then I should not see "SSH public key"
     When I fill in the following:
     | Surname    | Doe      |
