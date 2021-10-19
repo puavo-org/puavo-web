@@ -15,6 +15,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
     invalid_json: "Virheellinen JSON-data",
     temporary_mode: "Taulukko on väliaikaisessa tilassa. Asetuksia ei tallenneta pysyvästi (sivun lataus uudelleen hukkaa ne). Paina \"Poistu väliaikaisesta tilasta\" -nappia Työkalut -välilehdellä poistuaksesi tästä tilasta. Väliaikaisesta tilasta poistuminen korvaa nykyiset tallentamasi asetukset, joten ole varovainen.",
     help: "Ohje...",
+    missing: "(Puuttuu/tyhjä)",
 
     tabs: {
         // TOOLS

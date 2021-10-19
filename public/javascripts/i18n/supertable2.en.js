@@ -15,6 +15,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
     invalid_json: "Invalid JSON data",
     temporary_mode: "This table is in a temporary mode. Settings will not be saved (reloading the page loses them). Click the \"Exit temporary mode\" button on the \"Tools\" page to exit the temporary mode. Exiting the temprary mode will replace your currently saved settings, so be careful.",
     help: "Help...",
+    missing: "(Missing/empty)",
 
     tabs: {
         // TOOLS

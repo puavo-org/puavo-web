@@ -312,6 +312,18 @@ function transformRawData(columnDefinitions, userTransforms, rawData)
                 clean[INDEX_DISPLAYABLE] = null;
                 clean[INDEX_SORTABLE] = defVal;
                 clean[INDEX_FILTERABLE] = undefined;    // the filter system can deal with this
+
+                if (coldef.missing) {
+                    // Retrieve custom default values, if specified
+                    if (coldef.missing.display !== undefined)
+                        clean[INDEX_DISPLAYABLE] = coldef.missing.display;
+
+                    if (coldef.missing.sort !== undefined)
+                        clean[INDEX_SORTABLE] = coldef.missing.sort;
+
+                    if (coldef.missing.filter !== undefined)
+                        clean[INDEX_FILTERABLE] = coldef.missing.filter;
+                }
             }
 
             cleaned[key] = clean;
