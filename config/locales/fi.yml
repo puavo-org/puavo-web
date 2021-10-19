@@ -268,6 +268,7 @@ fi:
       df_images: "Vapaana /images (MiB)"
       df_state: "Vapaana /state (MiB)"
       df_tmp: "Vapaana /tmp (MiB)"
+      have_smart: "SMART-tiedot?"
       has_windows_license: "Windows-lisenssi"
       purchase_date: "Hankintapäivä"
       purchase_warranty: "Takuu päättyy"

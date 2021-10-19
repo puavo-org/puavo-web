@@ -177,6 +177,11 @@ const COLUMN_DEFINITIONS = {
         flags: ColumnFlag.DESCENDING_DEFAULT,
     },
 
+    have_smart: {
+        key: "have_smart",
+        type: ColumnType.BOOL,
+    },
+
     id: {
         key: "id",
         type: ColumnType.NUMERIC,
@@ -404,6 +409,7 @@ const COLUMN_TITLES = {
     df_images: "<%= t('columns.devices.df_images') %>",
     df_state: "<%= t('columns.devices.df_state') %>",
     df_tmp: "<%= t('columns.devices.df_tmp') %>",
+    have_smart: "<%= t('columns.devices.have_smart') %>",
     hd: "<%= t('columns.devices.hwinfo_hd_size') %>",
     hd_ssd: "<%= t('columns.devices.hwinfo_is_ssd') %>",
     hn: "<%= t('columns.devices.hostname') %>",
@@ -488,6 +494,7 @@ const COLUMN_ORDER = [
     "ram",
     "hd",
     "hd_ssd",
+    "have_smart",
     "df_home",
     "df_images",
     "df_state",
