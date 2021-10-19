@@ -192,6 +192,7 @@ Rails.application.routes.draw do
       match 'devices/:id/select_school' => 'devices#select_school', :as => 'select_school_device', :via => :get
       match 'devices/:id/change_school' => 'devices#change_school', :as => 'change_school_device', :via => :post
       match 'devices/:id/image' => 'devices#image', :as => 'image_device', :via => :get
+      match 'devices/:id/raw_hardware_info' => 'devices#raw_hardware_info', :as => 'device_raw_hardware_info', :via => :get
 
       get 'devices/device_statistics' => 'image_statistics#school_images', :as => 'school_image_statistics'
 

@@ -1047,6 +1047,7 @@ en:
     no_info: "No hardware information received from this device"
     json_failed: "Could not parse the device hardware info JSON: %{msg}"
     received_timestamp: "Data received"
+    download_raw: "Download the raw data in JSON format"
     image:
       name: "Image"
       release: "Name"

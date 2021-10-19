@@ -1046,6 +1046,7 @@ fi:
     no_info: "Ei vastaanotettuja laitetietoja tästä laitteesta"
     json_failed: "Laitetietojen JSONin lataus epäonnistui: %{msg}"
     received_timestamp: "Tiedot vastaanotettu"
+    download_raw: "Lataa raakadata JSON-muodossa"
     image:
       name: "Päätekuva"
       release: "Julkaisu"

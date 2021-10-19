@@ -578,6 +578,22 @@ class DevicesController < ApplicationController
     send_data @device.jpegPhoto, :disposition => 'inline', :type => "image/jpeg"
   end
 
+  # GET /:school_id/devices/:id/raw_hardware_info
+  def raw_hardware_info
+    device = Device.find(params[:id])
+    data = {}
+
+    begin
+      data = JSON.parse(device.puavoDeviceHWInfo)
+    rescue => e
+    end
+
+    send_data data.to_json,
+              type: :json,
+              disposition: "attachment",
+              filename: "#{current_organisation.organisation_key}-#{device.cn}.json"
+  end
+
   # GET /devices/new
   # GET /devices/new.xml
   # GET /devices/new.json
