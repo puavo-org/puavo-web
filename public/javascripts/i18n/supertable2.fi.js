@@ -52,6 +52,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
             save: "Tallenna muutokset",
             defaults: "Oletukset",
             all: "Valitse kaikki näkyvät",
+            none: "Epävalitse kaikki näkyvät",
             sort: "Lajittele sarakkeet<br>oletusjärjestykseen",
         },
 

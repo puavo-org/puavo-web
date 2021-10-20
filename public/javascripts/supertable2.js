@@ -1178,6 +1178,7 @@ __buildColumnsTab(tabBar, frag)
 <button id="save" disabled>${_tr('tabs.columns.save')}</button>
 <button id="reset" disabled>${_tr('tabs.columns.defaults')}</button>
 <button id="selectAll" disabled>${_tr('tabs.columns.all')}</button>
+<button id="deselectAll" disabled>${_tr('tabs.columns.none')}</button>
 <button id="sort" disabled>${_tr('tabs.columns.sort')}</button>
 </div></div>`;
 
@@ -1189,7 +1190,8 @@ __buildColumnsTab(tabBar, frag)
     container.querySelector(`input[type="search"]`).addEventListener("input", (e) => this.filterColumnList(e));
     container.querySelector("button#save").addEventListener("click", () => this.saveColumns());
     container.querySelector("button#reset").addEventListener("click", () => this.resetColumns());
-    container.querySelector("button#selectAll").addEventListener("click", () => this.allColumns());
+    container.querySelector("button#selectAll").addEventListener("click", () => this.allColumns(true));
+    container.querySelector("button#deselectAll").addEventListener("click", () => this.allColumns(false));
     container.querySelector("button#sort").addEventListener("click", () => this.resetColumnOrder());
 
     tabBar.appendChild(tab);
@@ -1727,20 +1729,31 @@ resetColumns()
     this.updateColumnEditor();
 }
 
-allColumns()
+allColumns(select)
 {
     if (this.processing || this.updating)
         return;
 
+    let changed = false;
+
     for (let c of this.getColumnList(false)) {
-        if (!c.classList.contains("hidden")) {
+        if (c.classList.contains("hidden"))
+            continue;
+
+        if (select)
             c.classList.add("selected");
-            c.firstChild.checked = true;
+        else c.classList.remove("selected");
+
+        if (c.firstChild.checked != select) {
+            c.firstChild.checked = select;
+            changed = true;
         }
     }
 
-    this.unsavedColumns = true;
-    this.updateColumnEditor();
+    if (changed) {
+        this.unsavedColumns = true;
+        this.updateColumnEditor();
+    }
 }
 
 resetColumnOrder()

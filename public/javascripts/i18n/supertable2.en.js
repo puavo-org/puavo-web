@@ -52,6 +52,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
             save: "Save changes",
             defaults: "Defaults",
             all: "Select all visible",
+            none: "Deselect all visible",
             sort: "Sort the columns<br>in default order",
         },
 
