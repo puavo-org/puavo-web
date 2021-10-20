@@ -19,7 +19,12 @@ end
 <div class="hardwareInfo">
 
 <p class="timestamp"><strong><%= t('hwinfo.received_timestamp') %>:</strong> <%= Time.at(@info['timestamp']).localtime.strftime('%Y-%m-%d %H:%M:%S') %></p>
+
+<% if @school %>
 <a href="<%= device_raw_hardware_info_path(@school, @device) %>"><%= t('hwinfo.download_raw') %></a><br><br>
+<% else %>
+<a href="<%= server_raw_hardware_info_path(@server) %>"><%= t('hwinfo.download_raw') %></a><br><br>
+<% end %>
 
 <table class="infoTable">
 
