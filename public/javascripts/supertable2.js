@@ -1136,40 +1136,36 @@ __buildColumnsTab(tabBar, frag)
     let [tab, container] =
         this.__buildTab("columns", _tr('tabs.columns.title'), this.settings.currentTab == "columns");
 
-    const keys = Object.keys(this.settings.columns.definitions);
-
     let html =
 `<p class="margin-0 padding-0">${_tr('tabs.columns.help')}</p>
+<div class="flex flex-columns margin-top-5px margin-bottom-5px flex-gap-10px">
 <p class="columnStats margin-0 padding-0 margin-top-5px margin-bottom-5px"></p>
+<input type="search" placeholder="${_tr('tabs.columns.search')}" spellcheck="false"></input>
+</div>
 <div class="flex flex-columns flex-gap-5px">
 <div class="flex flex-rows flex-no-wrap colList">`;
 
-    let currentColumns = new Set();
-
-    for (const c of this.settings.columns.current)
-        currentColumns.add(c);
-
     // Sort the columns alphabetically by their localized names
+    const keys = Object.keys(this.settings.columns.definitions);
+    const current = new Set(this.settings.columns.current);
+
     let columnNames = [];
 
-    for (const name of keys)
-        columnNames.push([name, this.settings.columns.titles[name]]);
+    for (const key of keys)
+        columnNames.push([key, this.settings.columns.titles[key]]);
 
     columnNames.sort((a, b) => { return a[1].localeCompare(b[1]) });
 
     for (const c of columnNames) {
         const def = this.settings.columns.definitions[c[0]];
+        let cls = ["column", "disabled"];   // initially everything is disabled
 
-        let cls = ["column"];
-
-        if (currentColumns.has(c[0]))
+        if (current.has(c[0]))
             cls.push("selected");
-
-        cls.push("disabled");
 
         html += `<div data-column="${c[0]}" class="${cls.join(' ')}">`;
 
-        if (currentColumns.has(c[0]))
+        if (current.has(c[0]))
             html += `<input type="checkbox" checked></input>`;
         else html += `<input type="checkbox"></input>`;
 
@@ -1190,6 +1186,7 @@ __buildColumnsTab(tabBar, frag)
     for (let i of container.querySelectorAll(`.colList .column`))
         i.addEventListener("click", (e) => this.toggleColumn(e.target));
 
+    container.querySelector(`input[type="search"]`).addEventListener("input", (e) => this.filterColumnList(e));
     container.querySelector("button#save").addEventListener("click", () => this.saveColumns());
     container.querySelector("button#reset").addEventListener("click", () => this.resetColumns());
     container.querySelector("button#selectAll").addEventListener("click", () => this.allColumns());
@@ -1736,8 +1733,10 @@ allColumns()
         return;
 
     for (let c of this.getColumnList(false)) {
-        c.classList.add("selected");
-        c.firstChild.checked = true;
+        if (!c.classList.contains("hidden")) {
+            c.classList.add("selected");
+            c.firstChild.checked = true;
+        }
     }
 
     this.unsavedColumns = true;
@@ -1787,6 +1786,22 @@ enableOrDisableColumnEditor(isEnabled)
         button.disabled = !isEnabled;
 
     this.updateColumnEditor();
+}
+
+filterColumnList(e)
+{
+    const filter = e.target.value.trim().toLowerCase();
+
+    // The list is not rebuilt when searching, we just change item visibilities.
+    // This way, searching for something else does not undo previous changes
+    // if they weren't saved yet.
+    for (let c of this.getColumnList()) {
+        const title = this.settings.columns.titles[c.dataset.column];
+
+        if (filter && title.toLowerCase().indexOf(filter) == -1)
+            c.classList.add("hidden");
+        else c.classList.remove("hidden");
+    }
 }
 
 // --------------------------------------------------------------------------------------------------
