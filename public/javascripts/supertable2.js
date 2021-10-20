@@ -1093,6 +1093,7 @@ __buildToolsTab(tabBar, frag)
 <summary>${_tr("tabs.tools.export.title")}</summary>
 <div class="padding-10px flex flex-vcenter flex-columns flex-gap-10px">
 <button id="btnCSV" disabled>${_tr("tabs.tools.export.as_csv")}</button>
+<button id="btnJSON" disabled>${_tr("tabs.tools.export.as_json")}</button>
 <span><input type="checkbox" id="${this.id}-only-visible-rows" checked><label for="${this.id}-only-visible-rows" title="${_tr("tabs.tools.export.only_visible_rows_help")}">${_tr("tabs.tools.export.only_visible_rows")}</label></span>
 <span><input type="checkbox" id="${this.id}-only-visible-cols" checked><label for="${this.id}-only-visible-cols" title="${_tr("tabs.tools.export.only_visible_cols_help")}">${_tr("tabs.tools.export.only_visible_cols")}</label></span>
 </div>
@@ -1119,8 +1120,10 @@ __buildToolsTab(tabBar, frag)
     container.querySelector(`button#btnReload`).addEventListener("click", () => this.fetchDataAndUpdate());
     //container.querySelector(`button#btnExitTempMode`).addEventListener("click", () => this.exitTemporaryMode());
 
-    if (!(this.settings.flags & TableFlag.DISABLE_EXPORT))
-        container.querySelector(`button#btnCSV`).addEventListener("click", () => this.getCSV());
+    if (!(this.settings.flags & TableFlag.DISABLE_EXPORT)) {
+        container.querySelector(`button#btnCSV`).addEventListener("click", () => this.exportTable("csv"));
+        container.querySelector(`button#btnJSON`).addEventListener("click", () => this.exportTable("json"));
+    }
 
     if (!(this.settings.flags & TableFlag.DISABLE_VIEW_SAVING)) {
         container.querySelector(`button#btnLoadJSON`).addEventListener("click", () => this.loadSettingsJSON());
@@ -1439,8 +1442,10 @@ enableUI(isEnabled)
     this.container.querySelector(`div.stTab#tab-tools button#btnReload`).disabled = !isEnabled;
     //this.container.querySelector(`div.stTab#tab-tools button#btnExitTempMode`).disabled = !isEnabled || !this.temporaryMode;
 
-    if (!(this.settings.flags & TableFlag.DISABLE_EXPORT))
+    if (!(this.settings.flags & TableFlag.DISABLE_EXPORT)) {
         this.container.querySelector(`div.stTab#tab-tools button#btnCSV`).disabled = !isEnabled;
+        this.container.querySelector(`div.stTab#tab-tools button#btnJSON`).disabled = !isEnabled;
+    }
 
     if (!(this.settings.flags & TableFlag.DISABLE_VIEW_SAVING)) {
         this.container.querySelector(`div.stTab#tab-tools textarea#tools-saved-json`).disabled = !isEnabled;
@@ -1510,47 +1515,70 @@ getTableRows()
 // --------------------------------------------------------------------------------------------------
 // TOOLS
 
-// CSV download
-getCSV()
+// Download table contents. Format must be "csv" or "json".
+exportTable(format)
 {
     try {
         const visibleRows = this.container.querySelector(`#${this.id}-only-visible-rows`).checked,
               visibleCols = this.container.querySelector(`#${this.id}-only-visible-cols`).checked;
         const source = visibleRows ? this.data.current : this.data.transformed;
-        let csvRows = [];
+        let output = [];
 
         const columns = visibleCols ?
             this.settings.columns.current :
             Object.keys(this.settings.columns.definitions);
 
-        // Header first
-        csvRows.push(columns.join(";"));
+        let mimetype, extension;
 
-        for (const row of source) {
-            let csvRow = [];
+        if (format == "csv") {
+            // CSV export
 
-            for (const col of columns)
-                csvRow.push(col in row ? row[col][INDEX_FILTERABLE] : "");
+            // Header first
+            output.push(columns.join(";"));
 
-            csvRows.push(csvRow.join(";"));
+            for (const row of source) {
+                let out = [];
+
+                for (const col of columns)
+                    out.push(col in row ? row[col][INDEX_FILTERABLE] : "");
+
+                output.push(out.join(";"));
+            }
+
+            output = output.join("\n");
+            mimetype = "text/csv";
+            extension = "csv";
+        } else {
+            // JSON export
+            for (const row of source) {
+                let out = {};
+
+                for (const col of columns)
+                    if (col in row)
+                        out[col] = row[col][INDEX_FILTERABLE];
+
+                output.push(out);
+            }
+
+            output = JSON.stringify(output);
+            mimetype = "application/json";
+            extension = "json";
         }
-
-        csvRows = csvRows.join("\n");
 
         // Build a blob object (it must be an array for some reason), then trigger a download.
         // Download code stolen from StackOverflow.
-        const b = new Blob([csvRows], { type: "text/csv" });
+        const b = new Blob([output], { type: mimetype });
         let a = window.document.createElement("a");
 
         a.href = window.URL.createObjectURL(b);
-        a.download = `${this.settings.csvPrefix}-${I18n.strftime(new Date(), "%Y-%m-%d-%H-%M-%S")}.csv`;
+        a.download = `${this.settings.csvPrefix}-${I18n.strftime(new Date(), "%Y-%m-%d-%H-%M-%S")}.${extension}`;
 
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
     } catch (e) {
         console.log(e);
-        window.alert(`${_tr('csv_generation_error')}\n\n${e}\n\n${_tr('see_console_for_details')}`);
+        window.alert(`${_tr('export_file_generation_error')}\n\n${e}\n\n${_tr('see_console_for_details')}`);
     }
 }
 
