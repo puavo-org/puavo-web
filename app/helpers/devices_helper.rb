@@ -358,7 +358,7 @@ module DevicesHelper
       # Why oh why did I put a string in this field and not an integer?
       out[:hd_ssd] = info['ssd'] ? (info['ssd'] == '1') : false
 
-      out[:have_smart] = info.include?('blockdevice_sda_smart')
+      out[:have_smart] = info.include?('blockdevice_sda_smart') && !info['blockdevice_sda_smart'].nil?
 
       out[:wifi] = info['wifi']
 
