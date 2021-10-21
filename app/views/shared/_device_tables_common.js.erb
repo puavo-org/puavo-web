@@ -553,7 +553,7 @@ function doImage(image)
     if (image.release) {
         // Display the release name nicely
         display = `${image.file} <span class="releaseName">(${image.release})</span>`;
-        filter = `${image.file} ${image.release})`;
+        filter = `${image.file} (${image.release})`;
     } else {
         display = image.file;
         filter = image.file;
