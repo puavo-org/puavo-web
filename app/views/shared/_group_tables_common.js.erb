@@ -177,3 +177,8 @@ function userActions(item)
 
     return html;
 }
+
+function openCallback(item)
+{
+    return `/users/${item.school_id}/groups/${item.id[INDEX_DISPLAYABLE]}`;
+}

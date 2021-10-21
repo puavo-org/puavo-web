@@ -1515,3 +1515,13 @@ function userActions(item)
 
     return html;
 }
+
+function openCallback(item)
+{
+    return `/devices/${item.school_id}/devices/${item.id[INDEX_DISPLAYABLE]}`;
+}
+
+function openCallbackServers(item)
+{
+    return `/devices/servers/${item.id[INDEX_DISPLAYABLE]}`;
+}

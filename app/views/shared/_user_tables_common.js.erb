@@ -739,3 +739,8 @@ function userActions(item)
 
     return html;
 }
+
+function openCallback(item)
+{
+    return `/users/${item.school_id}/users/${item.id[INDEX_DISPLAYABLE]}`;
+}
