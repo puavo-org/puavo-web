@@ -1086,7 +1086,7 @@ en:
       interface_speed: "Interface speed"
       time: "Time (local)"
       self_test: "Self-test"
-      power_on_time: "Power on time (TT:MM)"
+      power_on_time: "Power on time (HH:MM)"
       power_cycles: "Power cycle count"
       temperature: "Temperature"
       attributes_title: "SMART attributes"
