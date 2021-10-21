@@ -152,6 +152,12 @@ const COLUMN_DEFINITIONS = {
         flags: ColumnFlag.USER_TRANSFORM | ColumnFlag.DESCENDING_DEFAULT | ColumnFlag.F_STORAGE,
     },
 
+    df_imageoverlays: {
+        key: "df_imageoverlays",
+        type: ColumnType.NUMERIC,
+        flags: ColumnFlag.USER_TRANSFORM | ColumnFlag.DESCENDING_DEFAULT | ColumnFlag.F_STORAGE,
+    },
+
     hd: {
         key: "hd",
         type: ColumnType.NUMERIC,
@@ -409,6 +415,7 @@ const COLUMN_TITLES = {
     df_images: "<%= t('columns.devices.df_images') %>",
     df_state: "<%= t('columns.devices.df_state') %>",
     df_tmp: "<%= t('columns.devices.df_tmp') %>",
+    df_imageoverlays: "<%= t('columns.devices.df_imageoverlays') %>",
     have_smart: "<%= t('columns.devices.have_smart') %>",
     hd: "<%= t('columns.devices.hwinfo_hd_size') %>",
     hd_ssd: "<%= t('columns.devices.hwinfo_is_ssd') %>",
@@ -496,6 +503,7 @@ const COLUMN_ORDER = [
     "hd_ssd",
     "have_smart",
     "df_home",
+    "df_imageoverlays",
     "df_images",
     "df_state",
     "df_tmp",
@@ -628,6 +636,10 @@ const USER_TRANSFORM_FUNCTIONS = {
 
     df_tmp: function(entry) {
         return doStorage(entry.df_tmp);
+    },
+
+    df_imageoverlays: function(entry) {
+        return doStorage(entry.df_imageoverlays);
     },
 
     current_image: function(entry) {

@@ -408,6 +408,7 @@ module DevicesHelper
         out[:df_images] = df['/images'].to_i if df.include?('/home')
         out[:df_state] = df['/state'].to_i if df.include?('/home')
         out[:df_tmp] = df['/tmp'].to_i if df.include?('/home')
+        out[:df_imageoverlays] = df['/imageoverlays'].to_i if df.include?('/imageoverlays')
       end
 
       # Windows license info (boolean exists/does not exist)
