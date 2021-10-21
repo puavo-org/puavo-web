@@ -50,6 +50,11 @@ const COLUMN_DEFINITIONS = {
         key: "type",
         type: ColumnType.STRING,
         flags: ColumnFlag.USER_TRANSFORM,
+        missing: {
+            display: `<span class="missingData"><%= t('missing_data') %></span>`,
+            sort: "",
+            filter: "",
+        }
     },
 };
 
