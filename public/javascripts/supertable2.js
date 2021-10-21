@@ -681,6 +681,7 @@ constructor(container, settings)
         source: settings.source,                        // the URL to get the table data from
         userTransforms: typeof(settings.userTransforms) == "object" ? settings.userTransforms : {},
         actionsCallback: typeof(settings.actions) == "function" ? settings.actions : null,
+        openCallback: typeof(settings.openCallback) == "function" ? settings.openCallback : null,
 
         temporaryMode: false,
         currentTab: "tools",
@@ -2701,11 +2702,35 @@ enableTable(isEnabled)
     }
 }
 
+onRowOpen(e)
+{
+    if (e.button != 1)    // middle button
+        return;
+
+    if (e.target.tagName != "TD")
+        return;
+
+    if (e.target.classList.contains("checkbox"))
+        return;
+
+    e.preventDefault();
+
+    const index = e.target.parentNode.dataset.index;
+
+    const url = this.settings.openCallback(this.data.current[index]);
+
+    if (url === null || url === undefined)
+        return;
+
+    window.open(url, "_blank");
+}
+
 // Rebuild the table contents and place it in the output container
 buildTable()
 {
     const haveActions = !!this.settings.actionsCallback,
           canSelect = this.settings.flags & TableFlag.ENABLE_SELECTION,
+          canOpen = !!this.settings.openCallback,
           currentColumn = this.settings.sorting.column;
 
     // Unicode arrow characters and empirically determined padding values (their widths
@@ -2867,10 +2892,17 @@ buildTable()
     for (let i = start; i < count; i++)
         headings[i].addEventListener("mousedown", event => this.onHeaderMouseDown(event));
 
-    // Row checkbox handlers
-    if (canSelect && this.data.current.length > 0)
-        for (let row of fragment.querySelectorAll("tbody > tr"))
-            row.childNodes[0].addEventListener("click", event => this.onRowCheckboxClick(event));
+    if (this.data.current.length > 0) {
+        for (let row of fragment.querySelectorAll("tbody > tr")) {
+            // Full row click open handlers
+            if (canOpen)
+                row.addEventListener("mouseup", event => this.onRowOpen(event));
+
+            // Row checkbox handlers
+            if (canSelect)
+                row.childNodes[0].addEventListener("click", event => this.onRowCheckboxClick(event));
+        }
+    }
 
     const t3 = performance.now();
 
