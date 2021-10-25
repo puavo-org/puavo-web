@@ -32,7 +32,7 @@ window.onload = function(e) {
         {
             id: "orgDevices",
             csvPrefix: `<%= LdapOrganisation.current.o %>-devices`,
-            flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION,
+            flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION | TableFlag.ENABLE_PAGINATION,
             locale: "<%= supertable_sorting_locale %>",
             columnDefinitions: COLUMN_DEFINITIONS,
             columnTitles: COLUMN_TITLES,

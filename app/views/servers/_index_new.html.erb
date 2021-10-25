@@ -29,7 +29,7 @@ new SuperTable(
     {
         id: "servers",
         csvPrefix: `<%= LdapOrganisation.current.o %>-servers`,
-        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION,
+        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION | TableFlag.ENABLE_PAGINATION,
         locale: "<%= supertable_sorting_locale %>",
         columnDefinitions: COLUMN_DEFINITIONS,
         columnTitles: COLUMN_TITLES,
