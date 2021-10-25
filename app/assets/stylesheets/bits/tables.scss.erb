@@ -535,16 +535,21 @@ SUPERTABLES
     font-size: 110%;
 }
 
+.stStatusOuter {
+    border: 1px solid var(--st-status-border);
+    display: flex;
+}
+
 /* The status box */
 .stStatus {
     background: var(--st-status-bg);
     color: var(--st-status-fg);
-    border: 1px solid var(--st-status-border);
     padding: 5px;
     font-size: 100%;
     min-height: 32px;
     display: flex;
     align-items: center;
+    width: 30%;
 }
 
 .stStatus .success {
@@ -555,6 +560,17 @@ SUPERTABLES
 .stStatus .fail {
     background: var(--st-status-fail-bg);
     color: var(--st-status-fail-fg);
+}
+
+/* Pagination */
+.stPaging {
+    border-left: 1px solid var(--st-status-border);
+    padding: 5px;
+    flex-grow: 2;
+}
+
+.stPaging #pageCounter {
+    font-size: 120%;
 }
 
 /* The update error message */

@@ -229,4 +229,16 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
         successfull_rows: "successfull",
         failed_rows: "failed",
     },
+
+
+    // PAGINATION
+    paging: {
+        rows_per_page: "Rows/page:",
+        rows_per_page_title: "How many rows to show on each page",
+        first_title: "First page",
+        prev_title: "Previous page",
+        next_title: "Next page",
+        last_title: "Last page",
+        jump_to_page_title: "Jump directly to page",
+    },
 });

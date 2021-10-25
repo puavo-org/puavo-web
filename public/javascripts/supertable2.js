@@ -4,7 +4,7 @@
 SuperTable 2: The 2nd Edition
 It's still a monster, but it's more structured now
 
-Version 2.5.2
+Version 2.5.5
 */
 
 // --------------------------------------------------------------------------------------------------
@@ -16,8 +16,9 @@ const TableFlag = {
     ENABLE_COLUMN_EDITING: 0x01,
     ENABLE_FILTERING: 0x02,
     ENABLE_SELECTION: 0x04,
-    DISABLE_EXPORT: 0x08,           // disables CSV export (enabled by default)
-    DISABLE_VIEW_SAVING: 0x10,      // disables JSON/URL view saving (enabled by default)
+    ENABLE_PAGINATION: 0x08,
+    DISABLE_EXPORT: 0x10,           // disables CSV export (enabled by default)
+    DISABLE_VIEW_SAVING: 0x20,      // disables JSON/URL view saving (enabled by default)
 };
 
 // Column data types. Affects filtering and sorting.
@@ -74,6 +75,24 @@ const RowSelectOp = {
     DESELECT_ALL: 2,
     DESELECT_SUCCESSFULL: 3,
 };
+
+// Pagination defaults
+const ROWS_PER_PAGE_PRESETS = [
+    [-1, "∞"],
+    [5, "5"],
+    [10, "10"],
+    [25, "25"],
+    [50, "50"],
+    [100, "100"],
+    [200, "200"],
+    [250, "250"],
+    [500, "500"],
+    [1000, "1000"],
+    [2000, "2000"],
+    [5000, "5000"],
+];
+
+const DEFAULT_ROWS_PER_PAGE = 250;
 
 // --------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------
@@ -642,6 +661,9 @@ constructor(container, settings)
             counter: null,
         },
 
+        // The pagination controls DIV
+        paging: null,
+
         // The previously clicked table row. Can be null.
         previousRow: null,
     };
@@ -708,7 +730,19 @@ constructor(container, settings)
             program: null,                              // the current (compiled) filter program
         },
 
+        paging: {
+            rowsPerPage: -1,                            // -1 = no paging, ie. "show all at once"
+        },
+
         massOperations: Array.isArray(settings.massOperations) ? settings.massOperations : [],
+    };
+
+    // Pagination state
+    this.paging = {
+        numPages: 0,
+        currentPage: 0,
+        firstRowIndex: 0,     // used to compute table row numbers during selections and mass operations
+        lastRowIndex: 0,
     };
 
     // There's no point in permitting row selection if there are no mass tools
@@ -987,6 +1021,23 @@ loadSettingsObject(stored)
     if ("filters_string" in stored && typeof(stored.filters_string) == "string")
         this.settings.filters.string = stored.filters_string;
 
+    // Restore pagination settings
+    if ("rows_per_page" in stored && typeof(stored.rows_per_page) == "number") {
+        let found = false;
+
+        // Validate the stored setting. Only allow predefined values.
+        for (const r of ROWS_PER_PAGE_PRESETS) {
+            if (r[0] == stored.rows_per_page) {
+                this.settings.paging.rowsPerPage = stored.rows_per_page;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+            this.settings.paging.rowsPerPage = DEFAULT_ROWS_PER_PAGE;
+    }
+
     return true;
 }
 
@@ -1008,6 +1059,7 @@ getSettingsObject(full=true)
         advanced: this.settings.filters.advanced,
         filters: filters,
         filters_string: typeof(this.settings.filters.string) == "string" ? this.settings.filters.string : "",
+        rows_per_page: this.settings.paging.rowsPerPage,
     };
 
     if (!full) {
@@ -1327,6 +1379,48 @@ __buildMassToolsTab(tabBar, frag)
     frag.appendChild(container);
 }
 
+__buildPaginationControls()
+{
+    let html = "";
+
+    html +=
+`<div class="flex flex-rows flex-gap-5px">
+<div class="flex flex-columns flex-gap-5px flex-vcenter">
+<label for="rowsPerPage">${_tr('paging.rows_per_page')}</label>
+<select id="rowsPerPage" title="${_tr('paging.rows_per_page_title')}" disabled>`
+
+    // settings.paging.rowsPerPage has been validated already
+    for (const r of ROWS_PER_PAGE_PRESETS) {
+        html += `<option data-rows="${r[0]}" ${r[0] == this.settings.paging.rowsPerPage ? "selected" : ""}>`;
+        html += r[1];
+        html += `</option>`;
+    }
+
+    html +=
+`</select>
+<button id="first" class="margin-left-10px" title="${_tr('paging.first_title')}" disabled>&lt;&lt;</button>
+<button id="prev" title="${_tr('paging.prev_title')}" disabled>&lt;</button>
+<span id="pageCounter" class="font-monospace">-/-</span>
+<button id="next" title="${_tr('paging.next_title')}" disabled>&gt;</button>
+<button id="last" title="${_tr('paging.last_title')}" disabled>&gt;&gt;</button></div>
+<select id="page" title="${_tr('paging.jump_to_page_title')}" class="" disabled><option>-</option></select>
+</div>`;
+
+    let container = create("div", { id: "stPaging", cls: "stPaging" })
+
+    container.innerHTML = html;
+
+    // Event handling
+    container.querySelector("select#rowsPerPage").addEventListener("change", () => this.onRowsPerPageChanged());
+    container.querySelector("button#first").addEventListener("click", () => this.onPageDelta(-999999));
+    container.querySelector("button#prev").addEventListener("click", () => this.onPageDelta(-1));
+    container.querySelector("button#next").addEventListener("click", () => this.onPageDelta(+1));
+    container.querySelector("button#last").addEventListener("click", () => this.onPageDelta(+999999));
+    container.querySelector("select#page").addEventListener("change", () => this.onJumpToPage());
+
+    this.ui.paging = container;
+}
+
 buildUI()
 {
     // Can't assume the container DIV already has the required styles
@@ -1359,10 +1453,26 @@ buildUI()
     if (this.settings.flags & TableFlag.ENABLE_SELECTION)
         this.__buildMassToolsTab(tabBar, controls);
 
+    if (this.settings.flags & TableFlag.ENABLE_PAGINATION)
+        this.__buildPaginationControls();
+
     // Assemble the full layout
+    let upper = create("div", { cls: "stUpper" });
+
+    upper.appendChild(controls);
+
+    let statusOuter = create("div", {cls: "stStatusOuter"});
+
+    let status = create("div", { cls: "stStatus" });
+
+    statusOuter.appendChild(status);
+
+    if (this.settings.flags & TableFlag.ENABLE_PAGINATION)
+        statusOuter.appendChild(this.ui.paging);
+
 //    this.container.appendChild(temporary);
-    this.container.appendChild(controls);
-    this.container.appendChild(create("div", { cls: "stStatus" }));
+    this.container.appendChild(upper);
+    this.container.appendChild(statusOuter);
     this.container.appendChild(create("div", { cls: ["stError", "hidden"]}));
     this.container.appendChild(create("div", { cls: "stTableWrapper" }));
 
@@ -1421,7 +1531,7 @@ updateUI()
     parts.push(`${totalRows - visibleRows} ${_tr('status.filtered_rows')}`);
 
     if (this.settings.flags & TableFlag.ENABLE_SELECTION) {
-        parts.push(`${this.data.selectedItems.size} ${_tr('status.selected_rows')}`);
+        parts.push(`<br>${this.data.selectedItems.size} ${_tr('status.selected_rows')}`);
 
         if (this.processing || this.doneAtLeastOneOperation) {
             parts.push(`(<span class=\"success\">${this.data.successItems.size} ${_tr('status.successfull_rows')}</span>`);
@@ -1456,6 +1566,9 @@ enableUI(isEnabled)
 
     if (this.settings.flags & TableFlag.ENABLE_COLUMN_EDITING)
         this.enableOrDisableColumnEditor(isEnabled);
+
+    if (this.settings.flags & TableFlag.ENABLE_PAGINATION)
+        this.enablePaginationControls(isEnabled);
 
     if (this.settings.flags & TableFlag.ENABLE_FILTERING) {
         this.ui.filters.enabled.disabled = !isEnabled;
@@ -1510,6 +1623,158 @@ setStatus(html)
 getTableRows()
 {
     return this.container ? this.container.querySelectorAll("table.stTable tbody tr") : [];
+}
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// PAGINATION
+
+calculatePagination()
+{
+    if (!this.ui.paging)
+        return;
+
+    if (this.data.current === null || this.data.current === undefined || this.data.current.length == 0) {
+        this.paging.numPages = 0;
+        this.paging.currentPage = 0;
+        return;
+    }
+
+    if (this.data.current.length <= this.settings.paging.rowsPerPage) {
+        this.paging.numPages = 1;
+        this.paging.currentPage = 0;
+        return;
+    }
+
+    this.paging.numPages = (this.settings.paging.rowsPerPage == -1) ? 1 :
+        Math.ceil(this.data.current.length / this.settings.paging.rowsPerPage);
+
+    this.paging.currentPage =
+        Math.min(Math.max(this.paging.currentPage, 0), this.paging.numPages - 1);
+}
+
+updatePageCounter()
+{
+    if (!this.ui.paging)
+        return;
+
+    let elem = this.ui.paging.querySelector("span#pageCounter");
+
+    if (this.paging.numPages == 0)
+        elem.innerHTML = `-/-`;
+    else {
+        const width = ("" + this.paging.numPages).length;
+
+        elem.innerHTML = `${this.paging.currentPage + 1}`.padStart(width, "\u00a0") + "/" +
+                         `${this.paging.numPages}`;
+    }
+}
+
+onRowsPerPageChanged()
+{
+    const selector = this.ui.paging.querySelector("select#rowsPerPage");
+
+    const numRows = parseInt(selector.options[selector.selectedIndex].dataset.rows, 10);
+
+    this.settings.paging.rowsPerPage = numRows;
+    this.saveSettings();
+
+    const old = this.paging.numPages;
+
+    this.calculatePagination();
+    this.enablePaginationControls(true);
+    this.updatePaginationPageSelector();
+
+    if (old != this.paging.numPages && this.data.current && this.data.current.length > 0)
+        this.buildTable();
+}
+
+onPageDelta(delta)
+{
+    const old = this.paging.currentPage;
+
+    this.paging.currentPage += delta;
+    this.calculatePagination();
+
+    if (this.paging.currentPage == old)
+        return;
+
+    this.ui.paging.querySelector("select#page").selectedIndex = this.paging.currentPage;
+    this.updatePageCounter();
+    this.enablePaginationControls(true);
+
+    if (this.data.current && this.data.current.length > 0)
+        this.buildTable();
+}
+
+onJumpToPage()
+{
+    const selector = this.ui.paging.querySelector("select#page");
+    const pageNum = parseInt(selector.options[selector.selectedIndex].dataset.page, 10);
+
+    this.paging.currentPage = pageNum;
+    this.updatePageCounter();
+    this.enablePaginationControls(true);
+    this.buildTable();
+}
+
+enablePaginationControls(state)
+{
+    if (!this.ui.paging)
+        return;
+
+    this.ui.paging.querySelector("select#rowsPerPage").disabled = !state;
+    this.ui.paging.querySelector("button#first").disabled = !(state && this.paging.currentPage > 0);
+    this.ui.paging.querySelector("button#prev").disabled = !(state && this.paging.currentPage > 0);
+    this.ui.paging.querySelector("button#next").disabled = !(state && this.paging.currentPage < this.paging.numPages - 1);
+    this.ui.paging.querySelector("button#last").disabled = !(state && this.paging.currentPage < this.paging.numPages - 1);
+    this.ui.paging.querySelector("select#page").disabled = !(state && this.paging.numPages > 1);
+}
+
+updatePaginationPageSelector()
+{
+    if (!this.ui.paging)
+        return;
+
+    console.log(`updatePaginationPageSelector(): numpages=${this.paging.numPages}, currpage=${this.paging.currentPage}`);
+
+    this.updatePageCounter();
+
+    if (this.paging.numPages == 0) {
+        this.ui.paging.querySelector("select#page").innerHTML = ``;
+        return;
+    }
+
+    const col = this.settings.sorting.column;
+
+    let html = "";
+
+    if (this.settings.paging.rowsPerPage == -1) {
+        // Everything on one giant page
+        let first = this.data.current[0],
+            last = this.data.current[this.data.current.length - 1];
+
+        first = first[col][INDEX_EXISTS] ? first[col][INDEX_DISPLAYABLE] : "-";
+        last = last[col][INDEX_EXISTS] ? last[col][INDEX_DISPLAYABLE] : "-";
+
+        html += `<option selected}>1: ${first} → ${last}</option>`;
+    } else {
+        for (let page = 0; page < this.paging.numPages; page++) {
+            const start = page * this.settings.paging.rowsPerPage;
+            const end = Math.min((page + 1) * this.settings.paging.rowsPerPage, this.data.current.length);
+
+            let first = this.data.current[start],
+                last = this.data.current[end - 1];
+
+            first = first[col][INDEX_EXISTS] ? first[col][INDEX_DISPLAYABLE] : "-";
+            last = last[col][INDEX_EXISTS] ? last[col][INDEX_DISPLAYABLE] : "-";
+
+            html += `<option ${page == this.paging.currentPage ? "selected" : ""} ` +
+                    `data-page="${page}">${page + 1}: ${first} → ${last}</option>`;
+        }
+    }
+
+    this.ui.paging.querySelector("select#page").innerHTML = html;
 }
 
 // --------------------------------------------------------------------------------------------------
@@ -1630,6 +1895,8 @@ loadSettingsJSON()
     this.ui.filters.advanced.checked = this.settings.filters.advanced;
     this.settings.filters.program = this.ui.filters.editor.getFilterProgram();
 
+    this.calculatePagination();
+    this.updatePaginationPageSelector();
     this.updateTable();
 }
 
@@ -1864,8 +2131,10 @@ updateFiltering()
     this.settings.filters.program = this.ui.filters.editor.getFilterProgram();
     this.doneAtLeastOneOperation = false;
 
-    if (this.settings.filters.enabled)
+    if (this.settings.filters.enabled) {
+        this.clearRowSelections();
         this.updateTable();
+    }
 }
 
 toggleFiltersEnabled()
@@ -1880,6 +2149,7 @@ toggleFiltersEnabled()
 
     this.doneAtLeastOneOperation = false;
     this.saveSettings();
+    this.clearRowSelections();
     this.updateTable();
 }
 
@@ -1893,6 +2163,7 @@ toggleFiltersReverse()
 
     if (this.settings.filters.enabled) {
         this.doneAtLeastOneOperation = false;
+        this.clearRowSelections();
         this.updateTable();
     }
 }
@@ -1909,6 +2180,7 @@ toggleFiltersAdvanced()
 
     if (this.settings.filters.enabled) {
         this.doneAtLeastOneOperation = false;
+        this.clearRowSelections();
         this.updateTable();
     }
 }
@@ -1928,6 +2200,36 @@ massSelectRows(operation)
         this.ui.previousRow = null;
     }
 
+    // Update internal state
+    if (operation == RowSelectOp.SELECT_ALL) {
+        this.data.selectedItems.clear();
+
+        for (const i of this.data.current)
+            this.data.selectedItems.add(i.id[INDEX_DISPLAYABLE]);
+
+        this.data.successItems.clear();
+        this.data.failedItems.clear();
+    } else if (operation == RowSelectOp.DESELECT_ALL) {
+        this.data.selectedItems.clear();
+        this.data.successItems.clear();
+        this.data.failedItems.clear();
+    } else if (operation == RowSelectOp.INVERT_SELECTION) {
+        let newState = new Set();
+
+        for (const i of this.data.current)
+            if (!this.data.selectedItems.has(i.id[INDEX_DISPLAYABLE]))
+                newState.add(i.id[INDEX_DISPLAYABLE]);
+
+        this.data.selectedItems = newState;
+        this.data.successItems.clear();
+        this.data.failedItems.clear();
+    } else if (operation == RowSelectOp.DESELECT_SUCCESSFULL) {
+        for (const id of this.data.successItems)
+            this.data.selectedItems.delete(id);
+
+        this.data.successItems.clear();
+    }
+
     // Rebuilding the table is too slow, so modify the checkbox cells directly
     for (let row of this.getTableRows()) {
         let cb = row.childNodes[0].childNodes[0];
@@ -1936,23 +2238,17 @@ massSelectRows(operation)
             case RowSelectOp.SELECT_ALL:
                 cb.classList.add("checked");
                 row.classList.remove("success", "fail");
-                this.data.selectedItems.add(this.data.current[row.dataset.index].id[INDEX_DISPLAYABLE]);
                 break;
 
             case RowSelectOp.DESELECT_ALL:
                 cb.classList.remove("checked");
                 row.classList.remove("success", "fail");
-                this.data.selectedItems.delete(this.data.current[row.dataset.index].id[INDEX_DISPLAYABLE]);
                 break;
 
             case RowSelectOp.INVERT_SELECTION:
-                if (cb.classList.contains("checked")) {
+                if (cb.classList.contains("checked"))
                     cb.classList.remove("checked");
-                    this.data.selectedItems.delete(this.data.current[row.dataset.index].id[INDEX_DISPLAYABLE]);
-                } else {
-                    cb.classList.add("checked");
-                    this.data.selectedItems.add(this.data.current[row.dataset.index].id[INDEX_DISPLAYABLE]);
-                }
+                else cb.classList.add("checked");
 
                 row.classList.remove("success", "fail");
                 break;
@@ -1961,20 +2257,16 @@ massSelectRows(operation)
                 if (row.classList.contains("success")) {
                     row.classList.remove("success");
                     cb.classList.remove("checked");
-                    this.data.selectedItems.delete(this.data.current[row.dataset.index].id[INDEX_DISPLAYABLE]);
                 }
 
                 break;
 
             default:
-                return;
+                break;
         }
     }
 
-    this.data.successItems.clear();
-    this.data.failedItems.clear();
     this.doneAtLeastOneOperation = false;
-
     this.updateUI();
 }
 
@@ -2038,6 +2330,8 @@ doMassOperation()
         ctx.container.querySelector("div#controls select").disabled = !isEnabled;
         ctx.ui.mass.proceed.disabled = !isEnabled;
 
+        ctx.enablePaginationControls(isEnabled);
+
         ctx.enableTable(isEnabled);
     }
 
@@ -2077,6 +2371,11 @@ doMassOperation()
 
     function updateRow(ctx, row, status)
     {
+        if (!row[1]) {
+            // This row is not on the current page
+            return;
+        }
+
         let cell = row[1];
 
         if (status.success === true) {
@@ -2096,7 +2395,7 @@ doMassOperation()
 
     let tableRows = this.getTableRows();
 
-    // Reset previous row states
+    // Reset previous row states of visible rows
     for (let row of tableRows)
         row.classList.remove("success", "fail");
 
@@ -2107,8 +2406,12 @@ doMassOperation()
     for (let i = 0; i < this.data.current.length; i++) {
         const item = this.data.current[i];
 
-        if (this.data.selectedItems.has(item.id[INDEX_DISPLAYABLE]))
-            itemsToBeProcessed.push([item, tableRows[i]]);
+        if (this.data.selectedItems.has(item.id[INDEX_DISPLAYABLE])) {
+            if (i >= this.paging.firstRowIndex && i <= this.paging.lastRowIndex) {
+                // Only rows that are visible on the current page can be live updated
+                itemsToBeProcessed.push([item, tableRows[i - this.paging.firstRowIndex]]);
+            } else itemsToBeProcessed.push([item, null]);
+        }
     }
 
     this.data.successItems.clear();
@@ -2211,7 +2514,7 @@ onRowCheckboxClick(e)
         for (let i = startIndex; i <= endIndex; i++) {
             const id = this.data.current[i].id[INDEX_DISPLAYABLE];
 
-            let row = tableRows[i],
+            let row = tableRows[i - this.paging.firstRowIndex],
                 cb = row.childNodes[0].childNodes[0];
 
             row.classList.remove("success", "fail");
@@ -2316,6 +2619,7 @@ onHeaderMouseUp(e)
         }
 
         this.saveSettings();
+        this.clearRowSelections();
         this.updateTable();
         this.updateUI();
 
@@ -2539,12 +2843,17 @@ updateHeaderDrag(e)
 // --------------------------------------------------------------------------------------------------
 // DATA PROCESSING AND TABLE BUILDING
 
-// Retrieve data from the server and process it
-fetchDataAndUpdate()
+clearRowSelections()
 {
     this.data.selectedItems.clear();
     this.data.successItems.clear();
     this.data.failedItems.clear();
+}
+
+// Retrieve data from the server and process it
+fetchDataAndUpdate()
+{
+    this.clearRowSelections();
     this.setStatus(`<div>${_tr('status.updating')}</div><img src="/images/spinner.gif" class="margin-left-5px">`);
     this.updating = true;
     this.enableUI(false);
@@ -2643,9 +2952,6 @@ updateTable()
     this.enableUI(false);
     this.updating = true;
     this.doneAtLeastOneOperation = false;
-    this.data.selectedItems.clear();
-    this.data.successItems.clear();
-    this.data.failedItems.clear();
 
     const t0 = performance.now();
 
@@ -2673,12 +2979,15 @@ updateTable()
     console.log(`Data filtering: ${t1 - t0} ms`);
     console.log(`Data sorting: ${t3 - t2} ms`);
 
+    this.calculatePagination();
+    this.updatePaginationPageSelector();
+
     // Rebuild the table
     this.buildTable();
 
     this.updating = false;
-    this.enableUI(true);
     this.updateUI();
+    this.enableUI(true);
 
     console.log("updateTable(): table update complete");
 }
@@ -2831,12 +3140,47 @@ buildTable()
 
         html += `<tr><td colspan="${numColumns}">(${_tr('empty_table')})</td></tr>`;
     } else {
-        for (const [index, row] of this.data.current.entries()) {
-            html += `<tr data-index="${index}">`;
+        // Calculate start and end indexes
+        let start, end;
+
+        if (this.settings.flags & TableFlag.ENABLE_PAGINATION) {
+            if (this.settings.paging.rowsPerPage == -1) {
+                start = 0;
+                end = this.data.current.length;
+            } else {
+                start = this.paging.currentPage * this.settings.paging.rowsPerPage;
+                end = Math.min((this.paging.currentPage + 1) * this.settings.paging.rowsPerPage, this.data.current.length);
+            }
+
+            console.log(`currentPage=${this.paging.currentPage} start=${start} end=${end}`);
+        } else {
+            start = 0;
+            end = this.data.current.length;
+        }
+
+        // These must always be updated, even when pagination is disabled
+        this.paging.firstRowIndex = start;
+        this.paging.lastRowIndex = end;
+
+        for (let index = start; index < end; index++) {
+            const row = this.data.current[index];
+            const rowID = row.id[INDEX_DISPLAYABLE];
+            let rowClasses = [];
+
+            if (this.data.successItems.has(rowID))
+                rowClasses.push("success");
+
+            if (this.data.failedItems.has(rowID))
+                rowClasses.push("fail");
+
+            html += `<tr data-index="${index}" class=${rowClasses.join(" ")}>`;
 
             // The checkbox
-            if (canSelect)
-                html += `<td class="minimize-width cursor-pointer checkbox"><span></span></td>`;
+            if (canSelect) {
+                html += `<td class="minimize-width cursor-pointer checkbox">`;
+                html += this.data.selectedItems.has(row.id[INDEX_DISPLAYABLE]) ? `<span class="checked">` : `<span>`;
+                html += `</span></td>`;
+            }
 
             // Data columns
             for (const column of this.settings.columns.current) {

@@ -228,4 +228,15 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
         successfull_rows: "onnistui",
         failed_rows: "epäonnistui",
     },
+
+    // PAGINATION
+    paging: {
+        rows_per_page: "Rivejä/sivu:",
+        rows_per_page_title: "Montako riviä näytetään per sivu",
+        first_title: "Ensimmäinen sivu",
+        prev_title: "Edellinen sivu",
+        next_title: "Seuraava sivu",
+        last_title: "Viimeinen sivu",
+        jump_to_page_title: "Hyppää suoraan sivulle",
+    },
 });
