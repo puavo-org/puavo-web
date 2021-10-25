@@ -731,7 +731,7 @@ constructor(container, settings)
         },
 
         paging: {
-            rowsPerPage: -1,                            // -1 = no paging, ie. "show all at once"
+            rowsPerPage: DEFAULT_ROWS_PER_PAGE,         // -1 = no paging, ie. "show all at once"
         },
 
         massOperations: Array.isArray(settings.massOperations) ? settings.massOperations : [],
