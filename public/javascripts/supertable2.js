@@ -2986,8 +2986,8 @@ updateTable()
     this.buildTable();
 
     this.updating = false;
-    this.updateUI();
     this.enableUI(true);
+    this.updateUI();
 
     console.log("updateTable(): table update complete");
 }
