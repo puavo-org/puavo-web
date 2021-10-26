@@ -1751,7 +1751,7 @@ updatePaginationPageSelector()
     // HTML-escaped when displayed, but that means HTML tags can slip through and it looks
     // really ugly.
     const index = (this.settings.columns.definitions[col].type == ColumnType.STRING) ?
-        INDEX_SORTABLE : INDEX_DISPLAYABLE;
+        INDEX_FILTERABLE : INDEX_DISPLAYABLE;
 
     // Maximum length of an entry we'll display
     const MAX_LENGTH = 70;
