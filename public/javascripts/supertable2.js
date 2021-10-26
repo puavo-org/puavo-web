@@ -1753,6 +1753,13 @@ updatePaginationPageSelector()
     const index = (this.settings.columns.definitions[col].type == ColumnType.STRING) ?
         INDEX_SORTABLE : INDEX_DISPLAYABLE;
 
+    // Maximum length of an entry we'll display
+    const MAX_LENGTH = 70;
+
+    const limitLength = (str) => {
+        return (str.length > MAX_LENGTH) ? str.substring(0, MAX_LENGTH) + "…" : str;
+    };
+
     let html = "";
 
     if (this.settings.paging.rowsPerPage == -1) {
@@ -1760,8 +1767,8 @@ updatePaginationPageSelector()
         let first = this.data.current[0],
             last = this.data.current[this.data.current.length - 1];
 
-        first = first[col][INDEX_EXISTS] ? first[col][index] : "-";
-        last = last[col][INDEX_EXISTS] ? last[col][index] : "-";
+        first = limitLength(first[col][INDEX_EXISTS] ? first[col][index] : "-");
+        last = limitLength(last[col][INDEX_EXISTS] ? last[col][index] : "-");
 
         html += `<option selected}>1: ${escapeHTML(first)} → ${escapeHTML(last)}</option>`;
     } else {
@@ -1772,8 +1779,8 @@ updatePaginationPageSelector()
             let first = this.data.current[start],
                 last = this.data.current[end - 1];
 
-            first = first[col][INDEX_EXISTS] ? first[col][index] : "-";
-            last = last[col][INDEX_EXISTS] ? last[col][index] : "-";
+            first = limitLength(first[col][INDEX_EXISTS] ? first[col][index] : "-");
+            last = limitLength(last[col][INDEX_EXISTS] ? last[col][index] : "-");
 
             html += `<option ${page == this.paging.currentPage ? "selected" : ""} ` +
                     `data-page="${page}">${page + 1}: ${escapeHTML(first)} → ${escapeHTML(last)}</option>`;
