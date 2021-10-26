@@ -1747,6 +1747,12 @@ updatePaginationPageSelector()
 
     const col = this.settings.sorting.column;
 
+    // Assume string columns can contain HTML, but numeric columns won't. The values are
+    // HTML-escaped when displayed, but that means HTML tags can slip through and it looks
+    // really ugly.
+    const index = (this.settings.columns.definitions[col].type == ColumnType.STRING) ?
+        INDEX_SORTABLE : INDEX_DISPLAYABLE;
+
     let html = "";
 
     if (this.settings.paging.rowsPerPage == -1) {
@@ -1754,10 +1760,10 @@ updatePaginationPageSelector()
         let first = this.data.current[0],
             last = this.data.current[this.data.current.length - 1];
 
-        first = first[col][INDEX_EXISTS] ? first[col][INDEX_DISPLAYABLE] : "-";
-        last = last[col][INDEX_EXISTS] ? last[col][INDEX_DISPLAYABLE] : "-";
+        first = first[col][INDEX_EXISTS] ? first[col][index] : "-";
+        last = last[col][INDEX_EXISTS] ? last[col][index] : "-";
 
-        html += `<option selected}>1: ${first} → ${last}</option>`;
+        html += `<option selected}>1: ${escapeHTML(first)} → ${escapeHTML(last)}</option>`;
     } else {
         for (let page = 0; page < this.paging.numPages; page++) {
             const start = page * this.settings.paging.rowsPerPage;
@@ -1766,11 +1772,11 @@ updatePaginationPageSelector()
             let first = this.data.current[start],
                 last = this.data.current[end - 1];
 
-            first = first[col][INDEX_EXISTS] ? first[col][INDEX_DISPLAYABLE] : "-";
-            last = last[col][INDEX_EXISTS] ? last[col][INDEX_DISPLAYABLE] : "-";
+            first = first[col][INDEX_EXISTS] ? first[col][index] : "-";
+            last = last[col][INDEX_EXISTS] ? last[col][index] : "-";
 
             html += `<option ${page == this.paging.currentPage ? "selected" : ""} ` +
-                    `data-page="${page}">${page + 1}: ${first} → ${last}</option>`;
+                    `data-page="${page}">${page + 1}: ${escapeHTML(first)} → ${escapeHTML(last)}</option>`;
         }
     }
 
