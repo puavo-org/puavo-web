@@ -525,6 +525,21 @@ SUPERTABLES
 }
 
 /* Mass tools */
+.stMass div#massRowSelectSource {
+    border: 1px solid var(--st-border);
+    padding: 5px;
+    font-size: 120%;
+    outline: none;
+    font-family: monospace;
+    width: 30em;
+    overflow: scroll;
+    resize: both;
+}
+
+.stMass .unmatchedRow {
+    background-color: var(--st-row-fail-bg);
+}
+
 .stMass progress {
     min-width: 250px;
     border-radius: 0;

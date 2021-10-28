@@ -4,7 +4,7 @@
 SuperTable 2: The 2nd Edition
 It's still a monster, but it's more structured now
 
-Version 2.5.5
+Version 2.5.6
 */
 
 // --------------------------------------------------------------------------------------------------
@@ -735,6 +735,8 @@ constructor(container, settings)
         },
 
         massOperations: Array.isArray(settings.massOperations) ? settings.massOperations : [],
+
+        massSelects: Array.isArray(settings.massSelects) ? settings.massSelects : [],
     };
 
     // Pagination state
@@ -1327,9 +1329,32 @@ __buildMassToolsTab(tabBar, frag)
 <button id="none">${_tr('tabs.mass.deselect_all')}</button>
 <button id="successfull">${_tr('tabs.mass.deselect_successfull')}</button>
 <button id="invert">${_tr('tabs.mass.invert_selection')}</button>
-</div>
-</fieldset>
+</div>`;
 
+    // Mass row selection by ID/name/etc.
+    if (this.settings.massSelects.length > 0) {
+        html +=
+`<br><details>
+<summary>${_tr('tabs.mass.mass_row_title')}</summary>
+<p>${_tr('tabs.mass.mass_row_help')}</p>
+<div class="flex flex-columns flex-gap-5px margin-top-5px">
+<div id="massRowSelectSource" contentEditable="true" spellcheck="false"></div>
+<div class="flex flex-rows flex-gap-5px">
+<span><label for="massRowSelectType">${_tr('tabs.mass.mass_row_type')}</label><select id="massRowSelectType" class="margin-left-5px">`;
+
+        for (const m of this.settings.massSelects)
+            html += `<option data-id="${m[0]}">${m[1]}</option>`;
+
+        html +=
+`</select></span>
+<button id="massRowSelect" class="margin-top-5px">${_tr('tabs.mass.mass_row_select')}</button>
+<button id="massRowDeselect">${_tr('tabs.mass.mass_row_deselect')}</button>
+<div id="massRowSelectStatus">&nbsp;</div>
+</div></div></details>`;
+    }
+
+    html +=
+`</fieldset>
 <fieldset><legend>${_tr('tabs.mass.operation_title')}</legend>
 <div id="controls" class="flex flex-columns flex-gap-10px flex-nowrap flex-vcenter">
 <select class="operation" disabled>`;
@@ -1369,6 +1394,12 @@ __buildMassToolsTab(tabBar, frag)
     this.ui.mass.proceed = container.querySelector("div#controls > button");
     this.ui.mass.progress = container.querySelector("div#controls > progress");
     this.ui.mass.counter = container.querySelector("div#controls > span.counter");
+
+    if (this.settings.massSelects.length > 0) {
+        container.querySelector("div#massRowSelectSource").addEventListener("paste", (e) => this.onMassSelectPaste(e));
+        container.querySelector("button#massRowSelect").addEventListener("click", () => this.onMassSelectByID(true));
+        container.querySelector("button#massRowDeselect").addEventListener("click", () => this.onMassSelectByID(false));
+    }
 
     container.querySelector("div#controls > select").addEventListener("change", (e) =>
         this.switchMassOperation(e));
@@ -2280,6 +2311,111 @@ massSelectRows(operation)
     }
 
     this.doneAtLeastOneOperation = false;
+    this.updateUI();
+}
+
+// Strip HTML from the pasted text (plain text only!). The thing is, the "text box" is a
+// contentEdit-enabled DIV, so it accepts HTML. If you paste data from, say, LibreOffice
+// Calc, the spreadsheet font gets embedded in it and it can actually screw up the page's
+// layout completely (I saw that happening)! That's not acceptable, so this little function
+// will hopefully remove all HTML from whatever's being pasted and leave only plain text.
+// See https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent/clipboardData
+onMassSelectPaste(e)
+{
+    e.preventDefault();
+    e.target.innerText = e.clipboardData.getData("text/plain");
+}
+
+// Perform row mass selection
+onMassSelectByID(state)
+{
+    if (this.updating || this.processing)
+        return;
+
+    let container = this.container.querySelector("div#massRowSelectSource");
+
+    // Source data type
+    const selector = this.container.querySelector("select#massRowSelectType");
+    const type = selector.options[selector.selectedIndex].dataset.id;
+    const numeric = this.settings.columns.definitions[type].type != ColumnType.STRING;
+
+    // Extract plain text content
+    let entries = new Set();
+
+    for (const i of container.innerText.split("\n")) {
+        let s = i.trim();
+
+        if (s.length == 0 || s[0] == "#")
+            continue;
+
+        if (numeric) {
+            s = parseInt(s, 10);
+
+            if (isNaN(s))
+                continue;
+        }
+
+        entries.add(s);
+    }
+
+    // Select/deselect the rows
+    let tableRows = this.getTableRows();
+    let found = new Set();
+
+    for (let i = 0, j = this.data.current.length; i < j; i++) {
+        const item = this.data.current[i];
+
+        if (!item[type][INDEX_EXISTS])
+            continue;
+
+        const field = item[type][INDEX_FILTERABLE];
+
+        if (!entries.has(field))
+            continue;
+
+        found.add(field);
+
+        const id = item.id[INDEX_DISPLAYABLE];
+
+        if (state)
+            this.data.selectedItems.add(id);
+        else {
+            this.data.selectedItems.delete(id);
+            this.data.successItems.delete(id);
+            this.data.failedItems.delete(id);
+        }
+
+        // Directly update visible table rows
+        if (i >= this.paging.firstRowIndex && i < this.paging.lastRowIndex) {
+            let row = tableRows[i - this.paging.firstRowIndex],
+                cb = row.childNodes[0].childNodes[0];
+
+            if (state)
+                cb.classList.add("checked");
+            else cb.classList.remove("checked");
+
+            row.classList.remove("success", "fail");
+        }
+    }
+
+    // Highlight the items that weren't found
+    let html = "";
+
+    for (const e of entries) {
+        if (found.has(e))
+            html += "<div>";
+        else html += `<div class="unmatchedRow">`;
+
+        html += escapeHTML(e);
+        html += "</div>";
+    }
+
+    container.innerHTML = html;
+
+    this.container.querySelector("div#massRowSelectStatus").innerHTML =
+        _tr('tabs.mass.mass_row_status',
+            { total: entries.size, match: found.size, unmatched: entries.size - found.size });
+
     this.updateUI();
 }
 
