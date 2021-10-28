@@ -1322,21 +1322,22 @@ __buildMassToolsTab(tabBar, frag)
 
     html +=
 `<div class="flex flex-rows flex-gap-10px">
-<fieldset>
-<legend>${_tr('tabs.mass.rows_title')}</legend>
-<div class="mainButtons flex flex-columns flex-gap-5px">
-<button id="all">${_tr('tabs.mass.select_all')}</button>
-<button id="none">${_tr('tabs.mass.deselect_all')}</button>
-<button id="successfull">${_tr('tabs.mass.deselect_successfull')}</button>
-<button id="invert">${_tr('tabs.mass.invert_selection')}</button>
-</div>`;
+<details><summary>${_tr('tabs.mass.mass_row_select_title')}</summary>
+<div id="massRowTools">
+<div class="flex flex-columns flex-gap-10px margin-top-10px">
+<fieldset><legend>${_tr('tabs.mass.mass_row_whole_table')}</legend>
+<div class="mainButtons flex flex-rows flex-gap-5px">
+<button id="all">${_tr('tabs.mass.mass_row_select_all')}</button>
+<button id="none">${_tr('tabs.mass.mass_row_deselect_all')}</button>
+<button id="invert">${_tr('tabs.mass.mass_row_invert_selection')}</button>
+<button id="successfull">${_tr('tabs.mass.mass_row_deselect_successfull')}</button>
+</div></fieldset>`;
 
     // Mass row selection by ID/name/etc.
     if (this.settings.massSelects.length > 0) {
         html +=
-`<br><details>
-<summary>${_tr('tabs.mass.mass_row_title')}</summary>
-<p>${_tr('tabs.mass.mass_row_help')}</p>
+`<fieldset><legend>${_tr('tabs.mass.mass_row_specific_rows')}</legend>
+<p class="margin-0 padding-0">${_tr('tabs.mass.mass_row_help')}</p>
 <div class="flex flex-columns flex-gap-5px margin-top-5px">
 <div id="massRowSelectSource" contentEditable="true" spellcheck="false"></div>
 <div class="flex flex-rows flex-gap-5px">
@@ -1350,11 +1351,11 @@ __buildMassToolsTab(tabBar, frag)
 <button id="massRowSelect" class="margin-top-5px">${_tr('tabs.mass.mass_row_select')}</button>
 <button id="massRowDeselect">${_tr('tabs.mass.mass_row_deselect')}</button>
 <div id="massRowSelectStatus">&nbsp;</div>
-</div></div></details>`;
+</div></div>`;
     }
 
     html +=
-`</fieldset>
+`</fieldset></div></details>
 <fieldset><legend>${_tr('tabs.mass.operation_title')}</legend>
 <div id="controls" class="flex flex-columns flex-gap-10px flex-nowrap flex-vcenter">
 <select class="operation" disabled>`;
@@ -1383,22 +1384,22 @@ __buildMassToolsTab(tabBar, frag)
     container.innerHTML = html;
 
     container.querySelector("#all")
-        .addEventListener("click", () => this.massSelectRows(RowSelectOp.SELECT_ALL));
+        .addEventListener("click", () => this.massSelectAllRows(RowSelectOp.SELECT_ALL));
     container.querySelector("#none")
-        .addEventListener("click", () => this.massSelectRows(RowSelectOp.DESELECT_ALL));
+        .addEventListener("click", () => this.massSelectAllRows(RowSelectOp.DESELECT_ALL));
     container.querySelector("#successfull")
-        .addEventListener("click", () => this.massSelectRows(RowSelectOp.DESELECT_SUCCESSFULL));
+        .addEventListener("click", () => this.massSelectAllRows(RowSelectOp.DESELECT_SUCCESSFULL));
     container.querySelector("#invert")
-        .addEventListener("click", () => this.massSelectRows(RowSelectOp.INVERT));
+        .addEventListener("click", () => this.massSelectAllRows(RowSelectOp.INVERT));
 
     this.ui.mass.proceed = container.querySelector("div#controls > button");
     this.ui.mass.progress = container.querySelector("div#controls > progress");
     this.ui.mass.counter = container.querySelector("div#controls > span.counter");
 
     if (this.settings.massSelects.length > 0) {
-        container.querySelector("div#massRowSelectSource").addEventListener("paste", (e) => this.onMassSelectPaste(e));
-        container.querySelector("button#massRowSelect").addEventListener("click", () => this.onMassSelectByID(true));
-        container.querySelector("button#massRowDeselect").addEventListener("click", () => this.onMassSelectByID(false));
+        container.querySelector("div#massRowSelectSource").addEventListener("paste", (e) => this.massSelectFilterPaste(e));
+        container.querySelector("button#massRowSelect").addEventListener("click", () => this.massSelectSpecificRows(true));
+        container.querySelector("button#massRowDeselect").addEventListener("click", () => this.massSelectSpecificRows(false));
     }
 
     container.querySelector("div#controls > select").addEventListener("change", (e) =>
@@ -1612,7 +1613,7 @@ enableUI(isEnabled)
         this.container.querySelector("div#controls select").disabled = !isEnabled;
         this.ui.mass.proceed.disabled = !isEnabled;
 
-        for (let b of this.container.querySelectorAll("div.mainButtons button"))
+        for (let b of this.container.querySelectorAll("div#massRowTools button"))
             b.disabled = !isEnabled;
 
         this.ui.mass.proceed.disabled = !isEnabled && this.data.selectedItems.size == 0;
@@ -2234,7 +2235,7 @@ toggleFiltersAdvanced()
 // MASS OPERATIONS AND ROW SELECTIONS
 
 // Mass select or deselect table rows
-massSelectRows(operation)
+massSelectAllRows(operation)
 {
     if (this.updating || this.processing || !this.data.current || this.data.current.length == 0)
         return;
@@ -2320,14 +2321,14 @@ massSelectRows(operation)
 // layout completely (I saw that happening)! That's not acceptable, so this little function
 // will hopefully remove all HTML from whatever's being pasted and leave only plain text.
 // See https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent/clipboardData
-onMassSelectPaste(e)
+massSelectFilterPaste(e)
 {
     e.preventDefault();
     e.target.innerText = e.clipboardData.getData("text/plain");
 }
 
 // Perform row mass selection
-onMassSelectByID(state)
+massSelectSpecificRows(state)
 {
     if (this.updating || this.processing)
         return;
@@ -2473,7 +2474,7 @@ doMassOperation()
             else t.classList.add("disabled");
         }
 
-        for (let b of ctx.container.querySelectorAll("div.mass div.mainButtons button"))
+        for (let b of ctx.container.querySelectorAll("div#massRowTools button"))
             b.disabled = !isEnabled;
 
         ctx.container.querySelector("div#controls select").disabled = !isEnabled;
