@@ -99,7 +99,7 @@ const DEFAULT_ROWS_PER_PAGE = 250;
 // UTILITY
 
 // A shorter to type alias
-function _tr(id) { return I18n.translate(id); }
+function _tr(id, params={}) { return I18n.translate(id, params); }
 
 function escapeHTML(s)
 {
