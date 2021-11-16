@@ -907,9 +907,7 @@ module PuavoRest
 
     def get_add_groups_param(params, param_name)
       value = params[param_name] || @user_mapping_defaults[param_name]
-      unless value.kind_of?(String) && !value.empty? then
-        raise "add group attribute '#{ param_name }' not configured"
-      end
+      return nil unless value.kind_of?(String) && !value.empty?
       value.clone
     end
 
@@ -920,43 +918,83 @@ module PuavoRest
 
      return groupdata_string unless formatting_needed
 
+     teaching_group = nil
      teaching_group_field = get_add_groups_param(params, 'teaching_group_field')
-
-     ldap_attribute_value = Array(@ldap_userinfo[teaching_group_field]).first
-     unless ldap_attribute_value.kind_of?(String) then
-       # not all users have (teachers and such) have teaching group fields
-       return nil
+     if teaching_group_field then
+       teaching_group_value = Array(@ldap_userinfo[teaching_group_field]).first
+       if teaching_group_value.kind_of?(String) then
+         teaching_group_regex \
+           = get_add_groups_param(params, 'teaching_group_regex') || /^(.*)$/
+         match = teaching_group_value.match(teaching_group_regex)
+         if match && match.size == 2 then
+           teaching_group = match[1]
+         else
+           @rlog.warn('unexpected format in ldap attribute' \
+                        + " '#{ teaching_group_field }':" \
+                        + " '#{ teaching_group_value }'" \
+                        + " (expecting a match with '#{ teaching_group_regex }'" \
+                        + ' that should also have one string capture)')
+         end
+       end
      end
 
-     teaching_group_regex = get_add_groups_param(params, 'teaching_group_regex')
-     match = ldap_attribute_value.match(teaching_group_regex)
-     unless match && match.size == 2 then
-       @rlog.warn('unexpected format in ldap attribute' \
-                    + " '#{ teaching_group_field }':" \
-                    + " '#{ ldap_attribute_value }'" \
-                    + " (expecting a match with '#{ teaching_group_regex }'" \
-                    + " that should also have one string capture)")
-       return nil
+     if groupdata_string.include?('%GROUP') then
+       unless teaching_group then
+         @rlog.warn('could not determine teaching group')
+         return nil
+       end
+       groupdata_string.sub!('%GROUP', teaching_group)
      end
-     teaching_group = match[1]
-
-     groupdata_string.sub!('%GROUP', teaching_group)
 
      return groupdata_string unless groupdata_string.include?('%CLASSNUMBER') \
                                       || groupdata_string.include?('%STARTYEAR')
 
-     classnum_regex = get_add_groups_param(params, 'classnumber_regex')
-     match = ldap_attribute_value.match(classnum_regex)
-     unless match && match.size == 2 then
-       @rlog.warn('unexpected format in ldap attribute' \
-                    + " '#{ teaching_group_field }':" \
-                    + " '#{ ldap_attribute_value }'" \
-                    + " (expecting a match with '#{ classnum_regex }'" \
-                    + " that should also have one integer capture)")
+     yearclass = nil
+     yearclass_field = get_add_groups_param(params, 'yearclass_field')
+     if yearclass_field then
+       yearclass_value = Array(@ldap_userinfo[yearclass_field]).first
+       if yearclass_value.kind_of?(String) then
+         yearclass_regex = get_add_groups_param(params, 'yearclass_regex') \
+                             || /^(.*)$/
+         match = yearclass_value.match(yearclass_regex)
+         if match && match.size == 2 then
+           yearclass = match[1]
+         else
+           @rlog.warn('unexpected format in ldap attribute' \
+                        + " '#{ yearclass_field }':" \
+                        + " '#{ yearclass_value }'" \
+                        + " (expecting a match with '#{ yearclass_regex }'" \
+                        + ' that should also have one string capture)')
+         end
+       end
+     end
+
+     if !yearclass && teaching_group then
+       classnum_regex = get_add_groups_param(params, 'classnumber_regex')
+       if classnum_regex then
+         match = teaching_group.match(classnum_regex)
+         if match && match.size == 2 then
+           yearclass = match[1]
+         else
+           @rlog.warn('unexpected format in teaching group' \
+                        + " '#{ teaching_group }':" \
+                        + " (expecting a match with '#{ classnumber_regex }'" \
+                        + ' that should also have one string capture)')
+         end
+       end
+     end
+
+     unless yearclass then
+       @rlog.warn('could not determine year class')
        return nil
      end
 
-     class_number = Integer(match[1])
+     begin
+       class_number = Integer(yearclass)
+     rescue StandardError => e
+       @rlog.warn("could not convert '#{ yearclass }' to integer")
+       return nil
+     end
 
      today = Date.today
      class_yearbase = today.year + (today.month < 8 ? 0 : 1)
@@ -976,6 +1014,10 @@ module PuavoRest
         # these are mandatory
         displayname_format = get_add_groups_param(params, 'displayname')
         name_format        = get_add_groups_param(params, 'name')
+        raise 'group attribute "displayname" not configured' \
+          unless displayname_format
+        raise 'group attribute "name" not configured' \
+          unless name_format
 
         displayname = format_groupdata(displayname_format, params)
         return {} unless displayname
