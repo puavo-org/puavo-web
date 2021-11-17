@@ -969,10 +969,10 @@ module PuavoRest
        end
      end
 
-     if !yearclass && teaching_group then
-       classnum_regex = get_add_groups_param(params, 'classnumber_regex')
-       if classnum_regex then
-         match = teaching_group.match(classnum_regex)
+     if !yearclass && teaching_group_value then
+       classnumber_regex = get_add_groups_param(params, 'classnumber_regex')
+       if classnumber_regex then
+         match = teaching_group_value.match(classnumber_regex)
          if match && match.size == 2 then
            yearclass = match[1]
          else
