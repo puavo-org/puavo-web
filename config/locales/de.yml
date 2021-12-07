@@ -73,6 +73,7 @@ de:
       changed_user: "Zu ändernden Benutzer"
       password: "Passwort"
       link_own_password: "Das eigene Passwort änderen"
+      domain_or: " oder "
     own:
       title: "Das eigene Passwort ändern"
       password: "Altes Passwort"

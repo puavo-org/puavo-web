@@ -38,7 +38,7 @@
         <% if @domain %>
         <div class="passwordDomainContainer">
         <%= text_field :login, :uid, :value => @changing, :autofocus => (@changing.nil? || @changing.empty?) ? true : false, :required => "required" %>
-        <span><%= @domain %></span>
+        <span><%= Array(@domain).map { |d| "<strong>#{d}</strong>" }.join(t('password.edit.domain_or')).html_safe %></span>
         </div>
         <% else %>
         <%= text_field :login, :uid, :value => @changing, :autofocus => (@changing.nil? || @changing.empty?) ? true : false, :required => "required" %>

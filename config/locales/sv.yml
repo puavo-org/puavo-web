@@ -73,6 +73,7 @@ sv:
       changed_user: "Changed user"
       password: "Password"
       link_own_password: "Change your own password"
+      domain_or: " eller "
     own:
       title: "Change your own password"
       password: "Old password"

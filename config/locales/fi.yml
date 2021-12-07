@@ -1543,6 +1543,7 @@ fi:
       changed_user: Vaihdettava tunnus
       password: Salasana
       link_own_password: Vaihda oma salasanasi
+      domain_or: " tai "
     own:
       title: Vaihda oma salasanasi
       password: Vanha salasana

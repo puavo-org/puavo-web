@@ -342,8 +342,11 @@ class PasswordController < ApplicationController
     customisations = get_school_password_form_customisations(@organisation_name, -1)
     domain = customisations[:domain]
 
-    if domain && login_uid.end_with?(domain)
-      login_uid.remove!(domain)
+    Array(domain || []).each do |d|
+      if login_uid.end_with?(d)
+        login_uid.sub!(d, '')
+        break
+      end
     end
 
     external_login_status = external_login(login_uid, params[:login][:password])
@@ -392,8 +395,11 @@ class PasswordController < ApplicationController
     if params[:user][:uid] then
       target_user_username = params[:user][:uid]
 
-      if domain && target_user_username.end_with?(domain)
-        target_user_username.remove!(domain)
+      Array(domain || []).each do |d|
+        if target_user_username.end_with?(d)
+          target_user_username.sub!(d, '')
+          break
+        end
       end
 
       @user = User.find(:first,
