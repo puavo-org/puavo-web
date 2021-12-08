@@ -3213,7 +3213,7 @@ buildTable()
     html += "<thead>";
 
     if (canSelect)
-        html += `<th class="width-0"></th>`;
+        html += `<th class="width-0"><span class="headerCheckbox"></span></th>`;
 
     for (const [index, key] of this.settings.columns.current.entries()) {
         const def = this.settings.columns.definitions[key];
