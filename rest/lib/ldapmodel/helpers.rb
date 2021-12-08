@@ -1,12 +1,4 @@
 class LdapModel
-
-  def self.callable_from_instance(method)
-    klass = self
-    define_method method do |*args|
-      klass.send(method, *args)
-    end
-  end
-
   def self.from_ldap_hash(ldap_attrs, serialize_attrs=nil)
     new({}, :serialize => serialize_attrs, :existing => true).ldap_merge!(ldap_attrs)
   end
@@ -17,31 +9,10 @@ class LdapModel
     s && s.include?(",") && s.include?("=")
   end
 
-  # http://tools.ietf.org/html/rfc4515 lists these exceptions from UTF1
-  # charset for filters. All of the following must be escaped in any normal
-  # string using a single backslash ('\') as escape.
-  #
-  ESCAPES = {
-    "\0" => '00', # NUL            = %x00 ; null character
-    '*'  => '2A', # ASTERISK       = %x2A ; asterisk ("*")
-    '('  => '28', # LPARENS        = %x28 ; left parenthesis ("(")
-    ')'  => '29', # RPARENS        = %x29 ; right parenthesis (")")
-    '\\' => '5C', # ESC            = %x5C ; esc (or backslash) ("\")
-  }
-  # Compiled character class regexp using the keys from the above hash.
-  ESCAPE_RE = Regexp.new(
-    "[" +
-    ESCAPES.keys.map { |e| Regexp.escape(e) }.join +
-    "]"
-  )
-
-  # Escape unsafe user input for safe LDAP filter use
-  #
-  # @see https://github.com/ruby-ldap/ruby-net-ldap/blob/8ddb2d7c8476c3a2b2ad9fcd367ca0d36edaa611/lib/net/ldap/filter.rb#L247-L264
-  def self.escape(string)
-    string.to_s.gsub(ESCAPE_RE) { |char| "\\" + ESCAPES[char] }
+  # Shorter-to-type wrapper around Net::LDAP::Filter.escape
+  def self.ldap_escape(string)
+    Net::LDAP::Filter.escape(string.to_s)
   end
-  callable_from_instance :escape
 end
 
 
@@ -93,24 +64,24 @@ def v4_get_filters_from_params(params, user_to_ldap, base_class = '*')
     case parts[1]
       when 'starts'
         next if is_multi
-        out << "(#{field}=#{escape(value)}*)"
+        out << "(#{field}=#{LdapModel.ldap_escape(value)}*)"
       when 'ends'
         next if is_multi
-        out << "(#{field}=*#{escape(value)})"
+        out << "(#{field}=*#{LdapModel.ldap_escape(value)})"
       when 'contains'
         next if is_multi
-        out << "(#{field}=*#{escape(value)}*)"
+        out << "(#{field}=*#{LdapModel.ldap_escape(value)}*)"
       when 'is'
         if value.class == Array
           if value.count > 1
             # multiple values OR'd together
-            mvalue = value.map { |v| "(#{field}=#{escape(v)})" }
+            mvalue = value.map { |v| "(#{field}=#{LdapModel.ldap_escape(v)})" }
             out << "(|#{mvalue.join})"
           else
-            out << "(#{field}=#{escape(value[0])})"
+            out << "(#{field}=#{LdapModel.ldap_escape(value[0])})"
           end
         else
-          out << "(#{field}=#{escape(value)})"
+          out << "(#{field}=#{LdapModel.ldap_escape(value)})"
         end
     end
   end

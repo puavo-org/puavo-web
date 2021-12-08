@@ -176,7 +176,7 @@ class Organisation < LdapModel
     self.owner.each do |dn|
       next if dn == 'uid=admin,o=puavo'
 
-      User.raw_filter(escape(dn), '(objectclass=*)', attrs) do |o|
+      User.raw_filter(LdapModel.ldap_escape(dn), '(objectclass=*)', attrs) do |o|
         out[:owners] << {
           id: o['puavoId'][0].to_i,
           dn: dn,

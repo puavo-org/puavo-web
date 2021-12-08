@@ -106,7 +106,7 @@ class LdapModel
   # @param [Hash] options See {.filter}
   # @return [Array<LdapModel>, LdapModel]
   def self.by_ldap_attr(attr, value, options={})
-    return filter("(#{ escape attr }=#{ escape value })", options)
+    return filter("(#{ LdapModel.ldap_escape(attr) }=#{ LdapModel.ldap_escape(value) })", options)
   end
 
   # @param [Hash] attributes Hash of pretty attributes and values to search for
@@ -114,7 +114,7 @@ class LdapModel
   # @return [Array<LdapModel>, LdapModel]
   def self.by_attrs(filter_attrs, options={})
     custom_filter = "(&#{filter_attrs.map do |attr, value|
-      "(#{ escape pretty2ldap!(attr) }=#{ escape value })"
+      "(#{ LdapModel.ldap_escape(pretty2ldap!(attr)) }=#{ LdapModel.ldap_escape(value) })"
     end.join("")})"
 
     return filter(custom_filter, options)
@@ -325,7 +325,7 @@ class LdapModel
 
     ldap_attr = pretty2ldap[pretty_attr.to_sym]
     raise "Unknown pretty attribute '#{ pretty_attr }' for #{ self }" if not ldap_attr
-    lambda { |keyword| "(#{ ldap_attr }=#{ convert.call(escape(keyword)) })" }
+    lambda { |keyword| "(#{ ldap_attr }=#{ convert.call(LdapModel.ldap_escape(keyword)) })" }
   end
 
   private
