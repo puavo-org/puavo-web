@@ -365,6 +365,12 @@
       "css": "sort-up",
       "code": 61662,
       "src": "fontawesome"
+    },
+    {
+      "uid": "ccc2329632396dc096bb638d4b46fb98",
+      "css": "mail-alt",
+      "code": 61664,
+      "src": "fontawesome"
     }
   ]
 }
