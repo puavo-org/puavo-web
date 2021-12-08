@@ -3394,7 +3394,7 @@ buildTable()
 
             // Row checkbox handlers
             if (canSelect)
-                row.childNodes[0].addEventListener("click", event => this.onRowCheckboxClick(event));
+                row.childNodes[0].addEventListener("mousedown", event => this.onRowCheckboxClick(event));
         }
     }
 
