@@ -330,20 +330,15 @@ class Schools < PuavoSinatra
     'telephoneNumber'             => { name: 'telephone' },
   }
 
-  def v4_do_school_search(id, requested_ldap_attrs)
-    unless id.class == Array
-      raise "do_school_search(): school IDs must be an Array, even if empty"
-    end
-
-    filter = v4_build_puavoid_filter('(objectClass=puavoSchool)', id)
+  def v4_do_school_search(filters, requested_ldap_attrs)
     base = "ou=Groups,#{Organisation.current['base']}"
+    filter_string = v4_combine_filter_parts(filters)
 
-    return School.raw_filter(base, filter, requested_ldap_attrs)
+    return School.raw_filter(base, filter_string, requested_ldap_attrs)
   end
 
   # Retrieve all (or some) schools in the organisation
   # GET /v4/schools?fields=...
-  # GET /v4/schools?id=1,2,3,4,...&fields=...
   get '/v4/schools' do
     auth :basic_auth, :kerberos
 
@@ -354,11 +349,11 @@ class Schools < PuavoSinatra
       user_fields = v4_get_fields(params).to_set
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
 
-      # zero or more user IDs
-      id = v4_get_id_from_params(params)
+      # optional filters
+      filters = v4_get_filters_from_params(params, USER_TO_LDAP, 'puavoSchool')
 
       # do the query
-      raw = v4_do_school_search(id, ldap_attrs)
+      raw = v4_do_school_search(filters, ldap_attrs)
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)

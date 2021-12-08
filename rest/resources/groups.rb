@@ -196,20 +196,15 @@ class Groups < PuavoSinatra
     'puavoSchool'       => { name: 'school_id', type: :id_from_dn },
   }
 
-  def v4_do_group_search(id, requested_ldap_attrs)
-    unless id.class == Array
-      raise "v4_do_group_search(): user IDs must be an Array, even if empty"
-    end
-
-    filter = v4_build_puavoid_filter('(objectClass=puavoEduGroup)', id)
+  def v4_do_group_search(filters, requested_ldap_attrs)
     base = "ou=Groups,#{Organisation.current['base']}"
+    filter_string = v4_combine_filter_parts(filters)
 
-    return Group.raw_filter(base, filter, requested_ldap_attrs)
+    return Group.raw_filter(base, filter_string, requested_ldap_attrs)
   end
 
   # Get all (or some) groups in the organisation.
   # GET /v4/groups?fields=...
-  # GET /v4/groups?id=1,2,3,...&fields=...
   get "/v4/groups" do
     auth :basic_auth, :kerberos
 
@@ -220,11 +215,11 @@ class Groups < PuavoSinatra
       user_fields = v4_get_fields(params).to_set
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
 
-      # zero or more user IDs
-      id = v4_get_id_from_params(params)
+      # optional filters
+      filters = v4_get_filters_from_params(params, USER_TO_LDAP, 'puavoEduGroup')
 
       # do the query
-      raw = v4_do_group_search(id, ldap_attrs)
+      raw = v4_do_group_search(filters, ldap_attrs)
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
