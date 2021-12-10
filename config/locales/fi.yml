@@ -693,6 +693,7 @@ fi:
     index:
       actions: Toiminnot
       members: "Jäseniä"
+      devices: "Laitteita"
     edit:
       title: Muokkaa koulua
     new:

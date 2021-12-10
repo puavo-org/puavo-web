@@ -19,6 +19,8 @@
 
     <th><%= t('schools.index.members') %></th>
 
+    <th><%= t('schools.index.devices') %></th>
+
     <th><%= t('.actions') %></th>
   </tr>
 
@@ -61,6 +63,8 @@
     <% end %>
 
     <td><%= Array(school.memberUid || []).count %></td>
+
+    <td><%= @device_counts.fetch(school.dn.to_s, 0) %></td>
 
     <td data-title="<%= t('actions')%>" class="table-actions">
       <%= link_to edit_school_path(school), class: "btn" do %>

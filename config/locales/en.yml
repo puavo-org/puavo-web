@@ -693,6 +693,7 @@ en:
     index:
       actions: Actions
       members: "Members"
+      devices: "Devices"
     edit:
       title: Edit school
     new:

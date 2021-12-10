@@ -9,6 +9,18 @@ class SchoolsController < ApplicationController
       @schools.sort!{|a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
 
+    # Count devices by school
+    @device_counts = {}
+
+    @schools.collect(&:dn).map.each do |dn|
+      @device_counts[dn.to_s] = 0
+    end
+
+    Device.search(:filter => "(objectClass=device)", :attributes => ["puavoSchool"]).each do |d|
+      dn = d[1]['puavoSchool'][0]
+      @device_counts[dn] += 1 if @device_counts.include?(dn)
+    end
+
     @have_external_ids = @schools.any?{ |s| s.puavoExternalId }
     @have_school_codes = @schools.any?{ |s| s.puavoSchoolCode }
 
