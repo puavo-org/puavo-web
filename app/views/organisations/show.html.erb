@@ -116,6 +116,16 @@
     </tr>
 
     <tr>
+      <th><%= t('ldap_create_time') %></th>
+      <td class="noWrap"><%= h @created %></td>
+    </tr>
+
+    <tr>
+      <th><%= t('ldap_modify_time')  %></th>
+      <td class="noWrap"><%= h @modified %></td>
+    </tr>
+
+    <tr>
       <th><%= t("activeldap.attributes.ldap_organisation.puavoBillingInfo") %></th>
       <td>
         <% Array(@organisation.puavoBillingInfo).each do |billing_info| %>

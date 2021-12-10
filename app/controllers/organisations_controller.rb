@@ -15,6 +15,13 @@ class OrganisationsController < ApplicationController
       @release = get_releases().fetch(@organisation.puavoDeviceImage, nil)
     end
 
+    # Dig up the organisation-level timestamps
+    timestamps = LdapBase.search_as_utf8(:filter => "(&(objectClass=puavoEduOrg)(cn=#{@organisation.cn}))",
+                                         :attributes => ["createTimestamp", "modifyTimestamp"])
+
+    @created = convert_timestamp(Time.at(Puavo::Helpers::convert_ldap_time(timestamps[0][1]['createTimestamp'])))
+    @modified = convert_timestamp(Time.at(Puavo::Helpers::convert_ldap_time(timestamps[0][1]['modifyTimestamp'])))
+
     respond_to do |format|
       format.html # show.html.erb
       format.json do
