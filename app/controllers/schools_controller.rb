@@ -17,6 +17,7 @@ class SchoolsController < ApplicationController
     end
 
     Device.search(:filter => "(objectClass=device)", :attributes => ["puavoSchool"]).each do |d|
+      next unless d[1].include?('puavoSchool')
       dn = d[1]['puavoSchool'][0]
       @device_counts[dn] += 1 if @device_counts.include?(dn)
     end
