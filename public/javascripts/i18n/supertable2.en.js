@@ -175,9 +175,8 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
             },
 
             ed: {
-                include: "Specify an interval the value must be inside of.",
-                exclude: "Specify an interval the value must not be inside of.",
-                interval: " The interval is closed, so the minimum and maximum values are included in in.",
+                closed: "Specify an interval the value must be inside of. The start and end values are included.",
+                open: "Specify an interval the value must not be inside of. The start and end values are not included.",
                 invalid_interval: "Specify valid minimum and maximum values.",
 
                 single: "This operator accepts only one value.",
