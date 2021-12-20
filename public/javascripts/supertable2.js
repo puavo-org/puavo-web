@@ -782,13 +782,15 @@ constructor(container, settings)
     // exist before buildUI() is finished.
 
     if (this.settings.flags & TableFlag.ENABLE_FILTERING) {
+/*
         let saved = this.settings.filters.string;
 
         if (typeof(saved) != "string" || saved == "")
             saved = settings.initialFilter;
+*/
 
         this.ui.filters.editor.setFilters(this.settings.filters.filters);
-        this.ui.filters.editor.setFilterString(saved);
+        //this.ui.filters.editor.setFilterString(saved);
 
         // Can't call setFilter() here, because it attempts to update the table...
         // and we don't have any table data yet!
@@ -959,8 +961,10 @@ loadSettingsObject(stored)
     else if ("reverse" in stored && typeof(stored.reverse) == "boolean")
         this.settings.filters.reverse = stored.reverse;
 
+/*
     if ("advanced" in stored && typeof(stored.advanced) == "boolean")
         this.settings.filters.advanced = stored.advanced;
+*/
 
     let tryToLoadOldFilters = false;
 
@@ -1020,8 +1024,10 @@ loadSettingsObject(stored)
         }
     }
 
+/*
     if ("filters_string" in stored && typeof(stored.filters_string) == "string")
         this.settings.filters.string = stored.filters_string;
+*/
 
     // Restore pagination settings
     if ("rows_per_page" in stored && typeof(stored.rows_per_page) == "number") {
@@ -1058,9 +1064,9 @@ getSettingsObject(full=true)
         sort_by: `${this.settings.sorting.column},${this.settings.sorting.dir}`,
         filter: this.settings.filters.enabled,
         reverse: this.settings.filters.reverse,
-        advanced: this.settings.filters.advanced,
+        //advanced: this.settings.filters.advanced,
         filters: filters,
-        filters_string: typeof(this.settings.filters.string) == "string" ? this.settings.filters.string : "",
+        //filters_string: typeof(this.settings.filters.string) == "string" ? this.settings.filters.string : "",
         rows_per_page: this.settings.paging.rowsPerPage,
     };
 
@@ -1277,9 +1283,11 @@ __buildFilteringTab(tabBar, frag)
             `<label for="st-filters-reverse-${this.id}">${_tr('tabs.filtering.reverse')}` +
             `</label></span>`;
 
+/*
     html += `<span><input type="checkbox" id="st-filters-advanced-${this.id}">` +
             `<label for="st-filters-advanced-${this.id}">${_tr("tabs.filtering.advanced")}` +
             `</label></span>`;
+*/
 
     html += `</div><div class="stFilters margin-top-10px"></div>`;
 
@@ -1287,16 +1295,16 @@ __buildFilteringTab(tabBar, frag)
 
     this.ui.filters.enabled = container.querySelector(`input#st-filters-enabled-${this.id}`);
     this.ui.filters.reverse = container.querySelector(`input#st-filters-reverse-${this.id}`);
-    this.ui.filters.advanced = container.querySelector(`input#st-filters-advanced-${this.id}`);
+    //this.ui.filters.advanced = container.querySelector(`input#st-filters-advanced-${this.id}`);
 
     this.ui.filters.enabled.addEventListener("click", () => this.toggleFiltersEnabled());
     this.ui.filters.reverse.addEventListener("click", () => this.toggleFiltersReverse());
-    this.ui.filters.advanced.addEventListener("click", () => this.toggleFiltersAdvanced());
+    //this.ui.filters.advanced.addEventListener("click", () => this.toggleFiltersAdvanced());
 
     // Restore settings
     this.ui.filters.enabled.checked = this.settings.filters.enabled;
     this.ui.filters.reverse.checked = this.settings.filters.reverse;
-    this.ui.filters.advanced.checked = this.settings.filters.advanced;
+    //this.ui.filters.advanced.checked = this.settings.filters.advanced;
 
     // Construct the filter editor
     this.ui.filters.editor = new FilterEditor(this,
@@ -1305,7 +1313,7 @@ __buildFilteringTab(tabBar, frag)
                                               this.settings.columns.titles,
                                               this.settings.filters.presets,
                                               this.settings.filters.defaults,
-                                              this.settings.filters.advanced);
+                                              false);
 
     tabBar.appendChild(tab);
     frag.appendChild(container);
@@ -1605,7 +1613,7 @@ enableUI(isEnabled)
     if (this.settings.flags & TableFlag.ENABLE_FILTERING) {
         this.ui.filters.enabled.disabled = !isEnabled;
         this.ui.filters.reverse.disabled = !isEnabled;
-        this.ui.filters.advanced.disabled = !isEnabled;
+        //this.ui.filters.advanced.disabled = !isEnabled;
         this.ui.filters.editor.enableOrDisable(isEnabled);
     }
 
@@ -1933,11 +1941,11 @@ loadSettingsJSON()
     this.loadSettingsObject(json);
 
     this.ui.filters.editor.setFilters(this.settings.filters.filters);
-    this.ui.filters.editor.setFilterString(this.settings.filters.string);
-    this.ui.filters.editor.toggleMode(this.settings.filters.advanced);
+    //this.ui.filters.editor.setFilterString(this.settings.filters.string);
+    //this.ui.filters.editor.toggleMode(this.settings.filters.advanced);
     this.ui.filters.enabled.checked = this.settings.filters.enabled;
     this.ui.filters.reverse.checked = this.settings.filters.reverse;
-    this.ui.filters.advanced.checked = this.settings.filters.advanced;
+    //this.ui.filters.advanced.checked = this.settings.filters.advanced;
     this.settings.filters.program = this.ui.filters.editor.getFilterProgram();
 
     this.calculatePagination();
@@ -2166,7 +2174,7 @@ filterColumnList(e)
 saveFilters()
 {
     this.settings.filters.filters = this.ui.filters.editor.getFilters();
-    this.settings.filters.string = this.ui.filters.editor.getFilterString();
+    //this.settings.filters.string = this.ui.filters.editor.getFilterString();
     this.saveSettings();
 }
 
@@ -2213,6 +2221,7 @@ toggleFiltersReverse()
     }
 }
 
+/*
 toggleFiltersAdvanced()
 {
     if (this.updating || this.processing)
@@ -2229,6 +2238,7 @@ toggleFiltersAdvanced()
         this.updateTable();
     }
 }
+*/
 
 // --------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------
