@@ -260,7 +260,7 @@ class SchoolsController < ApplicationController
 
   # GET /schools/1/wlan
   def wlan
-    return if redirected_nonowner_user?
+    return unless can_edit_wlans?
 
     @school = School.find(params[:id])
 
@@ -271,7 +271,7 @@ class SchoolsController < ApplicationController
 
   # PUT /schools/1/wlan/update
   def wlan_update
-    return if redirected_nonowner_user?
+    return unless can_edit_wlans?
 
     @school = School.find(params[:id])
 
@@ -359,6 +359,20 @@ class SchoolsController < ApplicationController
       s['cn'].strip! if s.include?('cn')
 
       return s
+    end
+
+    # Allow admins edit WLANs in schools they're admins of, but nowhere else.
+    # No restrictions for owners.
+    def can_edit_wlans?
+      return true if is_owner?
+
+      admin_in =  Array(current_user.puavoAdminOfSchool || []).collect { |dn| dn.rdns[0]["puavoId"].to_i }
+
+      return true if admin_in.include?(@school.id.to_i)
+
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to school_path(current_user.primary_school)
+      return false
     end
 
 end
