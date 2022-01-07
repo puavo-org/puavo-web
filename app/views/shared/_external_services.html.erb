@@ -30,7 +30,7 @@
     <table class="editForm">
       <tr>
         <th>Domain</th>
-        <td><%= external_service.puavoServiceDomain %></td>
+        <td><%= Array(external_service.puavoServiceDomain || []).join("<br>").html_safe %></td>
       </tr>
 
       <tr>
