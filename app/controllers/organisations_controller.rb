@@ -182,6 +182,55 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  # GET /users/admins
+  def all_admins
+    return if redirected_nonowner_user?
+
+    # Current organisation owners
+    @current_owners = Array(LdapOrganisation.current.owner) #.each
+      .select { |dn| dn != 'uid=admin,o=puavo' }
+      .collect { |dn| dn.to_s }
+      .to_set
+
+    # All admins in this organisation
+    @all_admins = User.find(:all,
+                            :attribute => 'puavoEduPersonAffiliation',
+                            :value => 'admin')
+    .sort { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+    .collect do |u|
+      {
+        user: u,
+        schools: [],
+        pri_school: u.primary_school.dn.to_s,
+        admin_in: Array(u.puavoAdminOfSchool || []).collect { |dn| dn.rdns[0]['puavoId'].to_i }.to_set,
+        permissions: [],
+      }
+    end
+
+    # List schools and extra permissions
+    schools = {}
+
+    @all_admins.each do |a|
+      Array(a[:user].puavoSchool).each do |dn|
+        dns = dn.to_s
+        schools[dns] = School.find(dns) unless schools.include?(dns)
+        a[:schools].push(schools[dn.to_s])
+      end
+
+      # sort the schools alphabetically
+      a[:schools].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+
+      # any extra permissions?
+      unless @current_owners.include?(a[:user].dn.to_s)
+        [:create_single_users, :delete_single_users].each do |p|
+          if can_schooladmin_do_this?(a[:user].uid, p)
+            a[:permissions] << p.to_s
+          end
+        end
+      end
+    end
+  end
+
   def all_users
     return if redirected_nonowner_user?
 

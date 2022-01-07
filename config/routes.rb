@@ -172,6 +172,8 @@ Rails.application.routes.draw do
     match 'remove_owner/:user_id' => 'organisations#remove_owner', :as => :remove_owner_organisations, :via => :put
     match 'add_owner/:user_id' => 'organisations#add_owner', :as => :add_owner_organisations, :via => :put
 
+    match 'all_admins' => 'organisations#all_admins', :as => :all_admins_organisation, :via => :get
+
     match 'wlan' => 'organisations#wlan', :as => :wlan_organisation, :via => :get
     match 'wlan_update' => 'organisations#wlan_update', :as => :wlan_update_organisation, :via => :patch
 

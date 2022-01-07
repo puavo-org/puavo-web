@@ -147,6 +147,7 @@ fi:
       search_title: Käyttäjien, ryhmien ja laitteden haku nimellä
       extended_search_title: Laajennettu haku. Etsi useita nimiä yhtä aikaa, valitse mistä kentistä etsitään ja miten täsmäys tehdään.
       owners: Omistajat
+      all_admins: "Kaikki ylläpitäjät"
       your_account: Oma tunnuksesi
     forms:
       required_field: "* = Pakollinen kenttä"
@@ -567,6 +568,12 @@ fi:
       available: "Lisää omistusoikeudet"
       none_left: "(Kaikilla ylläpitäjä-roolissa olevilla käyttäjillä on jo omistajaoikeudet.)"
       cant_remove_yourself: "(Et voi poistaa omaa omistusoikeuttasi)"
+    all_admins:
+      title: "Kaikki organisaation ylläpitäjät"
+      description: "Pikasilmäys kaikkiin organisaation ylläpitäjiin, missä he ovat ja mitä he voivat tehdä."
+      name: "Nimi"
+      schools: "Koulut"
+      admin: "ylläpitäjä"
     all_users:
       sync_deletion_1: "<strong>VAROITUS:</strong> Seuraavissa kouluissa on käytössä käyttäjien synkronoituja poistoja eri ulkoisiin järjestelmiin:"
       sync_deletion_2: "Tee ylläolevien koulujen käyttäjien poistoja (yksittäin tai massana) hyvin varovasti. Saatat poistaa enemmän kuin mitä aioit, kuten käyttäjien sähköpostitilit sisältöineen! "
