@@ -150,6 +150,11 @@
   }
 }
 
+span.release-other { }
+span.release-stretch { color: $deviceStatsReleaseStretch; }
+span.release-buster { color: $deviceStatsReleaseBuster; }
+span.release-bullseye { color: $deviceStatsReleaseBullseye; }
+
 .releaseName {
   color: $deviceStatsReleaseName;
   font-weight: bold;

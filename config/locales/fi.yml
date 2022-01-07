@@ -675,10 +675,10 @@ fi:
     no_images: "Laitetietoja ei ole vastaanotettu mistään laitteesta"
     download: "Lataa raakadata JSON-muodossa..."
     sorting: "Lajittelu"
-    sort_by_image: "Kuvan pohjanimi (bullseye, buster, stretch, muut) ja julkaisuaika (uusin ensin)"
+    sort_by_image: "Kuvan pohjanimi (<span class=\"release-bullseye\">bullseye</span>, <span class=\"release-buster\">buster</span>, <span class=\"release-stretch\">stretch</span>, muut) ja julkaisuaika (uusin ensin)"
     sort_by_usage: "Kuvaa käyttävien koneiden määrä"
     instructions: "Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista."
-    image_name_column: "Kuvan nimi (<span class=\"releaseName\">julkaisun</span>, jos tunnettu)"
+    image_name_column: "Kuvan nimi (<span class=\"releaseName\">julkaisun nimi</span>, jos tunnettu)"
     usage_column: "Koneiden määrä / koneita yhteensä (%)"
 
   # Schools editing
