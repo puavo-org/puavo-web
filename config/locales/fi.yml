@@ -1184,6 +1184,7 @@ fi:
       select: Valitse
     form_wlan:
       title: Langattomat verkot
+      warning: "<strong>VAROITUS</strong>: Langattoman verkon salasanan tai sen muiden asetusten vaihto katkaisee laitteiden yhteyden kyseiseen verkkoon siihen asti, kunnes ne ovat saaneet päivitetyt verkkotiedot jonkin toisen verkkoyhteyden kautta. Siksi on suositeltavaa, että luot ensin uuden väliaikaisen verkon (langaton tai langallinen) ja annat laitteiden yhdistyä siihen, ja muutat verkon asetuksia vasta sitten. Näin laitteet saavat päivitetyt verkkotiedot toisen yhteyden kautta ja sinun ei tarvitse päivittää laitteita käsin yksi kerrallaan."
       wireless_access_point_setup: Tukiasemien oletusasetukset
       channel_random: Satunnainen
       wireless_network_setup: Langattomien verkkojen asetukset
