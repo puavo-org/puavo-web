@@ -10,7 +10,6 @@ gem "activeldap", "5.2.2", :require => "active_ldap"    # TODO: figure out why l
 gem "rmagick"
 gem "uuid"
 gem "nokogiri"
-gem "resque"
 
 # puavo-web specific games
 gem "pry"

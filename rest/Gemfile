@@ -11,7 +11,6 @@ gem "activeldap", "5.2.2", :require => "active_ldap"
 gem "rmagick"
 gem "uuid"
 gem "nokogiri"
-gem "resque"
 gem "gettext_i18n_rails"
 
 gem "sinatra"
