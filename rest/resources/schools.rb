@@ -35,6 +35,15 @@ class School < LdapModel
   ldap_map :puavoKeyboardVariant, :keyboard_variant
   ldap_map :puavoImageSeriesSourceURL, :image_series_source_urls, LdapConverters::ArrayValue
 
+  ldap_map :postalAddress, :postal_address, LdapConverters::SingleValue
+  ldap_map :postalCode, :postal_code, LdapConverters::SingleValue
+  ldap_map :street, :postal_street, LdapConverters::SingleValue
+  ldap_map :postOfficeBox, :post_box, LdapConverters::SingleValue
+  ldap_map :st, :state, LdapConverters::SingleValue
+  ldap_map :facsimileTelephoneNumber, :fax_number, LdapConverters::SingleValue
+  ldap_map :telephoneNumber, :phone_number, LdapConverters::SingleValue
+  ldap_map :description, :description, LdapConverters::SingleValue
+
   # Internal attributes, do not use! These are automatically set when
   # User#school_dns is updated
   ldap_map :member, :member_dns, LdapConverters::ArrayValue
