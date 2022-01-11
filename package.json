@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/puavo-org/puavo-web.git"
+    "url": "https://github.com/puavo-org/puavo-web.git"
   },
   "license": "GPLv2",
   "dependencies": {
@@ -25,7 +25,7 @@
     "express": "^4.13.3",
     "lodash": "^3.10.1",
     "papaparse": "^4.1.2",
-    "piecon": "git://github.com/opinsys/piecon",
+    "piecon": "https://github.com/opinsys/piecon",
     "ramda": "^0.17.1",
     "react": "^0.14.0",
     "react-cond": "^0.3.0",
