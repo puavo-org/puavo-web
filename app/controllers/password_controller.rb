@@ -35,24 +35,36 @@ class PasswordController < ApplicationController
     setup_customisations()
   end
 
-  def filter_multiple_attempts(username, request_id)
+  # Hinder password brute-forcing by imposing a 10-second wait between changing attempts
+  def filter_multiple_attempts(request_id, changer, changee)
     db = Redis::Namespace.new("puavo:password_management:attempt_counter", :redis => REDIS_CONNECTION)
 
-    # if the username key exists in the database, then there have been multiple attempts lately
-    if db.get(username) == "true"
-      logger.error "[#{request_id}] (#{Time.now}) Too many change attempts for user \"#{username}\", request rejected"
+    if changer.nil?
+      key = changee
+    else
+      key = "#{changer}:#{changee}"
+    end
+
+    if db.exists(key) == 1
+      log_prefix = "[#{request_id}] (#{Time.now})"
+
+      if changer.nil?
+        logger.error "#{log_prefix} Too many change attempts for user \"#{changee}\", request rejected"
+      else
+        logger.error "#{log_prefix} User \"#{changer}\" has tried to change the password of user \"#{changee}\" too many times too quickly, request rejected"
+      end
 
       # must setup these or the form breaks
       setup_language(params.fetch(:lang, ''))
       setup_customisations()
-      @changing = username
+      @changing = changer.nil? ? changee : changer
 
       raise UserError, I18n.t('flash.password.too_many_attempts')
       return
     end
 
-    # store the username with automatic expiration in 10 seconds
-    db.set(username, true, :px => 10000, :nx => true)
+    # Expire automaticlly in 10 seconds
+    db.set(key, true, :px => 10000, :nx => true)
   end
 
   # PUT /password
@@ -72,12 +84,13 @@ class PasswordController < ApplicationController
       logger.info "[#{request_id}] (#{Time.now}) User \"#{params['login']['uid']}\" " \
                   "in organisation \"#{@organisation_name}\" " \
                   "is trying to change their password, #{ip}"
-      filter_multiple_attempts(params['login']['uid'], request_id)
+      filter_multiple_attempts(request_id, nil, params['login']['uid'])
       mode = :own
     else
       logger.info "[#{request_id}] (#{Time.now}) User \"#{params['login']['uid']}\" " \
                   "is trying to change the password of user \"#{params['user']['uid']}\" " \
                   "in organisation \"#{@organisation_name}\", #{ip}"
+      filter_multiple_attempts(request_id, params['login']['uid'], params['user']['uid'])
       mode = :other
     end
 
