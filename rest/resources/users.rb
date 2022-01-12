@@ -948,6 +948,22 @@ class Users < PuavoSinatra
   end
 
   put '/v3/users/password' do
+    # Permit localhost by default (for testing purposes), but all other IPs
+    # must be explicitly allowed
+    unless request.ip == "127.0.0.1" || CONFIG.fetch("allow_password_changes_from", []).include?(request.ip)
+      request_id = json_params.fetch('request_id', nil)
+
+      $rest_log.error("[#{request_id}] got a PUT /v3/users/password from unauthorized IP address \"#{request.ip}\"")
+
+      return json({
+        :exit_status => 1,
+        :stderr      => 'your password change request came from an unauthorized IP address',
+        :stdout      => '',
+        :sync_status => 'unauthorized',
+        :request_id  => request_id,
+      })
+    end
+
     auth :basic_auth
 
     request_id = nil
