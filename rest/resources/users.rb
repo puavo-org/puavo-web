@@ -947,17 +947,6 @@ class Users < PuavoSinatra
     return 200
   end
 
-  def too_many_password_change_attempts(username)
-    db = Redis::Namespace.new("puavo:password_management:attempt_counter_rest", :redis => REDIS_CONNECTION)
-
-    # if the username key exists in the database, then there have been multiple attempts lately
-    return true if db.get(username) == "true"
-
-    # store the username with automatic expiration in 10 seconds
-    db.set(username, true, :px => 10000, :nx => true)
-    return false
-  end
-
   put '/v3/users/password' do
     auth :basic_auth
 
@@ -1026,22 +1015,6 @@ class Users < PuavoSinatra
       "[#{request_id}] \"PUT /v3/users/password\" starting " \
       "for user \"#{json_params['target_user_username']}\""
     )
-
-    if ENV['PUAVO_WEB_CUCUMBER_TESTS'] != 'true'
-      username = json_params['target_user_username']
-
-      if too_many_password_change_attempts(username)
-        $rest_log.error("[#{request_id}] password change rate limit hit for user \"#{username}\"")
-
-        return json({
-          :exit_status => 1,
-          :stderr      => 'password change rate limit hit',
-          :stdout      => '',
-          :sync_status => 'rate_limit',
-          :request_id  => request_id,
-        })
-      end
-    end
 
     res = Puavo.change_passwd(json_params['mode'].to_sym,
                               json_params['host'],
