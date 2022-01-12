@@ -47,16 +47,6 @@ Feature: Manage passwords
     And the "user[uid]" field should contain "louie.duck"
     And I should see "Invalid password or username"
 
-  Scenario: Usernames are remembered on the other user password change form
-    Given I am on the password change page
-    Then I fill in "login[uid]" with "donald.duck"
-    And I fill in "user[uid]" with "louie.duck"
-    When I press "Change password"
-    Then the "login[uid]" field should contain "donald.duck"
-    And the "user[uid]" field should contain "louie.duck"
-    And I should see "Invalid password or username"
-    Then I should not see "Password changed successfully!"
-
   Scenario: Non-existent user tries to change another user's password
     When I fill in "login[uid]" with "wrong"
     And I fill in "Password" with "pavelsecret"
@@ -83,6 +73,7 @@ Feature: Manage passwords
     And I fill in "user[uid]" with "ben"
     And I fill in "user[new_password]" with "newbensecret"
     And I fill in "Confirm new password" with "confirmation test"
+    And I wait 11 seconds
     And I press "Change password"
     Then I should not see "Password changed successfully!"
     And I should see "Password doesn't match the confirmation"
@@ -124,6 +115,7 @@ Feature: Manage passwords
     And I fill in "Old password" with "wrong"
     And I fill in "user[new_password]" with "newpavelsecret"
     And I fill in "Confirm new password" with "newpavelsecret"
+    And I wait 11 seconds
     And I press "Change password"
     Then I should not see "Password changed successfully!"
     And I should see "Invalid password or username (pavel)"
@@ -134,6 +126,7 @@ Feature: Manage passwords
     And I fill in "Old password" with "pavelsecret"
     And I fill in "user[new_password]" with "newpavelsecret"
     And I fill in "Confirm new password" with "confirmation test"
+    And I wait 11 seconds
     And I press "Change password"
     Then I should not see "Password changed successfully!"
     And I should see "Password doesn't match the confirmation"

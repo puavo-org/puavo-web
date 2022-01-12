@@ -3,26 +3,8 @@ require 'base64'
 require 'timecop'
 require_relative '../../generic_test_helpers'
 
-def purge_redis
-  db = Redis::Namespace.new("puavo:password_management:attempt_counter", :redis => REDIS_CONNECTION)
-
-  # Calling just "flushall" produces a very ugly warning message, but this seems to work fine.
-  db.redis.flushall
-
-  # Oddly, the following does not work
-  #
-  #   db.keys('*').each{ |k| db.del(k) }
-  #
-  # I don't know why
-end
-
 Before do |scenario|
   @owner_dn, @owner_password = Puavo::Test.setup_test_connection
-
-  # Get rid of the password change attempt database between scenarios. Otherwise user editing
-  # and many other things will fail, because they don't wait 10 seconds between edits.
-  purge_redis
-
   Puavo::Test.clean_up_ldap
 end
 
