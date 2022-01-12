@@ -155,7 +155,4 @@ databases.each_with_index do |database, index|
   rescue => e
     puts "  ERROR: #{e}"
   end
-
-  # wait a bit so we do not hit puavo-rest password change rate limiter
-  sleep 11
 end
