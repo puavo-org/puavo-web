@@ -6,7 +6,7 @@ gem "sprockets", "3.7.2"    # I'm not going to deal with the manifest.js mess in
 gem "sqlite3"
 gem "prawn"
 gem "net-ldap"
-gem "activeldap", "5.2.2", :require => "active_ldap"    # TODO: figure out why later versions fail
+gem "activeldap", "6.1.0", :require => "active_ldap"
 gem "rmagick"
 gem "uuid"
 gem "nokogiri"
