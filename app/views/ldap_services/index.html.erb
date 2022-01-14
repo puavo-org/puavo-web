@@ -6,6 +6,7 @@
   <tr class="thead">
     <th><%= sortable_list_column_header(t('activeldap.attributes.ldap_service.uid')) %></th>
     <th><%= sortable_list_column_header(t('activeldap.attributes.ldap_service.description')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.ldap_service.dn')) %></th>
     <th><%= t('.actions') %></th>
   </tr>
 
@@ -13,6 +14,7 @@
   <tr>
     <td data-title="<%= t('activeldap.attributes.ldap_service.uid') %>"><%= link_to ldap_service.uid, ldap_service_path(ldap_service) %></td>
     <td data-title="<%= t('activeldap.attributes.ldap_service.description') %>"><%= h ldap_service.description %></td>
+    <td data-title="<%= t('activeldap.attributes.ldap_service.dn') %>"><%= ldap_service.dn %></td>
     <td data-title="<%= t('.actions') %>" class="tableActions">
       <%= link_to edit_ldap_service_path(ldap_service), class: "btn" do%>
        <i class="icon-pencil"></i> <%=t('link.edit')%>
