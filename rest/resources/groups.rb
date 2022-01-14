@@ -208,7 +208,7 @@ class Groups < PuavoSinatra
   get "/v4/groups" do
     auth :basic_auth, :kerberos
 
-    raise Unauthorized, :user => nil unless User.current.admin?
+    raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 
     v4_do_operation do
       # which fields to get?

@@ -39,6 +39,21 @@ OPERATORS = Set.new(['starts', 'ends', 'contains', 'is']).freeze
 # Known fields that can accept multiple values
 PERMIT_MULTIPLE = Set.new(['id']).freeze
 
+# Attempts to detect if the user is high-level enough for this request
+def v4_is_request_allowed?(current)
+  if current
+    return current.admin?
+  end
+
+  # uid=<name>,ou=System Accounts,dc=...
+  if /^uid=[a-zA-Z0-9_]+,ou=System Accounts,dc=edu,dc=/.match(LdapModel.settings[:credentials][:dn])
+    return true
+  end
+
+  # Fail safe
+  return false
+end
+
 def v4_get_fields(params)
   # Make sure there is a non-empty 'fields' parameter
   raise V4_MissingFields unless params.include?('fields')
