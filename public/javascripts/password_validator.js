@@ -160,8 +160,6 @@ function initializePasswordValidator(passwordFieldID, confirmFieldID, callback=n
 
         updateCallbackName = callback;
 
-        console.log(updateCallbackName);
-
         passwordField.addEventListener("input", () => onPasswordInput());
         confirmField.addEventListener("input", () => onPasswordInput());
     } catch (e) {
