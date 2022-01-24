@@ -1260,12 +1260,6 @@ en:
         blank: "%{attribute} can't be blank"
         invalid: "%{attribute} is invalid"
         confirmation: "%{attribute} doesn't match the confirmation"
-        gsuite_password_too_short: "The school's security policies require that passwords must be at least eight characters long."
-        gsuite_password_whitespace: "The school's security policies require that passwords cannot start or end in whitespace."
-        gsuite_password_ascii_only: "The school's security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
-        oulu_ad_password_too_short: "The school's security policies require that passwords are at least eight characters long."
-        sixcharsmin_password_too_short: "The school's security policies require that passwords are at least six characters long."
-        sevencharsmin_password_too_short: "The school's security policies require that passwords are at least seven characters long."
         too_long: "%{attribute} is too long (maximum is %{count} characters)"
         too_short: "%{attribute} is too short (min is %{count} characters)"
         image_failed: "Failed to save the image"
@@ -1291,6 +1285,11 @@ en:
           unknown_json_error: "PuavoConf JSON parsing failed due to an unknown error"
           not_a_hash: "PuavoConf is not in key/value pair format"
           unsupported_value_types: "Unsupported types in PuavoConf values"
+        password_validation:
+          too_short: "The password is too short"
+          too_long: "The password is too long"
+          cant_start_or_end_in_whitespace: "The password cannot start or end in whitespace."
+          ascii_only: "The password can only contain letters A-Z and a-z, numbers, and some common punctuation."
     models:
       group: Group
       user: User
@@ -1532,20 +1531,10 @@ en:
   # Password forms
   # (There are more password-related messages in the flash messages section)
   password:
-    validator_ok: "Password OK"
-    validator_ascii_only: "The password can only contain ASCII characters"
-    validator_no_whitespace: "The password cannot start or end in whitespace"
-    validator_too_short: "The password is too short"
-    validator_too_short_with_count: "The password is too short, it must be at least %{minlength} characters long"
-    validator_passwords_match: "The password and its confirmation match"
-    validator_passwords_dont_match: "The password and its confirmation do not match"
-    gsuite_integration_enabled: "The school's security policies require that passwords must at least eight characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
-    oulu_ad_integration_enabled: "The school's security policies require that passwords must be at least eight characters long."
-    six_chars_min: "The school's security policies require that passwords must be at least six characters long."
-    seven_chars_min: "The school's security policies require that passwords must be at least seven characters long."
     current_password_too_old: "Due to your organisation security policies, your current password must be changed because it is too old."
     attempts_are_logged_own: "All password change attempts are logged."
     attempts_are_logged_other: "This form is only meant for teachers and admin users. All password changes and change attempts are logged. We log all usernames, your IP address(es), and timestamps."
+    invalid: "The new password did not meet the predefined requirements"
     edit:
       title: Change someone else's password
       head: To change the password of another user, fill in your own username and password, and then the username and the new password for the user whose password is being changed. You must have sufficient privileges to change the passwords of other users.

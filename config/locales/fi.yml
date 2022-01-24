@@ -1259,12 +1259,6 @@ fi:
         blank: "%{attribute} pitää olla asetettuna"
         invalid: "%{attribute} on virheellinen"
         confirmation: "%{attribute} ei täsmää vahvistukseen"
-        gsuite_password_too_short: "Koulun tietoturvakäytänteissä on määritetty, että salasanojen on oltava vähintään 8 merkkiä pitkiä."
-        gsuite_password_whitespace: "Koulun tietoturvakäytänteissä on määritetty, että salasana ei saa alkaa eikä loppua välilyöntiin."
-        gsuite_password_ascii_only: "Koulun tietoturvakäytänteissä on määritetty, että salasanat voivat sisältää vain merkkejä A-Z, a-z, 0-9 ja muutama muu välimerkki."
-        oulu_ad_password_too_short: "Koulun tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään kahdeksan merkkiä."
-        sixcharsmin_password_too_short: "Koulun tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään kuusi merkkiä."
-        sevencharsmin_password_too_short: "Koulun tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään seitsemän merkkiä."
         too_long: "%{attribute} on liian pitkä (suurin sallittu pituus on %{count} merkkiä)"
         too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
         image_failed: "Kuvaa ei voitu tallentaa"
@@ -1290,6 +1284,11 @@ fi:
           unknown_json_error: "PuavoConfin JSON-parsinnassa tuntematon virhe"
           not_a_hash: "PuavoConf ei ole avain-/arvopari-muotoa"
           unsupported_value_types: "PuavoConfin arvoissa ei-tuettuja tyyppejä"
+        password_validation:
+          too_short: "Salasana on liian lyhyt"
+          too_long: "Salasana on liian pitkä"
+          cant_start_or_end_in_whitespace: "Salasana ei saa alkaa/loppua välilyöntiin"
+          ascii_only: "Salasana voi sisältää vain kirjaimia A-Z ja a-z, numeroita, sekä tavallisimpia välimerkkejä."
     models:
       group: "Ryhmä"
       user: "Käyttäjä"
@@ -1531,20 +1530,10 @@ fi:
   # Password forms
   # (There are more password-related messages in the flash messages section)
   password:
-    validator_ok: "Salasana OK"
-    validator_ascii_only: "Salasana saa sisältää vain ASCII-merkkejä"
-    validator_no_whitespace: "Salasana ei saa alkaa eikä loppua tyhjään merkkiin"
-    validator_too_short: "Salasana on liian lyhyt"
-    validator_too_short_with_count: "Salasana on liian lyhyt, sen on oltava vähintään %{minlength} merkkiä pitkä"
-    validator_passwords_match: "Salasana täsmää vahvistukseen"
-    validator_passwords_dont_match: "Salasana ei täsmää vahvistukseen"
-    gsuite_integration_enabled: "Koulun tietoturvakäytänteissä on määritelty, että salasanojen on oltava vähintään 8 merkkiä pitkiä, eivät saa alkaa eikä loppua välilyöntiin, ja ne voivat sisältää vain merkkejä A-Z, a-z, 0-9 ja muutaman muun välimerkin."
-    oulu_ad_integration_enabled: "Koulun tietoturvakäytänteissä on määritelty, että salasanojen on oltava vähintään 8 merkkiä pitkiä, ja että salasana ei saa olla sama kuin kaksi edellistä salasanaa."
-    six_chars_min: "Koulun tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään kuusi merkkiä."
-    seven_chars_min: "Koulun tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään seitsemän merkkiä."
     current_password_too_old: "Organisaation tietoturvakäytännöistä johtuen sinun täytyy vaihtaa nykyinen salasanasi, koska se on liian vanha."
     attempts_are_logged_own: "Kaikki salasananvaihtoyritykset tallennataan lokiin."
     attempts_are_logged_other: "Tämä lomake on tarkoitettu vain opettajien ja ylläpitäjien käytettäväksi. Kaikki salasananvaihdot ja -yritykset tallennataan lokiin. Lokiin tallentuvat käyttäjänimet, IP-osoite/-osoitteet sekä aikaleima."
+    invalid: "Uusi salasana ei täsmännyt asetettuihin vaatimuksiin"
     edit:
       title: "Vaihda toisen käyttäjän salasana"
       head: "Vaihtaaksesi toisen käyttäjän salasanan, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi."
