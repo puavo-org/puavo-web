@@ -51,21 +51,19 @@ sv:
         puavoLocale: "Language"
     errors:
       messages:
-        gsuite_password_too_short: "The organisation security policies require that passwords must be at least eight characters long."
-        gsuite_password_whitespace: "The organisation security policies require that passwords cannot start or end in whitespace."
-        gsuite_password_ascii_only: "The organisation security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
-        sixcharsmin_password_too_short: "The organisation security policies require that passwords are at least six characters long."
-        sevencharsmin_password_too_short: "The organisation security policies require that passwords are at least seven characters long."
+        password_validation:
+          too_short: "Lösenordet är för kort"
+          too_long: "Lösenordet är för långt"
+          cant_start_or_end_in_whitespace: "Lösenordet får inte börja eller sluta med ett blanksteg."
+          ascii_only: "Lösenordet får innehålla bara bokstäver A-Z och a-z, nummer och några övliga specialtecken."
 
   # Password forms
   # (There are more password-related messages in the flash messages section)
   password:
-    gsuite_integration_enabled: "The organisation security policies require that passwords must at least eight characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
-    six_chars_min: "The organisation security policies require that passwords must be at least six characters long."
-    seven_chars_min: "The organisation security policies require that passwords must be at least seven characters long."
     current_password_too_old: "Due to your organisation security policies, your current password must be changed because it is too old."
     attempts_are_logged_own: "All password change attempts are logged."
     attempts_are_logged_other: "This form is only meant for teachers and admin users. All password changes and change attempts are logged. We log all usernames, your IP address(es), and timestamps."
+    invalid: "Det nya lösenord uppfyller inte kraven"
     edit:
       title: "Change someone else's password"
       head: "To change the password of another user, fill in your own username and password, and then the username and the new password for the user whose password is being changed. You must have sufficient privileges to change the passwords of other users."
