@@ -6,6 +6,7 @@ class TokenLifetimeHasExpired < StandardError; end
 
 class PasswordController < ApplicationController
   include Puavo::Integrations
+  include Puavo::Password
 
   before_action :set_ldap_connection
   skip_before_action :find_school, :require_login, :require_puavo_authorization
@@ -297,55 +298,23 @@ class PasswordController < ApplicationController
   end
 
   def change_user_password(mode, request_id)
-    # must use -1 because password forms use global requirements
-    case get_school_password_requirements(@organisation_name, -1)
-      when 'Google'
-        # Validate the password against Google's requirements.
-        new_password = params[:user][:new_password]
+    # Must use -1 because password forms use global requirements, we don't know anything
+    # about schools here
+    ruleset_name = get_school_password_requirements(@organisation_name, -1)
 
-        if new_password.size < 8 then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.gsuite_password_too_short')
-        end
-        if new_password[0] == ' ' || new_password[-1] == ' ' then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.gsuite_password_whitespace')
-        end
-        if !new_password.ascii_only? then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.gsuite_password_ascii_only')
-        end
-      when 'oulu_ad'
-        # Validate the password to contain at least eight characters
-        new_password = params[:user][:new_password]
-        if new_password.size < 8 then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.oulu_ad_password_too_short')
-        end
+    if ruleset_name
+      rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
 
-        # There are other limitations here too, but we cannot check for them
-      when 'SixCharsMin'
-        # Validate the password to contain at least six characters.
-        new_password = params[:user][:new_password]
-        if new_password.size < 6 then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.sixcharsmin_password_too_short')
-        end
-      when 'SevenCharsMin'
-        # Validate the password to contain at least seven characters.
-        # TODO: This is inflexible and too repetitive. We need a better system
-        # for validating and enforcing password requirements.
-        new_password = params[:user][:new_password]
-        if new_password.size < 7 then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.sevencharsmin_password_too_short')
-        end
+      logger.info("[#{request_id}] Validating the password against ruleset \"#{ruleset_name}\"")
+
+      password_errors =
+        Puavo::Password::validate_password(params[:user][:new_password], rules)
+
+      unless password_errors.empty?
+        # Combine the errors like the live validator does
+        logger.error("[#{request_id}] The new password does not meet the requirements (errors=#{password_errors.join(', ')}")
+        raise UserError, I18n.t('password.invalid')
+      end
     end
 
     login_uid = params[:login][:uid]

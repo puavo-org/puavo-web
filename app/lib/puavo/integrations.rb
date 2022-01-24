@@ -108,7 +108,7 @@ module Puavo
           domain: nil
         },
 
-        # Password requirements set by a third-party system
+        # Password requirements/validation ruleset name, or nil if anything goes
         password_requirements: nil,
 
         # Schedule for third-party integrations
@@ -185,6 +185,11 @@ module Puavo
         # Completely empty value disables password requirements for this school,
         # overriding global values (if any)
         requrements = nil if requirements.empty?
+      end
+
+      # Ensure the name is correct
+      if requirements && !Puavo::PASSWORD_RULESETS.include?(requirements)
+        abort "Invalid password requirements \"#{requirements}\""
       end
 
       entry[:password_requirements] = requirements.freeze

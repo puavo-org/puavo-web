@@ -6,6 +6,7 @@ class User < LdapBase
   include Puavo::Locale
   include Puavo::Helpers
   include Puavo::Integrations
+  include Puavo::Password
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
@@ -149,36 +150,31 @@ class User < LdapBase
                                     :attribute => I18n.t("activeldap.attributes.user.givenName") ) )
     end
 
-    # Uid validation
-    #
-    # Password confirmation
     if !self.new_password_confirmation.nil? && self.new_password != self.new_password_confirmation
       errors.add( :new_password_confirmation, I18n.t("activeldap.errors.messages.confirmation",
                                         :attribute => I18n.t("activeldap.attributes.user.new_password")) )
     end
 
-    if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty? then
-      case get_school_password_requirements(LdapOrganisation.current.cn, self.primary_school.puavoId)
-        when 'Google'
-          if self.new_password.size < 8 then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_too_short"))
-          elsif self.new_password[0] == ' ' || self.new_password[-1] == ' ' then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_whitespace"))
-          elsif !self.new_password.ascii_only? then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_ascii_only"))
+    # Validate the password against the validation rules specified for this organisation/school
+    if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty?
+      unless self.primary_school.cn == 'administration'
+        ruleset_name =
+          get_school_password_requirements(LdapOrganisation.current.cn, self.primary_school.puavoId)
+
+        if ruleset_name
+          password_errors =
+            Puavo::Password::validate_password(self.new_password, Puavo::PASSWORD_RULESETS[ruleset_name][:rules])
+
+          unless password_errors.empty?
+            # Combine the errors like the live validator does
+            password_errors = password_errors
+                              .collect { |e| I18n.t("activeldap.errors.messages.password_validation.#{e}") }
+                              .join('<br>')
+                              .html_safe
+
+            errors.add(:new_password, password_errors)
           end
-        when 'oulu_ad'
-          if self.new_password.size < 8 then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.oulu_ad_password_too_short"))
-          end
-        when 'SixCharsMin'
-          if self.new_password.size < 6 then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.sixcharsmin_password_too_short"))
-          end
-        when 'SevenCharsMin'
-          if self.new_password.size < 7 then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.sevencharsmin_password_too_short"))
-          end
+        end
       end
     end
 
