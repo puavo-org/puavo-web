@@ -179,7 +179,10 @@
 
 <% unless @is_admin_school %>
 <% content_for :post_load_javascript do %>
-<%= setup_password_validator(@organisation_name, @school.id) %>
+<%= setup_password_validator(@organisation_name,
+                             @school.id,
+                             'user_new_password',
+                             'user_new_password_confirmation') %>
 <% end %>
 <% end %>
 

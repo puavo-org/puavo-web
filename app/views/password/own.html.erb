@@ -2,10 +2,6 @@
 <%= javascript_include_tag 'password_validator', skip_pipeline: true %>
 <% end %>
 
-<% content_for :password_validator do %>
-<%= setup_password_validator(@organisation_name, -1) %>
-<% end %>
-
 <% content_for :title do %><%= t('.title') %><% end %>
 
 <% content_for :password_tabs do %>
@@ -74,27 +70,20 @@
   </table>
 <% end %>
 
+<% content_for :password_validator do %>
+<%= setup_password_validator(@organisation_name,
+                             -1,
+                             'user_new_password',
+                             'user_new_password_confirmation',
+                             'setSubmitState') %>
+<% end %>
+
 <script>
-document.getElementById("submit").addEventListener("click", function(e) {
-  const uid = document.getElementById("login_uid").value,
-        old = document.getElementById("login_password").value,
-        password = document.getElementById("user_new_password").value,
-        password2 = document.getElementById("user_new_password_confirmation").value;
+function setSubmitState(valid, identical)
+{
+    // Prevent the form from being submitted unless it has been fully filled out.
+    document.querySelector(`input[type="submit"]`).disabled = !(valid && identical);
+}
 
-  var target = e.target;
-
-  // Prevent the form from being submitted unless it has been fully filled out.
-  // Also disable the submit button to prevent double-submissions.
-  if (uid.length > 0 && old.length > 0 && password.length > 0 && password2.length > 0 &&
-      password == password2) {
-    // disable the submit button
-    setTimeout(function() {
-      target.value = "...";
-      target.disabled = true;
-    }, 0);
-  } else {
-    // don't send the form, not all fields are filled in
-    e.preventDefault();
-  }
-});
+setSubmitState(false, false);
 </script>
