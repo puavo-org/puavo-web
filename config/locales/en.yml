@@ -804,7 +804,6 @@ en:
         title: "Additional granted permissions"
         create_single_users: "can create users"
         delete_single_users: "can delete users"
-
     new:
       title: New user
     edit:
