@@ -507,7 +507,7 @@ en:
       confirmation_failed: "Password doesn't match the confirmation"
       invalid_user: User (%{uid}) does not exist
       extlogin_password_changed_but_puavo_failed: "Password change was successful, but not to all services.  Contact support in case of problems."
-      email_not_found: "Couldn't find email: %{email}"
+      email_not_found: "We could not find any user with the email address \"%{email}\". If this really is your email address, please contact Opinsys support for further assistance."
       connection_failed: We're sorry, but something went wrong. Please try again later!
       can_not_change_password: "Can't change password. Please try again later! Log code: %{code}."
       can_not_change_upstream_password: "Can't change password to upstream service. Please try again later!"
@@ -1548,7 +1548,7 @@ en:
       link_other_password: Change someone else's password
     forgot:
       title: Reset your password
-      description: Please enter your email address to get reset instructions
+      description: "Please enter your email address and we'll send you a link that allows you to set your new password."
     reset:
       title: Reset your password
       password: Enter new password
@@ -1556,7 +1556,7 @@ en:
       description: Please enter your new password
       submit: Reset password
     successfully:
-      send_token: We've sent you an email that will let you reset your password.
+      send_token: "We've sent you an email that will let you reset your password. The link will expire soon, so please open it as quickly as you can."
       update: Your password has been successfully reset!
 
   # Email address confirmation

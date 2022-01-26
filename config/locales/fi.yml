@@ -507,7 +507,7 @@ fi:
       confirmation_failed: "Uusi salasana ei täsmää salasanan vahvistukseen"
       invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
       extlogin_password_changed_but_puavo_failed: "Salasananvaihto onnistui, mutta ei kuitenkaan kaikkiin palveluihin.  Ota tarvittaessa yhteys tukipalveluun."
-      email_not_found: "Sähköpostiosoitetta ei löydy: %{email}"
+      email_not_found: "Emme löydä käyttäjää jolla olisi sähköpostiosoite \"%{email}\". Jos tämä oikeasti on sähköpostiosoitteesi, ota yhteys Opinsysin tukipalveluun avun saamikseksi."
       connection_failed: Pahoittelut, mutta jotain meni nyt pieleen. Yritä myöhemmin uudelleen!
       can_not_change_password: "Jostain syystä salasanan vaihto ei onnistunut. Yritä myöhemmin uudelleen! Lokikoodi: %{code}."
       can_not_change_upstream_password: "Jostain syystä salasanan vaihto lähdepalveluun ei onnistunut. Yritä myöhemmin uudelleen!"
@@ -1548,7 +1548,7 @@ fi:
       link_other_password: "Vaihda toisen käyttäjän salasana"
     forgot:
       title: Aseta uusi salasana
-      description: Anna sähköpostiosoitteesi saadaksesi tarkemmat ohjeet.
+      description: "Anna sähköpostiosoitteesi, niin lähetämme sinne linkin jonka kautta voit asettaa itsellesi uuden salasanan."
     reset:
       title: Aseta uusi salasana
       password: Uusi salasana
@@ -1556,7 +1556,7 @@ fi:
       description: Anna uusi salasanasi.
       submit: Vaihda salasanasi
     successfully:
-      send_token: Olemme lähettäneet sinulle sähköpostilla linkin, jonka kautta voit vaihtaa salasanasi.
+      send_token: "Olemme lähettäneet sinulle sähköpostilla linkin, jonka kautta voit vaihtaa salasanasi. Linkki on voimassa vain rajatun ajan, joten avaathan sen pian."
       update: Salasanan vaihto onnistui!
 
   # Email address confirmation

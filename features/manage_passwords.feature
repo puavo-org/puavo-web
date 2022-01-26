@@ -136,7 +136,7 @@ Feature: Manage passwords
   Scenario: Forgot password
     Given mock password management service
     And I am on the forgot password page
-    Then I should see "Reset your password Please enter your email address to get reset instructions"
+    Then I should see "Reset your password Please enter your email address and we'll send you a link that allows"
     When I fill in "Email" with "pavel@foobar.com"
     And I press "Continue"
     Then I should see "We've sent you an email that will let you reset your password."
@@ -158,7 +158,10 @@ Feature: Manage passwords
     And I am on the forgot password page
     When I fill in "Email" with "broken@foobar.com"
     And I press "Continue"
-    Then I should see "Couldn't find email: broken@foobar.com"
+    Then I should see:
+      """
+      We could not find any user with the email address "broken@foobar.com"
+      """
 
   Scenario: Reset password when password and password confirmation doesn't match
     Given generate new token for "pavel"
