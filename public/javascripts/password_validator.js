@@ -108,7 +108,7 @@ function onPasswordInput()
     if (password.length == 0 && confirmation.length == 0) {
         passwordStatus.innerText = "";
         confirmStatus.innerText = "";
-        callCallback(true, true);
+        callCallback(false, true);
         return;
     }
 
