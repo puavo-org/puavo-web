@@ -7,12 +7,12 @@
 <% content_for :password_tabs do %>
 <ul>
   <li>
-    <%= link_to own_password_path(:lang => @language, :changing => @changing || ''), :id => "left" do %>
+    <%= link_to own_password_path(:lang => @language, :changing => @changing || '') do %>
       <%= t('password.edit.link_own_password') %>
     <% end %>
   </li>
 
-  <li><span id="right"><%= t('password.own.link_other_password') %></span></li>
+  <li class="current"><%= t('password.own.link_other_password') %></li>
 </ul>
 <% end %>
 
