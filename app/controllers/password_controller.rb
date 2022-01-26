@@ -44,38 +44,6 @@ class PasswordController < ApplicationController
     setup_customisations()
   end
 
-  # Hinder password brute-forcing by imposing a 10-second wait between changing attempts
-  def filter_multiple_attempts(request_id, changer, changee)
-    db = Redis::Namespace.new("puavo:password_management:attempt_counter", :redis => REDIS_CONNECTION)
-
-    if changer.nil?
-      key = changee
-    else
-      key = "#{changer}:#{changee}"
-    end
-
-    if db.exists(key) == 1
-      log_prefix = "[#{request_id}] (#{Time.now})"
-
-      if changer.nil?
-        logger.error "#{log_prefix} Too many change attempts for user \"#{changee}\", request rejected"
-      else
-        logger.error "#{log_prefix} User \"#{changer}\" has tried to change the password of user \"#{changee}\" too many times too quickly, request rejected"
-      end
-
-      # must setup these or the form breaks
-      setup_language(params.fetch(:lang, ''))
-      setup_customisations()
-      @changing = changer.nil? ? changee : changer
-
-      raise UserError, I18n.t('flash.password.too_many_attempts')
-      return
-    end
-
-    # Expire automaticlly in 10 seconds
-    db.set(key, true, :px => 10000, :nx => true)
-  end
-
   # PUT /password
   # "Change your own password" and "Change someone else's password" are both processed here
   def update
@@ -259,6 +227,38 @@ class PasswordController < ApplicationController
   end
 
   private
+
+  # Hinder password brute-forcing by imposing a 10-second wait between changing attempts
+  def filter_multiple_attempts(request_id, changer, changee)
+    db = Redis::Namespace.new("puavo:password_management:attempt_counter", :redis => REDIS_CONNECTION)
+
+    if changer.nil?
+      key = changee
+    else
+      key = "#{changer}:#{changee}"
+    end
+
+    if db.exists(key) == 1
+      log_prefix = "[#{request_id}] (#{Time.now})"
+
+      if changer.nil?
+        logger.error "#{log_prefix} Too many change attempts for user \"#{changee}\", request rejected"
+      else
+        logger.error "#{log_prefix} User \"#{changer}\" has tried to change the password of user \"#{changee}\" too many times too quickly, request rejected"
+      end
+
+      # must setup these or the form breaks
+      setup_language(params.fetch(:lang, ''))
+      setup_customisations()
+      @changing = changer.nil? ? changee : changer
+
+      raise UserError, I18n.t('flash.password.too_many_attempts')
+      return
+    end
+
+    # Expire automaticlly in 10 seconds
+    db.set(key, true, :px => 10000, :nx => true)
+  end
 
   def error_message_and_redirect(message)
     flash.now[:alert] = message
