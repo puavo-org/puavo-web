@@ -1,3 +1,6 @@
+# The publicly-accessible password changing and resetting forms. Allows users to change/reset
+# their own password, and teachers/admins to change someone else's password.
+
 class UserNotFound < StandardError; end
 class TooManySentTokenRequest < StandardError; end
 class RestConnectionError < StandardError; end
@@ -325,8 +328,8 @@ class PasswordController < ApplicationController
 
     login_uid = params[:login][:uid]
 
-    # if the username(s) contain the domain name, strip it out
-    # must use -1 because password forms use global requirements
+    # If the username(s) contain the domain name, strip it out. -1 for the school ID
+    # works here, because domains are always organisation-wide.
     customisations = get_school_password_form_customisations(@organisation_name, -1)
     domain = customisations[:domain]
 
@@ -380,6 +383,7 @@ class PasswordController < ApplicationController
     end
 
     @user = @logged_in_user
+
     if params[:user][:uid] then
       target_user_username = params[:user][:uid]
 
