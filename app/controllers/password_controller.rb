@@ -193,7 +193,7 @@ class PasswordController < ApplicationController
 
     respond_to do |format|
       flash[:message] = I18n.t('password.successfully.send_token')
-      format.html { redirect_to successfully_password_path(:message => "send_token") }
+      format.html { redirect_to successfully_password_path(:message => "send_token", :lang => @language) }
     end
   rescue UserNotFound
     flash.now[:alert] = I18n.t('flash.password.email_not_found', :email => params[:forgot][:email])
@@ -216,7 +216,6 @@ class PasswordController < ApplicationController
   # PUT /password/:jwt/reset
   # Reset the user's password
   def reset_update
-
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
 
@@ -237,7 +236,7 @@ class PasswordController < ApplicationController
     respond_to do |format|
       if rest_response.status == 200
         flash[:message] = I18n.t('password.successfully.update')
-        format.html { redirect_to successfully_password_path(:message => "update") }
+        format.html { redirect_to successfully_password_path(:message => "update", :lang => @language) }
       else
         flash[:alert] = I18n.t('flash.password.can_not_change_password')
         format.html { redirect_to reset_password_path }
@@ -253,7 +252,7 @@ class PasswordController < ApplicationController
 
   # "Your password has been reset" form
   def successfully
-
+    setup_language(params.fetch(:lang, ''))
   end
 
   private
