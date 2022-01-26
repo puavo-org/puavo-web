@@ -27,6 +27,10 @@
 <% end %>
 
 <%= form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
+  <% if params.include?('hidetabs') || @reduced_ui %>
+  <input type="hidden" id="hidetabs" name="hidetabs" value="1">
+  <% end %>
+
   <table class="editForm">
     <tr>
       <th><%= label :login, :uid, t('activeldap.attributes.user.uid') %></th>

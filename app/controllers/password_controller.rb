@@ -22,6 +22,8 @@ class PasswordController < ApplicationController
 
     @expired = (params[:password_expired] == 'true')
 
+    @reduced_ui = params.include?('hidetabs')
+
     setup_customisations()
   end
 
@@ -32,6 +34,9 @@ class PasswordController < ApplicationController
 
     @changing = params.fetch(:changing, '')
     @changed = params.fetch(:changed, '')
+
+    @reduced_ui = params.include?('hidetabs')
+
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
   end
@@ -109,6 +114,8 @@ class PasswordController < ApplicationController
     else
       @changed = params.fetch(:changed, '')
     end
+
+    @reduced_ui = params.include?('hidetabs')
 
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
