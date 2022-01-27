@@ -25,6 +25,7 @@ class PasswordController < ApplicationController
 
     @expired = (params[:password_expired] == 'true')
 
+    @primary_school_id = params.fetch(:primary_school_id, -1)
     @reduced_ui = params.include?('hidetabs')
 
     setup_customisations()
@@ -38,6 +39,7 @@ class PasswordController < ApplicationController
     @changing = params.fetch(:changing, '')
     @changed = params.fetch(:changed, '')
 
+    @primary_school_id = params.fetch(:primary_school_id, -1)
     @reduced_ui = params.include?('hidetabs')
 
     setup_language(params.fetch(:lang, ''))
@@ -87,6 +89,7 @@ class PasswordController < ApplicationController
     end
 
     @reduced_ui = params.include?('hidetabs')
+    @primary_school_id = params.fetch(:primary_school_id, -1)
 
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
@@ -405,6 +408,33 @@ class PasswordController < ApplicationController
       logger.error("[#{request_id}] Username \"#{target_user_username}\" is invalid")
       raise UserError, I18n.t('flash.password.invalid_user',
                                     :uid => params[:user][:uid])
+    end
+
+    # Try to find the primary school ID of the user whose password is being changed.
+    # If we can determine it, use it to validate the password.
+    if @logged_in_user.puavoEduPersonPrimarySchool
+      @primary_school_id = @logged_in_user.puavoEduPersonPrimarySchool.rdns[0]['puavoId'].to_i
+    else
+      @primary_school_id = @user.puavoEduPersonPrimarySchool.rdns[0]['puavoId'].to_i
+    end
+
+    if @primary_school_id
+      ruleset_name = get_school_password_requirements(@organisation_name, @primary_school_id)
+
+      if ruleset_name
+        rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
+
+        logger.info("[#{request_id}] Validating the password against ruleset \"#{ruleset_name}\"")
+
+        password_errors =
+          Puavo::Password::validate_password(params[:user][:new_password], rules)
+
+        unless password_errors.empty?
+          # Combine the errors like the live validator does
+          logger.error("[#{request_id}] The new password does not meet the requirements (errors=#{password_errors.join(', ')})")
+          raise UserError, I18n.t('password.invalid')
+        end
+      end
     end
 
     rest_params = {

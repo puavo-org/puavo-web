@@ -26,9 +26,15 @@
 <div class="genericNotice"><%= @banner.html_safe %></div>
 <% end %>
 
+<% school_id = params['school_id'] || @primary_school_id || -1 %>
+
 <%= form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
   <% if params.include?('hidetabs') || @reduced_ui %>
   <input type="hidden" id="hidetabs" name="hidetabs" value="1">
+  <% end %>
+
+  <% if school_id %>
+  <input type="hidden" id="primary_school_id" name="primary_school_id" value="<%= school_id %>">
   <% end %>
 
   <table class="editForm">
@@ -54,7 +60,7 @@
     <tr>
       <th><%= f.label :new_password, t('activeldap.attributes.user.new_password') %></th>
       <td>
-        <%= show_password_requirements(@organisation_name, -1) %>
+        <%= show_password_requirements(@organisation_name, school_id) %>
         <%= password_field :user, :new_password, :value => "", :required => "required" %>
       </td>
     </tr>
@@ -76,13 +82,13 @@
 
 <% content_for :password_validator do %>
 <%= setup_password_validator(@organisation_name,
-                             -1,
+                             school_id,
                              'user_new_password',
                              'user_new_password_confirmation',
                              'setSubmitState') %>
 <% end %>
 
-<% if get_school_password_requirements(@organisation_name, -1) %>
+<% if get_school_password_requirements(@organisation_name, school_id) %>
 <script>
 function setSubmitState(valid, identical)
 {
