@@ -113,6 +113,15 @@ function onPasswordInput()
     }
 
     // PASSWORD_RULES is defined in the inline <script> block on the page
+
+    if (PASSWORD_RULES.length == 0) {
+        // There are no rules, only verify the password confirmation
+        passwordStatus.innerText = "";
+        confirmStatus.innerText = (confirmation == password) ? "" : unEsacapeHTML(CONFIRM_MISMATCH);
+        callCallback(true, (confirmation == password));
+        return;
+    }
+
     const errors = validatePassword(password, PASSWORD_RULES);
 
     passwordStatus.innerText = (errors.length == 0) ? "" : errors.map(e => unEsacapeHTML(e)).join("\n");
@@ -125,6 +134,9 @@ function initializePasswordValidator(passwordFieldID, confirmFieldID, callback=n
 {
     try {
         console.log(`Initializing the password validator, have ${PASSWORD_RULES.length} rule(s)`);
+
+        if (PASSWORD_RULES.length == 0)
+            console.log("Only checking the password confirmation");
 
         passwordField = document.getElementById(passwordFieldID);
         confirmField = document.getElementById(confirmFieldID);

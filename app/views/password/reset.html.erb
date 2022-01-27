@@ -38,7 +38,6 @@
                              'setSubmitState') %>
 <% end %>
 
-<% if get_school_password_requirements(@organisation_name, -1) %>
 <script>
 function setSubmitState(valid, identical)
 {
@@ -48,4 +47,3 @@ function setSubmitState(valid, identical)
 
 setSubmitState(false, false);
 </script>
-<% end %>

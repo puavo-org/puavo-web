@@ -7,10 +7,11 @@ module PasswordHelper
     logger.info("setup_password_validator(): password validation ruleset for school #{school_id} " \
                 "in organisation \"#{organisation_name}\" is \"#{ruleset_name}\"")
 
-    return unless ruleset_name
+    rules = ruleset_name ? Puavo::PASSWORD_RULESETS[ruleset_name][:rules] : []
 
-    rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
-
+    # Always render the validator template, even if there are no rules. If the rule list is empty,
+    # then the validator simply ensures the password confirmation matches the password and
+    # does nothing else.
     render partial: 'password/password_validator', locals: {
       password_field_id: password_field_id,
       confirm_field_id: confirm_field_id,

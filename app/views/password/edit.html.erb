@@ -106,7 +106,6 @@
                              'setSubmitState') %>
 <% end %>
 
-<% if get_school_password_requirements(@organisation_name, school_id) %>
 <script>
 function setSubmitState(valid, identical)
 {
@@ -116,4 +115,3 @@ function setSubmitState(valid, identical)
 
 setSubmitState(false, false);
 </script>
-<% end %>
