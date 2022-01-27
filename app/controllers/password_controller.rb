@@ -310,9 +310,11 @@ class PasswordController < ApplicationController
   end
 
   def change_user_password(mode, request_id)
-    # Must use -1 because password forms use global requirements, we don't know anything
-    # about schools here
-    ruleset_name = get_school_password_requirements(@organisation_name, -1)
+    # Try to retain the school ID across form reloads. If it cannot be accessed, use -1 for
+    # organisation-level rules and hope for the best.
+    @primary_school_id = params.fetch(:primary_school_id, -1)
+
+    ruleset_name = get_school_password_requirements(@organisation_name, @primary_school_id)
 
     if ruleset_name
       rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
