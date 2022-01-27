@@ -1556,7 +1556,7 @@ fi:
       description: Anna uusi salasanasi.
       submit: Vaihda salasanasi
     successfully:
-      send_token: "Olemme lähettäneet sinulle sähköpostilla linkin, jonka kautta voit vaihtaa salasanasi. Linkki on voimassa vain rajatun ajan, joten avaathan sen pian."
+      send_token: "Olemme lähettäneet sinulle sähköpostilla linkin, jonka kautta voit vaihtaa salasanasi. Linkki on voimassa vain rajatun ajan, joten avaathan sen pian.<br><br>Jos et saa sähköpostia, ole hyvä ja ota yhteys Opinsysin tukeen ja anna heille tämä koodi: %{request_id}."
       update: Salasanan vaihto onnistui!
 
   # Email address confirmation

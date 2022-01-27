@@ -139,45 +139,44 @@ class PasswordController < ApplicationController
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
 
+    request_id = generate_synchronous_call_id()
+
     if params[:forgot].empty? || params[:forgot][:email].empty?
       flash[:alert] = I18n.t('password.forgot.description')
       redirect_to forgot_password_path
       return
     end
 
-    user = User.find(:first, :attribute => "mail", :value =>  params[:forgot][:email])
+    begin
+      user = User.find(:first, :attribute => "mail", :value => params[:forgot][:email])
 
-    send_token_url = password_management_host + "/password/send_token"
+      unless user
+        logger.error("[#{request_id}] No user found by email \"#{params[:forgot][:email]}\"")
+      end
 
-    raise UserNotFound if not user
+      send_token_url = password_management_host + "/password/send_token"
 
-    db = redis_connect
+      db = redis_connect
 
-    raise TooManySentTokenRequest if db.get(user.puavoId)
+      rest_response = HTTP.headers(:host => current_organisation_domain, "Accept-Language" => locale)
+                          .post(send_token_url, params: { username: user.uid })
 
-    rest_response = HTTP.headers(:host => current_organisation_domain,
-                                      "Accept-Language" => locale)
-      .post(send_token_url,
-            :params => { :username => user.uid })
-
-    raise RestConnectionError if rest_response.status != 200
-
-    db.set(user.puavoId, true)
-    db.expire(user.puavoId, 300)
-
-    respond_to do |format|
-      flash[:message] = I18n.t('password.successfully.send_token')
-      format.html { redirect_to successfully_password_path(:message => "send_token", :lang => @language) }
+      if rest_response.status == 200
+        db.set(user.puavoId, true)
+        db.expire(user.puavoId, 300)
+      else
+        logger.error("[#{request_id}] puavo-rest call failed, response code was #{rest_response.status}")
+      end
+    rescue => e
+      logger.error("[#{request_id}] Password reset failed: #{e}")
     end
-  rescue UserNotFound
-    flash.now[:alert] = I18n.t('flash.password.email_not_found', :email => params[:forgot][:email])
-    render :action => "forgot"
-  rescue TooManySentTokenRequest
-    flash.now[:alert] = I18n.t('flash.password.too_many_sent_token_request')
-    render :action => "forgot"
-  rescue RestConnectionError
-    flash.now[:alert] = I18n.t('flash.password.connection_failed', :email => params[:forgot][:email])
-    render :action => "forgot"
+
+    # This always succeeds, even if an email cannot be sent. The message contains a logging ID
+    # so the actual reason can be later determined.
+    respond_to do |format|
+      @message = I18n.t('password.successfully.send_token', :request_id => request_id)
+      format.html { render :action => "successfully" }
+    end
   end
 
   # GET /password/:jwt/reset
@@ -209,8 +208,8 @@ class PasswordController < ApplicationController
 
     respond_to do |format|
       if rest_response.status == 200
-        flash[:message] = I18n.t('password.successfully.update')
-        format.html { redirect_to successfully_password_path(:message => "update", :lang => @language) }
+        @message = I18n.t('password.successfully.update')
+        format.html { render :action => "successfully" }
       else
         flash[:alert] = I18n.t('flash.password.can_not_change_password')
         format.html { redirect_to reset_password_path }
@@ -226,7 +225,6 @@ class PasswordController < ApplicationController
 
   # "Your password has been reset" form
   def successfully
-    setup_language(params.fetch(:lang, ''))
   end
 
   private

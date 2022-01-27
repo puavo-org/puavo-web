@@ -149,7 +149,7 @@ Rails.application.routes.draw do
             :to => 'password#reset_update',
             :as => :reset_update_password,
             constraints: { jwt: /.+/ } )
-      get( 'successfully/:message',
+      get( 'successfully',
            :to => 'password#successfully',
            :as => :successfully_password )
     end

@@ -158,10 +158,7 @@ Feature: Manage passwords
     And I am on the forgot password page
     When I fill in "Email" with "broken@foobar.com"
     And I press "Continue"
-    Then I should see:
-      """
-      We could not find any user with the email address "broken@foobar.com"
-      """
+    Then I should see "We've sent you an email that will let you reset your password."
 
   Scenario: Reset password when password and password confirmation doesn't match
     Given generate new token for "pavel"
