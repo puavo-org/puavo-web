@@ -74,6 +74,8 @@ class ProfilesController < ApplicationController
 
   # We get here after the profile has been updated
   def show
+    setup_language
+
     respond_to do |format|
       format.html
     end
