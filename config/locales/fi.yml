@@ -524,9 +524,6 @@ fi:
       no_groups: Tässä koulussa ei ole yhtään ryhmää jota voisi siirtää.
       wlan_updated: WLAN-asetukset päivitetty
       wlan_save_failed: WLAN-asetusten tallennus epäonnistui
-    profile:
-      updated: Tietojen tallennus onnistui
-      save_failed: "Tietojen tallennus epäonnistui"
     printer:
       updated: "Tulostimen tietojen päivitys onnistui"
     devices:
@@ -1574,11 +1571,12 @@ fi:
   # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:
     edit:
-      title: Omat tiedot
-      save_and_close: Tallenna ja sulje
+      title: "Omat tiedot"
     show:
-      message: Tietojesi tallennus onnistui.
-      email_confirm_info: Saat vahvistuslinkin uuteen sähköpostiisi hetken kuluttua. Klikkaa linkkiä vahvistaaksesi uuden osoitteen.
+      photo_failed: "Profiilikuvan tallennus ei onnistunut. Tarkista että valitsit toimivan kuvatiedoston ja yritä uudelleen."
+      save_failed: "Tietojesi tallennus epäonnistui jostain syystä. Yritä uudelleen ja jos ongelma toistuu, ota yhteys Opinsysin tukeen."
+      save_failed_code: "Tietojesi tallennus epäonnistui. Yritä uudelleen ja jos ongelma toistuu, ota yhteys Opinsysin tukeen ja anta heille tämä koodi: \"%{request_id}\"."
+      updated: "Omat tietosi on päivitetty"
 
   # Used by script/create_organisation_owner
   create_organisation_owner:

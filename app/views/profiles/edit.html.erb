@@ -1,7 +1,2 @@
 <% content_for :page_title do %><%= t('.title') %><% end %>
-
-  <%= render( :partial => 'form',
-              :locals => {
-                :path => profile_path(@user),
-                :submit_text => ( @data_remote ? t('.save_and_close') : t('link.update') ),
-                :method => :put } ) %>
+<%= render(:partial => 'form', locals: { path: profile_path(@user), submit_text: t('link.update'), method: :put } ) %>

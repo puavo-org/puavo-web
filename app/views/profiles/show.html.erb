@@ -1,7 +1,9 @@
-<div class="saveNotice">
-  <p><%= t('.message') %></p>
+<% content_for :page_title do %><%= t('profiles.edit.title') %><% end %>
 
-  <% unless @new_emails.empty? %>
-  <p><%= t('.email_confirm_info') %></p>
+<% if message_keys = flash.keys.select { |key| ['notice', 'alert'].include?(key) } %>
+  <% message_keys.each do |key| %>
+    <p class="message_<%= key %>">
+      <%= flash[key] %>
+    </p>
   <% end %>
-</div>
+<% end %>

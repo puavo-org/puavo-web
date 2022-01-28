@@ -1,69 +1,49 @@
-<%
-html_args = {
-  :method => method,
-  :multipart => true,
-  :class => "form-horizontal"
-}
+<%= form_for(@user, url: profile_path, method: method, multipart: true) do |f| %>
+  <input type="hidden" name="lang" id="lang" value="<%= @language %>">
 
-html_args[:'data-remote'] = true if @data_remote
-%>
+  <div id="upper">
+      <div id="left">
+        <%= image_tag(default_image_or_user_image_path(image_profile_path, @user),
+                      :class => "avatar", skip_pipeline: true) %>
+      </div>
 
-  <%= form_for(@user, :url => profile_path, :html => html_args ) do |f| %>
-    <div id="upper">
-      <div id="upperWrapper">
-        <div id="left">
-          <%= image_tag(default_image_or_user_image_path(image_profile_path, @user),
-                        :class => "avatar", skip_pipeline: true) %>
-        </div>
+      <div id="right">
+        <section class="userInfo">
+          <p class="userName"><%= current_user.displayName %></p>
+          <p class="userSchool"><%= current_user.primary_school.displayName %></p>
+        </section>
 
-        <div id="right">
-          <section class="userInfo">
-            <p class="userName"><%= current_user.displayName %></p>
-            <p class="userSchool"><%= current_user.primary_school.displayName %></p>
-          </section>
-
-          <section>
+        <section>
 <% if @automatic_email_addresses %>
-            <%= f.label t('users.edit.automatic_email'), nil %>
-            <div class="automaticEmail"><%= Array(@user.mail).first %></div>
+          <%= f.label t('users.edit.automatic_email'), nil %>
+          <div class="automaticEmail"><%= Array(@user.mail).first %></div>
 <% else %>
-            <%= f.label :mail, nil %>
-            <%= f.text_field :mail, :placeholder => t('activeldap.attributes.user.mail') %>
+          <%= f.label :mail, nil %>
+          <%= f.text_field :mail, :placeholder => t('activeldap.attributes.user.mail') %>
 <% end %>
-          </section>
+        </section>
 
-          <section>
-            <%= f.label :telephoneNumber, nil %>
-            <%= f.text_field :telephoneNumber, :placeholder => t('activeldap.attributes.user.telephoneNumber') %>
-          </section>
+        <section>
+          <%= f.label :telephoneNumber, nil %>
+          <%= f.text_field :telephoneNumber, :placeholder => t('activeldap.attributes.user.telephoneNumber') %>
+        </section>
 
-          <section>
-            <%= f.label :puavoLocale, nil %>
-            <%= f.select :puavoLocale, locales_for_select %>
-          </section>
+        <section>
+          <%= f.label :puavoLocale, nil %>
+          <%= f.select :puavoLocale, locales_for_select %>
+        </section>
 
-          <section>
-            <%= f.label :jpegPhoto, nil %>
+        <section>
+          <%= f.label :jpegPhoto, nil %>
 
-            <div>
-              <%= f.file_field(:jpegPhoto, accept: 'image/*') %>
-            </div>
-          </section>
-        </div>
+          <div>
+            <%= f.file_field(:jpegPhoto, accept: 'image/*') %>
+          </div>
+        </section>
       </div>
-    </div>
+  </div>
 
-    <div id="lower">
-      <div id="lowerWrapper">
-        <%= f.submit submit_text %>
-      </div>
-
-      <% if message_keys = flash.keys.select { |key| [:notice, :alert].include?(key) } %>
-        <% message_keys.each do |key| %>
-          <p class="message_<%= key %>">
-            <%= flash[key] %>
-          </p>
-        <% end %>
-      <% end %>
-    </div>
-  <% end %>
+  <div id="lower">
+    <%= f.submit submit_text %>
+  </div>
+<% end %>

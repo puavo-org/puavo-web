@@ -524,9 +524,6 @@ en:
       no_groups: This school has no groups that could be renamed.
       wlan_updated: WLAN settings successfully updated
       wlan_save_failed: WLAN settings could not be saved!
-    profile:
-      updated: Profile was successfully updated
-      save_failed: Profile cannot be saved!
     printer:
       updated: Printer was successfully updated
     devices:
@@ -1574,11 +1571,12 @@ en:
   # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:
     edit:
-      title: My profile
-      save_and_close: Save and close
+      title: "My profile"
     show:
-      message: Your profile has been successfully updated.
-      email_confirm_info: "A confirmation message will be soon sent to your new email address. Click it to verify your address."
+      photo_failed: "The profile image could not be saved. Please check that it is a valid image file and try again."
+      save_failed: "Your profile could not be saved for some reason. Try again and if the problem persists, contact Opinsys support."
+      save_failed_code: "Your profile could not be saved. Try again and if the problem persists, please contact Opinsys support and give them this code: \"%{request_id}\"."
+      updated: "Your profile has been successfully updated"
 
   # Used in script/create_organisation_owner
   create_organisation_owner:
