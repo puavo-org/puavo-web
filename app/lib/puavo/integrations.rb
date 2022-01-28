@@ -184,7 +184,7 @@ module Puavo
       unless requirements.nil?
         # Completely empty value disables password requirements for this school,
         # overriding global values (if any)
-        requrements = nil if requirements.empty?
+        requirements = nil if requirements.empty?
       end
 
       # Ensure the name is correct
