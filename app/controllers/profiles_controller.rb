@@ -42,6 +42,7 @@ class ProfilesController < ApplicationController
       modify_params << { 'preferredLanguage' => pp['puavoLocale'].match(/^[a-z]{2}/)[0] }
     else
       # Allow reset (ie. set to "default")
+      # (Actually, no. Sorry. See the wall of text below.)
       modify_params << { 'puavoLocale' => '' }
       modify_params << { 'preferredLanguage' => '' }
     end
@@ -54,6 +55,19 @@ class ProfilesController < ApplicationController
         flash[:alert] = t('profiles.show.photo_failed')
       end
     end
+
+    # Remove empty elements. I didn't want to do this, but it has to be done. There's something
+    # very strange going on here. If you don't remove empty strings, then ldap_modify_operation()
+    # WILL fail to remove (clear) the values, but only if you're running in production mode!
+    # No errors will happen in development and testing modes, and those values will be cleared out
+    # just fine. This is completely bizarre and I cannot explain it nor figure it out. But it will
+    # fail in production. Which is really strange, because you *can* use ldap_modify_operation()
+    # to remove values. But not here. I hate this, because I want do do the right thing; the form
+    # should be able to clear out existing values, but... I don't know. I really don't know why
+    # it fails in production. So if you're here, trying to find out why you can't clear your email
+    # address or phone number using the public form (this is open source after all, you can see
+    # the code), this is why. If you can figure out why it fails, let me know so I can fix this.
+    modify_params.delete_if { |p| p.values[0].nil? || p.values[0].to_s.strip.empty? }
 
     respond_to do |format|
       begin
