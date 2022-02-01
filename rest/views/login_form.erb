@@ -1,11 +1,13 @@
 <div id="container">
-    <% if @login_content['upper_logo'] %>
-    <div id="upperLogo">
-        <% if @login_content['upper_logo']['href'] %>
-        <a href="<%= @login_content['upper_logo']['href'] %>" target="_blank" title="<%= @login_content['upper_logo']['title'] %>"><img src="<%= File.join(@login_content['prefix'], @login_content['upper_logo']['image']) %>" alt="<%= @login_content['upper_logo']['alt'] %>"></a>
-        <% else %>
-        <img src="<%= File.join(@login_content['prefix'], @login_content['upper_logo']['image']) %>" alt="<%= @login_content['upper_logo']['alt'] %>">
-        <% end %>
+    <% if @login_content['upper_logos'] %>
+    <div id="upperLogos" class="logoRow">
+      <% @login_content['upper_logos'].each do |logo| %>
+          <% if logo['href'] %>
+          <a href="<%= logo['href'] %>" target="_blank" title="<%= logo['title'] %>"><img src="<%= File.join(@login_content['prefix'], logo['image']) %>" alt="<%= logo['alt'] %>" title="<%= logo['title'] %>" width="<%= logo['width'] %>" height="<%= logo['height'] %>"></a>
+          <% else %>
+          <img src="<%= File.join(@login_content['prefix'], logo['image']) %>" alt="<%= logo['alt'] %>" title="<%= logo['title'] %>" width="<%= logo['width'] %>" height="<%= logo['height'] %>">
+          <% end %>
+      <% end %>
     </div>
     <% end %>
 
@@ -55,11 +57,11 @@
         </fieldset>
     </form>
 
-    <div id="logoRow">
-        <% Array(@login_content['bottom_logos'] || []).each do |logo| %>
-        <a href="<%= logo['href'] %>" target="_blank" title="<%= logo['title'] %>"><img src="<%= File.join(@login_content['prefix'], logo['image']) %>" alt="<%= logo['alt'] %>"></a>
+    <div id="lowerLogos" class="logoRow">
+        <% Array(@login_content['lower_logos'] || []).each do |logo| %>
+        <a href="<%= logo['href'] %>" target="_blank" title="<%= logo['title'] %>"><img src="<%= File.join(@login_content['prefix'], logo['image']) %>" width="<%= logo['width'] %>" height="<%= logo['height'] %>" alt="<%= logo['alt'] %>" title="<%= logo['title'] %>"></a>
         <% end %>
-        <a href="https://opinsys.fi" target="_blank" title="Opinsys Oy"><img src="<%= File.join(@login_content['prefix'], "opinsys_logo.svg") %>" alt="Opinsys Oy logo"></a>
+        <a href="https://opinsys.fi" target="_blank" title="Opinsys Oy"><img src="<%= File.join(@login_content['prefix'], "opinsys_logo.svg") %>" alt="Opinsys Oy logo" width="150" height="34"></a>
     </div>
 
     <div id="help">

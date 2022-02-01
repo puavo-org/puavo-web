@@ -324,8 +324,8 @@ class SSO < PuavoSinatra
       @login_content['css'] = customisations['css']
     end
 
-    if customisations.include?('upper_logo')
-      @login_content['upper_logo'] = customisations['upper_logo']
+    if customisations.include?('upper_logos')
+      @login_content['upper_logos'] = customisations['upper_logos']
     end
 
     if customisations.include?('header_text')
@@ -336,8 +336,8 @@ class SSO < PuavoSinatra
       @login_content['service_title_override'] = customisations['service_title_override']
     end
 
-    if customisations.include?('bottom_logos')
-      @login_content['bottom_logos'] = customisations['bottom_logos']
+    if customisations.include?('lower_logos')
+      @login_content['lower_logos'] = customisations['lower_logos']
     end
 
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
