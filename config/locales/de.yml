@@ -10,6 +10,18 @@ de:
   language_id_ID: "Indonesisch"
   language_default: "Vorgabe"
 
+  # "Main menu", from which you can log in or access other services in the organisation
+  menu:
+    index:
+      service_link_name_puavo: "Puavo - Nutzer- und Geräteverwaltung"
+      service_link_name_infotv: "Info-TV"
+      service_link_name_change_password: "Passwort ändern"
+
+  # Main application layout
+  layouts:
+    sessions:
+      title: "Opinsys Authentication"
+
   # Hyperlinks and buttons
   link:
     change_password: "Setze neues Passwort"

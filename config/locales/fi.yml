@@ -31,9 +31,9 @@ fi:
   # "Main menu", from which you can log in or access other services in the organisation
   menu:
     index:
-      service_link_name_puavo: Puavo - käyttäjä- ja laitehallinta
-      service_link_name_infotv: Info-TV
-      service_link_name_change_password: Vaihda salasana
+      service_link_name_puavo: "Puavo - käyttäjien ja laitteiden hallinta"
+      service_link_name_infotv: "Info-TV"
+      service_link_name_change_password: "Vaihda salasanaasi"
 
   # Login screen
   sessions:

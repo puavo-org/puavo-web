@@ -6,283 +6,299 @@
     available, without any authentication, on any puavo-web server.
 */
 
+:root {
+  --font: "Cantarell", "Ubuntu", "Noto Sans", "Arial", sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --page-background: rgb(245, 246, 247);
+    --page-foreground: #000;
+    --title-shadow: #ccc;
+    --container-foreground: #000;
+    --container-background: rgb(245, 246, 247);
+    --container-border: rgb(207, 214, 230);
+    --generic-border: rgb(207, 214, 230);
+    --input-background: #fff;
+    --input-foreground: #000;
+    --input-border: var(--generic-border);
+    --input-border-active: #ff00ff;
+    --input-border-active: #2679db;
+    --button-background: rgb(252, 253, 253);
+    --button-foreground: #000;
+    --button-border: rgb(207, 214, 230);
+    --button-foreground-disabled: rgb(152, 154, 158);
+    --button-background-active: rgb(211, 216, 226);
+    --button-foreground-active: #000;
+    --button-border-active: rgb(183, 192, 211);
+    --link-foreground: #5294e2;
+    --link-foreground-hover: #2679db;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page-background: rgb(56, 60, 74);
+    --page-foreground: #fff;
+    --title-shadow: #666;
+    --container-foreground: #fff;
+    --container-background: rgb(56, 60, 74);
+    --container-border: rgb(43, 46, 57);
+    --generic-border: rgb(43, 46, 57);
+    --input-background: rgb(64, 69, 82);
+    --input-foreground: #fff;
+    --input-border: var(--generic-border);
+    --input-border-active: #2679db;
+    --button-background: rgb(68, 74, 88);
+    --button-foreground: #fff;
+    --button-border: rgb(43, 46, 57);
+    --button-foreground-disabled: rgb(134, 139, 151);
+    --button-background-active: rgb(46, 51, 64);
+    --button-foreground-active: #fff;
+    --button-border-active: rgb(82, 148, 226);
+    --field-error-foreground: rgb(252, 65, 56);
+    --link-foreground: #5294e2;
+    --link-foreground-hover: #2679db;
+  }
+}
+
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: #f0eee1;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--page-background);
 }
 
 body {
-    font-family: "Noto Sans", "Roboto", "Ubuntu", "Arial", sans-serif;
-    margin: 0;
-    padding: 0;
+  font-family: var(--font);
+  margin: 0;
+  padding: 0;
 }
 
-/* Main container for the menu list and login prompts */
 #container {
-    margin: 1em auto;
-    padding: 1em;
-    color: #000;
-    width: 100%;
-    max-width: 650px;   /* Empirically determined, looks "nice" */
-    border: 4px solid #eeae79;
-    border-radius: 5px;
-    background: rgb(240, 238, 225);
-    background: radial-gradient(circle, rgba(240, 238, 225, 1) 0%, rgba(213, 208, 177, 1) 100%);
-    box-shadow: 0 0 5px #000;
-}
-
-#upperLogo {
-    text-align: center;
-    margin-bottom: 1em;
-}
-
-#upperLogo img {
-    width: 250px;
-}
-
-#headerText {
-    text-align: center;
-    margin-bottom: 1em;
+  margin: 1em auto;
+  padding: 1em;
+  color: var(--container-foreground);
+  background: var(--container-background);
+  width: 100%;
+  max-width: 650px;   /* Empirically determined, looks "nice" */
+  border: 2px solid var(--container-border);
+  border-radius: 5px;
 }
 
 #serviceName {
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    font-size: 125%;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  font-size: 125%;
+  text-shadow: 2px 2px 0 var(--title-shadow);
 }
 
 #serviceName span {
-    font-weight: bold;
+  font-weight: bold;
 }
 
-#error {
-    background: #d00;
-    border-radius: 5px;
-    color: #f4f4f4;
-    display: block;
-    margin: 1em auto;
-    padding: 0.75em;
-    text-align: center;
-    font-size: 90%;
-}
-
-form {
-    margin: 1em auto;
-    padding: 0;
-}
-
-fieldset {
-    padding: 0;
-    margin: 0;
-    border: 0;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-}
-
-fieldset > .row {
-    padding: 0.5em 0;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-}
-
-.col-username {
-    flex-grow: 2;   /* shrink the domain name to minimum possible width */
-}
-
-.col-orgname {
-    margin-left: 0.5em;
-}
-
-#username, #password {
-    margin: 0;
-    padding: 0.5em;
-    border: 1px solid #ccc;
-    border-radius: 0;
-    width: 100%;
-    font-size: 100%;
-}
-
-#submit {
-    background-color: #ffb94b;
-    background-image: linear-gradient(top, #ffb94b, #f17931);
-    border: solid 1px #d69e31;
-    border-radius: 3px;
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.3) inset;
-    color: #8f5a0a;
-    cursor: pointer;
-    font-size: 100%;
-    margin: 0 auto;
-    padding: 0.5em;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
-    width: 75%;
-}
-
-#submit:hover, #submit:focus {
-    background-color: #fddb6f;
-    background-image: linear-gradient(top, #ffb94b, #fddb6f);
-}
-
-#submit:active {
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
-}
-
-::placeholder {
-    font-style: italic;
-}
-
-#logoRow {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-}
-
-#logoRow img {
-    width: 150px;
-    margin: 0.25em;
-}
-
-#help {
-    padding: 0;
-    margin: 0 auto;
-}
-
-#help a {
-    color: #3151a2;
-    white-space: nowrap;
-    text-decoration: none;
-}
-
-#help a:hover {
-    color: #3151a2;
-    text-decoration: underline;
-}
-
-#help .support-info {
-    text-align: center;
-    font-size: 90%;
-}
-
-#help summary {
-    font-weight: bold;
-    outline: none;
-    cursor: pointer;
-    padding: 0.25em;
-}
-
-#help summary:hover {
-    color: #3151a2;
-}
-
-#help details {
-    margin: 0;
-    padding: 0;
-    font-size: 75%;
-}
-
-#help details p {
-    margin-top: 0.5em;
-    margin-left: 2em;
-}
-
-/* The services list in the menu screen */
 #services {
-    margin: 2em 1em;
-    padding: 0;
-    list-style-type: none;
-    font-size: 110%;
+  margin: 1em 0;
+  padding: 0;
+  list-style-type: none;
+  font-size: 110%;
 }
 
 #services li {
-    padding-bottom: 2px;
 }
 
 #services a {
-    display: block;
-    padding: 0.5em;
-    text-align: center;
-    text-decoration: none;
-    color: #3151a2;
-    background: none;
-    border: 1px solid transparent;
+  display: block;
+  padding: 0.5em;
+  text-align: center;
+  text-decoration: none;
+  color: var(--service-foreground);
+  background: transparent;
 }
 
 #services a:hover {
-    border: 1px dotted #3151a2;
+  background: var(--service-background-hover);
+  color: var(--service-foreground-hover);
 }
 
 #services a:active, #services a:focus {
-    color: #808;
+  background: var(--service-background-active);
+  color: var(--service-foreground-active);
 }
 
-/* Some clumsy media queries to make mobile users happy/happier */
-@media (max-width: 500px) {
-    #container {
-        margin: 0;
-        padding: 1em;
-        font-size: 90%;
-        box-shadow: none;
-        border: none;
-        border-bottom: 4px solid #eeae79;
-        border-radius: 0;
-        box-shadow: none;
-    }
-
-    #serviceName {
-        font-size: 120%;
-    }
-
-    #upperLogo img {
-        width: 200px;
-    }
-
-    #services {
-        margin: 1em 0.5em;
-        padding: 0;
-        list-style-type: none;
-        font-size: 100%;
-    }
+.logoRow {
+  display: flex;
+  flex-direction: rows;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
 
-@media (min-width: 501px) and (max-width: 700px) {
-    body {
-        padding: 0.5em;
-    }
-
-    #container {
-        margin: 0 auto;
-        padding: 1em;
-        font-size: 90%;
-        box-shadow: none;
-    }
-
-    #serviceName {
-        font-size: 120%;
-    }
-
-    #upperLogo img {
-        width: 225px;
-    }
+.logoRow > * {
+  display: inline;
 }
 
-@media (max-height: 400px) {
-    #upperLogo img {
-        width: 200px;
-    }
+#upperLogos {
+  margin-bottom: 1em;
+}
 
-    #container {
-        font-size: 90%;
-    }
+#lowerLogos {
+  margin: 1em 0;
+}
+
+#headerText {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+#error {
+  background: #d00;
+  border-radius: 5px;
+  color: #f4f4f4;
+  display: block;
+  margin: 1em auto;
+  padding: 0.75em;
+  text-align: center;
+  font-size: 90%;
+}
+
+form {
+  margin: 1em auto;
+  padding: 0;
+}
+
+fieldset {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+fieldset > .row {
+  padding: 0.5em 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.col-username {
+  flex-grow: 2;   /* shrink the domain name to minimum possible width */
+}
+
+.col-orgname {
+  margin-left: 0.5em;
+}
+
+#username, #password {
+  margin: 0;
+  padding: 0.5em;
+  width: 100%;
+  font-size: 100%;
+}
+
+#submit {
+  margin: 0 auto;
+  width: 75%;
+}
+
+::placeholder {
+  font-style: italic;
+}
+
+input[type="text"], input[type="password"] {
+  padding: 5px;
+  border: 1px solid var(--input-border);
+  background: var(--input-background);
+  color: var(--input-foreground);
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border: 1px solid var(--input-border-active);
+}
+
+button, input[type="submit"] {
+  background: var(--button-background);
+  color: var(--button-foreground);
+  border: 1px solid var(--button-border);
+  padding: 10px 25px;
+  border-radius: 3px;
+}
+
+button:hover, button:focus {
+  outline: 1px solid var(--input-border-focused);
+}
+
+button:active, input[type="submit"]:active {
+  border-color: var(--button-border-active);
+  background: var(--button-background-active);
+  color: var(--button-foreground-active);
+  outline: none;
+}
+
+button:disabled, input[type="submit"]:disabled, input[type="submit"]:active:disabled {
+  background: var(--button-background);
+  border: 1px solid var(--button-border);
+  color: var(--button-foreground-disabled);
+}
+
+#help {
+  padding: 0;
+  margin: 0 auto;
+}
+
+#help a {
+  color: var(--link-foreground);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+#help a:hover {
+  color: var(--link-foreground-hover);
+  text-decoration: underline;
+}
+
+#help .support-info {
+  text-align: center;
+  font-size: 90%;
+}
+
+#help summary {
+  font-weight: bold;
+  outline: none;
+  cursor: pointer;
+  padding: 0.25em;
+}
+
+#help summary:hover {
+  color: var(--link-foreground-hover);
+}
+
+#help details {
+  margin: 0;
+  padding: 0;
+  font-size: 75%;
+}
+
+#help details p {
+  margin-top: 0.5em;
+  margin-left: 2em;
+}
+
+@media screen and (max-width: 670px) {
+  #container {
+    margin: 0 auto;
+    max-width: reset;
+    border: none;
+  }
 }

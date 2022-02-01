@@ -6,7 +6,7 @@ module Puavo
       begin
         org_key = organisation_key_from_host
 
-        logger.info("Organisation key: \"#{org_key}\"")
+        logger.info("customise_login_screen(): organisation key: \"#{org_key}\"")
 
         customisations = Puavo::Organisation
           .find(org_key)
@@ -18,7 +18,7 @@ module Puavo
       end
 
       unless customisations.empty?
-        logger.info("This organisation has login screen customisations enabled")
+        logger.info('customise_login_screen(): this organisation has login screen customisations enabled')
       end
 
       extra_content = {}
@@ -27,8 +27,8 @@ module Puavo
         extra_content['css'] = customisations['css']
       end
 
-      if customisations.include?('upper_logo')
-        extra_content['upper_logo'] = customisations['upper_logo']
+      if customisations.include?('upper_logos')
+        extra_content['upper_logos'] = customisations['upper_logos']
       end
 
       if customisations.include?('header_text')
@@ -39,8 +39,8 @@ module Puavo
         extra_content['service_title_override'] = customisations['service_title_override']
       end
 
-      if customisations.include?('bottom_logos')
-        extra_content['bottom_logos'] = customisations['bottom_logos']
+      if customisations.include?('lower_logos')
+        extra_content['lower_logos'] = customisations['lower_logos']
       end
 
       extra_content

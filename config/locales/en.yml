@@ -31,9 +31,9 @@ en:
   # "Main menu", from which you can log in or access other services in the organisation
   menu:
     index:
-      service_link_name_puavo: Puavo - users and devices management
-      service_link_name_infotv: Info-TV
-      service_link_name_change_password: Change password
+      service_link_name_puavo: "Puavo - users and devices management"
+      service_link_name_infotv: "Info-TV"
+      service_link_name_change_password: "Change your password"
 
   # Login screen
   sessions:

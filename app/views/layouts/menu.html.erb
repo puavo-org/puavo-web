@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=500, initial-scale=1">
+<title>Puavo (<%= @organisation.name %>)</title>
+<link rel="stylesheet" media="all" href="<%= File.join(@login_content['prefix'], 'default.css') %>">
+<% if @login_content['css'] %>
+<link rel="stylesheet" media="all" href="<%= File.join(@login_content['prefix'], @login_content['css']) %>">
+<% end %>
+</head>
+<body>
+<%= yield %>
+</body>
+</html>
