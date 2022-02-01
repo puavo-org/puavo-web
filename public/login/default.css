@@ -19,10 +19,14 @@
     --container-background: rgb(245, 246, 247);
     --container-border: rgb(207, 214, 230);
     --generic-border: rgb(207, 214, 230);
+    --service-foreground: #5294e2;
+    --service-foreground-hover: #fff;
+    --service-background-hover: #5294e2;
+    --service-foreground-active: #fff;
+    --service-background-active: #2679db;
     --input-background: #fff;
     --input-foreground: #000;
     --input-border: var(--generic-border);
-    --input-border-active: #ff00ff;
     --input-border-active: #2679db;
     --button-background: rgb(252, 253, 253);
     --button-foreground: #000;
@@ -45,6 +49,11 @@
     --container-background: rgb(56, 60, 74);
     --container-border: rgb(43, 46, 57);
     --generic-border: rgb(43, 46, 57);
+    --service-foreground: #5294e2;
+    --service-foreground-hover: #fff;
+    --service-background-hover: #5294e2;
+    --service-foreground-active: #fff;
+    --service-background-active: #2679db;
     --input-background: rgb(64, 69, 82);
     --input-foreground: #fff;
     --input-border: var(--generic-border);
