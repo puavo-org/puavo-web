@@ -1,9 +1,38 @@
 /* SSO developers documentation */
 
+@media (prefers-color-scheme: light) {
+  :root {
+    --page-background: rgb(245, 246, 247);
+    --page-foreground: #000;
+    --generic-border: #000;
+    --code-border: rgb(205, 206, 207);
+    --code-background: rgb(225, 226, 227);
+    --link-foreground: #00f;
+    --link-background: none;
+    --link-foreground-hover: #fff;
+    --link-background-hover: #00f;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page-background: rgb(56, 60, 74);
+    --page-foreground: #fff;
+    --generic-border: rgb(43, 46, 57);
+    --code-border: rgb(23, 26, 27);
+    --code-background: rgb(43, 46, 57);
+    --link-foreground: #0ff;
+    --link-background: none;
+    --link-foreground-hover: #000;
+    --link-background-hover: #0ff;
+  }
+}
+
 body {
     font-family: "Noto Sans", "Roboto", "DejaVu Sans", "Ubuntu", "Arial", sans-serif;
     padding: 2em;
-    background: #f0eee1;
+    background: var(--page-background);
+    color: var(--page-foreground);
 }
 
 .doc {
@@ -28,7 +57,7 @@ h1 {
 }
 
 h2 {
-    border-bottom: 1px dashed #000;
+    border-bottom: 1px dashed var(--generic-border);
 }
 
 h1, h2 {
@@ -56,8 +85,8 @@ h2 {
 }
 
 code, pre {
-    background: #E5E2CD;
-    border: 1px solid #8F8F8F;
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
     border-radius: 3px;
     font-family: "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
     overflow-x: auto;
@@ -75,17 +104,17 @@ pre {
 }
 
 a {
-    color: #00f;
-    background: none;
+    color: var(--link-foreground);
+    background: var(--link-background);
 }
 
 a:hover {
-    color: #fff;
-    background: #00f;
+    color: var(--link-foreground-hover);
+    background: var(--link-background-hover);
 }
 
 footer {
-    border-top: 1px solid #000;
+    border-top: 1px solid var(--generic-border);
     text-align: center;
     padding: 10px;
 }
