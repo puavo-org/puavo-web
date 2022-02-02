@@ -30,7 +30,13 @@
 
   <div class="multilineItem">
     <div class="title"><%= t('activeldap.attributes.school.puavoDeviceImage') %></div>
-    <div class="value"><%= h @school.puavoDeviceImage %></div>
+    <div class="value">
+      <% if @releases.include?(@school.puavoDeviceImage) %>
+      <%= h @school.puavoDeviceImage %> (<span class="releaseName"><%= @releases[@school.puavoDeviceImage] %></span>)</li>
+      <% else %>
+      <%= h @school.puavoDeviceImage %>
+      <% end %>
+    </div>
   </div>
 
   <div class="multilineItem">

@@ -60,6 +60,9 @@ class SchoolsController < ApplicationController
     @school['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @school['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 
+    # Known image release names
+    @releases = get_releases
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @school }
