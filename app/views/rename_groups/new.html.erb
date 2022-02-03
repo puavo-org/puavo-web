@@ -2,34 +2,29 @@
 
 <div class="formContainer">
 
-<h1>Vuosiluokkasiirrot</h1>
-
-<h4>Ryhmien massauudelleennimeäminen</h4>
+<h1><%= t('rename_groups.title') %></h1>
 
 <%= form_for("renamge_groups", :url => rename_groups_path(@school) ) do |f| %>
 
-<fieldset>
-<legend>Ryhmät</legend>
-
 <% if @groups.empty? %>
-  <p>Tässä koulussa ei ole yhtään ryhmää, joka täsmäisi hakuehtoihin!</p>
+  <p><%= t('rename_groups.no_groups_to_rename') %></p>
 <% else %>
 
-  <p>Koulun luokka-asteet: <b><%= @first_group_class_number %> - <%= @last_group_class_number %></b></p>
-  <p>Kaikki luokat-asteet <%=  @all_group_class_found ? "löytyivät" : "<b>eivät löytyneet</b>".html_safe %></p>
+  <p><%= t('rename_groups.school_grades') %>: <b><%= @first_group_class_number %> - <%= @last_group_class_number %></b></p>
+  <p><%= t('rename_groups.all_grades') %> <%= (@all_group_class_found ? t('rename_groups.found') : '<strong>' + t('rename_groups.not_found') + '</strong>').html_safe %>.</p>
 
-  <p>Ryhmien luokka-asteet
+  <p><%= t('rename_groups.grades_title') %>
   <% if @first_class_number == @first_group_class_number && @last_class_number == @last_group_class_number %>
-    täsmäävät
+    <%= t('rename_groups.grades_match') %>
   <% else %>
-    <b>eivät täsmää</b>
+    <strong><%= t('rename_groups.grades_no_match') %></strong>
   <% end %>
   </p>
 
   <table class="editForm massGroupRenameTable">
     <tr>
-      <th>Vanha nimi</th>
-      <th>Uusi nimi</th>
+      <th><%= t('rename_groups.old_name') %></th>
+      <th><%= t('rename_groups.new_name') %></th>
     </tr>
 
     <% @groups.each do |group| %>
@@ -51,16 +46,16 @@
   </table>
 
   <br><br>
-  <h4>Luodaan seuraavat uudet ryhmät uudelleen nimeämisen jälkeen:</h4>
+  <h4><%= t('rename_groups.will_create_new_groups') %>:</h4>
 
   <% if @new_group_name_already_used %>
-    <p style="color: #f00;">VAROITUS: Ainakin yhden uuden luotavan ryhmän lyhenne on jo käytössä!</p><br>
+    <p style="color: #f00;"><%= t('rename_groups.abbreviation_already_in_use') %></p><br>
   <% end %>
 
   <table class="editForm massGroupRenameTable">
     <tr>
-      <th>Ryhmän lyhenne</th>
-      <th>Ryhmän nimi</th>
+      <th><%= t('rename_groups.abbreviation') %></th>
+      <th><%= t('rename_groups.name') %></th>
     </tr>
 
     <% @first_class_groups.each do |group| %>
@@ -72,12 +67,8 @@
   </table>
 <% end %>
 
-<% unless @do_only_groups %>
-  </fieldset>
-<% end %>
-
 <br>
-<%= f.submit "Toteuta muutokset", class: 'btn' %>
+<%= f.submit t('rename_groups.submit'), class: 'btn' %>
 
 <% end %>
 

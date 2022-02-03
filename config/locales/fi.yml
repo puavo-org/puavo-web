@@ -55,7 +55,7 @@ fi:
     new_users_groups: "Uuden käyttäjän ryhmät"
     users_import: "Tuo käyttäjiä"
     users_lists: "Käyttäjätunnuslistat"
-    groups_rename: "Vuosiluokkasiirto"
+    groups_rename: "Ryhmien uudelleenimeäminen..."
     groups: "Ryhmät"
     groupless_users: "Ryhmättömät käyttäjät"
     devices: "Laitteet"
@@ -113,7 +113,7 @@ fi:
     change_password: Vaihda salasana
     new_school: Uusi koulu...
     new_ldap_service: Uusi...
-    rename_groups: Vuosiluokkasiirto...
+    rename_groups: Ryhmien uudelleenimeäminen...
     devices: Laitelista
     image_statistics: "Työpöytäkuvatilastot"
     delete_device: "Poista laite"
@@ -449,6 +449,9 @@ fi:
       groupless_marked: "%{ok} käyttäjää merkitty poistettavaksi, %{failed} käyttäjän merkintä epäonnistui"
       group_emptied_ok: "Kaikki jäsenet poistettu ryhmästä"
       group_emptied_failed: "Kaikkia jäseniä ei voitu poistaa"
+    rename_groups:
+      abbreviation_already_in_use: "Uuden ryhmän lyhenne on jo käytössä!"
+      complete: "Nimetty %{count} ryhmä(ä) uudelleen."
     user:
       save_failed: "Käyttäjää ei voitu tallentaa!"
       save_failed_organsation_owner_removal: "Tallennus epäonnistui: käyttäjää ei voitu poistaa organisaation omistajista ennen ylläpitäjä-roolin poistoa. Yritä poistaa omistajuus ensin käsin."
@@ -729,6 +732,25 @@ fi:
       info: "Yleistiedot"
     form:
       add_puavo_billing_info: "Lisää laskutustietoja"
+
+  # Group mass rename
+  rename_groups:
+    title: "Ryhmien massauudelleennimeäminen"
+    no_groups_to_rename: "Tässä koulussa ei ole yhtään ryhmää, joka täsmäisi hakuehtoihin"
+    school_grades: "Koulun luokka-asteet"
+    all_grades: "Kaikki luokat-asteet"
+    found: "löytyivät"
+    not_found: "eivät löytyneet"
+    grades_title: "Luokkien numerot ryhmien nimissä"
+    grades_match: "täsmäävät"
+    grades_no_match: "eivät täsmää"
+    old_name: "Vanha nimi"
+    new_name: "Uusi nimi"
+    abbreviation: "Ryhmän lyhenne"
+    name: "Ryhmän nimi"
+    will_create_new_groups: "Luodaan seuraavat uudet ryhmät uudelleen nimeämisen jälkeen"
+    abbreviation_already_in_use: "VAROITUS: Ainakin yhden uuden luotavan ryhmän lyhenne on jo käytössä!"
+    submit: "Toteuta muutokset"
 
   # Users editing
   users:
