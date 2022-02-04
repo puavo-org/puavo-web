@@ -139,6 +139,62 @@ class GroupsController < ApplicationController
     end
   end
 
+  # Mass operation: lock or unlock all group members
+  def mass_op_group_lock_members
+    begin
+      group_id = params[:group][:id]
+      state = params[:group][:state]
+    rescue
+      puts "mass_op_group_lock_members(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_group_lock_members(): missing params')
+    end
+
+    ok = false
+
+    begin
+      group = Group.find(group_id)
+      _lock_members(group, state)
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # Mass operation: mark (or unmark) all group members for deletion
+  def mass_op_group_mark_members_for_deletion
+    begin
+      group_id = params[:group][:id]
+      state = params[:group][:state]
+    rescue
+      puts "mass_op_group_mark_members_for_deletion(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_group_mark_members_for_deletion(): missing params')
+    end
+
+    ok = false
+
+    begin
+      group = Group.find(group_id)
+      _mark_members_for_deletion(group, state)
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
   # ------------------------------------------------------------------------------------------------
   # ------------------------------------------------------------------------------------------------
 
@@ -280,20 +336,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    now = Time.now.utc
-    count = 0
-
-    @group.members.each do |u|
-      begin
-        if u.puavoRemovalRequestTime.nil?
-          u.puavoRemovalRequestTime = now
-          u.puavoLocked = true
-          u.save
-          count += 1
-        end
-      rescue StandardError => e
-      end
-    end
+    count = _mark_members_for_deletion(@group, true)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_marked', :count => count)
@@ -314,18 +357,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    count = 0
-
-    @group.members.each do |u|
-      begin
-        if u.puavoRemovalRequestTime
-          u.puavoRemovalRequestTime = nil
-          u.save
-          count += 1
-        end
-      rescue StandardError => e
-      end
-    end
+    count = _mark_members_for_deletion(@group, false)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_unmarked', :count => count)
@@ -346,18 +378,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    count = 0
-
-    @group.members.each do |u|
-      begin
-        unless u.puavoLocked
-          u.puavoLocked = true
-          u.save
-          count += 1
-        end
-      rescue StandardError => e
-      end
-    end
+    count = _lock_members(@group, true)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_locked', :count => count)
@@ -378,18 +399,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    count = 0
-
-    @group.members.each do |u|
-      begin
-        if u.puavoLocked
-          u.puavoLocked = nil
-          u.save
-          count += 1
-        end
-      rescue StandardError => e
-      end
-    end
+    count = _lock_members(@group, false)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_unlocked', :count => count)
@@ -584,7 +594,7 @@ class GroupsController < ApplicationController
         begin
           group.remove_user(m)
         rescue StandardError => e
-          puts "===> Could not remove member #{m} from group #{@group}: #{e}"
+          puts "===> Could not remove member #{m.uid} from group #{group.cn}: #{e}"
           ok = false
         end
       end
@@ -592,4 +602,63 @@ class GroupsController < ApplicationController
       ok
     end
 
+    # Mark (or unmark) group members for deletion. Returns the number of users updated.
+    def _mark_members_for_deletion(group, mark)
+      now = Time.now.utc
+      count = 0
+
+      group.members.each do |u|
+        begin
+          if mark
+            # Mark for deletion
+            if u.puavoRemovalRequestTime.nil?
+              u.puavoRemovalRequestTime = now
+              u.puavoLocked = true
+              u.save
+              count += 1
+            end
+          else
+            # Remove deletion mark
+            if u.puavoRemovalRequestTime
+              u.puavoRemovalRequestTime = nil
+              u.save
+              count += 1
+            end
+          end
+        rescue StandardError => e
+          puts "====> Could not mark/unmark group member #{u.uid} from group #{group.cn}: #{e}"
+        end
+      end
+
+      return count
+    end
+
+    # Lock or unlock members
+    def _lock_members(group, lock)
+      count = 0
+
+      group.members.each do |u|
+        begin
+          if lock
+            # Lock
+            unless u.puavoLocked
+              u.puavoLocked = true
+              u.save
+              count += 1
+            end
+          else
+            # Unlock
+            if u.puavoLocked
+              u.puavoLocked = nil
+              u.save
+              count += 1
+            end
+          end
+        rescue StandardError => e
+          puts "====> Could not lock/unlock group member #{u.uid} in group #{group.cn}: #{e}"
+        end
+      end
+
+      return count
+    end
 end

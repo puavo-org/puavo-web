@@ -125,23 +125,7 @@ const USER_TRANSFORM_FUNCTIONS = {
 };
 
 class MassGroupDeletion extends MassOperation {
-    constructor(parent, container)
-    {
-        super(parent, container);
-    }
-
-    canProceed()
-    {
-        return true;
-    }
-
-    start()
-    {
-    }
-
-    finish()
-    {
-    }
+    constructor(parent, container) { super(parent, container); }
 
     processItem(item)
     {
@@ -153,29 +137,61 @@ class MassGroupDeletion extends MassOperation {
 };
 
 class MassGroupClear extends MassOperation {
-    constructor(parent, container)
-    {
-        super(parent, container);
-    }
-
-    canProceed()
-    {
-        return true;
-    }
-
-    start()
-    {
-    }
-
-    finish()
-    {
-    }
+    constructor(parent, container) { super(parent, container); }
 
     processItem(item)
     {
         return doPOST(
             `/users/${item.school_id}/mass_op_group_clear`,
             { id: item.id[INDEX_FILTERABLE] }
+        );
+    }
+};
+
+class MassGroupLockMembers extends MassOperation {
+    constructor(parent, container) { super(parent, container); }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/mass_op_group_lock_members`,
+            { id: item.id[INDEX_FILTERABLE], state: true }
+        );
+    }
+};
+
+class MassGroupUnlockMembers extends MassOperation {
+    constructor(parent, container) { super(parent, container); }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/mass_op_group_lock_members`,
+            { id: item.id[INDEX_FILTERABLE], state: false }
+        );
+    }
+};
+
+class MassGroupMarkMembersForDeletion extends MassOperation {
+    constructor(parent, container) { super(parent, container); }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/mass_op_group_mark_members_for_deletion`,
+            { id: item.id[INDEX_FILTERABLE], state: true }
+        );
+    }
+};
+
+class MassGroupUnmarkMembersForDeletion extends MassOperation {
+    constructor(parent, container) { super(parent, container); }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/mass_op_group_mark_members_for_deletion`,
+            { id: item.id[INDEX_FILTERABLE], state: false }
         );
     }
 };
@@ -188,6 +204,30 @@ const MASS_OPERATIONS = [
         title: "<%= t('link.remove_all_members_from_group') %>",
         flags: 0,
         cls: MassGroupClear
+    },
+    {
+        id: "lock_users",
+        title: "<%= t('link.lock_all_group_members') %>",
+        flags: 0,
+        cls: MassGroupLockMembers
+    },
+    {
+        id: "unlock_users",
+        title: "<%= t('link.unlock_all_group_members') %>",
+        flags: 0,
+        cls: MassGroupUnlockMembers
+    },
+    {
+        id: "mark_for_deletion",
+        title: "<%= t('link.mark_group_members_for_deletion') %>",
+        flags: 0,
+        cls: MassGroupMarkMembersForDeletion
+    },
+    {
+        id: "unmark_deletion",
+        title: "<%= t('link.unmark_group_members_deletion') %>",
+        flags: 0,
+        cls: MassGroupUnmarkMembersForDeletion
     },
     {
         id: "delete",
