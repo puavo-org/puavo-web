@@ -20,7 +20,7 @@ sv:
   # Main application layout
   layouts:
     sessions:
-      title: "Opinsys Authentication"
+      title: "Opinsys-autentisering"
 
   # Hyperlinks and buttons
   link:

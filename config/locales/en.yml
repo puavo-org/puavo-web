@@ -730,6 +730,25 @@ en:
     form:
       add_puavo_billing_info: Add a new billing info
 
+  # Group mass rename
+  rename_groups:
+    title: "Group mass renaming"
+    no_groups_to_rename: "No groups matching the search criteria were found in this school"
+    school_grades: "Grade numbers in this school"
+    all_grades: "All grades"
+    found: "found"
+    not_found: "not found"
+    grades_title: "The grade numbers in group names"
+    grades_match: "match"
+    grades_no_match: "do not match"
+    old_name: "Old name"
+    new_name: "New name"
+    abbreviation: "Group abbreviation"
+    name: "Group name"
+    will_create_new_groups: "The following groups will be created after the renaming"
+    abbreviation_already_in_use: "WARNING: One or more of the abbreviations are already in use!"
+    submit: "Commit changes"
+
   # Users editing
   users:
     index:
