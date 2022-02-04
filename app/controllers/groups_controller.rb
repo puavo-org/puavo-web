@@ -127,18 +127,7 @@ class GroupsController < ApplicationController
 
     begin
       group = Group.find(group_id)
-      members = group.members
-
-      members.each do |m|
-        begin
-          group.remove_user(m)
-        rescue StandardError => e
-          puts "===> Could not remove member #{m} from group #{group}: #{e}"
-          ok = false
-        end
-      end
-
-      ok = true
+      ok = _remove_all_group_members(group)
     rescue StandardError => e
       return status_failed_msg(e)
     end
@@ -471,17 +460,7 @@ class GroupsController < ApplicationController
     @group = get_group(params[:id])
     return if @group.nil?
 
-    members = @group.members
-    ok = true
-
-    members.each do |m|
-      begin
-        @group.remove_user(m)
-      rescue StandardError => e
-        puts "===> Could not remove member #{m} from group #{@group}: #{e}"
-        ok = false
-      end
-    end
+    ok = _remove_all_group_members(@group)
 
     respond_to do |format|
       flash[:notice] = ok ? t('flash.group.group_emptied_ok') : t('flash.group.group_emptied_failed')
@@ -594,6 +573,23 @@ class GroupsController < ApplicationController
       members.sort!{ |a, b| (a["givenName"] + a["sn"]).downcase <=> (b["givenName"] + b["sn"]).downcase }
 
       return members, num_hidden
+    end
+
+    # Remove all users from a group (don't delete them, just remove them from the group)
+    def _remove_all_group_members(group)
+      members = group.members
+      ok = true
+
+      members.each do |m|
+        begin
+          group.remove_user(m)
+        rescue StandardError => e
+          puts "===> Could not remove member #{m} from group #{@group}: #{e}"
+          ok = false
+        end
+      end
+
+      ok
     end
 
 end
