@@ -152,9 +152,43 @@ class MassGroupDeletion extends MassOperation {
     }
 };
 
+class MassGroupClear extends MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+    }
+
+    canProceed()
+    {
+        return true;
+    }
+
+    start()
+    {
+    }
+
+    finish()
+    {
+    }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/mass_op_group_clear`,
+            { id: item.id[INDEX_FILTERABLE] }
+        );
+    }
+};
+
 // JavaScript class fields support is so poor that I can't really
 // define titles, IDs and other things in classes, they must be here
 const MASS_OPERATIONS = [
+    {
+        id: "clear",
+        title: "<%= t('groups.index.mass_operations.clear.title') %>",
+        flags: 0,
+        cls: MassGroupClear
+    },
     {
         id: "delete",
         title: "<%= t('groups.index.mass_operations.delete.title') %>",

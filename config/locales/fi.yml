@@ -921,6 +921,8 @@ fi:
       mass_operations:
         delete:
           title: "Poista"
+        clear:
+          title: "Tyhjennä"
     show:
       title: Ryhmän tiedot
       add_user_title: Lisää käyttäjiä ryhmään

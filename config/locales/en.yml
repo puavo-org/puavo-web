@@ -899,6 +899,8 @@ en:
       mass_operations:
         delete:
           title: "Delete"
+        clear:
+          title: "Clear"
     show:
       title: Group information
       add_user_title: Add users to this group

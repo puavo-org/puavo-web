@@ -72,6 +72,7 @@ Rails.application.routes.draw do
       get 'get_school_groups_list' => 'groups#get_school_groups_list'
 
       post 'mass_op_group_delete' => 'groups#mass_op_group_delete'
+      post 'mass_op_group_clear' => 'groups#mass_op_group_clear'
 
       get 'groups/find_groupless_users' => 'groups#find_groupless_users', :as => :find_groupless_users
       put 'groups/mark_groupless_users_for_deletion' => 'groups#mark_groupless_users_for_deletion', :as => :mark_groupless_users_for_deletion

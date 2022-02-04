@@ -113,6 +113,43 @@ class GroupsController < ApplicationController
     end
   end
 
+  # Mass operation: clear group (remove all users from it)
+  def mass_op_group_clear
+    begin
+      group_id = params[:group][:id]
+    rescue
+      puts "mass_op_group_clear(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_group_clear(): missing params')
+    end
+
+    ok = false
+
+    begin
+      group = Group.find(group_id)
+      members = group.members
+
+      members.each do |m|
+        begin
+          group.remove_user(m)
+        rescue StandardError => e
+          puts "===> Could not remove member #{m} from group #{group}: #{e}"
+          ok = false
+        end
+      end
+
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
   # ------------------------------------------------------------------------------------------------
   # ------------------------------------------------------------------------------------------------
 
