@@ -895,12 +895,6 @@ en:
       actions: Actions
       groups: groups
       externally_maintained: "The group is maintained by an external integration script. Do not edit."
-
-      mass_operations:
-        delete:
-          title: "Delete"
-        clear:
-          title: "Clear"
     show:
       title: Group information
       add_user_title: Add users to this group
