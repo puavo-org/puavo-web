@@ -92,7 +92,7 @@ fi:
     delete_school: "Poista koulu"
     new_group: "Uusi ryhmä..."
     delete_group: "Poista ryhmä"
-    find_groupless_users: "Etsi ryhmättömät käyttäjät..."
+    find_groupless_users: "Ryhmättömät käyttäjät"
     create_username_list_from_group: "Luo jäsenistä uusi käyttäjätunnuslista"
     get_members_as_csv: "Lataa ryhmän käyttäjälista CSV:nä"
     remove_all_members_from_group: "Poista ryhmästä kaikki jäsenet"
@@ -938,9 +938,18 @@ fi:
       member: Jäsen
       add_to_group: Liitä ryhmään
     groupless_users:
-      title: "Etsi ryhmättömät käyttäjät"
-      count: "Löytyi %{count} ryhmätöntä käyttäjää."
-      mark_for_deletion: "Merkitse nämä käyttäjät poistettavaksi"
+      title: "Ryhmättömät käyttäjät"
+      count: "Koulussa on %{count} käyttäjää joita ei ole liitetty mihinkään ryhmään."
+      owners_warning: "Huomaa, että tämä työkalu ei turvallisuussyistä koske käyttäjiin jotka ovat organisaation omistajissa. Heidät kuitenkin listataan normaalisti."
+      action: "Toiminto"
+      lock: "Lukitse nämä käyttäjät"
+      mark: "Merkitse nämä käyttäjät poistettavaksi"
+      move: "Siirrä käyttäjät tähän ryhmään"
+      no_groups: "Koulussa ei ole yhtään ryhmää"
+      members: "jäsen(tä)"
+      proceed: "Toteuta"
+      missing_params: "Puuttuvat tai virheelliset lomakkeen parametrit"
+      done: "Käsiteltiin %{count} käyttäjä(ä)"
 
   # Devices editing
   devices:

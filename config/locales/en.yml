@@ -92,7 +92,7 @@ en:
     delete_school: "Delete school"
     new_group: New group...
     delete_group: "Remove group"
-    find_groupless_users: "Find groupless users..."
+    find_groupless_users: "Groupless users"
     create_username_list_from_group: "Create a new username list from members"
     get_members_as_csv: "Download member list as CSV"
     remove_all_members_from_group: "Remove all members from the group"
@@ -916,9 +916,18 @@ en:
       member: Member
       add_to_group: Add
     groupless_users:
-      title: "Find groupless users"
+      title: "Groupless users"
       count: "Found %{count} ungrouped users."
-      mark_for_deletion: "Mark these users for deletion"
+      owners_warning: "Please note that due to security reasons, this tool does not modify users who are organisation owners. However, those users will be listed here normally."
+      action: "Action"
+      lock: "Lock these users"
+      mark: "Mark these users for later deletion"
+      move: "Move these users to group"
+      no_groups: "This school has no groups"
+      members: "member(s)"
+      proceed: "Proceed"
+      missing_params: "Missing or invalid form parameters"
+      done: "Processed %{count} user(s)"
 
   # Devices editing
   devices:

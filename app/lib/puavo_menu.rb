@@ -83,12 +83,24 @@ class PuavoMenu < MetaMenu
     active_on GroupsController
     owners_only { false }
 
-    # The menu looks weird without this
     child do
       title { t('link.groups') }
       link { groups_path(@school) }
-      owners_only { false }
       active_on GroupsController
+      active_on_action 'index'
+      active_on_action 'show'
+      active_on_action 'edit'
+      active_on_action 'create'
+      active_on_action 'update'
+      owners_only { false }
+    end
+
+    child do
+      title { t('link.find_groupless_users') }
+      link { find_groupless_users_path(@school) }
+      active_on GroupsController
+      active_on_action 'find_groupless_users'
+      owners_only { false }
     end
   end
 

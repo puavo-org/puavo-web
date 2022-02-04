@@ -426,42 +426,112 @@ class GroupsController < ApplicationController
   end
 
   def find_groupless_users
+    # Find all users who have no groups and sort them alphabetically by name
     @users = []
 
     @school.members.each do |m|
       @users << m if m.groups.empty?
     end
 
-    # sort by name
-    @users.sort!{|a, b| a.displayName.downcase <=> b.displayName.downcase }
+    @users.sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+
+    # List potential groups where these users could be added to
+    @move_groups = []
+
+    @school.groups.each do |g|
+      @move_groups << [g.displayName, g.cn, g.id.to_i, I18n.t("group_type.#{g.puavoEduGroupType}"), g.members.count]
+    end
+
+    @move_groups.sort! { |a, b| a[0].downcase <=> b[0].downcase }
+
+    # A set of organisation owners' DNs
+    @owners = Array(LdapOrganisation.current.owner)
+               .reject { |dn| dn == 'uid=admin,o=puavo' }
+               .collect { |o| o.to_s }.to_set
 
     respond_to do |format|
-      format.html { render :action => "groupless_users" }
+      format.html { render :action => 'groupless_users' }
     end
   end
 
-  def mark_groupless_users_for_deletion
-    ok = 0
-    failed = 0
+  #
+  def process_groupless_users
+    if !params.include?(:operation) || !['lock', 'mark', 'move'].include?(params[:operation])
+      flash[:alert] = t('groups.groupless_users.missing_params')
+      redirect_to find_groupless_users_path(@school)
+      return
+    end
+
+    # A set of organisation owners' DNs
+    owners = Array(LdapOrganisation.current.owner)
+              .reject { |dn| dn == 'uid=admin,o=puavo' }
+              .collect { |o| o.to_s }.to_set
+
     now = Time.now.utc
+    count = 0
 
-    @school.members.each do |m|
-      next unless m.groups.empty?
-      next if m.puavoRemovalRequestTime
+    case params[:operation]
+      when 'lock'
+        @school.members.each do |m|
+          next unless m.groups.empty?
+          next if owners.include?(m.dn.to_s)
+          next if m.puavoLocked
 
-      begin
-        m.puavoRemovalRequestTime = now
-        m.puavoLocked = true
-        m.save!
-        ok += 1
-      rescue StandardError => e
-        failed += 1
-      end
+          begin
+            m.puavoLocked = true
+            m.save
+            count += 1
+          rescue => e
+          end
+        end
+
+      when 'mark'
+        @school.members.each do |m|
+          next unless m.groups.empty?
+          next if owners.include?(m.dn.to_s)
+          next if m.puavoRemovalRequestTime
+
+          begin
+            m.puavoRemovalRequestTime = now
+            m.puavoLocked = true
+            m.save!
+            count += 1
+          rescue => e
+          end
+        end
+
+      when 'move'
+        if !params.include?(:group)
+          flash[:alert] = t('groups.groupless_users.missing_params')
+          redirect_to find_groupless_users_path(@school)
+          return
+        end
+
+        # Can't use get_group, because it redirects to wrong page!
+        begin
+          group = Group.find(params[:group])
+        rescue ActiveLdap::EntryNotFound => e
+          flash[:alert] = t('flash.invalid_group_id', :id => params[:group])
+          redirect_to find_groupless_users_path(@school)
+          return
+        end
+
+        @school.members.each do |m|
+          next unless m.groups.empty?
+          next if owners.include?(m.dn.to_s)
+
+          begin
+            group.add_user(m)
+            count += 1
+          rescue => e
+            byebug
+          end
+        end
     end
 
     respond_to do |format|
-      flash[:notice] = t('flash.group.groupless_marked', :ok => ok, :failed => failed)
-      format.html { redirect_to groups_path(@school) }
+      flash[:notice] = t('groups.groupless_users.done', :count => count)
+      format.html { redirect_to find_groupless_users_path(@school) }
     end
   end
 

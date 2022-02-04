@@ -27,6 +27,15 @@ class Group < BaseGroup
     self.displayName
   end
 
+  def add_user(user)
+    begin
+      self.ldap_modify_operation(:add, [{ "memberUid" => [user.uid]},
+                                        { "member" => [user.dn.to_s] }])
+    rescue ActiveLdap::LdapError::TypeOrValueExists
+      # The user is already a member of this group
+    end
+  end
+
   def remove_user(user)
     begin
       self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},

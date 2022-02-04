@@ -5,6 +5,30 @@
 <p><%= t('groups.groupless_users.count', :count => @users.count) %></p>
 
 <% unless @users.empty? %>
+<p class="genericWarning"><%= t('groups.groupless_users.owners_warning') %></p>
+
+<fieldset>
+  <legend><%= t('groups.groupless_users.action') %></legend>
+  <%= form_for("", url: process_groupless_users_path) do |f| %>
+    <div class="flex flex-rows margin-bottom-10px flex-gap-5px">
+      <span><input type="radio" id="lock" name="operation" value="lock"><label for="lock"><%= t('groups.groupless_users.lock') %></label></span>
+      <span><input type="radio" id="mark" name="operation" value="mark" checked><label for="mark"><%= t('groups.groupless_users.mark') %></label></span>
+      <span><input type="radio" id="move" name="operation" value="move" <%= @move_groups.empty? ? "disabled" : "" %>><label for="move"><%= t('groups.groupless_users.move') %>:
+      <% if @move_groups.empty? %>
+      <select disabled></select> <em>(<%= t('groups.groupless_users.no_groups') %>)</em>
+      <% else %>
+      <select id="group" name="group">
+        <% @move_groups.each do |g| %>
+        <option value="<%= g[2] %>"><%= g[0] %> (<%= g[1] %>), <%= g[3] %>, <%= g[4] %> <%= t('groups.groupless_users.members') %></option>
+        <% end %>
+      </select>
+      <% end %>
+      </label></span>
+    </div>
+    <input type="submit" class="btn" value="<%= t('groups.groupless_users.proceed') %>">
+  <% end %>
+</fieldset>
+
 <table class="list">
   <tr class="thead">
     <th><%= t('activeldap.attributes.user.displayName') %></th>
@@ -19,21 +43,18 @@
       <% if user.puavoLocked %><i class='icon-lock' title="<%= t('users.show.user_is_locked') %>"></i><% end %>
     </td>
     <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%= user.uid %></td>
-    <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>"><%= t('puavoEduPersonAffiliation_' + (user.puavoEduPersonAffiliation.class == Array ? user.puavoEduPersonAffiliation.first : user.puavoEduPersonAffiliation).to_s) %></td>
+    <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>">
+      <ul class="no-list-bullets margin-0 padding-0">
+      <% if @owners.include?(user.dn.to_s) %>
+        <li><span class="adminOrOwner"><%= t('organisation_owner_role') %></span></li>
+      <% end %>
+      <% Array(user.puavoEduPersonAffiliation).each do |r| %>
+        <li><%= t('puavoEduPersonAffiliation_' + r) %></li>
+      <% end %>
+      </ul>
+    </td>
   </tr>
   <% end %>
 </table>
-
-<% unless @users.empty? %>
-<% content_for :tools do %>
-<ul>
-  <li>
-    <%= link_to mark_groupless_users_for_deletion_path(@school), class: 'btn', data: { confirm: t('general_confirm') }, method: :put do %>
-      <i class="icon-flag"></i><%= t('groups.groupless_users.mark_for_deletion') %>
-    <% end %>
-  </li>
-</ul>
-<% end %>
-<% end %>
 
 <% end %>

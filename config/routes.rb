@@ -77,7 +77,7 @@ Rails.application.routes.draw do
       post 'mass_op_group_lock_members' => 'groups#mass_op_group_lock_members'
 
       get 'groups/find_groupless_users' => 'groups#find_groupless_users', :as => :find_groupless_users
-      put 'groups/mark_groupless_users_for_deletion' => 'groups#mark_groupless_users_for_deletion', :as => :mark_groupless_users_for_deletion
+      post 'groups/find_groupless_users' => 'groups#process_groupless_users', :as => :process_groupless_users
 
       get 'groups/:id/members' => 'groups#members'
 
