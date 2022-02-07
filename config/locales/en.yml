@@ -224,6 +224,7 @@ en:
       rrt: "When marked for deletion"
       dnd: "Do not delete?"
       is_locked: "Locked?"
+      other_schools: "Other schools"
 
     groups:
       name: "Name"

@@ -101,6 +101,16 @@ class UsersController < ApplicationController
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
+    @schools_list = []
+
+    School.all.each do |s|
+      @schools_list << {
+        id: s.id.to_i,
+        dn: s.dn.to_s,
+        name: s.displayName,
+      }
+    end
+
     # List of systems where user deletions are synchronised
     @synchronised_deletions = {}
     deletions = list_school_synchronised_deletion_systems(@organisation_name, school.id.to_i)
@@ -125,6 +135,17 @@ class UsersController < ApplicationController
 
     school_admins = Array(@school.user_school_admins || []).collect { |a| a.dn.to_s }.to_set
 
+    schools_by_dn = {}
+
+    School.search_as_utf8(:filter => '',
+                          :attributes => ['cn', 'displayName', 'puavoId']).each do |dn, school|
+      schools_by_dn[dn] = {
+        id: school['puavoId'][0].to_i,
+        cn: school['cn'][0],
+        name: school['displayName'][0].force_encoding('utf-8'),
+      }
+    end
+
     # Get a raw list of users in this school
     raw = User.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
                               :scope => :one,
@@ -141,6 +162,7 @@ class UsersController < ApplicationController
       # Special attributes
       user[:link] = "/users/#{school.id}/users/#{user[:id]}"
       user[:school_id] = school_id
+      user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school_id]
 
       users << user
     end

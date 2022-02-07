@@ -248,7 +248,15 @@ class OrganisationsController < ApplicationController
     @synchronised_deletions = {}
     @synchronised_deletions_by_school = {}
 
+    @schools_list = []
+
     School.all.each do |s|
+      @schools_list << {
+        id: s.id.to_i,
+        dn: s.dn.to_s,
+        name: s.displayName,
+      }
+
       deletions = list_school_synchronised_deletion_systems(@organisation_name, s.id.to_i)
       next if deletions.empty?
 
@@ -284,7 +292,7 @@ class OrganisationsController < ApplicationController
       schools_by_dn[dn] = {
         id: school['puavoId'][0].to_i,
         cn: school['cn'][0],
-        name: school['displayName'][0],
+        name: school['displayName'][0].force_encoding('utf-8'),
       }
 
       Array(school['puavoSchoolAdmin'] || []).each{ |dn| school_admins << dn }
@@ -308,6 +316,7 @@ class OrganisationsController < ApplicationController
       user[:link] = "/users/#{school[:id]}/users/#{user[:id]}"
       user[:school] = [school[:cn], school[:name]]
       user[:school_id] = school[:id]
+      user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school[:id]]
 
       users << user
     end

@@ -112,6 +112,12 @@ const COLUMN_DEFINITIONS = {
         flags: ColumnFlag.USER_TRANSFORM,
     },
 <% end %>
+
+    schools: {
+        key: "schools",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.USER_TRANSFORM,
+    },
 };
 
 // Localized column titles. The keys must be same as in the keys in the column
@@ -135,6 +141,7 @@ const COLUMN_TITLES = {
     created: "<%= t('columns.created') %>",
     modified: "<%= t('columns.modified') %>",
     school: "<%= t('columns.primary_school') %>",
+    schools: "<%= t('columns.users.other_schools') %>",
 };
 
 // The default order for columns
@@ -142,6 +149,7 @@ const COLUMN_ORDER = [
 <% if @is_organisation %>
     "school",
 <% end %>
+    "schools",
     "id",
     "name",
     "first",
@@ -173,6 +181,15 @@ const USER_ROLES = {
     parent: "<%= t('puavoEduPersonAffiliation_parent') %>",
     visitor: "<%= t('puavoEduPersonAffiliation_visitor') %>",
     unknown: "<%= t('unknown_role') %>",
+};
+
+const SCHOOLS = {
+<% @schools_list.each do |s| %>
+    "<%= s[:id] %>": {
+        dn: "<%= s[:dn] %>",
+        name: "<%= s[:name] %>",
+    },
+<% end %>
 };
 
 /*
@@ -243,6 +260,16 @@ const USER_TRANSFORM_FUNCTIONS = {
             entry.school[1],
             entry.school[1]
         ];
+    },
+
+    schools: function(entry) {
+        let out = [];
+
+        if (Array.isArray(entry.schools))
+            for (const id of entry.schools)
+                out.push((id in SCHOOLS) ? SCHOOLS[id].name : "?");
+
+        return [out.join("<br>"), out.join(","), out.join(",")];
     },
 };
 

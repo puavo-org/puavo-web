@@ -224,6 +224,7 @@ fi:
       rrt: "Poistomerkintä tehty"
       dnd: "Poisto estetty?"
       is_locked: "Lukittu?"
+      other_schools: "Muut koulut"
 
     groups:
       name: "Nimi"
