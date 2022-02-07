@@ -369,6 +369,9 @@ class OrganisationsController < ApplicationController
   def all_devices
     return if redirected_nonowner_user?
 
+    # You can't get here unless you're an owner
+    @is_owner = true
+
     @school_list = DevicesHelper.device_school_change_list()
 
     respond_to do |format|
