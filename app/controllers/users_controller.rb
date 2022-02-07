@@ -280,7 +280,6 @@ class UsersController < ApplicationController
         # Unlock
         if user.puavoRemovalRequestTime
           user.puavoRemovalRequestTime = nil
-          user.puavoLocked = false
           user.save!
         end
 

@@ -424,21 +424,20 @@ class MassUserMarkForDeletion extends MassOperation {
         // Pre-filter users, avoid useless network requests. All of these checks
         // are also done on the server end.
         const dnd = item.dnd[INDEX_EXISTS] === true && item.dnd[INDEX_FILTERABLE] !== undefined,
-              marked = item.rrt[INDEX_EXISTS] === true && item.rrt[INDEX_FILTERABLE] !== undefined,
-              locked = item.locked[INDEX_EXISTS] === true && item.locked[INDEX_FILTERABLE] === true;
+              marked = item.rrt[INDEX_EXISTS] === true && item.rrt[INDEX_FILTERABLE] !== undefined;
 
         if (dnd) {
             // deletion prevented
             return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
         }
 
-        if (!locked && this.operation == 2) {
-            // already unlocked
+        if (marked && this.operation == 0) {
+            // Already marked for deletion and not in force mode
             return itemProcessedStatus(true);
         }
 
-        if (locked && marked && this.operation == 0) {
-            // already locked and not forced mode
+        if (!marked && this.operation == 2) {
+            // Not marked for deletion
             return itemProcessedStatus(true);
         }
 
