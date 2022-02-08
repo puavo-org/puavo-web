@@ -14,11 +14,13 @@ const COLUMN_DEFINITIONS = {
     audio_sink: {
         key: "audio_sink",
         type: ColumnType.STRING,
+        export_name: "audio_out",
     },
 
     audio_src: {
         key: "audio_src",
         type: ColumnType.STRING,
+        export_name: "audio_in",
     },
 
     auto_updates: {
@@ -97,6 +99,7 @@ const COLUMN_DEFINITIONS = {
         type: ColumnType.STRING,
         flags: ColumnFlag.ARRAY,
         alias: ["puavo_conf", "puavoconf"],
+        export_name: "puavoconf",
     },
 
     cpu: {
@@ -175,6 +178,7 @@ const COLUMN_DEFINITIONS = {
         type: ColumnType.STRING,
         flags: ColumnFlag.USER_TRANSFORM,
         alias: ["hostname"],
+        export_name: "hostname",
     },
 
     hw_time: {
@@ -208,12 +212,14 @@ const COLUMN_DEFINITIONS = {
         key: "krn_args",
         type: ColumnType.STRING,
         alias: ["kernel_args"],
+        export_name: "kernel_args",
     },
 
     krn_ver: {
         key: "krn_ver",
         type: ColumnType.STRING,
         alias: ["kernel_version"],
+        export_name: "kernel_version",
     },
 
     location: {
@@ -253,7 +259,8 @@ const COLUMN_DEFINITIONS = {
     mfer: {
         key: "mfer",
         type: ColumnType.STRING,
-        alias: ["manufacturer"]
+        alias: ["manufacturer"],
+        export_name: "manufacturer",
     },
 
     model: {
@@ -298,6 +305,7 @@ const COLUMN_DEFINITIONS = {
     personal_admin: {
         key: "personal_admin",
         type: ColumnType.BOOL,
+        export_name: "personally_administered",
     },
 
     personal_device: {
@@ -324,6 +332,7 @@ const COLUMN_DEFINITIONS = {
     purchase_support: {
         key: "purchase_support",
         type: ColumnType.STRING,
+        export_name: "support_contract",
     },
 
     purchase_url: {
@@ -335,6 +344,7 @@ const COLUMN_DEFINITIONS = {
         key: "purchase_warranty",
         type: ColumnType.UNIXTIME,
         flags: ColumnFlag.USER_TRANSFORM,
+        export_name: "warranty_ends",
     },
 
     ram: {

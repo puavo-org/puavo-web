@@ -1847,13 +1847,23 @@ exportTable(format)
             this.settings.columns.current :
             Object.keys(this.settings.columns.definitions);
 
+        let headers = [...columns];
+
+        // Optional export alias names
+        for (let i = 0; i < headers.length; i++) {
+            const def = this.settings.columns.definitions[headers[i]];
+
+            if (def.export_name)
+                headers[i] = def.export_name;
+        }
+
         let mimetype, extension;
 
         if (format == "csv") {
             // CSV export
 
             // Header first
-            output.push(columns.join(";"));
+            output.push(headers.join(";"));
 
             for (const row of source) {
                 let out = [];
@@ -1872,9 +1882,9 @@ exportTable(format)
             for (const row of source) {
                 let out = {};
 
-                for (const col of columns)
-                    if (col in row)
-                        out[col] = row[col][INDEX_FILTERABLE];
+                for (let i = 0; i < columns.length; i++)
+                    if (columns[i] in row)
+                        out[headers[i]] = row[columns[i]][INDEX_FILTERABLE];
 
                 output.push(out);
             }
