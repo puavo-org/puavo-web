@@ -439,7 +439,7 @@ class GroupsController < ApplicationController
     @move_groups = []
 
     @school.groups.each do |g|
-      @move_groups << [g.displayName, g.cn, g.id.to_i, I18n.t("group_type.#{g.puavoEduGroupType}"), g.members.count]
+      @move_groups << [g.displayName, g.cn, g.id.to_i, g.puavoEduGroupType.nil? ? "(?)" : I18n.t("group_type.#{g.puavoEduGroupType}"), g.members.count]
     end
 
     @move_groups.sort! { |a, b| a[0].downcase <=> b[0].downcase }
