@@ -799,6 +799,16 @@ fi:
             pnumber: "Henkilönumero"
         username_list:
           title: "Luo käyttäjätunnuslista"
+        change_school:
+          title: "Vaihda koulua..."
+          automation_warning: "Jos lähde- ja/tai kohdekoulussa on käytössä kolmannen osapuolen integraatioita, varmista etukäteen että koulun vaihto ei häiritse niiden toimintaa, ja että ne eivät yritä \"kumota\" muutoksia."
+          operation: "Toiminto:"
+          operation_move: "Vaihda kohdekoulu käyttäjän pääkouluksi"
+          operation_move_keep: "Siirrä nykyinen pääkoulu lisäkouluihin (ei kovin käytännöllinen oppilailla)"
+          operation_add: "Lisää kohdekouluun, jos ei ole jo"
+          operation_remove: "Poista kohdekoulusta, jos on (epäonnistuu jos kohdekoulu on käyttäjän pääkoulu tai ainoa koulu)"
+          target_school: "Kohdekoulu:"
+          cant_remove_primary_school: "Käyttäjää ei voi poistaa hänen pääkoulustaan"
 
     show:
       system_information: "Järjestelmätietoja"
@@ -842,7 +852,7 @@ fi:
       title: "Vaihda kouluja"
       header: "Vaihda käyttäjän \"%{name}\" kouluja"
       sync_warning: "Ole varovainen jos muokkaat käyttäjää jonka tunnus on Primus- tai AD-integraation hallinnan alaisuudessa. Kaikki kouluihin tekemäsi muutokset saatetaan kumota osittain tai kokonaan seuraavan synkronisaatioajon aikana. Pidä myös mielessä, että integraatiojärjestelmät jotka hakevat dataa Puavosta voivat synkronoida nämä muutokset eteenpäin paikkoihin joihin ne eivät kuulu. Varmista etukäteen, että muutokset jotka aiot tehdä ovat juuri niitä mitä pitää tehdä ja että ne voi tehdä tälle käyttäjälle. Käyttäjän poisto koulusta poistaa hänet myös kyseisen koulun ylläpitäjistä."
-      instant_save_warning: "Huomaathan, että kaikki muutokset tallennetaan heti. Usean koulun lisäys tai poisto on tehtävä yksi kerrallaan. Koululiitosten massamuokkaustyökalu tehdään myöhemmin."
+      instant_save_warning: "Huomaathan, että kaikki muutokset tallennetaan heti. Usean koulun lisäys tai poisto on tehtävä yksi kerrallaan. Koululiitosten massamuokkaus usealle käyttäjälle yhtä aikaa on saatavilla toisaalla organisaation omistajille."
       current_title: "Nykyiset koulut (%{count})"
       available_title: "Käytettävissä olevat koulut (%{count})"
       primary_school: "pääkoulu"

@@ -559,6 +559,86 @@ class MassUsernameList extends MassOperation {
 };
 <% end %>
 
+<% if @is_owner %>
+class MassUserChangeSchool extends MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+
+        const firstSchoolID = Object.keys(SCHOOLS)[0];
+
+        this.operation = 0;
+        this.keep = false;
+        this.schoolID = firstSchoolID;
+    }
+
+    buildInterface()
+    {
+        let html = `
+<p class="genericWarning"><%= t('users.index.mass_operations.change_school.automation_warning') %></p>
+<form>
+<table class="settingsChild">
+<tr>
+    <th><%= t('users.index.mass_operations.change_school.operation') %></label></th>
+    <td>
+        <div class="flex flex-rows flex-gap-5px">
+            <span><input type="radio" name="operation" id="move" value="move" checked><label for="move"><%= t('users.index.mass_operations.change_school.operation_move') %></label></span>
+            <span class="margin-left-20px margin-bottom-5px"><input type="checkbox" name="keep" id="keep"><label for="keep"><%= t('users.index.mass_operations.change_school.operation_move_keep') %></label></span>
+            <span><input type="radio" name="operation" id="add" value="add"><label for="add"><%= t('users.index.mass_operations.change_school.operation_add') %></label></span>
+            <span><input type="radio" name="operation" id="remove" value="remove"><label for="remove"><%= t('users.index.mass_operations.change_school.operation_remove') %></label></span>
+        </div>
+    </td>
+</tr>
+<tr>
+    <th><label for="mass_user_change_school"><%= t('users.index.mass_operations.change_school.target_school') %></label></th>
+    <td>
+        <select id="mass_user_change_school">`;
+
+        // Sort the schools alphabetically and put them in the combo box
+        let sortedSchools = [];
+
+        for (const id of Object.keys(SCHOOLS))
+            sortedSchools.push([id, SCHOOLS[id].name]);
+
+        sortedSchools.sort((a, b) => { return a[1].localeCompare(b[1]) });
+
+        for (const s of sortedSchools)
+            html += `<option data-id="${s[0]}">${SCHOOLS[s[0]].name}</option>`;
+
+        html += `</select></td></tr></table></form>`;
+
+        this.container.innerHTML = html;
+
+        this.container.querySelector("#mass_user_change_school").addEventListener("change", (e) => {
+            this.schoolID = e.target.options[e.target.selectedIndex].dataset.id;
+        });
+
+        this.container.querySelector("#move").addEventListener("click", () => { this.operation = 0; });
+        this.container.querySelector("#keep").addEventListener("click", (e) => { this.keep = e.target.checked; });
+        this.container.querySelector("#add").addEventListener("click", () => { this.operation = 1; });
+        this.container.querySelector("#remove").addEventListener("click", () => { this.operation = 2; });
+    }
+
+    processItem(item)
+    {
+        //console.log(`operation=${this.operation}, schoolID=${this.schoolID}, schoolDN=${SCHOOLS[this.schoolID].dn}, schools=${item.schools}`);
+
+        // Unfortunately there's nothing to optimize yet, we must issue a network request
+        // for every selected user
+        return doPOST(
+            `/users/${item.school_id}/mass_op_user_change_school`,
+            {
+                id: item.id[INDEX_FILTERABLE],
+                operation: this.operation,
+                keep: this.keep,
+                school_id: this.schoolID,
+                school_dn: SCHOOLS[this.schoolID].dn,
+            }
+        );
+    }
+};
+<% end %>
+
 const MASS_OPERATIONS = [
 <% if @is_owner %>
     {
@@ -596,6 +676,15 @@ const MASS_OPERATIONS = [
         title: "<%= t('users.index.mass_operations.username_list.title') %>",
         flags: MassOperationFlags.SINGLESHOT,
         cls: MassUsernameList
+    },
+<% end %>
+
+<% if @is_owner %>
+    {
+        id: "change_school",
+        title: "<%= t('users.index.mass_operations.change_school.title') %>",
+        flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: MassUserChangeSchool
     },
 <% end %>
 ];

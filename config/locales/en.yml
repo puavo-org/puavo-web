@@ -796,6 +796,16 @@ en:
             pnumber: "Personnel number"
         username_list:
           title: "Create username list"
+        change_school:
+          title: "Change school..."
+          automation_warning: "If the source and/or destination schools have third-party integrations enabled then ensure in advance that this operation does not interfere with them, and that they do not try to \"undo\" these changes."
+          operation: "Action:"
+          operation_move: "Change the user's primary school to the target school"
+          operation_move_keep: "Keep the current primary school in the other schools"
+          operation_add: "Add to the target school"
+          operation_remove: "Remove from the target school (will fail if the school is the user's primary/only school)"
+          target_school: "Target school:"
+          cant_remove_primary_school: "Can't remove user from their primary school"
 
     show:
       system_information: System information
@@ -839,7 +849,7 @@ en:
       title: "Change Schools"
       header: "Change the schools of user \"%{name}\""
       sync_warning: "Be careful if you edit a user whose account is managed by the Primus or AD integration systems. Any changes you make to the schools here can be get undone partially or completely during the next synchronisation. Also keep in mind that systems that get data from Puavo and synchronise them further into other systems can propagate these changes into places where they do not belong. Verify in advance that the changes you're about to make here are exactly what needs to be done, and that they can be done to this user. Removing a user from a school will also remove them from that school's administrators."
-      instant_save_warning: "Please note that all changes are saved immediately. Adding or removing multiple schools must be done one at a time. A mass tool for editing schools will be implemented later."
+      instant_save_warning: "Please note that all changes are saved immediately. Adding or removing multiple schools must be done one at a time. A tool for mass manipulating the schools of multiple users at once is available elsewhere for organisation owners."
       current_title: "Current schools (%{count})"
       available_title: "Available schools (%{count})"
       primary_school: "primary school"

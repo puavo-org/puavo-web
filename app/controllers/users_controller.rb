@@ -413,6 +413,122 @@ class UsersController < ApplicationController
     end
   end
 
+  # Mass operation: change school(s)
+  def mass_op_user_change_school
+    begin
+      user_id = params[:user][:id]
+      operation = params[:user][:operation]
+      keep_previous = params[:user][:keep]
+      school_id = params[:user][:school_id]
+      school_dn = params[:user][:school_dn]
+    rescue
+      puts "mass_op_user_change_school(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_user_change_school(): missing params')
+    end
+
+    ok = false
+
+    begin
+      user = User.find(user_id)
+
+      if operation == 0
+        # Move (change primary school)
+        unless user.puavoEduPersonPrimarySchool == school_dn
+          school = School.find(school_id)
+          puts "-" * 50
+          puts "Moving user #{user.uid} to school #{school_dn}"
+
+          previous_dn = user.puavoEduPersonPrimarySchool
+          previous_school = School.find(previous_dn)
+
+          if keep_previous
+            puts "Keeping the previous school (#{previous_dn})"
+          end
+
+          if Array(user.puavoSchool).include?(school_dn)
+            puts "The user is already in the target school, changing the primary school DN"
+            user.puavoEduPersonPrimarySchool = school_dn
+
+            unless keep_previous
+              puts "Removing the previous primary school"
+              schools = Array(user.puavoSchool).dup
+              schools.delete(previous_dn)
+              user.puavoSchool = (schools.count == 1) ? schools[0] : schools
+            end
+          else
+            puts "Inserting the new school on the schools array"
+            schools = Array(user.puavoSchool).dup
+            schools << school_dn
+
+            unless keep_previous
+              puts "Removing the previous primary school"
+              schools.delete(previous_dn)
+            end
+
+            user.puavoSchool = (schools.count == 1) ? schools[0] : schools
+
+            puts "Changing the primary school"
+            user.puavoEduPersonPrimarySchool = school_dn
+          end
+
+          puts "Saving the user object"
+          user.save!
+
+          unless keep_previous
+            # Remove the user from the previous primary school
+            LdapBase.ldap_modify_operation(previous_dn, :delete, [{ "member" => [user.dn.to_s] }])
+            LdapBase.ldap_modify_operation(previous_dn, :delete, [{ "memberUid" => [user.uid.to_s] }])
+          end
+
+          puts "-" * 50
+        end
+
+        ok = true
+      elsif operation == 1
+        # Add
+        unless Array(user.puavoSchool).include?(school_dn)
+          school = School.find(school_id)
+
+          puts "-" * 50
+          puts "Adding user #{user.uid} to school #{school_dn}"
+          puts "-" * 50
+
+          user.puavoSchool = Array(user.puavoSchool) + [school_dn]
+          user.save!
+        end
+
+        ok = true
+      elsif operation == 2
+        # Remove
+        if Array(user.puavoSchool).include?(school_dn)
+          if user.puavoEduPersonPrimarySchool == school_dn
+            # Users cannot be removed from their primary school. You have to move them
+            # to another school first, then remove the old primary school.
+            return status_failed_trans('users.index.mass_operations.change_school.cant_remove_primary_school')
+          else
+            school = School.find(school_id)
+
+            puts "-" * 50
+            puts "Removing user #{user.uid} from school #{school_dn}"
+            _remove_user_from_school(user, school)
+            puts "-" * 50
+          end
+        end
+
+        ok = true
+      end
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
 
   # ------------------------------------------------------------------------------------------------
   # ------------------------------------------------------------------------------------------------
