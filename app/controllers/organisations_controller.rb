@@ -307,7 +307,7 @@ class OrganisationsController < ApplicationController
     users = []
 
     raw.each do |dn, usr|
-      school = schools_by_dn[usr['puavoSchool'][0]]
+      school = schools_by_dn[usr['puavoEduPersonPrimarySchool'][0]]
 
       # Common attributes
       user = UsersHelper.convert_raw_user(dn, usr, organisation_owners, school_admins)

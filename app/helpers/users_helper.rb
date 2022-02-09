@@ -32,6 +32,7 @@ module UsersHelper
       'createTimestamp',
       'modifyTimestamp',
       'puavoSchool',
+      'puavoEduPersonPrimarySchool',
     ].freeze
   end
 
