@@ -524,7 +524,7 @@ class GroupsController < ApplicationController
             group.add_user(m)
             count += 1
           rescue => e
-            byebug
+            logger.error(e)
           end
         end
     end
