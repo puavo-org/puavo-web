@@ -789,7 +789,7 @@ fi:
           not_marked_for_deletion: "Käyttäjää ei ole merkitty poistettavaksi"
           marked_too_recently: "Käyttäjä on ollut merkittynä poistettavaksi alle viikon"
         clear_column:
-          title: "Tyhjennä sarakkeen sisältö"
+          title: "Tyhjennä sarakkeen sisältö..."
           column_title: "Sarake:"
           columns:
             eid: "Ulkoinen ID"

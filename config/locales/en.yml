@@ -786,7 +786,7 @@ en:
           not_marked_for_deletion: "User has not been marked for deletion"
           marked_too_recently: "User has been marked for deletion for less than a week"
         clear_column:
-          title: "Clear column contents"
+          title: "Clear column contents..."
           column_title: "Column:"
           columns:
             eid: "External ID"
