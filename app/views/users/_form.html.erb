@@ -182,7 +182,8 @@
 <%= setup_password_validator(@organisation_name,
                              @school.id,
                              'user_new_password',
-                             'user_new_password_confirmation') %>
+                             'user_new_password_confirmation',
+                             ['user_givenName', 'user_sn', 'user_uid']) %>
 <% end %>
 <% end %>
 

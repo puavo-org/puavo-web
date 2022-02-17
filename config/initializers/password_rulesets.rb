@@ -8,6 +8,7 @@ def parse_password_validation_rulesets(data)
 
   instructions = {}
   rulesets = {}
+  deny_names_in_passwords = false
 
   Array(data.fetch('password_rulesets', [])).each do |ruleset|
     unless ruleset.include?('id')
@@ -21,6 +22,7 @@ def parse_password_validation_rulesets(data)
     ruleset_id = ruleset['id']
     rules = []
     instructions = ruleset.fetch('instructions', {})
+    deny_names_in_passwords = ruleset.fetch('deny_names_in_passwords', false) == true
 
     Array(ruleset.fetch('rules', [])).each do |rule|
       # Validate the common parameters
@@ -135,6 +137,7 @@ def parse_password_validation_rulesets(data)
 
     rulesets[ruleset_id] = {
       instructions: instructions,
+      deny_names_in_passwords: deny_names_in_passwords,
       rules: rules
     }
   end

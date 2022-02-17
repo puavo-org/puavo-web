@@ -162,8 +162,18 @@ class User < LdapBase
           get_school_password_requirements(LdapOrganisation.current.cn, self.primary_school.puavoId)
 
         if ruleset_name
+          rules = Puavo::PASSWORD_RULESETS[ruleset_name]
+
           password_errors =
-            Puavo::Password::validate_password(self.new_password, Puavo::PASSWORD_RULESETS[ruleset_name][:rules])
+            Puavo::Password::validate_password(self.new_password, rules[:rules])
+
+          if self.new_password && rules[:deny_names_in_passwords]
+            if self.new_password.downcase.include?(self.givenName.downcase) ||
+               self.new_password.downcase.include?(self.sn.downcase) ||
+               self.new_password.downcase.include?(self.uid.downcase)
+              password_errors << 'contains_name'
+            end
+          end
 
           unless password_errors.empty?
             # Combine the errors like the live validator does

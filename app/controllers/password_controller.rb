@@ -426,8 +426,19 @@ class PasswordController < ApplicationController
 
         logger.info("[#{request_id}] Validating the password against ruleset \"#{ruleset_name}\"")
 
+        new_password = params[:user][:new_password]
+
         password_errors =
-          Puavo::Password::validate_password(params[:user][:new_password], rules)
+          Puavo::Password::validate_password(new_password, rules)
+
+        if Puavo::PASSWORD_RULESETS[ruleset_name][:deny_names_in_passwords]
+          if new_password.downcase.include?(@user.givenName.downcase) ||
+             new_password.downcase.include?(@user.sn.downcase) ||
+             new_password.downcase.include?(@user.uid.downcase) ||
+             (mode == :other && new_password.downcase.include?(params[:login][:uid].downcase))
+            password_errors << 'contains_name'
+          end
+        end
 
         unless password_errors.empty?
           # Combine the errors like the live validator does

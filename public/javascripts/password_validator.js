@@ -79,7 +79,8 @@ function validatePassword(password, rules)
 let passwordField = null,
     passwordStatus = null,
     confirmField = null,
-    confirmStatus = null;
+    confirmStatus = null,
+    usernameFields = [];
 
 // Optional function that is called whenever the input changes and the password is revalidated.
 // It receives two parameters: one true/false that indicates if the password is okay, and
@@ -127,14 +128,24 @@ function onPasswordInput()
     // PASSWORD_RULES is defined in the inline <script> block on the page
 
     if (PASSWORD_RULES.length == 0) {
-        // There are no rules, only verify the password confirmation
+        // Only verify the password confirmation
         passwordStatus.innerText = "";
         confirmStatus.innerText = (confirmation == password) ? "" : unEsacapeHTML(CONFIRM_MISMATCH);
         callCallback(true, (confirmation == password));
         return;
     }
 
-    const errors = validatePassword(password, PASSWORD_RULES);
+    let errors = validatePassword(password, PASSWORD_RULES);
+
+    for (const e of usernameFields) {
+        // If the password contains the first name, last name or username, flag it as an error
+        const v = e.value.toLowerCase().trim();
+
+        if (password.toLowerCase().indexOf(v) != -1) {
+            errors.push(unEsacapeHTML(PASSWORD_CONTAINS_NAME));
+            break;
+        }
+    }
 
     passwordStatus.innerText = (errors.length == 0) ? "" : errors.map(e => unEsacapeHTML(e)).join("\n");
     confirmStatus.innerText = (confirmation == password) ? "" : unEsacapeHTML(CONFIRM_MISMATCH);
@@ -142,7 +153,7 @@ function onPasswordInput()
     callCallback(errors.length == 0, (confirmation == password));
 }
 
-function initializePasswordValidator(passwordFieldID, confirmFieldID, callback=null)
+function initializePasswordValidator(passwordFieldID, confirmFieldID, nameFields=null, callback=null)
 {
     try {
         console.log(`Initializing the password validator, have ${PASSWORD_RULES.length} rule(s)`);
@@ -161,6 +172,15 @@ function initializePasswordValidator(passwordFieldID, confirmFieldID, callback=n
         if (!confirmField) {
             console.error(`Could not find the confirm input field by ID "${confirmFieldID}"`);
             return;
+        }
+
+        if (nameFields) {
+            for (const id of nameFields) {
+                const e = document.getElementById(id);
+
+                if (e)
+                    usernameFields.push(e);
+            }
         }
 
         // Reuse the existing field error elements. Must find the actual TD element

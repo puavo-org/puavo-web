@@ -69,6 +69,7 @@ de:
           cant_start_or_end_in_whitespace: "Das Passwort darf nicht mit Leerzeichen beginnen oder enden"
           ascii_only: "Das Password darf nur Buchstaben A-Z und a-z, Nummern und einige übliche Sonderzeichen enthalten"
           not_complex_enough: "Das Passwort ist zu einfach (enthält nicht alle angeforderte Zeichen)"
+          contains_name: "Das Passwort darf nicht Ihren Vornamen, Familiennamen, oder Benutzernamen enthalten"
 
   # Password forms
   # (There are more password-related messages in the flash messages section)

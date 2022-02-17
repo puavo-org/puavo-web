@@ -1,13 +1,23 @@
 module PasswordHelper
   # Renders the Javascript template at the bottom of the page that sets up
   # password field validation.
-  def setup_password_validator(organisation_name, school_id, password_field_id, confirm_field_id, callback=nil)
+  def setup_password_validator(organisation_name, school_id,
+                               password_field_id, confirm_field_id,
+                               name_field_ids=[],
+                               callback=nil)
+
     ruleset_name = get_school_password_requirements(organisation_name, school_id)
 
     logger.info("setup_password_validator(): password validation ruleset for school #{school_id} " \
                 "in organisation \"#{organisation_name}\" is \"#{ruleset_name}\"")
 
-    rules = ruleset_name ? Puavo::PASSWORD_RULESETS[ruleset_name][:rules] : []
+    rules = []
+    deny_names = false
+
+    if ruleset_name
+      rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
+      deny_names = Puavo::PASSWORD_RULESETS[ruleset_name][:deny_names_in_passwords]
+    end
 
     # Always render the validator template, even if there are no rules. If the rule list is empty,
     # then the validator simply ensures the password confirmation matches the password and
@@ -15,6 +25,7 @@ module PasswordHelper
     render partial: 'password/password_validator', locals: {
       password_field_id: password_field_id,
       confirm_field_id: confirm_field_id,
+      name_field_ids: deny_names ? name_field_ids : [],
       rules: rules,
       callback: callback,
     }

@@ -1322,6 +1322,7 @@ en:
           cant_start_or_end_in_whitespace: "The password cannot start or end in whitespace"
           ascii_only: "The password can only contain letters A-Z and a-z, numbers, and some common punctuation"
           not_complex_enough: "The password is not complex enough (it does not contain all of the required characters)"
+          contains_name: "The password must not contain the first name, last name, or username"
     models:
       group: Group
       user: User
