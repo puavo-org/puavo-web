@@ -1,5 +1,5 @@
 // =============================================================================
-// Extremely ugly password field validator, v2.0
+// Extremely ugly password field validator, v2.1
 // Does not prevent the form from being submitted, but it lets the
 // user know that the password will be rejected if they submit it
 // =============================================================================
@@ -21,27 +21,27 @@ function validatePassword(password, rules)
 
                 switch (rule.operator) {
                     case "=":
-                        match = (length == rule.value);
+                        match = (length == rule.length);
                         break;
 
                     case "!=":
-                        match = (length != rule.value);
+                        match = (length != rule.length);
                         break;
 
                     case "<":
-                        match = (length < rule.value);
+                        match = (length < rule.length);
                         break;
 
                     case "<=":
-                        match = (length <= rule.value);
+                        match = (length <= rule.length);
                         break;
 
                     case ">":
-                        match = (length > rule.value);
+                        match = (length > rule.length);
                         break;
 
                     case ">=":
-                        match = (length >= rule.value);
+                        match = (length >= rule.length);
                         break;
                 }
 
@@ -49,8 +49,20 @@ function validatePassword(password, rules)
             }
 
             case "regexp":
-                match = (rule.value.exec(password) ? "=" : "!=") == rule.operator;
+                match = (rule.regexp.exec(password) ? "=" : "!=") == rule.operator;
                 break;
+
+            case "complexity_check":
+            {
+                let matches = 0;
+
+                for (const r of rule.regexps)
+                    if (r.exec(password) !== null)
+                        matches++;
+
+                match = (matches >= rule.min_matches);
+                break;
+            }
 
             default:
                 break;

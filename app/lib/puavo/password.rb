@@ -17,21 +17,29 @@ module Puavo
 
             case rule[:operator]
               when '='
-                match = (length == rule[:value])
+                match = (length == rule[:length])
               when '!='
-                match = (length != rule[:value])
+                match = (length != rule[:length])
               when '<'
-                match = (length < rule[:value])
+                match = (length < rule[:length])
               when '<='
-                match = (length <= rule[:value])
+                match = (length <= rule[:length])
               when '>'
-                match = (length > rule[:value])
+                match = (length > rule[:length])
               when '>='
-                match = (length >= rule[:value])
+                match = (length >= rule[:length])
             end
 
           when 'regexp'
-            match = (rule[:value].match(password) ? '=' : '!=') == rule[:operator]
+            match = (Regexp.new(rule[:regexp]).match(password) ? '=' : '!=') == rule[:operator]
+
+          when 'complexity_check'
+            # Count how many of the regexps match the password
+            matches = 0
+
+            rule[:regexps].each { |r| matches += 1 if Regexp.new(r).match(password) }
+
+            match = (matches >= rule[:min_matches])
         end
 
         errors << rule[:message_id] unless match

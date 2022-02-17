@@ -25,10 +25,10 @@ module PasswordHelper
     ruleset_name = get_school_password_requirements(organisation_name, school_id)
     return unless ruleset_name
 
-    descriptions = Puavo::PASSWORD_RULESETS[ruleset_name][:descriptions]
+    instructions = Puavo::PASSWORD_RULESETS[ruleset_name][:instructions]
     lang = I18n.locale.to_s
-    return unless descriptions.include?(lang)
+    return unless instructions.include?(lang)
 
-    "<p class=\"passwordNotice\">#{descriptions[lang]}</p>".html_safe
+    "<p class=\"passwordNotice\">#{instructions[lang]}</p>".html_safe
   end
 end

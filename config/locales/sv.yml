@@ -66,8 +66,9 @@ sv:
         password_validation:
           too_short: "Lösenordet är för kort"
           too_long: "Lösenordet är för långt"
-          cant_start_or_end_in_whitespace: "Lösenordet får inte börja eller sluta med ett blanksteg."
-          ascii_only: "Lösenordet får innehålla bara bokstäver A-Z och a-z, nummer och några övliga specialtecken."
+          cant_start_or_end_in_whitespace: "Lösenordet får inte börja eller sluta med ett blanksteg"
+          ascii_only: "Lösenordet får innehålla bara bokstäver A-Z och a-z, nummer och några övliga specialtecken"
+          not_complex_enough: "Lösenordet är för enkelt (innehåller inte alla krävda tecken)"
 
   # Password forms
   # (There are more password-related messages in the flash messages section)
