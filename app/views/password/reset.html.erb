@@ -35,16 +35,5 @@
                              -1,
                              'reset_password',
                              'reset_password_confirmation',
-                             [],
-                             'setSubmitState') %>
+                             []) %>
 <% end %>
-
-<script>
-function setSubmitState(valid, identical)
-{
-    // Prevent the form from being submitted unless it has been fully filled out.
-    //document.querySelector(`input[type="submit"]`).disabled = !(valid && identical);
-}
-
-setSubmitState(false, false);
-</script>
