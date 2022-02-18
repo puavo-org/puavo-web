@@ -155,9 +155,13 @@ class PasswordController < ApplicationController
         logger.error("[#{request_id}] No user found by email \"#{params[:forgot][:email]}\"")
       end
 
-      send_token_url = password_management_host + "/password/send_token"
-
       db = redis_connect
+
+      if db.get(user.puavoId)
+        raise "A reset link has already been sent to the specified email address"
+      end
+
+      send_token_url = password_management_host + "/password/send_token"
 
       rest_response = HTTP.headers(:host => current_organisation_domain, "Accept-Language" => locale)
                           .post(send_token_url, params: { username: user.uid })
