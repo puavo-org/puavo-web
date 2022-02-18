@@ -141,6 +141,9 @@ function onPasswordInput()
         // If the password contains the first name, last name or username, flag it as an error
         const v = e.value.toLowerCase().trim();
 
+        if (v.length == 0)
+            continue;
+
         if (password.toLowerCase().indexOf(v) != -1) {
             errors.push(unEsacapeHTML(PASSWORD_CONTAINS_NAME));
             break;
