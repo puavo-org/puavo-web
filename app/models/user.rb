@@ -167,11 +167,18 @@ class User < LdapBase
           password_errors =
             Puavo::Password::validate_password(self.new_password, rules[:rules])
 
-          if self.new_password && rules[:deny_names_in_passwords]
-            if self.new_password.downcase.include?(self.givenName.downcase) ||
-               self.new_password.downcase.include?(self.sn.downcase) ||
-               self.new_password.downcase.include?(self.uid.downcase)
-              password_errors << 'contains_name'
+          if self.new_password
+            if rules[:deny_names_in_passwords]
+              if self.new_password.downcase.include?(self.givenName.downcase) ||
+                 self.new_password.downcase.include?(self.sn.downcase) ||
+                 self.new_password.downcase.include?(self.uid.downcase)
+                password_errors << 'contains_name'
+              end
+            end
+
+            # Match full words in a tab-separated string of blocked passwords
+            if Regexp.new("\t#{self.new_password}\t").match(Puavo::COMMON_PASSWORDS)
+              password_errors << 'common'
             end
           end
 

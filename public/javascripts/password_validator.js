@@ -1,5 +1,5 @@
 // =============================================================================
-// Extremely ugly password field validator, v2.1
+// Extremely ugly password field validator, v2.2
 // Does not prevent the form from being submitted, but it lets the
 // user know that the password will be rejected if they submit it
 // =============================================================================
@@ -146,6 +146,10 @@ function onPasswordInput()
             break;
         }
     }
+
+    // Check for common passwords. Find full words, not substrings. The strings are tab-separated.
+    if (new RegExp(`\t${password}\t`).exec(COMMON_PASSWORDS))
+        errors.push(unEsacapeHTML(PASSWORD_IS_COMMON));
 
     passwordStatus.innerText = (errors.length == 0) ? "" : errors.map(e => unEsacapeHTML(e)).join("\n");
     confirmStatus.innerText = (confirmation == password) ? "" : unEsacapeHTML(CONFIRM_MISMATCH);

@@ -6,6 +6,7 @@ class TooManySentTokenRequest < StandardError; end
 class RestConnectionError < StandardError; end
 class PasswordConfirmationFailed < StandardError; end
 class TokenLifetimeHasExpired < StandardError; end
+class WeakPassword < StandardError; end
 
 class PasswordController < ApplicationController
   include Puavo::Integrations
@@ -194,6 +195,9 @@ class PasswordController < ApplicationController
 
     raise PasswordConfirmationFailed if params[:reset][:password] != params[:reset][:password_confirmation]
 
+    # Match full words in a tab-separated string of blocked passwords
+    raise WeakPassword if Regexp.new("\t#{params[:reset][:password]}\t").match(Puavo::COMMON_PASSWORDS)
+
     change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
 
     rest_response = HTTP.headers(:host => current_organisation_domain,
@@ -217,6 +221,9 @@ class PasswordController < ApplicationController
     end
   rescue PasswordConfirmationFailed
     flash.now[:alert] = I18n.t('flash.password.confirmation_failed')
+    render :action => "reset"
+  rescue WeakPassword
+    flash.now[:alert] = I18n.t('activeldap.errors.messages.password_validation.common')
     render :action => "reset"
   rescue TokenLifetimeHasExpired
     flash[:alert] = I18n.t('flash.password.token_lifetime_has_expired')
@@ -438,6 +445,11 @@ class PasswordController < ApplicationController
              (mode == :other && new_password.downcase.include?(params[:login][:uid].downcase))
             password_errors << 'contains_name'
           end
+        end
+
+        # Match full words in a tab-separated string of blocked passwords
+        if Regexp.new("\t#{new_password}\t").match(Puavo::COMMON_PASSWORDS)
+          password_errors << 'common'
         end
 
         unless password_errors.empty?

@@ -1326,6 +1326,7 @@ fi:
           ascii_only: "Salasana voi sisältää vain kirjaimia A-Z ja a-z, numeroita, sekä tavallisimpia välimerkkejä"
           not_complex_enough: "Salasana ei ole tarpeeksi monimutkainen (se ei sisällä kaikkia vaadittuja merkkejä)"
           contains_name: "Salasana ei saa sisältää etunimeä, sukunimeä, tai käyttäjänimeä"
+          common: "Tämä salasana on heikko ja yleisesti käytetty"
     models:
       group: "Ryhmä"
       user: "Käyttäjä"

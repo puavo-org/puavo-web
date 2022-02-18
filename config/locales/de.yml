@@ -70,6 +70,7 @@ de:
           ascii_only: "Das Password darf nur Buchstaben A-Z und a-z, Nummern und einige übliche Sonderzeichen enthalten"
           not_complex_enough: "Das Passwort ist zu einfach (enthält nicht alle angeforderte Zeichen)"
           contains_name: "Das Passwort darf nicht Ihren Vornamen, Familiennamen, oder Benutzernamen enthalten"
+          common: "Dieses Passwort ist schwach und häufig verwendet"
 
   # Password forms
   # (There are more password-related messages in the flash messages section)

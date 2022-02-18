@@ -70,6 +70,7 @@ sv:
           ascii_only: "Lösenordet får innehålla bara bokstäver A-Z och a-z, nummer och några övliga specialtecken"
           not_complex_enough: "Lösenordet är för enkelt (innehåller inte alla krävda tecken)"
           contains_name: "Lösenordet får inte innehålla ditt förnamn, efternamn, eller användarnamn"
+          common: "Detta lösenord är svag och vanligt"
 
   # Password forms
   # (There are more password-related messages in the flash messages section)
