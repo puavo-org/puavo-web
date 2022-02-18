@@ -43,6 +43,7 @@ if ENV['RACK_ENV'] == 'test' then
     "cloud" => true,
     "password_management" => {
       "secret" => "foobar",
+      "lifetime" => 600,
       "smtp" => {
         "from" => "Puavo Org <no-reply@puavo.net>",
         "via_options" => {

@@ -164,7 +164,7 @@ class PasswordController < ApplicationController
 
       if rest_response.status == 200
         db.set(user.puavoId, true)
-        db.expire(user.puavoId, 300)
+        db.expire(user.puavoId, 600)
       else
         logger.error("[#{request_id}] puavo-rest call failed, response code was #{rest_response.status}")
       end
@@ -215,7 +215,10 @@ class PasswordController < ApplicationController
         @message = I18n.t('password.successfully.update')
         format.html { render :action => "successfully" }
       else
-        flash[:alert] = I18n.t('flash.password.can_not_change_password')
+        request_id = generate_synchronous_call_id()
+        logger.error("[#{request_id}] Password change failed, puavo-rest returned error:")
+        logger.error("[#{request_id}] #{rest_response.inspect}")
+        flash[:alert] = I18n.t('flash.password.can_not_change_password', :code => request_id)
         format.html { redirect_to reset_password_path }
       end
     end

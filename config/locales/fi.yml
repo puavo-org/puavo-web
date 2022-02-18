@@ -511,12 +511,10 @@ fi:
       confirmation_failed: "Uusi salasana ei täsmää salasanan vahvistukseen"
       invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
       extlogin_password_changed_but_puavo_failed: "Salasananvaihto onnistui, mutta ei kuitenkaan kaikkiin palveluihin.  Ota tarvittaessa yhteys tukipalveluun."
-      email_not_found: "Emme löydä käyttäjää jolla olisi sähköpostiosoite \"%{email}\". Jos tämä oikeasti on sähköpostiosoitteesi, ota yhteys Opinsysin tukipalveluun avun saamikseksi."
-      connection_failed: Pahoittelut, mutta jotain meni nyt pieleen. Yritä myöhemmin uudelleen!
-      can_not_change_password: "Jostain syystä salasanan vaihto ei onnistunut. Yritä myöhemmin uudelleen! Lokikoodi: %{code}."
-      can_not_change_upstream_password: "Jostain syystä salasanan vaihto lähdepalveluun ei onnistunut. Yritä myöhemmin uudelleen!"
+      connection_failed: "Pahoittelut, mutta jotain meni nyt pieleen. Yritä uudelleen hetken kuluttua. Jos vaihto epäonnistuu uudelleen, ota yhteys Opinsysin tukeen."
+      can_not_change_password: "Jostain syystä salasanan vaihto ei onnistunut. Yritä uudelleen hetken kuluttua. Jos vaihto epäonnistuu yhä, ota yhtey Opinsysin tukeen ja anna heille tämä koodi: %{code}."
+      can_not_change_upstream_password: "Jostain syystä salasanan vaihto lähdepalveluun ei onnistunut. Yritä uudelleen hetken kuluttua, ja jos vaihto epäonnistuu yhä, ota yhteys Opisysin tukeen."
       token_lifetime_has_expired: Linkkisi on vanhentunut. Syötä sähköpostiosoite uudelleen.
-      too_many_sent_token_request: Valitsemaasi sähköpostiosoitteeseen on jo lähetetty viesti.
       too_many_attempts: "Salasanan vaihtojen välillä on odotettava 10 sekuntia."
       go_away: "Et ole opettaja tai ylläpitäjä, joten et voi vaihtaa muiden salasanoja."
     school:
