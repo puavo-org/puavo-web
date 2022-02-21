@@ -125,17 +125,10 @@ function onPasswordInput()
         return;
     }
 
+    let errors = [];
+
     // PASSWORD_RULES is defined in the inline <script> block on the page
-
-    if (PASSWORD_RULES.length == 0) {
-        // Only verify the password confirmation
-        passwordStatus.innerText = "";
-        confirmStatus.innerText = (confirmation == password) ? "" : unEsacapeHTML(CONFIRM_MISMATCH);
-        callCallback(true, (confirmation == password));
-        return;
-    }
-
-    let errors = validatePassword(password, PASSWORD_RULES);
+    errors = errors.concat(validatePassword(password, PASSWORD_RULES));
 
     for (const e of usernameFields) {
         // If the password contains the first name, last name or username, flag it as an error
@@ -151,7 +144,7 @@ function onPasswordInput()
     }
 
     // Check for common passwords. Find full words, not substrings. The strings are tab-separated.
-    if (new RegExp(`\t${password}\t`).exec(COMMON_PASSWORDS))
+    if (COMMON_PASSWORDS.indexOf(`\t${password}\t`) !== -1)
         errors.push(unEsacapeHTML(PASSWORD_IS_COMMON));
 
     passwordStatus.innerText = (errors.length == 0) ? "" : errors.map(e => unEsacapeHTML(e)).join("\n");
@@ -164,9 +157,6 @@ function initializePasswordValidator(passwordFieldID, confirmFieldID, nameFields
 {
     try {
         console.log(`Initializing the password validator, have ${PASSWORD_RULES.length} rule(s)`);
-
-        if (PASSWORD_RULES.length == 0)
-            console.log("Only checking the password confirmation");
 
         passwordField = document.getElementById(passwordFieldID);
         confirmField = document.getElementById(confirmFieldID);

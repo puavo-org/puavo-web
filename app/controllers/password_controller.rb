@@ -432,15 +432,16 @@ class PasswordController < ApplicationController
       @primary_school_id = @user.puavoEduPersonPrimarySchool.rdns[0]['puavoId'].to_i
     end
 
+    password_errors = []
+    new_password = params[:user][:new_password]
+
     if @primary_school_id
       ruleset_name = get_school_password_requirements(@organisation_name, @primary_school_id)
 
       if ruleset_name
-        rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
-
+        # Rule-based password validation
         logger.info("[#{request_id}] Validating the password against ruleset \"#{ruleset_name}\"")
-
-        new_password = params[:user][:new_password]
+        rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
 
         password_errors =
           Puavo::Password::validate_password(new_password, rules)
@@ -453,18 +454,19 @@ class PasswordController < ApplicationController
             password_errors << 'contains_name'
           end
         end
-
-        # Match full words in a tab-separated string of blocked passwords
-        if Regexp.new("\t#{new_password}\t").match(Puavo::COMMON_PASSWORDS)
-          password_errors << 'common'
-        end
-
-        unless password_errors.empty?
-          # Combine the errors like the live validator does
-          logger.error("[#{request_id}] The new password does not meet the requirements (errors=#{password_errors.join(', ')})")
-          raise UserError, I18n.t('password.invalid')
-        end
       end
+    end
+
+    # Reject common passwords. Match full words in a tab-separated string.
+    if Puavo::COMMON_PASSWORDS.include?("\t#{new_password}\t")
+      logger.error("[#{request_id}] Rejecting a common/weak password")
+      password_errors << 'common'
+    end
+
+    unless password_errors.empty?
+      # Combine the errors like the live validator does
+      logger.error("[#{request_id}] The new password does not meet the requirements (errors=#{password_errors.join(', ')})")
+      raise UserError, I18n.t('password.invalid')
     end
 
     rest_params = {

@@ -158,16 +158,19 @@ class User < LdapBase
     # Validate the password against the validation rules specified for this organisation/school
     if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty?
       unless self.primary_school.cn == 'administration'
-        ruleset_name =
-          get_school_password_requirements(LdapOrganisation.current.cn, self.primary_school.puavoId)
+        if self.new_password
+          password_errors = []
 
-        if ruleset_name
-          rules = Puavo::PASSWORD_RULESETS[ruleset_name]
+          ruleset_name =
+            get_school_password_requirements(LdapOrganisation.current.cn, self.primary_school.puavoId)
 
-          password_errors =
-            Puavo::Password::validate_password(self.new_password, rules[:rules])
+          if ruleset_name
+            # Rule-based password validation
+            rules = Puavo::PASSWORD_RULESETS[ruleset_name]
 
-          if self.new_password
+            password_errors +=
+              Puavo::Password::validate_password(self.new_password, rules[:rules])
+
             if rules[:deny_names_in_passwords]
               if self.new_password.downcase.include?(self.givenName.downcase) ||
                  self.new_password.downcase.include?(self.sn.downcase) ||
@@ -175,11 +178,11 @@ class User < LdapBase
                 password_errors << 'contains_name'
               end
             end
+          end
 
-            # Match full words in a tab-separated string of blocked passwords
-            if Regexp.new("\t#{self.new_password}\t").match(Puavo::COMMON_PASSWORDS)
-              password_errors << 'common'
-            end
+          # Reject common passwords. Match full words in a tab-separated string.
+          if Puavo::COMMON_PASSWORDS.include?("\t#{self.new_password}\t")
+            password_errors << 'common'
           end
 
           unless password_errors.empty?
