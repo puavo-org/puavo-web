@@ -150,7 +150,10 @@ class Password < PuavoSinatra
 
     $rest_log.info("[#{request_id}] The email has been sent")
 
-    json({ :status => 'successfully' })
+    # The puavo-web controller that calls us does not actually know who the user is.
+    # It could decode the JWT, but it doesn't. So send the user information back,
+    # so it can finish the operation.
+    json({ :status => 'successfully', uid: user.username, id: user.id.to_i })
   end
 
 end

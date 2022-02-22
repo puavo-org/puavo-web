@@ -247,7 +247,23 @@ class PasswordController < ApplicationController
 
     respond_to do |format|
       if rest_response.status == 200
-        logger.info("[#{request_id}] Password reset complete")
+        begin
+          # Remove the reset flag from the user, so a new reset email can be sent. The problem is,
+          # we don't know who the user was. But the reset host sends that information back to us.
+          # The data is in the JWT token, but we won't decode it here.
+          data = JSON.parse(rest_response.body.to_s)
+
+          db = redis_connect
+          db.del(data['id'])
+          logger.info("[#{request_id}] Redis entries cleared")
+          logger.info("[#{request_id}] Password reset complete for user \"#{data['uid']}\" (ID=#{data['id']})")
+        rescue => e
+          logger.error("[#{request_id}] Unable to parse the response received from the password reset host: #{e}")
+          logger.error("[#{request_id}] Raw response data: #{rest_response.body.to_s}")
+          logger.error("[#{request_id}] Redis entries not cleared")
+          logger.info("[#{request_id}] Password reset complete for unknown user")
+        end
+
         @message = I18n.t('password.successfully.update')
         format.html { render :action => "successfully" }
       else
