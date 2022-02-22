@@ -65,12 +65,6 @@ class Password < PuavoSinatra
   put "/password/change/:jwt" do
     auth :pw_mgmt_server_auth
 
-    if json_params["new_password"].nil? || json_params["new_password"].empty?
-      status 404
-      return json({ :status => "failed",
-                    :error  => "Invalid new password" })
-    end
-
     request_id = json_params.fetch('request_id', '???')
 
     $rest_log.info("[#{request_id}] Received a password reset request")

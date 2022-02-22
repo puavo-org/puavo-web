@@ -4,6 +4,7 @@
 class UserNotFound < StandardError; end
 class TooManySentTokenRequest < StandardError; end
 class RestConnectionError < StandardError; end
+class EmptyPassword < StandardError; end
 class PasswordConfirmationFailed < StandardError; end
 class TokenLifetimeHasExpired < StandardError; end
 class WeakPassword < StandardError; end
@@ -224,6 +225,13 @@ class PasswordController < ApplicationController
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
 
+    if params[:reset][:password].nil? || params[:reset][:password].empty? ||
+       params[:reset][:password_confirmation].nil? || params[:reset][:password_confirmation].empty?
+      # Protect against intentionally broken form
+      logger.info("[#{request_id}] Empty password/password confirmation")
+      raise EmptyPassword
+    end
+
     raise PasswordConfirmationFailed if params[:reset][:password] != params[:reset][:password_confirmation]
 
     # Match full words in a tab-separated string of blocked passwords
@@ -275,6 +283,10 @@ class PasswordController < ApplicationController
     end
   rescue PasswordConfirmationFailed
     logger.info("[#{request_id}] Password confirmation failed")
+    flash.now[:alert] = I18n.t('flash.password.confirmation_failed')
+    render :action => "reset"
+  rescue EmptyPassword
+    logger.info("[#{request_id}] No password entered")
     flash.now[:alert] = I18n.t('flash.password.confirmation_failed')
     render :action => "reset"
   rescue WeakPassword
