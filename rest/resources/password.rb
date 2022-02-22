@@ -5,17 +5,28 @@ module PuavoRest
 class Password < PuavoSinatra
   register Sinatra::R18n
 
+  # Generate and send a password reset email
   post "/password/send_token" do
     auth :pw_mgmt_server_auth
 
     # FIXME Request limit? Denial of Service?
 
+    request_id = params.fetch('request_id', '???')
+
+    email = params['email']
+
+    $rest_log.info("[#{request_id}] User \"#{params['username']}\" (ID=#{params['id']}) is requesting " \
+                   "their password to be reset, email address is \"#{email}\", source IP=\"#{request.ip}\"")
+
     user = User.by_username(params["username"])
 
     if user.nil?
+      # Should not happen, as the user has already been validated,
+      # but it doesn't hurt to double-check
+      $rest_log.error("[#{request_id}] The user does not exist")
       status 404
       return json({ :status => "failed",
-                    :error => "Cannot find user" })
+                    :error => "Cannot find the user" })
     end
 
     if user.email.nil?
@@ -25,14 +36,15 @@ class Password < PuavoSinatra
     end
 
     jwt_data = {
-      # Issued At
-      "iat" => Time.now.to_i,
-
-      "username" => user.username,
-      "organisation_domain" => user.organisation_domain
+      iat: Time.now.to_i,
+      id: user.id.to_i,
+      uid: user.username,
+      domain: user.organisation_domain
     }
 
     jwt = JWT.encode(jwt_data, CONFIG["password_management"]["secret"])
+
+    $rest_log.info("[#{request_id}] The generated JWT is #{jwt}")
 
     @password_reset_url = "https://#{ user.organisation_domain }/users/password/#{ jwt }/reset"
     @first_name = user.first_name
@@ -48,10 +60,12 @@ class Password < PuavoSinatra
                     :body => message )
     end
 
-    json({ :status => 'successfully' })
+    $rest_log.info("[#{request_id}] The email has been sent")
 
+    json({ :status => 'successfully' })
   end
 
+  # Perform the password reset
   put "/password/change/:jwt" do
     auth :pw_mgmt_server_auth
 
@@ -61,35 +75,45 @@ class Password < PuavoSinatra
                     :error  => "Invalid new password" })
     end
 
+    request_id = json_params.fetch('request_id', '???')
+
+    $rest_log.info("[#{request_id}] Received a password reset request")
+
     begin
-      jwt_decode_data = JWT.decode(params[:jwt],
-                                   CONFIG["password_management"]["secret"])
-      jwt_data = jwt_decode_data[0] # jwt_decode_data is [payload, header]
-    rescue JWT::DecodeError
+      jwt_data = JWT.decode(params[:jwt], CONFIG["password_management"]["secret"])[0]
+    rescue JWT::DecodeError => e
+      $rest_log.error("[#{request_id}] The JWT paylod cannot be decoded: #{e}")
       status 404
       return json({ :status => "failed",
-                    :error => "Invalid jwt token" })
+                    :error => "Invalid JWT token" })
     end
 
     lifetime =  CONFIG["password_management"]["lifetime"]
+
     if Time.at( jwt_data["iat"] + lifetime ) < Time.now
+      $rest_log.error("[#{request_id}] The JWT has expired")
       status 404
       return json({ :status => "failed",
                     :error => "Token lifetime has expired" })
     end
 
-    if jwt_data["organisation_domain"] != request.host
+    if jwt_data["domain"] != request.host
+      $rest_log.error("[#{request_id}] Invalid organisation domain in the JWT")
       status 404
       return json({ :status => "failed",
                     :error => "Invalid organisation domain" })
-
     end
 
-    user = User.by_username(jwt_data["username"])
+    $rest_log.info("[#{request_id}] Resetting the password for user \"#{jwt_data['uid']}\" (ID=#{jwt_data['id']})")
+
+    user = User.by_username(jwt_data['uid'])
+
     if user.nil? then
+      # This can happen, if the user is removed from puavo at the right moment
+      $rest_log.error("[#{request_id}] The user does not exist")
       status 404
       return json({ :status => "failed",
-                    :error => "Cannot find user" })
+                    :error => "Cannot find the user" })
     end
 
     res = Puavo.change_passwd(:no_upstream,
@@ -99,11 +123,12 @@ class Password < PuavoSinatra
                               PUAVO_ETC.ds_pw_mgmt_password,
                               user.username,
                               json_params['new_password'],
-                              '???')    # no request ID
+                              request_id)
 
     rlog.info("changed user password for '#{ user.username }' (DN #{user.dn.to_s})")
 
     if res[:exit_status] != 0
+      $rest_log.error("[#{request_id}] Puavo.change_passwd() failed with error code #{res[:exit_status]}")
       status 404
       return json({ :status => "failed",
                     :error => "Cannot change password for user: #{ user.username }" })
@@ -115,11 +140,15 @@ class Password < PuavoSinatra
     emails += user.secondary_emails if user.secondary_emails
     message = erb(:password_has_been_reset, :layout => false)
 
+    $rest_log.info("[#{request_id}] The password has been reset, sending the confirmation email to \"#{emails.inspect}\"")
+
     emails.each do |email|
       $mailer.send( :to => email,
                     :subject => t.password_management.subject,
                     :body => message )
     end
+
+    $rest_log.info("[#{request_id}] The email has been sent")
 
     json({ :status => 'successfully' })
   end

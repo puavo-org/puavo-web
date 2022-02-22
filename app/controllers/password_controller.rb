@@ -149,26 +149,45 @@ class PasswordController < ApplicationController
     end
 
     begin
+      logger.info("[#{request_id}] A password reset for user \"#{params[:forgot][:email]}\" has been requested")
+      log_request_env(request, request_id)
+
       user = User.find(:first, :attribute => "mail", :value => params[:forgot][:email])
 
       unless user
-        logger.error("[#{request_id}] No user found by email \"#{params[:forgot][:email]}\"")
+        logger.error("[#{request_id}] No user found by that email address")
+        raise "No user found by email \"#{params[:forgot][:email]}\""
       end
+
+      logger.info("[#{request_id}] Found user \"#{user.givenName} #{user.sn}\" (\"#{user.uid}\"), " \
+                  "ID=#{user.puavoId}, organisation=\"#{current_organisation_domain}\"")
 
       db = redis_connect
 
       if db.get(user.puavoId)
-        raise "A reset link has already been sent to the specified email address"
+        logger.error("[#{request_id}] This user has already received a password reset link, request rejected")
+        raise "A reset link has already been sent for the specified user"
       end
 
       send_token_url = password_management_host + "/password/send_token"
 
-      rest_response = HTTP.headers(:host => current_organisation_domain, "Accept-Language" => locale)
-                          .post(send_token_url, params: { username: user.uid })
+      logger.info("[#{request_id}] Generating the reset email, see the password reset host logs at " \
+                  "#{password_management_host} for details")
+
+      rest_response = HTTP.headers(host: current_organisation_domain, 'Accept-Language': locale)
+                          .post(send_token_url, params: {
+                            # Most of these are just for logging purposes. Abuse cases must
+                            # be traceable afterwards.
+                            request_id: request_id,
+                            id: user.puavoId.to_i,
+                            username: user.uid,
+                            email: params[:forgot][:email],
+                          })
 
       if rest_response.status == 200
         db.set(user.puavoId, true)
         db.expire(user.puavoId, 600)
+        logger.info("[#{request_id}] Redis entries saved")
       else
         logger.error("[#{request_id}] puavo-rest call failed, response code was #{rest_response.status}")
       end
@@ -187,6 +206,10 @@ class PasswordController < ApplicationController
   # GET /password/:jwt/reset
   # Password reset form
   def reset
+    request_id = generate_synchronous_call_id()
+    logger.info("[#{request_id}] Rendering the password reset form")
+    log_request_env(request, request_id)
+
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
   end
@@ -194,6 +217,10 @@ class PasswordController < ApplicationController
   # PUT /password/:jwt/reset
   # Reset the user's password
   def reset_update
+    request_id = generate_synchronous_call_id()
+    logger.info("[#{request_id}] Processing a password reset form submission")
+    log_request_env(request, request_id)
+
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
 
@@ -204,10 +231,14 @@ class PasswordController < ApplicationController
 
     change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
 
-    rest_response = HTTP.headers(:host => current_organisation_domain,
-                                      "Accept-Language" => locale)
-      .put(change_password_url,
-           :json => { :new_password => params[:reset][:password] })
+    logger.info("[#{request_id}] Resetting the password, see the password reset host logs at " \
+                "#{password_management_host} for details")
+
+    rest_response = HTTP.headers(host: current_organisation_domain, 'Accept-Language': locale)
+                                 .put(change_password_url, json: {
+                                    request_id: request_id,
+                                    new_password: params[:reset][:password]
+                                 })
 
     if rest_response.status == 404 &&
         JSON.parse(rest_response.body.readpartial)["error"] == "Token lifetime has expired"
@@ -216,10 +247,10 @@ class PasswordController < ApplicationController
 
     respond_to do |format|
       if rest_response.status == 200
+        logger.info("[#{request_id}] Password reset complete")
         @message = I18n.t('password.successfully.update')
         format.html { render :action => "successfully" }
       else
-        request_id = generate_synchronous_call_id()
         logger.error("[#{request_id}] Password change failed, puavo-rest returned error:")
         logger.error("[#{request_id}] #{rest_response.inspect}")
         flash[:alert] = I18n.t('flash.password.can_not_change_password', :code => request_id)
@@ -227,12 +258,15 @@ class PasswordController < ApplicationController
       end
     end
   rescue PasswordConfirmationFailed
+    logger.info("[#{request_id}] Password confirmation failed")
     flash.now[:alert] = I18n.t('flash.password.confirmation_failed')
     render :action => "reset"
   rescue WeakPassword
+    logger.info("[#{request_id}] The password is weak")
     flash.now[:alert] = I18n.t('activeldap.errors.messages.password_validation.common')
     render :action => "reset"
   rescue TokenLifetimeHasExpired
+    logger.info("[#{request_id}] The JWT token has expired")
     flash[:alert] = I18n.t('flash.password.token_lifetime_has_expired')
     redirect_to forgot_password_path
   end
@@ -242,6 +276,13 @@ class PasswordController < ApplicationController
   end
 
   private
+
+  def log_request_env(request, request_id)
+    logger.info("[#{request_id}] REMOTE_ADDR=\"#{request.env['REMOTE_ADDR']}\"")
+    logger.info("[#{request_id}] REMOTE_HOST=\"#{request.env['REMOTE_HOST']}\"")
+    logger.info("[#{request_id}] REQUEST_URI=\"#{request.env['REQUEST_URI']}\"")
+    logger.info("[#{request_id}] user agent=\"#{request.env['HTTP_USER_AGENT']}\"")
+  end
 
   # Hinder password brute-forcing by imposing a 10-second wait between changing attempts
   def filter_multiple_attempts(request_id, changer, changee)
