@@ -5,13 +5,18 @@ module PuavoRest
 class Password < PuavoSinatra
   register Sinatra::R18n
 
-  # Generate and send a password reset email
+  # Generate and send a password reset email. Can only be called from
+  # a white-listed puavo-web server.
   post "/password/send_token" do
     auth :pw_mgmt_server_auth
 
-    # FIXME Request limit? Denial of Service?
-
     request_id = params.fetch('request_id', '???')
+
+    unless Array(CONFIG['password_management']['ip_whitelist'] || []).include?(request.ip)
+      $rest_log.error("[#{request_id}] got a POST /password/send_token from an unauthorised IP address \"#{request.ip}\"")
+      status 403
+      return json({ :status => 'unauthorised' })
+    end
 
     email = params['email']
 
@@ -66,6 +71,12 @@ class Password < PuavoSinatra
     auth :pw_mgmt_server_auth
 
     request_id = json_params.fetch('request_id', '???')
+
+    unless Array(CONFIG['password_management']['ip_whitelist'] || []).include?(request.ip)
+      $rest_log.error("[#{request_id}] got a PUT /password/reset/:token from an unauthorised IP address \"#{request.ip}\"")
+      status 403
+      return json({ :status => 'unauthorised' })
+    end
 
     $rest_log.info("[#{request_id}] Received a password reset request")
 

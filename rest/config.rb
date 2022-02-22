@@ -44,6 +44,7 @@ if ENV['RACK_ENV'] == 'test' then
     "password_management" => {
       "secret" => "foobar",
       "lifetime" => 600,
+      "ip_whitelist" => ['127.0.0.1'],
       "smtp" => {
         "from" => "Puavo Org <no-reply@puavo.net>",
         "via_options" => {
