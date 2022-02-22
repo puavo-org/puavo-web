@@ -50,15 +50,12 @@ class Password < PuavoSinatra
     @first_name = user.first_name
     @username = user.username
 
-    emails = Array(user.email)
-    emails += user.secondary_emails if user.secondary_emails
     message = erb(:password_email, :layout => false)
 
-    emails.each do |email|
-      $mailer.send( :to => email,
-                    :subject => t.password_management.subject,
-                    :body => message )
-    end
+    # The email address has been validated. It really does belong to someone in the system.
+    $mailer.send( :to => email,
+                  :subject => t.password_management.subject,
+                  :body => message )
 
     $rest_log.info("[#{request_id}] The email has been sent")
 
@@ -136,17 +133,18 @@ class Password < PuavoSinatra
 
     @first_name = user.first_name
 
-    emails = Array(user.email)
-    emails += user.secondary_emails if user.secondary_emails
+    # This email address has to be correct, since it was validated less than 10 minutes ago
+    # when the reset email was sent to it. If someone changes/removes the password during
+    # those 10 minutes, that's too bad.
+    email = user.email
+
     message = erb(:password_has_been_reset, :layout => false)
 
-    $rest_log.info("[#{request_id}] The password has been reset, sending the confirmation email to \"#{emails.inspect}\"")
+    $rest_log.info("[#{request_id}] The password has been reset, sending the confirmation email to \"#{email}\"")
 
-    emails.each do |email|
-      $mailer.send( :to => email,
-                    :subject => t.password_management.subject,
-                    :body => message )
-    end
+    $mailer.send( :to => email,
+                  :subject => t.password_management.subject,
+                  :body => message )
 
     $rest_log.info("[#{request_id}] The email has been sent")
 
