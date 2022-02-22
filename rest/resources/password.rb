@@ -48,7 +48,6 @@ class Password < PuavoSinatra
 
     @password_reset_url = "https://#{ user.organisation_domain }/users/password/#{ jwt }/reset"
     @first_name = user.first_name
-    @username = user.username
 
     message = erb(:password_email, :layout => false)
 

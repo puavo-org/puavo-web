@@ -1590,7 +1590,7 @@ en:
       submit: Reset password
     successfully:
       send_token: "We've sent you an email that will let you reset your password. The link will expire soon, so please open it as quickly as you can.<br><br>If you do not receive the email, please contact Opinsys support and give them this code: %{request_id}."
-      update: Your password has been successfully reset!
+      update: "Your password has been successfully reset."
 
   # Email address confirmation
   email_confirm:
