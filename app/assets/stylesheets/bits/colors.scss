@@ -14,6 +14,9 @@ $headerBorder: #000;
 
 $defaultBoxShadow: rgba(34, 34, 34, 0.75);
 
+/* Highlight admins and owners in tables */
+$adminOwner: #00f;
+
 /*
 --------------------------------------------------------------------------------
 Top bar
@@ -249,11 +252,17 @@ $listRowHoverBack: #f9f7e6;
 $listRowBorder: #c8c8c8;
 $listFore: #000;
 
+/* Sortable Tables (not supertables) */
+$listSortableColumnHeaderBorder: #999;
+$listSortableColumnHover: linear-gradient(darken($baseOrange, 5%), darken($baseOrangeGradient, 5%));
+$listSelectedColumn: #d0d0d0;
+$listSelectedColumnRowHover: darken(#f9f7e6, 10%);
+
+/* Group member lists */
 $markedForDeletionOddRowBack: #faa;
 $markedForDeletionEvenRowBack: #fcc;
 $markedForDeletionRowHoverBack: #fdd;
 $markedForDeletionBackground: #f66;
-$adminOwner: #00f;
 
 /*
 --------------------------------------------------------------------------------
