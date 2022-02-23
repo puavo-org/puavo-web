@@ -1414,7 +1414,6 @@ class MassDevicePuavoconfEditor extends MassOperation {
     }
 };
 
-<% if @is_owner %>
 class MassDeviceChangeSchool extends MassOperation {
     constructor(parent, container)
     {
@@ -1423,7 +1422,10 @@ class MassDeviceChangeSchool extends MassOperation {
 
     buildInterface()
     {
-        this.container.innerHTML =
+        let html =
+        <% if @school_list.empty? %>
+        `<p class="genericWarning"><%= t('devices.index.mass_operations.change_school.no_other_schools') %></p>`;
+        <% else %>
 `<form>
 <table class="settingsChild">
 <tr>
@@ -1439,16 +1441,31 @@ class MassDeviceChangeSchool extends MassOperation {
 </tr>
 </table>
 </form>`;
+        <% end %>
 
+        this.container.innerHTML = html;
+
+        this.haveSchools = <%= !@school_list.empty? %>;
+
+        <% unless @school_list.empty? %>
         this.newSchoolDN = "<%= @school_list.first[0] %>";
 
         this.container.querySelector("#mass_device_change_school")
             .addEventListener("change", event => this.changeNewSchool(event));
+        <% end %>
     }
 
     changeNewSchool(event)
     {
         this.newSchoolDN = event.target.children[event.target.selectedIndex].dataset.dn;
+    }
+
+    canProceed()
+    {
+        if (!this.haveSchools)
+            window.alert("<%= t('devices.index.mass_operations.change_school.no_other_schools_alert') %>");
+
+        return this.haveSchools;
     }
 
     processItem(item)
@@ -1462,7 +1479,6 @@ class MassDeviceChangeSchool extends MassOperation {
         );
     }
 };
-<% end %>
 
 class MassDeviceDeletion extends MassOperation {
     constructor(parent, container)
@@ -1501,14 +1517,12 @@ const MASS_OPERATIONS = [
         cls: MassDevicePuavoconfEditor
     },
 
-<% if @is_owner %>
     {
         id: "change_school",
         title: "<%= t('devices.index.mass_operations.change_school.title') %>",
         flags: MassOperationFlags.HAVE_SETTINGS,
         cls: MassDeviceChangeSchool
     },
-<% end %>
 
     {
         id: "delete",

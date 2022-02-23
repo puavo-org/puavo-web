@@ -50,7 +50,11 @@ class DevicesController < ApplicationController
 
     @device = Device.new
 
-    @school_list = DevicesHelper.device_school_change_list()
+    if is_owner?
+      @school_list = DevicesHelper.device_school_change_list(true, current_user, @school.dn.to_s)
+    else
+      @school_list = DevicesHelper.device_school_change_list(false, current_user, @school.dn.to_s)
+    end
 
     if request.format == 'text/html'
       # list of new device types
@@ -808,6 +812,18 @@ class DevicesController < ApplicationController
   def select_school
     @device = Device.find(params[:id])
     @schools = School.all.select{ |s| s.id != @school.id }
+
+    unless is_owner?
+      # School admins can only transfer devices between the schools they're admins in
+      schools = Set.new(Array(current_user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
+      @schools.delete_if { |s| !schools.include?(s.dn.to_s) }
+    end
+
+    # The current school is not shown on the list, so it can be empty.
+    if @schools.count < 1
+      flash[:notice] = t('flash.devices.no_other_schools')
+      redirect_to device_path(@school, @device)
+    end
 
     # sort the schools, so you can actually find the one you're looking for
     @schools.sort!{ |a, b| a.displayName.downcase <=> b.displayName.downcase }

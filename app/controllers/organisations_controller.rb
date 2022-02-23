@@ -381,7 +381,8 @@ class OrganisationsController < ApplicationController
     # You can't get here unless you're an owner
     @is_owner = true
 
-    @school_list = DevicesHelper.device_school_change_list()
+    # List ALL schools, hide nothing
+    @school_list = DevicesHelper.device_school_change_list(true, nil, nil)
 
     respond_to do |format|
       format.html   # all_devices.html.erb

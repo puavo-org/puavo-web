@@ -425,14 +425,29 @@ module DevicesHelper
     return out
   end
 
-  def self.device_school_change_list
+  def self.device_school_change_list(owner, user=nil, current_school_dn=nil)
     # Get a list of schools for the mass tool. I wanted to do this with AJAX
     # calls, getting the list from puavo-rest with the new V4 API, but fetch()
     # and CORS and other domains just won't cooperate...
-    School.search_as_utf8(:filter => '', :attributes => ['displayName', 'cn']).collect do |s|
+
+    schools = School.search_as_utf8(:filter => '', :attributes => ['displayName', 'cn']).collect do |s|
         [s[0], s[1]['displayName'][0], s[1]['cn'][0]]
     end.sort do |a, b|
+        # Sort alphabetically
         a[1].downcase <=> b[1].downcase
     end
+
+    unless owner
+      # School admins can only transfer devices between the schools they're admins of
+      admin_schools = Set.new(Array(user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
+      schools.delete_if { |s| !admin_schools.include?(s[0]) }
+    end
+
+    if current_school_dn
+      # Don't show the current school on the list. Not used on the organisation devices page.
+      schools.delete_if { |s| s[0] == current_school_dn }
+    end
+
+    schools
   end
 end
