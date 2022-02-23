@@ -45,18 +45,17 @@
 <% end %>
 
 <script>
-/*
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
     new SortableTable(
         "ldap",
         [
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // name
-            [ ],                                        // description
+            [ COLUMN_TYPE_STRING ],                     // description
+            [ COLUMN_TYPE_STRING ],                     // bind DN
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
         ],
         "fi",
         "<%= "#{LdapOrganisation.current.o}-ldap" %>"
     );
 });
-*/
 </script>
