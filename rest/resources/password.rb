@@ -59,7 +59,8 @@ class Password < PuavoSinatra
     # The email address has been validated. It really does belong to someone in the system.
     $mailer.send( :to => email,
                   :subject => t.password_management.subject,
-                  :body => message )
+                  :body => message,
+                  :charset => 'UTF-8' )
 
     $rest_log.info("[#{request_id}] The email has been sent")
 
@@ -148,7 +149,8 @@ class Password < PuavoSinatra
 
     $mailer.send( :to => email,
                   :subject => t.password_management.subject,
-                  :body => message )
+                  :body => message,
+                  :charset => 'UTF-8' )
 
     $rest_log.info("[#{request_id}] The email has been sent")
 
