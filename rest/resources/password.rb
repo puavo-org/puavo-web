@@ -56,11 +56,17 @@ class Password < PuavoSinatra
 
     message = erb(:password_email, :layout => false)
 
-    # The email address has been validated. It really does belong to someone in the system.
-    $mailer.send( :to => email,
-                  :subject => t.password_management.subject,
-                  :body => message,
-                  :charset => 'UTF-8' )
+    begin
+      # The email address has been validated. It really does belong to someone in the system.
+      $mailer.send( :to => email,
+                    :subject => t.password_management.subject,
+                    :body => message,
+                    :charset => 'UTF-8' )
+    rescue => e
+      $rest_log.info("[#{request_id}] The email could not be sent: #{e}")
+      status 404
+      return json({ :status => 'failed' })
+    end
 
     $rest_log.info("[#{request_id}] The email has been sent")
 
@@ -147,10 +153,16 @@ class Password < PuavoSinatra
 
     $rest_log.info("[#{request_id}] The password has been reset, sending the confirmation email to \"#{email}\"")
 
-    $mailer.send( :to => email,
-                  :subject => t.password_management.subject,
-                  :body => message,
-                  :charset => 'UTF-8' )
+    begin
+      $mailer.send( :to => email,
+                    :subject => t.password_management.subject,
+                    :body => message,
+                    :charset => 'UTF-8' )
+    rescue => e
+      $rest_log.info("[#{request_id}] The email could not be sent: #{e}")
+      status 404
+      return json({ :status => 'failed' })
+    end
 
     $rest_log.info("[#{request_id}] The email has been sent")
 
