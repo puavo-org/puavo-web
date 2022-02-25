@@ -12,7 +12,7 @@
       <th><%= label :reset, :password, t('.password') %></th>
       <td>
         <%= show_password_requirements(@organisation_name, @school_id) %>
-        <%= password_field :reset, :password, :required => 'required' %>
+        <%= password_field :reset, :password, :required => 'required', autofocus: true %>
       </td>
     </tr>
 
