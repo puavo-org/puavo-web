@@ -511,7 +511,7 @@ en:
       connection_failed: "We're sorry, but something went wrong. Please try again in a moment. If it still fails, please contact Opinsys support."
       can_not_change_password: "Failed to change the password. Please try again in moment. If it still fails, please contact Opinsys support and give them this code: %{code}."
       can_not_change_upstream_password: "Can't change password to upstream service. Please try again in a moment. If it still fails, please contact Opinsys support."
-      token_lifetime_has_expired: Your link has expired. Please enter your email again.
+      token_lifetime_has_expired: "Your link has expired or it's invalid. Please enter your email again."
       too_many_attempts: "You must wait 10 seconds between password change attempts."
       go_away: "You are not a teacher nor an admin. You cannot change other user's passwords."
     school:

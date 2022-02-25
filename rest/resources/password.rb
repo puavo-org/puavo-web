@@ -1,5 +1,7 @@
 require "sinatra/r18n"
 
+require "securerandom"
+
 module PuavoRest
 
 class Password < PuavoSinatra
@@ -41,8 +43,8 @@ class Password < PuavoSinatra
     end
 
     jwt_data = {
+      uuid: SecureRandom.uuid,    # try to avoid generating two identical JWT's
       iat: Time.now.to_i,
-      id: user.id.to_i,
       uid: user.username,
       domain: user.organisation_domain
     }
@@ -70,7 +72,7 @@ class Password < PuavoSinatra
 
     $rest_log.info("[#{request_id}] The email has been sent")
 
-    json({ :status => 'successfully' })
+    json({ status: 'successfully', jwt: jwt })
   end
 
   # Perform the password reset

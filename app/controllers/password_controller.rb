@@ -1,13 +1,15 @@
 # The publicly-accessible password changing and resetting forms. Allows users to change/reset
 # their own password, and teachers/admins to change someone else's password.
 
+require 'digest'
+
 class UserNotFound < StandardError; end
 class TooManySentTokenRequest < StandardError; end
 class RestConnectionError < StandardError; end
 class EmptyPassword < StandardError; end
 class PasswordConfirmationFailed < StandardError; end
 class TokenLifetimeHasExpired < StandardError; end
-class WeakPassword < StandardError; end
+class PasswordDoesNotMeetRequirements < StandardError; end
 
 class PasswordController < ApplicationController
   include Puavo::Integrations
@@ -186,9 +188,31 @@ class PasswordController < ApplicationController
                           })
 
       if rest_response.status == 200
-        db.set(user.puavoId, true)
-        db.expire(user.puavoId, 600)
-        logger.info("[#{request_id}] Redis entries saved")
+        unless ENV['RAILS_ENV'] == 'test'
+          # The server sends the JWT back as a string
+          response_data = JSON.parse(rest_response.body.to_s)
+
+          # Store full user data in Redis. The key is SHA384 of the JWT string. We can't
+          # store anything in the public reset link or the JWT itself, because it cannot
+          # be decoded on puavo-web without the secret key that only the reset server has.
+          # So the "public" JWT only contains some user-identifying data (most of which
+          # are public already), but the Redis contains the full information. If the URL
+          # is edited, the JWT hash no longer matches and the data cannot be retrieved.
+          # This protects effectively against attacks.
+          cache_data = {
+            id: user.puavoId.to_i,
+            uid: user.uid,
+            school: user.puavoEduPersonPrimarySchool.to_s.match(/^puavoId=(?<id>\d+),ou=Groups,dc=edu,dc=/)[:id].to_i,
+            domain: current_organisation_domain,
+          }
+
+          key = Digest::SHA384.hexdigest(response_data['jwt'])
+
+          db.set(user.puavoId, true, :ex => 600, :nx => true)
+          db.set(key, cache_data.to_json, :ex => 600, :nx => true)
+
+          logger.info("[#{request_id}] Redis entries saved")
+        end
       else
         logger.error("[#{request_id}] puavo-rest call failed, response code was #{rest_response.status}")
       end
@@ -211,8 +235,33 @@ class PasswordController < ApplicationController
     logger.info("[#{request_id}] Rendering the password reset form")
     log_request_env(request, request_id)
 
-    setup_language(params.fetch(:lang, ''))
-    setup_customisations()
+    unless ENV['RAILS_ENV'] == 'test'
+      # Retrieve the full user data from the Redis cache
+      key = Digest::SHA384.hexdigest(params['jwt'])
+      logger.info("[#{request_id}] JWT key: #{key}")
+
+      data = redis_connect.get(key)
+    else
+      # No extra data in test mode. We can't, in fact, cache anything in Redis in test mode.
+      # We can't test the link expiration at all.
+      data = "{}"
+    end
+
+    unless data
+      logger.error("[#{request_id}] No user data found in Redis. The link has expired or it's not valid.")
+      flash[:alert] = t('flash.password.token_lifetime_has_expired')
+      redirect_to forgot_password_path
+    else
+      data = JSON.parse(data)
+      logger.info("[#{request_id}] Data retrieved from Redis: #{data.inspect}")
+
+      # The primary school ID stored in the JWT is used to set up password validation
+      @school_id = data['school'] || -1
+      logger.info("[#{request_id}] Using school ID of #{@school_id} for customisations")
+
+      setup_language(params.fetch(:lang, ''))
+      setup_customisations(@school_id)
+    end
   end
 
   # PUT /password/:jwt/reset
@@ -234,20 +283,70 @@ class PasswordController < ApplicationController
     logger.info("[#{request_id}] Processing a password reset form submission")
     log_request_env(request, request_id)
 
+    unless ENV['RAILS_ENV'] == 'test'
+      # Retrieve the full user data from the Redis cache. The JWT is not validated at this point,
+      # since if it's invalid, the data won't exist in Redis.
+      key = Digest::SHA384.hexdigest(params['jwt'])
+      logger.info("[#{request_id}] JWT hash: #{key}")
+
+      db = redis_connect
+      data = db.get(key)
+
+      unless data
+        # Assume the token has expired or the link is invalid
+        logger.error("[#{request_id}] No user data found in Redis")
+        raise TokenLifetimeHasExpired
+      end
+
+      data = JSON.parse(data)
+      logger.info("[#{request_id}] Data retrieved from Redis: #{data.inspect}")
+    else
+      # No password validation in test mode
+      data = { 'school' => -1 }
+    end
+
     setup_language(params.fetch(:lang, ''))
-    setup_customisations()
+    setup_customisations(data['school'])
 
     if params[:reset][:password].nil? || params[:reset][:password].empty? ||
        params[:reset][:password_confirmation].nil? || params[:reset][:password_confirmation].empty?
       # Protect against intentionally broken form
-      logger.info("[#{request_id}] Empty password/password confirmation")
+      logger.error("[#{request_id}] Empty password/password confirmation")
       raise EmptyPassword
     end
 
-    raise PasswordConfirmationFailed if params[:reset][:password] != params[:reset][:password_confirmation]
+    if params[:reset][:password] != params[:reset][:password_confirmation]
+      logger.info("[#{request_id}] Password confirmation mismatch")
+      raise PasswordConfirmationFailed
+    end
 
-    # Match full words in a tab-separated string of blocked passwords
-    raise WeakPassword if Regexp.new("\t#{params[:reset][:password]}\t").match(Puavo::COMMON_PASSWORDS)
+    unless ENV['RAILS_ENV'] == 'test'
+      password_errors = []
+      new_password = params[:reset][:password]
+
+      ruleset_name = get_school_password_requirements(@organisation_name, data['school'])
+
+      if ruleset_name
+        # Rule-based password validation
+        logger.info("[#{request_id}] Validating the password against ruleset \"#{ruleset_name}\"")
+        rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
+
+        password_errors =
+          Puavo::Password::validate_password(new_password, rules)
+      end
+
+      # Reject common passwords. Match full words in a tab-separated string.
+      if Puavo::COMMON_PASSWORDS.include?("\t#{new_password}\t")
+        logger.error("[#{request_id}] Rejecting a common/weak password")
+        password_errors << 'common'
+      end
+
+      unless password_errors.empty?
+        # Combine the errors like the live validator does
+        logger.error("[#{request_id}] The password does not meet the requirements (errors=#{password_errors.join(', ')})")
+        raise PasswordDoesNotMeetRequirements
+      end
+    end
 
     change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
 
@@ -262,6 +361,7 @@ class PasswordController < ApplicationController
 
     if rest_response.status == 404 &&
         JSON.parse(rest_response.body.readpartial)["error"] == "Token lifetime has expired"
+      logger.info("[#{request_id}] The JWT token has expired")
       raise TokenLifetimeHasExpired
     end
 
@@ -271,11 +371,13 @@ class PasswordController < ApplicationController
           # Remove the reset flag from the user, so a new reset email can be sent. The problem is,
           # we don't know who the user was. But the reset host sends that information back to us.
           # The data is in the JWT token, but we won't decode it here.
-          data = JSON.parse(rest_response.body.to_s)
+          unless ENV['RAILS_ENV'] == 'test'
+            data = JSON.parse(rest_response.body.to_s)
+            db.del(data['id'])
+            db.del(key)
+            logger.info("[#{request_id}] Redis entries cleared")
+          end
 
-          db = redis_connect
-          db.del(data['id'])
-          logger.info("[#{request_id}] Redis entries cleared")
           logger.info("[#{request_id}] Password reset complete for user \"#{data['uid']}\" (ID=#{data['id']})")
         rescue => e
           logger.error("[#{request_id}] Unable to parse the response received from the password reset host: #{e}")
@@ -294,19 +396,15 @@ class PasswordController < ApplicationController
       end
     end
   rescue PasswordConfirmationFailed
-    logger.info("[#{request_id}] Password confirmation failed")
-    flash.now[:alert] = I18n.t('flash.password.confirmation_failed')
-    render :action => "reset"
+    flash[:alert] = I18n.t('flash.password.confirmation_failed')
+    redirect_to reset_password_path
   rescue EmptyPassword
-    logger.info("[#{request_id}] No password entered")
-    flash.now[:alert] = I18n.t('flash.password.confirmation_failed')
-    render :action => "reset"
-  rescue WeakPassword
-    logger.info("[#{request_id}] The password is weak")
-    flash.now[:alert] = I18n.t('activeldap.errors.messages.password_validation.common')
-    render :action => "reset"
+    flash[:alert] = I18n.t('flash.password.confirmation_failed')
+    redirect_to reset_password_path
+  rescue PasswordDoesNotMeetRequirements
+    flash[:alert] = I18n.t('password.invalid')
+    redirect_to reset_password_path
   rescue TokenLifetimeHasExpired
-    logger.info("[#{request_id}] The JWT token has expired")
     flash[:alert] = I18n.t('flash.password.token_lifetime_has_expired')
     redirect_to forgot_password_path
   end
@@ -703,9 +801,9 @@ class PasswordController < ApplicationController
     end
   end
 
-  def setup_customisations
-    # use -1 because we don't know what the school is
-    customisations = get_school_password_form_customisations(@organisation_name, -1)
+  # Use -1 by default because we don't always know what the school is
+  def setup_customisations(school_id=-1)
+    customisations = get_school_password_form_customisations(@organisation_name, school_id)
 
     @banner = customisations[:banner]
     @domain = customisations[:domain]
