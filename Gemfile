@@ -1,12 +1,12 @@
 source 'http://rubygems.org'
 
 # gems shared with puavo-rest
-gem "rails", "5.2.4.5"
+gem "rails", "5.2.6.2"
 gem "sprockets", "3.7.2"    # I'm not going to deal with the manifest.js mess in sprockets 4.x anytime soon
 gem "sqlite3"
 gem "prawn"
 gem "net-ldap"
-gem "activeldap", "6.1.0", :require => "active_ldap"
+gem "activeldap", :require => "active_ldap"
 gem "rmagick"
 gem "uuid"
 gem "nokogiri"
