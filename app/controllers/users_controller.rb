@@ -74,29 +74,13 @@ class UsersController < ApplicationController
   # New AJAX-based index for non-test environments
   def new_cool_users_index
     @is_owner = is_owner?
-    @permit_single_user_deletion = false
-    @permit_single_user_creation = false
+
+    @permit_single_user_deletion = true
+    @permit_single_user_creation = true
 
     unless @is_owner
-      if has_blocking_integrations?(LdapOrganisation.current.cn, school.id)
-        # This user is not an owner, but they *have* to be a school admin, because only owners
-        # and school admins can log in. See if they've been granted any extra permissions.
-        if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
-          @permit_single_user_deletion = true
-        end
-
-        if can_schooladmin_do_this?(current_user.uid, :create_single_users)
-          @permit_single_user_creation = true
-        end
-      else
-        # No blocking integrations are enabled in this school, permit user deletion and creation
-        @permit_single_user_creation = true
-        @permit_single_user_deletion = true
-      end
-    else
-      # Owners can always create and delete users
-      @permit_single_user_creation = true
-      @permit_single_user_deletion = true
+      @permit_single_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
+      @permit_single_user_creation = can_schooladmin_do_this?(current_user.uid, :create_users)
     end
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
@@ -629,13 +613,7 @@ class UsersController < ApplicationController
     else
       # This user is not an owner, but they *have* to be a school admin, because only owners
       # and school admins can log in. See if they've been granted any extra permissions.
-      if has_blocking_integrations?(LdapOrganisation.current.cn, school.id)
-        if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
-          @permit_user_deletion = true
-        end
-      else
-        @permit_user_deletion = true
-      end
+      @permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
     end
 
     # Learner ID
@@ -649,16 +627,16 @@ class UsersController < ApplicationController
       end
     end
 
-    # Extra permissions
+    # Extra permissions for admins (non-owners)
     @extra_permissions_list = []
 
     unless @user_is_owner
-      if can_schooladmin_do_this?(@user.uid, :create_single_users)
-        @extra_permissions_list << 'create_single_users'
+      if can_schooladmin_do_this?(@user.uid, :create_users)
+        @extra_permissions_list << 'create_users'
       end
 
-      if can_schooladmin_do_this?(@user.uid, :delete_single_users)
-        @extra_permissions_list << 'delete_single_users'
+      if can_schooladmin_do_this?(@user.uid, :delete_users)
+        @extra_permissions_list << 'delete_users'
       end
     end
 
@@ -698,12 +676,10 @@ class UsersController < ApplicationController
   # GET /:school_id/users/new.xml
   def new
     unless is_owner?
-      if has_blocking_integrations?(LdapOrganisation.current.cn, school.id)
-        unless can_schooladmin_do_this?(current_user.uid, :create_single_users)
-          flash[:alert] = t('flash.you_must_be_an_owner')
-          redirect_to users_path
-          return
-        end
+      unless can_schooladmin_do_this?(current_user.uid, :create_users)
+        flash[:alert] = t('flash.you_must_be_an_owner')
+        redirect_to users_path
+        return
       end
     end
 
@@ -900,13 +876,7 @@ class UsersController < ApplicationController
     else
       # This user is not an owner, but they *have* to be a school admin, because only owners
       # and school admins can log in. See if they've been granted any extra permissions.
-      if has_blocking_integrations?(LdapOrganisation.current.cn, school.id)
-        if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
-          permit_user_deletion = true
-        end
-      else
-        permit_user_deletion = true
-      end
+      permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
     end
 
     unless permit_user_deletion

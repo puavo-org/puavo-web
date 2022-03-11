@@ -571,6 +571,10 @@ en:
       name: "Name"
       schools: "Schools"
       admin: "admin"
+      default_permissions_title: "In this organisation, the following permissions have been given to all school admins by default:"
+      default_permissions_footer: "Extra permissions granted to individual admins will override these defaults."
+      permission_allow: "allowed"
+      permission_deny: "denied"
     all_users:
       sync_deletion_1: "<strong>WARNING:</strong> The following schools have enabled synchronised user deletions to various external systems:"
       sync_deletion_2: "Perform user deletions (either individually or by en masse) in the above schools very carefully. You might end up deleting more than what you intended to, for example, user email accounts with their contents!"
@@ -828,8 +832,8 @@ en:
       deletion_sync_warning: "The user will also be removed from these external systems:\n\n\t%{systems}\n\nPlease verify that this is what you intended to do."
       extra_permissions:
         title: "Additional granted permissions"
-        create_single_users: "can create users"
-        delete_single_users: "can delete users"
+        create_users: "can create users"
+        delete_users: "can delete users"
     new:
       title: New user
     edit:

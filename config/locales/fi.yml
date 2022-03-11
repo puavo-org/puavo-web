@@ -574,6 +574,10 @@ fi:
       name: "Nimi"
       schools: "Koulut"
       admin: "ylläpitäjä"
+      default_permissions_title: "Tässä organisaatiossa on määritetty oletuksena koulujen ylläpitäjille seuraavat oikeudet:"
+      default_permissions_footer: "Yksittäisten ylläpitäjien lisäoikeudet ajavat näiden oletusten yli."
+      permission_allow: "sallittu"
+      permission_deny: "estetty"
     all_users:
       sync_deletion_1: "<strong>VAROITUS:</strong> Seuraavissa kouluissa on käytössä käyttäjien synkronoituja poistoja eri ulkoisiin järjestelmiin:"
       sync_deletion_2: "Tee ylläolevien koulujen käyttäjien poistoja (yksittäin tai massana) hyvin varovasti. Saatat poistaa enemmän kuin mitä aioit, kuten käyttäjien sähköpostitilit sisältöineen! "
@@ -830,9 +834,9 @@ fi:
       prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
       deletion_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\t%{systems}\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
       extra_permissions:
-        title: "Sallitut lisätoiminnot"
-        create_single_users: "voi luoda käyttäjiä"
-        delete_single_users: "voi poistaa käyttäjiä"
+        title: "Sallitut lisäoikeudet"
+        create_users: "voi luoda käyttäjiä"
+        delete_users: "voi poistaa käyttäjiä"
     new:
       title: "Lisää uusi käyttäjä"
     edit:

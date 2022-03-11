@@ -10,11 +10,21 @@ module Puavo
     def can_schooladmin_do_this?(username, action)
       permissions = Puavo::Organisation.find(LdapOrganisation.current.cn).
                       value_by_key('schooladmin_permissions')
-      return false unless permissions
 
-      extra = permissions.fetch('by_username', {}).fetch(username, {})
+      return true unless permissions
 
-      return extra.include?(action.to_s) && extra[action.to_s] == true
+      defaults = permissions.fetch('defaults', {})
+
+      this_user = permissions.fetch('by_username', {}).fetch(username, {}) || {}
+
+      if this_user.include?('all')
+        return true if this_user['all'] == 'allow'
+        return false if this_user['all'] == 'deny'
+      end
+
+      final = defaults.merge(this_user)
+
+      return final.fetch(action.to_s, 'allow') == 'allow'
     end
 
     def supertable_sorting_locale

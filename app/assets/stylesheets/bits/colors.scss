@@ -202,7 +202,6 @@ $pceAutocompleteEntryHoverBackground: #00f;
 $pceAutocompleteMatchForeground: #000;
 $pceAutocompleteMatchBackground: #0ff;
 
-
 /* Miscellaneous */
 $mountPointsHeadingBack: #ccc;
 $groupRenameTableHeaderBack: #ccc;
@@ -214,6 +213,12 @@ $usernameListTableBorder: #ccc;
 /* Organisation password requirements info boxes */
 $passwordRequirementsBackground: rgb(217, 237, 247);
 $passwordRequirementsBorder: darken(rgb(217, 237, 247), 10%);
+
+/* School admin permissions page */
+$adminPermissionsAllowBackground: #0f0;
+$adminPermissionsAllowForeground: #000;
+$adminPermissionsDenyBackground: #f00;
+$adminPermissionsDenyForeground: #fff;
 
 /*
 --------------------------------------------------------------------------------

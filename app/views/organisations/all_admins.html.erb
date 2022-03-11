@@ -4,6 +4,22 @@
 
 <p><%= t('.description') %></p>
 
+<% unless @default_permissions.empty? %>
+<div class="genericNotice">
+<p class="margin-0"><%= t('.default_permissions_title') %></p>
+
+<ul>
+  <% @default_permissions.each do |permission, state| %>
+  <li>
+    <%= t("users.show.extra_permissions.#{permission}") %>: <span class="adminPermissions_<%= state %>"><%= t(".permission_#{state}") %></span>
+  </li>
+  <% end %>
+</ul>
+
+<p class="margin-0"><%= t('.default_permissions_footer') %></p>
+</div>
+<% end %>
+
 <table class="list">
 <tr>
   <th><%= t('.name') %></th>
