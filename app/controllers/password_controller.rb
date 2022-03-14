@@ -174,18 +174,31 @@ class PasswordController < ApplicationController
 
       send_token_url = password_management_host + "/password/send_token"
 
-      logger.info("[#{request_id}] Generating the reset email, see the password reset host logs at " \
-                  "#{password_management_host} for details")
+      tried = false
 
-      rest_response = HTTP.headers(host: current_organisation_domain, 'Accept-Language': locale)
-                          .post(send_token_url, params: {
-                            # Most of these are just for logging purposes. Abuse cases must
-                            # be traceable afterwards.
-                            request_id: request_id,
-                            id: user.puavoId.to_i,
-                            username: user.uid,
-                            email: params[:forgot][:email],
-                          })
+      begin
+        logger.info("[#{request_id}] Generating the reset email, see the password reset host logs at " \
+                    "#{password_management_host} for details")
+
+        rest_response = HTTP.headers(host: current_organisation_domain, 'Accept-Language': locale)
+                            .post(send_token_url, params: {
+                              # Most of these are just for logging purposes. Abuse cases must
+                              # be traceable afterwards.
+                              request_id: request_id,
+                              id: user.puavoId.to_i,
+                              username: user.uid,
+                              email: params[:forgot][:email],
+                            })
+      rescue => e
+        logger.error("[#{request_id}] request failed: #{e}")
+
+        if e.to_s.includes?('Connection reset by peer') && !tried
+          logger.info("[#{request_id}] Retrying the request once in 1 second...")
+          tried = true
+          sleep 1
+          retry
+        end
+      end
 
       if rest_response.status == 200
         unless ENV['RAILS_ENV'] == 'test'
