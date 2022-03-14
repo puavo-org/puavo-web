@@ -104,10 +104,6 @@ class ExternalService < LdapModel
       "iat" => Time.now.to_i,
       # JWT ID
       "jti" => UUID.generator.generate,
-
-      # use external_id like in Zendesk?
-      # https://support.zendesk.com/entries/23675367
-
       "external_service_path_prefix" => prefix
     })
 
