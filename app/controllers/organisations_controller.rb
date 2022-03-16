@@ -208,8 +208,8 @@ class OrganisationsController < ApplicationController
     end
 
     # List default extra permission states
-    @default_permissions = Puavo::Organisation.find(LdapOrganisation.current.cn).
-                    value_by_key('schooladmin_permissions').fetch('defaults', {})
+    @default_permissions = (Puavo::Organisation.find(LdapOrganisation.current.cn).
+                    value_by_key('schooladmin_permissions') || {}).fetch('defaults', {})
 
     # List schools and extra permissions
     schools = {}
