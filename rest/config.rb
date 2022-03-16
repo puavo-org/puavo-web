@@ -98,9 +98,9 @@ end
 
 # Load organisations.yml if it exists
 begin
-  ORGANISATIONS = YAML.load_file('/etc/puavo-web/organisations.yml')
+  ORGANISATIONS = YAML.load_file('/etc/puavo-web/organisations.yml').freeze
 rescue => e
-  ORGANISATIONS = {}
+  ORGANISATIONS = {}.freeze
 end
 
 def get_automatic_email(organisation_name)
