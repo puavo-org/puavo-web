@@ -28,9 +28,9 @@ class User < LdapBase
 
   before_update :change_password
 
-  after_save :add_member_uid_to_models
+  after_save :add_member_uid_to_models, :reset_sso_session
 
-  before_destroy :delete_all_associations, :delete_kerberos_principal
+  before_destroy :delete_all_associations, :delete_kerberos_principal, :reset_sso_session
 
   after_create :change_password_no_upstream
 
@@ -664,6 +664,26 @@ class User < LdapBase
 
     # Set uid to Domain Users group
     SambaGroup.add_uid_to_memberUid('Domain Users', self.uid)
+  end
+
+  # Invalidate active SSO session cookies for this user, if present
+  def reset_sso_session
+    organisation = Puavo::Organisation.find(LdapOrganisation.current.cn)
+    return unless organisation
+    return if organisation.value_by_key('enable_sso_sessions_in').nil?
+
+    # This organisation has SSO login cookies enabled. If this user has an active session,
+    # remove it immediately.
+    db = Redis::Namespace.new('sso_session', :redis => REDIS_CONNECTION)
+
+    key = db.get("user:#{self.id}")
+    return unless key
+
+    if db.get("data:#{key}")
+      db.del("data:#{key}")
+    end
+
+    db.del("user:#{self.id}")
   end
 
   private

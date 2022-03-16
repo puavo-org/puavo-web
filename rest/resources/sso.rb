@@ -1,6 +1,8 @@
 require "jwt"
 require "addressable/uri"
 require "sinatra/r18n"
+require "sinatra/cookies"
+
 require_relative "./users"
 
 module PuavoRest
@@ -96,10 +98,10 @@ class ExternalService < LdapModel
     }
   end
 
-  def generate_login_url(user, return_to_url)
+  def generate_login_url(user_hash, return_to_url)
     return_to_url = Addressable::URI.parse(return_to_url.to_s)
 
-    jwt_data = filtered_user_hash(user).merge({
+    jwt_data = user_hash.merge({
       # Issued At
       "iat" => Time.now.to_i,
       # JWT ID
@@ -109,7 +111,7 @@ class ExternalService < LdapModel
 
     jwt = JWT.encode(jwt_data, secret)
     return_to_url.query_values = (return_to_url.query_values || {}).merge("jwt" => jwt)
-    return return_to_url.to_s
+    return return_to_url.to_s, user_hash
   end
 end
 
@@ -158,6 +160,32 @@ class SSO < PuavoSinatra
         :user => "Unknown client service #{ return_to.host }"
     end
 
+    request_id = 'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
+    had_session = false
+
+    if session = read_sso_session(request_id)
+      # An SSO session cookie was found in the request, see if we can use it
+      rlog.info("[#{request_id}] verifying the SSO cookie")
+
+      organisation = session['user']['organisation_name']
+      sessions_in = ORGANISATIONS.fetch(organisation, {}).fetch('enable_sso_sessions_in', [])
+
+      if sessions_in.include?(@external_service.domain)
+        # The session cookie is usable
+        url, _ = @external_service.generate_login_url(session['user'], return_to)
+
+        rlog.info("[#{request_id}] SSO cookie login OK")
+        rlog.info("[#{request_id}] redirecting SSO auth #{session['user']['username']} (#{session['dn']}) to #{url}")
+
+        return redirect url
+      else
+        rlog.error("[#{request_id}] SSO cookie login rejected, the target external service domain (" + \
+                   @external_service.domain.inspect + ") is not on the list of allowed services")
+        had_session = true
+      end
+    end
+
+    # Normal/non-session SSO login
     begin
       auth :basic_auth, :from_post, :kerberos
     rescue KerberosError => err
@@ -187,9 +215,25 @@ class SSO < PuavoSinatra
       return render_form(t.sso.service_not_activated)
     end
 
+    url, user_hash =
+      @external_service.generate_login_url(@external_service.filtered_user_hash(user), return_to)
 
-    url = @external_service.generate_login_url(user, return_to)
     rlog.info('SSO login ok')
+
+    # If SSO session cookies are enabled for this service in this organisation,
+    # the create a new session
+    sessions_in = ORGANISATIONS.fetch(user.organisation.name, {}).fetch('enable_sso_sessions_in', [])
+
+    if sessions_in.include?(@external_service.domain) && !had_session
+      expires = Time.now.utc + PUAVO_SSO_SESSION_LENGTH
+
+      response.set_cookie(PUAVO_SSO_SESSION_KEY,
+                          value: generate_sso_session(request_id, user_hash, user),
+                          expires: expires)
+
+      rlog.info("[#{request_id}] the SSO session will expire at #{Time.at(expires)}")
+    end
+
     rlog.info("redirecting SSO auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
     redirect url
   end
@@ -435,8 +479,59 @@ class SSO < PuavoSinatra
     def form_authenticity_token
       # FIXME
     end
-
   end
 
+  private
+
+  def generate_sso_session(request_id, user_hash, user)
+    key = SecureRandom.hex(64)
+
+    rlog.info("[#{request_id}] creating a new SSO session cookie #{key}")
+
+    data = {
+      dn: user.dn.to_s,   # not included in the JWT, but we need it for logging purposes
+      user: user_hash,
+    }
+
+    # The data is not obfuscated or encrypted. Anyone who can access the production
+    # Redis database can also generate the full user information anyway.
+    session_data = data.to_json.to_s
+
+    redis = Redis::Namespace.new('sso_session', redis: REDIS_CONNECTION)
+
+    redis.set("data:#{key}", session_data, nx: true, ex: PUAVO_SSO_SESSION_LENGTH)
+
+    # This is used to locate and invalidate the session if the user is edited/removed
+    redis.set("user:#{user.puavo_id}", key, nx: true, ex: PUAVO_SSO_SESSION_LENGTH)
+
+    key
+  end
+
+  def read_sso_session(request_id)
+    return nil unless request.cookies.include?(PUAVO_SSO_SESSION_KEY)
+
+    key = request.cookies[PUAVO_SSO_SESSION_KEY]
+
+    rlog.info("[#{request_id}] have SSO session cookie #{key} in the request")
+
+    redis = Redis::Namespace.new('sso_session', redis: REDIS_CONNECTION)
+    data = redis.get("data:#{key}")
+
+    unless data
+      rlog.error("[#{request_id}] no session data found by key #{key}; it has expired or it's invalid")
+      return nil
+    end
+
+    rlog.info("[#{request_id}] session lifetime left: #{redis.ttl("data:#{key}")} seconds")
+
+    begin
+      data = JSON.parse(data)
+    rescue => e
+      rlog.error("[#{request_id}] have SSO session data, but it cannot be loaded: #{e}")
+      return nil
+    end
+
+    data
+  end
 end
 end

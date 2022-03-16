@@ -48,3 +48,6 @@ require_relative "./resources/my_school_users"
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 DISTRIBUTED_LOCK = Redlock::Client.new([REDIS_CONNECTION])
+
+PUAVO_SSO_SESSION_KEY = '_puavo_sso_session'.freeze
+PUAVO_SSO_SESSION_LENGTH = (60 * 60 * 8).freeze       # 8 hours
