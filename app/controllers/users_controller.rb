@@ -630,13 +630,15 @@ class UsersController < ApplicationController
     # Extra permissions for admins (non-owners)
     @extra_permissions_list = []
 
-    unless @user_is_owner
-      if can_schooladmin_do_this?(@user.uid, :create_users)
-        @extra_permissions_list << 'create_users'
-      end
+    if Array(@user.puavoEduPersonAffiliation || []).include?('admin')
+      unless @user_is_owner
+        if can_schooladmin_do_this?(@user.uid, :create_users)
+          @extra_permissions_list << 'create_users'
+        end
 
-      if can_schooladmin_do_this?(@user.uid, :delete_users)
-        @extra_permissions_list << 'delete_users'
+        if can_schooladmin_do_this?(@user.uid, :delete_users)
+          @extra_permissions_list << 'delete_users'
+        end
       end
     end
 
