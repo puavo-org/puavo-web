@@ -1,4 +1,5 @@
 require_relative "./hosts"
+require_relative '../lib/inventory.rb'
 
 module PuavoRest
 class Device < Host
@@ -555,6 +556,12 @@ class Devices < PuavoSinatra
       device.save_hwinfo!(params[:sysinfo])
 
       rlog.info("received sysinfo from device '#{params['hostname']}'")
+
+      if CONFIG['inventory_management']
+        # Notify the external inventory management
+        Puavo::Inventory::send_device_hardware_info(rlog, CONFIG['inventory_management'], params[:sysinfo])
+      end
+
       json({ :status => 'successfully' })
     rescue NotFound => e
       status 404

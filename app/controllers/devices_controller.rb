@@ -1,7 +1,10 @@
 require "devices_helper"
 
+require_relative '../../rest/lib/inventory.rb'
+
 class DevicesController < ApplicationController
   include Puavo::MassOperations
+  include Puavo::Inventory
 
   before_action :find_school
 
@@ -118,6 +121,12 @@ class DevicesController < ApplicationController
     begin
       device = Device.find(device_id)
       device.delete
+
+      if Puavo::CONFIG['inventory_management']
+        # Notify the external inventory management
+        Puavo::Inventory::device_deleted(logger, Puavo::CONFIG['inventory_management'], device.id.to_i)
+      end
+
       ok = true
     rescue StandardError => e
       return status_failed_msg(e)
@@ -785,6 +794,11 @@ class DevicesController < ApplicationController
     # FIXME, revoke certificate only if device's include certificate
     @device.revoke_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @device.destroy
+
+    if Puavo::CONFIG['inventory_management']
+      # Notify the external inventory management
+      Puavo::Inventory::device_deleted(logger, Puavo::CONFIG['inventory_management'], params[:id].to_i)
+    end
 
     respond_to do |format|
       format.html { redirect_to(devices_url) }
