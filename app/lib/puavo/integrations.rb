@@ -324,17 +324,6 @@ module Puavo
       return out
     end
 
-    # Some third-party integrations are "blocking", ie. they block non-owners from creating and
-    # deleting users at will, UNLESS those actions have been explicitly permitted for them
-    def has_blocking_integrations?(organisation_name, school_id)
-      blocking = Set.new(Puavo::CONFIG.fetch('blocking_integrations', []))
-      return false if blocking.empty?
-
-      integrations = Set.new(get_school_integration_names(organisation_name, school_id).keys)
-      return false if integrations.empty?
-
-      (integrations & blocking).any?
-    end
 
     # ----------------------------------------------------------------------------------------------
     # ----------------------------------------------------------------------------------------------
