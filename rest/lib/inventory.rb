@@ -5,8 +5,17 @@ require 'json'
 
 module Puavo
   module Inventory
-    def self.send_device_hardware_info(logger, config, hw_info)
-      self.send_device_change(logger, config, 'device_hwinfo_update', hw_info)
+    def self.send_device_hardware_info(logger, config, device, hw_info)
+      self.send_device_change(logger, config, 'device_hwinfo_update', {
+        'id' => device.puavo_id.to_i,
+        'hostname' => device.hostname,
+        'domain' => device.organisation.domain,
+        'type' => device.type,
+        'school_id' => device.school.id.to_i,
+        'school_dn' => device.school.dn,
+        'school_name' => device.school.name,
+        'hw_info' => hw_info.to_s
+      })
     end
 
     def self.device_deleted(logger, config, id)

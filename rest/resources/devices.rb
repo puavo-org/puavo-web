@@ -559,7 +559,7 @@ class Devices < PuavoSinatra
 
       if CONFIG['inventory_management']
         # Notify the external inventory management
-        Puavo::Inventory::send_device_hardware_info(rlog, CONFIG['inventory_management'], params[:sysinfo])
+        Puavo::Inventory::send_device_hardware_info(rlog, CONFIG['inventory_management'], device, params[:sysinfo])
       end
 
       json({ :status => 'successfully' })
