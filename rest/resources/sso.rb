@@ -218,13 +218,16 @@ class SSO < PuavoSinatra
     url, user_hash =
       @external_service.generate_login_url(@external_service.filtered_user_hash(user), return_to)
 
-    rlog.info('SSO login ok')
+    rlog.info("[#{request_id}] SSO login ok")
 
     # If SSO session cookies are enabled for this service in this organisation,
     # the create a new session
-    sessions_in = ORGANISATIONS.fetch(user.organisation.name, {}).fetch('enable_sso_sessions_in', [])
+    domain = @external_service.domain
+    org_key = user.organisation.organisation_key
 
-    if sessions_in.include?(@external_service.domain) && !had_session
+    sessions_in = ORGANISATIONS.fetch(org_key, {}).fetch('enable_sso_sessions_in', [])
+
+    if sessions_in.include?(domain) && !had_session
       expires = Time.now.utc + PUAVO_SSO_SESSION_LENGTH
 
       response.set_cookie(PUAVO_SSO_SESSION_KEY,
@@ -232,9 +235,11 @@ class SSO < PuavoSinatra
                           expires: expires)
 
       rlog.info("[#{request_id}] the SSO session will expire at #{Time.at(expires)}")
+    else
+      rlog.info("[#{request_id}] domain \"#{domain}\" is not eligible for SSO sessions in organisation \"#{org_key}\"")
     end
 
-    rlog.info("redirecting SSO auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
+    rlog.info("[#{request_id}] redirecting SSO auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
     redirect url
   end
 
