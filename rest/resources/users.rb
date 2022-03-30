@@ -98,6 +98,7 @@ class User < LdapModel
     # delete all associations.
     delete_kerberos_principal
     delete_all_associations
+    reset_sso_session
   end
 
   before :update do
@@ -125,6 +126,8 @@ class User < LdapModel
     self.admin_of_school_dns = new_admin
 
     # Then we hope that remove_from_school below will remove the other associations...
+
+    reset_sso_session
   end
 
   def validate
@@ -382,6 +385,10 @@ class User < LdapModel
 
   after :create do
     schools.each { |s| add_to_school!(s) }
+  end
+
+  def reset_sso_session
+    # TODO: Implement this. It's harder than it looks.
   end
 
   def home_directory=(value)
