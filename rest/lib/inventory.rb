@@ -26,8 +26,16 @@ module Puavo
 
     def self.send_device_change(logger, config, command, params)
       uri = URI.parse(config['host'] + '/v0/devicechanges')
+
       http = Net::HTTP.new(uri.host, uri.port)
+
+      # Ruby for the love of... why can't you figure this out yourself?
+      http.use_ssl = true if uri.instance_of?(URI::HTTPS)
+
       post = Net::HTTP::Post.new(uri.request_uri)
+
+      # This isn't a form submission
+      post.add_field('Content-Type', 'application/json')
 
       # Authorization key
       post.add_field(config['auth']['key'], Digest::SHA256.hexdigest(config['auth']['value']))
@@ -43,6 +51,7 @@ module Puavo
 
       begin
         response = http.request(post)
+        logger.info("Puavo::Inventory::send_device_change(): response status: #{response.code}")
       rescue => e
         logger.error("Puavo::Inventory::send_device_change(): send failed: #{e}")
 
