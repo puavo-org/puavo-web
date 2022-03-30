@@ -167,7 +167,7 @@ class SSO < PuavoSinatra
       # An SSO session cookie was found in the request, see if we can use it
       rlog.info("[#{request_id}] verifying the SSO cookie")
 
-      organisation = session['user']['organisation_name']
+      organisation = session['organisation']
       sessions_in = ORGANISATIONS.fetch(organisation, {}).fetch('enable_sso_sessions_in', [])
 
       if sessions_in.include?(@external_service.domain)
@@ -495,6 +495,7 @@ class SSO < PuavoSinatra
 
     data = {
       dn: user.dn.to_s,   # not included in the JWT, but we need it for logging purposes
+      organisation: user.organisation.organisation_key,   # needed when the session is restored
       user: user_hash,
     }
 
