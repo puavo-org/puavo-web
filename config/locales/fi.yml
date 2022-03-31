@@ -531,8 +531,6 @@ fi:
     devices:
       school_changed: Laitteen koulu on nyt vaihdettu!
       no_other_schools: "Tässä organisaatiossa ei ole muita kouluja joihin voisit siirtää laitteen"
-    email_confirm:
-      invalid_password: Kirjautuminen epäonnistui. Tarkista salasanasi.
 
     # Message codes received from third-party integration subsystems
     integrations:
@@ -1601,18 +1599,6 @@ fi:
     successfully:
       send_token: "Olemme lähettäneet sinulle sähköpostilla linkin, jonka kautta voit vaihtaa salasanasi. Linkki on voimassa vain rajatun ajan, joten avaathan sen pian.<br><br>Jos et saa sähköpostia, ole hyvä ja ota yhteys Opinsysin tukeen ja anna heille tämä koodi: %{request_id}."
       update: "Salasanasi on onnistuneesti vaihdettu."
-
-  # Email address confirmation
-  email_confirm:
-    preview:
-      title: Vahvista sähköpostiosoitteesi
-      description: "Vahvista uusi sähköpostiosoitteesi (%{email}) syöttämällä salasanasi ja napsauttamalla Vahvista"
-      confirm: Vahvista
-    successfully:
-      info: Sähköpostiosoitteesi on vahvistettu
-    error:
-      email_already_exists: "Tämä sähköpostiosoite on jo käytössä!"
-      invalid_jwt_token: "Virheellinen JWT -valtuutus. Ota yhteyttä Opinsysin tukeen."
 
   # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:

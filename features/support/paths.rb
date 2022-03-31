@@ -7,7 +7,7 @@ module NavigationHelpers
   #
   def path_to(page_name)
     case page_name
-    
+
     when /the homepage/
       '/'
     when /the new LDAP service page/
@@ -32,14 +32,11 @@ module NavigationHelpers
     when /the own password change by token page/
       reset_password_path(@jwt)
 
-    when /the email confirm page/
-      preview_email_confirm_path(@jwt)
-      
     when /the new organisation page/
       new_organisation_path
     when /the organisation page/
       organisation_path
-      
+
     when /printer permissions page/
       printer_permissions_path(@school)
 
@@ -62,8 +59,8 @@ module NavigationHelpers
       new_group_path(@school)
     when /the groups list page/
       groups_path(@school)
-      
-    # School path  
+
+    # School path
     when /the school page/
       school_path(@school)
     when /the new school page/

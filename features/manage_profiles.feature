@@ -12,7 +12,6 @@ Feature: Manage profile
 
 
   Scenario: School admin edit profile
-    Given mock email confirm service for user "ken.jones" with email "ken.jones@puavo.net"
     When I am on the edit profile page
     Then I should be on the login page
     When I fill in "Username" with "ken.jones"
@@ -52,7 +51,6 @@ Feature: Manage profile
     And I attach the file at "features/support/test.jpg" to "Image"
     When I press "Update"
     Then I should see "Your profile has been successfully updated"
-    And I should not see "A confirmation message will be soon sent to your new email address. Click it to verify your address."
 
   Scenario: Student edit email address
     When I am on the edit profile page

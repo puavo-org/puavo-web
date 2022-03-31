@@ -54,8 +54,6 @@ if ENV['RACK_ENV'] == 'test' then
         }
       }
     },
-    "email_confirm" => {
-      "secret" => "barfoo" },
     "redis" => {
       :db => 1
     },

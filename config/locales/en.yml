@@ -528,8 +528,6 @@ en:
     devices:
       school_changed: Device school has been changed!
       no_other_schools: "This organisation has no other schools to where you could move this device"
-    email_confirm:
-      invalid_password: Login failed! Please check your password.
 
     # Message codes received from third-party integration subsystems
     integrations:
@@ -1598,18 +1596,6 @@ en:
     successfully:
       send_token: "We've sent you an email that will let you reset your password. The link will expire soon, so please open it as quickly as you can.<br><br>If you do not receive the email, please contact Opinsys support and give them this code: %{request_id}."
       update: "Your password has been successfully reset."
-
-  # Email address confirmation
-  email_confirm:
-    preview:
-      title: Confirm your email address
-      description: "Verify your new email address (%{email}) by entering it below and then clicking on Confirm"
-      confirm: Confirm
-    successfully:
-      info: Your email address has been confirmed
-    error:
-      email_already_exists: "This email address is already in use!"
-      invalid_jwt_token: Invalid JWT token. Please contact Opinsys support.
 
   # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:

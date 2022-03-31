@@ -193,7 +193,6 @@ class Root < PuavoSinatra
 
   if CONFIG["password_management"]
     use PuavoRest::Password
-    use PuavoRest::EmailConfirm
   end
 
 end

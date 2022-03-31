@@ -158,17 +158,6 @@ Rails.application.routes.draw do
            :as => :successfully_password )
     end
 
-    match( 'email_confirm' => 'email_confirm#confirm',
-           :as => :confirm_email,
-           :via => :put )
-    match( 'email_confirm/successfully' => 'email_confirm#successfully',
-           :as => :successfully_email_confirm,
-           :via => :get )
-    match( 'email_confirm/:jwt' => 'email_confirm#preview',
-           :as => :preview_email_confirm,
-           :via => :get,
-           :constraints => { jwt: /.+/ } )
-
     get 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins
 
