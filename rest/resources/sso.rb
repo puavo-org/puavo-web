@@ -444,7 +444,7 @@ class SSO < PuavoSinatra
     if params["username"].include?("@")
       _, user_org = params["username"].split("@")
       if Organisation.by_domain(ensure_topdomain(user_org)).nil?
-        rlog.info("SSO error: could not find organisation for domain #{ user_org }")
+        rlog.error("SSO error: could not find organisation for domain #{ user_org }")
         render_form(t.sso.bad_username_or_pw)
       end
     end
