@@ -255,7 +255,7 @@ GEM
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    yajl-ruby (1.4.1)
+    yajl-ruby (1.4.2)
     yard (0.9.27)
       webrick (~> 1.7.0)
 
