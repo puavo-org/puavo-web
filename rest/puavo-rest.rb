@@ -46,6 +46,10 @@ require_relative "./resources/external_login"
 require_relative "./resources/bootserver_dns"
 require_relative "./resources/my_school_users"
 
+if CONFIG["eltern"]
+require_relative "./resources/eltern"
+end
+
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 DISTRIBUTED_LOCK = Redlock::Client.new([REDIS_CONNECTION])
 

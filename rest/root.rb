@@ -187,7 +187,13 @@ class Root < PuavoSinatra
   use PuavoRest::MySchoolUsers
 
   if CONFIG["cloud"]
-    use PuavoRest::SSO
+    # You have to choose which one you want
+    if CONFIG["eltern"]
+      use PuavoRest::Eltern
+    else
+      use PuavoRest::SSO
+    end
+
     use PuavoRest::Certs
   end
 
