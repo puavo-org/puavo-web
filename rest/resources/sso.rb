@@ -166,6 +166,7 @@ class SSO < PuavoSinatra
       # places. This key tells the form where those resources are.
       "prefix" => "/v3/login",
 
+      "page_title" => t.sso.title,
       "external_service_name" => @external_service["name"],
       "service_title_override" => nil,
       "return_to" => params['return_to'] || params['return'] || nil,
