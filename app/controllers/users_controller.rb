@@ -554,6 +554,8 @@ class UsersController < ApplicationController
       end
     end
 
+    @admin_in_schools.sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+
     # If the user is a member in more than one school, list them all in alphabetical order
     primary_school = @user.primary_school
     @primary_school_dn = primary_school.dn
