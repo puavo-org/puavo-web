@@ -160,6 +160,14 @@
 
       <% end %>
 
+      <ul>
+        <li>
+          <%= link_to select_new_school_path(@school, @group) do %>
+            <i class="icon-exchange"></i><%= t('link.change_school') %>
+          <% end %>
+        </li>
+      </ul>
+
       <% if @num_hidden == 0 %>
       <ul>
         <li>

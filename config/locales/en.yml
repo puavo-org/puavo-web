@@ -107,6 +107,7 @@ en:
     lists: Username lists
     add: Add
     remove: Remove
+    move: "Move"
     new_user: New user...
     delete_user: "Delete user"
     continue: Continue
@@ -121,6 +122,7 @@ en:
     set_install_mode_server: "Remove certificate and set the server to install mode"
     printer_permissions: Printing permissions
     show_printer_permissions: List printing premissions...
+    change_school: "Change school..."
 
   # Main application layout
   layouts:
@@ -450,6 +452,8 @@ en:
       groupless_marked: "%{ok} users marked for deletion, %{failed} could not be marked"
       group_emptied_ok: "All members removed from the group"
       group_emptied_failed: "Not all members could be removed"
+      no_other_available_schools: "This group cannot be moved to another school, because there are no other suitable schools"
+      school_changed: "Group moved to school \"%{new_school}\""
     user:
       save_failed: User cannot be saved!
       save_failed_organsation_owner_removal: "Save failed: user could not be removed from the organisation owners before the admin role was removed. Try removing the ownership manually."
@@ -946,6 +950,11 @@ en:
     user_search:
       member: Member
       add_to_group: Add
+    change_school:
+      title: "Move group \"%{group}\" to another school"
+      warning: "This tool only moves the group to another school. The group members are not moved. If you want to mass move the members to another school, copy the members' usernames into the school mass editor in user tables."
+      integrations_warning: "If the destination school has an integration (Primus) that manages groups, make sure in advance that the group you're moving does not interfere with its operation. Certain types of groups (course group, year class, etc.) can accidentally end up being managed by the integration and cause unwanted things to happen."
+      destination_school: "Destination school:"
     groupless_users:
       title: "Groupless users"
       count: "Found %{count} ungrouped users."

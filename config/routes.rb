@@ -66,6 +66,8 @@ Rails.application.routes.draw do
       match 'groups/:id/delete_all_group_members' => 'groups#delete_all_group_members', :as => "delete_all_group_members", :via => :delete
       match "groups/:id/add_user/:user_id" => "groups#add_user", :as => "add_user_group", :via => :put
       match "groups/:id/user_search" => "groups#user_search", :as => :user_search, :via => :get
+      get 'groups/:id/select_new_school' => 'groups#select_new_school', :as => :select_new_school, :via => :get
+      put 'groups/:id/change_school' => 'groups#change_school', :as => :group_change_school, :via => :put
       get 'groups/:id/get_members_as_csv' => 'groups#get_members_as_csv', :as => :get_members_as_csv
       put 'groups/:id/remove_all_members' => 'groups#remove_all_members', :as => :remove_all_members
 

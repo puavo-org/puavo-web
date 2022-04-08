@@ -407,6 +407,66 @@ class GroupsController < ApplicationController
     end
   end
 
+  # GET /:school_id/groups/:group_id/select_new_school
+  def select_new_school
+    @group = get_group(params[:id])
+    return if @group.nil?
+
+    @available_schools = School.all.select { |s| s.id != @group.school.id }
+
+    unless is_owner?
+      # School admins can only transfer groups between the schools they're admins in
+      # TODO: This is starting to be a recurring pattern. See if this could be moved to
+      # its own utility function.
+      only_these = Set.new(Array(current_user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
+      @available_schools.delete_if { |s| !only_these.include?(s.dn.to_s) }
+    end
+
+    if @available_schools.empty?
+      flash[:notice] = t('flash.group.no_other_available_schools')
+      return redirect_to group_path(@school, @group)
+    end
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # PUT /:school_id/groups/:group_id/change_school
+  def change_school
+    @group = get_group(params[:id])
+    return if @group.nil?
+
+    begin
+      school = School.find(params[:school])
+    rescue ActiveLdap::EntryNotFound => e
+      flash[:alert] = t('flash.invalid_school_id')
+      return redirect_to group_path(@school, @group)
+    end
+
+    unless is_owner?
+      only_these = Set.new(Array(current_user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
+
+      unless only_these.include?(school.dn.to_s)
+        flash[:alert] = t('flash.invalid_school_id')
+        return redirect_to group_path(@school, @group)
+      end
+    end
+
+    begin
+      @group.puavoSchool = school.dn
+      @group.save!
+    rescue => e
+      flash[:alert] = t('flash.save_failed')    # Not the best possible error message
+      return redirect_to group_path(@school, @group)
+    end
+
+    flash[:notice] = t('flash.group.school_changed', new_school: school.displayName)
+
+    # Don't use @school or @group.school here, they still point to the previous school
+    return redirect_to group_path(school, @group)
+  end
+
   def remove_user
     @group = Group.find(params[:id])
     @user = User.find(params[:user_id])

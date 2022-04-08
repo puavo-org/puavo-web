@@ -140,3 +140,36 @@ Feature: Manage groups
     | Jane      | Doe    | jane | secret   | student                   | class4 |
     When I get on the members group JSON page with "Class 4"
     Then I should see JSON '[{"user_type":"student", "name":"Joe Bloggs", "uid":"joe", "given_name":"Joe", "surname":"Bloggs", "reverse_name":"Bloggs Joe"},{"name":"Jane Doe", "user_type":"student", "uid":"jane", "surname":"Doe", "reverse_name":"Doe Jane", "given_name":"Jane"}]'
+
+  Scenario: Move group to another school (admin)
+    Given I am on the new group page
+    Then I should see "New group"
+    When I fill in "Group name" with "Moving group"
+    And I fill in "Abbreviation" with "moving"
+    And I press "Create"
+    Then I should see "Group was successfully created."
+    When I follow "Change school..."
+    Then I should see "This group cannot be moved to another school, because there are no other suitable schools"
+
+  Scenario: Move group to another school (owner)
+    Given the following schools:
+    | displayName | cn      |
+    | School 2    | school2 |
+
+    Given I am logged in as "cucumber" with password "cucumber"
+    And I am on the new group page
+    Then I should see "New group"
+    When I fill in "Group name" with "Moving group"
+    And I fill in "Abbreviation" with "moving"
+    And I press "Create"
+    Then I should see "Group was successfully created."
+    When I follow "Change school..."
+    Then I should not see "This group cannot be moved to another school, because there are no other suitable schools"
+    And I should not see "Example school 1" within "select#school"
+    And I should see "School 2" within "select#school"
+    When I select "School 2" from "school"
+    And I press "Move"
+    Then I should see:
+      """
+      Group moved to school "School 2"
+      """

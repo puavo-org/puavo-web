@@ -107,6 +107,7 @@ fi:
     lists: Käyttäjätunnuslistat
     add: "Lisää"
     remove: Poista
+    move: "Siirrä"
     new_user: "Uusi käyttäjä..."
     delete_user: "Poista käyttäjä"
     continue: Jatka
@@ -121,6 +122,7 @@ fi:
     set_install_mode_server: "Poista sertifikaatti ja aseta palvelin asennustilaan"
     printer_permissions: Tulostinoikeudet
     show_printer_permissions: Listaa tulostinoikeudet...
+    change_school: "Vaihda koulua..."
 
   # Main application layout
   layouts:
@@ -450,6 +452,8 @@ fi:
       groupless_marked: "%{ok} käyttäjää merkitty poistettavaksi, %{failed} käyttäjän merkintä epäonnistui"
       group_emptied_ok: "Kaikki jäsenet poistettu ryhmästä"
       group_emptied_failed: "Kaikkia jäseniä ei voitu poistaa"
+      no_other_available_schools: "Ryhmää ei voi siirtää toiseen kouluun koska muita sopivia kouluja ei ole"
+      school_changed: "Ryhmä siirretty kouluun \"%{new_school}\""
     rename_groups:
       abbreviation_already_in_use: "Uuden ryhmän lyhenne on jo käytössä!"
       complete: "Nimetty %{count} ryhmä(ä) uudelleen."
@@ -949,6 +953,11 @@ fi:
     user_search:
       member: Jäsen
       add_to_group: Liitä ryhmään
+    change_school:
+      title: "Siirrä ryhmä \"%{group}\" toiseen kouluun"
+      warning: "Tämä työkalu ainostaan siirtää ryhmän toiseen kouluun. Ryhmän jäseniä ei siirretä mihinkään. Jos haluat massamuokata ryhmän jäsenien kouluja, kopioi ryhmän jäsenlistasta nimet käyttäjätaulukon koulunmuokkausmassatyökaluun."
+      integrations_warning: "Jos kohdekoulussa on integraatio joka hallitsee ryhmiä (Primus), varmista etukäteen ettei siirrettävä ryhmä sotke sen toimintaa. Tietyntyyppiset ryhmät (esim. kurssiryhmä, vuosiluokka, yms.) voivat joutua vahingossa integraation alaisuuteen ja aiheuttaa ei-toivottuja ilmiöitä."
+      destination_school: "Kohdekoulu:"
     groupless_users:
       title: "Ryhmättömät käyttäjät"
       count: "Koulussa on %{count} käyttäjää joita ei ole liitetty mihinkään ryhmään."
