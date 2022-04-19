@@ -116,7 +116,7 @@ class Eltern < PuavoSinatra
     end
 
     unless params.fetch('organisation', nil) == CONFIG['eltern']['service_domain']
-      @login_content = { "prefix" => "/v3/login/eltern" }
+      @login_content = { "prefix" => '/v3/login/' }
       @error_message = t.eltern_sso.missing_organisation
       halt 400, { 'Content-Type' => 'text/html' }, erb(:fatal_error, :layout => :layout)
     end
@@ -181,8 +181,8 @@ class Eltern < PuavoSinatra
     end
 
     @login_content = {
-      "prefix" => "/v3/login/eltern",
-      "page_title" => t.sso.title,
+      "prefix" => '/v3/login/',
+      "page_title" => 'Puavo-Eltern Login',
       "service_name" => t.eltern_sso.title,
       "header_text" => t.eltern_sso.header,
       "return_to" => params['return_to'] || nil,
