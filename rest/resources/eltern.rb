@@ -2,13 +2,15 @@
 
 require "sinatra/r18n"
 
-require 'net/http'
-
 require_relative "./users"
+
+require_relative '../lib/eltern.rb'
 
 module PuavoRest
 
 class Eltern < PuavoSinatra
+  include PuavoRest::ElternHelpers
+
   register Sinatra::R18n
 
   get "/v3/eltern/sso" do
@@ -37,7 +39,7 @@ class Eltern < PuavoSinatra
         # Validate the user against the external puavo-eltern system
         rlog.info("[#{request_id}] this is not the target domain, trying external Eltern auth")
 
-        eltern_response = eltern_auth(params['username'], params['password'], request_id)
+        eltern_response = eltern_authenticate(params['username'], params['password'], request_id)
 
         if eltern_response.nil?
           rlog.error("[#{request_id}] eltern_auth() returned nil")
@@ -202,57 +204,6 @@ class Eltern < PuavoSinatra
     halt 200, {'Content-Type' => 'text/html'}, erb(:eltern_login, :layout => :layout)
   end
 
-  def eltern_auth(username, password, request_id)
-    attempt = 1
-
-    begin
-      uri = URI.parse(CONFIG['eltern']['server'])
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true if uri.instance_of?(URI::HTTPS)
-
-      # Don't get stuck for too long if puavo-eltern isn't responding
-      http.open_timeout = 5
-      http.read_timeout = 10
-
-      post = Net::HTTP::Post.new(uri.request_uri)
-
-      post.basic_auth(CONFIG['eltern']['auth']['username'], CONFIG['eltern']['auth']['password'])
-
-      # This isn't a form submission
-      post.add_field('Content-Type', 'application/json')
-
-      post.body = {
-        'username' => username,
-        'password' => password
-      }.to_json
-
-      rlog.info("[#{request_id}] eltern_auth(): sending auth lookup to \"#{uri.to_s}\"")
-
-      response = http.request(post)
-      rlog.info("[#{request_id}] eltern_auth(): response status: #{response.code}")
-      data = JSON.parse(response.body)
-
-      if response.code != '200'
-        rlog.error("[#{request_id}] eltern_auth(): error response: #{data.inspect}")
-        return nil
-      end
-
-      return data
-    rescue => e
-      rlog.error("[#{request_id}] eltern_auth(): request failed: #{e}")
-
-      # Retry to weed out intermittent network errors
-      if attempt < 3
-        rlog.info("[#{request_id}] eltern_auth(): attempt #{attempt + 1} in 1 second...")
-        attempt += 1
-        sleep 1
-        retry
-      else
-        rlog.error("[#{request_id}] eltern_auth(): all attempts used, giving up")
-        return nil
-      end
-    end
-  end
 end   # class Eltern
 
 end   # module PuavoRest
