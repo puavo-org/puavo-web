@@ -1,6 +1,8 @@
 require_relative "../lib/password"
 require_relative "../lib/samba_attrs"
 
+require_relative '../lib/eltern.rb'
+
 require 'date'
 require 'securerandom'
 
@@ -910,6 +912,8 @@ class User < LdapModel
 end
 
 class Users < PuavoSinatra
+  include PuavoRest::ElternHelpers
+
   DIR = File.expand_path(File.dirname(__FILE__))
   ANONYMOUS_IMAGE_PATH = DIR + "/anonymous.png"
 
@@ -1353,6 +1357,14 @@ class Users < PuavoSinatra
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
+
+      # Handle supplementary Eltern data if the domain matches
+      if CONFIG['eltern_users'] && Array(CONFIG['eltern_users']['domains']).include?(Organisation.current.domain)
+        # FIXME: This is extremely alpha-level code. I normally do not commit code like this,
+        # but I don't have a choice at the moment.
+        eltern_get_all_users('<no request id>')&.each { |_, user| out << user }
+      end
+
       out = v4_ensure_is_array(out, 'role', 'email', 'phone', 'admin_school_id', 'school_ids')
 
       return 200, json({

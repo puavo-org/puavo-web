@@ -12,6 +12,13 @@ module ElternHelpers
                       :post, { 'username' => username, 'password' => password })
   end
 
+  def eltern_get_all_users(request_id)
+    do_eltern_request(request_id,
+                      CONFIG['eltern_users']['server'],
+                      CONFIG['eltern_users']['auth'],
+                      :get)
+  end
+
   private
 
   # Generic HTTP(S) POST/GET wrapper with timeouts and retries. Returns nil if the request failed,
