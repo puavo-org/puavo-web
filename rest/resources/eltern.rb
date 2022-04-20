@@ -25,16 +25,16 @@ class Eltern < PuavoSinatra
     if params["username"].include?("@")
       _, user_org = params["username"].split("@")
 
-      if user_org == CONFIG['eltern']['service_domain']
+      if user_org == CONFIG['eltern_sso']['service_domain']
         # The easy case: it's the target organisation
         rlog.info("[#{request_id}] this is the target domain, looking it up")
 
-        if Organisation.by_domain(CONFIG['eltern']['login_domain']).nil?
+        if Organisation.by_domain(CONFIG['eltern_sso']['login_domain']).nil?
           rlog.error("[#{request_id}] SSO error: could not find organisation for domain #{ user_org }")
           render_form(t.sso.bad_username_or_pw)
         end
       else
-        # Validate the user against the external system
+        # Validate the user against the external puavo-eltern system
         rlog.info("[#{request_id}] this is not the target domain, trying external Eltern auth")
 
         eltern_response = eltern_auth(params['username'], params['password'], request_id)
@@ -65,8 +65,8 @@ class Eltern < PuavoSinatra
       end
     else
       # Single-domain only
-      user_org = CONFIG['eltern']['login_domain']
-      rlog.info("[#{request_id}] automatically filled in the target domain (\"#{CONFIG['eltern']['login_domain']}\")")
+      user_org = CONFIG['eltern_sso']['login_domain']
+      rlog.info("[#{request_id}] automatically filled in the target domain (\"#{CONFIG['eltern_sso']['login_domain']}\")")
     end
 
     # The organisation is semi-hardcoded here. This system only logins to one domain.
@@ -115,7 +115,7 @@ class Eltern < PuavoSinatra
         :user => "Unknown client service #{ return_to.host }"
     end
 
-    unless params.fetch('organisation', nil) == CONFIG['eltern']['service_domain']
+    unless params.fetch('organisation', nil) == CONFIG['eltern_sso']['service_domain']
       @login_content = { "prefix" => '/v3/login/' }
       @error_message = t.eltern_sso.missing_organisation
       halt 400, { 'Content-Type' => 'text/html' }, erb(:fatal_error, :layout => :layout)
@@ -171,7 +171,7 @@ class Eltern < PuavoSinatra
       end
     end
 
-    @organisation = CONFIG['eltern']['login_domain']
+    @organisation = CONFIG['eltern_sso']['login_domain']
 
     if !(browser.linux?)
       # Kerberos authentication works only on Opinsys desktops with Firefox.
@@ -186,7 +186,7 @@ class Eltern < PuavoSinatra
       "service_name" => t.eltern_sso.title,
       "header_text" => t.eltern_sso.header,
       "return_to" => params['return_to'] || nil,
-      "organisation" => CONFIG['eltern']['service_domain'],
+      "organisation" => CONFIG['eltern_sso']['service_domain'],
       "username_placeholder" => t.eltern_sso.username_placeholder,
       "username" => params["username"],
       "error_message" => @error_message,
@@ -194,7 +194,7 @@ class Eltern < PuavoSinatra
       "text_login" => t.sso.login,
     }
 
-    unless params.fetch('organisation', nil) == CONFIG['eltern']['service_domain']
+    unless params.fetch('organisation', nil) == CONFIG['eltern_sso']['service_domain']
       @error_message = t.eltern_sso.missing_organisation
       halt 400, { 'Content-Type' => 'text/html' }, erb(:fatal_error, :layout => :layout)
     end

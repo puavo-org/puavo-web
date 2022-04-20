@@ -188,7 +188,7 @@ class Root < PuavoSinatra
 
   if CONFIG["cloud"]
     # You have to choose which one you want
-    if CONFIG["eltern"]
+    if CONFIG["eltern_sso"]
       use PuavoRest::Eltern
     else
       use PuavoRest::SSO
