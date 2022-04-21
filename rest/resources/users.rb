@@ -1362,7 +1362,7 @@ class Users < PuavoSinatra
       if CONFIG['eltern_users'] && Array(CONFIG['eltern_users']['domains']).include?(Organisation.current.domain)
         # FIXME: This is extremely alpha-level code. I normally do not commit code like this,
         # but I don't have a choice at the moment.
-        eltern_get_all_users('<no request id>')&.each { |_, user| out << user }
+        eltern_get_all_users('<no request id>')&.each { |user| out << user }
       end
 
       out = v4_ensure_is_array(out, 'role', 'email', 'phone', 'admin_school_id', 'school_ids')
