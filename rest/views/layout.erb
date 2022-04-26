@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=500, initial-scale=1">
-<title><%= @login_content['page_title'] %></title>
+<title><%= defined?(@login_content) && @login_content.include?('page_title') ? @login_content['page_title'] : t.sso.title %></title>
 <% if @login_content %>
 <link rel="stylesheet" href="<%= File.join(@login_content['prefix'], 'default.css') %>">
 <% if @login_content['css'] %>
