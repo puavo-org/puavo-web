@@ -4,6 +4,7 @@ locales:
   - sv_FI
   - de_CH
   - id_ID
+  - uk_UA
 puavo_ca:
   host: localhost
   use_ssl: false
