@@ -51,17 +51,6 @@ class User < LdapBase
 
   attr_accessor(*@@extra_attributes)
 
-  OVERWRITE_CHARACTERS = {
-    "Ä" => "a",
-    "ä" => "a",
-    "Ö" => "o",
-    "ö" => "o",
-    "Å" => "a",
-    "å" => "a",
-    "é" => "e"
-  }
-
-
   def self.image_size
     { :width => 120, :height => 160 }
   end
@@ -472,16 +461,6 @@ class User < LdapBase
 
   def organisation_owner?
     Array(LdapOrganisation.current.owner).include? self.dn
-  end
-
-  def generate_username
-    self.uid = username_escape(self.givenName).to_s + "." + username_escape(self.sn).to_s
-  end
-
-  def username_escape(string)
-    string.strip.split(//).map do |char|
-      OVERWRITE_CHARACTERS.has_key?(char) ? OVERWRITE_CHARACTERS[char] : char
-    end.join.downcase.gsub(/[^a-z]/, '')
   end
 
   def human_readable_format(attribute)
