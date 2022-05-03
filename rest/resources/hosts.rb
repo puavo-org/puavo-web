@@ -19,6 +19,7 @@ class Host < LdapModel
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoDeviceKernelArguments, :kernel_arguments
   ldap_map :puavoDeviceKernelVersion, :kernel_version
+  ldap_map :puavoDeviceReset, :reset, LdapConverters::JSONObj
   ldap_map :puavoDeviceType, :type
   ldap_map :puavoHostname, :hostname
   ldap_map :puavoId, :puavo_id
