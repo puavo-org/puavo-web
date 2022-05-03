@@ -849,6 +849,7 @@ en:
       gsuite_duplicate_prevention: "G Suite integration is enabled. If you are creating a new account for a user who already has a Google account, then please contact support, so that the new Puavo account can be connected to the existing Google account. This way user synchronisation does not break, and duplicate account creation attempts are prevented."
       password_sync_new: "Password synchronisation is in use in this school. You cannot set the password for the new user before the user has been synchronised to external systems. The synchronisation schedule is listed at the top of the page; wait until all synchronisations have run at least once, then set the password."
       password_sync_edit: "Password synchronisation is in use in this school. Before changing the password, please ensure that the user has been synchronised to external systems. Otherwise the password will be changed to Puavo, but not to these systems, resulting in an incomplete change. If you are editing a user who isn't participating in the synchronisation, then you can ignore this notification (the system does not know which users actually are synchronised)."
+      conflicting_roles: "Be careful if you assign a teacher/staff role to a student. This combination, while possible, won't necessarily work correctly with integrations, for example."
 
     change_schools:
       title: "Change Schools"

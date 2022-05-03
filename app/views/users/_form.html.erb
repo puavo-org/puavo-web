@@ -80,12 +80,13 @@
       <th class="requiredField">
       <%= f.label :puavoEduPersonAffiliation %>
       </th>
-      <td>
+      <td class="rolesCell">
         <% User.puavoEduPersonAffiliation_list.map do |a| %>
           <input <%= @edu_person_affiliation.include?(a) ? ' checked="checked"' : "" %> id="puavoEduPersonAffiliation_<%= a %>" name="user[puavoEduPersonAffiliation][]" type="checkbox" value="<%= a %>"/>
           <label for="puavoEduPersonAffiliation_<%= a %>"><%= h t('puavoEduPersonAffiliation_' + a) %></label><br>
         <% end %>
         <%= field_error_text_span(f.object, :puavoEduPersonAffiliation) %>
+        <p class="genericWarning" id="conflictingRoles"><%= t('.conflicting_roles') %></p>
       </td>
     </tr>
 
@@ -187,9 +188,9 @@
 <% end %>
 <% end %>
 
-<% if @automatic_email_addresses %>
 <% content_for :post_load_javascript do %>
 <script>
+<% if @automatic_email_addresses %>
 // Automatically generate the email address. This is only for the show, the actual
 // address is generated server-side, using same logic.
 const DOMAIN = "<%= @automatic_email_domain %>";
@@ -207,6 +208,27 @@ function autogenerateEmailAddress()
 }
 
 uid.addEventListener("input", e => autogenerateEmailAddress());
-</script>
 <% end %>
+
+function getRoleSelector(role)
+{
+    return document.querySelector(`table.editForm td.rolesCell input[id=puavoEduPersonAffiliation_${role}]`);
+}
+
+function updateRoles()
+{
+    const isStudent = getRoleSelector("student").checked,
+          isTeacherOrStaff = getRoleSelector("teacher").checked || getRoleSelector("staff").checked;
+
+    if (isStudent && isTeacherOrStaff)
+        document.querySelector("p#conflictingRoles").classList.remove("hidden");
+    else document.querySelector("p#conflictingRoles").classList.add("hidden");
+}
+
+for (let cb of document.querySelectorAll("table.editForm td.rolesCell input[id^=puavoEduPersonAffiliation_]"))
+    cb.addEventListener("click", () => { updateRoles(); });
+
+// Initial update
+updateRoles();
+</script>
 <% end %>

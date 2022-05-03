@@ -852,6 +852,7 @@ fi:
       gsuite_duplicate_prevention: "G Suite -integraatio on päällä. Jos olet luomassa tunnusta käyttäjälle jolla on jo tunnus Googlessa, ota ensin yhteys tukeen jotta luomasi uusi Puavo-tunnus voidaan liittää hallitusti jo olemassaolevaan Google-tunnukseen. Näin käyttäjien synkronisaatio ei mene rikki ja tuplatunnuksien luonnin yritykset estetään."
       password_sync_new: "Salasanasynkronointi on käytössä. Et voi asettaa uudelle käyttäjälle salasanaa ennenkuin uusi käyttäjä on synkronoitu ulkoisiin järjestelmiin. Synkronisaatioaikataulu on listattu sivun yläreunassa; odota, kunnes kaikki synkronisaatiot on ajettu läpi ainakin kerran ja aseta salasana sitten."
       password_sync_edit: "Salasanasynkronointi on käytössä. Ennen kuin vaihdat salasanan, varmista, että käyttäjä on synkronoitunut ulkoisiin järjestelmiin. Muutoin salasananvaihto onnistunee Puavoon, mutta ei näihin järjestelmiin, ja muutos on epätäydellinen. Jos muokkat käyttäjää joka ei ole synronoinnin piirissä, tästä viestistä ei tarvitse välittää (järjestelmä ei tiedä mitkä käyttäjät oikeasti on synkronoitu ja mitkä eivät)."
+      conflicting_roles: "Ole varovainen jos annat oppilaalle myös opettaja-/henkilökuntaroolin. Tämä yhdistelmä, vaikkakin mahdollinen, ei välttämättä toimi oikein esimerkiksi integraatioiden kanssa."
 
     change_schools:
       title: "Vaihda kouluja"
