@@ -543,6 +543,9 @@ class UsersController < ApplicationController
     organisation_owners = Array(LdapOrganisation.current.owner).each.select { |dn| dn != "uid=admin,o=puavo" } || []
     @user_is_owner = organisation_owners.include?(@user.dn)
 
+    @viewer_is_an_owner = is_owner?
+    viewer_is_admin_in = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
+
     # List schools where this user is an admin in
     @admin_in_schools = []
 
@@ -586,24 +589,26 @@ class UsersController < ApplicationController
 
     Array(@user.groups || []).each do |group|
       unless by_school_hash.include?(group.school.dn)
-        by_school_hash[group.school.dn] = [group.school, []]
+        by_school_hash[group.school.dn] = {
+          school: group.school,
+          accessible: @viewer_is_an_owner ? true : viewer_is_admin_in.include?(group.school.dn.to_s),
+          groups: []
+        }
       end
 
-      by_school_hash[group.school.dn][1] << group
+      by_school_hash[group.school.dn][:groups] << group
     end
 
     # flatten the hash and sort the schools by name
     @user_groups = []
 
     by_school_hash.each { |_, data| @user_groups << data }
-    @user_groups.sort! { |a, b| a[0].displayName.downcase <=> b[0].displayName.downcase }
+    @user_groups.sort! { |a, b| a[:school].displayName.downcase <=> b[:school].displayName.downcase }
 
     # then sort the per-school group lists by name
     @user_groups.each do |data|
-      data[1].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+      data[:groups].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
-
-    @viewer_is_an_owner = is_owner?
 
     @permit_user_deletion = false
 

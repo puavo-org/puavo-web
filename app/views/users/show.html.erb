@@ -112,10 +112,10 @@
     <td class="noWrap">
       <ul class="userShowGroups" id="groups_by_roles">
       <% @user_groups.each do |s| %>
-        <li><%= link_to s[0].displayName, school_path(s[0]) %>:<ul>
-          <% s[1].each do |g| %>
+        <li><%= s[:accessible] ? link_to(s[:school].displayName, school_path(s[:school])) : s[:school].displayName %>:<ul>
+          <% s[:groups].each do |g| %>
             <li>
-              <%= link_to g.displayName, group_path(g.school.puavoId, g) %>
+              <%= s[:accessible] ? link_to(g.displayName, group_path(g.school.puavoId, g)) : g.displayName %>
               <% if g.puavoEduGroupType %>
               <small>(<%= h humanize_group_type(g.puavoEduGroupType) %>)</small>
               <% end %>
