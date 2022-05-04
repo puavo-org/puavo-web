@@ -159,23 +159,15 @@ input[type="submit"]:hover {
   border: 1px solid $formErrorColor;
 }
 
-/* Administrative groups checkbox list header */
-.administrativeGroups header {
-  border-bottom: 1px dashed $adminGroupsHeaderBorder;
-  font-size: 110%;
-  margin-bottom: 5px;
-  margin-left: 10px;
-  margin-top: 10px;
-}
-
-.administrativeGroups header:first-of-type {
-  margin-top: 0;
-}
-
-/* Administrative groups checkbox list entry */
-.administrativeGroups input[type="checkbox"] {
-  margin-left: 30px;
-  margin-right: 0;
+/* Groups list on user create/edit pages */
+.groupsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 500px;
+  overflow-x: clip;
+  overflow-y: scroll;
+  resize: vertical;
 }
 
 @media #{$screen-breakpoint-one} {

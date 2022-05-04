@@ -104,7 +104,7 @@ class ListsController < ApplicationController
             group_name = user.groups.first.displayName
           end
         else
-          group_name = user.teaching_group["name"]
+          group_name = grp.displayName
         end
       else
         # assume that users who aren't students are teachers...

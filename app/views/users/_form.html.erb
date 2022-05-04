@@ -90,9 +90,25 @@
       </td>
     </tr>
 
-    <%= render :partial => "teaching_group", :locals => { :f => f } %>
-
-    <%= render :partial => "administrative_groups", :locals => { :f => f } %>
+    <tr>
+      <th><%= f.label :groups %></th>
+      <td id="groupsCell">
+        <div class="flex flex-rows flex-gap-10px">
+          <div class="groupsList">
+            <% @groups_by_school.each do |s| %>
+            <div class="school">
+              <h4 class="margin-0"><%= s[:school] %></h4>
+              <ul class="no-list-bullets margin-0 padding-0">
+                <% s[:groups].each do |g| %>
+                <li class="padding-left-20px" data-group-name="<%= g.displayName.downcase %>"><input type="checkbox" name="groups[]" id="<%= g.id %>" value="<%= g.id %>" <%= Array(g.member || []).include?(@is_new_user ? '' : @user.dn) ? "checked" : "" %>><label for="<%= g.id %>"><%= h g.displayName %> (<%= g.members.count %> jäsentä<%= g.puavoEduGroupType ? ", #{t("group_type.#{g.puavoEduGroupType}")}" : "" %>)</label></li>
+                <% end %>
+              </ul>
+            </div>
+            <% end %>
+          </div>
+        </div>
+      </td>
+    </tr>
 
     <tr>
       <th><%= f.label :puavoLocale %></th>

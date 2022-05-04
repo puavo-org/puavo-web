@@ -709,6 +709,8 @@ class UsersController < ApplicationController
     @is_new_user = true
     setup_integrations_for_form(@school, true)
 
+    get_group_list
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @user }
@@ -720,8 +722,6 @@ class UsersController < ApplicationController
     @user = get_user(params[:id])
     return if @user.nil?
 
-    @groups = @school.groups
-
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
     @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
@@ -729,7 +729,7 @@ class UsersController < ApplicationController
     @is_new_user = false
     setup_integrations_for_form(@school, false)
 
-    get_user_groups
+    get_group_list
   end
 
   # POST /:school_id/users
@@ -761,10 +761,17 @@ class UsersController < ApplicationController
         unless @user.save
           raise UserError, I18n.t('flash.user.create_failed')
         end
-        format.html { redirect_to( group_user_path(@school,@user) ) }
+
+        # Add to groups
+        if params.include?(:groups)
+          update_user_groups(@user, params[:groups])
+        end
+
+        format.html { redirect_to( user_path(@school, @user) ) }
         format.json { render :json => nil }
       rescue UserError => e
         logger.info "Create user, Exception: " + e.to_s
+        get_group_list
         error_message_and_render(format, 'new', e.message)
       end
     end
@@ -863,13 +870,8 @@ class UsersController < ApplicationController
           raise UserError, I18n.t('flash.user.save_failed')
         end
 
-        if params["teaching_group"]
-          @user.teaching_group = params["teaching_group"]
-        end
-        if params["administrative_groups"]
-          @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == "0" }
-          params["user"].delete("administrative_groups")
-        end
+        # Update all group associations
+        update_user_groups(@user, params[:groups] || [])
 
         # Save new password to session otherwise next request does not work
         if session[:dn] == @user.dn
@@ -880,7 +882,7 @@ class UsersController < ApplicationController
         flash[:notice] = t('flash.updated', :item => t('activeldap.models.user'))
         format.html { redirect_to( user_path(@school,@user) ) }
       rescue UserError => e
-        get_user_groups
+        get_group_list
         error_message_and_render(format, 'edit',  e.message)
       end
     end
@@ -1271,21 +1273,76 @@ class UsersController < ApplicationController
     format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
   end
 
-  def get_user_groups
-    @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
-    administrative_groups = rest_proxy.get("/v3/administrative_groups").parse or []
+  def get_group_list
+    @is_owner = is_owner?
 
-    @administrative_groups_by_school = {}
-    administrative_groups.each do |g|
-      unless @administrative_groups_by_school[g["school_id"]]
-        @administrative_groups_by_school[g["school_id"]] = {}
-        @administrative_groups_by_school[g["school_id"]]["school_name"] = School.find(g["school_id"]).displayName
-      @administrative_groups_by_school[g["school_id"]]["groups"] = []
-      end
-      @administrative_groups_by_school[g["school_id"]]["groups"].push g
+    unless @is_owner
+      # Don't show groups in schools that this user can't access
+      school_filter = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
     end
 
+    # Partition groups by school
+    @groups_by_school = {}
+
+    Group.all.each do |g|
+      school_dn = g.puavoSchool.to_s
+
+      next if !@is_owner && !school_filter.include?(school_dn)
+
+      @groups_by_school[school_dn] ||= {
+        school: School.find(school_dn).displayName,
+        groups: []
+      }
+
+      @groups_by_school[school_dn][:groups] << g
+    end
+
+    # Sort the groups by name
+    @groups_by_school.each do |_, sch|
+      sch[:groups].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+    end
+
+    # Sort the schools by name
+    @groups_by_school = @groups_by_school.values
+    @groups_by_school.sort! { |a, b| a[:school].downcase <=> b[:school].downcase }
   end
+
+    def update_user_groups(user, new_group_ids)
+      return if user.nil?
+
+      # Access control. The group list on the page won't include groups in schools
+      # non-owners can't access, but do another level of checks here, in case
+      # something fails. This also protects against the cases where a non-owner
+      # user knows the IDs of the "invisible" groups and manually edits the page
+      # to include those group IDs. At least that's the idea here. Never trust
+      # user input.
+      is_owner = is_owner?
+      only_these = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
+
+      # Figure out what has changed
+      current_groups = Array(user.groups || []).collect { |g| g.puavoId.to_i }.to_set
+      new_groups = new_group_ids.map(&:to_i).to_set
+
+      remove_groups = current_groups - new_groups
+      add_groups = new_groups - current_groups
+
+      # Then apply the changes
+      remove_groups.each do |id|
+        g = Group.find(id)
+
+        next if !is_owner && !only_these.include?(g.school.dn.to_s)
+        puts "update_user_groups(): removing from group #{id} (#{g.displayName})"
+        g.remove_user(user)
+      end
+
+      add_groups.each do |id|
+        g = Group.find(id)
+
+        next if !is_owner && !only_these.include?(g.school.dn.to_s)
+        puts "update_user_groups(): adding to group #{id} (#{g.displayName})"
+        g.add_user(user)
+      end
+    end
 
     def user_params
       u = params.require(:user).permit(
