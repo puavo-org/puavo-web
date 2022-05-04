@@ -187,6 +187,12 @@ When(/^I add user "(.*?)" to teaching group "(.*?)"$/) do |uid, groupname|
   # XXX no user.save! due to weird API
 end
 
+When(/^I select group "(.*?)"$/) do |group_name|
+  within('div.groupsList') do
+    check(group_name)
+  end
+end
+
 # Used when testing password changing timeouts
 Then(/^I wait (\d+) seconds$/) do |number|
   sleep(number)

@@ -50,9 +50,8 @@ Feature: Manage users
     | Given name | Jane     |
     | Username   | jane.doe |
     And I check "Student"
+    And I select group "Class 4"
     And I press "Create"
-    And I select "Class 4" from "teaching_group"
-    And I press "Save"
     Then I should see "jane.doe"
     And I should see "Jane"
     And I should see "Doe"
@@ -90,9 +89,8 @@ Feature: Manage users
     # FIXME
     And I choose "user_puavoAllowRemoteAccess_true"
     And I attach the file at "features/support/test.jpg" to "Image"
+    And I select group "Class 4"
     And I press "Create"
-    And I select "Class 4" from "teaching_group"
-    And I press "Save"
     Then I should see the following:
     |                                                 |
     | Mabey                                           |
@@ -176,8 +174,11 @@ Feature: Manage users
     And the following groups:
     | displayName | cn      |
     | Class 6B    | class6b |
-    And I am on the edit user page with "ben"
+    # Set the teaching group directly before opening the edit page, otherwise
+    # the group is not selected and saving the form will remove the user from
+    # the group
     And I add user "ben" to teaching group "Class 4"
+    And I am on the edit user page with "ben"
     When I fill in the following:
     | Surname    | MabeyEDIT       |
     | Given name | BenEDIT         |
@@ -333,9 +334,8 @@ Feature: Manage users
     And I press "Create"
     Then I should see "Username contains invalid characters (allowed characters are a-z0-9.-)"
     When I fill in "Username" with "ben-james.mabey"
+    And I select group "Class 6B"
     And I press "Create"
-    And I select "Class 6B" from "teaching_group"
-    And I press "Save"
     Then I should see the following:
     | Ben             |
     | Mabey           |
@@ -364,9 +364,8 @@ Feature: Manage users
     | Username       | jane.doe |
     | SSH public key | foobar   |
     And I check "Student"
+    And I select group "Class 4"
     And I press "Create"
-    And I select "Class 4" from "teaching_group"
-    And I press "Save"
     Then I should see "Jane"
     And I should see "Doe"
     And I should see "Invalid public key"
@@ -399,9 +398,8 @@ Feature: Manage users
     | Username       | donald.duck             |
     And I fill in "Email" with " donald.duck@calisota.us "
     And I check "Student"
+    And I select group "Class 4"
     And I press "Create"
-    And I select "Class 4" from "teaching_group"
-    And I press "Save"
     And I should see "donald.duck@calisota.us"
 
   Scenario: Reverse name is updated
@@ -490,7 +488,6 @@ Feature: Manage users
     And I should see "Donald Ducky"
     And I should not see "User is locked"
 
-
   Scenario: Preventing user deletion must clear existing deletion marks
     Given the following users:
       | givenName | surname | uid    | password | puavoEduPersonAffiliation |
@@ -518,7 +515,6 @@ Feature: Manage users
     And I check "Teacher"
     And I check "Admin"
     And I press "Create"
-    And I press "Save"
     Then I should not see "The user is an administrator of the school"
     And I should not see "The user is an owner of this organisation"
     # make them an owner and an admin
