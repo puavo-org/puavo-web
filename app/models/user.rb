@@ -201,19 +201,15 @@ class User < LdapBase
     # Format of uid, default configuration:
     #   * allowed characters is a-z0-9.-
     #   * uid must begin with the small letter
-    allow_uppercase_characters_uid = Puavo::Organisation.
-      find(LdapOrganisation.current.cn).
-      value_by_key("allow_uppercase_characters_uid").
-      to_s.chomp == "true" ? true : false rescue false
 
     usernameFailed = false
 
-    unless self.uid.to_s =~ ( allow_uppercase_characters_uid ? /^[a-zA-Z]/ : /^[a-z]/ )
+    unless self.uid.to_s =~ /^[a-z]/
       errors.add( :uid, I18n.t("activeldap.errors.messages.user.must_begin_with") )
       usernameFailed = true
     end
 
-    unless self.uid.to_s =~ ( allow_uppercase_characters_uid ? /^[a-zA-Z0-9.-]+$/ : /^[a-z0-9.-]+$/ )
+    unless self.uid.to_s =~ /^[a-z0-9.-]+$/
       errors.add( :uid, I18n.t("activeldap.errors.messages.user.invalid_characters") )
       usernameFailed = true
     end
