@@ -537,26 +537,31 @@ class User < LdapBase
   end
 
   def administrative_groups
-    return @administrative_groups if @administrative_groups
-    @administrative_groups = rest_proxy.get("/v3/users/#{ self.uid }/administrative_groups").parse or []
-  end
-
-  def administrative_groups=(group_ids)
-    rest_proxy.put("/v3/users/#{ self.uid }/administrative_groups", :json => { "ids" => group_ids }).parse
+    groups.find_all { |g| g.puavoEduGroupType == 'administrative group' }
   end
 
   def teaching_group
-    return @teaching_group if @teaching_group
-    @teaching_group = rest_proxy.get("/v3/users/#{ self.uid }/teaching_group").parse or {}
+    groups.find { |g| g.puavoEduGroupType == 'teaching group' }
   end
 
   def teaching_group=(group_id)
-    rest_proxy.put("/v3/users/#{ self.uid }/teaching_group", :params => { "id" => group_id }).parse
+    puts "Setting the teaching group to #{group_id}"
+
+    groups.each do |g|
+      next unless g.puavoEduGroupType == 'teaching group'
+      next unless g.id == group_id
+      g.remove_user(self)
+    end
+
+    current = groups.find { |g| g.puavoEduGroupType == 'teaching group' }
+
+    if !current
+      Group.find(group_id).add_user(self)
+    end
   end
 
   def year_class
-    return @year_class if @year_class
-    @year_class = rest_proxy.get("/v3/users/#{ self.uid }/year_class").parse or {}
+    groups.find { |g| g.puavoEduGroupType == 'year class' }
   end
 
   private

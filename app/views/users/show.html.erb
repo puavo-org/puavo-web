@@ -49,9 +49,9 @@
 
     <% if @user.puavoEduPersonAffiliation.include?('student') %>
     <p class="infoTitle"><%= t('activeldap.attributes.user.teaching_group') %></p>
-    <p class="infoValue"><%= @user.teaching_group['name'].nil? ? t('missing_data') : (h @user.teaching_group['name']) %></p>
+    <p class="infoValue"><%= h @user.teaching_group&.displayName || t('missing_data') %></p>
     <p class="infoTitle"><%= t('activeldap.attributes.user.year_class') %></p>
-    <p class="infoValue"><%= @user.year_class['name'].nil? ? t('missing_data') : (h @user.year_class['name']) %></p>
+    <p class="infoValue"><%= h @user.year_class&.displayName || t('missing_data') %></p>
     <% end %>
 
     <% if @learner_id %>
