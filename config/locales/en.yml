@@ -850,6 +850,8 @@ en:
       password_sync_new: "Password synchronisation is in use in this school. You cannot set the password for the new user before the user has been synchronised to external systems. The synchronisation schedule is listed at the top of the page; wait until all synchronisations have run at least once, then set the password."
       password_sync_edit: "Password synchronisation is in use in this school. Before changing the password, please ensure that the user has been synchronised to external systems. Otherwise the password will be changed to Puavo, but not to these systems, resulting in an incomplete change. If you are editing a user who isn't participating in the synchronisation, then you can ignore this notification (the system does not know which users actually are synchronised)."
       conflicting_roles: "Be careful if you assign a teacher/staff role to a student. This combination, while possible, won't necessarily work correctly with integrations, for example."
+      group_search_placeholder: "Find groups by name..."
+      no_group_search_hits: "No hits"
 
     change_schools:
       title: "Change Schools"

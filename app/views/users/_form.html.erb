@@ -94,6 +94,9 @@
       <th><%= f.label :groups %></th>
       <td id="groupsCell">
         <div class="flex flex-rows flex-gap-10px">
+          <div class="groupsFilter">
+            <input type="search" class="search" placeholder="<%= t('.group_search_placeholder') %>">
+          </div>
           <div class="groupsList">
             <% @groups_by_school.each do |s| %>
             <div class="school">
@@ -105,6 +108,7 @@
               </ul>
             </div>
             <% end %>
+            <div class="hidden noMatches"><%= t('.no_group_search_hits') %></div>
           </div>
         </div>
       </td>
@@ -241,10 +245,54 @@ function updateRoles()
     else document.querySelector("p#conflictingRoles").classList.add("hidden");
 }
 
+// Filter the groups list
+function filterGroups()
+{
+    const filter = document.querySelector(`table.editForm td#groupsCell .search`).value.toLowerCase().trim();
+
+    const container = document.querySelector("table.editForm td#groupsCell div.groupsList"),
+          schools = container.querySelectorAll("div.school")
+          noHits = container.querySelector("div.noMatches");
+
+    let numVisibleSchools = 0;
+
+    for (let school of schools) {
+        // Filter the groups in this school and then show/hide the whole school section
+        // if nothing under it is visible
+        let numVisibleGroups = 0;
+
+        for (let group of school.querySelectorAll("li")) {
+            if (filter.length == 0) {
+                group.classList.remove("hidden");
+                numVisibleGroups++;
+                continue;
+            }
+
+            if (group.dataset.groupName.includes(filter)) {
+                group.classList.remove("hidden");
+                numVisibleGroups++;
+            } else group.classList.add("hidden");
+        }
+
+        if (numVisibleGroups > 0) {
+            school.classList.remove("hidden");
+            numVisibleSchools++;
+        } else school.classList.add("hidden");
+    }
+
+    if (numVisibleSchools == 0)
+        noHits.classList.remove("hidden");
+    else noHits.classList.add("hidden");
+}
+
 for (let cb of document.querySelectorAll("table.editForm td.rolesCell input[id^=puavoEduPersonAffiliation_]"))
     cb.addEventListener("click", () => { updateRoles(); });
 
-// Initial update
+document.querySelector(`table.editForm td#groupsCell .search`).addEventListener("input", () => filterGroups());
+
+// Initial updates
 updateRoles();
+filterGroups();
+
 </script>
 <% end %>

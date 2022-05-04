@@ -160,6 +160,16 @@ input[type="submit"]:hover {
 }
 
 /* Groups list on user create/edit pages */
+.groupsFilter {
+  input[type="search"] {
+    background: url("/images/magnifier.png") no-repeat scroll 5px center #fff;
+    text-indent: 2em;
+    border: 1px solid var(--st-controls-border);
+    padding: 5px;
+    width: 50%;
+  }
+}
+
 .groupsList {
   display: flex;
   flex-direction: column;
@@ -168,6 +178,11 @@ input[type="submit"]:hover {
   overflow-x: clip;
   overflow-y: scroll;
   resize: vertical;
+}
+
+.groupsList .noMatches {
+  font-size: 110%;
+  font-style: italic;
 }
 
 @media #{$screen-breakpoint-one} {
