@@ -1175,31 +1175,6 @@ class UsersController < ApplicationController
     redirect_to(change_schools_path(@user.primary_school, @user))
   end
 
-  # GET /users/:school_id/users/:id/group
-  def group
-    @user = User.find(params[:id])
-
-    get_user_groups
-
-    respond_to do |format|
-      format.html
-    end
-  end
-
-  # PUT /users/:school_id/users/:id/group
-  def add_group
-    @user = User.find(params[:id])
-
-    if params["administrative_groups"]
-      @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == 0 }
-    end
-    @user.teaching_group = params["teaching_group"]
-
-    respond_to do |format|
-      format.html { redirect_to( user_path(@school, @user) ) }
-    end
-  end
-
   def username_redirect
     user = User.find(:first, :attribute => "uid", :value => params["username"])
     if user.nil?
