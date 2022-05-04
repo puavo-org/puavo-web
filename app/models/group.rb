@@ -28,20 +28,30 @@ class Group < BaseGroup
   end
 
   def add_user(user)
+    # Do both adds separately, in case the association was only partial.
+    # Oh how I miss actual SQL relations and transactions...
     begin
-      self.ldap_modify_operation(:add, [{ "memberUid" => [user.uid]},
-                                        { "member" => [user.dn.to_s] }])
+      self.ldap_modify_operation(:add, [{ "memberUid" => [user.uid]}])
     rescue ActiveLdap::LdapError::TypeOrValueExists
-      # The user is already a member of this group
+    end
+
+    begin
+      self.ldap_modify_operation(:add, [{ "member" => [user.dn.to_s] }])
+    rescue ActiveLdap::LdapError::TypeOrValueExists
     end
   end
 
   def remove_user(user)
+    # Do both removals separately, in case the association was only partial.
+    # Oh how I miss actual SQL relations and transactions...
     begin
-      self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},
-                                           { "member" => [user.dn.to_s] }])
+      self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid] }])
     rescue ActiveLdap::LdapError::NoSuchAttribute
-      # nothing to do if there is no memberUid/member
+    end
+
+    begin
+      self.ldap_modify_operation(:delete, [{ "member" => [user.dn.to_s] }])
+    rescue ActiveLdap::LdapError::NoSuchAttribute
     end
   end
 

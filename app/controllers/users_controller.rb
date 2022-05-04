@@ -461,8 +461,15 @@ class UsersController < ApplicationController
 
           unless keep_previous
             # Remove the user from the previous primary school
-            LdapBase.ldap_modify_operation(previous_dn, :delete, [{ "member" => [user.dn.to_s] }])
-            LdapBase.ldap_modify_operation(previous_dn, :delete, [{ "memberUid" => [user.uid.to_s] }])
+            begin
+              LdapBase.ldap_modify_operation(previous_dn, :delete, [{ "member" => [user.dn.to_s] }])
+            rescue ActiveLdap::LdapError::NoSuchAttribute
+            end
+
+            begin
+              LdapBase.ldap_modify_operation(previous_dn, :delete, [{ "memberUid" => [user.uid.to_s] }])
+            rescue ActiveLdap::LdapError::NoSuchAttribute
+            end
           end
 
           puts "-" * 50
@@ -824,8 +831,15 @@ class UsersController < ApplicationController
                   SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
                 end
 
-                s.ldap_modify_operation(:delete, [{"puavoSchoolAdmin" => [@user.dn.to_s]}])
-                @user.ldap_modify_operation(:delete, [{"puavoAdminOfSchool" => [s.dn.to_s]}])
+                begin
+                  s.ldap_modify_operation(:delete, [{"puavoSchoolAdmin" => [@user.dn.to_s]}])
+                rescue ActiveLdap::LdapError::NoSuchAttribute
+                end
+
+                begin
+                  @user.ldap_modify_operation(:delete, [{"puavoAdminOfSchool" => [s.dn.to_s]}])
+                rescue ActiveLdap::LdapError::NoSuchAttribute
+                end
               rescue StandardError => e
                 raise UserError, I18n.t('flash.user.save_failed_school_admin_removal')
               end
@@ -1138,8 +1152,15 @@ class UsersController < ApplicationController
 
       # The system appears to automatically add the user's UID and DN to the relevant arrays,
       # but it won't *remove* them
-      LdapBase.ldap_modify_operation(@previous.dn, :delete, [{ "member" => [@user.dn.to_s] }])
-      LdapBase.ldap_modify_operation(@previous.dn, :delete, [{ "memberUid" => [@user.uid.to_s] }])
+      begin
+        LdapBase.ldap_modify_operation(@previous.dn, :delete, [{ "member" => [@user.dn.to_s] }])
+      rescue ActiveLdap::LdapError::NoSuchAttribute
+      end
+
+      begin
+        LdapBase.ldap_modify_operation(@previous.dn, :delete, [{ "memberUid" => [@user.uid.to_s] }])
+      rescue ActiveLdap::LdapError::NoSuchAttribute
+      end
 
       flash[:notice] = t('flash.user.user_moved_to_school', :name => @target.displayName)
     rescue StandardError => e
@@ -1396,7 +1417,14 @@ class UsersController < ApplicationController
 
       # The system appears to automatically add the user's UID and DN to the relevant arrays,
       # but it won't *remove* them
-      LdapBase.ldap_modify_operation(school.dn, :delete, [{ "member" => [user.dn.to_s] }])
-      LdapBase.ldap_modify_operation(school.dn, :delete, [{ "memberUid" => [user.uid.to_s] }])
+      begin
+        LdapBase.ldap_modify_operation(school.dn, :delete, [{ "member" => [user.dn.to_s] }])
+      rescue ActiveLdap::LdapError::NoSuchAttribute
+      end
+
+      begin
+        LdapBase.ldap_modify_operation(school.dn, :delete, [{ "memberUid" => [user.uid.to_s] }])
+      rescue ActiveLdap::LdapError::NoSuchAttribute
+      end
     end
 end

@@ -225,7 +225,7 @@ class SchoolsController < ApplicationController
         # FIXME: change notice type (ERROR)
         flash[:alert] = t('flash.school.wrong_user_type')
         format.html { redirect_to( admins_school_path(@school) ) }
-      elsif  @school.add_admin(@user)
+      elsif @school.add_admin(@user)
         flash[:notice] = t('flash.school.school_admin_added',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )
@@ -245,13 +245,7 @@ class SchoolsController < ApplicationController
     @school = School.find(params[:id])
     @user = User.find(params[:user_id])
 
-    # Delete user from the list of Domain Users if it is no in any school administrator
-    if Array(@user.puavoAdminOfSchool).count < 2
-      SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
-    end
-
-    @school.ldap_modify_operation( :delete, [{"puavoSchoolAdmin" => [@user.dn.to_s]}] )
-    @user.ldap_modify_operation( :delete, [{"puavoAdminOfSchool" => [@school.dn.to_s]}] )
+    @school.remove_admin(@user)
 
     respond_to do |format|
       flash[:notice] = t('flash.school.school_admin_removed',

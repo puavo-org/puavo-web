@@ -603,12 +603,18 @@ class User < LdapBase
           Group.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
                         :scope => :one,
                         :attributes => ['dn'] ).each do |group_dn, values|
-            LdapBase.ldap_modify_operation(group_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
+            begin
+              LdapBase.ldap_modify_operation(group_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
+            rescue ActiveLdap::LdapError::NoSuchAttribute
+            end
           end
           School.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
                          :scope => :one,
                          :attributes => ['dn'] ).each do |school_dn, values|
-            LdapBase.ldap_modify_operation(school_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
+            begin
+              LdapBase.ldap_modify_operation(school_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
+            rescue ActiveLdap::LdapError::NoSuchAttribute
+            end
           end
           # Remove uid from Domain Users group
           SambaGroup.delete_uid_from_memberUid('Domain Users', old_user.uid)
@@ -624,20 +630,30 @@ class User < LdapBase
       self.uid_has_changed = false
 
       self.groups.each do |group|
-        group.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
+        begin
+          group.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
+        rescue ActiveLdap::LdapError::TypeOrValueExists
+        end
       end
     end
 
     Array(self.school).each do |school|
       unless Array(school.memberUid).include?(self.uid)
-        school.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
+        begin
+          school.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
+        rescue ActiveLdap::LdapError::TypeOrValueExists
+        end
       end
 
       unless Array(school.member).include?(self.dn)
         # There was a "FIXME" in the original code here, but I don't know what it was for.
         # As far as I can tell, it was added in commit ec5094a99 back in 2011, but there was
         # no explanation for what was broken.
-        school.ldap_modify_operation( :add, [{"member" => [self.dn.to_s]}] )
+        begin
+          school.ldap_modify_operation( :add, [{"member" => [self.dn.to_s]}] )
+        rescue ActiveLdap::LdapError::TypeOrValueExists
+        end
+
       end
     end
 

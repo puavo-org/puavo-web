@@ -635,8 +635,7 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
     @user = User.find(params[:user_id])
 
-    Group.ldap_modify_operation(@group.dn, :add, [{ "memberUid" => [@user.uid]},
-                                                  { "member" => [@user.dn.to_s] }])
+    @group.add_user(@user)
 
     @group.reload
 

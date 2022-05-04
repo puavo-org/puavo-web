@@ -16,8 +16,12 @@ class SambaGroup < LdapBase
   end
 
   def add_uid_to_memberUid(uid)
-    unless Array(self.memberUid).include?(uid)
-      self.ldap_modify_operation( :add, [{"memberUid" => [uid]}] )
+    begin
+      unless Array(self.memberUid).include?(uid)
+        self.ldap_modify_operation( :add, [{"memberUid" => [uid]}] )
+      end
+    rescue ActiveLdap::LdapError::TypeOrValueExists
+      # Just move on; LDAP isn't a relational DB, this can happen and it'll get fixed soon
     end
   end
 
