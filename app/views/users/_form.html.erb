@@ -93,6 +93,9 @@
     <tr>
       <th><%= f.label :groups %></th>
       <td id="groupsCell">
+        <% if @groups_by_school.empty? %>
+        (<%= t('.no_groups') %>)
+        <% else %>
         <div class="flex flex-rows flex-gap-10px">
           <div class="groupsFilter">
             <input type="search" class="search" placeholder="<%= t('.group_search_placeholder') %>">
@@ -111,6 +114,7 @@
             <div class="hidden noMatches"><%= t('.no_group_search_hits') %></div>
           </div>
         </div>
+        <% end %>
       </td>
     </tr>
 
@@ -288,11 +292,16 @@ function filterGroups()
 for (let cb of document.querySelectorAll("table.editForm td.rolesCell input[id^=puavoEduPersonAffiliation_]"))
     cb.addEventListener("click", () => { updateRoles(); });
 
+<% unless @groups_by_school.empty? %>
 document.querySelector(`table.editForm td#groupsCell .search`).addEventListener("input", () => filterGroups());
+<% end %>
 
 // Initial updates
 updateRoles();
+
+<% unless @groups_by_school.empty? %>
 filterGroups();
+<% end %>
 
 </script>
 <% end %>

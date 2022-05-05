@@ -855,6 +855,7 @@ fi:
       conflicting_roles: "Ole varovainen jos annat oppilaalle myös opettaja-/henkilökuntaroolin. Tämä yhdistelmä, vaikkakin mahdollinen, ei välttämättä toimi oikein esimerkiksi integraatioiden kanssa."
       group_search_placeholder: "Etsi ryhmiä nimeltä..."
       no_group_search_hits: "Ei osumia"
+      no_groups: "Ei ryhmiä"
 
     change_schools:
       title: "Vaihda kouluja"
