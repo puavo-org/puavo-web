@@ -120,6 +120,8 @@ fi:
     delete_device: "Poista laite"
     set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
     set_install_mode_server: "Poista sertifikaatti ja aseta palvelin asennustilaan"
+    set_reset_mode: "Aseta laite nollaustilaan"
+    clear_reset_mode: "Poista laitteen nollaustila"
     printer_permissions: Tulostinoikeudet
     show_printer_permissions: Listaa tulostinoikeudet...
     change_school: "Vaihda koulua..."
@@ -158,7 +160,8 @@ fi:
 
   # Various uncategorized strings
   general_confirm: Oletko varma?
-  destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
+  reset_confirm: Haluatko varmasti asettaa koneen (%{object_name}) nollaustilaan?  Nollaustilassa laitetta ei voi käyttää ennen kuin käyttäjien data on poistettu ja laite on asetettu tehdasasetuksille.
+  destroy_confirm: Haluatko varmasti poistaa %{object_name}?
   destroy_confirm_admin: "Tämä käyttäjä on omistaja ja/tai koulun ylläpitäjä. Oletko varma?"
   destroy_generic_sync_warning: "Poistot synkronoidaan mahdollisesti yhteen tai useampaan ulkoiseen järjestelmään.\nOletko varma, että haluat jatkaa?"
   destroy_exact_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\tSYSTEM_NAMES_HERE\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
@@ -431,6 +434,7 @@ fi:
     unknown_device_type: Tuntematon laitetyyppi
     set_install_mode: "Sertifikaatti poistettu, laite asennustilassa"
     set_install_mode_server: "Sertifikaatti poistettu, palvelin asennustilassa"
+    clear_reset_mode: "Laitteen nollaustila poistettu"
     organisation_ownership_removed: "Admin-käyttäjän organisaation omistajuus poistettiin."
     organisation_ownership_not_removed: "Admin-käyttäjän organisaation omistajuutta ei voitu poistaa automaattisesti!"
     user_deletion_prevented: "Käyttäjän poisto on estetty"
@@ -1075,6 +1079,9 @@ fi:
       cups_settings: CUPS-asetukset
     cups:
       cups_settings: CUPS-asetukset
+    reset:
+      error: Tälle laitteelle on tehty nollauspyyntö, mutta sen yksityiskohtia ei voi näyttää jostain virheestä johtuen.
+      pending: Tälle laitteelle on tehty nollauspyyntö, käytä PIN-koodia %{pin} uudelleenkäynnistyksen jälkeen.
     show:
       change_school: Vaihda koulua...
     select_school:

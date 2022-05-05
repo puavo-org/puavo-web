@@ -207,6 +207,13 @@ Rails.application.routes.draw do
              :as => 'revoke_certificate_device',
              :via => :delete )
 
+      match( 'devices/:id/set_reset_mode' => 'devices#set_reset_mode',
+             :as => 'set_reset_mode_device',
+             :via => :put )
+
+      match( 'devices/:id/clear_reset_mode' => 'devices#clear_reset_mode',
+             :as => 'clear_reset_mode_device',
+             :via => :put )
     end
 
     match 'servers/:id/image' => 'servers#image', :as => 'image_server', :via => :get

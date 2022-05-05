@@ -1,0 +1,10 @@
+<% reset = JSON.parse(reset_json) rescue nil %>
+<p class="message_alert">
+  <% if reset && reset.kind_of?(Hash) && reset['pin'] && reset['request-time'] then %>
+    <% if !reset['request-fulfilled'] then %>
+      <%= t('devices.reset.pending', pin: reset['pin']) %>
+    <% end %>
+  <% else %>
+    <%= t('devices.reset.error') %>
+  <% end %>
+</p>

@@ -120,6 +120,8 @@ en:
     delete_device: "Delete device"
     set_install_mode: "Remove certificate and set the device to install mode"
     set_install_mode_server: "Remove certificate and set the server to install mode"
+    set_reset_mode: "Set device to reset mode"
+    clear_reset_mode: "Clear reset mode from device"
     printer_permissions: Printing permissions
     show_printer_permissions: List printing premissions...
     change_school: "Change school..."
@@ -158,6 +160,7 @@ en:
 
   # Various uncategorized strings
   general_confirm: Are you sure?
+  reset_confirm: Are you sure you want to set device (%{object_name}) to reset mode?  In reset mode device can not be used until user data is removed and device is set to factory settings.
   destroy_confirm: Are you sure? (%{object_name})?
   destroy_confirm_admin: "This user is an owner and/or a school admin. Are you sure?"
   destroy_generic_sync_warning: "Deletions will potentially be synchronised to one or more external systems.\nAre you sure you want to continue?"
@@ -431,6 +434,7 @@ en:
     unknown_device_type: Unknown device type
     set_install_mode: "Certificate removed, device now in install mode"
     set_install_mode_server: "Certificate removed, server now in install mode"
+    clear_reset_mode: "Device is no longer in reset mode"
     organisation_ownership_removed: "Admin user organisation ownership was removed."
     organisation_ownership_not_removed: "Admin user organisation ownership could not be removed automatically!"
     user_deletion_prevented: "User cannot be removed"
@@ -1072,6 +1076,9 @@ en:
       cups_settings: CUPS settings
     cups:
       cups_settings: CUPS settings
+    reset:
+      error: There is a reset request but its details can not be shown due to some error.
+      pending: This device has a pending reset request, use PIN-code %{pin} after a reboot.
     show:
       change_school: Change school...
     select_school:

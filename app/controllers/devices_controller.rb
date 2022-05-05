@@ -822,6 +822,30 @@ class DevicesController < ApplicationController
     end
   end
 
+  def clear_reset_mode
+    @device = get_device(params[:id])
+    return if @device.nil?
+
+    @device.puavoDeviceReset = nil
+    @device.save!
+
+    respond_to do |format|
+      format.html { redirect_to(device_path(@school, @device), :notice => t('flash.clear_reset_mode')) }
+    end
+  end
+
+  def set_reset_mode
+    @device = get_device(params[:id])
+    return if @device.nil?
+
+    @device.set_reset_mode(current_user)
+    @device.save!
+
+    respond_to do |format|
+      format.html { redirect_to(device_path(@school, @device)) }
+    end
+  end
+
   # GET /:school_id/devices/:id/select_school
   def select_school
     @device = Device.find(params[:id])

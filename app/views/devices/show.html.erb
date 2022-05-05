@@ -1,5 +1,10 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices'), @device.cn %>
 
+<% if @device.puavoDeviceReset %>
+  <%= render :partial => 'shared/reset',
+             :locals  => { :reset_json => @device.puavoDeviceReset } %>
+<% end %>
+
 <%= render :partial => 'shared/main_information', :locals => { :device => @device} %>
 
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @device} %>
@@ -32,6 +37,20 @@
       </ul>
 
       <ul>
+        <li>
+          <% if @device.puavoDeviceReset %>
+            <%= link_to clear_reset_mode_device_path(@school, @device), :method => :put do %>
+              <i class="icon-flag-empty"></i><%= t('link.clear_reset_mode') %>
+            <% end %>
+          <% else %>
+            <%= link_to set_reset_mode_device_path(@school, @device),
+                        data: { confirm: t('reset_confirm', object_name: @device.puavoHostname) },
+                        :method => :put do %>
+              <i class="icon-flag"></i><%= t('link.set_reset_mode') %>
+            <% end %>
+          <% end %>
+        </li>
+
         <li>
           <% if @device.hostCertificates %>
             <%= link_to revoke_certificate_device_path(@school, @device), data: { confirm: t('general_confirm') }, :method => :delete do %>
