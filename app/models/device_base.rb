@@ -212,7 +212,7 @@ class DeviceBase < LdapBase
     self.puavoDeviceReset = {
       'from'              => user_string,
       'id'                => reset_id,
-      'mode'              => 'ask',
+      'mode'              => 'ask_pin',
       'operation'         => 'reset',
       'pin'               => reset_pin,
       'request-fulfilled' => nil,
