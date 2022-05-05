@@ -86,7 +86,7 @@
           <label for="puavoEduPersonAffiliation_<%= a %>"><%= h t('puavoEduPersonAffiliation_' + a) %></label><br>
         <% end %>
         <%= field_error_text_span(f.object, :puavoEduPersonAffiliation) %>
-        <p class="genericWarning" id="conflictingRoles"><%= t('.conflicting_roles') %></p>
+        <p class="hidden genericWarning" id="conflictingRoles"><%= t('.conflicting_roles') %></p>
       </td>
     </tr>
 
