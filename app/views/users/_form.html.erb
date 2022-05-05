@@ -103,10 +103,12 @@
           <div class="groupsList">
             <% @groups_by_school.each do |s| %>
             <div class="school">
-              <h4 class="margin-0"><%= s[:school] %></h4>
+              <h4 class="margin-0"><%= s[:school_name] %></h4>
               <ul class="no-list-bullets margin-0 padding-0">
                 <% s[:groups].each do |g| %>
-                <li class="padding-left-20px" data-group-name="<%= g.displayName.downcase %>"><input type="checkbox" name="groups[]" id="<%= g.id %>" value="<%= g.id %>" <%= Array(g.member || []).include?(@is_new_user ? '' : @user.dn) ? "checked" : "" %>><label for="<%= g.id %>"><%= h g.displayName %> (<%= g.members.count %> jäsentä<%= g.puavoEduGroupType ? ", #{t("group_type.#{g.puavoEduGroupType}")}" : "" %>)</label></li>
+                <li class="padding-left-20px" data-group-name="<%= g[:name_sort] %>">
+                  <input type="checkbox" name="groups[]" id="<%= g[:id] %>" value="<%= g[:id] %>" <%= g[:member_dn].include?(@is_new_user ? '' : @user.dn.to_s) ? "checked" : "" %>><label for="<%= g[:id] %>"><%= h g[:name] %> (<%= g[:member_dn].count %> jäsentä<%= g[:type] ? ", #{g[:type]}" : "" %>)</label>
+                </li>
                 <% end %>
               </ul>
             </div>

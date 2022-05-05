@@ -1256,30 +1256,57 @@ class UsersController < ApplicationController
       school_filter = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
     end
 
-    # Partition groups by school
+    # Partition groups by school. This has to be done with raw searches. Writing
+    # "Group.all" is so easy, but so slow... multiple minutes slow in some places.
+    school_names = {}
+
+    School.search_as_utf8(:filter => '', :attributes => ['displayName']).each do |dn, school|
+      school_names[dn] = school['displayName'][0]
+    end
+
+    # Don't repeatedly call t() when listing potentiall hundreds of groups
+    group_types = {
+      nil => nil,
+      'teaching group' => t('group_type.teaching group'),
+      'course group' => t('group_type.course group'),
+      'year class' => t('group_type.year class'),
+      'administrative group' => t('group_type.administrative group'),
+      'archive users' => t('group_type.archive users'),
+      'other groups' => t('group_type.other groups'),
+    }
+
     @groups_by_school = {}
 
-    Group.all.each do |g|
-      school_dn = g.puavoSchool.to_s
+    group_attrs = ['puavoId', 'displayName', 'puavoEduGroupType', 'puavoSchool', 'member']
+
+    Group.search_as_utf8(filter: '(objectClass=puavoEduGroup)', attributes: group_attrs).each do |dn, g|
+      school_dn = g['puavoSchool'][0]
 
       next if !@is_owner && !school_filter.include?(school_dn)
 
       @groups_by_school[school_dn] ||= {
-        school: School.find(school_dn).displayName,
+        school_name: school_names[school_dn],
+        school_name_sort: school_names[school_dn].downcase,
         groups: []
       }
 
-      @groups_by_school[school_dn][:groups] << g
+      @groups_by_school[school_dn][:groups] << {
+        id: g['puavoId'][0].to_i,
+        name: g['displayName'][0],
+        name_sort: g['displayName'][0].downcase,
+        type: group_types[g.fetch('puavoEduGroupType', [nil])[0]],
+        member_dn: Array(g['member'] || []).to_set,
+      }
     end
 
     # Sort the groups by name
-    @groups_by_school.each do |_, sch|
-      sch[:groups].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+    @groups_by_school.each do |_, school|
+      school[:groups].sort! { |a, b| a[:name_sort] <=> b[:name_sort] }
     end
 
     # Sort the schools by name
     @groups_by_school = @groups_by_school.values
-    @groups_by_school.sort! { |a, b| a[:school].downcase <=> b[:school].downcase }
+    @groups_by_school.sort! { |a, b| a[:school_name_sort] <=> b[:school_name_sort] }
   end
 
     def update_user_groups(user, new_group_ids)
