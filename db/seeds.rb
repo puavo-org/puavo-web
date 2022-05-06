@@ -88,7 +88,7 @@ group.save!
   user.puavoSchool = school.dn
   user.puavoEduPersonPrimarySchool = school.dn
   user.save!
-  user.teaching_group = group   # XXX weird that this must be here
+  user.teaching_group = group.id   # XXX weird that this must be here
   if user.puavoEduPersonAffiliation == 'admin' then
     school.add_admin(user)
   end
@@ -287,7 +287,7 @@ group.save!
   user.puavoSchool = school.dn
   user.puavoEduPersonPrimarySchool = school.dn
   user.save!
-  user.teaching_group = group   # XXX weird that this must be here
+  user.teaching_group = group.id   # XXX weird that this must be here
   if user.puavoEduPersonAffiliation == 'admin' then
     school.add_admin(user)
   end
@@ -437,7 +437,7 @@ group.save!
   user.puavoSchool = school.dn
   user.puavoEduPersonPrimarySchool = school.dn
   user.save!
-  user.teaching_group = group   # XXX weird that this must be here
+  user.teaching_group = group.id   # XXX weird that this must be here
   if user.puavoEduPersonAffiliation == 'admin' then
     school.add_admin(user)
   end
