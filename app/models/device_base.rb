@@ -200,6 +200,14 @@ class DeviceBase < LdapBase
     end
   end
 
+  def has_pending_reset
+    self.puavoDeviceReset \
+      && (reset_state = JSON.parse(self.puavoDeviceReset) rescue nil) \
+      && reset_state.kind_of?(Hash) \
+      && reset_state['request-time'] \
+      && !reset_state['request-fulfilled']
+  end
+
   def set_reset_mode(current_user)
     reset_id  = ('a'..'z').to_a.sample(16).join
     reset_pin = DateTime.now.strftime('%y%V')   # this is not an actual secret

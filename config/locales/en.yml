@@ -1077,7 +1077,6 @@ en:
     cups:
       cups_settings: CUPS settings
     reset:
-      error: There is a reset request but its details can not be shown due to some error.
       pending: This device has a pending reset request, use PIN-code %{pin} after a reboot.
     show:
       change_school: Change school...

@@ -1080,7 +1080,6 @@ fi:
     cups:
       cups_settings: CUPS-asetukset
     reset:
-      error: Tälle laitteelle on tehty nollauspyyntö, mutta sen yksityiskohtia ei voi näyttää jostain virheestä johtuen.
       pending: Tälle laitteelle on tehty nollauspyyntö, käytä PIN-koodia %{pin} uudelleenkäynnistyksen jälkeen.
     show:
       change_school: Vaihda koulua...

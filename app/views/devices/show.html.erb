@@ -1,6 +1,6 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices'), @device.cn %>
 
-<% if @device.puavoDeviceReset %>
+<% if @device.has_pending_reset %>
   <%= render :partial => 'shared/reset',
              :locals  => { :reset_json => @device.puavoDeviceReset } %>
 <% end %>
@@ -37,19 +37,21 @@
       </ul>
 
       <ul>
-        <li>
-          <% if @device.puavoDeviceReset %>
-            <%= link_to clear_reset_mode_device_path(@school, @device), :method => :put do %>
-              <i class="icon-flag-empty"></i><%= t('link.clear_reset_mode') %>
+        <% if @device.puavoDeviceType == 'laptop' %>
+          <li>
+            <% if @device.has_pending_reset %>
+              <%= link_to clear_reset_mode_device_path(@school, @device), :method => :put do %>
+                <i class="icon-flag-empty"></i><%= t('link.clear_reset_mode') %>
+              <% end %>
+            <% else %>
+              <%= link_to set_reset_mode_device_path(@school, @device),
+                          data: { confirm: t('reset_confirm', object_name: @device.puavoHostname) },
+                          :method => :put do %>
+                <i class="icon-flag"></i><%= t('link.set_reset_mode') %>
+              <% end %>
             <% end %>
-          <% else %>
-            <%= link_to set_reset_mode_device_path(@school, @device),
-                        data: { confirm: t('reset_confirm', object_name: @device.puavoHostname) },
-                        :method => :put do %>
-              <i class="icon-flag"></i><%= t('link.set_reset_mode') %>
-            <% end %>
-          <% end %>
-        </li>
+          </li>
+        <% end %>
 
         <li>
           <% if @device.hostCertificates %>
