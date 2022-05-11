@@ -476,10 +476,6 @@ en:
       you_cant_lock_yourself: "You can't lock your own account"
       cant_mark_yourself_for_deletion: "You can't mark yourself for deletion"
       cant_delete_yourself: "You can't delete yourself"
-      import:
-        dupplicate_column_name_error: Duplicate column name
-        require_error: Given name and surname are required fields
-        role_require_error: You must be select Role
       added_to_school: "User added to school \"%{name}\""
       school_adding_failed: "Could not add the user to the school!"
       removed_from_school: "User removed from school \"%{name}\""

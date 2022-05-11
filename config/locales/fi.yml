@@ -479,10 +479,6 @@ fi:
       you_cant_lock_yourself: "Et voi lukita omaa tunnustasi"
       cant_mark_yourself_for_deletion: "Et voi merkitä itseäsi poistettavaksi"
       cant_delete_yourself: "Et voi poistaa itseäsi"
-      import:
-        dupplicate_column_name_error: "Kahdelle sarakkeelle on valittu sama kenttätieto"
-        require_error: "Käyttäjälle on syötettävä etu- ja sukunimi"
-        role_require_error: "Rooli pitää olla valittuna"
       added_to_school: "Käyttäjä lisätty kouluun \"%{name}\""
       school_adding_failed: "Kouluun lisäys epäonnistui!"
       removed_from_school: "Käyttäjä poistettu koulusta \"%{name}\""
