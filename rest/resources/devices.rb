@@ -575,6 +575,36 @@ class Devices < PuavoSinatra
     end
   end
 
+  # This interface is for devices to send updates to their information
+  # depending on their state.  It differs from normal "/v3/devices/:hostname"
+  # in that the current state of "puavoDeviceReset"-attribute might affect
+  # whether it should actually be updated.
+  post "/v3/devices/:hostname/state_update" do
+    auth :basic_auth, :kerberos
+    device = Device.by_hostname!(params["hostname"])
+
+    if json_params['reset'] && json_params['reset']['request-fulfilled'] then
+      begin
+        if device.reset && device.reset['request-time'] then
+          cur_request_time = DateTime.parse(device.reset['request-time'])
+          req_fulfilled_time \
+            = DateTime.parse(json_params['reset']['request-fulfilled'])
+          # We will not update reset information in case of a pending request.
+          if req_fulfilled_time < cur_request_time then
+            json_params.delete('reset')
+          end
+        end
+      rescue StandardError => e
+        rlog.warn('unexpected error on reset update, allowing reset: ' \
+                    + e.backtrace.join("\n"))
+      end
+    end
+
+    device.update!(json_params)
+    device.save!
+    json device
+  end
+
   post "/v3/devices/:hostname" do
     auth :basic_auth, :kerberos
     device = Device.by_hostname!(params["hostname"])
