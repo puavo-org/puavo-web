@@ -2,7 +2,7 @@
 const COLUMN_DEFINITIONS = {
     abitti_version: {
         key: "abitti_version",
-        type: ColumnType.NUMERIC,
+        type: ColumnType.STRING,
         flags: ColumnFlag.USER_TRANSFORM,
     },
 
@@ -583,23 +583,7 @@ function doImage(image)
 const USER_TRANSFORM_FUNCTIONS = {
     abitti_version: function(entry) {
         const v = entry.abitti_version;
-        let display, value, filter;
-
-        if (v == "latest") {
-            display = "latest";
-            value = 9999999;
-            filter = 9999999;
-        } else {
-            display = v;
-            value = parseInt(v, 10);
-
-            if (isNaN(value))
-                value = -1;
-
-            filter = value;
-        }
-
-        return [display, value, filter];
+        return [v, v, v];
     },
 
 <% if @is_servers %>
