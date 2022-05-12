@@ -209,7 +209,6 @@ class DeviceBase < LdapBase
   end
 
   def set_reset_mode(current_user)
-    reset_id  = ('a'..'z').to_a.sample(16).join
     reset_pin = DateTime.now.strftime('%y%V')   # this is not an actual secret
 
     user_uid        = current_user.uid        || 'NO_UID'
@@ -219,7 +218,6 @@ class DeviceBase < LdapBase
 
     self.puavoDeviceReset = {
       'from'              => user_string,
-      'id'                => reset_id,
       'mode'              => 'ask_pin',
       'operation'         => 'reset',
       'pin'               => reset_pin,
