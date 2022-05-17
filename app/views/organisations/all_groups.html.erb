@@ -22,7 +22,7 @@
 const DEFAULT_COLUMNS = ["school", "name", "abbr", "type", "members_count", "eid", "created", "modified"];
 const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
 
-window.onload = function(e) {
+document.addEventListener("DOMContentLoaded", function() {
 
 new SuperTable(
     // Main container DIV
@@ -48,7 +48,7 @@ new SuperTable(
     }
 );
 
-};
+});
 
 </script>
 <% end %>

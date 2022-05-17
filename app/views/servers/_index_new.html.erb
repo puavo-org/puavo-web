@@ -19,7 +19,7 @@
 const DEFAULT_COLUMNS = ["hn", "schools", "available_images", "location", "mac", "mfer", "model", "serial", "current_image"];
 const DEFAULT_SORTING = { column: "hn", dir: SortOrder.ASCENDING };
 
-window.onload = function(e) {
+document.addEventListener("DOMContentLoaded", function() {
 
 new SuperTable(
     // Main container DIV
@@ -44,7 +44,7 @@ new SuperTable(
         source: "/devices/get_servers_list",
     }
 );
-};
+});
 
 </script>
 <% end %>

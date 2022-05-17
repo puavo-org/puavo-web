@@ -19,7 +19,7 @@
 const DEFAULT_COLUMNS = ["hn", "type", "tags", "mac", "mfer", "model", "serial", "image", "current_image"];
 const DEFAULT_SORTING = { column: "hn", dir: SortOrder.ASCENDING };
 
-window.onload = function(e) {
+document.addEventListener("DOMContentLoaded", function() {
 
 new SuperTable(
     // Main container DIV
@@ -45,7 +45,7 @@ new SuperTable(
         source: "/devices/<%= @school.id %>/get_school_devices_list",
     }
 );
-};
+});
 
 </script>
 <% end %>

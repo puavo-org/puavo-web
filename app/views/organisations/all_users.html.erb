@@ -42,7 +42,7 @@
 const DEFAULT_COLUMNS = ["school", "uid", "name", "role", "eid", "locked", "dnd", "rrt"];
 const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
 
-window.onload = function(e) {
+document.addEventListener("DOMContentLoaded", function() {
     new SuperTable(
         // Main container DIV
         document.getElementById("tableUsers"),
@@ -67,6 +67,6 @@ window.onload = function(e) {
             source: "/get_all_users",
         }
     );
-};
+});
 </script>
 <% end %>
