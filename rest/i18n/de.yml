@@ -17,7 +17,7 @@ sso:
   username_help: "Der Benutzername ist derselbe den Sie für die Anmeldung an Opinsys-Computern verwenden."
   organisation_help: "Der Benutzername muss in folgender Form angeben werden:  <em>benutzername</em>@<em>organisation</em>.opinsys.fi. Der Benutzername ist derselbe den Sie für die Anmeldung an Opinsys-Computern verwenden. Die Organisation entspricht der Stadt / Gemeinde in der sich Ihrer Schule befindet. Der Benutzername besteht nur aus Kleinbuchstaben und alle diakritische Zeichen sowie Akzente müssen entfernt werden.  Wenn Sie beispielsweise aus dem Harz kommen und Ihr Opinsys-Benutzername ’max.mustermann’ lautet, ist die Organisation <em>’harz’</em>. Somit melden Sie sich mit der Benutzerkennung <em>’max.mustermann@harz.opinsys.fi’</em> an."
   service_not_activated: Dieser Service ist nicht aktiviert. Bitte nehmen Sie Kontakt zu dem Administrator ihrer Schule auf.
-  support_info: "Wenn Sie Probleme mit der Anmeldung haben, können Sie den Support von OpinSys kontaktieren: <a href=\"maito:kontakt@opinsys.de\">kontakt@opinsys.de</a> oder <a href=\"tel:+358 14 4591 625\">+358 14 4591 625</a>."
+  support_info: "Wenn Sie Probleme mit der Anmeldung haben, können Sie den Support von OpinSys kontaktieren: <a href=\"maito:kontakt@opinsys.de\">kontakt@opinsys.de</a> oder <a href=\"tel:+358 14 4591 624\">+358 14 4591 6245</a>."
 eltern_sso:
   title: "Welcome!"
   header: "Login by entering your username or email address, and password below."
