@@ -98,7 +98,7 @@ class ListsController < ApplicationController
       if Array(user.puavoEduPersonAffiliation).include?("student")
         grp = user.teaching_group
 
-        if grp.nil? || grp.empty?
+        if grp.nil?
           # teaching group is not set, use the first group then
           if user.groups && user.groups.first
             group_name = user.groups.first.displayName
