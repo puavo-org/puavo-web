@@ -2,7 +2,7 @@ source "http://rubygems.org"
 
 # Some code and dependencies of puavo-web is used in puavo-rest during test
 # runs (ActiveLdap models).
-gem "rails", "5.2.6.2"
+gem "rails", "5.2.8"
 gem "sprockets", "3.7.2"    # last version that works with Ruby 2.3
 gem "sqlite3"
 gem "prawn"
@@ -21,6 +21,7 @@ gem "rack-rewrite"
 gem "rack", "2.1.4"   # 2.2.x breaks some VirtualHostBase tests
 gem "addressable"
 gem "jwt"
+gem "jwe"
 gem "json"
 gem "gssapi"
 gem "sinatra-r18n"

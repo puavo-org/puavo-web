@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 # gems shared with puavo-rest
-gem "rails", "5.2.6.2"
+gem "rails", "5.2.8"
 gem "sprockets", "3.7.2"    # I'm not going to deal with the manifest.js mess in sprockets 4.x anytime soon
 gem "sqlite3"
 gem "prawn"
@@ -19,6 +19,7 @@ gem "http"
 gem "json"
 gem "sinatra-support", :require => "sinatra/support"
 gem "jwt"
+gem "jwe"
 gem "sshkey"
 gem "i18n-js"
 gem "byebug"
