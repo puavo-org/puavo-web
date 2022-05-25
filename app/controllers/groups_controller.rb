@@ -100,7 +100,7 @@ class GroupsController < ApplicationController
 
     begin
       group = Group.find(group_id)
-      group.delete
+      group.destroy
       ok = true
     rescue StandardError => e
       return status_failed_msg(e)

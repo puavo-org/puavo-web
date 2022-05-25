@@ -191,7 +191,7 @@ class UsersController < ApplicationController
         return status_failed_msg(message)
       end
 
-      user.delete
+      user.destroy
       ok = true
     rescue StandardError => e
       return status_failed_msg(e)

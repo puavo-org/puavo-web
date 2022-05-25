@@ -120,7 +120,7 @@ class DevicesController < ApplicationController
 
     begin
       device = Device.find(device_id)
-      device.delete
+      device.destroy
 
       if Puavo::CONFIG['inventory_management']
         # Notify the external inventory management
