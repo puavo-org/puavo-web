@@ -694,12 +694,12 @@ en:
   # Schools editing
   schools:
     integrations:
-      in: "Sends data to Puavo"
-      out: "Receives data from Puavo"
+      in: "System sends data to Puavo"
+      out: "Data is sent from Puavo to this system"
       inout: "Sends data to Puavo and receives data from Puavo"
-      password: "Passwords are synchronised from Puavo"
-      login: "Login with Puavo account"
-      other: "Other integrated system"
+      password: "Passwords are synchronised from Puavo to this system"
+      login: "Login to this system with a Puavo account"
+      other: "Other integration"
     index:
       actions: Actions
       members: "Members"
