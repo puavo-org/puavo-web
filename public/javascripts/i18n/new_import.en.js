@@ -1,0 +1,80 @@
+I18n.translations || (I18n.translations = {});
+
+I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
+{
+    parser: {
+        title: "Read settings",
+        infer: "infer column types from first row identifiers",
+        trim: "trim leading and trailing whitespace",
+        separated_by: "separated by",
+        commas: "commas",
+        semicolons: "semicolons",
+        tabs: "tabs",
+    },
+
+    buttons: {
+        reloading: "Reloading...",
+        reload_groups: "Reload groups",
+    },
+
+    status: {
+        no_data_to_display: "(No data to display)",
+        fetching_current_users: "Fetching a list of current users from the server...",
+        comparing_data: "Comparing data...",
+        synchronising: "Doing the operation...",
+        complete: "Complete",
+        aborted: "The operation was aborted",
+
+        success: "success",
+        partial_success: "partial success",
+        failed: "failed",
+    },
+
+    alerts: {
+        no_file: "Select a file to be imported, or switch to manual input.",
+        delete_all: "Are you sure you want to start over?",
+        delete_row: "Are yo usure you want to delete this row?",
+        delete_column: "Are you sure you want to delete this column?",
+        are_you_sure: "Are you sure?",
+        need_one_first_name: "You need exactly one first name column for this",
+        need_one_last_name: "You need exactly one last name column for this",
+        no_groups: "There are no groups. Try reloading the groups list first.",
+        could_not_generate_all_usernames: "Found one or more rows that had empty or missing first/last name. No username was generated for these rows.",
+        unconvertible_characters: "Found %{count} names that did not have any letters that could be used to generate a username with.",
+        first_five: "Here are the first five names:",
+        unconvertible_name: "Row %{row}: first name \"%{first}\", last name \"%{last}\"",
+        same_password: "Giving the same password to multiple users is a severe security hazard. Are you sure you want to do this?",
+        too_short_password: "The password must be at least 5 characters long",
+        check_something: "You need to select at least something for the new passwords",
+        no_data_to_import: "The table has no rows suitable for the selected update method.",
+        fix_problems_first: "You need to fix the errors first.",
+        cant_parse_server_response: "The reply sent by the server cannot be interpreted. Details have been logged in the console.\n\nTry again and if the problem persists, note the message in the console and contact the technical support of Opinsys.",
+        too_short_uid: "The username must be at least 3 characters long.",
+        invalid_uid: "The username is not valid.",
+
+        no_data_for_the_pdf: "The table does not have a column for usernames or passwords.",
+        still_no_data_for_the_pdf: "The table does not have any users whose password could be listed in a PDF.",
+        empty_rows_skipped: "The table has rows with missing username and/or password. These rows will be excluded from the generated PDF. Do you want to continue?",
+        no_failed_rows: "There are no failed rows",
+    },
+
+    problems: {
+        multiple_columns: "Multiple \"%{title}\" columns",
+        required_column_missing: "A required column \"%{title}\" is missing",
+        need_uid_column_in_update_mode: "The username column is required in the update only -mode.",
+        need_something_to_update_in_update_mode: "In the update only -mode, you need at least one column (in addition to the username column) that contains data you want to update",
+        empty_first: "%{count} row(s) with an empty first name",
+        empty_last: "%{count} row(s) with an empty last name",
+        empty_uid: "%{count} row(s) with an empty username",
+        duplicate_uid: "%{count} row(s) with duplicate usernames (marked with red)",
+        invalid_uid: "%{count} row(s) with invalid username (marked with red)",
+        short_uid: "%{count} row(s) with usernames that are less than 3 characters long (marked with red)",
+        missing_role: "%{count} row(s) with missing or invalid role (marked with red)",
+        duplicate_eid: "%{count} row(s) with a duplicate external ID (marked with red)",
+        duplicate_email: "%{count} row(s) with a duplicate email address (marked with red)",
+        duplicate_phone: "%{count} rows(s) with a duplicate telephone number (marked with red)",
+        automatic_emails: "Automatic email address generation is enabled in this school, so the email address column must be removed.",
+        common_password: "%{count} row(s) with a common, poor-quality password",
+        no_role_mass_change: "The roles of existing users cannot be mass changed, so the Role column must be removed.",
+    },
+});

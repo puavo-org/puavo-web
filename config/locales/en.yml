@@ -872,6 +872,126 @@ en:
       cant_remove_from_primary_school_multiple: "You cannot remove the user from their primary school."
       back: "Back"
 
+  # New new user mass import/update tool
+  new_import:
+    title: "User Mass Import and Update"
+    beta_warning: "THIS TOOL IS STILL IN BETA PHASE. IT WORKS, BUT BE VERY CAREFUL WITH IT. REPORT ALL BUGS AND IMPROVEMENT IDEAS AT ONCE."
+    data_source_title: "Data source"
+    upload_help: "Upload a UTF-8 -encoded CSV or TSV file:"
+    infer_columns: "Infer column types from first row identifiers"
+    infer_explanation: "If the first row contains identifiers listed on the left column in the table below, the column type is taken from the right column. If the identifier is not in the table, the column will be skipped."
+    infer_left: "Identifier"
+    infer_right: "Inferred column type"
+    trim: "Trim leading and trailing whitespace from values"
+    separator: "Separator"
+    separator_help: "Hint: If you copy-paste data directly from LibreOffice Calc into the manual input box, set this to tab."
+    comma: "Comma (,)"
+    semicolon: "Semicolon (;)"
+    tab: "Tab (\\t)"
+    preview_title: "Prepare and import data"
+
+    mode:
+      title: "Update method"
+      create_new_update_existing: "Add new users and update existing (default)"
+      create_new_skip_existing: "Add new users, skip existing"
+      skip_new_update_existing: "Skip new users, update existing"
+
+    row_state: "State"
+
+    legend:
+      idle: "Not processed"
+      processing: "Is being processed right now"
+      success: "Success"
+      partial_success: "Partial success"
+      failed: "Failed completely"
+
+    column_title: "Column type"
+    column_tools: "Column tools"
+
+    columns:
+      skip: "(Skip column)"
+      first: "First name"
+      last: "Last name"
+      uid: "Username"
+      role: "Role"
+      password: "Password"
+      eid: "External ID"
+      group: "Group"
+      phone: "Phone number"
+      email: "Email address"
+      pnumber: "Personnel number"
+
+    menu:
+      fill_column: "Fill column..."
+      fill_selection: "Fill selected cells..."
+      set_role: "Set role..."
+      generate_usernames: "Generate usernames..."
+      generate_passwords: "Generate passwords..."
+      add_to_group: "Add to group..."
+      clear_column: "Clear column"
+      clear_selection: "Clear selected columns"
+      insert_column: "Insert new column after"
+      delete_column: "Remove column"
+
+    buttons:
+      manual: "Manual Input"
+      upload: "Upload a File"
+      show_infers: "Show infers..."
+      parse: "Read data"
+      begin: "Begin Import"
+      begin_failed: "Re-import failed rows"
+      delete_all: "Clear the table"
+      get_passwords: "Download the passwords in a PDF file"
+      export: "Download the table contents as a CSV file"
+      save: "Save (Enter)"
+      cancel: "Cancel (Esc)"
+      close: "Close (Esc)"
+      set: "Set"
+      generate: "Generate"
+      add: "Add"
+      fill: "Fill"
+      reload_groups: "Reload groups"
+      overwrite_existing: "Overwrite existing values"
+
+    tools:
+      set_role:
+        title: "Set User Roles"
+        help: "Select the role (only one can be selected):"
+
+      set_group:
+        title: "Add to Group"
+        help: "Add the user to this group:"
+
+      generate_usernames:
+        title: "Generate Usernames"
+        help: "First- and last names are downcased and concatenated with a dot. Then diacritics are removed. ß is always converted into \"ss\", but you can choose below how letters Ä, Ö and Ü will be converted:"
+
+      generate_passwords:
+        title: "Generate Passwords"
+        custom: "Fill with this"
+        random: "Fill with random passwords"
+        uppercase: "Include uppercase letters (A-Z)"
+        lowercase: "Include lowercase letters (a-z)"
+        numbers: "Include numbers (0-9)"
+        punct: "Include punctuation (.,;:@£$+?#%&=\"/\\{}[]())"
+        length: "Length"
+
+      fill:
+        title_column: "Fill Column"
+        title_selection: "Fill Selected Cells"
+        help_column: "Fill the whole column with this value"
+        help_selection: "Fill the selected cells with this value"
+
+    problems:
+      title: "The following problems were found in the table data. They must be fixed before the import process can be started:"
+
+    table:
+      delete_row: "Delete this row"
+
+    pdf:
+      page: "page"
+      end: "End"
+
   # New mass import/update tool
   import_tool:
     import: Import

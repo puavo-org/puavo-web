@@ -1,0 +1,556 @@
+:root {
+  --generic-border: #aaa;
+  --error-cell-color: #f00;
+  --import-table-border: #888;
+  --indicators: #00f;
+  --danger: #f00;
+
+  --header-background: #ccc;
+
+  --import-stripe-size: 16px;
+  --stripe-empty: #ddd;
+  --stripe-back: transparent;
+  --stripe-back-error: #f00;
+  --hover-back: rgb(249, 247, 230);
+  --stripe-hover: var(--hover-back);
+
+  --column-controls-border: #888;
+
+  --table-header-background: #ccc;
+
+  --selected-back: #8ff;
+  --delete-border: #f00;
+  --delete-background: #f88;
+
+  --popup-background: #fff;
+  --popup-foreground: #000;
+  --popup-foreground-hover: #fff;
+  --popup-border: #5595e5;
+
+  --active-menu-back: var(--popup-border);
+
+  --state-idle: #fff;
+  --state-processing: #8ff;
+  --state-failed: #f88;
+  --state-partial-success: #ff8;
+  --state-success: #8f8;
+
+  --problems-border: #f00;
+  --problems-background: #fbb;
+}
+
+.stickyTop {
+  position: sticky;
+  top: 39px;
+}
+
+div.betaOuter {
+  background-size: 64px 64px;
+
+  background-image: linear-gradient(135deg,
+      #000 25%, #ff0 25%,
+      #ff0 50%, #000 50%,
+      #000 75%, #ff0 75%,
+      #ff0 100%
+  );
+
+  max-width: 80%;
+  margin: 10px auto;
+  padding: 10px;
+}
+
+div.betaInner {
+  background: #ffa;
+  padding: 10px;
+  text-align: center;
+  font-size: 120%;
+}
+
+div.betaInner h2 {
+  margin: 0 0 10px 0;
+  padding: 0;
+  border: none;
+}
+
+/* The main importer container */
+#import {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  line-height: 1;
+}
+
+#source { }
+
+#source .tabs {
+  display: flex;
+  flex-direction: rows;
+}
+
+#source .tabs button {
+  margin: 0 0 0 5px;
+  padding: 0;
+  display: inline-block;
+  background: #ddd;
+  color: #000;
+  border: 1px solid var(--generic-border);
+  padding: 5px;
+  width: 250px;
+  text-align: center;
+  cursor: default;
+}
+
+#source .tabs button.selected { background: #fff; border-bottom: 1px solid #fff; }
+
+#source .tabs button:disabled { color: #888; }
+
+#source .content {
+  margin: -1px 0 0 0;
+  padding: 5px;
+  border: 1px solid var(--generic-border);
+}
+
+#source textarea {
+  margin: 0;
+  resize: vertical;
+}
+
+#import header {
+  font-size: 150%;
+  font-weight: bold;
+  background: var(--header-background);
+  padding: 5px;
+  margin: 0;
+}
+
+summary {
+  padding: 5px;
+  cursor: default;
+}
+
+summary:hover, details[open] > summary {
+  background: #ddd;
+}
+
+p.error {
+  background: #f44;
+  color: #fff;
+  padding: 5px;
+  margin: 0;
+}
+
+.inferTable table {
+  border-collapse: collapse;
+}
+
+.inferTable th {
+  background: #ddd;
+}
+
+.inferTable th, .inferTable td {
+  border: 1px solid #000;
+  padding: 5px;
+}
+
+input#fileUpload {
+  border: 1px solid var(--generic-border);
+  padding: 5px;
+}
+
+.settingRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+div#controls .buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+div#controls select {
+  padding: 5px 10px;
+}
+
+div#controls .buttons button {
+  padding: 5px 10px;
+}
+
+#output {
+  /*overflow-x: auto;*/
+}
+
+div.problems {
+  border-width: 1px;
+  border-style: solid;
+  padding: 10px;
+  line-height: 1.5;
+}
+
+div.problems ul {
+  margin: 2px;
+  padding: 5px 0 0 20px;
+}
+
+div.problems p {
+  margin: 0;
+  padding: 0;
+}
+
+div.have-problems {
+  border-color: var(--problems-border);
+  background: var(--problems-background);
+}
+
+.importResults {
+  border-top: 1px solid var(--import-table-border);
+  border-right: 1px solid var(--import-table-border);
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+}
+
+/* Row status indicators */
+.importResults th.state.idle { background: var(--state-idle); }
+.importResults th.state.processing { background: var(--state-processing); }
+.importResults th.state.failed { background: var(--state-failed); }
+.importResults th.state.partialSuccess { background: var(--state-partial-success); }
+.importResults th.state.success { background: var(--state-success); }
+.importResults th.state.failed i { color: #f00; }
+
+.importResults td {
+  border-bottom: 1px solid var(--import-table-border);
+  border-left: 1px solid var(--import-table-border);
+  padding: 5px;
+}
+
+.importResults th {
+  border-bottom: 1px solid var(--import-table-border);
+  border-left: 1px solid var(--import-table-border);
+  background: var(--table-header-background);
+  padding: 5px;
+}
+
+.importResults td {
+  cursor: cell;
+}
+
+div#legend {
+  display: none;
+  position: absolute;
+  top: auto;
+  left: auto;
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: 5px;
+  margin-top: 5px;
+  font-weight: normal;
+  box-shadow: 0 0 10px #000;
+  z-index: 2;
+}
+
+div#legend ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+div#legend ul li {
+  display: flex;
+  flex-direction: rows;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 5px;
+}
+
+div#legend ul li div {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #000;
+}
+
+div#legend ul li div.idle { background: var(--state-idle); }
+div#legend ul li div.processing { background: var(--state-processing); }
+div#legend ul li div.failed { background: var(--state-failed); }
+div#legend ul li div.partialSuccess { background: var(--state-partial-success); }
+div#legend ul li div.success { background: var(--state-success); }
+
+.importResults th span#legendToggle:hover + div#legend {
+  display: block !important;
+}
+
+.importResults th select {
+  background: #fff;
+  border: 1px solid var(--column-controls-border);
+}
+
+.importResults th button.controls {
+  margin-left: 5px;
+  padding: 2px 5px;
+  font-family: puavo-icons;
+  background: #eee;
+  border: 1px solid var(--column-controls-border);
+  color: #000;
+}
+
+.importResults th button.controls:disabled {
+  color: #000;
+}
+
+.importResults a.delete {
+  padding: 2px 5px;
+  color: var(--danger) !important;
+  border: 1px solid transparent;
+  background: none;
+  cursor: default;
+  text-decoration: none;
+  font-family: puavo-icons;
+  font-size: 125%;
+  font-weight: normal !important;
+}
+
+.importResults a.delete:hover {
+  background: var(--delete-background);
+  border: 1px solid var(--delete-border);
+}
+
+.importResults .rowNumber {
+  color: var(--indicators);
+}
+
+.importResults .colNumber {
+  color: var(--indicators);
+  margin: 0 10px 0 5px;
+}
+
+.activeMenu {
+  background: var(--active-menu-back) !important;
+  border-color: var(--popup-border) !important;
+}
+
+.importResults td {
+  /* The JavaScript-based multi-cell selection prevents normal text selection anyway */
+  user-select: none;
+}
+
+.importResults td.skipped {
+  color: #888;
+}
+
+.importResults td.password {
+  font-family: monospace;
+  font-size: 120%;
+}
+
+.importResults td.error {
+  border: 1px solid var(--error-cell-color);
+}
+
+.selectedCell {
+  background: var(--selected-back);
+}
+
+/* Indicate empty values with colored stripes. Pure CSS only, no background images! */
+.empty {
+  background-size: var(--import-stripe-size) var(--import-stripe-size);
+
+  background-image: linear-gradient(135deg,
+      var(--stripe-empty) 25%, var(--stripe-back)  25%,
+      var(--stripe-back)  50%, var(--stripe-empty) 50%,
+      var(--stripe-empty) 75%, var(--stripe-back)  75%,
+      var(--stripe-back)  100%
+  );
+}
+
+.empty.error {
+  background-size: var(--import-stripe-size) var(--import-stripe-size);
+
+  background-image: linear-gradient(135deg,
+      var(--stripe-empty)      25%, var(--stripe-back-error) 25%,
+      var(--stripe-back-error) 50%, var(--stripe-empty)      50%,
+      var(--stripe-empty)      75%, var(--stripe-back-error) 75%,
+      var(--stripe-back-error) 100%
+  );
+}
+
+.empty.selectedCell {
+  background-size: var(--import-stripe-size) var(--import-stripe-size);
+
+  background-image: linear-gradient(135deg,
+      var(--stripe-empty)  25%, var(--selected-back) 25%,
+      var(--selected-back) 50%, var(--stripe-empty)  50%,
+      var(--stripe-empty)  75%, var(--selected-back) 75%,
+      var(--selected-back) 100%
+  );
+}
+
+.empty.selectedCell.error {
+  background-size: var(--import-stripe-size) var(--import-stripe-size);
+
+  background-image: linear-gradient(135deg,
+      var(--selected-back)     25%, var(--stripe-back-error) 25%,
+      var(--stripe-back-error) 50%, var(--selected-back)     50%,
+      var(--selected-back)     75%, var(--stripe-back-error) 75%,
+      var(--stripe-back-error) 100%
+  );
+}
+
+#popupBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: block;
+}
+
+div.popup {
+  border: 2px solid var(--popup-border);
+  background: var(--popup-background);
+  padding: 0;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.75);
+  font-size: 80%;
+}
+
+div.popup header {
+  font-size: 110%;
+  font-weight: bold;
+  padding: 5px;
+  border-bottom: 1px solid var(--popup-border);
+  text-align: center;
+}
+
+div.popup .buttons {
+  display: flex;
+  flex-direction: rows;
+  justify-content: center;
+  border-top: 1px solid var(--popup-border);
+  padding-top: 5px;
+  gap: 5px;
+}
+
+div.directButtons {
+  display: flex;
+  flex-direction: rows;
+  justify-content: center;
+  gap: 5px;
+}
+
+div.directButtons button {
+  white-space: nowrap;
+  width: 50%;
+}
+
+/* It just doesn't seem to work otherwise */
+.cellEdit { font-family: "Arial"; }
+.cellEditPassword { font-family: "monospace"; font-size: 90%; }
+
+.columnMenu {
+  padding: 5px;
+}
+
+.columnMenu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.columnMenu li.separator {
+  border-bottom: 1px solid var(--popup-border);
+  padding-top: 5px;
+  margin-bottom: 5px;
+}
+
+.columnMenu a {
+  padding: 5px;
+  display: block;
+  background: transparent;
+  text-decoration: none;
+  color: var(--popup-foreground);
+  white-space: nowrap;
+  cursor: default;        /* no href set */
+}
+
+.columnMenu a:hover {
+  color: var(--popup-foreground-hover);
+  background: var(--popup-border);
+}
+
+.columnMenu a.danger {
+  color: var(--danger);
+}
+
+#columnDialog {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#columnDialog .buttons button {
+  width: 125px;
+}
+
+#columnDialog select {
+  width: 100%;
+}
+
+div.popup div#contents {
+  margin-bottom: 10px;
+}
+
+div.popup div#contents input[type="text"]#value {
+  width: 100%;
+}
+
+fieldset {
+  border: 1px solid var(--generic-border);
+}
+
+p.methodExplanation {
+  margin-top: 0;
+  margin-left: 20px;
+  margin-bottom: 5px;
+}
+
+#status {
+  border: 1px solid var(--generic-border);
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#status #progress {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+#status #progress progress {
+  height: 20px;
+  border: 1px solid #000;
+  width: 300px;
+}
+
+#status #progress #counter {
+  font-size: 120%;
+  font-weight: bold;
+}
+
+#status #progress #counter span.success { background: var(--state-success); }
+#status #progress #counter span.partial_success { background: var(--state-partial-success); }
+#status #progress #counter span.failed { background: var(--state-failed); }
+
+#status.error {
+  border: 1px solid #f00;
+  background: #f44;
+  color: #fff;
+}

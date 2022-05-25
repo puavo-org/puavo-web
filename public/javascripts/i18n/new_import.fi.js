@@ -1,0 +1,80 @@
+I18n.translations || (I18n.translations = {});
+
+I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
+{
+    parser: {
+        title: "Lukuasetukset",
+        infer: "päättele sarakkeiden tyypit ensimmäisestä rivistä",
+        trim: "poista välilyönnit alusta ja lopusta",
+        separated_by: "eroteltu",
+        commas: "pilkuilla",
+        semicolons: "puolipilkuilla",
+        tabs: "tabeilla",
+    },
+
+    buttons: {
+        reloading: "Päivitetään...",
+        reload_groups: "Päivitä ryhmät",
+    },
+
+    status: {
+        no_data_to_display: "(Ei näytettävää dataa)",
+        fetching_current_users: "Haetaan palvelimelta lista nykyisistä käyttäjistä...",
+        comparing_data: "Vertaillaan dataa...",
+        synchronising: "Suoritetaan operaatiota...",
+        complete: "Valmis",
+        aborted: "Operaatio keskeytyi",
+
+        success: "onnistui",
+        partial_success: "onnistui osittain",
+        failed: "epäonnistui",
+    },
+
+    alerts: {
+        no_file: "Valitse tuotava tiedosto, tai vaihda käsisyötteeseen.",
+        delete_all: "Oletko varma, että haluat aloittaa alusta?",
+        delete_row: "Oletko varma, että haluat poistaa tämän rivin?",
+        delete_column: "Oletko varma, että haluat poistaa tämän sarakkeen?",
+        are_you_sure: "Oletko varma?",
+        need_one_first_name: "Tarvitset tasan yhden etunimi-sarakkeen tätä varten",
+        need_one_last_name: "Tarvitset tasan yhden sukunimi-sarakkeen tätä varten",
+        no_groups: "Ryhmiä ei ole. Kokeile päivittää ryhmälista ensin.",
+        could_not_generate_all_usernames: "Löydettiin yksi tai useampi rivi joissa oli tyhjä tai puuttuva etu- ja/tai sukunimi. Käyttäjänimiä ei luotu näille riveille.",
+        unconvertible_characters: "Löydettiin %{count} nimeä joissa ei ollut yhtään sellaista merkkiä joka säilyisi muunnoksesta.",
+        first_five: "Tässä ensimmäiset viisi nimeä:",
+        unconvertible_name: "Rivi %{row}: etunumi \"%{first}\", sukunimi \"%{last}\"",
+        same_password: "Saman salasanan asetus usealle käyttäjälle on vakava tietoturvariski. Oletko varma että haluat tehdä tämän?",
+        too_short_password: "Salasanan on oltava vähintään 5 merkkiä pitkä",
+        check_something: "Valitse edes jotain mitä salasana saa sisältää.",
+        no_data_to_import: "Taulukossa ei ole yhtään valittua päivitysmenetelmää vastaavaa riviä.",
+        fix_problems_first: "Sinun on ensin korjattava havaitut virheet.",
+        cant_parse_server_response: "Palvelimen lähettämää viestiä ei voitu tulkita. Yksityiskohdat on tallennettu selaimen konsoliin.\n\nYritä uudelleen ja jos virhe toistuu, ota konsolissa oleva viesti talteen ja ota sitten yhteys Opinsys Oy:n tukeen.",
+        too_short_uid: "Käyttäjätunnuksen on oltava vähintään 3 merkkiä pitkä.",
+        invalid_uid: "Käyttäjätunnus ei ole oikean muotoinen.",
+
+        no_data_for_the_pdf: "Taulukossa ei ole käyttäjätunnus- ja/tai salasanasaraketta.",
+        still_no_data_for_the_pdf: "Taulukossa ei ole käyttäjiä joiden salasanan voisi listata PDF-tiedostossa.",
+        empty_rows_skipped: "Taulukossa on rivejä joilta puuttuu käyttäjätunnus tai salasana. Nämä rivit jätetään pois luodusta salasanalistasta. Haluatko jatkaa?",
+        no_failed_rows: "Epäonnistuneita rivejä ei ole",
+    },
+
+    problems: {
+        multiple_columns: "Monta \"%{title}\" -saraketta",
+        required_column_missing: "Vaadittu sarake \"%{title}\" puuttuu",
+        need_uid_column_in_update_mode: "Päivitys-tilassa tarvitset käyttäjänimisarakkeen",
+        need_something_to_update_in_update_mode: "Päivitys-tilassa tarvitset vähintään yhden ei-käyttäjänimi -sarakkeen jonka sisällön haluat päivittää",
+        empty_first: "%{count} rivi(ä) joissa on tyhjä etunimi",
+        empty_last: "%{count} rivi(ä) joissa on tyhjä sukunimi",
+        empty_uid: "%{count} rivi(ä) joissa on tyhjä käyttäjänimi",
+        duplicate_uid: "%{count} rivi(ä) joilla esiintyy sama käyttäjänimi useaan kertaan (merkitty punaisella)",
+        invalid_uid: "%{count} rivi(ä) joilla esiintyy virheellinen tai väärän muotoinen käyttäjänimi (merkitty punaisella)",
+        short_uid: "%{count} rivi(ä) joissa on alle 3 merkkiä pitkä käyttäjänimi (merkitty punaisella)",
+        missing_role: "%{count} rivi(ä) joissa on puuttuva tai virheellinen rooli (merkitty punaisella)",
+        duplicate_eid: "%{count} rivi(ä) joilla esiintyy sama ulkoinen ID useaan kertaan (merkitty punaisella)",
+        duplicate_email: "%{count} rivi(ä) joilla esiintyy sama sähköpostiosoite useaan kertaan (merkitty punaisella)",
+        duplicate_phone: "%{count} rivi(ä) joilla esiintyy sama puhelinnumero useaan kertaan (merkitty punaisella)",
+        automatic_emails: "Automaattinen sähköpostiosoitteiden muodostus on päällä tässä koulussa, joten sähköpostisarake on poistettava",
+        common_password: "%{count} rivi(ä) joilla esiintyy huonolaatuinen yleisesti käytetty salasana",
+        no_role_mass_change: "Olemassaolevien käyttäjien rooleja ei voi massavaihtaa, joten Rooli-sarake on poistettava",
+    },
+});

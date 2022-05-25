@@ -50,6 +50,7 @@ class PuavoMenu < MetaMenu
     active_on UsersController
     active_on ListsController
     active_on ImportToolController
+    active_on NewImportController
     owners_only { false }
 
     child do
@@ -65,6 +66,14 @@ class PuavoMenu < MetaMenu
       active_on ImportToolController
       owners_only { true }
       # XXX: Feature switch!
+      hide_when { !current_user.organisation_owner? }
+    end
+
+    child do
+      title { t('link.new_import') }
+      link { new_import_path(@school) }
+      active_on NewImportController
+      owners_only { true }
       hide_when { !current_user.organisation_owner? }
     end
 

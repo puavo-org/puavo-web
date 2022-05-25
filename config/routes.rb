@@ -106,6 +106,11 @@ Rails.application.routes.draw do
       post 'mass_op_username_list' => 'users#mass_op_username_list'
       post 'mass_op_user_change_school' => 'users#mass_op_user_change_school'
 
+      get 'new_import' => 'new_import#index'
+      get 'reload_groups' => 'new_import#reload_groups'
+      get 'get_current_users' => 'new_import#get_current_users'
+      post 'password_pdf' => 'new_import#generate_password_pdf'
+      post 'new_import/import' => 'new_import#import'
     end
 
 

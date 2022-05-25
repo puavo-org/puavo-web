@@ -125,6 +125,7 @@ fi:
     printer_permissions: Tulostinoikeudet
     show_printer_permissions: Listaa tulostinoikeudet...
     change_school: "Vaihda koulua..."
+    new_import: "(Uusi) tuo"
 
   # Main application layout
   layouts:
@@ -874,6 +875,126 @@ fi:
       cant_remove_from_primary_school_one: "Käyttäjää ei voi poistaa hänen pääkoulustaan, mutta voit siirtää hänet toiseen kouluun."
       cant_remove_from_primary_school_multiple: "Käyttäjää ei voi poistaa hänen pääkoulustaan."
       back: "Takaisin"
+
+  # New new user mass import/update tool
+  new_import:
+    title: "Käyttäjien massatuonti ja -päivitys"
+    beta_warning: "TÄMÄ TYÖKALU ON VIELÄ BETA-VAIHEESSA. SE TOIMII, MUTTA OLE HYVIN VAROVAINEN SEN KANSSA. RAPORTOI KAIKKI VIAT JA KEHITYSIDEAT VÄLITTÖMÄSTI."
+    data_source_title: "Datan lähde"
+    upload_help: "Lataa UTF-8 -enkoodattu CSV- tai TSV-tiedosto:"
+    infer_columns: "Päättele sarakkeiden tyypit ensimmäisen rivin tunnisteista"
+    infer_explanation: "Jos ensimmäinen rivi sisältää alla olevan taulukon ensimmäisessä sarakkeesa listattuja tunnisteita, asetetaan sarakkeen tyyppi oikeassa sarakkeessa olevaksi. Jos tunnistetta ei löydy taulukosta, sarakkeen tyypiksi asetetaan ohitettu."
+    infer_left: "Tunniste"
+    infer_right: "Päätelty sarakkeen tyyppi"
+    trim: "Poista solujen arvoista tyhjät välit alusta ja lopusta"
+    separator: "Erotinmerkki"
+    separator_help: "Vihje: Jos kopioit dataa suoraan LibreOffice Calcista käsisyötteeseen, aseta tämä tabiin."
+    comma: "Pikku (,)"
+    semicolon: "Puolipiste (;)"
+    tab: "Tab (\\t)"
+    preview_title: "Valmistele ja tuo data"
+
+    mode:
+      title: "Päivitystapa"
+      create_new_update_existing: "Lisää uudet käyttäjät ja päivitä olemassaolevat (oletus)"
+      create_new_skip_existing: "Lisää uudet käyttäjät, ohita olemassaolevat"
+      skip_new_update_existing: "Ohita uudet käyttäjät, päivitä olemassaolevat"
+
+    row_state: "Tila"
+
+    legend:
+      idle: "Ei käsitellä/käsitelty"
+      processing: "Käsitellään juuri nyt"
+      success: "Onnistui"
+      partial_success: "Onnistui osittain"
+      failed: "Epäonistui kokonaan"
+
+    column_title: "Sarakkeen tyyppi"
+    column_tools: "Sarakkeen muokkaustyökalut"
+
+    columns:
+      skip: "(Ohita sarake)"
+      first: "Etunimi"
+      last: "Sukunimi"
+      uid: "Käyttäjänimi"
+      role: "Rooli"
+      password: "Salasana"
+      eid: "Ulkoinen ID"
+      group: "Ryhmä"
+      phone: "Puhelinnumero"
+      email: "Email-osoite"
+      pnumber: "Henkilönumero"
+
+    menu:
+      fill_column: "Täytä sarake..."
+      fill_selection: "Täytä valitut solut..."
+      set_role: "Aseta rooli..."
+      generate_usernames: "Luo käyttäjänimiä..."
+      generate_passwords: "Luo salasanoja..."
+      add_to_group: "Lisää ryhmään..."
+      clear_column: "Tyhjennä sarake"
+      clear_selection: "Tyhjennä valitut solut"
+      insert_column: "Lisää tyhjä sarake jälkeen"
+      delete_column: "Poista sarake"
+
+    buttons:
+      manual: "Käsisyöte"
+      upload: "Lataa tiedosto"
+      show_infers: "Näytä päättelyt..."
+      parse: "Lue data"
+      begin: "Aloita tuonti"
+      begin_failed: "Tuo epäonnistuneet rivit uudelleen"
+      delete_all: "Tyhjennä taulukko"
+      get_passwords: "Lataa asetetut salasanat PDF-muodossa"
+      export: "Lataa taulukon sisältö CSV-tiedostona"
+      save: "Tallenna (Enter)"
+      cancel: "Peruuta (Esc)"
+      close: "Sulje (Esc)"
+      set: "Aseta"
+      generate: "Luo"
+      add: "Lisää"
+      fill: "Täytä"
+      reload_groups: "Päivitä ryhmät"
+      overwrite_existing: "Ylikirjoita olemassaolevat arvot"
+
+    tools:
+      set_role:
+        title: "Aseta käyttäjien roolit"
+        help: "Valitse käyttäjien rooli (voit valita vain yhden):"
+
+      set_group:
+        title: "Lisää ryhmään"
+        help: "Lisää käyttäjät tähän ryhmään:"
+
+      generate_usernames:
+        title: "Luo käyttäjänimiä"
+        help: "Etu- ja sukunimet muutetaan pieniksi ja yhdistetään pisteellä. Sen jälkeen tarkkeet poistetaan. ß muutetaan aina muotoon \"ss\", mutta voit valita miten kirjaimet Ä, Ö ja Ü muunnetaan:"
+
+      generate_passwords:
+        title: "Luo salasanoja"
+        custom: "Täytä tällä"
+        random: "Täytä satunnaisilla salasanoilla"
+        uppercase: "Sisällytä isoja kirjaimet (A-Z)"
+        lowercase: "Sisällytä pieniä kirjaimia (a-z)"
+        numbers: "Sisällytä numeroita (0-9)"
+        punct: "Sisällytä välimerkkejä (.,;:@£$+?#%&=\"/\\{}[]())"
+        length: "Pituus"
+
+      fill:
+        title_column: "Täytä sarake"
+        title_selection: "Täytä valitut solut"
+        help_column: "Täytä koko sarake tällä arvolla"
+        help_selection: "Täytä valitut solut tällä arvolla"
+
+    problems:
+      title: "Tuotavassa datassa havaittiin seuraavat ongelmat. Ne on korjattava ennenkuin tuontioperaatio voidaan aloittaa:"
+
+    table:
+      delete_row: "Poista tämä rivi"
+
+    pdf:
+      page: "sivu"
+      end: "Loppu"
 
   # New mass import/update tool
   import_tool:
