@@ -700,6 +700,7 @@ en:
       inout: "Sends data to Puavo and receives data from Puavo"
       password: "Passwords are synchronised from Puavo to this system"
       login: "Login to this system with a Puavo account"
+      email: "Automatic email addresses"
       other: "Other integration"
     index:
       actions: Actions

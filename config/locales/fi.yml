@@ -703,6 +703,7 @@ fi:
       inout: "Lähettää dataa Puavoon, vastaanottaa dataa Puavosta"
       password: "Salasanat synkronoidaan Puavosta tähän järjestelmään"
       login: "Kirjautuminen tähän järjestelmään Puavon tunnuksilla"
+      email: "Automaattiset sähköpostiosoitteet"
       other: "Muu integraatio"
     index:
       actions: Toiminnot
