@@ -76,5 +76,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
         automatic_emails: "Automatic email address generation is enabled in this school, so the email address column must be removed.",
         common_password: "%{count} row(s) with a common, poor-quality password",
         no_role_mass_change: "The roles of existing users cannot be mass changed, so the Role column must be removed.",
+        no_group_column: "No group column (new users are usually added to a teaching group when their accounts are created)",
+        no_password_column: "No password column (here it's easy to set passwords for new users)",
     },
 });

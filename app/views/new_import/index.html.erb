@@ -285,8 +285,14 @@
   </fieldset>
 </template>
 
-<template id="template_problems">
-  <div class="problems have-problems"><p><%= t('new_import.problems.title') %></p>
+<template id="template_errors">
+  <div class="problems errors"><p><%= t('new_import.problems.errors_title') %></p>
+    <ul></ul>
+  </div>
+</template>
+
+<template id="template_warnings">
+  <div class="problems warnings"><p><%= t('new_import.problems.warnings_title') %></p>
     <ul></ul>
   </div>
 </template>

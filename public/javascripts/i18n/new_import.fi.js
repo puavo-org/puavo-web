@@ -76,5 +76,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
         automatic_emails: "Automaattinen sähköpostiosoitteiden muodostus on päällä tässä koulussa, joten sähköpostisarake on poistettava",
         common_password: "%{count} rivi(ä) joilla esiintyy huonolaatuinen yleisesti käytetty salasana",
         no_role_mass_change: "Olemassaolevien käyttäjien rooleja ei voi massavaihtaa, joten Rooli-sarake on poistettava",
+        no_group_column: "Ryhmäsarake puuttuu (uudet käyttäjät yleensä lisätään johonkin opetusryhmään tuonnin aikana)",
+        no_password_column: "Salasanasarake puuttuu (uusille käyttäjille on helppo asettaa tässä salasanat)",
     },
 });

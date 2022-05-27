@@ -985,7 +985,8 @@ en:
         help_selection: "Fill the selected cells with this value"
 
     problems:
-      title: "The following problems were found in the table data. They must be fixed before the import process can be started:"
+      errors_title: "The following errors were found in the table data. They must be fixed before the import process can be started:"
+      warnings_title: "The following warnings were found in the table data. They won't prevent you from importing the data, but they're something you should take a look at and ensure they won't cause problems later."
 
     table:
       delete_row: "Delete this row"

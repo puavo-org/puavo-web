@@ -139,6 +139,9 @@ let importRows = [];
 // See detectProblems() for details.
 let importProblems = [];
 
+// Like above, but warnings. These won't prevent the import process.
+let importWarnings = [];
+
 // Everything in the import tool happens inside this container element
 let container = null;
 
@@ -670,6 +673,7 @@ function detectProblems()
     const tableRows = container.querySelectorAll("table#preview tbody tr");
 
     importProblems = [];
+    importWarnings = [];
 
     // ----------------------------------------------------------------------------------------------
     // Make sure required columns are present and there are no duplicates
@@ -709,6 +713,12 @@ function detectProblems()
         for (const r of REQUIRED_COLUMNS_NEW)
             if (!(r in counts))
                 importProblems.push(`${_tr("problems.required_column_missing", { title: COLUMN_TITLES[r] })}`);
+
+        if (findColumn("group") === -1)
+            importWarnings.push(_tr("problems.no_group_column"));
+
+        if (findColumn("password") === -1)
+            importWarnings.push(_tr("problems.no_password_column"));
     }
 
     // ----------------------------------------------------------------------------------------------
@@ -929,10 +939,20 @@ function detectProblems()
     output.innerHTML = "";
 
     if (importProblems.length > 0) {
-        const tmpl = getTemplate("problems");
+        const tmpl = getTemplate("errors");
         const list = tmpl.querySelector("ul");
 
         for (const p of importProblems)
+            list.appendChild(create("li", { text: p }));
+
+        output.appendChild(tmpl);
+    }
+
+    if (importWarnings.length > 0) {
+        const tmpl = getTemplate("warnings");
+        const list = tmpl.querySelector("ul");
+
+        for (const p of importWarnings)
             list.appendChild(create("li", { text: p }));
 
         output.appendChild(tmpl);

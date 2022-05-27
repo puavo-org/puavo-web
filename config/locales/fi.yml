@@ -988,7 +988,8 @@ fi:
         help_selection: "Täytä valitut solut tällä arvolla"
 
     problems:
-      title: "Tuotavassa datassa havaittiin seuraavat ongelmat. Ne on korjattava ennenkuin tuontioperaatio voidaan aloittaa:"
+      errors_title: "Tuotavassa datassa havaittiin seuraavat virheet. Ne on korjattava ennenkuin tuontioperaatio voidaan aloittaa:"
+      warnings_title: "Tuotavassa datassa havaittiin seuraavat puutteet. Ne eivät estä tuontioperaatiota, mutta sinun kannattaa vilkaista niitä ja varmistaa etteivät ne aiheuta ongelmia myöhemmin:"
 
     table:
       delete_row: "Poista tämä rivi"

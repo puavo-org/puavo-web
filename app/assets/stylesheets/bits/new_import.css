@@ -37,6 +37,8 @@
 
   --problems-border: #f00;
   --problems-background: #fbb;
+  --warnings-border: #ff0;
+  --warnings-background: #ffb;
 }
 
 .stickyTop {
@@ -183,7 +185,15 @@ div#controls .buttons button {
   /*overflow-x: auto;*/
 }
 
+div#problems {
+  display: flex;
+  flex-direction: rows;
+  gap: 10px;
+}
+
 div.problems {
+  display: block;
+  width: 100%;
   border-width: 1px;
   border-style: solid;
   padding: 10px;
@@ -200,9 +210,14 @@ div.problems p {
   padding: 0;
 }
 
-div.have-problems {
+div.errors {
   border-color: var(--problems-border);
   background: var(--problems-background);
+}
+
+div.warnings {
+  border-color: var(--warnings-border);
+  background: var(--warnings-background);
 }
 
 .importResults {
