@@ -246,7 +246,7 @@ function loadDefaultSettings()
             separator: 0,   // 0=comma, 1=semicolon, 2=tab
         },
         import: {
-            method: 0,      // 0=full sync, 1=import new users only, 2=update existing users only
+            method: 1,      // 0=full sync, 1=import new users only, 2=update existing users only
             overwrite: true,
             username: {
                 umlauts: 0,

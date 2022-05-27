@@ -897,8 +897,8 @@ fi:
 
     mode:
       title: "Päivitystapa"
-      create_new_update_existing: "Lisää uudet käyttäjät ja päivitä olemassaolevat (oletus)"
-      create_new_skip_existing: "Lisää uudet käyttäjät, ohita olemassaolevat"
+      create_new_update_existing: "Lisää uudet käyttäjät ja päivitä olemassaolevat"
+      create_new_skip_existing: "Lisää uudet käyttäjät, ohita olemassaolevat (oletus)"
       skip_new_update_existing: "Ohita uudet käyttäjät, päivitä olemassaolevat"
 
     row_state: "Tila"

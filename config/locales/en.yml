@@ -894,8 +894,8 @@ en:
 
     mode:
       title: "Update method"
-      create_new_update_existing: "Add new users and update existing (default)"
-      create_new_skip_existing: "Add new users, skip existing"
+      create_new_update_existing: "Add new users and update existing"
+      create_new_skip_existing: "Add new users, skip existing (default)"
       skip_new_update_existing: "Skip new users, update existing"
 
     row_state: "State"
