@@ -26,10 +26,12 @@ const INFERRED_NAMES = {
     "first_name": "first",
     "firstname": "first",
     "first name": "first",
+    "vorname": "first",
     "last": "last",
     "last_name": "last",
     "lastname": "last",
     "last name": "last",
+    "name": "last",
     "uid": "uid",
     "user_name": "uid",
     "username": "uid",
@@ -37,12 +39,14 @@ const INFERRED_NAMES = {
     "type": "role",
     "phone": "phone",
     "telephone": "phone",
+    "telefon": "phone",
     "email": "email",
     "mail": "email",
     "eid": "eid",
     "external_id": "eid",
     "externalid": "eid",
     "password": "password",
+    "passwort": "password",
 };
 
 const VALID_ROLES = new Set(["student", "teacher", "staff", "parent", "visitor", "testuser"]);
