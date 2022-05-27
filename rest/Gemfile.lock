@@ -164,7 +164,7 @@ GEM
       nio4r (~> 2.0)
     r18n-core (5.0.1)
     racc (1.6.0)
-    rack (2.1.4)
+    rack (2.1.4.1)
     rack-protection (2.0.8.1)
       rack
     rack-rewrite (1.5.1)
@@ -290,7 +290,7 @@ DEPENDENCIES
   pry
   puma
   r18n-core
-  rack (= 2.1.4)
+  rack (= 2.1.4.1)
   rack-rewrite
   rails (= 5.2.8)
   redis
