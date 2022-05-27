@@ -125,6 +125,7 @@ en:
     printer_permissions: Printing permissions
     show_printer_permissions: List printing premissions...
     change_school: "Change school..."
+    new_import: "(New) Import"
 
   # Main application layout
   layouts:
