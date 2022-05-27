@@ -127,19 +127,56 @@ class NewImportController < ApplicationController
         )
 
         users << {
+          dn: u[0][0],
           uid: uid,
           first: u[0][1]['givenName'][0],
           last: u[0][1]['sn'][0],
+          tgroup: '',   # filled in later
           password: uids_with_passwords[uid],
         }
+      end
+
+      # Fill in the teaching groups
+      teaching_groups = []
+
+      Group.search_as_utf8(
+        filter: '(&(objectClass=puavoEduGroup)(puavoEduGroupType=teaching group))',
+        attributes: ['cn', 'displayName', 'member']
+      ).each do |dn, group|
+        teaching_groups << {
+          name: group['displayName'][0],
+          members: Array(group['member'] || []).to_set.freeze,
+        }
+      end
+
+      users.each do |user|
+        teaching_groups.each do |group|
+          if group[:members].include?(user[:dn])
+            user[:tgroup] = group[:name]
+            break
+          end
+        end
+      end
+
+      # Sort the users by their username. Assume it's even somewhat related to their real name.
+      users.sort! { |a, b| [a[:tgroup], a[:last], a[:first], a[:uid]] <=> [b[:tgroup], b[:last], b[:first], b[:uid]] }
+
+      # Figure out the total page count. Each teaching group gets its own page (or pages).
+      # I determined empirically that 18 users per page is more or less the maximum.
+      # If you put more, the final user can get split across two pages.
+      users_per_page = 18
+      num_pages = 0
+      current_page = 0
+
+      grouped_users = users.chunk { |u| u[:tgroup] }
+
+      grouped_users.each do |group_name, group_users|
+        num_pages += group_users.each_slice(users_per_page).count
       end
 
       now = Time.now
       header_timestamp = now.strftime('%Y-%m-%d %H:%M:%S')
       filename_timestamp = now.strftime('%Y%m%d_%H%M%S')
-
-      # Sort the users by their username. Assume it's even somewhat related to their real name.
-      users.sort! { |a, b| [a[:last], a[:first], a[:uid]] <=> [b[:last], b[:first], b[:uid]] }
 
       pdf = Prawn::Document.new(skip_page_creation: true, page_size: 'A4')
       Prawn::Fonts::AFM.hide_m17n_warning = true
@@ -152,10 +189,6 @@ class NewImportController < ApplicationController
         }
       }
 
-      # Pagination
-      users_per_page = 18
-      num_pages = (users.count.to_f / users_per_page).ceil
-
       if users.count == 0
         pdf.start_new_page()
         pdf.font('unicodefont')
@@ -163,21 +196,33 @@ class NewImportController < ApplicationController
         pdf.draw_text("(No users)",
                       at: pdf.bounds.top_left)
       else
-        users.each_slice(users_per_page).each_with_index do |block, page_num|
-          pdf.start_new_page()
-          pdf.font('unicodefont')
-          pdf.font_size(12)
-          pdf.draw_text("#{current_organisation.name}, #{@school.displayName} " +
-                        "(#{t('new_import.pdf.page')} #{page_num + 1}/#{num_pages}, #{header_timestamp})",
-                        at: pdf.bounds.top_left)
-          pdf.text("\n\n")
-
-          block.each do |u|
+        grouped_users.each do |group_name, group_users|
+          group_users.each_slice(users_per_page).each_with_index do |block, _|
+            pdf.start_new_page()
             pdf.font('unicodefont')
-            pdf.text("#{u[:last]}, #{u[:first]} (#{u[:uid]})")
-            pdf.font('Courier')
-            pdf.text(u[:password])
-            pdf.text("\n")
+            pdf.font_size(12)
+            pdf.draw_text("#{current_organisation.name}, #{@school.displayName} " +
+                          "(#{t('new_import.pdf.page')} #{current_page + 1}/#{num_pages}, #{header_timestamp})",
+                          at: pdf.bounds.top_left)
+            pdf.text("\n\n")
+
+            current_page += 1
+
+            block.each do |u|
+              pdf.font('unicodefont')
+
+              title = "#{u[:last]}, #{u[:first]} (#{u[:uid]})"
+
+              unless u[:tgroup].empty?
+                title += ', ' + u[:tgroup]
+              end
+
+              pdf.text(title)
+
+              pdf.font('Courier')
+              pdf.text(u[:password])
+              pdf.text("\n")
+            end
           end
         end
       end
