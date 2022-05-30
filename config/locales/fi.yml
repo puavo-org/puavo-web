@@ -1110,6 +1110,7 @@ fi:
       title: Laitteet
       select_device_label: Valitse
       devices: laitetta
+      pending_reset: "Nollauspyyntö tehty"
 
       filters:
         uses_stretch: "Käyttää Stretch-kuvaa"

@@ -682,8 +682,16 @@ const USER_TRANSFORM_FUNCTIONS = {
     },
 
     hn: function(entry) {
+        let extra = "";
+
+<% unless @is_servers %>
+        console.log(entry);
+        if (entry.reset_from)
+            extra = ` <i class="icon-attention iconError" title="<%= t('devices.index.pending_reset') %>"></i>`;
+<% end %>
+
         return [
-            `<a href="${entry.link}">${escapeHTML(entry.hn)}</a>`,
+            `<a href="${entry.link}">${escapeHTML(entry.hn)}</a>${extra}`,
             entry.hn
         ];
     },

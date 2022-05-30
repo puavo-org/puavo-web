@@ -1107,6 +1107,7 @@ en:
       title: List of devices
       select_device_label: Select
       devices: devices
+      pending_reset: "A reset has been requested"
 
       filters:
         uses_stretch: "Uses a Stretch -based image"
