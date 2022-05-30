@@ -1,6 +1,15 @@
-<% reset = JSON.parse(reset_json) rescue nil %>
-<% if reset && reset['pin'] then %>
-  <p class="message_alert">
-    <%= t('devices.reset.pending', pin: reset['pin']) %>
-  </p>
-<% end %>
+    <!-- shared/_reset starts -->
+    <div class="deviceReset">
+    <header><%= t('devices.reset.title') %></header>
+    <ul>
+      <li><%= t('devices.reset.at') %>: <%= @reset['request-time'] %></li>
+      <li><%= t('devices.reset.from') %>: <%= @reset['from'] %></li>
+      <li><%= t('devices.reset.pin') %>: <code><%= @reset['pin'] %></code></li>
+    </ul>
+
+    <ul>
+      <li><%= t('devices.reset.mode') %>: <code><%= @reset['mode'] %></code></li>
+      <li><%= t('devices.reset.operation') %>: <code><%= @reset['operation'] %></code></li>
+    </ul>
+    </div>
+    <!-- shared/_reset ends -->

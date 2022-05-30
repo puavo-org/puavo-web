@@ -1,10 +1,5 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices'), @device.cn %>
 
-<% if @device.has_pending_reset %>
-  <%= render :partial => 'shared/reset',
-             :locals  => { :reset_json => @device.puavoDeviceReset } %>
-<% end %>
-
 <%= render :partial => 'shared/main_information', :locals => { :device => @device} %>
 
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @device} %>

@@ -1199,7 +1199,12 @@ fi:
     cups:
       cups_settings: CUPS-asetukset
     reset:
-      pending: Tälle laitteelle on tehty nollauspyyntö, käytä PIN-koodia %{pin} uudelleenkäynnistyksen jälkeen.
+      title: "Tälle laitteelle on tehty nollauspyyntö"
+      at: "Nollauspyyntö tehty"
+      from: "Nollauspyynnön tekijä"
+      pin: "Varmistuskoodi (PIN)"
+      mode: "Tila"
+      operation: "Operaatio"
     show:
       change_school: Vaihda koulua...
     select_school:

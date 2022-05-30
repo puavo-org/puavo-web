@@ -30,6 +30,11 @@
     <p class="infoValue"><%= h device.puavoDeviceStatus %></p>
     <% end %>
     <% end %>
+
+    <% if @reset %>
+    <%= render partial: 'shared/reset' %>
+    <% end %>
   </div>
 </div>
+
 <!-- shared/_main_information ends -->

@@ -1196,7 +1196,12 @@ en:
     cups:
       cups_settings: CUPS settings
     reset:
-      pending: This device has a pending reset request, use PIN-code %{pin} after a reboot.
+      title: "This device has been requested to be reset"
+      at: "Request made at"
+      from: "Request made by"
+      pin: "Verification code (PIN)"
+      mode: "Mode"
+      operation: "Operation"
     show:
       change_school: Change school...
     select_school:

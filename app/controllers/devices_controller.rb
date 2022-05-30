@@ -577,6 +577,25 @@ class DevicesController < ApplicationController
 
     @releases = get_releases
 
+    @reset = nil
+
+    if @device.puavoDeviceReset
+      @reset = JSON.parse(@device.puavoDeviceReset) rescue nil
+
+      unless @reset.kind_of?(Hash) && @reset['request-time'] && !@reset['request-fulfilled']
+        @reset = nil
+      else
+        @reset['request-time'] = DateTime.parse(@reset['request-time']).strftime('%Y-%m-%d %H:%M:%S')
+
+        if @reset['request-fulfilled']
+          @reset['request-fulfilled'] = DateTime.parse(@reset['request-time']).strftime('%Y-%m-%d %H:%M:%S')
+        end
+      end
+    end
+
+    # operation: fast-reset, reset
+    # mode: ask_pin
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @device }
