@@ -139,6 +139,50 @@ class DevicesController < ApplicationController
     end
   end
 
+  # Mass operation: set/clear the reset mode
+  def mass_op_device_reset
+    begin
+      device_id = params[:device][:id]
+      reset = params[:device][:reset]
+    rescue
+      puts "mass_op_device_reset(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_device_reset(): missing params')
+    end
+
+    ok = false
+
+    begin
+      device = Device.find(device_id)
+      changed = false   # save changes only if something actually does change
+
+      if reset && !device.puavoDeviceReset
+        # set
+        device.set_reset_mode(current_user)
+        changed = true
+      elsif !reset && device.puavoDeviceReset
+        # clear
+        device.puavoDeviceReset = nil
+        changed = true
+      end
+
+      if changed
+        device.save!
+      end
+
+      # don't raise errors when nothing happens
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
   # Mass operation: set arbitrary field value
   def mass_op_device_set_field
     begin

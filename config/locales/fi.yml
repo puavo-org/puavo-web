@@ -1192,6 +1192,12 @@ fi:
         purchase_info:
           title: "Hankintatiedot..."
           validity_warning: "Ruksaa jokainen kenttä jonka arvoa haluat muuttaa tämän operaation aikana. Asetettuja arvoja ei tarkisteta millään tavalla! Jos kentän sisältö on vihreellinen, tietokanta hylkää arvon!"
+        reset:
+          title: "Aseta/poista nollaustila"
+          action: "Toiminto:"
+          reset: "Aseta nollaustilaan (jos ei ole jo)"
+          clear: "Poista nollaustilasta (jos on)"
+          not_a_laptop: "Vain kannettavat voi asettaa nollaustilaan"
 
     new:
       new_device: Uusi laite (%{device_type})

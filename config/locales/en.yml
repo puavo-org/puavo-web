@@ -1189,6 +1189,12 @@ en:
         purchase_info:
           title: "Purchase information..."
           validity_warning: "Check every field you want to change during this operation. Their values are not validated in any way! If a field contents is invalid, the database will reject it!"
+        reset:
+          title: "Set/clear reset mode"
+          action: "Action:"
+          reset: "Set to reset mode (if not already in it)"
+          clear: "Clear the reset mode (if set)"
+          not_a_laptop: "Only laptops can be set in reset mode"
 
     new:
       new_device: New device

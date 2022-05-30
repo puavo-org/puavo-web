@@ -1521,6 +1521,70 @@ class MassDeviceDeletion extends MassOperation {
     }
 };
 
+<% unless @is_servers %>
+class MassDeviceReset extends MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+        this.reset = true;
+    }
+
+    buildInterface()
+    {
+        this.container.innerHTML =
+`<form>
+<table class="settingsChild">
+<tr>
+    <th><%= t('devices.index.mass_operations.reset.action') %></th>
+    <td>
+        <input type="radio" name="reset_action_type" id="reset_set" checked>
+        <label for="reset_set"><%= t('devices.index.mass_operations.reset.reset') %></label><br>
+        <input type="radio" name="reset_action_type" id="reset_clear">
+        <label for="reset_clear"><%= t('devices.index.mass_operations.reset.clear') %></label>
+    </td>
+</tr>
+</table>
+</form>`;
+
+        this.container.querySelector("#reset_set").addEventListener("click", () => { this.reset = true; });
+        this.container.querySelector("#reset_clear").addEventListener("click", () => { this.reset = false; });
+    }
+
+    start()
+    {
+        this.container.querySelector("#reset_set").disabled = true;
+        this.container.querySelector("#reset_clear").disabled = true;
+    }
+
+    finish()
+    {
+        this.container.querySelector("#reset_set").disabled = false;
+        this.container.querySelector("#reset_clear").disabled = false;
+    }
+
+    processItem(item)
+    {
+        if (item.type[INDEX_FILTERABLE] !== "laptop") {
+            // Only laptops can be mass reset
+            return itemProcessedStatus(false, "<%= t('devices.index.mass_operations.reset.not_a_laptop') %>");
+        }
+
+        //console.log(`${item.id[INDEX_FILTERABLE]}: ${item.reset_from[INDEX_EXISTS]}, ${this.reset}`);
+
+        // All "reset" members will be omitted if the device is not in reset mode
+        if (item.reset_from[INDEX_EXISTS] === this.reset) {
+            console.log(`Device ${item.id[INDEX_FILTERABLE]} is already in the desired reset state, skipping`);
+            return itemProcessedStatus(true);
+        }
+
+        return doPOST(
+            `/devices/${item.school_id}/mass_op_device_reset`,
+            { id: item.id[1], reset: this.reset }
+        );
+    }
+};
+<% end %>
+
 const MASS_OPERATIONS = [
     {
         id: "set_field",
@@ -1555,6 +1619,15 @@ const MASS_OPERATIONS = [
         title: "<%= t('devices.index.mass_operations.delete.title') %>",
         cls: MassDeviceDeletion
     },
+
+<% unless @is_servers %>
+    {
+        id: "reset",
+        title: "<%= t('devices.index.mass_operations.reset.title') %>",
+        flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: MassDeviceReset
+    },
+<% end %>
 ];
 
 <% end %>
