@@ -301,6 +301,10 @@ en:
       autopower_mode: "Auto power off mode"
       autopower_on: "Daytime start"
       autopower_off: "Daytime end"
+      reset_from: "Reset mode requested by"
+      reset_operation: "Reset operation"
+      reset_pin: "Reset PIN"
+      reset_time: "Reset mode requested at"
 
     servers:
       available_images: "Available images"

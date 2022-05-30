@@ -353,6 +353,28 @@ const COLUMN_DEFINITIONS = {
         flags: ColumnFlag.USER_TRANSFORM | ColumnFlag.DESCENDING_DEFAULT | ColumnFlag.F_STORAGE,
     },
 
+<% unless @is_servers %>
+    reset_from: {
+        key: "reset_from",
+        type: ColumnType.STRING,
+    },
+
+    reset_operation: {
+        key: "reset_operation",
+        type: ColumnType.STRING,
+    },
+
+    reset_pin: {
+        key: "reset_pin",
+        type: ColumnType.NUMERIC,
+    },
+
+    reset_time: {
+        key: "reset_time",
+        type: ColumnType.UNIXTIME,
+    },
+<% end %>
+
     serial: {
         key: "serial",
         type: ColumnType.STRING,
@@ -463,6 +485,12 @@ const COLUMN_TITLES = {
     purchase_url: "<%= t('columns.devices.purchase_url') %>",
     purchase_warranty: "<%= t('columns.devices.purchase_warranty') %>",
     ram: "<%= t('columns.devices.hwinfo_ram_size') %>",
+<% unless @is_servers %>
+    reset_from: "<%= t('columns.devices.reset_from') %>",
+    reset_operation: "<%= t('columns.devices.reset_operation') %>",
+    reset_pin: "<%= t('columns.devices.reset_pin') %>",
+    reset_time: "<%= t('columns.devices.reset_time') %>",
+<% end %>
     serial: "<%= t('columns.devices.serial') %>",
     tags: "<%= t('columns.devices.tags') %>",
     type: "<%= t('columns.devices.type') %>",
@@ -555,6 +583,12 @@ const COLUMN_ORDER = [
     "autopower_mode",
     "autopower_on",
     "autopower_off",
+<% unless @is_servers %>
+    "reset_from",
+    "reset_time",
+    "reset_pin",
+    "reset_operation",
+<% end %>
 ];
 
 function doStorage(value)

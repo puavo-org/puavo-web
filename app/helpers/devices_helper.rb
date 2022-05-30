@@ -89,6 +89,7 @@ module DevicesHelper
       'puavoDeviceAutoPowerOffMode',
       'puavoDeviceOnHour',
       'puavoDeviceOffHour',
+      'puavoDeviceReset',
       'createTimestamp',    # LDAP operational attribute
       'modifyTimestamp'     # LDAP operational attribute
     ].freeze
@@ -307,6 +308,23 @@ module DevicesHelper
 
     if dev.include?('puavoPersonalDevice')
       out[:personal_device] = dev['puavoPersonalDevice'][0] == 'TRUE'
+    end
+
+    if dev.include?('puavoDeviceReset')
+      reset = JSON.parse(dev['puavoDeviceReset'][0]) rescue {}
+
+      if reset['request-time'] && !reset['request-fulfilled']
+        out[:reset_from] = reset['from']
+
+        begin
+          out[:reset_time] = DateTime.parse(reset.fetch('request-time', '')).to_i
+        rescue
+          out[:reset_time] = 0
+        end
+
+        out[:reset_pin] = reset['pin'].to_i
+        out[:reset_operation] = reset['mode']
+      end
     end
 
     # Parse the hardware information

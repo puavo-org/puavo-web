@@ -301,6 +301,10 @@ fi:
       autopower_mode: "Automaattisammutuksen tila"
       autopower_on: "Päivä alkaa"
       autopower_off: "Päivä loppuu"
+      reset_from: "Nollauspyynnön tekijä"
+      reset_operation: "Nollausoperaatio"
+      reset_pin: "Nollaus-PIN"
+      reset_time: "Nollauspyyntö tehty"
 
     servers:
       available_images: "Tarjolla olevat kuvatiedostot"
