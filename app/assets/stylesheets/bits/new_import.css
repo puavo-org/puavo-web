@@ -371,7 +371,7 @@ div#legend ul li div.success { background: var(--state-success); }
 }
 
 /* Indicate empty values with colored stripes. Pure CSS only, no background images! */
-.empty {
+.importResults .empty {
   background-size: var(--import-stripe-size) var(--import-stripe-size);
 
   background-image: linear-gradient(135deg,
@@ -382,7 +382,7 @@ div#legend ul li div.success { background: var(--state-success); }
   );
 }
 
-.empty.error {
+.importResults .empty.error {
   background-size: var(--import-stripe-size) var(--import-stripe-size);
 
   background-image: linear-gradient(135deg,
@@ -393,7 +393,7 @@ div#legend ul li div.success { background: var(--state-success); }
   );
 }
 
-.empty.selectedCell {
+.importResults .empty.selectedCell {
   background-size: var(--import-stripe-size) var(--import-stripe-size);
 
   background-image: linear-gradient(135deg,
@@ -404,7 +404,7 @@ div#legend ul li div.success { background: var(--state-success); }
   );
 }
 
-.empty.selectedCell.error {
+.importResults .empty.selectedCell.error {
   background-size: var(--import-stripe-size) var(--import-stripe-size);
 
   background-image: linear-gradient(135deg,
