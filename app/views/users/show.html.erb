@@ -9,7 +9,6 @@
 
   <div class="basicInfoDetails">
     <h1><%= h @user.displayName %></h1>
-    <% hack_blank = false %>
 
     <% if @user_is_owner %>
     <p class="infoNotice"><%= t('.user_is_an_organisation_owner') %></p>
@@ -28,17 +27,14 @@
 
     <% if @user.puavoLocked == true %>
     <p class="infoWarn"><%= t('.user_is_locked') %></p>
-    <% hack_blank = true %>
     <% end %>
 
     <% unless @user.puavoRemovalRequestTime.nil? %>
     <p class="infoWarn"><%= t('.user_is_marked_for_deletion') %></p>
-    <% hack_blank = true %>
     <% end %>
 
     <% if @user.puavoDoNotDelete %>
     <p class="infoNotice"><%= t('.user_deletion_prevented') %></p>
-    <% hack_blank = true %>
     <% end %>
 
     <p class="infoTitle"><%= t('activeldap.attributes.user.uid') %></p>
