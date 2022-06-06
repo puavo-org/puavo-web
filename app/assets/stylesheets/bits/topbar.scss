@@ -106,7 +106,7 @@
     font-weight: bold;
   }
 
-  .haveDropdown, .noDropdown {
+  .haveTopDropdown, .noDropdown {
     /*
       Make the dropdown menus and titles big. This padding actually controls the
       overall height of the entire top menu bar.
@@ -114,11 +114,11 @@
     padding: 10px;
   }
 
-  .haveDropdown:after {
+  .haveTopDropdown:after {
     content: "▼";
   }
 
-  .dropdown {
+  .topDropdown {
     display: none;
     position: absolute;
     padding: 3px;
@@ -131,13 +131,13 @@
     margin: 10px 0 0 -11px;   /* position the dropdown in relation to the parent */
   }
 
-  .haveDropdown:hover {
+  .haveTopDropdown:hover {
     background: $topbarNavLinkHoverBack;
     color: $topbarNavLinkHoverFore;
     cursor: default;
   }
 
-  .haveDropdown:hover .dropdown {
+  .haveTopDropdown:hover .topDropdown {
     /* Open the dropdown menu */
     display: block;
   }

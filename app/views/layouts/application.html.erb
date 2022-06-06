@@ -28,8 +28,8 @@ I18n.locale = "<%= I18n.locale %>";
         <% unless current_user.organisation_owner? %>
         <li class="asFlex noDropdown"><span class="menuTitle"><%= current_organisation.name %></span></li>
         <% else %>
-        <li class="asFlex haveDropdown"><span class="menuTitle"><%= current_organisation.name %></span>
-          <ul class="dropdown">
+        <li class="asFlex haveTopDropdown"><span class="menuTitle"><%= current_organisation.name %></span>
+          <ul class="topDropdown">
             <li><%= link_to t('.about'), organisation_path %></li>
             <li class="org-separator"></li>
             <% if Puavo::CONFIG %>
@@ -56,8 +56,8 @@ I18n.locale = "<%= I18n.locale %>";
         </li>
         <% end %>
 
-        <li class="asFlex haveDropdown"><span class="menuTitle"><%= t('.schools') %></span>
-          <ul class="dropdown separators schools">
+        <li class="asFlex haveTopDropdown"><span class="menuTitle"><%= t('.schools') %></span>
+          <ul class="topDropdown separators schools">
             <% if current_user.organisation_owner? %>
             <li><a href="/users"><%= t('.index') %></a></li>
             <% end %>
@@ -99,8 +99,8 @@ I18n.locale = "<%= I18n.locale %>";
         <%= topbar_language_selector %>
         <% end %>
 
-        <li class="asFlex haveDropdown"><span class="menuTitle" id="loggedInName"><%= h current_user.displayName %></span>
-          <ul class="dropdown dropRight">
+        <li class="asFlex haveTopDropdown"><span class="menuTitle" id="loggedInName"><%= h current_user.displayName %></span>
+          <ul class="topDropdown dropRight">
             <li><%= link_to t('.your_account'), user_path(current_user.primary_school.id, current_user) %></li>
             <li>
               <%= link_to logout_path, method: :delete, class: 'logoutButton' do %>
