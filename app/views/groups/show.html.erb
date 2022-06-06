@@ -6,13 +6,7 @@
   </div>
 </div>
 
-<% if school_has_integration?(@organisation_name, @school.id.to_i, 'primus') %>
-<% if @group.puavoEduGroupType == "course group" %>
-<div class="genericWarning"><%= t('groups.edit.course_group_warning') %></div>
-<% elsif @group.puavoEduGroupType == 'year class' %>
-<div class="genericWarning"><%= t('groups.edit.year_class_warning') %></div>
-<% end %>
-<% end %>
+<%= render :partial => 'integration_warnings', :locals => { :school => @school, :group => @group } %>
 
 <% if !current_user.organisation_owner? && @num_hidden > 0 %>
 <p class="genericWarning"><%= t('.hidden_members_hidden_tools_warning') %></p>

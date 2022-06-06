@@ -1,0 +1,9 @@
+<!-- groups/_integration_warnings starts -->
+<% if school_has_integration?(@organisation_name, @school.id.to_i, 'primus') %>
+<% if @group.puavoEduGroupType == "course group" %>
+<div class="genericWarning"><%= t('groups.edit.course_group_warning') %></div>
+<% elsif @group.puavoEduGroupType == 'year class' %>
+<div class="genericWarning"><%= t('groups.edit.year_class_warning') %></div>
+<% end %>
+<% end %>
+<!-- groups/_integration_warnings ends -->
