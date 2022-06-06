@@ -1360,9 +1360,19 @@ class Users < PuavoSinatra
 
       # Handle supplementary Eltern data if the domain matches
       if CONFIG['eltern_users'] && Array(CONFIG['eltern_users']['domains']).include?(Organisation.current.domain)
-        # FIXME: This is extremely alpha-level code. I normally do not commit code like this,
-        # but I don't have a choice at the moment.
-        eltern_get_all_users('<no request id>')&.each { |user| out << user }
+        eltern_get_all_users&.each do |user|
+          next if !user['first_name'] || user['first_name'].empty?
+
+          if user.include?('children')
+            user['children'].collect! { |c| c['puavo_id'].to_i }
+          end
+
+          user['role'] = ['parent']
+          user['school_ids'] = []
+          user['primary_school_id'] = nil
+
+          out << user
+        end
       end
 
       out = v4_ensure_is_array(out, 'role', 'email', 'phone', 'admin_school_id', 'school_ids')
