@@ -285,10 +285,10 @@ en:
       purchase_url: "Purchase URL"
       purchase_support: "Support contract"
       location: "Location"
-      lspci: "lspci values"
-      lsusb: "lsusb"
       loc_lat: "Latitude"
       loc_lon: "Longitude"
+      lspci: "lspci values"
+      lsusb: "lsusb"
       status: "Status"
       printer_uri: "Printer URI"
       default_printer: "Default printer"
@@ -463,6 +463,9 @@ en:
       group_emptied_failed: "Not all members could be removed"
       no_other_available_schools: "This group cannot be moved to another school, because there are no other suitable schools"
       school_changed: "Group moved to school \"%{new_school}\""
+    rename_groups:
+      abbreviation_already_in_use: "This abbreviation is already in use!"
+      complete: "Renamed %{count} group(s)."
     user:
       save_failed: User cannot be saved!
       save_failed_organsation_owner_removal: "Save failed: user could not be removed from the organisation owners before the admin role was removed. Try removing the ownership manually."
@@ -488,6 +491,7 @@ en:
       primary_school_changed: "Primary school set to \"%{name}\""
       primary_school_change_failed: "Could not change the primary school!"
       cannot_remove_primary_school: "You can't remove a user from their primary school!"
+      invalid_primary_school: "The user is not a member of school \"%{name}\", so it cannot be made their primary school."
       primary_school_added_and_changed: "User moved to the new primary school \"%{name}\"."
       user_moved_to_school: "User moved to school \"%{name}\""
       school_moving_failed: "School change failed"
@@ -500,7 +504,6 @@ en:
           part3: "You can retry again later. If you want more information, please contact Opinsys support and give them this code: %{code}."
 
     password_set_failed: Failed to change password! Try again!
-
     session:
       login_successful: Login successful!
       failed: Login failed!
