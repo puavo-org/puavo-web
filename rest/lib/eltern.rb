@@ -9,7 +9,7 @@ module ElternHelpers
     do_eltern_request(request_id,
                       CONFIG['eltern_sso']['server'],
                       CONFIG['eltern_sso']['auth'],
-                      :post, { 'username' => username, 'password' => password })
+                      :post, { 'email' => username, 'password' => password })
   end
 
   def eltern_get_all_users(request_id)
@@ -30,6 +30,7 @@ module ElternHelpers
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true if uri.instance_of?(URI::HTTPS)
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
       # Don't get stuck for too long if puavo-eltern isn't responding
       http.open_timeout = 5
@@ -47,7 +48,8 @@ module ElternHelpers
           return nil
       end
 
-      request.basic_auth(auth['username'], auth['password'])
+      request.add_field('Host', 'eltern.harz.schule')
+      request.add_field('Authorization', CONFIG['eltern_sso']['auth']['token'])
 
       # This isn't a form submission
       request.add_field('Content-Type', 'application/json')
