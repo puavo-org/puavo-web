@@ -615,20 +615,20 @@ class GroupsController < ApplicationController
     @group = get_group(params[:id])
     return if @group.nil?
 
-    output = CSV.generate(:headers => true, :force_quotes => true) do |csv|
-      csv << ['puavoid', 'username', 'firstname', 'lastname']
+    output = CSV.generate(headers: true) do |csv|
+      csv << ['puavoid', 'first_name', 'last_name', 'uid', 'school_name']
 
       @group.members.each do |m|
-        csv << [m.id, m.uid, m.givenName, m.surname]
+        csv << [m.id, m.givenName, m.surname, m.uid, m.primary_school.displayName]
       end
     end
 
     filename = "#{current_organisation.organisation_key}_#{@group.cn}_members_#{Time.now.strftime("%Y%m%d_%H%M%S")}.csv"
 
     send_data(output,
-              :filename => filename,
-              :type => 'text/csv',
-              :disposition => 'attachment' )
+              filename: filename,
+              type: 'text/csv',
+              disposition: 'attachment' )
   end
 
   def add_user
