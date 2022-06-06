@@ -1,6 +1,12 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.groups'), @group.displayName %>
 
-<%= render :partial => 'integration_warnings', :locals => { :school => @school, :group => @group } %>
+<% if school_has_integration?(@organisation_name, @school.id.to_i, 'primus') %>
+<% if @group.puavoEduGroupType == "course group" %>
+<div class="genericWarning"><%= t('groups.edit.course_group_warning') %></div>
+<% elsif @group.puavoEduGroupType == 'year class' %>
+<div class="genericWarning"><%= t('groups.edit.year_class_warning') %></div>
+<% end %>
+<% end %>
 
 <% if !current_user.organisation_owner? && @num_hidden > 0 %>
 <p class="genericWarning"><%= t('.hidden_members_hidden_tools_warning') %></p>
