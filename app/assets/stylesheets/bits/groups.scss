@@ -15,11 +15,34 @@
   background: $externallyMaintainedGroupBack;
 }
 
-/* Group members who ar emarked for deletion */
-.groupUserMarkedForDeletion:nth-child(even) {
-  background-color: $markedForDeletionEvenRowBack !important;
+input#groupMembersSearch {
+  max-width: 30em;
 }
 
-.groupUserMarkedForDeletion:nth-child(odd) {
-  background-color: $markedForDeletionOddRowBack !important;
+#groupMembers {
+  p {
+    margin: 0 0 5px 0;
+  }
+
+  #membersTable {
+    max-height: 1000px;
+    overflow-y: auto;
+  }
+
+  th {
+    background: $listHeadingBack;
+    color: $listHeadingFore;
+  }
+
+  tr {
+    border-bottom: 1px solid $listRowBorder;
+    background: none;
+  }
+
+  tr:last-of-type {
+    border-bottom: none;
+  }
+
+  .markedForDeletion:nth-child(even) { background-color: $markedForDeletionEvenRowBack !important; }
+  .markedForDeletion:nth-child(odd) { background-color: $markedForDeletionOddRowBack !important; }
 }

@@ -1,5 +1,11 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.groups'), @group.displayName %>
 
+<div class="basicInfo">
+  <div class="basicInfoDetails">
+    <h1><%= h @group.displayName %></h1>
+  </div>
+</div>
+
 <% if school_has_integration?(@organisation_name, @school.id.to_i, 'primus') %>
 <% if @group.puavoEduGroupType == "course group" %>
 <div class="genericWarning"><%= t('groups.edit.course_group_warning') %></div>
@@ -12,26 +18,11 @@
 <p class="genericWarning"><%= t('.hidden_members_hidden_tools_warning') %></p>
 <% end %>
 
-<%= start_box t('.title'), extraClass="noFloat" %>
+<%= start_box 'Ryhmän tiedot', extraClass="noFloat fullWidth" %>
   <table>
-    <tr>
-      <th><%= t('activeldap.attributes.group.displayName') %></th>
-      <td><%= h @group.displayName %></td>
-    </tr>
-
-  <tr>
-    <th><%= t('activeldap.attributes.dn') %></th>
-    <td><%= h @group.dn %></td>
-  </tr>
-
     <tr>
       <th><%= t('activeldap.attributes.group.cn') %></th>
       <td><%= h @group.cn %></td>
-    </tr>
-
-    <tr>
-      <th><%= t('activeldap.attributes.group.gidNumber') %></th>
-      <td><%= h @group.gidNumber %></td>
     </tr>
 
     <tr>
@@ -51,6 +42,16 @@
     </tr>
 
     <tr>
+      <th style="width: 15em;"><%= t('activeldap.attributes.dn') %></th>
+      <td><%= h @group.dn %></td>
+    </tr>
+
+    <tr>
+      <th><%= t('activeldap.attributes.group.gidNumber') %></th>
+      <td><%= h @group.gidNumber %></td>
+    </tr>
+
+    <tr>
       <th><%= t('ldap_create_time') %></th>
       <td><%= @group['createTimestamp'] %></td>
     </tr>
@@ -62,25 +63,78 @@
   </table>
 <%= end_box %>
 
-<div id="members">
-<%= render :partial => "members" %>
-</div>
+<%= start_box t('.members'), extraClass="noFloat fullWidth" %>
+  <div class="flex flex-rows flex-gap-5px">
+    <div class="flex flex-cols flex-gap-5px flex-vcenter">
+      <div>
+        <p class="margin-0"><%= t('.description') %></p>
+        <input type="search" id="groupMembersSearch" class="searchBox groupMembersSearch" size="50" placeholder="<%= t('.placeholder_for_search') %>">
+      </div>
 
-<%= start_box t('.add_user_title') %>
-  <table>
-    <tr>
-      <td><%= t('.description') %></td>
-    </tr>
-    <tr>
-      <td>
-        <%= text_field_tag("groupMembersSearch",
-                           nil,
-                           class: "groupMembersSearch",
-                           size: 50,
-                           placeholder: t('.placeholder_for_search')) %>
-      </td>
-    </tr>
-  </table>
+      <% if current_user.organisation_owner? %>
+      <div class="haveDropdown ownersOnly">
+        <span class="btn"><i class="icon-collapse"></i> <%= t('groups.members.actions') %></span>
+        <div class="dropdown">
+          <ul>
+            <ul>
+              <li>
+                <%= link_to get_members_as_csv_path(@school, @group), method: :get do %>
+                  <i class="icon-download"></i><%= t('link.get_members_as_csv') %>
+                <% end %>
+              </li>
+
+              <li>
+                <%= link_to create_username_list_from_group_path(@school, @group), data: { confirm: t('.group_username_list_confirm') }, method: :put do %>
+                  <i class="icon-list"></i><%= t('link.create_username_list_from_group') %>
+                <% end %>
+              </li>
+            </ul>
+
+            <ul>
+              <li>
+                <%= link_to mark_group_members_for_deletion_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+                  <i class="icon-flag"></i><%= t('link.mark_group_members_for_deletion') %>
+                <% end %>
+              </li>
+
+              <li>
+                <%= link_to unmark_group_members_deletion_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+                  <i class="icon-flag-empty"></i><%= t('link.unmark_group_members_deletion') %>
+                <% end %>
+              </li>
+            </ul>
+
+            <ul>
+              <li>
+                <%= link_to lock_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+                  <i class="icon-lock"></i><%= t('link.lock_all_group_members') %>
+                <% end %>
+              </li>
+
+              <li>
+                <%= link_to unlock_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+                  <i class="icon-lock-open"></i><%= t('link.unlock_all_group_members') %>
+                <% end %>
+              </li>
+            </ul>
+
+            <ul>
+              <li>
+                <%= link_to remove_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+                  <i class="icon-minus-squared"></i><%= t('link.remove_all_members_from_group') %>
+                <% end %>
+              </li>
+            </ul>
+          </ul>
+        </div>    <!-- dropdown UL div -->
+      </div>    <!-- haveDropdown div -->
+      <% end %>
+    </div>    <!-- upper div -->
+
+    <div id="groupMembers">
+    <%= render :partial => "members" %>
+    </div>
+  </div>
 <%= end_box %>
 
 <% content_for :tools do %>
@@ -100,90 +154,22 @@
             <i class="icon-plus"></i><%= t('link.new_group') %>
           <% end %>
         </li>
-      </ul>
 
-      <% if @group.members.count > 0 && @num_hidden == 0 %>
-
-      <ul>
-        <% if current_user.organisation_owner? %>
-        <li class="ownersOnly">
-          <%= link_to get_members_as_csv_path(@school, @group), method: :get do %>
-            <i class="icon-download"></i><%= t('link.get_members_as_csv') %>
-          <% end %>
-        </li>
-        <% end %>
-
-        <% if @num_hidden == 0 %>
-        <li>
-          <%= link_to create_username_list_from_group_path(@school, @group), data: { confirm: t('.group_username_list_confirm') }, method: :put do %>
-            <i class="icon-list"></i><%= t('link.create_username_list_from_group') %>
-          <% end %>
-        </li>
-        <% end %>
-      </ul>
-
-      <% if @num_hidden == 0 %>
-      <ul>
-        <li>
-          <%= link_to remove_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
-            <i class="icon-minus-squared"></i><%= t('link.remove_all_members_from_group') %>
-          <% end %>
-        </li>
-      </ul>
-      <% end %>
-
-      <% if current_user.organisation_owner? %>
-
-      <ul>
-        <li class="ownersOnly">
-          <%= link_to mark_group_members_for_deletion_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
-            <i class="icon-flag"></i><%= t('link.mark_group_members_for_deletion') %>
-          <% end %>
-        </li>
-
-        <li class="ownersOnly">
-          <%= link_to unmark_group_members_deletion_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
-            <i class="icon-flag-empty"></i><%= t('link.unmark_group_members_deletion') %>
-          <% end %>
-        </li>
-      </ul>
-
-      <ul>
-        <li class="ownersOnly">
-          <%= link_to lock_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
-            <i class="icon-lock"></i><%= t('link.lock_all_group_members') %>
-          <% end %>
-        </li>
-
-        <li class="ownersOnly">
-          <%= link_to unlock_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
-            <i class="icon-lock-open"></i><%= t('link.unlock_all_group_members') %>
-          <% end %>
-        </li>
-      </ul>
-
-      <% end %>
-
-      <% end %>
-
-      <ul>
         <li>
           <%= link_to select_new_school_path(@school, @group) do %>
             <i class="icon-exchange"></i><%= t('link.change_school') %>
           <% end %>
         </li>
-      </ul>
 
-      <% if @num_hidden == 0 %>
-      <ul>
+        <% if @num_hidden == 0 %>
         <li>
           <%= link_to group_path(@school, @group), data: { confirm: t('general_confirm') }, method: :delete  do %>
             <i class="icon-trash"></i><%= t('link.delete_group') %>
           <% end %>
         </li>
+        <% end %>
       </ul>
-      <% end %>
-    </div> <!-- dropdown -->
+    </div>    <!-- dropdown -->
   </li>
 </ul>
 <% end %>
@@ -191,15 +177,15 @@
 <hr>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
     // Setup group members searching
-    $(document).ready(function() {
-        $('.groupMembersSearch').liveSearch({
-            id: "membersSearchResults",                   // unique ID for the results box
-            url: "<%= @group.id %>/user_search?words=",   // search URL
-            field: "quickSearch",                         // search term source
-            typeDelay: 400,
-            minLength: 2,
-            width: 'auto'
-        });
+    $(".groupMembersSearch").liveSearch({
+        id: "membersSearchResults",                   // unique ID for the results box
+        url: "<%= @group.id %>/user_search?words=",   // search URL
+        field: "groupMembersSearch",                  // search term source
+        typeDelay: 400,
+        minLength: 2,
+        width: "auto"
     });
+});
 </script>

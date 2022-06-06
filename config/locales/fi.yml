@@ -1066,10 +1066,10 @@ fi:
       externally_maintained: "Ryhmä on erillisen integraatioskriptin ylläpitämä. Älä muokkaa."
     show:
       title: Ryhmän tiedot
-      add_user_title: Lisää käyttäjiä ryhmään
-      description: Lisätäksesi uusia käyttäjiä ryhmään kirjoita käyttäjän nimi seuraavaan hakukenttään ja paina "Liitä ryhmään" -painikkeita.
-      placeholder_for_search: Kirjoita käyttäjän nimi tai osa siitä
-      hidden_members_hidden_tools_warning: "Joitain toimintoja on piilotettu, koska ryhmässä on jäseniä kouluista joihin sinulla ei ole pääsyoikeutta."
+      members: "Ryhmän jäsenet"
+      description: "Lisää käyttäjiä ryhmään:"
+      placeholder_for_search: "Käyttäjän nimi tai osa siitä"
+      hidden_members_hidden_tools_warning: "Ryhmä sisältää jäseniä kouluista joihin sinulla ei ole hallintaoikeutta. Et voi kohdistaa ryhmän jäseniin massatoimintoja."
       group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
     new:
       title: "Luo uusi ryhmä"
@@ -1078,9 +1078,11 @@ fi:
       course_group_warning: "Tämä ryhmä on ulkoisen Primus-synkronointiskriptin ylläpitämä. Ryhmään tekemäsi muutokset tullaan todennäköisesti kumoamaan. Älä koskaan vaihda tämän ryhmän ulkoista ID:tä!"
       year_class_warning: "Tämä ryhmä on ulkoisen Primus-synkronointiskriptin ylläpitämä. Jäsenlistaan tai ryhmän tietoihin tekemäsi muutokset tullaan kumoamaan. Älä koskaan muuta ryhmän lyhennettä!"
     members:
-      title: Nykyiset jäsenet
-      hidden_title: "piilotettua jäsentä muista kouluista"
-      remove: Poista ryhmästä
+      title: "Nykyiset jäsenet (%{count})"
+      hidden_from_you: "+%{count} piilotettua jäsentä muista kouluista joihin sinulla ei ole hallintaoikeutta"
+      empty_group: "Ryhmässä ei ole vielä jäseniä"
+      remove: "Poista ryhmästä"
+      actions: "Jäsentoiminnot"
     user_search:
       member: Jäsen
       add_to_group: Liitä ryhmään

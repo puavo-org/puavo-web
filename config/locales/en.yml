@@ -1066,8 +1066,7 @@ en:
       externally_maintained: "The group is maintained by an external integration script. Do not edit."
     show:
       title: Group information
-      add_user_title: Add users to this group
-      description: To add new users to this group, write a part of their name in the box below, then click the "Add" buttons on the search results.
+      description: "Add users to this group:"
       placeholder_for_search: Name of the user
       hidden_members_hidden_tools_warning: "Some tools have been hidden because this group has members from other schools you don't have permission to access."
       group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
@@ -1078,12 +1077,14 @@ en:
       course_group_warning: "This group is maintained by an external Primus synchronisation script. Your modifications will most likely be lost. Never change the group's external ID!"
       year_class_warning: "This group is maintained by an external Primus synchronisation script. Changes you make to the group or its membership list will be undone. Never change the group's abbreviation!"
     members:
-      title: Current members
-      hidden_title: "hidden member(s) from other schools"
-      remove: Remove
+      title: "Current members (%{count})"
+      hidden_from_you: "+%{count} hidden members from other schools that you don't have access to"
+      empty_group: "This group has no members yet"
+      remove: "Remove from group"
+      actions: "Member actions"
     user_search:
       member: Member
-      add_to_group: Add
+      add_to_group: Add to group
     change_school:
       title: "Move group \"%{group}\" to another school"
       warning: "This tool only moves the group to another school. The group members are not moved. If you want to mass move the members to another school, copy the members' usernames into the school mass editor in user tables."
