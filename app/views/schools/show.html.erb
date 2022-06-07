@@ -216,7 +216,7 @@
   <% if current_user.organisation_owner? %>
   <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
-    <div class="dropdown">
+    <div class="dropdown dropRight">
       <ul>
         <li>
           <%= link_to new_rename_groups_path(@school) do %>
