@@ -19,6 +19,7 @@ const TableFlag = {
     ENABLE_PAGINATION: 0x08,
     DISABLE_EXPORT: 0x10,           // disables CSV export (enabled by default)
     DISABLE_VIEW_SAVING: 0x20,      // disables JSON/URL view saving (enabled by default)
+    DISABLE_TOOLS: 0x40,            // completely hide the "Tools" tab
 };
 
 // Column data types. Affects filtering and sorting.
@@ -1474,7 +1475,8 @@ buildUI()
 
     controls.appendChild(tabBar);
 
-    this.__buildToolsTab(tabBar, controls);
+    if (!(this.settings.flags & TableFlag.DISABLE_TOOLS))
+        this.__buildToolsTab(tabBar, controls);
 
     if (this.settings.flags & TableFlag.ENABLE_COLUMN_EDITING)
         this.__buildColumnsTab(tabBar, controls);
@@ -1582,18 +1584,21 @@ updateUI()
 // prevent the user from initiating multiple overlapping/interfering actions.
 enableUI(isEnabled)
 {
-    this.container.querySelector(`div.stTab#tab-tools button#btnReload`).disabled = !isEnabled;
     //this.container.querySelector(`div.stTab#tab-tools button#btnExitTempMode`).disabled = !isEnabled || !this.temporaryMode;
 
-    if (!(this.settings.flags & TableFlag.DISABLE_EXPORT)) {
-        this.container.querySelector(`div.stTab#tab-tools button#btnCSV`).disabled = !isEnabled;
-        this.container.querySelector(`div.stTab#tab-tools button#btnJSON`).disabled = !isEnabled;
-    }
+    if (!(this.settings.flags & TableFlag.DISABLE_TOOLS)) {
+        this.container.querySelector(`div.stTab#tab-tools button#btnReload`).disabled = !isEnabled;
 
-    if (!(this.settings.flags & TableFlag.DISABLE_VIEW_SAVING)) {
-        this.container.querySelector(`div.stTab#tab-tools textarea#tools-saved-json`).disabled = !isEnabled;
-        this.container.querySelector(`div.stTab#tab-tools button#btnLoadJSON`).disabled = !isEnabled;
-        //this.container.querySelector(`div.stTab#tab-tools button#btnCopyURL`).disabled = !isEnabled;
+        if (!(this.settings.flags & TableFlag.DISABLE_EXPORT)) {
+            this.container.querySelector(`div.stTab#tab-tools button#btnCSV`).disabled = !isEnabled;
+            this.container.querySelector(`div.stTab#tab-tools button#btnJSON`).disabled = !isEnabled;
+        }
+
+        if (!(this.settings.flags & TableFlag.DISABLE_VIEW_SAVING)) {
+            this.container.querySelector(`div.stTab#tab-tools textarea#tools-saved-json`).disabled = !isEnabled;
+            this.container.querySelector(`div.stTab#tab-tools button#btnLoadJSON`).disabled = !isEnabled;
+            //this.container.querySelector(`div.stTab#tab-tools button#btnCopyURL`).disabled = !isEnabled;
+        }
     }
 
     if (this.settings.flags & TableFlag.ENABLE_COLUMN_EDITING)
