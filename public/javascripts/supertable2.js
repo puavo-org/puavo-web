@@ -1205,15 +1205,12 @@ __buildColumnsTab(tabBar, frag)
 <div class="flex flex-rows flex-no-wrap colList">`;
 
     // Sort the columns alphabetically by their localized names
-    const keys = Object.keys(this.settings.columns.definitions);
+    const columnNames =
+        Object.keys(this.settings.columns.definitions)
+        .map((key) => [key, this.settings.columns.titles[key]])
+        .sort((a, b) => { return a[1].localeCompare(b[1]) });
+
     const current = new Set(this.settings.columns.current);
-
-    let columnNames = [];
-
-    for (const key of keys)
-        columnNames.push([key, this.settings.columns.titles[key]]);
-
-    columnNames.sort((a, b) => { return a[1].localeCompare(b[1]) });
 
     for (const c of columnNames) {
         const def = this.settings.columns.definitions[c[0]];
