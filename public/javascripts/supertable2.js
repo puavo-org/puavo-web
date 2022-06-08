@@ -585,6 +585,19 @@ constructor(container, settings)
         return;
     }
 
+    // Ensure we have at least one data source
+    if ((settings.staticData === undefined || settings.staticData === null) &&
+        (settings.dynamicData === undefined || settings.dynamicData === null)) {
+
+        console.error("staticData and dynamicData are both indefined/NULL");
+
+        this.container.innerHTML =
+            `<p class="error">No data source has been defined (missing both <code>staticData</code> and <code>dynamicData</code>). ` +
+            `Please contact Opinsys support.</p>`;
+
+        return;
+    }
+
     // The default columns parameter MUST be correct at all times
     for (const c of settings.defaultColumns) {
         if (!(c in settings.columnDefinitions)) {
@@ -701,7 +714,7 @@ constructor(container, settings)
         flags: settings.flags || 0,
         locale: settings.locale || "en-US",
         csvPrefix: settings.csvPrefix || "unknown",
-        source: settings.source,                        // the URL to get the table data from
+        dynamicData: settings.dynamicData,      // URL where to get data dynamically
         userTransforms: typeof(settings.userTransforms) == "object" ? settings.userTransforms : {},
         actionsCallback: typeof(settings.actions) == "function" ? settings.actions : null,
         openCallback: typeof(settings.openCallback) == "function" ? settings.openCallback : null,
@@ -801,7 +814,24 @@ constructor(container, settings)
 
     this.saveSettings();
     this.enableUI(false);
-    this.fetchDataAndUpdate();
+
+    if (settings.staticData) {
+        // Static data
+        this.beginTableUpdate();
+
+        this.data.transformed = transformRawData(
+            this.settings.columns.definitions,
+            this.settings.userTransforms,
+            settings.staticData
+        );
+
+        this.updating = false;
+        this.updateTable();
+        this.enableUI(true);
+    } else {
+        // Dynamic data
+        this.fetchDataAndUpdate();
+    }
 }
 
 // Loads stored settings from LocalStore, if they exist
@@ -1135,13 +1165,15 @@ __buildToolsTab(tabBar, frag)
 
     let html = "";
 
-    html =
-`
-<div class="flex flex-rows flex-gap-10px">
-<div class="flex flex-cols flex-gap-10px">
+    html = `<div class="flex flex-rows flex-gap-10px">`;
+
+    if (this.settings.dynamicData) {
+        // We have dynamic data source, so permit live reloads
+        html +=
+`<div class="flex flex-cols flex-gap-10px">
 <button id="btnReload" disabled>${_tr("tabs.tools.reload")}</button>
-</div>
-`;
+</div>`;
+    }
 
     if (!(this.settings.flags & TableFlag.DISABLE_EXPORT)) {
         html +=
@@ -1173,7 +1205,11 @@ __buildToolsTab(tabBar, frag)
 
     container.innerHTML = html;
 
-    container.querySelector(`button#btnReload`).addEventListener("click", () => this.fetchDataAndUpdate());
+    if (this.settings.dynamicData) {
+        // Static data cannot be reloaded on-the-fly
+        container.querySelector(`button#btnReload`).addEventListener("click", () => this.fetchDataAndUpdate());
+    }
+
     //container.querySelector(`button#btnExitTempMode`).addEventListener("click", () => this.exitTemporaryMode());
 
     if (!(this.settings.flags & TableFlag.DISABLE_EXPORT)) {
@@ -1584,7 +1620,8 @@ enableUI(isEnabled)
     //this.container.querySelector(`div.stTab#tab-tools button#btnExitTempMode`).disabled = !isEnabled || !this.temporaryMode;
 
     if (!(this.settings.flags & TableFlag.DISABLE_TOOLS)) {
-        this.container.querySelector(`div.stTab#tab-tools button#btnReload`).disabled = !isEnabled;
+        if (this.settings.dynamicData)
+            this.container.querySelector(`div.stTab#tab-tools button#btnReload`).disabled = !isEnabled;
 
         if (!(this.settings.flags & TableFlag.DISABLE_EXPORT)) {
             this.container.querySelector(`div.stTab#tab-tools button#btnCSV`).disabled = !isEnabled;
@@ -3012,20 +3049,31 @@ clearRowSelections()
     this.data.failedItems.clear();
 }
 
-// Retrieve data from the server and process it
-fetchDataAndUpdate()
+beginTableUpdate()
 {
     this.clearRowSelections();
     this.setStatus(`<div>${_tr('status.updating')}</div><img src="/images/spinner.gif" class="margin-left-5px">`);
     this.updating = true;
     this.enableUI(false);
     this.enableTable(false);
+}
+
+// Loads the statically provided table data
+loadStaticData(data)
+{
+    this.beginTableUpdate();
+}
+
+// Retrieve data from the server and process it
+fetchDataAndUpdate()
+{
+    this.beginTableUpdate();
 
     const startTime = performance.now();
 
     let networkError = null;
 
-    fetch(this.settings.source)
+    fetch(this.settings.dynamicData)
         .then(response => {
             if (response.status != 200) {
                 networkError = response.status;
