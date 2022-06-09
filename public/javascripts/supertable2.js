@@ -472,12 +472,16 @@ class MassOperation {
 // Sends a single AJAX POST message
 function doPOST(url, itemData)
 {
+    // The (table) development environment does not have CSRF tokens, but
+    // development and production Puavo environments have. Support both.
+    const csrf = document.querySelector("meta[name='csrf-token']");
+
     return fetch(url, {
         method: "POST",
         mode: "cors",
         headers: {
             "Content-Type": "application/json; charset=utf-8",
-            "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+            "X-CSRF-Token": "sfhsdfkhdsfdsf", //csrf ? csrf.content : "",
         },
         body: JSON.stringify(itemData)
     }).then(function(response) {
