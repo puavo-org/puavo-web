@@ -294,13 +294,13 @@ function _transformValue(userTransforms, raw, key, coldef, defVal)
 // convert timestamps into user's local time, turn booleans into checkmarks, and so on.
 // The data we generate here is purely presentational, intended for humans; it's never
 // fed back into the database.
-function transformRawData(columnDefinitions, userTransforms, rawData)
+function transformRawData(columnDefinitions, userTransforms, rawData, preFilterFunction=null)
 {
     const columnKeys = Object.keys(columnDefinitions);
 
     let out = [];
 
-    for (const raw of rawData) {
+    for (const raw of (preFilterFunction ? preFilterFunction(rawData) : rawData)) {
         // Puavo ID and school ID are both *always* required. No exceptions.
         if (!("id" in raw) || !("school_id" in raw))
             continue;
@@ -722,6 +722,7 @@ constructor(container, settings)
         userTransforms: typeof(settings.userTransforms) == "object" ? settings.userTransforms : {},
         actionsCallback: typeof(settings.actions) == "function" ? settings.actions : null,
         openCallback: typeof(settings.openCallback) == "function" ? settings.openCallback : null,
+        preFilterFunction: typeof(settings.preFilterFunction) == "function" ? settings.preFilterFunction : null,
 
         temporaryMode: false,
         currentTab: "tools",
@@ -826,7 +827,8 @@ constructor(container, settings)
         this.data.transformed = transformRawData(
             this.settings.columns.definitions,
             this.settings.userTransforms,
-            settings.staticData
+            settings.staticData,
+            this.settings.preFilterFunction
         );
 
         this.updating = false;
@@ -3146,7 +3148,8 @@ parseServerResponse(textData, startTime)
     this.data.transformed = transformRawData(
         this.settings.columns.definitions,
         this.settings.userTransforms,
-        raw
+        raw,
+        this.settings.preFilterFunction
     );
 
     const t2 = performance.now();
