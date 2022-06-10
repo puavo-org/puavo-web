@@ -87,3 +87,12 @@
                              'user_new_password_confirmation',
                              ['login_uid']) %>
 <% end %>
+
+<% if @password_changed_ok %>
+  <script>
+    if (window.webkit && window.webkit.messageHandlers
+                      && window.webkit.messageHandlers.form_response) {
+      window.webkit.messageHandlers.form_response.postMessage({ 'status': 'ok' });
+    }
+  </script>
+<% end %>

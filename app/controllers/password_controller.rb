@@ -121,6 +121,7 @@ class PasswordController < ApplicationController
       flash.now[:notice] = t('flash.password.successful')
 
       unless params[:user][:uid]
+        @password_changed_ok = true
         format.html { render :action => "own" }
       else
         format.html { render :action => "edit" }
