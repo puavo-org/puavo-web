@@ -78,6 +78,11 @@ Rails.application.routes.draw do
       post 'mass_op_group_mark_members_for_deletion' => 'groups#mass_op_group_mark_members_for_deletion'
       post 'mass_op_group_lock_members' => 'groups#mass_op_group_lock_members'
 
+      get 'groups/members_mass_edit' => 'groups#members_mass_edit', :as => :group_members_mass_edit
+      get 'groups/get_all_groups_members' => 'groups#get_all_groups_members'
+      get 'groups/update_groups_list' => 'groups#update_groups_list'
+      post 'groups/change_members' => 'groups#mass_op_change_members'
+
       get 'groups/find_groupless_users' => 'groups#find_groupless_users', :as => :find_groupless_users
       post 'groups/find_groupless_users' => 'groups#process_groupless_users', :as => :process_groupless_users
 

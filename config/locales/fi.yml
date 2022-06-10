@@ -80,6 +80,7 @@ fi:
     printer_permissions: "Tulostusoikeudet"
     all_users_marked_for_deletion: "Organisaation poistetuksi merkityt käyttäjät"
     extended_search: "Laajennettu haku"
+    group_members_mass_edit: "Jäsenten massamuokkaus"
 
   # Hyperlinks and buttons
   link:
@@ -126,6 +127,7 @@ fi:
     show_printer_permissions: Listaa tulostinoikeudet...
     change_school: "Vaihda koulua..."
     new_import: "(Uusi) tuo"
+    group_members_mass_edit: "Jäsenten massamuokkaus"
 
   # Main application layout
   layouts:
@@ -238,6 +240,7 @@ fi:
       abbreviation: "Lyhenne"
       eid: "Ulkoinen ID"
       members_count: "Jäseniä"
+      member_groups: "Ryhmät (nimi (lyhenne, tyyppi) [koulu])"
 
     devices:
       hostname: "Verkkonimi"
@@ -1064,6 +1067,19 @@ fi:
       actions: Toiminnot
       groups: ryhmää
       externally_maintained: "Ryhmä on erillisen integraatioskriptin ylläpitämä. Älä muokkaa."
+      mass_operations:
+        add:
+          title: "Lisää ryhmiin..."
+          help: "Lisää valitut käyttäjät näihin ryhmiin jos he eivät ole jo niissä:"
+        remove:
+          title: "Poista ryhmistä..."
+          help: "Poista valitut käyttäjät näistä ryhmistä jos he ovat niissä:"
+
+        search_placeholder: "Etsi nimellä"
+        reload: "Päivitä ryhmälista"
+        select_something: "Valitse edes yksi ryhmä listasta."
+        network_error: "Verkkoyhteysongelma. Katso yksityiskohdat konsolista."
+        invalid_response: "Palvelimen vastausta ei pystytty tulkitsemaan. Katso yksityiskohdat konsolista."
     show:
       title: Ryhmän tiedot
       members: "Ryhmän jäsenet"

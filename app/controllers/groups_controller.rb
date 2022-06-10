@@ -195,6 +195,46 @@ class GroupsController < ApplicationController
     end
   end
 
+  # Mass operation: modify memberships (see below)
+  def mass_op_change_members
+    begin
+      user_id = params[:group][:id]
+      mode = params[:group][:mode]
+      groups = params[:group][:groups]
+    rescue
+      puts "mass_op_change_members(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_change_members(): missing params')
+    end
+
+    ok = false
+
+    begin
+      u = User.find(user_id)
+
+      groups.each do |id|
+        g = Group.find(id)
+
+        # add_user and remove_user handle duplicates and non-existent members gracefully
+        if mode == 'add'
+          g.add_user(u)
+        else
+          g.remove_user(u)
+        end
+      end
+
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
   # ------------------------------------------------------------------------------------------------
   # ------------------------------------------------------------------------------------------------
 
@@ -483,6 +523,125 @@ class GroupsController < ApplicationController
       format.html { render :plain => "OK" }
       format.js
     end
+  end
+
+  # GET /:school_id/groups/mass_members_edit
+  def members_mass_edit
+    return if redirected_nonowner_user?
+
+    @initial_groups = get_plain_groups_list(@school.dn)
+
+    respond_to do |format|
+      format.html { render action: 'members_mass_edit' }
+    end
+  end
+
+  # Retrieve groups for the target groups list (this isn't dynamic, the groups list is updated
+  # ONLY when the page is loaded)
+  def get_plain_groups_list(school_dn)
+    Group.search_as_utf8(
+      filter: "(&(objectClass=puavoEduGroup)(puavoSchool=#{Net::LDAP::Filter.escape(school_dn.to_s)}))",
+      attributes: ['puavoId', 'cn', 'displayName', 'puavoSchool', 'puavoEduGroupType', 'member']
+    ).collect do |dn, raw|
+      {
+        id: raw['puavoId'][0].to_i,
+        name: raw['displayName'][0],
+        sortName: raw['displayName'][0].downcase,
+        abbr: raw['cn'][0],
+        type: raw.fetch('puavoEduGroupType', [nil])[0],
+      }
+    end.sort do |a, b|
+      a[:sortName] <=> b[:sortName]
+    end.each do |g|
+      # The "sortName" is used to avoid repeated downcase calls during sorting
+      g.delete(:sortName)
+    end
+  end
+
+  # AJAX call
+  def update_groups_list
+    render json: get_plain_groups_list(@school.dn)
+  end
+
+  # AJAX call
+  def get_all_groups_members
+    dn_to_uid = /\d+/
+
+    schools = {}
+    groups = {}
+    users = {}
+
+    # Grab schools (groups can be in other schools than the current)
+    School.search_as_utf8(
+      attributes: ['puavoId', 'displayName']
+    ).map do |dn, raw|
+      schools[dn] = {
+        id: raw['puavoId'][0].to_i,
+        name: raw['displayName'][0],
+      }
+    end
+
+    # Get users
+    User.search_as_utf8(
+      filter: "(&(objectClass=puavoEduPerson)(puavoSchool=#{@school.dn.to_s}))",
+      attributes: ['puavoId', 'givenName', 'sn', 'uid', 'puavoEduPersonAffiliation',
+                   'puavoLocked', 'puavoRemovalRequestTime']
+    ).map do |dn, raw|
+      uid = raw['puavoId'][0].to_i
+
+      users[uid] = {
+        id: uid,
+        first: raw['givenName'][0],
+        last: raw['sn'][0],
+        uid: raw['uid'][0],
+        role: Array(raw['puavoEduPersonAffiliation'] || []),
+        groups: [],
+      }
+
+      # Supplementary information, included only in the username column
+      flags = []
+
+      flags << 'm' if raw.include?('puavoRemovalRequestTime')
+      flags << 'l' if raw.include?('puavoLocked') && raw['puavoLocked'][0] == 'TRUE'
+
+      users[uid][:flags] = flags.join unless flags.empty?
+    end
+
+    # Get groups and their members
+    Group.search_as_utf8(
+      filter: "(objectClass=puavoEduGroup)",
+      attributes: ['puavoId', 'cn', 'displayName', 'puavoSchool', 'puavoEduGroupType', 'member']
+    ).each do |dn, raw|
+      gid = raw['puavoId'][0].to_i
+
+      groups[gid] = {
+        name: raw['displayName'][0],
+        abbr: raw['cn'][0],
+        type: raw.fetch('puavoEduGroupType', [nil])[0],
+        school: raw['puavoSchool'][0],
+      }
+
+      # Fill in the "groups" member for each user
+      Array(raw['member'] || []).each do |dn|
+        begin
+          # extract the PuavoID from the DN
+          uid = dn_to_uid.match(dn)[0].to_i
+        rescue
+          next
+        end
+
+        users[uid][:groups] << gid if users.include?(uid)
+      end
+    end
+
+    # Wrap it all in one compact structure, that we'll "unpack" with JavaScript
+    data = {
+      schools: schools,
+      groups: groups,
+      users: users,
+    }
+
+    render json: data
   end
 
   def find_groupless_users

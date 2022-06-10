@@ -105,6 +105,15 @@ class PuavoMenu < MetaMenu
     end
 
     child do
+      title { t('link.group_members_mass_edit') }
+      link { group_members_mass_edit_path(@school) }
+      active_on GroupsController
+      active_on_action 'members_mass_edit'
+      owners_only { true }
+      hide_when { !current_user.organisation_owner? }
+    end
+
+    child do
       title { t('link.find_groupless_users') }
       link { find_groupless_users_path(@school) }
       active_on GroupsController

@@ -80,6 +80,7 @@ en:
     printer_permissions: "Printing permissions"
     all_users_marked_for_deletion: "Users in the organisation who are marked for deletion"
     extended_search: "Extended Search"
+    group_members_mass_edit: "Members mass edit"
 
   # Hyperlinks and buttons
   link:
@@ -126,6 +127,7 @@ en:
     show_printer_permissions: List printing premissions...
     change_school: "Change school..."
     new_import: "(New) Import"
+    group_members_mass_edit: "Members mass edit"
 
   # Main application layout
   layouts:
@@ -238,6 +240,7 @@ en:
       abbreviation: "Abbreviation"
       eid: "External ID"
       members_count: "Members"
+      member_groups: "Groups (name (abbreviation, type) [school])"
 
     devices:
       hostname: "Hostname"
@@ -1064,6 +1067,19 @@ en:
       actions: Actions
       groups: groups
       externally_maintained: "The group is maintained by an external integration script. Do not edit."
+      mass_operations:
+        add:
+          title: "Add to groups..."
+          help: "Add the selected users to these groups if they aren't already in them:"
+        remove:
+          title: "Remove from groups..."
+          help: "Remove the selected users from these groups if they are in them:"
+
+        search_placeholder: "Search..."
+        reload: "Reload groups list"
+        select_something: "Please select at least one group."
+        network_error: "Network connection error. See the console for details."
+        invalid_response: "The server's response could not be interpreted. See the console for details."
     show:
       title: Group information
       description: "Add users to this group:"
