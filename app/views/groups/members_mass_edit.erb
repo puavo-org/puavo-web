@@ -29,14 +29,15 @@ const USER_ROLES = {
     unknown: "<%= t('unknown_role') %>",
 };
 
-const DEFAULT_COLUMNS = ["name", "role", "groups"];
-const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
+const DEFAULT_COLUMNS = ["name", "uid", "role", "groups"];
+const DEFAULT_SORTING = { column: "uid", dir: SortOrder.ASCENDING };
 
 const COLUMN_ORDER = [
     "id",
     "first",
     "last",
     "name",
+    "uid",
     "role",
     "groups",
 ];
@@ -65,6 +66,11 @@ const COLUMN_DEFINITIONS = {
         flags: ColumnFlag.USER_TRANSFORM,
     },
 
+    uid: {
+        key: "uid",
+        type: ColumnType.STRING,
+    },
+
     role: {
         key: "role",
         type: ColumnType.STRING,
@@ -84,7 +90,8 @@ const COLUMN_TITLES = {
     id: "<%= t('columns.puavoid') %>",
     first: "<%= t('columns.users.first_names') %>",
     last: "<%= t('columns.users.last_name') %>",
-    name: "<%= t('columns.users.full_name') %> (<%= t('columns.users.uid') %>)",
+    name: "<%= t('columns.users.full_name') %>",
+    uid: "<%= t('columns.users.uid') %>",
     role: "<%= t('columns.users.role') %>",
     groups: "<%= t('columns.groups.member_groups') %>",
 };
@@ -385,6 +392,11 @@ const MASS_OPERATIONS = [
     },
 ];
 
+const MASS_SELECTS = [
+    ["uid", "<%= t('columns.users.uid') %>"],
+    ["name", "<%= t('columns.users.full_name') %>"],
+];
+
 // "Unpack" the condensed user/group data into full rows
 function* synthesizeData(raw)
 {
@@ -393,7 +405,7 @@ function* synthesizeData(raw)
 
         // These fields don't exist in the data, generate them on-the-fly
         u2.school_id = <%= @school.id %>;
-        u2.name = `${u.first} ${u.last} (${u.uid})`;
+        u2.name = `${u.first} ${u.last}`;
 
         // Rewrite group information in-place. Group information is highly repetitive
         // and verbose, so it has been stored in a more compact form and we must
@@ -434,7 +446,7 @@ new SuperTable(
         columnTitles: COLUMN_TITLES,
         columnOrder: COLUMN_ORDER,
         userTransforms: USER_TRANSFORM_FUNCTIONS,
-        //massSelects: MASS_SELECTS,
+        massSelects: MASS_SELECTS,
         massOperations: MASS_OPERATIONS,
         defaultColumns: DEFAULT_COLUMNS,
         defaultSorting: DEFAULT_SORTING,
