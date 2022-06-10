@@ -1082,6 +1082,7 @@ en:
         invalid_response: "The server's response could not be interpreted. See the console for details."
     show:
       title: Group information
+      members: "Group members"
       description: "Add users to this group:"
       placeholder_for_search: Name of the user
       hidden_members_hidden_tools_warning: "Some tools have been hidden because this group has members from other schools you don't have permission to access."
