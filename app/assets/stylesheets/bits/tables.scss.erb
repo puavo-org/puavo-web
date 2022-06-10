@@ -320,9 +320,7 @@ SUPERTABLES
     font-style: italic;
 }
 
-.stTab .colList {
-    width: 30em;
-    height: 20em;
+.stTab .scrollList {
     border: 1px solid var(--st-common-border);
     overflow-x: hidden;
     overflow-y: scroll;
@@ -330,22 +328,23 @@ SUPERTABLES
     min-height: 5em;
 }
 
-.stTab .colList .column {
+.stTab .scrollList .item {
     display: flex;
     align-items: center;
     padding: 5px 10px;
     cursor: pointer;
 }
 
-.stTab .colList .column { color: var(--st-tab-container-fg); }
-.stTab .colList .columnName { font-style: italic; pointer-events: none; }
-.stTab .colList .column:hover { background: var(--st-columnlist-hover-bg); }
-.stTab .colList .disabled { color: var(--st-columnlist-disabled-fg); }
+.stTab .scrollList .item { color: var(--st-tab-container-fg); }
+.stTab .scrollList .item:hover { background: var(--st-scroll-list-hover-bg); }
+.stTab .scrollList .disabled { color: var(--st-scroll-list-disabled-fg); }
 
-.stTab .colList .column input {
+.stTab .scrollList .item input {
     pointer-events: none;       /* The checkbox is there just for the looks */
     margin-right: 10px;
 }
+
+.stTab .scrollList .columnName { font-style: italic; pointer-events: none; }
 
 /* Some commonly used subtables in the SuperTable controls */
 .stControls .commonTable {

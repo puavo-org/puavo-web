@@ -1244,7 +1244,7 @@ __buildColumnsTab(tabBar, frag)
 <input type="search" placeholder="${_tr('tabs.columns.search')}" spellcheck="false"></input>
 </div>
 <div class="flex flex-columns flex-gap-5px">
-<div class="flex flex-rows flex-no-wrap colList">`;
+<div class="flex flex-rows flex-no-wrap scrollList" style="width: 30em; height: 20em;">`;
 
     // Sort the columns alphabetically by their localized names
     const columnNames =
@@ -1256,7 +1256,7 @@ __buildColumnsTab(tabBar, frag)
 
     for (const c of columnNames) {
         const def = this.settings.columns.definitions[c[0]];
-        let cls = ["column", "disabled"];   // initially everything is disabled
+        let cls = ["item", "disabled"];     // initially everything is disabled
 
         if (current.has(c[0]))
             cls.push("selected");
@@ -1282,7 +1282,7 @@ __buildColumnsTab(tabBar, frag)
 
     container.innerHTML = html;
 
-    for (let i of container.querySelectorAll(`.colList .column`))
+    for (let i of container.querySelectorAll(`.scrollList .item`))
         i.addEventListener("click", (e) => this.toggleColumn(e.target));
 
     container.querySelector(`input[type="search"]`).addEventListener("input", (e) => this.filterColumnList(e));
@@ -2019,7 +2019,7 @@ copySettingsURL()
 
 getColumnList(selected)
 {
-    const path = "div#tab-columns div.colList > div";
+    const path = "div#tab-columns div.scrollList > div";
 
     return this.container.querySelectorAll(selected ? path + ".selected" : path);
 }
