@@ -481,7 +481,7 @@ function doPOST(url, itemData)
         mode: "cors",
         headers: {
             "Content-Type": "application/json; charset=utf-8",
-            "X-CSRF-Token": "sfhsdfkhdsfdsf", //csrf ? csrf.content : "",
+            "X-CSRF-Token": csrf ? csrf.content : "",
         },
         body: JSON.stringify(itemData)
     }).then(function(response) {
