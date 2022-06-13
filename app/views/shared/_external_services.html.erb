@@ -35,7 +35,7 @@
 
       <tr>
         <th><%= t("external_services.email") %></th>
-        <td><%= external_service.mail  %></td>
+        <td><%= external_service.mail %></td>
       </tr>
 
       <tr>
@@ -44,14 +44,20 @@
       </tr>
 
       <tr>
-        <th><%= t("external_services.active") %></th>
+        <th><label for="<%= external_service.dn.to_s %>"><%= t("external_services.active") %></label></th>
         <td>
           <%= check_box_tag("puavoActiveService[]",
                             external_service.dn,
                             is_checked?(external_service),
+                            :id => external_service.dn.to_s,
                             :disabled => is_disabled?(external_service))
           %>
         </td>
+      </tr>
+
+      <tr>
+        <th>DN</th>
+        <td><%= external_service.dn %></td>
       </tr>
     </table>
 
