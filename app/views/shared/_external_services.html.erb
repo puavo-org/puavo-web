@@ -59,6 +59,17 @@
         <th>DN</th>
         <td><%= external_service.dn %></td>
       </tr>
+
+      <tr>
+        <th><%= t('ldap_create_time') %></th>
+        <td>
+          <% if @extra.include?(external_service.dn.to_s) %>
+          <%= Time.at(@extra[external_service.dn.to_s][:created]).strftime('%Y-%m-%d %H:%M:%S') %> UTC
+          <% else %>
+          ?
+          <% end %>
+        </td>
+      </tr>
     </table>
 
     <% if is_disabled?(external_service) %>

@@ -8,6 +8,16 @@ class ExternalServicesBase < ApplicationController
       !s.puavoServiceTrusted
     end
 
+    @extra = {}
+
+    @external_services.each do |e|
+      raw = ExternalService.find(e.dn, :attributes => ['createTimestamp'])
+
+      @extra[e.dn.to_s] = {
+        created: raw.createTimestamp,
+      }
+    end
+
     @external_services.sort!{|a, b| a.cn.downcase <=> b.cn.downcase }
 
     @is_owner = is_owner?
