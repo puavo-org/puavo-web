@@ -280,15 +280,6 @@ class SSO < PuavoSinatra
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
   end
 
-  def username_prefill
-    [
-      # what user typed last
-      params["username"],
-      # organisation presetting
-      (@organisation ? "@#{ @organisation["domain"] }" : nil),
-    ].compact.first
-  end
-
   def topdomain
     CONFIG["topdomain"]
   end
