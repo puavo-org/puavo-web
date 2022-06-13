@@ -474,6 +474,8 @@ class PasswordController < ApplicationController
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
 
+    @reduced_ui = params.include?('hidetabs')
+
     unless params[:user][:uid]
       render :action => "own"
     else
