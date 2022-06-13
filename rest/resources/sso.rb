@@ -59,9 +59,8 @@ class SSO < PuavoSinatra
       rlog.info("[#{request_id}] verifying the SSO cookie")
 
       organisation = session['organisation']
-      sessions_in = ORGANISATIONS.fetch(organisation, {}).fetch('enable_sso_sessions_in', [])
 
-      if sessions_in.include?(@external_service.domain)
+      if are_sessions_enabled(organisation, @external_service.domain, request_id)
         # The session cookie is usable
         url, _ = @external_service.generate_login_url(session['user'], return_to)
 
@@ -116,9 +115,9 @@ class SSO < PuavoSinatra
     domain = @external_service.domain
     org_key = user.organisation.organisation_key
 
-    sessions_in = ORGANISATIONS.fetch(org_key, {}).fetch('enable_sso_sessions_in', [])
+    if !had_session && are_sessions_enabled(org_key, domain, request_id)
+      rlog.info("[#{request_id}] SSO sessions are enabled for domain \"#{domain}\" in organisation \"#{org_key}\"")
 
-    if sessions_in.include?(domain) && !had_session
       expires = Time.now.utc + PUAVO_SSO_SESSION_LENGTH
 
       response.set_cookie(PUAVO_SSO_SESSION_KEY,
@@ -370,6 +369,26 @@ class SSO < PuavoSinatra
   end
 
   private
+
+  def are_sessions_enabled(organisation_key, domain, request_id)
+    begin
+      ORGANISATIONS.fetch(organisation_key, {}).fetch('enable_sso_sessions_in', []).each do |test|
+        next if test.nil? || test.empty?
+
+        if test[0] == '^'
+          # A regexp domain
+          return true if Regexp.new(test).match?(domain)
+        else
+          # A plain text domain
+          return true if test == domain
+        end
+      end
+    rescue => e
+      rlog.error("[#{request_id}] domain matching failed: #{e}")
+    end
+
+    return false
+  end
 
   def generate_sso_session(request_id, user_hash, user)
     key = SecureRandom.hex(64)
