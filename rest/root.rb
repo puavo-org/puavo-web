@@ -181,7 +181,6 @@ class Root < PuavoSinatra
   use PuavoRest::UserLists
   use PuavoRest::SambaNextRid
   use PuavoRest::Groups
-  use PuavoRest::Authentication
   use PuavoRest::ExternalLogins
   use PuavoRest::BootserverDNS
   use PuavoRest::MySchoolUsers
