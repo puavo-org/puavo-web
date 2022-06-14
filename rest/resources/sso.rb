@@ -370,17 +370,18 @@ class SSO < PuavoSinatra
 
   private
 
-  def are_sessions_enabled(organisation_key, domain, request_id)
+  def are_sessions_enabled(organisation_key, domains, request_id)
     begin
       ORGANISATIONS.fetch(organisation_key, {}).fetch('enable_sso_sessions_in', []).each do |test|
         next if test.nil? || test.empty?
 
         if test[0] == '^'
           # A regexp domain
-          return true if Regexp.new(test).match?(domain)
+          re = Regexp.new(test).freeze
+          return true if domains.any? { |d| re.match?(d) }
         else
           # A plain text domain
-          return true if test == domain
+          return true if domains.include?(test)
         end
       end
     rescue => e
