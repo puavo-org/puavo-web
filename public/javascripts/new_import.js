@@ -431,8 +431,8 @@ function prepareRawImportedData(results)
         while (row.columns.length < maxColumns)
             row.columns.push("");
 
-    console.log(importHeaders);
-    console.log(importRows);
+//    console.log(importHeaders);
+//    console.log(importRows);
 }
 
 // Route messages from the worker thread to the function that updates the UI
