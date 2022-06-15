@@ -911,11 +911,11 @@ en:
     row_state: "State"
 
     legend:
-      idle: "Not processed"
-      processing: "Is being processed right now"
-      success: "Success"
-      partial_success: "Partial success"
-      failed: "Failed completely"
+      idle: "The row won't be processed"
+      processing: "The row is being processed right now"
+      success: "The row was a complete success"
+      partial_success: "The row was a partial success"
+      failed: "The row failed completely"
 
     column_title: "Column type"
     column_tools: "Column tools"

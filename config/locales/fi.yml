@@ -911,11 +911,11 @@ fi:
     row_state: "Tila"
 
     legend:
-      idle: "Ei käsitellä/käsitelty"
-      processing: "Käsitellään juuri nyt"
-      success: "Onnistui"
-      partial_success: "Onnistui osittain"
-      failed: "Epäonistui kokonaan"
+      idle: "Riviä ei käsitellä/käsitelty"
+      processing: "Riviä käsitellään juuri nyt"
+      success: "Rivi onnistui täysin"
+      partial_success: "Rivi onnistui osittain"
+      failed: "Rivi epäonistui kokonaan"
 
     column_title: "Sarakkeen tyyppi"
     column_tools: "Sarakkeen muokkaustyökalut"
