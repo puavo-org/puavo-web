@@ -1744,8 +1744,8 @@ fi:
   # (There are more password-related messages in the flash messages section)
   password:
     current_password_too_old: "Organisaation tietoturvakäytännöistä johtuen sinun täytyy vaihtaa nykyinen salasanasi, koska se on liian vanha."
-    attempts_are_logged_own: "Kaikki salasananvaihtoyritykset tallennataan lokiin."
-    attempts_are_logged_other: "Tämä lomake on tarkoitettu vain opettajien ja ylläpitäjien käytettäväksi. Kaikki salasananvaihdot ja -yritykset tallennataan lokiin. Lokiin tallentuvat käyttäjänimet, IP-osoite/-osoitteet sekä aikaleima."
+    attempts_are_logged_own: "Kaikki salasananvaihtoyritykset tallennetaan lokiin."
+    attempts_are_logged_other: "Tämä lomake on tarkoitettu vain opettajien ja ylläpitäjien käytettäväksi. Kaikki salasananvaihdot ja -yritykset tallennetaan lokiin. Lokiin tallentuvat käyttäjänimet, IP-osoite/-osoitteet sekä aikaleima."
     invalid: "Uusi salasana ei täsmännyt asetettuihin vaatimuksiin"
     edit:
       title: "Vaihda toisen käyttäjän salasana"
