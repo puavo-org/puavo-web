@@ -952,6 +952,7 @@ fi:
       parse: "Lue data"
       begin: "Aloita tuonti"
       begin_failed: "Tuo epäonnistuneet rivit uudelleen"
+      get_duplicates: "Lataa lista duplikaateista käyttäjätunnuksista"
       delete_all: "Tyhjennä taulukko"
       get_passwords: "Lataa asetetut salasanat PDF-muodossa"
       export: "Lataa taulukon sisältö CSV-tiedostona"

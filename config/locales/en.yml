@@ -952,6 +952,7 @@ en:
       parse: "Read data"
       begin: "Begin Import"
       begin_failed: "Re-import failed rows"
+      get_duplicates: "Download a list of duplicate usernames"
       delete_all: "Clear the table"
       get_passwords: "Download the passwords in a PDF file"
       export: "Download the table contents as a CSV file"

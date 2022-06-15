@@ -2539,6 +2539,40 @@ function beginImport(onlyFailed)
     });
 }
 
+function getDuplicates()
+{
+    const uidCol = findColumn("uid");
+
+    if (uidCol === -1) {
+        window.alert(_tr("problems.required_column_missing", { title: COLUMN_TITLES["uid"] }));
+        return;
+    }
+
+    // Find the rows that have duplicate usernames
+    let usernames = new Set(),
+        duplicateRows = [];
+
+    for (let row = 0; row < importRows.length; row++) {
+        const value = importRows[row].columns[uidCol];
+
+        if (value === null || value.trim().length == 0)
+            continue;
+
+        const u = value.trim();
+
+        if (usernames.has(u))
+            duplicateRows.push(row);
+        else usernames.add(u);
+    }
+
+    if (duplicateRows.length == 0) {
+        window.alert(_tr("alerts.no_duplicate_uids"));
+        return;
+    }
+
+    exportData(duplicateRows);
+}
+
 function getPasswords()
 {
     const uidCol = findColumn("uid"),
@@ -2649,18 +2683,15 @@ function getPasswords()
     });
 }
 
-function exportData()
+// Either exports the current table as a CSV, or, if 'duplicateRows' is not NULL, exports
+// the rows in it as a CSV.
+function exportData(duplicateRows=null)
 {
     // Use the same separator that was used during parsing
     const separator = { 0: ",", 1: ";", 2: "\t" }[SETTINGS.parser.separator];
 
     try {
-        let output = [];
-
-        // Header first
-        output.push(importHeaders.join(separator));
-
-        for (const row of importRows) {
+        const outputRow = (row) => {
             let out = [];
 
             for (let col = 0; col < importHeaders.length; col++) {
@@ -2669,7 +2700,20 @@ function exportData()
                 else out.push(row.columns[col]);
             }
 
-            output.push(out.join(separator));
+            return out;
+        };
+
+        let output = [];
+
+        // Header first
+        output.push(importHeaders.join(separator));
+
+        if (duplicateRows === null) {
+            for (const row of importRows)
+                output.push(outputRow(row).join(separator));
+        } else {
+            for (const rowNum of duplicateRows)
+                output.push(outputRow(importRows[rowNum]).join(separator));
         }
 
         output = output.join("\n");
@@ -2680,7 +2724,7 @@ function exportData()
         let a = window.document.createElement("a");
 
         a.href = window.URL.createObjectURL(b);
-        a.download = `cleaned.csv`;
+        a.download = duplicateRows ? `duplicates.csv` :  `cleaned.csv`;
 
         document.body.appendChild(a);
         a.click();
@@ -2780,9 +2824,11 @@ function initializeImporter(params)
         container.querySelector("button#retryFailed").
             addEventListener("click", () => beginImport(true));
 
+        container.querySelector("button#getDuplicates").addEventListener("click", getDuplicates);
+
         container.querySelector("button#getPasswords").addEventListener("click", getPasswords);
 
-        container.querySelector("button#export").addEventListener("click", exportData);
+        container.querySelector("button#export").addEventListener("click", () => exportData());
 
         container.querySelector("button#deleteAll").addEventListener("click", onDeleteAll);
 

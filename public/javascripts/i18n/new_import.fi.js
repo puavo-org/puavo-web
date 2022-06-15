@@ -56,6 +56,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
         still_no_data_for_the_pdf: "Taulukossa ei ole käyttäjiä joiden salasanan voisi listata PDF-tiedostossa.",
         empty_rows_skipped: "Taulukossa on rivejä joilta puuttuu käyttäjätunnus tai salasana. Nämä rivit jätetään pois luodusta salasanalistasta. Haluatko jatkaa?",
         no_failed_rows: "Epäonnistuneita rivejä ei ole",
+        no_duplicate_uids: "Duplikaatteja käyttäjätunnuksia ei ole.",
     },
 
     problems: {

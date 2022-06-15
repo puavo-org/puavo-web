@@ -56,6 +56,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
         still_no_data_for_the_pdf: "The table does not have any users whose password could be listed in a PDF.",
         empty_rows_skipped: "The table has rows with missing username and/or password. These rows will be excluded from the generated PDF. Do you want to continue?",
         no_failed_rows: "There are no failed rows",
+        no_duplicate_uids: "There are no duplicate usernames.",
     },
 
     problems: {
