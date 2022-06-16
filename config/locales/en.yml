@@ -31,9 +31,9 @@ en:
   # "Main menu", from which you can log in or access other services in the organisation
   menu:
     index:
-      service_link_name_puavo: Puavo - users and devices management
-      service_link_name_infotv: Info-TV
-      service_link_name_change_password: Change password
+      service_link_name_puavo: "Puavo - users and devices management"
+      service_link_name_infotv: "Info-TV"
+      service_link_name_change_password: "Change your password"
 
   # Login screen
   sessions:
@@ -80,6 +80,7 @@ en:
     printer_permissions: "Printing permissions"
     all_users_marked_for_deletion: "Users in the organisation who are marked for deletion"
     extended_search: "Extended Search"
+    group_members_mass_edit: "Members mass edit"
 
   # Hyperlinks and buttons
   link:
@@ -92,7 +93,7 @@ en:
     delete_school: "Delete school"
     new_group: New group...
     delete_group: "Remove group"
-    find_groupless_users: "Find groupless users..."
+    find_groupless_users: "Groupless users"
     create_username_list_from_group: "Create a new username list from members"
     get_members_as_csv: "Download member list as CSV"
     remove_all_members_from_group: "Remove all members from the group"
@@ -107,6 +108,7 @@ en:
     lists: Username lists
     add: Add
     remove: Remove
+    move: "Move"
     new_user: New user...
     delete_user: "Delete user"
     continue: Continue
@@ -119,8 +121,13 @@ en:
     delete_device: "Delete device"
     set_install_mode: "Remove certificate and set the device to install mode"
     set_install_mode_server: "Remove certificate and set the server to install mode"
+    set_reset_mode: "Set device to reset mode"
+    clear_reset_mode: "Clear reset mode from device"
     printer_permissions: Printing permissions
     show_printer_permissions: List printing premissions...
+    change_school: "Change school..."
+    new_import: "(New) Import"
+    group_members_mass_edit: "Members mass edit"
 
   # Main application layout
   layouts:
@@ -147,6 +154,7 @@ en:
       search_title: User, group and device search by name
       extended_search_title: Extended search. Search using multiple names simultaneously, choose which fields are searched and how they are matched.
       owners: Owners
+      all_admins: "All Admins"
       your_account: Your account
     forms:
       required_field: "* = Required field"
@@ -155,6 +163,7 @@ en:
 
   # Various uncategorized strings
   general_confirm: Are you sure?
+  reset_confirm: Are you sure you want to set device (%{object_name}) to reset mode?  In reset mode device can not be used until user data is removed and device is set to factory settings.
   destroy_confirm: Are you sure? (%{object_name})?
   destroy_confirm_admin: "This user is an owner and/or a school admin. Are you sure?"
   destroy_generic_sync_warning: "Deletions will potentially be synchronised to one or more external systems.\nAre you sure you want to continue?"
@@ -183,7 +192,7 @@ en:
   language_de_DE: German (Germany)
   language_de_CH: German (Switzerland)
   language_fr_CH: French (Switzerland)
-  language_id_ID: Indonesian
+  language_uk_UA: Ukrainian
   language_default: Default
 
   group_type:
@@ -223,6 +232,7 @@ en:
       rrt: "When marked for deletion"
       dnd: "Do not delete?"
       is_locked: "Locked?"
+      other_schools: "Other schools"
 
     groups:
       name: "Name"
@@ -230,6 +240,7 @@ en:
       abbreviation: "Abbreviation"
       eid: "External ID"
       members_count: "Members"
+      member_groups: "Groups (name (abbreviation, type) [school])"
 
     devices:
       hostname: "Hostname"
@@ -256,9 +267,9 @@ en:
       bios_date: "BIOS date"
       bat_vendor: "Battery vendor"
       bat_serial: "Battery serial"
-      bat_cap: "Battery capacity"
-      bat_pcnt: "Battery percentage"
-      bat_volts: "Battery voltage"
+      bat_cap: "Battery capacity (%)"
+      bat_pcnt: "Battery percentage (%)"
+      bat_volts: "Battery voltage (V)"
       wifi: "WiFi"
       monitors_xml: "Display settings (XML)"
       xrandr: "Xrandr"
@@ -268,6 +279,8 @@ en:
       df_images: "Free /images (MiB)"
       df_state: "Free /state (MiB)"
       df_tmp: "Free /tmp (MiB)"
+      df_imageoverlays: "Free /imageoverlays (MiB)"
+      have_smart: "SMART infos?"
       has_windows_license: "Has Windows license"
       purchase_date: "Purchase date"
       purchase_warranty: "Warranty ends"
@@ -275,10 +288,10 @@ en:
       purchase_url: "Purchase URL"
       purchase_support: "Support contract"
       location: "Location"
-      lspci: "lspci values"
-      lsusb: "lsusb"
       loc_lat: "Latitude"
       loc_lon: "Longitude"
+      lspci: "lspci values"
+      lsusb: "lsusb"
       status: "Status"
       printer_uri: "Printer URI"
       default_printer: "Default printer"
@@ -291,6 +304,10 @@ en:
       autopower_mode: "Auto power off mode"
       autopower_on: "Daytime start"
       autopower_off: "Daytime end"
+      reset_from: "Reset mode requested by"
+      reset_operation: "Reset operation"
+      reset_pin: "Reset PIN"
+      reset_time: "Reset mode requested at"
 
     servers:
       available_images: "Available images"
@@ -425,6 +442,7 @@ en:
     unknown_device_type: Unknown device type
     set_install_mode: "Certificate removed, device now in install mode"
     set_install_mode_server: "Certificate removed, server now in install mode"
+    clear_reset_mode: "Device is no longer in reset mode"
     organisation_ownership_removed: "Admin user organisation ownership was removed."
     organisation_ownership_not_removed: "Admin user organisation ownership could not be removed automatically!"
     user_deletion_prevented: "User cannot be removed"
@@ -446,6 +464,11 @@ en:
       groupless_marked: "%{ok} users marked for deletion, %{failed} could not be marked"
       group_emptied_ok: "All members removed from the group"
       group_emptied_failed: "Not all members could be removed"
+      no_other_available_schools: "This group cannot be moved to another school, because there are no other suitable schools"
+      school_changed: "Group moved to school \"%{new_school}\""
+    rename_groups:
+      abbreviation_already_in_use: "This abbreviation is already in use!"
+      complete: "Renamed %{count} group(s)."
     user:
       save_failed: User cannot be saved!
       save_failed_organsation_owner_removal: "Save failed: user could not be removed from the organisation owners before the admin role was removed. Try removing the ownership manually."
@@ -464,10 +487,6 @@ en:
       you_cant_lock_yourself: "You can't lock your own account"
       cant_mark_yourself_for_deletion: "You can't mark yourself for deletion"
       cant_delete_yourself: "You can't delete yourself"
-      import:
-        dupplicate_column_name_error: Duplicate column name
-        require_error: Given name and surname are required fields
-        role_require_error: You must be select Role
       added_to_school: "User added to school \"%{name}\""
       school_adding_failed: "Could not add the user to the school!"
       removed_from_school: "User removed from school \"%{name}\""
@@ -475,6 +494,7 @@ en:
       primary_school_changed: "Primary school set to \"%{name}\""
       primary_school_change_failed: "Could not change the primary school!"
       cannot_remove_primary_school: "You can't remove a user from their primary school!"
+      invalid_primary_school: "The user is not a member of school \"%{name}\", so it cannot be made their primary school."
       primary_school_added_and_changed: "User moved to the new primary school \"%{name}\"."
       user_moved_to_school: "User moved to school \"%{name}\""
       school_moving_failed: "School change failed"
@@ -487,7 +507,6 @@ en:
           part3: "You can retry again later. If you want more information, please contact Opinsys support and give them this code: %{code}."
 
     password_set_failed: Failed to change password! Try again!
-
     session:
       login_successful: Login successful!
       failed: Login failed!
@@ -504,12 +523,10 @@ en:
       confirmation_failed: "Password doesn't match the confirmation"
       invalid_user: User (%{uid}) does not exist
       extlogin_password_changed_but_puavo_failed: "Password change was successful, but not to all services.  Contact support in case of problems."
-      email_not_found: "Couldn't find email: %{email}"
-      connection_failed: We're sorry, but something went wrong. Please try again later!
-      can_not_change_password: "Can't change password. Please try again later! Log code: %{code}."
-      can_not_change_upstream_password: "Can't change password to upstream service. Please try again later!"
-      token_lifetime_has_expired: Your link has expired. Please enter your email again.
-      too_many_sent_token_request: We've already sent a reset message to your email address.
+      connection_failed: "We're sorry, but something went wrong. Please try again in a moment. If it still fails, please contact Opinsys support."
+      can_not_change_password: "Failed to change the password. Please try again in moment. If it still fails, please contact Opinsys support and give them this code: %{code}."
+      can_not_change_upstream_password: "Can't change password to upstream service. Please try again in a moment. If it still fails, please contact Opinsys support."
+      token_lifetime_has_expired: "Your link has expired or it's invalid. Please enter your email again."
       too_many_attempts: "You must wait 10 seconds between password change attempts."
       go_away: "You are not a teacher nor an admin. You cannot change other user's passwords."
     school:
@@ -521,15 +538,11 @@ en:
       no_groups: This school has no groups that could be renamed.
       wlan_updated: WLAN settings successfully updated
       wlan_save_failed: WLAN settings could not be saved!
-    profile:
-      updated: Profile was successfully updated
-      save_failed: Profile cannot be saved!
     printer:
       updated: Printer was successfully updated
     devices:
       school_changed: Device school has been changed!
-    email_confirm:
-      invalid_password: Login failed! Please check your password.
+      no_other_schools: "This organisation has no other schools to where you could move this device"
 
     # Message codes received from third-party integration subsystems
     integrations:
@@ -565,6 +578,16 @@ en:
       available: "Grant organisation ownership"
       none_left: "(All admin-level users are already organisation owners)"
       cant_remove_yourself: "(You can't remove your own owner-level rights)"
+    all_admins:
+      title: "All admin users in the organisation"
+      description: "A quick overview of all the admins in this organisation, where they are and what they can do."
+      name: "Name"
+      schools: "Schools"
+      admin: "admin"
+      default_permissions_title: "In this organisation, the following permissions have been given to all school admins by default:"
+      default_permissions_footer: "Extra permissions granted to individual admins will override these defaults."
+      permission_allow: "allowed"
+      permission_deny: "denied"
     all_users:
       sync_deletion_1: "<strong>WARNING:</strong> The following schools have enabled synchronised user deletions to various external systems:"
       sync_deletion_2: "Perform user deletions (either individually or by en masse) in the above schools very carefully. You might end up deleting more than what you intended to, for example, user email accounts with their contents!"
@@ -674,23 +697,25 @@ en:
     no_images: "No hardware information has been received from any device"
     sorting: "Sorting"
     download: "Download the raw data in JSON format..."
-    sort_by_image: "Image base name (bullseye, buster, stretch, others) and release timestamp (newest first)"
+    sort_by_image: "Image base name (<span class=\"release-bullseye\">bullseye</span>, <span class=\"release-buster\">buster</span>, <span class=\"release-stretch\">stretch</span>, others) and release timestamp (newest first)"
     sort_by_usage: "Number of devices using the image"
-    image_name_column: "Image name (<span class=\"releaseName\">release</span>, if known)"
+    image_name_column: "Image name (<span class=\"releaseName\">release name</span>, if known)"
     usage_column: "Device count / total devices (%)"
 
   # Schools editing
   schools:
     integrations:
-      in: "Sends data to Puavo"
-      out: "Receives data from Puavo"
+      in: "System sends data to Puavo"
+      out: "Data is sent from Puavo to this system"
       inout: "Sends data to Puavo and receives data from Puavo"
-      password: "Passwords are synchronised from Puavo"
-      login: "Login with Puavo account"
-      other: "Other integrated system"
+      password: "Passwords are synchronised from Puavo to this system"
+      login: "Login to this system with a Puavo account"
+      email: "Automatic email addresses"
+      other: "Other integration"
     index:
       actions: Actions
       members: "Members"
+      devices: "Devices"
     edit:
       title: Edit school
     new:
@@ -723,6 +748,25 @@ en:
     form:
       add_puavo_billing_info: Add a new billing info
 
+  # Group mass rename
+  rename_groups:
+    title: "Group mass renaming"
+    no_groups_to_rename: "No groups matching the search criteria were found in this school"
+    school_grades: "Grade numbers in this school"
+    all_grades: "All grades"
+    found: "found"
+    not_found: "not found"
+    grades_title: "The grade numbers in group names"
+    grades_match: "match"
+    grades_no_match: "do not match"
+    old_name: "Old name"
+    new_name: "New name"
+    abbreviation: "Group abbreviation"
+    name: "Group name"
+    will_create_new_groups: "The following groups will be created after the renaming"
+    abbreviation_already_in_use: "WARNING: One or more of the abbreviations are already in use!"
+    submit: "Commit changes"
+
   # Users editing
   users:
     index:
@@ -731,14 +775,15 @@ en:
       synchronised_deletions: "User deletions are immediately synchronised to these external systems: %{systems}. All data stored in these systems will be irrevocably deleted! Verify all deletions in advance."
 
       filters:
+        marked_3months: "Has been marked for removal for > 90 days"
+        marked_6months: "Has been marked for removal for > 180 days"
+        marked_9months: "Has been marked for removal for > 270 days"
+        marked_12months: "Has been marked for removal for > 365 days"
         smoketest_users: "Smoketest users who haven't been removed"
-        locked_users: "Locked users"
         marked_for_deletion: "Is marked for deletion"
         marked_for_deletion_not_locked: "Is marked for deletion, but not locked"
-        marked_3months: "Has been marked for removal for ≥ 90 days"
-        marked_6months: "Has been marked for removal for ≥ 180 days"
-        marked_9months: "Has been marked for removal for ≥ 270 days"
-        marked_12months: "Has been marked for removal for ≥ 365 days"
+        locked_users: "Locked users"
+        short_uids: "Usernames that are 1-5 characters long"
 
       mass_operations:
         lock:
@@ -758,15 +803,26 @@ en:
           not_marked_for_deletion: "User has not been marked for deletion"
           marked_too_recently: "User has been marked for deletion for less than a week"
         clear_column:
-          title: "Clear column contents"
+          title: "Clear column contents..."
           column_title: "Column:"
           columns:
             eid: "External ID"
             email: "Email"
             telephone: "Telephone number"
             learner_id: "Learner ID"
+            pnumber: "Personnel number"
         username_list:
           title: "Create username list"
+        change_school:
+          title: "Change school..."
+          automation_warning: "If the source and/or destination schools have third-party integrations enabled then ensure in advance that this operation does not interfere with them, and that they do not try to \"undo\" these changes."
+          operation: "Action:"
+          operation_move: "Change the user's primary school to the target school"
+          operation_move_keep: "Keep the current primary school in the other schools"
+          operation_add: "Add to the target school"
+          operation_remove: "Remove from the target school (will fail if the school is the user's primary/only school)"
+          target_school: "Target school:"
+          cant_remove_primary_school: "Can't remove user from their primary school"
 
     show:
       system_information: System information
@@ -790,9 +846,8 @@ en:
       deletion_sync_warning: "The user will also be removed from these external systems:\n\n\t%{systems}\n\nPlease verify that this is what you intended to do."
       extra_permissions:
         title: "Additional granted permissions"
-        create_single_users: "can create users"
-        delete_single_users: "can delete users"
-
+        create_users: "can create users"
+        delete_users: "can delete users"
     new:
       title: New user
     edit:
@@ -806,12 +861,16 @@ en:
       gsuite_duplicate_prevention: "G Suite integration is enabled. If you are creating a new account for a user who already has a Google account, then please contact support, so that the new Puavo account can be connected to the existing Google account. This way user synchronisation does not break, and duplicate account creation attempts are prevented."
       password_sync_new: "Password synchronisation is in use in this school. You cannot set the password for the new user before the user has been synchronised to external systems. The synchronisation schedule is listed at the top of the page; wait until all synchronisations have run at least once, then set the password."
       password_sync_edit: "Password synchronisation is in use in this school. Before changing the password, please ensure that the user has been synchronised to external systems. Otherwise the password will be changed to Puavo, but not to these systems, resulting in an incomplete change. If you are editing a user who isn't participating in the synchronisation, then you can ignore this notification (the system does not know which users actually are synchronised)."
+      conflicting_roles: "Be careful if you assign a teacher/staff role to a student. This combination, while possible, won't necessarily work correctly with integrations, for example."
+      group_search_placeholder: "Find groups by name..."
+      no_group_search_hits: "No hits"
+      no_groups: "No groups"
 
     change_schools:
       title: "Change Schools"
       header: "Change the schools of user \"%{name}\""
       sync_warning: "Be careful if you edit a user whose account is managed by the Primus or AD integration systems. Any changes you make to the schools here can be get undone partially or completely during the next synchronisation. Also keep in mind that systems that get data from Puavo and synchronise them further into other systems can propagate these changes into places where they do not belong. Verify in advance that the changes you're about to make here are exactly what needs to be done, and that they can be done to this user. Removing a user from a school will also remove them from that school's administrators."
-      instant_save_warning: "Please note that all changes are saved immediately. Adding or removing multiple schools must be done one at a time. A mass tool for editing schools will be implemented later."
+      instant_save_warning: "Please note that all changes are saved immediately. Adding or removing multiple schools must be done one at a time. A tool for mass manipulating the schools of multiple users at once is available elsewhere for organisation owners."
       current_title: "Current schools (%{count})"
       available_title: "Available schools (%{count})"
       primary_school: "primary school"
@@ -824,6 +883,128 @@ en:
       cant_remove_from_primary_school_one: "You cannot remove the user from their primary school,<br>but you can move them to another school."
       cant_remove_from_primary_school_multiple: "You cannot remove the user from their primary school."
       back: "Back"
+
+  # New new user mass import/update tool
+  new_import:
+    title: "User Mass Import and Update"
+    beta_warning: "THIS TOOL IS STILL IN BETA PHASE. IT WORKS, BUT BE VERY CAREFUL WITH IT. REPORT ALL BUGS AND IMPROVEMENT IDEAS AT ONCE."
+    data_source_title: "Data source"
+    upload_help: "Upload a UTF-8 -encoded CSV or TSV file:"
+    infer_columns: "Infer column types from first row identifiers"
+    infer_explanation: "If the first row contains identifiers listed on the left column in the table below, the column type is taken from the right column. If the identifier is not in the table, the column will be skipped."
+    infer_left: "Identifier"
+    infer_right: "Inferred column type"
+    trim: "Trim leading and trailing whitespace from values"
+    separator: "Separator"
+    separator_help: "Hint: If you copy-paste data directly from LibreOffice Calc into the manual input box, set this to tab."
+    comma: "Comma (,)"
+    semicolon: "Semicolon (;)"
+    tab: "Tab (\\t)"
+    preview_title: "Prepare and import data"
+
+    mode:
+      title: "Update method"
+      create_new_update_existing: "Add new users and update existing"
+      create_new_skip_existing: "Add new users, skip existing (default)"
+      skip_new_update_existing: "Skip new users, update existing"
+
+    row_state: "State"
+
+    legend:
+      idle: "The row won't be processed"
+      processing: "The row is being processed right now"
+      success: "The row was a complete success"
+      partial_success: "The row was a partial success"
+      failed: "The row failed completely"
+
+    column_title: "Column type"
+    column_tools: "Column tools"
+
+    columns:
+      skip: "(Skip column)"
+      first: "First name"
+      last: "Last name"
+      uid: "Username"
+      role: "Role"
+      password: "Password"
+      eid: "External ID"
+      group: "Group"
+      phone: "Phone number"
+      email: "Email address"
+      pnumber: "Personnel number"
+
+    menu:
+      fill_column: "Fill column..."
+      fill_selection: "Fill selected cells..."
+      set_role: "Set role..."
+      generate_usernames: "Generate usernames..."
+      generate_passwords: "Generate passwords..."
+      add_to_group: "Add to group..."
+      clear_column: "Clear column"
+      clear_selection: "Clear selected columns"
+      insert_column: "Insert new column after"
+      delete_column: "Remove column"
+
+    buttons:
+      manual: "Manual Input"
+      upload: "Upload a File"
+      show_infers: "Show infers..."
+      parse: "Read data"
+      begin: "Begin Import"
+      begin_failed: "Re-import failed rows"
+      get_duplicates: "Download a list of duplicate usernames"
+      delete_all: "Clear the table"
+      get_passwords: "Download the passwords in a PDF file"
+      export: "Download the table contents as a CSV file"
+      save: "Save (Enter)"
+      cancel: "Cancel (Esc)"
+      close: "Close (Esc)"
+      set: "Set"
+      generate: "Generate"
+      add: "Add"
+      fill: "Fill"
+      reload_groups: "Reload groups"
+      overwrite_existing: "Overwrite existing values"
+
+    tools:
+      set_role:
+        title: "Set User Roles"
+        help: "Select the role (only one can be selected):"
+
+      set_group:
+        title: "Add to Group"
+        help: "Add the user to this group:"
+
+      generate_usernames:
+        title: "Generate Usernames"
+        help: "First- and last names are downcased and concatenated with a dot. Then diacritics are removed. ß is always converted into \"ss\", but you can choose below how letters Ä, Ö and Ü will be converted:"
+
+      generate_passwords:
+        title: "Generate Passwords"
+        custom: "Fill with this"
+        random: "Fill with random passwords"
+        uppercase: "Include uppercase letters (A-Z)"
+        lowercase: "Include lowercase letters (a-z)"
+        numbers: "Include numbers (0-9)"
+        punct: "Include punctuation (.,;:@£$+?#%&=\"/\\{}[]())"
+        length: "Length"
+
+      fill:
+        title_column: "Fill Column"
+        title_selection: "Fill Selected Cells"
+        help_column: "Fill the whole column with this value"
+        help_selection: "Fill the selected cells with this value"
+
+    problems:
+      errors_title: "The following errors were found in the table data. They must be fixed before the import process can be started:"
+      warnings_title: "The following warnings were found in the table data. They won't prevent you from importing the data, but they're something you should take a look at and ensure they won't cause problems later."
+
+    table:
+      delete_row: "Delete this row"
+
+    pdf:
+      page: "page"
+      end: "End"
 
   # New mass import/update tool
   import_tool:
@@ -887,14 +1068,23 @@ en:
       actions: Actions
       groups: groups
       externally_maintained: "The group is maintained by an external integration script. Do not edit."
-
       mass_operations:
-        delete:
-          title: "Delete"
+        add:
+          title: "Add to groups..."
+          help: "Add the selected users to these groups if they aren't already in them:"
+        remove:
+          title: "Remove from groups..."
+          help: "Remove the selected users from these groups if they are in them:"
+
+        search_placeholder: "Search..."
+        reload: "Reload groups list"
+        select_something: "Please select at least one group."
+        network_error: "Network connection error. See the console for details."
+        invalid_response: "The server's response could not be interpreted. See the console for details."
     show:
       title: Group information
-      add_user_title: Add users to this group
-      description: To add new users to this group, write a part of their name in the box below, then click the "Add" buttons on the search results.
+      members: "Group members"
+      description: "Add users to this group:"
       placeholder_for_search: Name of the user
       hidden_members_hidden_tools_warning: "Some tools have been hidden because this group has members from other schools you don't have permission to access."
       group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
@@ -905,16 +1095,32 @@ en:
       course_group_warning: "This group is maintained by an external Primus synchronisation script. Your modifications will most likely be lost. Never change the group's external ID!"
       year_class_warning: "This group is maintained by an external Primus synchronisation script. Changes you make to the group or its membership list will be undone. Never change the group's abbreviation!"
     members:
-      title: Current members
-      hidden_title: "hidden member(s) from other schools"
-      remove: Remove
+      title: "Current members (%{count})"
+      hidden_from_you: "+%{count} hidden members from other schools that you don't have access to"
+      empty_group: "This group has no members yet"
+      remove: "Remove from group"
+      actions: "Member actions"
     user_search:
       member: Member
-      add_to_group: Add
+      add_to_group: Add to group
+    change_school:
+      title: "Move group \"%{group}\" to another school"
+      warning: "This tool only moves the group to another school. The group members are not moved. If you want to mass move the members to another school, copy the members' usernames into the school mass editor in user tables."
+      integrations_warning: "If the destination school has an integration (Primus) that manages groups, make sure in advance that the group you're moving does not interfere with its operation. Certain types of groups (course group, year class, etc.) can accidentally end up being managed by the integration and cause unwanted things to happen."
+      destination_school: "Destination school:"
     groupless_users:
-      title: "Find groupless users"
+      title: "Groupless users"
       count: "Found %{count} ungrouped users."
-      mark_for_deletion: "Mark these users for deletion"
+      owners_warning: "Please note that due to security reasons, this tool does not modify users who are organisation owners. However, those users will be listed here normally."
+      action: "Action"
+      lock: "Lock these users"
+      mark: "Mark these users for later deletion"
+      move: "Move these users to group"
+      no_groups: "This school has no groups"
+      members: "member(s)"
+      proceed: "Proceed"
+      missing_params: "Missing or invalid form parameters"
+      done: "Processed %{count} user(s)"
 
   # Devices editing
   devices:
@@ -923,20 +1129,29 @@ en:
       title: List of devices
       select_device_label: Select
       devices: devices
+      pending_reset: "A reset has been requested"
 
       filters:
-        uses_trusty: "Uses a Trusty image"
-        uses_stretch: "Uses a Stretch image"
-        uses_buster: "Uses a Buster image"
+        uses_stretch: "Uses a Stretch -based image"
+        uses_buster: "Uses a Buster -based image"
+        uses_bullseye: "Uses a Bullseye -based image"
         have_monitors_xml: "Device has display settings (XML)"
         have_xrandr: "Device has xrandr settings"
         have_hwinfo: "Have received hardware information"
+        maybe_unused: "It has been over a year since hardware info was last received"
         has_primary_user: "Device has a primary user"
         has_invalid_primary_user: "Device has an invalid primary user"
+        hdd_500g: "The device hard drive capacity is at least 500 GiB"
+        ram_atleast_16g: "The device has at least 16 GiB of RAM"
+        ram_lt_4g: "The device has less than 4 GiB of RAM"
+        home_5g: "The /home partition has less than 5 GiB of free space"
+        poor_battery: "The battery capacity is 70% or less"
       mass_operations:
         change_school:
           title: "Change school..."
           school_title: "New school:"
+          no_other_schools: "This organisation has no other schools you could move devices to."
+          no_other_schools_alert: "There are no other schools. This operation cannot continue."
         puavoconf:
           json_warning: "This tool can add, remove and change <strong>single</strong> PuavoConf values. If you want to replace them all at once and you already have them in JSON format, select <em>\"Set database field value...\"</em> from the Operation list, then select <em>\"PuavoConf (replace all)\"</em>. That tool will let you overwrite all PuavoConf values at once.<br><br>"
           title: "PuavoConf editor..."
@@ -996,6 +1211,12 @@ en:
         purchase_info:
           title: "Purchase information..."
           validity_warning: "Check every field you want to change during this operation. Their values are not validated in any way! If a field contents is invalid, the database will reject it!"
+        reset:
+          title: "Set/clear reset mode"
+          action: "Action:"
+          reset: "Set to reset mode (if not already in it)"
+          clear: "Clear the reset mode (if set)"
+          not_a_laptop: "Only laptops can be set in reset mode"
 
     new:
       new_device: New device
@@ -1007,6 +1228,13 @@ en:
       cups_settings: CUPS settings
     cups:
       cups_settings: CUPS settings
+    reset:
+      title: "This device has been requested to be reset"
+      at: "Request made at"
+      from: "Request made by"
+      pin: "Verification code (PIN)"
+      mode: "Mode"
+      operation: "Operation"
     show:
       change_school: Change school...
     select_school:
@@ -1039,6 +1267,7 @@ en:
     no_info: "No hardware information received from this device"
     json_failed: "Could not parse the device hardware info JSON: %{msg}"
     received_timestamp: "Data received"
+    download_raw: "Download the raw data in JSON format"
     image:
       name: "Image"
       release: "Name"
@@ -1061,6 +1290,33 @@ en:
     hard_drive:
       title: "Hard drive"
       none: "(No hard drive)"
+    smart:
+      no_data: "(No SMART data)"
+      general_title: "General Info"
+      model_name: "Name"
+      model_family: "Model"
+      serial_number: "Serial number"
+      firmware_version: "Firmware version"
+      block_size: "Block size (logical/physical)"
+      wwn: "WWN (World Wide Name)"
+      trim_supported: "TRIM support?"
+      ata_version: "ATA version"
+      sata_version: "SATA version"
+      interface_speed: "Interface speed"
+      time: "Time (local)"
+      self_test: "Self-test"
+      power_on_time: "Power on time (HH:MM)"
+      power_cycles: "Power cycle count"
+      temperature: "Temperature"
+      attributes_title: "SMART attributes"
+      attr_attribute: "(ID) Attribute"
+      attr_value: "Value"
+      attr_worst: "Worst"
+      attr_threshold: "Threshold"
+      attr_raw: "Raw Value"
+      nvme_title: "NVME Information"
+      nvme_attr: "Attribute"
+      nvme_value: "Value"
     df:
       title: "Partitions free space"
     wifi:
@@ -1146,6 +1402,7 @@ en:
       select: Select
     form_wlan:
       title: Wireless networks
+      warning: "<strong>WARNING</strong>: Changing the password or its other settings of a wireless network will cause devices to get disconnected from that network until they have received updated network information through some other connection. It is therefore recommended that you create a new temporary network (wireless or wired) and let the devices connect to it, and then edit the network settings. This way devices will receive updated network settings through the other connection, and you don't have to update them by hand one-by-one."
       wireless_access_point_setup: Default Wireless Access Point setup
       channel_random: Random
       wireless_network_setup: Wireless network setup
@@ -1213,12 +1470,6 @@ en:
         blank: "%{attribute} can't be blank"
         invalid: "%{attribute} is invalid"
         confirmation: "%{attribute} doesn't match the confirmation"
-        gsuite_password_too_short: "The school's security policies require that passwords must be at least eight characters long."
-        gsuite_password_whitespace: "The school's security policies require that passwords cannot start or end in whitespace."
-        gsuite_password_ascii_only: "The school's security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
-        oulu_ad_password_too_short: "The school's security policies require that passwords are at least eight characters long."
-        sixcharsmin_password_too_short: "The school's security policies require that passwords are at least six characters long."
-        sevencharsmin_password_too_short: "The school's security policies require that passwords are at least seven characters long."
         too_long: "%{attribute} is too long (maximum is %{count} characters)"
         too_short: "%{attribute} is too short (min is %{count} characters)"
         image_failed: "Failed to save the image"
@@ -1244,6 +1495,14 @@ en:
           unknown_json_error: "PuavoConf JSON parsing failed due to an unknown error"
           not_a_hash: "PuavoConf is not in key/value pair format"
           unsupported_value_types: "Unsupported types in PuavoConf values"
+        password_validation:
+          too_short: "The password is too short"
+          too_long: "The password is too long"
+          cant_start_or_end_in_whitespace: "The password cannot start or end in whitespace"
+          ascii_only: "The password can only contain letters A-Z and a-z, numbers, and some common punctuation"
+          not_complex_enough: "The password is not complex enough (it does not contain all of the required characters)"
+          contains_name: "The password must not contain the first name, last name, or username"
+          common: "This password is weak and commonly used"
     models:
       group: Group
       user: User
@@ -1485,20 +1744,10 @@ en:
   # Password forms
   # (There are more password-related messages in the flash messages section)
   password:
-    validator_ok: "Password OK"
-    validator_ascii_only: "The password can only contain ASCII characters"
-    validator_no_whitespace: "The password cannot start or end in whitespace"
-    validator_too_short: "The password is too short"
-    validator_too_short_with_count: "The password is too short, it must be at least %{minlength} characters long"
-    validator_passwords_match: "The password and its confirmation match"
-    validator_passwords_dont_match: "The password and its confirmation do not match"
-    gsuite_integration_enabled: "The school's security policies require that passwords must at least eight characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
-    oulu_ad_integration_enabled: "The school's security policies require that passwords must be at least eight characters long."
-    six_chars_min: "The school's security policies require that passwords must be at least six characters long."
-    seven_chars_min: "The school's security policies require that passwords must be at least seven characters long."
     current_password_too_old: "Due to your organisation security policies, your current password must be changed because it is too old."
     attempts_are_logged_own: "All password change attempts are logged."
     attempts_are_logged_other: "This form is only meant for teachers and admin users. All password changes and change attempts are logged. We log all usernames, your IP address(es), and timestamps."
+    invalid: "The new password did not meet the predefined requirements"
     edit:
       title: Change someone else's password
       head: To change the password of another user, fill in your own username and password, and then the username and the new password for the user whose password is being changed. You must have sufficient privileges to change the passwords of other users.
@@ -1506,13 +1755,14 @@ en:
       changed_user: Changed user
       password: Password
       link_own_password: Change your own password
+      domain_or: " or "
     own:
       title: Change your own password
       password: Old password
       link_other_password: Change someone else's password
     forgot:
       title: Reset your password
-      description: Please enter your email address to get reset instructions
+      description: "Please enter your email address and we'll send you a link that allows you to set your new password."
     reset:
       title: Reset your password
       password: Enter new password
@@ -1520,29 +1770,18 @@ en:
       description: Please enter your new password
       submit: Reset password
     successfully:
-      send_token: We've sent you an email that will let you reset your password.
-      update: Your password has been successfully reset!
-
-  # Email address confirmation
-  email_confirm:
-    preview:
-      title: Confirm your email address
-      description: "Verify your new email address (%{email}) by entering it below and then clicking on Confirm"
-      confirm: Confirm
-    successfully:
-      info: Your email address has been confirmed
-    error:
-      email_already_exists: "This email address is already in use!"
-      invalid_jwt_token: Invalid JWT token. Please contact Opinsys support.
+      send_token: "We've sent you an email that will let you reset your password. The link will expire soon, so please open it as quickly as you can.<br><br>If you do not receive the email, please contact Opinsys support and give them this code: %{request_id}."
+      update: "Your password has been successfully reset."
 
   # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:
     edit:
-      title: My profile
-      save_and_close: Save and close
+      title: "My profile"
     show:
-      message: Your profile has been successfully updated.
-      email_confirm_info: "A confirmation message will be soon sent to your new email address. Click it to verify your address."
+      photo_failed: "The profile image could not be saved. Please check that it is a valid image file and try again."
+      save_failed: "Your profile could not be saved for some reason. Try again and if the problem persists, contact Opinsys support."
+      save_failed_code: "Your profile could not be saved. Try again and if the problem persists, please contact Opinsys support and give them this code: \"%{request_id}\"."
+      updated: "Your profile has been successfully updated"
 
   # Used in script/create_organisation_owner
   create_organisation_owner:

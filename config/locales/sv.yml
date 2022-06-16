@@ -1,40 +1,51 @@
 # Partial Swedish translations for Puavo. Password and user profile forms only.
 
 sv:
-  language_fi_FI: "Finnish"
-  language_en_US: "English (United States)"
-  language_sv_FI: "Swedish (Finland)"
-  language_de_DE: "German (Germany)"
-  language_de_CH: "German (Switzerland)"
-  language_fr_CH: "French (Switzerland)"
-  language_id_ID: "Indonesiska"
-  language_default: "Default"
+  language_fi_FI: "Finska"
+  language_en_US: "Engelska (USA)"
+  language_sv_FI: "Svenska (Finland)"
+  language_de_DE: "Tyska (Tyskland)"
+  language_de_CH: "Tyska (Schweiz)"
+  language_fr_CH: "Franska (Schweiz)"
+  language_default: "Förväld"
+
+  # "Main menu", from which you can log in or access other services in the organisation
+  menu:
+    index:
+      service_link_name_puavo: "Puavo - användar- och apparatadministration"
+      service_link_name_infotv: "Info-TV"
+      service_link_name_change_password: "Byta lösenord"
+
+  # Main application layout
+  layouts:
+    sessions:
+      title: "Opinsys-autentisering"
 
   # Hyperlinks and buttons
   link:
-    change_password: "Change password"
+    change_password: "Ändra lösenord"
     update: "Update"
+    continue: "Fortsätta"
 
   # Flash messages
   flash:
     password:
-      successful: "Password changed successfully!"
-      failed: "Password change failed. Unfortunately no extra information is available. Please contact support."
-      failed_code: "Password change failed. Unfortunately no extra information is available. Please contact support and give them this code: %{code}."
-      failed_details: "Password change failed: %{details}. Please contact support and give them this code: %{code}."
-      invalid_external_login: "Invalid external login password or username (%{uid})"
-      incomplete_form: "You did not fill in all the required form fields."
-      invalid_login: "Invalid password or username (%{uid})"
-      confirmation_failed: "Password doesn't match the confirmation"
-      invalid_user: "User (%{uid}) does not exist"
-      email_not_found: "Couldn't find email: %{email}"
-      connection_failed: "We're sorry, but something went wrong. Please try again later!"
-      can_not_change_password: "Can't change password. Please try again later! Log code: %{code}."
-      can_not_change_upstream_password: "Can't change password to upstream service. Please try again later!"
-      token_lifetime_has_expired: "Your link has expired. Please enter your email again."
-      too_many_sent_token_request: "We've already sent a reset message to your email address."
-      too_many_attempts: "You must wait 10 seconds between password change attempts."
-      go_away: "You are not a teacher nor an admin. You cannot change other user's passwords."
+      successful: "Lösenordsändring har lyckats!"
+      failed: "Lösenordsändring misslyckats. Tyvärr är inga ytterligare informationer tillgänglig. Var god och kontakt supporttjänst."
+      failed_code: "Lösenordsändring misslyckats. Tyvärr är inga ytterligare informationer tillgänglig. Var god och kontakt supporttjänst och ge dem denna kod: %{code}."
+      failed_details: "Lösenordsändring misslyckats: %{details}. Var god och kontakt supporttjänst och ge dem denna kod: %{code}."
+      invalid_external_login: "Lösenordet eller användarkontot till extern tjänst (%{uid}) är falskt"
+      incomplete_form: "Alla notvändiga formularfält angavs inte"
+      invalid_login: "Användarkontot (%{uid}) eller lösenordet är falskt"
+      confirmation_failed: "Nytt lösenordet stämmar inte med bekräftning"
+      invalid_user: "Användarkontot (%{uid}) finns inte"
+      extlogin_password_changed_but_puavo_failed: "Lösenordsändring lyckats, men inte till alla tjänster. Var god och kontakt supporttjänst om så behövs."
+      connection_failed: Tyvärr har något misslyckats. Var god och försök igen senare!
+      can_not_change_password: "Av någon anledning lyckades lösenordsändring inte. Var god och försök igen senare! Loggkod: %{code}."
+      can_not_change_upstream_password: "Av någon anledning lyckades lösenordsändring inte till källtjänst. Var god och försök igen senare!"
+      token_lifetime_has_expired: Din länk är föraldradt. Ange din e-postaddress igen.
+      too_many_attempts: "Man måste vänta 10 sekunder vid lösenordsändringsförsök."
+      go_away: "Du är ingen lärare eller administrator. Därför kan du inte ändra annan användares lösenorden."
 
   # Forms and form errors. Many of these have specially formatted names and
   # they're structured in a specific way, because they're accessed by form
@@ -42,47 +53,66 @@ sv:
   activeldap:
     attributes:
       user:
-        uid: "Username"
-        new_password: "New password"
-        new_password_confirmation: "Confirm new password"
+        uid: "Användärnamn"
+        new_password: "Nytt lösenörd"
+        new_password_confirmation: "Bekräfta nytt lösenord"
         mail: "Email"
-        telephoneNumber: "Telephone number"
-        jpegPhoto: "Image"
-        puavoLocale: "Language"
+        telephoneNumber: "Telefonnummer"
+        jpegPhoto: "Bild"
+        puavoLocale: "Språk"
     errors:
       messages:
-        gsuite_password_too_short: "The organisation security policies require that passwords must be at least eight characters long."
-        gsuite_password_whitespace: "The organisation security policies require that passwords cannot start or end in whitespace."
-        gsuite_password_ascii_only: "The organisation security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
-        sixcharsmin_password_too_short: "The organisation security policies require that passwords are at least six characters long."
-        sevencharsmin_password_too_short: "The organisation security policies require that passwords are at least seven characters long."
+        password_validation:
+          too_short: "Lösenordet är för kort"
+          too_long: "Lösenordet är för långt"
+          cant_start_or_end_in_whitespace: "Lösenordet får inte börja eller sluta med ett blanksteg"
+          ascii_only: "Lösenordet får innehålla bara bokstäver A-Z och a-z, nummer och några övliga specialtecken"
+          not_complex_enough: "Lösenordet är för enkelt (innehåller inte alla krävda tecken)"
+          contains_name: "Lösenordet får inte innehålla ditt förnamn, efternamn, eller användarnamn"
+          common: "Detta lösenord är svag och vanligt"
 
   # Password forms
   # (There are more password-related messages in the flash messages section)
   password:
-    gsuite_integration_enabled: "The organisation security policies require that passwords must at least eight characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
-    six_chars_min: "The organisation security policies require that passwords must be at least six characters long."
-    seven_chars_min: "The organisation security policies require that passwords must be at least seven characters long."
-    current_password_too_old: "Due to your organisation security policies, your current password must be changed because it is too old."
-    attempts_are_logged_own: "All password change attempts are logged."
-    attempts_are_logged_other: "This form is only meant for teachers and admin users. All password changes and change attempts are logged. We log all usernames, your IP address(es), and timestamps."
+    current_password_too_old: "För ditt lösenord är för gammalt, måste det ändras på grund av organisationens informationssäkerhetspolicy."
+    attempts_are_logged_own: "Alla lösenordsändringsförsöken sparas."
+    attempts_are_logged_other: "Detta formuläret är avsedd bara för lärare och administratorer. Lösenordsändringgar och lösenordsändringsförsöken sparas med användarkontona, IP-adresserna och tidstämplarna."
+    invalid: "Det nya lösenord uppfyller inte kraven"
     edit:
-      title: "Change someone else's password"
-      head: "To change the password of another user, fill in your own username and password, and then the username and the new password for the user whose password is being changed. You must have sufficient privileges to change the passwords of other users."
-      changing_user: "Changing user"
-      changed_user: "Changed user"
-      password: "Password"
-      link_own_password: "Change your own password"
+      title: "Ändra en annan användares lösenord"
+      head: "Om at ändra en annan användares lösenord, skriv in ditt användarnamnet och lösenordet, och annan användares användarnamnet och nytt lösenordet. Ändring är möjligt bara om det är tillåtet för ditt användarkonto."
+      changing_user: "Förändrare"
+      changed_user: "Ändrande kontot"
+      password: "Lösenord"
+      link_own_password: "Ändra ditt eget lösenord"
+      domain_or: " eller "
     own:
-      title: "Change your own password"
-      password: "Old password"
-      link_other_password: "Change someone else's password"
+      title: "Ändra ditt eget lösenord"
+      password: "Gammalt lösenord"
+      link_other_password: "Ändra en annan användares lösenordet"
+    forgot:
+      title: "Ange ett nytt lösenord"
+      description: "Ange din e-postaddress, var vi skulle skicka en lösenordsändringslänk."
+    reset:
+      title: Ange ett nytt lösenord
+      password: Nytt lösenord
+      password_confirmation: Bekräfta nytt lösenord
+      description: Ange ditt nytt lösenord
+      submit: Ändra ditt lösenord
+    successfully:
+      send_token: "Vi har skickad en lösenordsändringslänk via e-post. Länken är giltig för en begränsad tid, så var god och öppna den omedelbart.<br><br>Om du får ingen e-post, var god och kontakt Opinsys supporttjänst och ge dem denna kod: %{request_id}."
+      update: Lösenordsändring har lyckats!
+
+  users:
+    edit:
+      automatic_email: "E-Mail (automatisk)"
 
   # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:
     edit:
-      title: "My profile"
-      save_and_close: "Save and close"
+      title: "Egen information"
     show:
-      message: "Your profile has been successfully updated."
-      email_confirm_info: "A confirmation message will be soon sent to your new email address. Click it to verify your address."
+      photo_failed: "Profilbildsparning har mislyckats. Var god och kontrollera, att du har väljat en funktionell bildfil och försök igen."
+      save_failed: "Av någon anledning, sparning av dina informationer har mislyckats. Var god och försök igen senare, och om problemet kvarstår, kontakt Opinsys supporttjänst."
+      save_failed_code: "Sparning av dina informationer har mislyckats. Var god och försök igen senare, och om problemet kvarstår, kontakt Opinsys supporttjänst och ge dem denna kod: \"%{request_id}\"."
+      updated: "Dina informationar har uppdaterats."

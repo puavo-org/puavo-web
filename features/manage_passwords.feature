@@ -47,16 +47,6 @@ Feature: Manage passwords
     And the "user[uid]" field should contain "louie.duck"
     And I should see "Invalid password or username"
 
-  Scenario: Usernames are remembered on the other user password change form
-    Given I am on the password change page
-    Then I fill in "login[uid]" with "donald.duck"
-    And I fill in "user[uid]" with "louie.duck"
-    When I press "Change password"
-    Then the "login[uid]" field should contain "donald.duck"
-    And the "user[uid]" field should contain "louie.duck"
-    And I should see "Invalid password or username"
-    Then I should not see "Password changed successfully!"
-
   Scenario: Non-existent user tries to change another user's password
     When I fill in "login[uid]" with "wrong"
     And I fill in "Password" with "pavelsecret"
@@ -83,6 +73,7 @@ Feature: Manage passwords
     And I fill in "user[uid]" with "ben"
     And I fill in "user[new_password]" with "newbensecret"
     And I fill in "Confirm new password" with "confirmation test"
+    And I wait 11 seconds
     And I press "Change password"
     Then I should not see "Password changed successfully!"
     And I should see "Password doesn't match the confirmation"
@@ -124,6 +115,7 @@ Feature: Manage passwords
     And I fill in "Old password" with "wrong"
     And I fill in "user[new_password]" with "newpavelsecret"
     And I fill in "Confirm new password" with "newpavelsecret"
+    And I wait 11 seconds
     And I press "Change password"
     Then I should not see "Password changed successfully!"
     And I should see "Invalid password or username (pavel)"
@@ -134,6 +126,7 @@ Feature: Manage passwords
     And I fill in "Old password" with "pavelsecret"
     And I fill in "user[new_password]" with "newpavelsecret"
     And I fill in "Confirm new password" with "confirmation test"
+    And I wait 11 seconds
     And I press "Change password"
     Then I should not see "Password changed successfully!"
     And I should see "Password doesn't match the confirmation"
@@ -143,7 +136,7 @@ Feature: Manage passwords
   Scenario: Forgot password
     Given mock password management service
     And I am on the forgot password page
-    Then I should see "Reset your password Please enter your email address to get reset instructions"
+    Then I should see "Reset your password Please enter your email address and we'll send you a link that allows"
     When I fill in "Email" with "pavel@foobar.com"
     And I press "Continue"
     Then I should see "We've sent you an email that will let you reset your password."
@@ -158,14 +151,14 @@ Feature: Manage passwords
     When I fill in "Enter new password" with "foobar"
     And I fill in "Re-enter new password" with "foobar"
     And I press "Reset password"
-    Then I should see "Your password has been successfully reset!"
+    Then I should see "Your password has been successfully reset"
 
   Scenario: Use forgot password form with invalid email
     Given mock password management service
     And I am on the forgot password page
     When I fill in "Email" with "broken@foobar.com"
     And I press "Continue"
-    Then I should see "Couldn't find email: broken@foobar.com"
+    Then I should see "We've sent you an email that will let you reset your password."
 
   Scenario: Reset password when password and password confirmation doesn't match
     Given generate new token for "pavel"

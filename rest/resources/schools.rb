@@ -35,6 +35,15 @@ class School < LdapModel
   ldap_map :puavoKeyboardVariant, :keyboard_variant
   ldap_map :puavoImageSeriesSourceURL, :image_series_source_urls, LdapConverters::ArrayValue
 
+  ldap_map :postalAddress, :postal_address, LdapConverters::SingleValue
+  ldap_map :postalCode, :postal_code, LdapConverters::SingleValue
+  ldap_map :street, :postal_street, LdapConverters::SingleValue
+  ldap_map :postOfficeBox, :post_box, LdapConverters::SingleValue
+  ldap_map :st, :state, LdapConverters::SingleValue
+  ldap_map :facsimileTelephoneNumber, :fax_number, LdapConverters::SingleValue
+  ldap_map :telephoneNumber, :phone_number, LdapConverters::SingleValue
+  ldap_map :description, :description, LdapConverters::SingleValue
+
   # Internal attributes, do not use! These are automatically set when
   # User#school_dns is updated
   ldap_map :member, :member_dns, LdapConverters::ArrayValue
@@ -330,35 +339,30 @@ class Schools < PuavoSinatra
     'telephoneNumber'             => { name: 'telephone' },
   }
 
-  def v4_do_school_search(id, requested_ldap_attrs)
-    unless id.class == Array
-      raise "do_school_search(): school IDs must be an Array, even if empty"
-    end
-
-    filter = v4_build_puavoid_filter('(objectClass=puavoSchool)', id)
+  def v4_do_school_search(filters, requested_ldap_attrs)
     base = "ou=Groups,#{Organisation.current['base']}"
+    filter_string = v4_combine_filter_parts(filters)
 
-    return School.raw_filter(base, filter, requested_ldap_attrs)
+    return School.raw_filter(base, filter_string, requested_ldap_attrs)
   end
 
   # Retrieve all (or some) schools in the organisation
   # GET /v4/schools?fields=...
-  # GET /v4/schools?id=1,2,3,4,...&fields=...
   get '/v4/schools' do
     auth :basic_auth, :kerberos
 
-    raise Unauthorized, :user => nil unless User.current.admin?
+    raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 
     v4_do_operation do
       # which fields to get?
       user_fields = v4_get_fields(params).to_set
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
 
-      # zero or more user IDs
-      id = v4_get_id_from_params(params)
+      # optional filters
+      filters = v4_get_filters_from_params(params, USER_TO_LDAP, 'puavoSchool')
 
       # do the query
-      raw = v4_do_school_search(id, ldap_attrs)
+      raw = v4_do_school_search(filters, ldap_attrs)
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)

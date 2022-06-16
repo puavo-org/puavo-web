@@ -1,30 +1,24 @@
 <% if @users.length > 0 %>
 <% attributes = ["displayName", "uid"] %>
-<fieldset class="search_result">
+<% admin = Array(current_user.puavoAdminOfSchool || []).to_set %>
+<div class="resultsContainer">
 <table class="list">
   <tr>
-    <% attributes.each do |attribute| %>
-    <th><%= t("activeldap.attributes.user.#{attribute}") %></th>
-    <% end %>
+    <th><%= t("activeldap.attributes.user.displayName") %> (<%= t("activeldap.attributes.user.uid") %>)</th>
     <th><%= t('activeldap.attributes.school.displayName') %></th>
     <th><%= t('groups.index.actions') %></th>
   </tr>
   <% @users.each do |user| %>
   <tr>
     <td data-title="Name">
-      <% if current_user.organisation_owner? || (Array(current_user.puavoAdminOfSchool).map &:to_s).include?(user['puavoSchool']) %>
-      <%= link_to user["name"], user_path(user['school_id'], user['id']) %>
+      <% if current_user.organisation_owner? || admin.include?(user['puavoSchool']) %>
+      <%= link_to "#{h(user['name'])} (#{h(user['uid'][0])})", user_path(user['school_id'], user['id']) %>
       <% else %>
-      <%=h user["name"] %>
+      <%= h user['name'] %> (<%= h user['uid'][0] %>)
       <% end %>
     </td>
-    <% attributes[1..attributes.length].each do |attribute| %>
-    <td data-title="<%=t("activeldap.attributes.user.#{attribute}") %>">
-      <%=h user[attribute].first %>
-    </td>
-    <% end %>
     <td data-title="<%= t('activeldap.attributes.school.displayName') %>">
-      <%=h @schools[user["school_id"]] %>
+      <%= h @schools[user["school_id"]] %>
     </td>
     <td id="member_status_<%= @group.puavoId.to_s %>_<%= user["id"].to_s %>">
       <% if @group.member?(user["id"]) %>

@@ -31,9 +31,9 @@ fi:
   # "Main menu", from which you can log in or access other services in the organisation
   menu:
     index:
-      service_link_name_puavo: Puavo - käyttäjä- ja laitehallinta
-      service_link_name_infotv: Info-TV
-      service_link_name_change_password: Vaihda salasana
+      service_link_name_puavo: "Puavo - käyttäjien ja laitteiden hallinta"
+      service_link_name_infotv: "Info-TV"
+      service_link_name_change_password: "Vaihda salasanaasi"
 
   # Login screen
   sessions:
@@ -55,7 +55,7 @@ fi:
     new_users_groups: "Uuden käyttäjän ryhmät"
     users_import: "Tuo käyttäjiä"
     users_lists: "Käyttäjätunnuslistat"
-    groups_rename: "Vuosiluokkasiirto"
+    groups_rename: "Ryhmien uudelleenimeäminen..."
     groups: "Ryhmät"
     groupless_users: "Ryhmättömät käyttäjät"
     devices: "Laitteet"
@@ -80,6 +80,7 @@ fi:
     printer_permissions: "Tulostusoikeudet"
     all_users_marked_for_deletion: "Organisaation poistetuksi merkityt käyttäjät"
     extended_search: "Laajennettu haku"
+    group_members_mass_edit: "Jäsenten massamuokkaus"
 
   # Hyperlinks and buttons
   link:
@@ -92,7 +93,7 @@ fi:
     delete_school: "Poista koulu"
     new_group: "Uusi ryhmä..."
     delete_group: "Poista ryhmä"
-    find_groupless_users: "Etsi ryhmättömät käyttäjät..."
+    find_groupless_users: "Ryhmättömät käyttäjät"
     create_username_list_from_group: "Luo jäsenistä uusi käyttäjätunnuslista"
     get_members_as_csv: "Lataa ryhmän käyttäjälista CSV:nä"
     remove_all_members_from_group: "Poista ryhmästä kaikki jäsenet"
@@ -107,20 +108,26 @@ fi:
     lists: Käyttäjätunnuslistat
     add: "Lisää"
     remove: Poista
+    move: "Siirrä"
     new_user: "Uusi käyttäjä..."
     delete_user: "Poista käyttäjä"
     continue: Jatka
     change_password: Vaihda salasana
     new_school: Uusi koulu...
     new_ldap_service: Uusi...
-    rename_groups: Vuosiluokkasiirto...
+    rename_groups: Ryhmien uudelleenimeäminen...
     devices: Laitelista
     image_statistics: "Työpöytäkuvatilastot"
     delete_device: "Poista laite"
     set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
     set_install_mode_server: "Poista sertifikaatti ja aseta palvelin asennustilaan"
+    set_reset_mode: "Aseta laite nollaustilaan"
+    clear_reset_mode: "Poista laitteen nollaustila"
     printer_permissions: Tulostinoikeudet
     show_printer_permissions: Listaa tulostinoikeudet...
+    change_school: "Vaihda koulua..."
+    new_import: "(Uusi) tuo"
+    group_members_mass_edit: "Jäsenten massamuokkaus"
 
   # Main application layout
   layouts:
@@ -147,6 +154,7 @@ fi:
       search_title: Käyttäjien, ryhmien ja laitteden haku nimellä
       extended_search_title: Laajennettu haku. Etsi useita nimiä yhtä aikaa, valitse mistä kentistä etsitään ja miten täsmäys tehdään.
       owners: Omistajat
+      all_admins: "Kaikki ylläpitäjät"
       your_account: Oma tunnuksesi
     forms:
       required_field: "* = Pakollinen kenttä"
@@ -155,7 +163,8 @@ fi:
 
   # Various uncategorized strings
   general_confirm: Oletko varma?
-  destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
+  reset_confirm: Haluatko varmasti asettaa koneen (%{object_name}) nollaustilaan?  Nollaustilassa laitetta ei voi käyttää ennen kuin käyttäjien data on poistettu ja laite on asetettu tehdasasetuksille.
+  destroy_confirm: Haluatko varmasti poistaa %{object_name}?
   destroy_confirm_admin: "Tämä käyttäjä on omistaja ja/tai koulun ylläpitäjä. Oletko varma?"
   destroy_generic_sync_warning: "Poistot synkronoidaan mahdollisesti yhteen tai useampaan ulkoiseen järjestelmään.\nOletko varma, että haluat jatkaa?"
   destroy_exact_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\tSYSTEM_NAMES_HERE\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
@@ -183,7 +192,7 @@ fi:
   language_de_DE: Saksa (Saksa)
   language_de_CH: Saksa (Sveitsi)
   language_fr_CH: Ranska (Sveitsi)
-  language_id_ID: Indonesia
+  language_uk_UA: Ukraina
   language_default: Oletus
 
   group_type:
@@ -223,6 +232,7 @@ fi:
       rrt: "Poistomerkintä tehty"
       dnd: "Poisto estetty?"
       is_locked: "Lukittu?"
+      other_schools: "Muut koulut"
 
     groups:
       name: "Nimi"
@@ -230,6 +240,7 @@ fi:
       abbreviation: "Lyhenne"
       eid: "Ulkoinen ID"
       members_count: "Jäseniä"
+      member_groups: "Ryhmät (nimi (lyhenne, tyyppi) [koulu])"
 
     devices:
       hostname: "Verkkonimi"
@@ -256,9 +267,9 @@ fi:
       bios_date: "BIOS-päiväys"
       bat_vendor: "Akun valmistaja"
       bat_serial: "Akun sarjanumero"
-      bat_cap: "Akun kapasiteetti"
-      bat_pcnt: "Akun latausaste"
-      bat_volts: "Akun jännite"
+      bat_cap: "Akun kapasiteetti (%)"
+      bat_pcnt: "Akun latausaste (%)"
+      bat_volts: "Akun jännite (V)"
       wifi: "WiFi"
       monitors_xml: "Näyttöasetukset (XML)"
       xrandr: "Xrandr"
@@ -268,6 +279,8 @@ fi:
       df_images: "Vapaana /images (MiB)"
       df_state: "Vapaana /state (MiB)"
       df_tmp: "Vapaana /tmp (MiB)"
+      df_imageoverlays: "Vapaana /imageoverlays (MiB)"
+      have_smart: "SMART-tiedot?"
       has_windows_license: "Windows-lisenssi"
       purchase_date: "Hankintapäivä"
       purchase_warranty: "Takuu päättyy"
@@ -291,6 +304,10 @@ fi:
       autopower_mode: "Automaattisammutuksen tila"
       autopower_on: "Päivä alkaa"
       autopower_off: "Päivä loppuu"
+      reset_from: "Nollauspyynnön tekijä"
+      reset_operation: "Nollausoperaatio"
+      reset_pin: "Nollaus-PIN"
+      reset_time: "Nollauspyyntö tehty"
 
     servers:
       available_images: "Tarjolla olevat kuvatiedostot"
@@ -425,6 +442,7 @@ fi:
     unknown_device_type: Tuntematon laitetyyppi
     set_install_mode: "Sertifikaatti poistettu, laite asennustilassa"
     set_install_mode_server: "Sertifikaatti poistettu, palvelin asennustilassa"
+    clear_reset_mode: "Laitteen nollaustila poistettu"
     organisation_ownership_removed: "Admin-käyttäjän organisaation omistajuus poistettiin."
     organisation_ownership_not_removed: "Admin-käyttäjän organisaation omistajuutta ei voitu poistaa automaattisesti!"
     user_deletion_prevented: "Käyttäjän poisto on estetty"
@@ -446,6 +464,11 @@ fi:
       groupless_marked: "%{ok} käyttäjää merkitty poistettavaksi, %{failed} käyttäjän merkintä epäonnistui"
       group_emptied_ok: "Kaikki jäsenet poistettu ryhmästä"
       group_emptied_failed: "Kaikkia jäseniä ei voitu poistaa"
+      no_other_available_schools: "Ryhmää ei voi siirtää toiseen kouluun koska muita sopivia kouluja ei ole"
+      school_changed: "Ryhmä siirretty kouluun \"%{new_school}\""
+    rename_groups:
+      abbreviation_already_in_use: "Uuden ryhmän lyhenne on jo käytössä!"
+      complete: "Nimetty %{count} ryhmä(ä) uudelleen."
     user:
       save_failed: "Käyttäjää ei voitu tallentaa!"
       save_failed_organsation_owner_removal: "Tallennus epäonnistui: käyttäjää ei voitu poistaa organisaation omistajista ennen ylläpitäjä-roolin poistoa. Yritä poistaa omistajuus ensin käsin."
@@ -464,10 +487,6 @@ fi:
       you_cant_lock_yourself: "Et voi lukita omaa tunnustasi"
       cant_mark_yourself_for_deletion: "Et voi merkitä itseäsi poistettavaksi"
       cant_delete_yourself: "Et voi poistaa itseäsi"
-      import:
-        dupplicate_column_name_error: "Kahdelle sarakkeelle on valittu sama kenttätieto"
-        require_error: "Käyttäjälle on syötettävä etu- ja sukunimi"
-        role_require_error: "Rooli pitää olla valittuna"
       added_to_school: "Käyttäjä lisätty kouluun \"%{name}\""
       school_adding_failed: "Kouluun lisäys epäonnistui!"
       removed_from_school: "Käyttäjä poistettu koulusta \"%{name}\""
@@ -504,12 +523,10 @@ fi:
       confirmation_failed: "Uusi salasana ei täsmää salasanan vahvistukseen"
       invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
       extlogin_password_changed_but_puavo_failed: "Salasananvaihto onnistui, mutta ei kuitenkaan kaikkiin palveluihin.  Ota tarvittaessa yhteys tukipalveluun."
-      email_not_found: "Sähköpostiosoitetta ei löydy: %{email}"
-      connection_failed: Pahoittelut, mutta jotain meni nyt pieleen. Yritä myöhemmin uudelleen!
-      can_not_change_password: "Jostain syystä salasanan vaihto ei onnistunut. Yritä myöhemmin uudelleen! Lokikoodi: %{code}."
-      can_not_change_upstream_password: "Jostain syystä salasanan vaihto lähdepalveluun ei onnistunut. Yritä myöhemmin uudelleen!"
-      token_lifetime_has_expired: Linkkisi on vanhentunut. Syötä sähköpostiosoite uudelleen.
-      too_many_sent_token_request: Valitsemaasi sähköpostiosoitteeseen on jo lähetetty viesti.
+      connection_failed: "Pahoittelut, mutta jotain meni nyt pieleen. Yritä uudelleen hetken kuluttua. Jos vaihto epäonnistuu uudelleen, ota yhteys Opinsysin tukeen."
+      can_not_change_password: "Jostain syystä salasanan vaihto ei onnistunut. Yritä uudelleen hetken kuluttua. Jos vaihto epäonnistuu yhä, ota yhtey Opinsysin tukeen ja anna heille tämä koodi: %{code}."
+      can_not_change_upstream_password: "Jostain syystä salasanan vaihto lähdepalveluun ei onnistunut. Yritä uudelleen hetken kuluttua, ja jos vaihto epäonnistuu yhä, ota yhteys Opisysin tukeen."
+      token_lifetime_has_expired: "Linkkisi on vanhentunut tai virheellinen. Syötä sähköpostiosoite uudelleen."
       too_many_attempts: "Salasanan vaihtojen välillä on odotettava 10 sekuntia."
       go_away: "Et ole opettaja tai ylläpitäjä, joten et voi vaihtaa muiden salasanoja."
     school:
@@ -521,15 +538,11 @@ fi:
       no_groups: Tässä koulussa ei ole yhtään ryhmää jota voisi siirtää.
       wlan_updated: WLAN-asetukset päivitetty
       wlan_save_failed: WLAN-asetusten tallennus epäonnistui
-    profile:
-      updated: Tietojen tallennus onnistui
-      save_failed: "Tietojen tallennus epäonnistui"
     printer:
       updated: "Tulostimen tietojen päivitys onnistui"
     devices:
       school_changed: Laitteen koulu on nyt vaihdettu!
-    email_confirm:
-      invalid_password: Kirjautuminen epäonnistui. Tarkista salasanasi.
+      no_other_schools: "Tässä organisaatiossa ei ole muita kouluja joihin voisit siirtää laitteen"
 
     # Message codes received from third-party integration subsystems
     integrations:
@@ -565,6 +578,16 @@ fi:
       available: "Lisää omistusoikeudet"
       none_left: "(Kaikilla ylläpitäjä-roolissa olevilla käyttäjillä on jo omistajaoikeudet.)"
       cant_remove_yourself: "(Et voi poistaa omaa omistusoikeuttasi)"
+    all_admins:
+      title: "Kaikki organisaation ylläpitäjät"
+      description: "Pikasilmäys kaikkiin organisaation ylläpitäjiin, missä he ovat ja mitä he voivat tehdä."
+      name: "Nimi"
+      schools: "Koulut"
+      admin: "ylläpitäjä"
+      default_permissions_title: "Tässä organisaatiossa on määritetty oletuksena koulujen ylläpitäjille seuraavat oikeudet:"
+      default_permissions_footer: "Yksittäisten ylläpitäjien lisäoikeudet ajavat näiden oletusten yli."
+      permission_allow: "sallittu"
+      permission_deny: "estetty"
     all_users:
       sync_deletion_1: "<strong>VAROITUS:</strong> Seuraavissa kouluissa on käytössä käyttäjien synkronoituja poistoja eri ulkoisiin järjestelmiin:"
       sync_deletion_2: "Tee ylläolevien koulujen käyttäjien poistoja (yksittäin tai massana) hyvin varovasti. Saatat poistaa enemmän kuin mitä aioit, kuten käyttäjien sähköpostitilit sisältöineen! "
@@ -673,24 +696,26 @@ fi:
     no_images: "Laitetietoja ei ole vastaanotettu mistään laitteesta"
     download: "Lataa raakadata JSON-muodossa..."
     sorting: "Lajittelu"
-    sort_by_image: "Kuvan pohjanimi (bullseye, buster, stretch, muut) ja julkaisuaika (uusin ensin)"
+    sort_by_image: "Kuvan pohjanimi (<span class=\"release-bullseye\">bullseye</span>, <span class=\"release-buster\">buster</span>, <span class=\"release-stretch\">stretch</span>, muut) ja julkaisuaika (uusin ensin)"
     sort_by_usage: "Kuvaa käyttävien koneiden määrä"
     instructions: "Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista."
-    image_name_column: "Kuvan nimi (<span class=\"releaseName\">julkaisun</span>, jos tunnettu)"
+    image_name_column: "Kuvan nimi (<span class=\"releaseName\">julkaisun nimi</span>, jos tunnettu)"
     usage_column: "Koneiden määrä / koneita yhteensä (%)"
 
   # Schools editing
   schools:
     integrations:
-      in: "Lähettää dataa Puavoon"
-      out: "Vastaanottaa dataa Puavosta"
+      in: "Järjestelmä lähettää dataa Puavoon"
+      out: "Puavosta lähetetään dataa tähän järjestlmään"
       inout: "Lähettää dataa Puavoon, vastaanottaa dataa Puavosta"
-      password: "Salasanojen synkronointi Puavosta"
-      login: "Kirjautuminen Puavon tunnuksilla"
-      other: "Muu integroitu järjestelmä"
+      password: "Salasanat synkronoidaan Puavosta tähän järjestelmään"
+      login: "Kirjautuminen tähän järjestelmään Puavon tunnuksilla"
+      email: "Automaattiset sähköpostiosoitteet"
+      other: "Muu integraatio"
     index:
       actions: Toiminnot
       members: "Jäseniä"
+      devices: "Laitteita"
     edit:
       title: Muokkaa koulua
     new:
@@ -723,6 +748,25 @@ fi:
     form:
       add_puavo_billing_info: "Lisää laskutustietoja"
 
+  # Group mass rename
+  rename_groups:
+    title: "Ryhmien massauudelleennimeäminen"
+    no_groups_to_rename: "Tässä koulussa ei ole yhtään ryhmää, joka täsmäisi hakuehtoihin"
+    school_grades: "Koulun luokka-asteet"
+    all_grades: "Kaikki luokat-asteet"
+    found: "löytyivät"
+    not_found: "eivät löytyneet"
+    grades_title: "Luokkien numerot ryhmien nimissä"
+    grades_match: "täsmäävät"
+    grades_no_match: "eivät täsmää"
+    old_name: "Vanha nimi"
+    new_name: "Uusi nimi"
+    abbreviation: "Ryhmän lyhenne"
+    name: "Ryhmän nimi"
+    will_create_new_groups: "Luodaan seuraavat uudet ryhmät uudelleen nimeämisen jälkeen"
+    abbreviation_already_in_use: "VAROITUS: Ainakin yhden uuden luotavan ryhmän lyhenne on jo käytössä!"
+    submit: "Toteuta muutokset"
+
   # Users editing
   users:
     index:
@@ -731,14 +775,15 @@ fi:
       synchronised_deletions: "Käyttäjien poistot synkronoidaan välittömästi seuraaviin ulkoisiin järjestelmiin: %{systems}. Kaikki näihin järjestelmiin tallennetut tiedot poistetaan peruuttamattomasti! Varmista jokainen poisto etukäteen."
 
       filters:
+        marked_3months: "Merkitty poistettavaksi > 90 päivää"
+        marked_6months: "Merkitty poistettavaksi > 180 päivää"
+        marked_9months: "Merkitty poistettavaksi > 270 päivää"
+        marked_12months: "Merkitty poistettavaksi > 365 päivää"
         smoketest_users: "Poistamattomat smoketest -testitunnukset"
-        locked_users: "Lukitut käyttäjät"
         marked_for_deletion: "Merkitty poistettavaksi"
         marked_for_deletion_not_locked: "Merkitty poistettavaksi, ei lukittu"
-        marked_3months: "Merkitty poistettavaksi ≥ 90 päivää"
-        marked_6months: "Merkitty poistettavaksi ≥ 180 päivää"
-        marked_9months: "Merkitty poistettavaksi ≥ 270 päivää"
-        marked_12months: "Merkitty poistettavaksi ≥ 365 päivää"
+        locked_users: "Lukitut käyttäjät"
+        short_uids: "Käyttäjätunnukset jotka ovat 1-5 merkkiä pitkiä"
 
       mass_operations:
         lock:
@@ -758,15 +803,26 @@ fi:
           not_marked_for_deletion: "Käyttäjää ei ole merkitty poistettavaksi"
           marked_too_recently: "Käyttäjä on ollut merkittynä poistettavaksi alle viikon"
         clear_column:
-          title: "Tyhjennä sarakkeen sisältö"
+          title: "Tyhjennä sarakkeen sisältö..."
           column_title: "Sarake:"
           columns:
             eid: "Ulkoinen ID"
             email: "Email"
             telephone: "Puhelinnumero"
             learner_id: "Oppijanumero"
+            pnumber: "Henkilönumero"
         username_list:
           title: "Luo käyttäjätunnuslista"
+        change_school:
+          title: "Vaihda koulua..."
+          automation_warning: "Jos lähde- ja/tai kohdekoulussa on käytössä kolmannen osapuolen integraatioita, varmista etukäteen että koulun vaihto ei häiritse niiden toimintaa, ja että ne eivät yritä \"kumota\" muutoksia."
+          operation: "Toiminto:"
+          operation_move: "Vaihda kohdekoulu käyttäjän pääkouluksi"
+          operation_move_keep: "Siirrä nykyinen pääkoulu lisäkouluihin (ei kovin käytännöllinen oppilailla)"
+          operation_add: "Lisää kohdekouluun, jos ei ole jo"
+          operation_remove: "Poista kohdekoulusta, jos on (epäonnistuu jos kohdekoulu on käyttäjän pääkoulu tai ainoa koulu)"
+          target_school: "Kohdekoulu:"
+          cant_remove_primary_school: "Käyttäjää ei voi poistaa hänen pääkoulustaan"
 
     show:
       system_information: "Järjestelmätietoja"
@@ -789,9 +845,9 @@ fi:
       prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
       deletion_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\t%{systems}\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
       extra_permissions:
-        title: "Sallitut lisätoiminnot"
-        create_single_users: "voi luoda käyttäjiä"
-        delete_single_users: "voi poistaa käyttäjiä"
+        title: "Sallitut lisäoikeudet"
+        create_users: "voi luoda käyttäjiä"
+        delete_users: "voi poistaa käyttäjiä"
     new:
       title: "Lisää uusi käyttäjä"
     edit:
@@ -805,12 +861,16 @@ fi:
       gsuite_duplicate_prevention: "G Suite -integraatio on päällä. Jos olet luomassa tunnusta käyttäjälle jolla on jo tunnus Googlessa, ota ensin yhteys tukeen jotta luomasi uusi Puavo-tunnus voidaan liittää hallitusti jo olemassaolevaan Google-tunnukseen. Näin käyttäjien synkronisaatio ei mene rikki ja tuplatunnuksien luonnin yritykset estetään."
       password_sync_new: "Salasanasynkronointi on käytössä. Et voi asettaa uudelle käyttäjälle salasanaa ennenkuin uusi käyttäjä on synkronoitu ulkoisiin järjestelmiin. Synkronisaatioaikataulu on listattu sivun yläreunassa; odota, kunnes kaikki synkronisaatiot on ajettu läpi ainakin kerran ja aseta salasana sitten."
       password_sync_edit: "Salasanasynkronointi on käytössä. Ennen kuin vaihdat salasanan, varmista, että käyttäjä on synkronoitunut ulkoisiin järjestelmiin. Muutoin salasananvaihto onnistunee Puavoon, mutta ei näihin järjestelmiin, ja muutos on epätäydellinen. Jos muokkat käyttäjää joka ei ole synronoinnin piirissä, tästä viestistä ei tarvitse välittää (järjestelmä ei tiedä mitkä käyttäjät oikeasti on synkronoitu ja mitkä eivät)."
+      conflicting_roles: "Ole varovainen jos annat oppilaalle myös opettaja-/henkilökuntaroolin. Tämä yhdistelmä, vaikkakin mahdollinen, ei välttämättä toimi oikein esimerkiksi integraatioiden kanssa."
+      group_search_placeholder: "Etsi ryhmiä nimeltä..."
+      no_group_search_hits: "Ei osumia"
+      no_groups: "Ei ryhmiä"
 
     change_schools:
       title: "Vaihda kouluja"
       header: "Vaihda käyttäjän \"%{name}\" kouluja"
       sync_warning: "Ole varovainen jos muokkaat käyttäjää jonka tunnus on Primus- tai AD-integraation hallinnan alaisuudessa. Kaikki kouluihin tekemäsi muutokset saatetaan kumota osittain tai kokonaan seuraavan synkronisaatioajon aikana. Pidä myös mielessä, että integraatiojärjestelmät jotka hakevat dataa Puavosta voivat synkronoida nämä muutokset eteenpäin paikkoihin joihin ne eivät kuulu. Varmista etukäteen, että muutokset jotka aiot tehdä ovat juuri niitä mitä pitää tehdä ja että ne voi tehdä tälle käyttäjälle. Käyttäjän poisto koulusta poistaa hänet myös kyseisen koulun ylläpitäjistä."
-      instant_save_warning: "Huomaathan, että kaikki muutokset tallennetaan heti. Usean koulun lisäys tai poisto on tehtävä yksi kerrallaan. Koululiitosten massamuokkaustyökalu tehdään myöhemmin."
+      instant_save_warning: "Huomaathan, että kaikki muutokset tallennetaan heti. Usean koulun lisäys tai poisto on tehtävä yksi kerrallaan. Koululiitosten massamuokkaus usealle käyttäjälle yhtä aikaa on saatavilla toisaalla organisaation omistajille."
       current_title: "Nykyiset koulut (%{count})"
       available_title: "Käytettävissä olevat koulut (%{count})"
       primary_school: "pääkoulu"
@@ -823,6 +883,128 @@ fi:
       cant_remove_from_primary_school_one: "Käyttäjää ei voi poistaa hänen pääkoulustaan, mutta voit siirtää hänet toiseen kouluun."
       cant_remove_from_primary_school_multiple: "Käyttäjää ei voi poistaa hänen pääkoulustaan."
       back: "Takaisin"
+
+  # New new user mass import/update tool
+  new_import:
+    title: "Käyttäjien massatuonti ja -päivitys"
+    beta_warning: "TÄMÄ TYÖKALU ON VIELÄ BETA-VAIHEESSA. SE TOIMII, MUTTA OLE HYVIN VAROVAINEN SEN KANSSA. RAPORTOI KAIKKI VIAT JA KEHITYSIDEAT VÄLITTÖMÄSTI."
+    data_source_title: "Datan lähde"
+    upload_help: "Lataa UTF-8 -enkoodattu CSV- tai TSV-tiedosto:"
+    infer_columns: "Päättele sarakkeiden tyypit ensimmäisen rivin tunnisteista"
+    infer_explanation: "Jos ensimmäinen rivi sisältää alla olevan taulukon ensimmäisessä sarakkeesa listattuja tunnisteita, asetetaan sarakkeen tyyppi oikeassa sarakkeessa olevaksi. Jos tunnistetta ei löydy taulukosta, sarakkeen tyypiksi asetetaan ohitettu."
+    infer_left: "Tunniste"
+    infer_right: "Päätelty sarakkeen tyyppi"
+    trim: "Poista solujen arvoista tyhjät välit alusta ja lopusta"
+    separator: "Erotinmerkki"
+    separator_help: "Vihje: Jos kopioit dataa suoraan LibreOffice Calcista käsisyötteeseen, aseta tämä tabiin."
+    comma: "Pikku (,)"
+    semicolon: "Puolipiste (;)"
+    tab: "Tab (\\t)"
+    preview_title: "Valmistele ja tuo data"
+
+    mode:
+      title: "Päivitystapa"
+      create_new_update_existing: "Lisää uudet käyttäjät ja päivitä olemassaolevat"
+      create_new_skip_existing: "Lisää uudet käyttäjät, ohita olemassaolevat (oletus)"
+      skip_new_update_existing: "Ohita uudet käyttäjät, päivitä olemassaolevat"
+
+    row_state: "Tila"
+
+    legend:
+      idle: "Riviä ei käsitellä/käsitelty"
+      processing: "Riviä käsitellään juuri nyt"
+      success: "Rivi onnistui täysin"
+      partial_success: "Rivi onnistui osittain"
+      failed: "Rivi epäonistui kokonaan"
+
+    column_title: "Sarakkeen tyyppi"
+    column_tools: "Sarakkeen muokkaustyökalut"
+
+    columns:
+      skip: "(Ohita sarake)"
+      first: "Etunimi"
+      last: "Sukunimi"
+      uid: "Käyttäjänimi"
+      role: "Rooli"
+      password: "Salasana"
+      eid: "Ulkoinen ID"
+      group: "Ryhmä"
+      phone: "Puhelinnumero"
+      email: "Email-osoite"
+      pnumber: "Henkilönumero"
+
+    menu:
+      fill_column: "Täytä sarake..."
+      fill_selection: "Täytä valitut solut..."
+      set_role: "Aseta rooli..."
+      generate_usernames: "Luo käyttäjänimiä..."
+      generate_passwords: "Luo salasanoja..."
+      add_to_group: "Lisää ryhmään..."
+      clear_column: "Tyhjennä sarake"
+      clear_selection: "Tyhjennä valitut solut"
+      insert_column: "Lisää tyhjä sarake jälkeen"
+      delete_column: "Poista sarake"
+
+    buttons:
+      manual: "Käsisyöte"
+      upload: "Lataa tiedosto"
+      show_infers: "Näytä päättelyt..."
+      parse: "Lue data"
+      begin: "Aloita tuonti"
+      begin_failed: "Tuo epäonnistuneet rivit uudelleen"
+      get_duplicates: "Lataa lista duplikaateista käyttäjätunnuksista"
+      delete_all: "Tyhjennä taulukko"
+      get_passwords: "Lataa asetetut salasanat PDF-muodossa"
+      export: "Lataa taulukon sisältö CSV-tiedostona"
+      save: "Tallenna (Enter)"
+      cancel: "Peruuta (Esc)"
+      close: "Sulje (Esc)"
+      set: "Aseta"
+      generate: "Luo"
+      add: "Lisää"
+      fill: "Täytä"
+      reload_groups: "Päivitä ryhmät"
+      overwrite_existing: "Ylikirjoita olemassaolevat arvot"
+
+    tools:
+      set_role:
+        title: "Aseta käyttäjien roolit"
+        help: "Valitse käyttäjien rooli (voit valita vain yhden):"
+
+      set_group:
+        title: "Lisää ryhmään"
+        help: "Lisää käyttäjät tähän ryhmään:"
+
+      generate_usernames:
+        title: "Luo käyttäjänimiä"
+        help: "Etu- ja sukunimet muutetaan pieniksi ja yhdistetään pisteellä. Sen jälkeen tarkkeet poistetaan. ß muutetaan aina muotoon \"ss\", mutta voit valita miten kirjaimet Ä, Ö ja Ü muunnetaan:"
+
+      generate_passwords:
+        title: "Luo salasanoja"
+        custom: "Täytä tällä"
+        random: "Täytä satunnaisilla salasanoilla"
+        uppercase: "Sisällytä isoja kirjaimet (A-Z)"
+        lowercase: "Sisällytä pieniä kirjaimia (a-z)"
+        numbers: "Sisällytä numeroita (0-9)"
+        punct: "Sisällytä välimerkkejä (.,;:@£$+?#%&=\"/\\{}[]())"
+        length: "Pituus"
+
+      fill:
+        title_column: "Täytä sarake"
+        title_selection: "Täytä valitut solut"
+        help_column: "Täytä koko sarake tällä arvolla"
+        help_selection: "Täytä valitut solut tällä arvolla"
+
+    problems:
+      errors_title: "Tuotavassa datassa havaittiin seuraavat virheet. Ne on korjattava ennenkuin tuontioperaatio voidaan aloittaa:"
+      warnings_title: "Tuotavassa datassa havaittiin seuraavat puutteet. Ne eivät estä tuontioperaatiota, mutta sinun kannattaa vilkaista niitä ja varmistaa etteivät ne aiheuta ongelmia myöhemmin:"
+
+    table:
+      delete_row: "Poista tämä rivi"
+
+    pdf:
+      page: "sivu"
+      end: "Loppu"
 
   # New mass import/update tool
   import_tool:
@@ -886,16 +1068,25 @@ fi:
       actions: Toiminnot
       groups: ryhmää
       externally_maintained: "Ryhmä on erillisen integraatioskriptin ylläpitämä. Älä muokkaa."
-
       mass_operations:
-        delete:
-          title: "Poista"
+        add:
+          title: "Lisää ryhmiin..."
+          help: "Lisää valitut käyttäjät näihin ryhmiin jos he eivät ole jo niissä:"
+        remove:
+          title: "Poista ryhmistä..."
+          help: "Poista valitut käyttäjät näistä ryhmistä jos he ovat niissä:"
+
+        search_placeholder: "Etsi nimellä"
+        reload: "Päivitä ryhmälista"
+        select_something: "Valitse edes yksi ryhmä listasta."
+        network_error: "Verkkoyhteysongelma. Katso yksityiskohdat konsolista."
+        invalid_response: "Palvelimen vastausta ei pystytty tulkitsemaan. Katso yksityiskohdat konsolista."
     show:
       title: Ryhmän tiedot
-      add_user_title: Lisää käyttäjiä ryhmään
-      description: Lisätäksesi uusia käyttäjiä ryhmään kirjoita käyttäjän nimi seuraavaan hakukenttään ja paina "Liitä ryhmään" -painikkeita.
-      placeholder_for_search: Kirjoita käyttäjän nimi tai osa siitä
-      hidden_members_hidden_tools_warning: "Joitain toimintoja on piilotettu, koska ryhmässä on jäseniä kouluista joihin sinulla ei ole pääsyoikeutta."
+      members: "Ryhmän jäsenet"
+      description: "Lisää käyttäjiä ryhmään:"
+      placeholder_for_search: "Käyttäjän nimi tai osa siitä"
+      hidden_members_hidden_tools_warning: "Ryhmä sisältää jäseniä kouluista joihin sinulla ei ole hallintaoikeutta. Et voi kohdistaa ryhmän jäseniin massatoimintoja."
       group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
     new:
       title: "Luo uusi ryhmä"
@@ -904,16 +1095,32 @@ fi:
       course_group_warning: "Tämä ryhmä on ulkoisen Primus-synkronointiskriptin ylläpitämä. Ryhmään tekemäsi muutokset tullaan todennäköisesti kumoamaan. Älä koskaan vaihda tämän ryhmän ulkoista ID:tä!"
       year_class_warning: "Tämä ryhmä on ulkoisen Primus-synkronointiskriptin ylläpitämä. Jäsenlistaan tai ryhmän tietoihin tekemäsi muutokset tullaan kumoamaan. Älä koskaan muuta ryhmän lyhennettä!"
     members:
-      title: Nykyiset jäsenet
-      hidden_title: "piilotettua jäsentä muista kouluista"
-      remove: Poista ryhmästä
+      title: "Nykyiset jäsenet (%{count})"
+      hidden_from_you: "+%{count} piilotettua jäsentä muista kouluista joihin sinulla ei ole hallintaoikeutta"
+      empty_group: "Ryhmässä ei ole vielä jäseniä"
+      remove: "Poista ryhmästä"
+      actions: "Jäsentoiminnot"
     user_search:
       member: Jäsen
       add_to_group: Liitä ryhmään
+    change_school:
+      title: "Siirrä ryhmä \"%{group}\" toiseen kouluun"
+      warning: "Tämä työkalu ainostaan siirtää ryhmän toiseen kouluun. Ryhmän jäseniä ei siirretä mihinkään. Jos haluat massamuokata ryhmän jäsenien kouluja, kopioi ryhmän jäsenlistasta nimet käyttäjätaulukon koulunmuokkausmassatyökaluun."
+      integrations_warning: "Jos kohdekoulussa on integraatio joka hallitsee ryhmiä (Primus), varmista etukäteen ettei siirrettävä ryhmä sotke sen toimintaa. Tietyntyyppiset ryhmät (esim. kurssiryhmä, vuosiluokka, yms.) voivat joutua vahingossa integraation alaisuuteen ja aiheuttaa ei-toivottuja ilmiöitä."
+      destination_school: "Kohdekoulu:"
     groupless_users:
-      title: "Etsi ryhmättömät käyttäjät"
-      count: "Löytyi %{count} ryhmätöntä käyttäjää."
-      mark_for_deletion: "Merkitse nämä käyttäjät poistettavaksi"
+      title: "Ryhmättömät käyttäjät"
+      count: "Koulussa on %{count} käyttäjää joita ei ole liitetty mihinkään ryhmään."
+      owners_warning: "Huomaa, että tämä työkalu ei turvallisuussyistä koske käyttäjiin jotka ovat organisaation omistajissa. Heidät kuitenkin listataan normaalisti."
+      action: "Toiminto"
+      lock: "Lukitse nämä käyttäjät"
+      mark: "Merkitse nämä käyttäjät poistettavaksi"
+      move: "Siirrä käyttäjät tähän ryhmään"
+      no_groups: "Koulussa ei ole yhtään ryhmää"
+      members: "jäsen(tä)"
+      proceed: "Toteuta"
+      missing_params: "Puuttuvat tai virheelliset lomakkeen parametrit"
+      done: "Käsiteltiin %{count} käyttäjä(ä)"
 
   # Devices editing
   devices:
@@ -922,20 +1129,29 @@ fi:
       title: Laitteet
       select_device_label: Valitse
       devices: laitetta
+      pending_reset: "Nollauspyyntö tehty"
 
       filters:
-        uses_trusty: "Käyttää Trusty-kuvaa"
         uses_stretch: "Käyttää Stretch-kuvaa"
         uses_buster: "Käyttää Buster-kuvaa"
+        uses_bullseye: "Käyttää Bullseye-kuvaa"
         have_monitors_xml: "Laitteella on näyttöasetuksia (XML)"
         have_xrandr: "Laitteella on xrandr-asetuksia"
         have_hwinfo: "Laitteesta on saatu laitetiedot"
+        maybe_unused: "Laitteesta ei ole saatu laitetietoja yli vuoteen"
         has_primary_user: "Laitteelle on määritetty ensisijainen käyttäjä"
         has_invalid_primary_user: "Laitteelle on määritetty virheellinen ensisijainen käyttäjä"
+        hdd_500g: "Laitteen kiintolevyn kapasiteetti on vähintään 500 GiB"
+        ram_atleast_16g: "Laitteessa on vähintään 16 GiB muistia"
+        ram_lt_4g: "Laitteessa on alle 4 GiB muistia"
+        home_5g: "/home -osiolla on alle 5 GiB vapaata tilaa"
+        poor_battery: "Akun kapasiteetti on 70% tai vähemmän"
       mass_operations:
         change_school:
           title: "Vaihda koulua..."
           school_title: "Uusi koulu:"
+          no_other_schools: "Tässä organisaatiossa ei ole muita kouluja mihin voisit siirtää laitteita."
+          no_other_schools_alert: "Muita kouluja ei ole. Toimintoa ei voi suorittaa."
         puavoconf:
           json_warning: "Tämä työkalu lisää, poistaa ja muokkaa <strong>yksittäisiä</strong> PuavoConf-arvoja. Jos haluat korvata ne kaikki yhdellä kertaa ja ne ovat sinulla valmiina JSON-muodossa, valitse Operaatio-listasta <em>\"Aseta tietokannan kentän arvo...\"</em> ja sieltä <em>\"PuavoConf (korvaa kaikki)\"</em>. Se antaa sinun ylikirjoittaa laitteen kaikki puavoconf -arvot yhdellä kertaa halutuiksi.<br><br>"
           title: "PuavoConf-muokkaus..."
@@ -995,6 +1211,12 @@ fi:
         purchase_info:
           title: "Hankintatiedot..."
           validity_warning: "Ruksaa jokainen kenttä jonka arvoa haluat muuttaa tämän operaation aikana. Asetettuja arvoja ei tarkisteta millään tavalla! Jos kentän sisältö on vihreellinen, tietokanta hylkää arvon!"
+        reset:
+          title: "Aseta/poista nollaustila"
+          action: "Toiminto:"
+          reset: "Aseta nollaustilaan (jos ei ole jo)"
+          clear: "Poista nollaustilasta (jos on)"
+          not_a_laptop: "Vain kannettavat voi asettaa nollaustilaan"
 
     new:
       new_device: Uusi laite (%{device_type})
@@ -1006,11 +1228,18 @@ fi:
       cups_settings: CUPS-asetukset
     cups:
       cups_settings: CUPS-asetukset
+    reset:
+      title: "Tälle laitteelle on tehty nollauspyyntö"
+      at: "Nollauspyyntö tehty"
+      from: "Nollauspyynnön tekijä"
+      pin: "Varmistuskoodi (PIN)"
+      mode: "Tila"
+      operation: "Operaatio"
     show:
       change_school: Vaihda koulua...
     select_school:
-      title: "Laitteen (%{name}) siirtäminen toiseen kouluun"
-      select_new_school: Valitse uusi koulu
+      title: "Siirrä laite \"%{name}\" toiseen kouluun"
+      select_new_school: "Valitse uusi koulu"
       submit: "Siirrä"
 
   # Device types (used in app/models/host.rb)
@@ -1038,6 +1267,7 @@ fi:
     no_info: "Ei vastaanotettuja laitetietoja tästä laitteesta"
     json_failed: "Laitetietojen JSONin lataus epäonnistui: %{msg}"
     received_timestamp: "Tiedot vastaanotettu"
+    download_raw: "Lataa raakadata JSON-muodossa"
     image:
       name: "Päätekuva"
       release: "Julkaisu"
@@ -1060,6 +1290,33 @@ fi:
     hard_drive:
       title: "Kiintolevy"
       none: "(Ei kiintolevyä)"
+    smart:
+      no_data: "(Ei SMART-tietoja)"
+      general_title: "Yleistiedot"
+      model_name: "Nimi"
+      model_family: "Malli"
+      serial_number: "Sarjanumero"
+      firmware_version: "Firmware-versio"
+      block_size: "Lohkon koko (looginen/fyysinen)"
+      wwn: "WWN (World Wide Name)"
+      trim_supported: "TRIM-tuki?"
+      ata_version: "ATA-versio"
+      sata_version: "SATA-versio"
+      interface_speed: "Rajapinnan nopeus"
+      time: "Tiedot kerätty (paikallisaika)"
+      self_test: "Self-test"
+      power_on_time: "Päälläoloaika (TT:MM)"
+      power_cycles: "Käynnistyskertoja"
+      temperature: "Lämpötila"
+      attributes_title: "SMART-attribuutit"
+      attr_attribute: "(ID) Attribuutti"
+      attr_value: "Arvo"
+      attr_worst: "Huonoin"
+      attr_threshold: "Raja"
+      attr_raw: "Raaka arvo"
+      nvme_title: "NVME-tiedot"
+      nvme_attr: "Attribuutti"
+      nvme_value: "Arvo"
     df:
       title: "Osioiden vapaa tila"
     wifi:
@@ -1145,6 +1402,7 @@ fi:
       select: Valitse
     form_wlan:
       title: Langattomat verkot
+      warning: "<strong>VAROITUS</strong>: Langattoman verkon salasanan tai sen muiden asetusten vaihto katkaisee laitteiden yhteyden kyseiseen verkkoon siihen asti, kunnes ne ovat saaneet päivitetyt verkkotiedot jonkin toisen verkkoyhteyden kautta. Siksi on suositeltavaa, että luot ensin uuden väliaikaisen verkon (langaton tai langallinen) ja annat laitteiden yhdistyä siihen, ja muutat verkon asetuksia vasta sitten. Näin laitteet saavat päivitetyt verkkotiedot toisen yhteyden kautta ja sinun ei tarvitse päivittää laitteita käsin yksi kerrallaan."
       wireless_access_point_setup: Tukiasemien oletusasetukset
       channel_random: Satunnainen
       wireless_network_setup: Langattomien verkkojen asetukset
@@ -1212,12 +1470,6 @@ fi:
         blank: "%{attribute} pitää olla asetettuna"
         invalid: "%{attribute} on virheellinen"
         confirmation: "%{attribute} ei täsmää vahvistukseen"
-        gsuite_password_too_short: "Koulun tietoturvakäytänteissä on määritetty, että salasanojen on oltava vähintään 8 merkkiä pitkiä."
-        gsuite_password_whitespace: "Koulun tietoturvakäytänteissä on määritetty, että salasana ei saa alkaa eikä loppua välilyöntiin."
-        gsuite_password_ascii_only: "Koulun tietoturvakäytänteissä on määritetty, että salasanat voivat sisältää vain merkkejä A-Z, a-z, 0-9 ja muutama muu välimerkki."
-        oulu_ad_password_too_short: "Koulun tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään kahdeksan merkkiä."
-        sixcharsmin_password_too_short: "Koulun tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään kuusi merkkiä."
-        sevencharsmin_password_too_short: "Koulun tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään seitsemän merkkiä."
         too_long: "%{attribute} on liian pitkä (suurin sallittu pituus on %{count} merkkiä)"
         too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
         image_failed: "Kuvaa ei voitu tallentaa"
@@ -1243,6 +1495,14 @@ fi:
           unknown_json_error: "PuavoConfin JSON-parsinnassa tuntematon virhe"
           not_a_hash: "PuavoConf ei ole avain-/arvopari-muotoa"
           unsupported_value_types: "PuavoConfin arvoissa ei-tuettuja tyyppejä"
+        password_validation:
+          too_short: "Salasana on liian lyhyt"
+          too_long: "Salasana on liian pitkä"
+          cant_start_or_end_in_whitespace: "Salasana ei saa alkaa/loppua välilyöntiin"
+          ascii_only: "Salasana voi sisältää vain kirjaimia A-Z ja a-z, numeroita, sekä tavallisimpia välimerkkejä"
+          not_complex_enough: "Salasana ei ole tarpeeksi monimutkainen (se ei sisällä kaikkia vaadittuja merkkejä)"
+          contains_name: "Salasana ei saa sisältää etunimeä, sukunimeä, tai käyttäjänimeä"
+          common: "Tämä salasana on heikko ja yleisesti käytetty"
     models:
       group: "Ryhmä"
       user: "Käyttäjä"
@@ -1484,20 +1744,10 @@ fi:
   # Password forms
   # (There are more password-related messages in the flash messages section)
   password:
-    validator_ok: "Salasana OK"
-    validator_ascii_only: "Salasana saa sisältää vain ASCII-merkkejä"
-    validator_no_whitespace: "Salasana ei saa alkaa eikä loppua tyhjään merkkiin"
-    validator_too_short: "Salasana on liian lyhyt"
-    validator_too_short_with_count: "Salasana on liian lyhyt, sen on oltava vähintään %{minlength} merkkiä pitkä"
-    validator_passwords_match: "Salasana täsmää vahvistukseen"
-    validator_passwords_dont_match: "Salasana ei täsmää vahvistukseen"
-    gsuite_integration_enabled: "Koulun tietoturvakäytänteissä on määritelty, että salasanojen on oltava vähintään 8 merkkiä pitkiä, eivät saa alkaa eikä loppua välilyöntiin, ja ne voivat sisältää vain merkkejä A-Z, a-z, 0-9 ja muutaman muun välimerkin."
-    oulu_ad_integration_enabled: "Koulun tietoturvakäytänteissä on määritelty, että salasanojen on oltava vähintään 8 merkkiä pitkiä, ja että salasana ei saa olla sama kuin kaksi edellistä salasanaa."
-    six_chars_min: "Koulun tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään kuusi merkkiä."
-    seven_chars_min: "Koulun tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään seitsemän merkkiä."
     current_password_too_old: "Organisaation tietoturvakäytännöistä johtuen sinun täytyy vaihtaa nykyinen salasanasi, koska se on liian vanha."
-    attempts_are_logged_own: "Kaikki salasananvaihtoyritykset tallennataan lokiin."
-    attempts_are_logged_other: "Tämä lomake on tarkoitettu vain opettajien ja ylläpitäjien käytettäväksi. Kaikki salasananvaihdot ja -yritykset tallennataan lokiin. Lokiin tallentuvat käyttäjänimet, IP-osoite/-osoitteet sekä aikaleima."
+    attempts_are_logged_own: "Kaikki salasananvaihtoyritykset tallennetaan lokiin."
+    attempts_are_logged_other: "Tämä lomake on tarkoitettu vain opettajien ja ylläpitäjien käytettäväksi. Kaikki salasananvaihdot ja -yritykset tallennetaan lokiin. Lokiin tallentuvat käyttäjänimet, IP-osoite/-osoitteet sekä aikaleima."
+    invalid: "Uusi salasana ei täsmännyt asetettuihin vaatimuksiin"
     edit:
       title: "Vaihda toisen käyttäjän salasana"
       head: "Vaihtaaksesi toisen käyttäjän salasanan, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi."
@@ -1505,13 +1755,14 @@ fi:
       changed_user: Vaihdettava tunnus
       password: Salasana
       link_own_password: Vaihda oma salasanasi
+      domain_or: " tai "
     own:
       title: Vaihda oma salasanasi
       password: Vanha salasana
       link_other_password: "Vaihda toisen käyttäjän salasana"
     forgot:
-      title: Aseta uusi salasana
-      description: Anna sähköpostiosoitteesi saadaksesi tarkemmat ohjeet.
+      title: "Aseta uusi salasana"
+      description: "Anna sähköpostiosoitteesi, niin lähetämme sinne linkin jonka kautta voit asettaa itsellesi uuden salasanan."
     reset:
       title: Aseta uusi salasana
       password: Uusi salasana
@@ -1519,29 +1770,18 @@ fi:
       description: Anna uusi salasanasi.
       submit: Vaihda salasanasi
     successfully:
-      send_token: Olemme lähettäneet sinulle sähköpostilla linkin, jonka kautta voit vaihtaa salasanasi.
-      update: Salasanan vaihto onnistui!
-
-  # Email address confirmation
-  email_confirm:
-    preview:
-      title: Vahvista sähköpostiosoitteesi
-      description: "Vahvista uusi sähköpostiosoitteesi (%{email}) syöttämällä salasanasi ja napsauttamalla Vahvista"
-      confirm: Vahvista
-    successfully:
-      info: Sähköpostiosoitteesi on vahvistettu
-    error:
-      email_already_exists: "Tämä sähköpostiosoite on jo käytössä!"
-      invalid_jwt_token: "Virheellinen JWT -valtuutus. Ota yhteyttä Opinsysin tukeen."
+      send_token: "Olemme lähettäneet sinulle sähköpostilla linkin, jonka kautta voit vaihtaa salasanasi. Linkki on voimassa vain rajatun ajan, joten avaathan sen pian.<br><br>Jos et saa sähköpostia, ole hyvä ja ota yhteys Opinsysin tukeen ja anna heille tämä koodi: %{request_id}."
+      update: "Salasanasi on onnistuneesti vaihdettu."
 
   # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:
     edit:
-      title: Omat tiedot
-      save_and_close: Tallenna ja sulje
+      title: "Omat tiedot"
     show:
-      message: Tietojesi tallennus onnistui.
-      email_confirm_info: Saat vahvistuslinkin uuteen sähköpostiisi hetken kuluttua. Klikkaa linkkiä vahvistaaksesi uuden osoitteen.
+      photo_failed: "Profiilikuvan tallennus ei onnistunut. Tarkista että valitsit toimivan kuvatiedoston ja yritä uudelleen."
+      save_failed: "Tietojesi tallennus epäonnistui jostain syystä. Yritä uudelleen ja jos ongelma toistuu, ota yhteys Opinsysin tukeen."
+      save_failed_code: "Tietojesi tallennus epäonnistui. Yritä uudelleen ja jos ongelma toistuu, ota yhteys Opinsysin tukeen ja anta heille tämä koodi: \"%{request_id}\"."
+      updated: "Omat tietosi on päivitetty"
 
   # Used by script/create_organisation_owner
   create_organisation_owner:

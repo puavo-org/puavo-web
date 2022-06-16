@@ -84,7 +84,4 @@ databases.each_with_index do |database, index|
     puts "  Can't find the user"
     next
   end
-
-  # Don't trigger password change timeouts (FIXME this shouldn't happen but it happens anyway!)
-  sleep 11
 end

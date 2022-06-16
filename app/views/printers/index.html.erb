@@ -39,12 +39,15 @@
 <% end %>
 
 <script>
-$(document).ready(function() {
-    // Build a new table object for each server
-    for (var i = 0; i < <%= @servers_and_printers.count %>; i++) {
-      const tableId = "printers_" + i;
+document.addEventListener("DOMContentLoaded", function() {
+    // Build a new table object for each server. Use bootserver hostnames as LocalStorage keys.
+    const HOSTNAMES = [<%= raw @servers_and_printers.collect { |s| "\"#{s[:hostname]}\"" }.join(', ') %>];
 
-      console.log("Sorting printers table \"" + tableId + "\n");
+    for (var i = 0; i < <%= @servers_and_printers.count %>; i++) {
+      const tableId = `printers_${i}`,
+            storageKey = `printers_${HOSTNAMES[i]}`;
+
+      console.log(`Sorting printers table \"${tableId}", storage key="${storageKey}"\n`);
 
       // I can't help but to wonder if this leaks memory.
       // These are allocated inside a loop, so shouldn't
@@ -59,7 +62,8 @@ $(document).ready(function() {
               [ COLUMN_TYPE_STRING ],                   // location
               [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
           ],
-          "fi"
+          "fi",
+          storageKey
       );
   }
 });

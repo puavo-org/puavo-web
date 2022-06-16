@@ -1,12 +1,4 @@
 class LdapModel
-
-  def self.callable_from_instance(method)
-    klass = self
-    define_method method do |*args|
-      klass.send(method, *args)
-    end
-  end
-
   def self.from_ldap_hash(ldap_attrs, serialize_attrs=nil)
     new({}, :serialize => serialize_attrs, :existing => true).ldap_merge!(ldap_attrs)
   end
@@ -17,31 +9,10 @@ class LdapModel
     s && s.include?(",") && s.include?("=")
   end
 
-  # http://tools.ietf.org/html/rfc4515 lists these exceptions from UTF1
-  # charset for filters. All of the following must be escaped in any normal
-  # string using a single backslash ('\') as escape.
-  #
-  ESCAPES = {
-    "\0" => '00', # NUL            = %x00 ; null character
-    '*'  => '2A', # ASTERISK       = %x2A ; asterisk ("*")
-    '('  => '28', # LPARENS        = %x28 ; left parenthesis ("(")
-    ')'  => '29', # RPARENS        = %x29 ; right parenthesis (")")
-    '\\' => '5C', # ESC            = %x5C ; esc (or backslash) ("\")
-  }
-  # Compiled character class regexp using the keys from the above hash.
-  ESCAPE_RE = Regexp.new(
-    "[" +
-    ESCAPES.keys.map { |e| Regexp.escape(e) }.join +
-    "]"
-  )
-
-  # Escape unsafe user input for safe LDAP filter use
-  #
-  # @see https://github.com/ruby-ldap/ruby-net-ldap/blob/8ddb2d7c8476c3a2b2ad9fcd367ca0d36edaa611/lib/net/ldap/filter.rb#L247-L264
-  def self.escape(string)
-    string.to_s.gsub(ESCAPE_RE) { |char| "\\" + ESCAPES[char] }
+  # Shorter-to-type wrapper around Net::LDAP::Filter.escape
+  def self.ldap_escape(string)
+    Net::LDAP::Filter.escape(string.to_s)
   end
-  callable_from_instance :escape
 end
 
 
@@ -62,6 +33,27 @@ class V4_MissingParameter < StandardError; end
 class V4_InvalidParameter < StandardError; end
 class V4_DuplicateParameter < StandardError; end
 
+# Known filter operators
+OPERATORS = Set.new(['starts', 'ends', 'contains', 'is']).freeze
+
+# Known fields that can accept multiple values
+PERMIT_MULTIPLE = Set.new(['id']).freeze
+
+# Attempts to detect if the user is high-level enough for this request
+def v4_is_request_allowed?(current)
+  if current
+    return current.admin?
+  end
+
+  # uid=<name>,ou=System Accounts,dc=...
+  if /^uid=[a-zA-Z0-9_]+,ou=System Accounts,dc=edu,dc=/.match(LdapModel.settings[:credentials][:dn])
+    return true
+  end
+
+  # Fail safe
+  return false
+end
+
 def v4_get_fields(params)
   # Make sure there is a non-empty 'fields' parameter
   raise V4_MissingFields unless params.include?('fields')
@@ -69,12 +61,55 @@ def v4_get_fields(params)
   return params['fields'].split(',')
 end
 
-def v4_get_id_from_params(params)
-  if params.include?('id')
-    return params['id'].split(',')
-  else
-    return []
+def v4_get_filters_from_params(params, user_to_ldap, base_class = '*')
+  out = []
+
+  Array(params.fetch('filter', nil) || []).each do |f|
+    parts = f.split('|')
+
+    # Silently ignore invalid filters
+    next unless parts.count == 3
+    next unless OPERATORS.include?(parts[1])
+    next unless user_to_ldap.include?(parts[0])
+
+    is_multi = PERMIT_MULTIPLE.include?(parts[0])
+    field = user_to_ldap[parts[0]]
+    value = is_multi ? parts[2].split(',') : parts[2]
+
+    case parts[1]
+      when 'starts'
+        next if is_multi
+        out << "(#{field}=#{LdapModel.ldap_escape(value)}*)"
+      when 'ends'
+        next if is_multi
+        out << "(#{field}=*#{LdapModel.ldap_escape(value)})"
+      when 'contains'
+        next if is_multi
+        out << "(#{field}=*#{LdapModel.ldap_escape(value)}*)"
+      when 'is'
+        if value.class == Array
+          if value.count > 1
+            # multiple values OR'd together
+            mvalue = value.map { |v| "(#{field}=#{LdapModel.ldap_escape(v)})" }
+            out << "(|#{mvalue.join})"
+          else
+            out << "(#{field}=#{LdapModel.ldap_escape(value[0])})"
+          end
+        else
+          out << "(#{field}=#{LdapModel.ldap_escape(value)})"
+        end
+    end
   end
+
+  # This must be always in the query for reasons I'm not entirely familiar with
+  out.unshift("(objectclass=#{base_class})")
+
+  return out
+end
+
+# Builds a filter string for LDAP searches
+def v4_combine_filter_parts(parts)
+  (parts && parts.class == Array) ? "(&#{parts.join})" : "(objectclass=*)"
 end
 
 def v4_ensure_is_array(out, *members)
@@ -229,17 +264,6 @@ def v4_ldap_to_user(raw_ldap_entries, requested_ldap_attrs, conversion_table)
   end
 
   return out
-end
-
-# Builds a filter string for LDAP searches
-def v4_build_puavoid_filter(base, id)
-  if id && !id.empty?
-    #(&(base)(|(puavoId=XXX)(puavoId=YYY)...(puavoId=NNN)))
-    return "(&#{base}(|#{id.collect{ |id| "(puavoId=#{id})" }.join}))"
-  else
-    # just the base part
-    return base
-  end
 end
 
 # Removes items form hash whose keys are not on the set of allowed keys

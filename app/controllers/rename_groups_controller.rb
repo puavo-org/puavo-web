@@ -47,7 +47,7 @@ class RenameGroupsController < ApplicationController
     # don't duplicate group abbreviations
     Array(params[:new_groups_cn] || []).each do |new_cn|
       unless Group.all.select{|g| g.cn == new_cn.to_s }.empty?
-        flash[:alert] = "Uuden ryhmän lyhenne on jo käytössä!"
+        flash[:alert] = t('flash.rename_groups.abbreviation_already_in_use')
         redirect_to new_rename_groups_path(@school)
         return
       end
@@ -74,7 +74,7 @@ class RenameGroupsController < ApplicationController
       end
     end
 
-    flash[:notice] = "Nimetty #{num_groups_renamed} ryhmä(ä) uudelleen."
+    flash[:notice] = t('flash.rename_groups.complete', :count => num_groups_renamed)
 
     respond_to do |format|
       format.html { redirect_to( school_path(@school) ) }

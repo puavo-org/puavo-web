@@ -99,11 +99,39 @@ class School < BaseGroup
   end
 
   def add_admin(user)
-    return (
-      self.ldap_modify_operation( :add, [{"puavoSchoolAdmin" => [user.dn.to_s]}] ) &&
-      user.ldap_modify_operation( :add, [{"puavoAdminOfSchool" => [self.dn.to_s]}] ) &&
-      SambaGroup.add_uid_to_memberUid('Domain Admins', user.uid)
-    )
+    begin
+      self.ldap_modify_operation( :add, [{"puavoSchoolAdmin" => [user.dn.to_s]}] )
+    rescue ActiveLdap::LdapError::TypeOrValueExists
+    end
+
+    begin
+      user.ldap_modify_operation( :add, [{"puavoAdminOfSchool" => [self.dn.to_s]}] )
+    rescue ActiveLdap::LdapError::TypeOrValueExists
+    end
+
+    # SambaGroup.add_uid_to_memberUid contains its own exception handling
+    SambaGroup.add_uid_to_memberUid('Domain Admins', user.uid)
+
+    # This return value is checked in schools_controller.rb
+    true
+  end
+
+  def remove_admin(user)
+    # Delete user from the list of Domain Users if it is no in any school administrator
+    # (SambaGroup.delete_uid_from_memberUid contains its own exception handling)
+    if Array(user.puavoAdminOfSchool).count < 2
+      SambaGroup.delete_uid_from_memberUid('Domain Admins', user.uid)
+    end
+
+    begin
+      self.ldap_modify_operation( :delete, [{"puavoSchoolAdmin" => [user.dn.to_s]}] )
+    rescue ActiveLdap::LdapError::NoSuchAttribute
+    end
+
+    begin
+      user.ldap_modify_operation( :delete, [{"puavoAdminOfSchool" => [self.dn.to_s]}] )
+    rescue ActiveLdap::LdapError::NoSuchAttribute
+    end
   end
 
   def self.all_with_permissions(user)

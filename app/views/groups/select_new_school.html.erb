@@ -1,0 +1,33 @@
+<% page_title t('titles.schools'), @school.displayName, t('titles.groups'), t('link.change_school') %>
+
+<h1><%= t('groups.change_school.title', group: @group.displayName) %></h1>
+
+<p><%= t('groups.change_school.warning') %></p>
+
+<p><%= t('groups.change_school.integrations_warning') %></p>
+
+<div class="formContainer">
+
+<%= form_for(@group, url: group_change_school_path(@school, @group), html: { method: :put } ) do |f| %>
+<table class="editForm">
+  <tr>
+    <th><label for="school"><%= t('groups.change_school.destination_school') %></label></th>
+    <td>
+      <select id="school" name="school" class="flex-grow-2">
+      <% @available_schools.each do |s| %>
+        <option value="<%= s.id %>"><%= s.displayName %></option>
+      <% end %>
+      </select>
+    </td>
+  </tr>
+
+  <tr class="buttonRow">
+    <td colspan="2">
+      <%= f.submit t('link.move'), class: 'btn' %>
+      <%= link_to t('link.cancel'), group_path(@school, @group), class: 'btn' %>
+    </td>
+  </tr>
+</table>
+<% end %>
+
+</div>

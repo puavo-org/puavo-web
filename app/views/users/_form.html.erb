@@ -80,18 +80,45 @@
       <th class="requiredField">
       <%= f.label :puavoEduPersonAffiliation %>
       </th>
-      <td>
+      <td class="rolesCell">
         <% User.puavoEduPersonAffiliation_list.map do |a| %>
           <input <%= @edu_person_affiliation.include?(a) ? ' checked="checked"' : "" %> id="puavoEduPersonAffiliation_<%= a %>" name="user[puavoEduPersonAffiliation][]" type="checkbox" value="<%= a %>"/>
           <label for="puavoEduPersonAffiliation_<%= a %>"><%= h t('puavoEduPersonAffiliation_' + a) %></label><br>
         <% end %>
         <%= field_error_text_span(f.object, :puavoEduPersonAffiliation) %>
+        <p class="hidden genericWarning" id="conflictingRoles"><%= t('.conflicting_roles') %></p>
       </td>
     </tr>
 
-    <%= render :partial => "teaching_group", :locals => { :f => f } %>
-
-    <%= render :partial => "administrative_groups", :locals => { :f => f } %>
+    <tr>
+      <th><%= f.label :groups %></th>
+      <td id="groupsCell">
+        <% if @groups_by_school.empty? %>
+        (<%= t('.no_groups') %>)
+        <% else %>
+        <div class="flex flex-rows flex-gap-10px">
+          <div class="groupsFilter">
+            <input type="search" class="search" placeholder="<%= t('.group_search_placeholder') %>">
+          </div>
+          <div class="groupsList">
+            <% @groups_by_school.each do |s| %>
+            <div class="school">
+              <h4 class="margin-0"><%= s[:school_name] %></h4>
+              <ul class="no-list-bullets margin-0 padding-0">
+                <% s[:groups].each do |g| %>
+                <li class="padding-left-20px" data-group-name="<%= g[:name_sort] %>">
+                  <input type="checkbox" name="groups[]" id="<%= g[:id] %>" value="<%= g[:id] %>" <%= g[:member_dn].include?(@is_new_user ? '' : @user.dn.to_s) ? "checked" : "" %>><label for="<%= g[:id] %>"><%= h g[:name] %> (<%= g[:member_dn].count %> jäsentä<%= g[:type] ? ", #{g[:type]}" : "" %>)</label>
+                </li>
+                <% end %>
+              </ul>
+            </div>
+            <% end %>
+            <div class="hidden noMatches"><%= t('.no_group_search_hits') %></div>
+          </div>
+        </div>
+        <% end %>
+      </td>
+    </tr>
 
     <tr>
       <th><%= f.label :puavoLocale %></th>
@@ -179,13 +206,17 @@
 
 <% unless @is_admin_school %>
 <% content_for :post_load_javascript do %>
-<%= setup_password_validator(@organisation_name, @school.id) %>
+<%= setup_password_validator(@organisation_name,
+                             @school.id,
+                             'user_new_password',
+                             'user_new_password_confirmation',
+                             ['user_givenName', 'user_sn', 'user_uid']) %>
 <% end %>
 <% end %>
 
-<% if @automatic_email_addresses %>
 <% content_for :post_load_javascript do %>
 <script>
+<% if @automatic_email_addresses %>
 // Automatically generate the email address. This is only for the show, the actual
 // address is generated server-side, using same logic.
 const DOMAIN = "<%= @automatic_email_domain %>";
@@ -203,6 +234,76 @@ function autogenerateEmailAddress()
 }
 
 uid.addEventListener("input", e => autogenerateEmailAddress());
-</script>
 <% end %>
+
+function getRoleSelector(role)
+{
+    return document.querySelector(`table.editForm td.rolesCell input[id=puavoEduPersonAffiliation_${role}]`);
+}
+
+function updateRoles()
+{
+    const isStudent = getRoleSelector("student").checked,
+          isTeacherOrStaff = getRoleSelector("teacher").checked || getRoleSelector("staff").checked;
+
+    if (isStudent && isTeacherOrStaff)
+        document.querySelector("p#conflictingRoles").classList.remove("hidden");
+    else document.querySelector("p#conflictingRoles").classList.add("hidden");
+}
+
+// Filter the groups list
+function filterGroups()
+{
+    const filter = document.querySelector(`table.editForm td#groupsCell .search`).value.toLowerCase().trim();
+
+    const container = document.querySelector("table.editForm td#groupsCell div.groupsList"),
+          schools = container.querySelectorAll("div.school")
+          noHits = container.querySelector("div.noMatches");
+
+    let numVisibleSchools = 0;
+
+    for (let school of schools) {
+        // Filter the groups in this school and then show/hide the whole school section
+        // if nothing under it is visible
+        let numVisibleGroups = 0;
+
+        for (let group of school.querySelectorAll("li")) {
+            if (filter.length == 0) {
+                group.classList.remove("hidden");
+                numVisibleGroups++;
+                continue;
+            }
+
+            if (group.dataset.groupName.includes(filter)) {
+                group.classList.remove("hidden");
+                numVisibleGroups++;
+            } else group.classList.add("hidden");
+        }
+
+        if (numVisibleGroups > 0) {
+            school.classList.remove("hidden");
+            numVisibleSchools++;
+        } else school.classList.add("hidden");
+    }
+
+    if (numVisibleSchools == 0)
+        noHits.classList.remove("hidden");
+    else noHits.classList.add("hidden");
+}
+
+for (let cb of document.querySelectorAll("table.editForm td.rolesCell input[id^=puavoEduPersonAffiliation_]"))
+    cb.addEventListener("click", () => { updateRoles(); });
+
+<% unless @groups_by_school.empty? %>
+document.querySelector(`table.editForm td#groupsCell .search`).addEventListener("input", () => filterGroups());
+<% end %>
+
+// Initial updates
+updateRoles();
+
+<% unless @groups_by_school.empty? %>
+filterGroups();
+<% end %>
+
+</script>
 <% end %>

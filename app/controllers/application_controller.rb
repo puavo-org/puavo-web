@@ -123,13 +123,6 @@ class ApplicationController < ActionController::Base
     t.localtime.strftime('%Y-%m-%d %H:%M:%S') rescue '?'
   end
 
-  def puavo_users?
-    # FIXME
-    logger.warn "Deprecated call to puavo_users?"
-    return true
-    # PUAVO_CONFIG["puavo_users"] == "enabled" ? true : false
-  end
-
   def password_management_host
     url = "http://" +
       Puavo::CONFIG["password_management"]["host"]

@@ -28,6 +28,7 @@ require_relative "./resources/samba_domains"
 require_relative "./resources/schools"
 require_relative "./resources/organisations"
 require_relative "./resources/printer_queues"
+require_relative "./resources/external_service"
 require_relative "./resources/sso"
 require_relative "./resources/sessions"
 require_relative "./resources/wlan_networks"
@@ -38,13 +39,18 @@ require_relative "./resources/boot_configurations"
 require_relative "./resources/hosts"
 require_relative "./resources/device_images"
 require_relative "./resources/password"
-require_relative "./resources/email_confirm"
 require_relative "./resources/user_lists"
 require_relative "./resources/certs"
-require_relative "./resources/authentication"
 require_relative "./resources/external_login"
 require_relative "./resources/bootserver_dns"
 require_relative "./resources/my_school_users"
 
+if CONFIG["eltern_sso"]
+require_relative "./resources/eltern"
+end
+
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 DISTRIBUTED_LOCK = Redlock::Client.new([REDIS_CONNECTION])
+
+PUAVO_SSO_SESSION_KEY = '_puavo_sso_session'.freeze
+PUAVO_SSO_SESSION_LENGTH = (60 * 60 * 8).freeze       # 8 hours

@@ -74,26 +74,26 @@ class UsersController < ApplicationController
   # New AJAX-based index for non-test environments
   def new_cool_users_index
     @is_owner = is_owner?
-    @permit_single_user_deletion = false
-    @permit_single_user_creation = false
+
+    @permit_single_user_deletion = true
+    @permit_single_user_creation = true
 
     unless @is_owner
-      # This user is not an owner, but they *have* to be a school admin, because only owners
-      # and school admins can log in. See if they've been granted any extra permissions.
-      if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
-        @permit_single_user_deletion = true
-      end
-
-      if can_schooladmin_do_this?(current_user.uid, :create_single_users)
-        @permit_single_user_creation = true
-      end
-    else
-      # Owners can always create and delete users
-      @permit_single_user_creation = true
-      @permit_single_user_deletion = true
+      @permit_single_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
+      @permit_single_user_creation = can_schooladmin_do_this?(current_user.uid, :create_users)
     end
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
+
+    @schools_list = []
+
+    School.all.each do |s|
+      @schools_list << {
+        id: s.id.to_i,
+        dn: s.dn.to_s,
+        name: s.displayName,
+      }
+    end
 
     # List of systems where user deletions are synchronised
     @synchronised_deletions = {}
@@ -119,6 +119,17 @@ class UsersController < ApplicationController
 
     school_admins = Array(@school.user_school_admins || []).collect { |a| a.dn.to_s }.to_set
 
+    schools_by_dn = {}
+
+    School.search_as_utf8(:filter => '',
+                          :attributes => ['cn', 'displayName', 'puavoId']).each do |dn, school|
+      schools_by_dn[dn] = {
+        id: school['puavoId'][0].to_i,
+        cn: school['cn'][0],
+        name: school['displayName'][0].force_encoding('utf-8'),
+      }
+    end
+
     # Get a raw list of users in this school
     raw = User.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
                               :scope => :one,
@@ -135,6 +146,7 @@ class UsersController < ApplicationController
       # Special attributes
       user[:link] = "/users/#{school.id}/users/#{user[:id]}"
       user[:school_id] = school_id
+      user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school_id]
 
       users << user
     end
@@ -179,7 +191,7 @@ class UsersController < ApplicationController
         return status_failed_msg(message)
       end
 
-      user.delete
+      user.destroy
       ok = true
     rescue StandardError => e
       return status_failed_msg(e)
@@ -274,7 +286,6 @@ class UsersController < ApplicationController
         # Unlock
         if user.puavoRemovalRequestTime
           user.puavoRemovalRequestTime = nil
-          user.puavoLocked = false
           user.save!
         end
 
@@ -325,6 +336,9 @@ class UsersController < ApplicationController
           user.puavoExternalData = ed.empty? ? nil : ed.to_json
           user.save!
         end
+      elsif column == 'pnumber' && user.puavoEduPersonPersonnelNumber
+        user.puavoEduPersonPersonnelNumber = nil
+        user.save!
       end
 
       ok = true
@@ -383,6 +397,129 @@ class UsersController < ApplicationController
     end
   end
 
+  # Mass operation: change school(s)
+  def mass_op_user_change_school
+    begin
+      user_id = params[:user][:id]
+      operation = params[:user][:operation]
+      keep_previous = params[:user][:keep]
+      school_id = params[:user][:school_id]
+      school_dn = params[:user][:school_dn]
+    rescue
+      puts "mass_op_user_change_school(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_user_change_school(): missing params')
+    end
+
+    ok = false
+
+    begin
+      user = User.find(user_id)
+
+      if operation == 0
+        # Move (change primary school)
+        unless user.puavoEduPersonPrimarySchool == school_dn
+          school = School.find(school_id)
+          puts "-" * 50
+          puts "Moving user #{user.uid} to school #{school_dn}"
+
+          previous_dn = user.puavoEduPersonPrimarySchool
+          previous_school = School.find(previous_dn)
+
+          if keep_previous
+            puts "Keeping the previous school (#{previous_dn})"
+          end
+
+          if Array(user.puavoSchool).include?(school_dn)
+            puts "The user is already in the target school, changing the primary school DN"
+            user.puavoEduPersonPrimarySchool = school_dn
+
+            unless keep_previous
+              puts "Removing the previous primary school"
+              schools = Array(user.puavoSchool).dup
+              schools.delete(previous_dn)
+              user.puavoSchool = (schools.count == 1) ? schools[0] : schools
+            end
+          else
+            puts "Inserting the new school on the schools array"
+            schools = Array(user.puavoSchool).dup
+            schools << school_dn
+
+            unless keep_previous
+              puts "Removing the previous primary school"
+              schools.delete(previous_dn)
+            end
+
+            user.puavoSchool = (schools.count == 1) ? schools[0] : schools
+
+            puts "Changing the primary school"
+            user.puavoEduPersonPrimarySchool = school_dn
+          end
+
+          puts "Saving the user object"
+          user.save!
+
+          unless keep_previous
+            # Remove the user from the previous primary school
+            begin
+              LdapBase.ldap_modify_operation(previous_dn, :delete, [{ "member" => [user.dn.to_s] }])
+            rescue ActiveLdap::LdapError::NoSuchAttribute
+            end
+
+            begin
+              LdapBase.ldap_modify_operation(previous_dn, :delete, [{ "memberUid" => [user.uid.to_s] }])
+            rescue ActiveLdap::LdapError::NoSuchAttribute
+            end
+          end
+
+          puts "-" * 50
+        end
+
+        ok = true
+      elsif operation == 1
+        # Add
+        unless Array(user.puavoSchool).include?(school_dn)
+          school = School.find(school_id)
+
+          puts "-" * 50
+          puts "Adding user #{user.uid} to school #{school_dn}"
+          puts "-" * 50
+
+          user.puavoSchool = Array(user.puavoSchool) + [school_dn]
+          user.save!
+        end
+
+        ok = true
+      elsif operation == 2
+        # Remove
+        if Array(user.puavoSchool).include?(school_dn)
+          if user.puavoEduPersonPrimarySchool == school_dn
+            # Users cannot be removed from their primary school. You have to move them
+            # to another school first, then remove the old primary school.
+            return status_failed_trans('users.index.mass_operations.change_school.cant_remove_primary_school')
+          else
+            school = School.find(school_id)
+
+            puts "-" * 50
+            puts "Removing user #{user.uid} from school #{school_dn}"
+            _remove_user_from_school(user, school)
+            puts "-" * 50
+          end
+        end
+
+        ok = true
+      end
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
 
   # ------------------------------------------------------------------------------------------------
   # ------------------------------------------------------------------------------------------------
@@ -413,6 +550,9 @@ class UsersController < ApplicationController
     organisation_owners = Array(LdapOrganisation.current.owner).each.select { |dn| dn != "uid=admin,o=puavo" } || []
     @user_is_owner = organisation_owners.include?(@user.dn)
 
+    @viewer_is_an_owner = is_owner?
+    viewer_is_admin_in = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
+
     # List schools where this user is an admin in
     @admin_in_schools = []
 
@@ -423,6 +563,8 @@ class UsersController < ApplicationController
         logger.error "Unable to find admin school by DN \"#{dn.to_s}\": #{e}"
       end
     end
+
+    @admin_in_schools.sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
 
     # If the user is a member in more than one school, list them all in alphabetical order
     primary_school = @user.primary_school
@@ -454,24 +596,26 @@ class UsersController < ApplicationController
 
     Array(@user.groups || []).each do |group|
       unless by_school_hash.include?(group.school.dn)
-        by_school_hash[group.school.dn] = [group.school, []]
+        by_school_hash[group.school.dn] = {
+          school: group.school,
+          accessible: @viewer_is_an_owner ? true : viewer_is_admin_in.include?(group.school.dn.to_s),
+          groups: []
+        }
       end
 
-      by_school_hash[group.school.dn][1] << group
+      by_school_hash[group.school.dn][:groups] << group
     end
 
     # flatten the hash and sort the schools by name
     @user_groups = []
 
     by_school_hash.each { |_, data| @user_groups << data }
-    @user_groups.sort! { |a, b| a[0].displayName.downcase <=> b[0].displayName.downcase }
+    @user_groups.sort! { |a, b| a[:school].displayName.downcase <=> b[:school].displayName.downcase }
 
     # then sort the per-school group lists by name
     @user_groups.each do |data|
-      data[1].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+      data[:groups].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
-
-    @viewer_is_an_owner = is_owner?
 
     @permit_user_deletion = false
 
@@ -483,9 +627,7 @@ class UsersController < ApplicationController
     else
       # This user is not an owner, but they *have* to be a school admin, because only owners
       # and school admins can log in. See if they've been granted any extra permissions.
-      if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
-        @permit_user_deletion = true
-      end
+      @permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
     end
 
     # Learner ID
@@ -499,16 +641,18 @@ class UsersController < ApplicationController
       end
     end
 
-    # Extra permissions
+    # Extra permissions for admins (non-owners)
     @extra_permissions_list = []
 
-    unless @user_is_owner
-      if can_schooladmin_do_this?(@user.uid, :create_single_users)
-        @extra_permissions_list << 'create_single_users'
-      end
+    if Array(@user.puavoEduPersonAffiliation || []).include?('admin')
+      unless @user_is_owner
+        if can_schooladmin_do_this?(@user.uid, :create_users)
+          @extra_permissions_list << 'create_users'
+        end
 
-      if can_schooladmin_do_this?(@user.uid, :delete_single_users)
-        @extra_permissions_list << 'delete_single_users'
+        if can_schooladmin_do_this?(@user.uid, :delete_users)
+          @extra_permissions_list << 'delete_users'
+        end
       end
     end
 
@@ -548,7 +692,7 @@ class UsersController < ApplicationController
   # GET /:school_id/users/new.xml
   def new
     unless is_owner?
-      unless can_schooladmin_do_this?(current_user.uid, :create_single_users)
+      unless can_schooladmin_do_this?(current_user.uid, :create_users)
         flash[:alert] = t('flash.you_must_be_an_owner')
         redirect_to users_path
         return
@@ -565,6 +709,8 @@ class UsersController < ApplicationController
     @is_new_user = true
     setup_integrations_for_form(@school, true)
 
+    get_group_list
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @user }
@@ -576,8 +722,6 @@ class UsersController < ApplicationController
     @user = get_user(params[:id])
     return if @user.nil?
 
-    @groups = @school.groups
-
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
     @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
@@ -585,7 +729,7 @@ class UsersController < ApplicationController
     @is_new_user = false
     setup_integrations_for_form(@school, false)
 
-    get_user_groups
+    get_group_list
   end
 
   # POST /:school_id/users
@@ -617,10 +761,17 @@ class UsersController < ApplicationController
         unless @user.save
           raise UserError, I18n.t('flash.user.create_failed')
         end
-        format.html { redirect_to( group_user_path(@school,@user) ) }
+
+        # Add to groups
+        if params.include?(:groups)
+          update_user_groups(@user, params[:groups])
+        end
+
+        format.html { redirect_to( user_path(@school, @user) ) }
         format.json { render :json => nil }
       rescue UserError => e
         logger.info "Create user, Exception: " + e.to_s
+        get_group_list
         error_message_and_render(format, 'new', e.message)
       end
     end
@@ -687,8 +838,15 @@ class UsersController < ApplicationController
                   SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
                 end
 
-                s.ldap_modify_operation(:delete, [{"puavoSchoolAdmin" => [@user.dn.to_s]}])
-                @user.ldap_modify_operation(:delete, [{"puavoAdminOfSchool" => [s.dn.to_s]}])
+                begin
+                  s.ldap_modify_operation(:delete, [{"puavoSchoolAdmin" => [@user.dn.to_s]}])
+                rescue ActiveLdap::LdapError::NoSuchAttribute
+                end
+
+                begin
+                  @user.ldap_modify_operation(:delete, [{"puavoAdminOfSchool" => [s.dn.to_s]}])
+                rescue ActiveLdap::LdapError::NoSuchAttribute
+                end
               rescue StandardError => e
                 raise UserError, I18n.t('flash.user.save_failed_school_admin_removal')
               end
@@ -712,13 +870,8 @@ class UsersController < ApplicationController
           raise UserError, I18n.t('flash.user.save_failed')
         end
 
-        if params["teaching_group"]
-          @user.teaching_group = params["teaching_group"]
-        end
-        if params["administrative_groups"]
-          @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == "0" }
-          params["user"].delete("administrative_groups")
-        end
+        # Update all group associations
+        update_user_groups(@user, params[:groups] || [])
 
         # Save new password to session otherwise next request does not work
         if session[:dn] == @user.dn
@@ -729,7 +882,7 @@ class UsersController < ApplicationController
         flash[:notice] = t('flash.updated', :item => t('activeldap.models.user'))
         format.html { redirect_to( user_path(@school,@user) ) }
       rescue UserError => e
-        get_user_groups
+        get_group_list
         error_message_and_render(format, 'edit',  e.message)
       end
     end
@@ -748,9 +901,7 @@ class UsersController < ApplicationController
     else
       # This user is not an owner, but they *have* to be a school admin, because only owners
       # and school admins can log in. See if they've been granted any extra permissions.
-      if can_schooladmin_do_this?(current_user.uid, :delete_single_users)
-        permit_user_deletion = true
-      end
+      permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
     end
 
     unless permit_user_deletion
@@ -895,26 +1046,7 @@ class UsersController < ApplicationController
         return
       end
 
-      schools = Array(@user.puavoSchool.dup)
-      schools.reject!{ |s| s.to_s == @target.dn.to_s }
-      @user.puavoSchool = (schools.count == 1) ? schools[0] : schools
-
-      # Remove school admin associations if needed
-      Array(@user.puavoAdminOfSchool).each do |dn|
-        if dn.to_s == @target.dn.to_s
-          @user.puavoAdminOfSchool = Array(@user.puavoAdminOfSchool).reject{ |dn| dn.to_s == @target.dn.to_s }
-          @target.puavoSchoolAdmin = Array(@target.puavoSchoolAdmin).reject{ |dn| dn.to_s == @user.dn.to_s }
-          @target.save!
-          break
-        end
-      end
-
-      @user.save!
-
-      # The system appears to automatically add the user's UID and DN to the relevant arrays,
-      # but it won't *remove* them
-      LdapBase.ldap_modify_operation(@target.dn, :delete, [{ "member" => [@user.dn.to_s] }])
-      LdapBase.ldap_modify_operation(@target.dn, :delete, [{ "memberUid" => [@user.uid.to_s] }])
+      _remove_user_from_school(@user, @target)
 
       flash[:notice] = t('flash.user.removed_from_school', :name => @target.displayName)
     rescue StandardError => e
@@ -1022,8 +1154,15 @@ class UsersController < ApplicationController
 
       # The system appears to automatically add the user's UID and DN to the relevant arrays,
       # but it won't *remove* them
-      LdapBase.ldap_modify_operation(@previous.dn, :delete, [{ "member" => [@user.dn.to_s] }])
-      LdapBase.ldap_modify_operation(@previous.dn, :delete, [{ "memberUid" => [@user.uid.to_s] }])
+      begin
+        LdapBase.ldap_modify_operation(@previous.dn, :delete, [{ "member" => [@user.dn.to_s] }])
+      rescue ActiveLdap::LdapError::NoSuchAttribute
+      end
+
+      begin
+        LdapBase.ldap_modify_operation(@previous.dn, :delete, [{ "memberUid" => [@user.uid.to_s] }])
+      rescue ActiveLdap::LdapError::NoSuchAttribute
+      end
 
       flash[:notice] = t('flash.user.user_moved_to_school', :name => @target.displayName)
     rescue StandardError => e
@@ -1034,31 +1173,6 @@ class UsersController < ApplicationController
     end
 
     redirect_to(change_schools_path(@user.primary_school, @user))
-  end
-
-  # GET /users/:school_id/users/:id/group
-  def group
-    @user = User.find(params[:id])
-
-    get_user_groups
-
-    respond_to do |format|
-      format.html
-    end
-  end
-
-  # PUT /users/:school_id/users/:id/group
-  def add_group
-    @user = User.find(params[:id])
-
-    if params["administrative_groups"]
-      @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == 0 }
-    end
-    @user.teaching_group = params["teaching_group"]
-
-    respond_to do |format|
-      format.html { redirect_to( user_path(@school, @user) ) }
-    end
   end
 
   def username_redirect
@@ -1134,23 +1248,104 @@ class UsersController < ApplicationController
     format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
   end
 
-  def get_user_groups
-    @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
-    administrative_groups = rest_proxy.get("/v3/administrative_groups").parse or []
+  def get_group_list
+    @is_owner = is_owner?
 
-    @administrative_groups_by_school = {}
-    administrative_groups.each do |g|
-      unless @administrative_groups_by_school[g["school_id"]]
-        @administrative_groups_by_school[g["school_id"]] = {}
-        @administrative_groups_by_school[g["school_id"]]["school_name"] = School.find(g["school_id"]).displayName
-      @administrative_groups_by_school[g["school_id"]]["groups"] = []
-      end
-      @administrative_groups_by_school[g["school_id"]]["groups"].push g
+    unless @is_owner
+      # Don't show groups in schools that this user can't access
+      school_filter = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
     end
 
+    # Partition groups by school. This has to be done with raw searches. Writing
+    # "Group.all" is so easy, but so slow... multiple minutes slow in some places.
+    school_names = {}
+
+    School.search_as_utf8(:filter => '', :attributes => ['displayName']).each do |dn, school|
+      school_names[dn] = school['displayName'][0]
+    end
+
+    # Don't repeatedly call t() when listing potentiall hundreds of groups
+    group_types = {
+      nil => nil,
+      'teaching group' => t('group_type.teaching group'),
+      'course group' => t('group_type.course group'),
+      'year class' => t('group_type.year class'),
+      'administrative group' => t('group_type.administrative group'),
+      'archive users' => t('group_type.archive users'),
+      'other groups' => t('group_type.other groups'),
+    }
+
+    @groups_by_school = {}
+
+    group_attrs = ['puavoId', 'displayName', 'puavoEduGroupType', 'puavoSchool', 'member']
+
+    Group.search_as_utf8(filter: '(objectClass=puavoEduGroup)', attributes: group_attrs).each do |dn, g|
+      school_dn = g['puavoSchool'][0]
+
+      next if !@is_owner && !school_filter.include?(school_dn)
+
+      @groups_by_school[school_dn] ||= {
+        school_name: school_names[school_dn],
+        school_name_sort: school_names[school_dn].downcase,
+        groups: []
+      }
+
+      @groups_by_school[school_dn][:groups] << {
+        id: g['puavoId'][0].to_i,
+        name: g['displayName'][0],
+        name_sort: g['displayName'][0].downcase,
+        type: group_types[g.fetch('puavoEduGroupType', [nil])[0]],
+        member_dn: Array(g['member'] || []).to_set,
+      }
+    end
+
+    # Sort the groups by name
+    @groups_by_school.each do |_, school|
+      school[:groups].sort! { |a, b| a[:name_sort] <=> b[:name_sort] }
+    end
+
+    # Sort the schools by name
+    @groups_by_school = @groups_by_school.values
+    @groups_by_school.sort! { |a, b| a[:school_name_sort] <=> b[:school_name_sort] }
   end
 
-  private
+    def update_user_groups(user, new_group_ids)
+      return if user.nil?
+
+      # Access control. The group list on the page won't include groups in schools
+      # non-owners can't access, but do another level of checks here, in case
+      # something fails. This also protects against the cases where a non-owner
+      # user knows the IDs of the "invisible" groups and manually edits the page
+      # to include those group IDs. At least that's the idea here. Never trust
+      # user input.
+      is_owner = is_owner?
+      only_these = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
+
+      # Figure out what has changed
+      current_groups = Array(user.groups || []).collect { |g| g.puavoId.to_i }.to_set
+      new_groups = new_group_ids.map(&:to_i).to_set
+
+      remove_groups = current_groups - new_groups
+      add_groups = new_groups - current_groups
+
+      # Then apply the changes
+      remove_groups.each do |id|
+        g = Group.find(id)
+
+        next if !is_owner && !only_these.include?(g.school.dn.to_s)
+        puts "update_user_groups(): removing from group #{id} (#{g.displayName})"
+        g.remove_user(user)
+      end
+
+      add_groups.each do |id|
+        g = Group.find(id)
+
+        next if !is_owner && !only_these.include?(g.school.dn.to_s)
+        puts "update_user_groups(): adding to group #{id} (#{g.displayName})"
+        g.add_user(user)
+      end
+    end
+
     def user_params
       u = params.require(:user).permit(
           :givenName,
@@ -1257,5 +1452,38 @@ class UsersController < ApplicationController
 
       logger.info('Synchronous action(s) completed without errors, proceeding with user deletion')
       return true, nil
+    end
+
+    # Removes the user from the target school. Assumes you've done the prerequisite verifications
+    # (the user is in the school and it's not the user's primary school).
+    def _remove_user_from_school(user, school)
+      schools = Array(user.puavoSchool.dup)
+      schools.reject!{ |s| s.to_s == school.dn.to_s }
+      user.puavoSchool = (schools.count == 1) ? schools[0] : schools
+
+      # Remove school admin associations if needed
+      Array(user.puavoAdminOfSchool).each do |dn|
+        if dn.to_s == school.dn.to_s
+          user.puavoAdminOfSchool = Array(user.puavoAdminOfSchool).reject { |dn| dn.to_s == school.dn.to_s }
+          school.puavoSchoolAdmin = Array(school.puavoSchoolAdmin).reject { |dn| dn.to_s == user.dn.to_s }
+          school.save!
+          break
+        end
+      end
+
+      # This must be done first, otherwise ldap_modify_operation() below will fail
+      user.save!
+
+      # The system appears to automatically add the user's UID and DN to the relevant arrays,
+      # but it won't *remove* them
+      begin
+        LdapBase.ldap_modify_operation(school.dn, :delete, [{ "member" => [user.dn.to_s] }])
+      rescue ActiveLdap::LdapError::NoSuchAttribute
+      end
+
+      begin
+        LdapBase.ldap_modify_operation(school.dn, :delete, [{ "memberUid" => [user.uid.to_s] }])
+      rescue ActiveLdap::LdapError::NoSuchAttribute
+      end
     end
 end

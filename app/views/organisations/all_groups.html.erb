@@ -2,14 +2,15 @@
 
 <% content_for :javascript do %>
 <%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
-<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
 <%= javascript_include_tag 'supertable2', skip_pipeline: true %>
+<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
 <% end %>
 
 <% @is_organisation = true %>
 
 <h1><%= t('titles.all_groups') %></h1>
 
+<img src="/images/spinner.gif" style="opacity: 0; position: absolute; left: -1000px;">
 <div class="superTable" id="tableGroups"></div>
 
 <% content_for :post_load_javascript do %>
@@ -21,7 +22,7 @@
 const DEFAULT_COLUMNS = ["school", "name", "abbr", "type", "members_count", "eid", "created", "modified"];
 const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
 
-window.onload = function(e) {
+document.addEventListener("DOMContentLoaded", function() {
 
 new SuperTable(
     // Main container DIV
@@ -31,26 +32,23 @@ new SuperTable(
     {
         id: "groups",
         csvPrefix: `<%= LdapOrganisation.current.o %>-groups`,
-        flags: TableFlag.ALLOW_SELECTION | TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
+        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION | TableFlag.ENABLE_PAGINATION,
         locale: "<%= supertable_sorting_locale %>",
-
         columnDefinitions: COLUMN_DEFINITIONS,
         columnTitles: COLUMN_TITLES,
         columnOrder: COLUMN_ORDER,
         userTransforms: USER_TRANSFORM_FUNCTIONS,
         actions: userActions,
+        openCallback: openCallback,
+        massSelects: MASS_SELECTS,
         massOperations: MASS_OPERATIONS,
         defaultColumns: DEFAULT_COLUMNS,
         defaultSorting: DEFAULT_SORTING,
-        initialFilters: null,
-        defaultFilterColumn: "name",
-
-        // The URL to get the data from
-        source: "/get_all_groups",
+        dynamicData: "/get_all_groups",
     }
 );
 
-};
+});
 
 </script>
 <% end %>

@@ -1,0 +1,157 @@
+:root {
+  --font: "Cantarell", "Ubuntu", "Noto Sans", "Arial", sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --page-background: rgb(245, 246, 247);
+    --page-foreground: #000;
+    --tab-border: #5294e2;
+    --active-tab-background: #5294e2;
+    --active-tab-foreground: #fff;
+    --inactive-tab-foreground: var(--page-foreground);
+    --inactive-tab-background-hover: #7db4f5;
+    --inactive-tab-foreground-hover: #fff;
+    --generic-border: rgb(207, 214, 230);
+    --input-background: #fff;
+    --input-foreground: #000;
+    --input-border: var(--generic-border);
+    --input-border-active: #ff00ff;
+    --input-border-active: #2679db;
+    --message-foreground: #000;
+    --message-alert-background: #fff5f4;
+    --message-alert-border: #f98a89;
+    --message-warning-background: #fffaf0;
+    --message-warning-border: #ffc937;
+    --message-success-background: #f1f9f0;
+    --message-success-border: #7cbc76;
+    --password-notice-background: #d1ecf1;
+    --password-notice-border: #bee5eb;
+    --button-background: rgb(252, 253, 253);
+    --button-foreground: #000;
+    --button-border: rgb(207, 214, 230);
+    --button-foreground-disabled: rgb(152, 154, 158);
+    --button-background-active: rgb(211, 216, 226);
+    --button-foreground-active: #000;
+    --button-border-active: rgb(183, 192, 211);
+    --field-error-foreground: rgb(252, 65, 56);
+    --link-foreground: #5294e2;
+    --link-foreground-hover: #2679db;
+
+    --content-foreground: #000;
+    --content-border: rgb(220, 223, 227);
+    --content-shadow: #888;
+    --service-background: rgb(252, 253, 253);
+    --service-foreground: #000;
+    --service-border: var(--content-border);
+    --error-background: rgb(252, 65, 56);
+    --error-foreground: #fff;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page-background: rgb(56, 60, 74);
+    --page-foreground: #fff;
+    --tab-border: #5294e2;
+    --active-tab-background: #5294e2;
+    --active-tab-foreground: var(--page-foreground);
+    --inactive-tab-foreground: var(--page-foreground);
+    --inactive-tab-background-hover: #7db4f5;
+    --inactive-tab-foreground-hover: #fff;
+    --generic-border: rgb(43, 46, 57);
+    --input-background: rgb(64, 69, 82);
+    --input-foreground: #fff;
+    --input-border: var(--generic-border);
+    --input-border-active: #2679db;
+    --message-foreground: #000;
+    --message-alert-background: #fff5f4;
+    --message-alert-border: #f98a89;
+    --message-warning-background: #fffaf0;
+    --message-warning-border: #ffc937;
+    --message-success-background: #f1f9f0;
+    --message-success-border: #7cbc76;
+    --password-notice-background: #d1ecf1;
+    --password-notice-border: #bee5eb;
+    --button-background: rgb(68, 74, 88);
+    --button-foreground: #fff;
+    --button-border: rgb(43, 46, 57);
+    --button-foreground-disabled: rgb(134, 139, 151);
+    --button-background-active: rgb(46, 51, 64);
+    --button-foreground-active: #fff;
+    --button-border-active: rgb(82, 148, 226);
+    --field-error-foreground: rgb(252, 65, 56);
+    --link-foreground: #5294e2;
+    --link-foreground-hover: #2679db;
+
+    --error-background: rgb(252, 65, 56);
+    --error-foreground: #fff;
+    --content-foreground: rgb(255, 255, 255);
+    --content-border: rgb(43, 46, 57);
+    --content-shadow: #888;
+    --service-background: rgb(64, 69, 82);
+    --service-foreground: #fff;
+    --service-border: var(--content-border);
+  }
+}
+
+input[type="text"], input[type="password"] {
+  padding: 5px;
+  border: 1px solid var(--input-border);
+  background: var(--input-background);
+  color: var(--input-foreground);
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border: 1px solid var(--input-border-active);
+}
+
+button, input[type="submit"] {
+  background: var(--button-background);
+  color: var(--button-foreground);
+  border: 1px solid var(--button-border);
+  padding: 10px 25px;
+  border-radius: 3px;
+}
+
+button:hover, button:focus {
+  outline: 1px solid var(--input-border-focused);
+}
+
+button:active, input[type="submit"]:active {
+  border-color: var(--button-border-active);
+  background: var(--button-background-active);
+  color: var(--button-foreground-active);
+  outline: none;
+}
+
+button:disabled, input[type="submit"]:disabled, input[type="submit"]:active:disabled {
+  background: var(--button-background);
+  border: 1px solid var(--button-border);
+  color: var(--button-foreground-disabled);
+}
+
+.message_alert, .message_error, .message_notice, .message_success, .genericNotice, .genericWarning, .passwordNotice {
+  border-width: 1px;
+  border-style: solid;
+  padding: 10px;
+  color: var(--message-foreground);
+}
+
+.message_alert, .message_error {
+  background: var(--message-alert-background);
+  border-color: var(--message-alert-border);
+}
+
+.message_notice, .message_success, .genericNotice {
+  background: var(--message-success-background);
+  border-color: var(--message-success-border);
+}
+
+.genericWarning {
+  background: var(--message-warning-background);
+  border-color: var(--message-warning-border);
+}

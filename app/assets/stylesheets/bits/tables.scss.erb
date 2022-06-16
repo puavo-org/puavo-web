@@ -18,6 +18,14 @@ th {
   text-decoration: none;
 }
 
+table.shrinkHeadingColumn th {
+  white-space: nowrap;
+}
+
+table.shrinkHeadingColumn td {
+  width: 99%;
+}
+
 /* Lists of schools, users, devices, etc. */
 .list {
   width: 100%;
@@ -143,564 +151,702 @@ SUPERTABLES
 ----------------------------------------------------------------------------------------------------
 */
 
-#modalDialogBackdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  display: flex;
-  background: rgba(0, 0, 0, 0.3);
-  align-items: center;
-  justify-content: center;
-}
-
-/* Some composable style classes */
-.minimize-width { width: 1px; white-space: nowrap; }
-.width-0 { width: 0; }
-.cursor-not-allowed { cursor: not-allowed !important; }
-.cursor-pointer { cursor: pointer; }
-.cursor-default { cursor: default; }
-.cursor-grabbing { cursor: grabbing; }
-.hidden { display: none !important; }
-.not-visible { visibility: hidden; }
-.margin-left-25 { margin-left: 25px; }
-.margin-top-5 { margin-top: 5px; }
-.width-100p { width: 100%; }
-.nowrap { white-space: nowrap; }
-.flex { display: flex; }
-.flex-vcenter { align-items: center; }
-.no-text-selection { user-select: none; }
-.no-pointer-events { pointer-events: none; }
-.margin-right-10 { margin-right: 10px; }
-
-.stStickyHeader {
-  position: sticky;
-  top: 38px;  /* WARNING! Empirically determined! Will break in the future! */
-}
-
-@media #{$screen-breakpoint-one} {
-  .stStickyHeader {
-    position: sticky;
-    top: 0;
-  }
-}
-
-.stUserMarkedForDeletion {
-  background: $markedForDeletionBackground;
-  padding: 2px;
-}
-
 .stAdmin {
   color: $adminOwner;
 }
 
-/* Wraps the supertable and its controls */
-.superTable {
-  display: flex;
-  flex-direction: column;
+.stControls .mobileTitle { display: none; }   /* Will be fixed later. Maybe. Hopefully. */
 
-  > div {
-    margin-bottom: 10px;
-  }
+.superTable { }
 
-  button {
-    margin-right: 5px;
-    padding: 2px 5px;
-    font-family: "Arial", "sans-serif";
+/* The temporary mode warning indicator */
+#stTemporaryMode {
+    border: 1px solid var(--st-temporary-border);
+    background: var(--st-temporary-bg);
+    color: var(--st-temporary-fg);
+    padding: 10px;
     font-size: 100%;
-  }
+}
 
-  select {
-    font-family: "Arial", "sans-serif";
+/* Container for the supertable and its controls */
+.stControls {
     font-size: 100%;
-    padding: 1px 5px;
-  }
+    /*font-family: Cantarell, Ubuntu, Segoe UI, Arial, sans-serif;*/
+}
 
-  label {
-  }
+.stControls button,
+.stControls select {
+    font-size: 100%;
+    padding: 4px 10px;
+    font-family: "Arial", "sans-serif";
+}
 
-  fieldset legend {
-  }
+.stControls button {
+    border: 1px solid var(--st-buttons-border);
+    background: var(--st-buttons-back);
+    border-radius: 3px;
+    padding: 4px 10px;
+}
 
-  button:disabled {
+.stControls button:hover {
+    border: 1px solid var(--st-buttons-hover-border);
+    background: var(--st-buttons-hover-back);
+}
+
+.stControls button:disabled,
+.stControls button.danger:disabled,
+.stControls button:hover:disabled,
+.stControls button.danger:hover:disabled {
     cursor: not-allowed;
-  }
+    color: var(--st-buttons-disabled);
+}
 
-  button:hover:disabled {
-    cursor: not-allowed;
-  }
+.stControls button.danger {
+    border: 1px solid var(--st-buttons-danger-border);
+    background: var(--st-buttons-danger-back);
+    color: var(--st-buttons-danger-fore);
+}
 
-  /* The supertable tab bar */
-  ul.tabs {
+.stControls button.danger:hover {
+    border: 1px solid var(--st-buttons-danger-border);
+    background: var(--st-buttons-danger-hover-back);
+    color: var(--st-buttons-danger-fore);
+}
+
+.stControls textarea {
+    background: var(--st-textarea-bg);
+    color: var(--st-textarea-fg);
+    border: 1px solid var(--st-common-border);
+    padding: 5px;
+    width: 100%;
+}
+
+.stControls textarea:disabled {
+    background: var(--st-textarea-disabled-bg);
+    color: var(--st-textarea-disabled-fg);
+}
+
+.stControls fieldset {
+    border: 1px solid var(--st-fieldset-border);
+    margin: 0;
+}
+
+.stControls fieldset legend {
+    margin-left: 0px;
+}
+
+.stControls summary {
+    background: var(--st-summary-bg);
+    color: var(--st-summary-fg);
+    cursor: pointer;
+    padding: 5px;
+}
+
+.stControls summary:hover {
+    background: var(--st-summary-hover-bg);
+    color: var(--st-summary-hover-fg);
+}
+
+.stControls details[open] {
+    background: var(--st-details-open-bg);
+    color: var(--st-details-open-fg);
+}
+
+.stControls details[open] > summary {
+    background: var(--st-summary-hover-bg);
+    color: var(--st-summary-hover-fg);
+}
+
+/* The SuperTable controls tab bar */
+.stTabBar {
     list-style-type: none;
     margin: 0;
     padding: 0;
     display: flex;
-    z-index: 2;
-  }
+}
 
-  ul.tabs li {
-    border: 1px solid $stTabsBorder;
+.stTabBar li {
     display: inline;
     padding: 5px 20px;
-    border-radius: 3px 3px 0 0;
     margin-right: 2px;
+    background: var(--st-tab-bg);
+    color: var(--st-tab-fg);
+    border: 1px solid var(--st-controls-border);
+    border-radius: 3px 3px 0 0;
     min-width: 150px;
     text-align: center;
-  }
-
-  ul.tabs li.unselected {
-    background: $stTabBackground;
     cursor: pointer;
-  }
+}
 
-  ul.tabs li.unselected:hover {
-    background: $stTabHoverBackground;
-  }
+.stTabBar li:hover {
+    background: var(--st-tab-hover-bg);
+    color: var(--st-tab-hover-fg);
+}
 
-  ul.tabs li.selected {
-    background: $stTabSelectedBackground;
+.stTabBar li.selected {
+    background: var(--st-tab-active-bg);
+    color: var(--st-tab-active-fg);
+    border-bottom: 1px solid var(--st-tab-active-bg);
     cursor: default;
-    border-bottom: 1px solid $stTabSelectedBackground;
     font-weight: bold;
-  }
+}
 
-  ul.tabs li.disabled {
-    color: $stTabDisabledForeground !important;
-    cursor: not-allowed !important;
-  }
+.stTabBar li.disabled,
+.stTabBar li.disabled:hover {
+    background: var(--st-tab-disabled-bg);
+    color: var(--st-tab-disabled-fg);
+    cursor: not-allowed;
+}
 
-  ul.tabs li.disabled:hover {
-    color: $stTabDisabledForeground !important;
-    background: $stTabDisabledBackground !important;
-    cursor: not-allowed !important;
-  }
-
-  /* Tab container DIV */
-  .tab {
-    z-index: 1;
+/* Tab container DIV */
+.stTab {
+    background: var(--st-tab-container-bg);
+    color: var(--st-tab-container-fg);
+    border: 1px solid var(--st-controls-border);
     margin-top: -1px;
-    border: 1px solid $stTabsBorder;
     padding: 10px;
-  }
+}
 
-  .tab p {
-    margin: 0;
-  }
+/* Column editing */
+.stTab input[type="search"] {
+    background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 2px center;
+    text-indent: 1.5em;
+    border: 1px solid var(--st-controls-border);
+    padding: 2px;
+    min-width: 240px;
+}
 
-  /* Column editing */
-  span.unsavedWarning {
-    color: $pceError;   /* eugh */
-  }
+.stTab input[type="search"]::placeholder {
+    font-style: italic;
+}
 
-  .columnTable {
-    border: 0;
-    margin-top: 5px;
-  }
-
-  .columnTable td {
-    padding: 0;
-    margin: 0;
-  }
-
-  .columnTable button {
-    width: 100%;
-    margin-bottom: 5px;
-    margin-left: 5px;
-  }
-
-  .columnList {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    width: 100%;
-    max-height: 250px;
+.stTab .scrollList {
+    border: 1px solid var(--st-common-border);
     overflow-x: hidden;
     overflow-y: scroll;
-    border: 1px solid $stTabsBorder;
-  }
+    resize: vertical;
+    min-height: 5em;
+}
 
-  .columnList .column {
+.stTab .scrollList .item {
     display: flex;
     align-items: center;
     padding: 5px 10px;
     cursor: pointer;
-    color: $pageContentFore;
-  }
+}
 
-  .columnList .column:hover {
-    background: $stColumnListHoverBackground;
-    color: $stColumnListHoverForeground;
-  }
+.stTab .scrollList .item { color: var(--st-tab-container-fg); }
+.stTab .scrollList .item:hover { background: var(--st-scroll-list-hover-bg); }
+.stTab .scrollList .disabled { color: var(--st-scroll-list-disabled-fg); }
 
-  .columnList .selected { background: $stColumnListSelected; }
-  .columnList .disabled { color: $stColumnListDisabled; cursor: not-allowed; }
-  .columnList .selected.disabled { color: $stColumnListDisabled; }
-  .columnList .selected:hover { background: $stColumnListSelected; }
-  .columnList .disabled:hover { background: none; }
-  .columnList .selected.disabled:hover { background: $stColumnListSelected; }
-
-  .columnList .column input {
+.stTab .scrollList .item input {
     pointer-events: none;       /* The checkbox is there just for the looks */
     margin-right: 10px;
-  }
+}
 
-  /* Supertable filtering */
-  .filters .ui {
-    margin-top: 5px;
-  }
+.stTab .scrollList .columnName { font-style: italic; pointer-events: none; }
 
-  .filters .mainButtons {
-    margin-bottom: 5px;
-  }
+/* Some commonly used subtables in the SuperTable controls */
+.stControls .commonTable {
+    background: var(--st-commontable-bg);
+    color: var(--st-commontable-fg);
+}
 
-  .filters textarea {
-    width: 100%;
-    margin-bottom: 5px;
+.stControls .commonTable th {
+    background: var(--st-commontable-th-bg);
+    color: var(--st-commontable-th-fg);
+}
+
+.stControls .commonTable th,
+.stControls .commonTable td {
+    border: 1px solid var(--st-commontable-border);
     padding: 5px;
-  }
+}
 
-  .filters .invalidJSON {
-    border: 1px solid $genericErrorBorder;
-  }
+/* Supertable filtering */
+.stFilters .unsaved {
+    color: var(--st-filters-unsaved-fg);
+}
 
-  .filters .table {
-    border-collapse: collapse;
+.stFilters textarea {
+    display: block;
+    font-size: 140%;
+}
+
+.stFilters .toggleable {
+    margin-top: 10px;
+}
+
+.stFilters .filterEditorWrapper {
     border: none;
-  }
+    padding: 0;
+}
 
-  .filters .table td {
-    margin: 0;
-    padding: 1px;
-    border: none;
-  }
+.stFilters .filtersTable { width: 100%; }
 
-  .filters .table tr {
-    border-top: 1px solid $stFiltersRowBorder;
-    border-bottom: 1px solid $stFiltersRowBorder;
-  }
+.stFilters .filtersTable tr.row {      /* Must use .row, otherwise filter editor value tables are affected */
+    border-top: 1px solid var(--st-filters-table-separator);
+    border-bottom: 1px solid var(--st-filters-table-separator);
+}
 
-  .filters .table tr:last-of-type {
-    border-bottom: none;
-  }
+.stFilters .filtersTable td { padding: 2px 0; }
 
-  .filters .table div.explanation {
+.stFilters .filtersTable .buttons {
     display: flex;
+    flex-direction: rows;
+    gap: 3px;
+}
+
+.stFilters .filtersTable .active {
+    margin: 0 10px;
+}
+
+.stFilters .filtersTable .pretty {
+    display: flex;
+    flex-direction: rows;
     align-items: center;
+    gap: 10px;
     cursor: pointer;
-    padding: 3px;
-    min-width: 250px;
-  }
+    padding: 5px;
+}
 
-  .filters .table .invalidColumn { background: $stFiltersInvalidColumn; }
-  .filters .table .invalidFilter { background: $stFiltersInvalidFilter; }
+.stFilters .filtersTable .pretty:hover {
+    background: var(--st-filters-pretty-hover-back);
+}
 
-  .filters .table div.explanation:hover {
-    background: $stFiltersRowHoverBackground;
-  }
+.stFilters .filtersTable .pretty > * { pointer-events: none; }
 
-  .filters .table div.explanation:hover > span {
-    background: none;
-  }
-
-  .filters .filterBeingEdited {
-    outline: 2px dashed #080;
-  }
-
-  .table .explanation span {
-    display: inline;
-    padding: 2px 5px;
-    margin: 0;
-    pointer-events: none;
-  }
-
-  .table span.column {
-    font-weight: bold;
-  }
-
-  .table span.op {
-    font-weight: bold;
-    color: $stFiltersOperator;
-  }
-
-  .table span.value {
-    color: $stFiltersValue;
-  }
-
-  .table button.new {
-    margin-top: 5px;
-  }
-
-  .table span.notification {
-    flex-grow: 2;
-    text-align: right;
-    font-style: italic;
-  }
-
-  /* Mass tools */
-  .mass .mainButtons {
-  }
-
-  .mass .controls {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-  }
-
-  .mass .controls > * {
-    display: inline-block;
-    margin-right: 5px;
-  }
-
-  .mass .controls progress {
-    min-width: 250px;
-  }
-
-  .mass .controls .counter {
+.stFilters .filtersTable .pretty .column {
+    padding-left: 3px;
     font-weight: bold;
     font-size: 100%;
-  }
+}
 
-  .mass fieldset {
-    border: none;
-    border-top: 1px solid $formFieldsetBorderColor;
-    padding: 10px 0;
-    margin: 0;
-  }
+.stFilters .filtersTable .pretty .operator {
+    font-weight: bold;
+    color: var(--st-filters-operator);
+    font-size: 100%;
+}
 
-  .mass fieldset legend {
-    margin-left: 10px;
-    padding: 0 5px;
-  }
+.stFilters .filtersTable .pretty .value {
+    color: var(--st-filters-value);
+    font-size: 100%;
+}
 
-  .mass .ui {
+.stFilters .filtersTable .pretty .empty {
+    font-style: italic;
+    color: var(--st-filters-value);
+}
+
+.stFilters .filtersTable .pretty .sep {
+}
+
+.stFilters .filtersTable .editorWrapper {
+    background: var(--st-filters-editorwrapper-back);
     padding: 0;
     margin: 0;
-  }
+}
 
-  .mass .ui fieldset {
-    border: 1px solid $formFieldsetBorderColor;
-  }
+.stFilters .filtersTable select#column {
+    font-weight: bold;
+    font-size: 100%;
+}
 
-  .mass .ui .mobileTitle {
-    display: none;
-  }
+.stFilters .filtersTable select#operator {
+    font-weight: bold;
+    color: var(--st-filters-operator);
+    font-size: 100%;
+}
 
-  @media #{$screen-breakpoint-one} {
-    .mobileTitle {
-      display: block;
-      font-weight: bold;
-    }
-  }
-
-  /* The status box */
-  .status {
-    border: 1px solid $stStatusBorder;
+.stFilters .filtersTable .openFilter {
+    background: var(--st-filters-open-back);
     padding: 5px;
-  }
+}
 
-  /* Mass processing status success/fail counters */
-  .status .success { background: $stStatusSuccess; }
-  .status .fail { background: $stStatusFail; }
+.stFilters .filtersTable .openFilter button#save i { color: var(--st-filters-save-icon); }
+.stFilters .filtersTable .openFilter button#cancel i { color: var(--st-filters-cancel-icon); }
 
-  /* The update error message */
-  .error {
-    background: $stErrorBackground;
-    color: $stErrorForeground;
-    border: 1px solid $stErrorBorder;
+.stFilters .filtersTable .editor {
+    font-size: 100%;
+    margin: 0;
     padding: 5px;
-    border-radius: 3px;
-  }
+}
 
-  /* The supertable itself */
-  .table {
-    border-collapse: collapse;
-    width: 100%;
-  }
+.stFilters .filtersTable .editor p { margin: 0; }
+.stFilters .filtersTable .editor table td { padding: 2px; }
+.stFilters .filtersTable .editor input { color: var(--st-filters-value); }
 
-  .table td, .table th {
-    border: 1px solid $stTableBorder;
-    padding: 5px;
-  }
+.stFilters .filtersTable .editor table#values {
+    margin-top: 5px;
+}
 
-  .table th {
+.stFilters .jsonEditor {
+    border: 1px solid #888;
+}
+
+.stFilters .invalidJSON {
+    border: 1px solid red;
+}
+
+/* Filter parser messages table */
+.stFilters .messages th {
     text-align: left;
-    background: $stTableHeaderBackground;
-    padding: 10px;
-    color: $stTableHeaderForeground;
-  }
+    padding: 5px;
+}
 
-  .table th.sortable:hover {
+.stFilters .messages tbody tr {
+    cursor: pointer;
+}
+
+.stFilters .messages td {
+    border: 1px solid var(--st-common-border);
+    padding: 3px;
+}
+
+.stFilters .messages .error {
+    background: var(--st-filters-error-bg);
+    color: var(--st-filters-error-fg);
+}
+
+/* Filter presets table */
+.stFilters .presetsTable code {
+    background: var(--st-commontable-code-bg);
+    color: var(--st-commontable-code-fg);
+    padding: 2px 5px;
+    font-size: 120%;
+    display: inline-block;
+}
+
+/* Column help table */
+.stFilters .hiddenColumn {
+    background: var(--st-columnhelp-invisible-bg);
+    color: var(--st-columnhelp-invisible-fg);
+}
+
+.stFilters .columnHelp code {
+    background: var(--st-commontable-code-bg);
+    color: var(--st-commontable-code-fg);
+    padding: 2px 5px;
+    font-size: 120%;
+    display: inline-block;
+}
+
+/* Mass tools */
+.stMass div#massRowSelectSource {
+    border: 1px solid var(--st-border);
+    padding: 5px;
+    font-size: 120%;
+    outline: none;
+    font-family: monospace;
+    width: 30em;
+    overflow: scroll;
+    resize: both;
+}
+
+.stMass .unmatchedRow {
+    background-color: var(--st-row-fail-bg);
+}
+
+.stMass progress {
+    min-width: 250px;
+    border-radius: 0;
+}
+
+.stMass .counter {
+    font-weight: bold;
+    font-size: 110%;
+}
+
+.stStatusOuter {
+    border: 1px solid var(--st-status-border);
+    display: flex;
+}
+
+/* The status box */
+.stStatus {
+    background: var(--st-status-bg);
+    color: var(--st-status-fg);
+    padding: 5px;
+    font-size: 100%;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    width: 30%;
+}
+
+.stStatus .success {
+    background: var(--st-status-success-bg);
+    color: var(--st-status-success-fg);
+}
+
+.stStatus .fail {
+    background: var(--st-status-fail-bg);
+    color: var(--st-status-fail-fg);
+}
+
+/* Pagination */
+.stPaging {
+    border-left: 1px solid var(--st-status-border);
+    padding: 5px;
+    flex-grow: 2;
+}
+
+.stPaging #pageCounter {
+    font-size: 120%;
+}
+
+/* The update error message */
+.stError {
+    background: var(--st-error-bg);
+    color: var(--st-error-fg);
+    border: 1px solid var(--st-error-border);
+    padding: 5px;
+}
+
+/* A wrapper DIV around the main table */
+.stTableWrapper { }
+
+/* The supertable itself */
+.stTable {
+    width: 100%;
+    background: var(--st-bg);
+    color: var(--st-fg);
+
+    /*
+    Sticky headers and collapsed cell borders do not mix beautifully; the header cells lose
+    their borders. The workaround (read: hack) is to give the table top and right borders...
+    */
+    border-top: 1px solid var(--st-border);
+    border-right: 1px solid var(--st-border);
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.stTable td, .stTable th {
+    /*
+    ...and then set the opposite borders to cells. Now it looks nice again. I don't know how
+    long this hack will continue to work.
+    */
+    border-bottom: 1px solid var(--st-border);
+    border-left: 1px solid var(--st-border);
+    padding: 5px;
+}
+
+.stTable th {
+    /*background: var(--st-header-bg);*/
+    background: $listHeadingBack;
+    color: var(--st-header-fg);
+    text-align: left;
+
+    /* Make the header cells sticky. Also see the notice above about disappearing cell borders. */
+    position: sticky;
+    top: 38px;  /* WARNING! Empirically determined! Will break in the future! */
+}
+
+.stTable th.sortable:hover {
     background: $stTableHeaderHoverBackground;
-  }
+    color: var(--st-sortable-hover-fg);
+}
 
-  /* Supertable sort header cells */
-  .table th div {
+.stTable td {
+    padding: 5px;
+    font-size: 100%;
+}
+
+/* Supertable sort header cells */
+.stTable th div {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
     pointer-events: none;
-  }
+}
 
-  .table th div span {
+.stTable th div span {
     display: inline;
-  }
+}
 
-  .table th div span.arrow {
+.stTable th div span.arrow {
     margin-left: auto;
     font-family: puavo-icons;
-    font-size: 100%;
     font-weight: normal;
     padding-left: 5px;
-  }
+}
 
-  .table th.sorted {
-    background: $stTableHeaderHoverBackground;
-  }
+/* Row hover and row state interactions */
+.stTable th.sorted { background: $stTableHeaderHoverBackground; }
+.stTable .sorted { background: var(--st-row-sorted-column); }
+.stTable tbody tr:hover { background: var(--st-row-hover-bg); }
+.stTable tbody tr:hover .sorted { background: var(--st-row-sorted-hover-bg); }
 
-  .table tbody tr:hover {
-    background: $stTableRowHoverBackground;
-  }
+.stTable tbody tr.success {
+    background: var(--st-row-success-bg);
+    color: var(--st-row-processed-fg) !important;
+}
 
-  .table .sorted { background: $stTableSortedColumnBackground; }
+.stTable tbody tr.success:hover { background: var(--st-row-success-hover-bg) !important; }
+.stTable tbody tr.success .sorted { background: var(--st-row-success-sorted-bg); }
+.stTable tbody tr.success:hover .sorted { background: var(--st-row-success-sorted-hover-bg) !important; }
 
-  .table tbody tr { background: $pageContentBack; }
+.stTable tbody tr.fail {
+    background: var(--st-row-fail-bg);
+    color: var(--st-row-processed-fg) !important;
+}
 
-  .table tbody tr.success { background: $stTableSuccessRowBackground; }
-  .table tbody tr.success:hover { background: $stTableSuccessRowHoverBackground !important; }
-  .table tbody tr.success .sorted { background: $stTableSuccessRowSortedBackground; }
-  .table tbody tr.success:hover .sorted { background: $stTableSuccessRowHoverSortedBackground !important; }
+.stTable tbody tr.fail:hover { background: var(--st-row-fail-hover-bg) !important; }
+.stTable tbody tr.fail .sorted { background: var(--st-row-fail-sorted-bg); }
+.stTable tbody tr.fail:hover .sorted { background: var(--st-row-fail-sorted-hover-bg) !important; }
 
-  .table tbody tr.fail { background: $stTableFailRowBackground; }
-  .table tbody tr.fail:hover { background: $stTableFailRowHoverBackground !important; }
-  .table tbody tr.fail .sorted { background: $stTableFailRowSortedBackground; }
-  .table tbody tr.fail:hover .sorted { background: $stTableFailRowHoverSortedBackground !important; }
-
-  .table tbody tr:hover .sorted {
-    background: $stTableSortedColumnHoverBackground;
-  }
-
-  .table .previousRow {
-    outline: 2px dotted $stTablePreviousRowBorder;
-  }
-
-  /* Row checkboxes */
-  .table .checkbox {
-    /* Prevent text/table cell selections during range selections */
-    user-select: none;
-  }
-
-  .table .checkbox span {
-    border: 1px solid $stTableBorder;
+/* Row checkboxes */
+.stTable .headerCheckbox {
     display: block;
     width: 20px;
     height: 20px;
-    background: $stTableCheckboxColumnBack;
+}
+
+.stTable .checkbox {
+    /* Prevent text/table cell selections during range selections */
+    user-select: none;
+}
+
+.stTable .checkbox span {
+    border: 1px solid var(--st-checkbox-border);
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: var(--st-checkbox-bg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
     pointer-events: none;
-  }
+}
 
-  .table .checkbox span.checked {
-    background-image: url("<%= image_path('cross.svg') %>");
-    background-color: $stTableCheckboxColumnBack;
+.stTable .checkbox span.checked {
+    background-image: url("/images/cross.svg");
+    background-color: var(--st-checkbox-bg);
     background-size: 80%;
-  }
-
-  .table .updating {
-    opacity: 0.5;
-  }
 }
 
-.filterPopup {
-  display: none;    /* changed to "flex" when displaying the popup */
-  border: 2px solid $stFiltersPopupBorder;
-  padding: 0;
-  margin: 0;
-  min-width: 500px;
-  max-width: 500px;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  background: $stFiltersPopupBackground;
-  box-shadow: 0 0 10px $stFiltersPopupShadow;
-}
-
-.filterPopup .upper {
-  display: flex;
-  background: $stFiltersPopupHeaderBackground;
-  border-bottom: 1px solid $stFiltersPopupHeaderBorder;
-  align-items: center;
-}
-
-.filterPopup .upper > div {
-  display: inline;
-  padding: 5px;
-}
-
-.filterPopup .upper .title {
-  font-size: 90%;
-  font-weight: bold;
-}
-
-.filterPopup .upper .buttons {
-  display: flex;
-  flex-grow: 2;
-  justify-content: flex-end;
-}
-
-.filterPopup .upper .buttons > button {
-  padding: 0 15px;
-  font-size: 90%;
-  margin-left: 5px;
-}
-
-.filterPopup .btn-save { color: #080; }
-.filterPopup .btn-cancel { color: #800; }
-
-.filterPopup .lower {
-  font-size: 75%;
-}
-
-.filterPopup .lower th {
-}
-
-.filterPopup .lower p {
-  margin: 0;
-  padding: 0;
-}
-
-.filterPopup select {
-  width: 100%;
-  font-size: 100%;
-  padding: 2px;
-}
+/* The previously selected row indicator */
+.stTable .previousRow { outline: 2px dotted var(--st-previous-row); }
 
 /* Supertable cell header drag item */
-div.dragHeader {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  border: 1px solid $stTableBorder;
-  padding: 5px;
-  margin: 0;
-  font-weight: bold;
-  background: $stTableHeaderHoverBackground;
-  color: $stTableHeaderForeground;
-  z-index: 10;
-  font-size: 90%;
-  cursor: grabbing;
-  user-select: none;
-  box-shadow: 0 0 5px $stTableDragHeaderShadow;
+.stDragHeader {
+    background: $stTableHeaderHoverBackground;
+    color: var(--st-sortable-hover-fg);
+    border: 1px solid var(--st-border);
+    position: absolute;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    margin: 0;
+    font-weight: bold;
+    z-index: 10;
+    cursor: grabbing;
+    opacity: 0.85;
+    user-select: none;
 }
 
 /* Supertable drop target position indicator */
-div.dropMarker {
-  position: absolute;
-  display: block;
-  border: none;
-  background: $stTableDragHeaderMarker;
-  z-index: 9;
+.stDropMarker {
+    background: var(--st-dropmarker);
+    border: none;
+    position: absolute;
+    width: 5px;
+    display: block;
+    z-index: 9;
+}
+
+/*
+----------------------------------------------------------------------------------------------------
+SORTABLE TABLES
+Not the SuperTable, but the older simpler sortable table that is used in many places
+where filtering and mass tools aren't needed.
+----------------------------------------------------------------------------------------------------
+*/
+
+/* Sortable column headers. Each TH element contains a flexbox DIV that
+   contains two spans: one for the title, one for the sort direction
+   arrow. Flexbox is used because I want to right-align the sort arrow
+   and a flexbox is the only way to do that even somewhat reliably. */
+.sortHeader {
+  cursor: pointer;
+
+  &:hover {
+    background: $listSortableColumnHover;
+  }
+
+  /* The container DIV */
+  div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    /*
+      What JavaScript taketh, CSS giveth. What a mess...
+      https://css-tricks.com/slightly-careful-sub-elements-clickable-things/
+    */
+    pointer-events: none;
+
+    /* The child spans */
+    .title {
+      display: inline;
+    }
+
+    .arrow {
+      display: inline;
+      margin-left: auto;    /* right-align the arrow */
+    }
+  }
+}
+
+/* Setup the sort direction arrows */
+/* TODO: The arrows should be changed in the JavaScript code, not here. */
+@mixin sortCommon($padding) {
+  font-family: puavo-icons;
+  font-size: 120%;
+  font-weight: normal;
+  padding-left: $padding;
+  padding-right: 10px;
+};
+
+.orderAscending, .orderDescending {
+  background: $listSortableColumnHover !important;
+}
+
+.orderNone .arrow:after {
+  @include sortCommon(10px);
+  content: "\f0dc";       /* up arrow, down arrow */
+}
+
+.typeString.orderAscending .arrow:after {
+  @include sortCommon(5px);
+  content: " \f15d";      /* A -> Z */
+}
+
+.typeString.orderDescending .arrow:after {
+  @include sortCommon(5px);
+  content: " \f15e";      /* Z -> A */
+}
+
+.typeNumeric.orderAscending .arrow:after {
+  @include sortCommon(6px);
+  content: " \f162";      /* 1 -> 9 */
+}
+
+.typeNumeric.orderDescending .arrow:after {
+  @include sortCommon(6px);
+  content: " \f163";      /* 9 -> 1 */
+}
+
+tr:nth-child(odd) .selectedColumn {
+  background: darken($listSelectedColumn, 5%);
+}
+
+tr:nth-child(even) .selectedColumn {
+  background: lighten($listSelectedColumn, 5%);
+}
+
+tr:hover .selectedColumn {
+  background: $listSelectedColumnRowHover !important;
 }

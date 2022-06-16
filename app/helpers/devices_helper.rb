@@ -89,6 +89,7 @@ module DevicesHelper
       'puavoDeviceAutoPowerOffMode',
       'puavoDeviceOnHour',
       'puavoDeviceOffHour',
+      'puavoDeviceReset',
       'createTimestamp',    # LDAP operational attribute
       'modifyTimestamp'     # LDAP operational attribute
     ].freeze
@@ -309,6 +310,23 @@ module DevicesHelper
       out[:personal_device] = dev['puavoPersonalDevice'][0] == 'TRUE'
     end
 
+    if dev.include?('puavoDeviceReset')
+      reset = JSON.parse(dev['puavoDeviceReset'][0]) rescue {}
+
+      if reset['request-time'] && !reset['request-fulfilled']
+        out[:reset_from] = reset['from']
+
+        begin
+          out[:reset_time] = DateTime.parse(reset.fetch('request-time', '')).to_i
+        rescue
+          out[:reset_time] = 0
+        end
+
+        out[:reset_pin] = reset['pin'].to_i
+        out[:reset_operation] = reset['mode']
+      end
+    end
+
     # Parse the hardware information
     if dev.include?('puavoDeviceHWInfo')
       out.merge!(self.extract_hardware_info(dev['puavoDeviceHWInfo'][0], releases))
@@ -344,16 +362,21 @@ module DevicesHelper
       # they aren't always reliable
       out[:current_image] = self.get_release_name(info['this_image'], releases)
 
-      out[:ram] = (info['memory'] || []).sum { |slot| slot['size'].to_i }
+      # For some reason, when I wrote the sysinfo collector tool back in 2017, I
+      # used megabytes as the unit, instead of bytes. Too late to change that.
+      out[:ram] = (info['memory'] || []).sum { |slot| slot['size'].to_i } * megabytes
 
       # Some machines have no memory slot info, so use the "raw" number instead
       if out[:ram] == 0
-        out[:ram] = ((info['memorysize_mb'] || 0).to_i / megabytes).to_i
+        out[:ram] = (info['memorysize_mb'] || 0).to_i * megabytes
       end
 
-      out[:hd] = ((info['blockdevice_sda_size'] || 0).to_i / megabytes).to_i
+      out[:hd] = (info['blockdevice_sda_size'] || 0).to_i
 
-      out[:hd_ssd] = info['ssd'] ? (info['ssd'] == '1') : false   # why oh why did I put a string in this field and not an integer?
+      # Why oh why did I put a string in this field and not an integer?
+      out[:hd_ssd] = info['ssd'] ? (info['ssd'] == '1') : false
+
+      out[:have_smart] = info.include?('blockdevice_sda_smart') && !info['blockdevice_sda_smart'].nil?
 
       out[:wifi] = info['wifi']
 
@@ -395,15 +418,15 @@ module DevicesHelper
         end
       end
 
-      # Free disk space on various partitions. Retrieve them all even if only one
-      # of them was requested, because it takes a lot of effort to dig them up.
+      # Free disk space on various partitions
       if info['free_space']
         df = info['free_space']
 
-        out[:df_home] = (df['/home'].to_i / megabytes).to_i if df.include?('/home')
-        out[:df_images] = (df['/images'].to_i / megabytes).to_i if df.include?('/home')
-        out[:df_state] = (df['/state'].to_i / megabytes).to_i if df.include?('/home')
-        out[:df_tmp] = (df['/tmp'].to_i / megabytes).to_i if df.include?('/home')
+        out[:df_home] = df['/home'].to_i if df.include?('/home')
+        out[:df_images] = df['/images'].to_i if df.include?('/home')
+        out[:df_state] = df['/state'].to_i if df.include?('/home')
+        out[:df_tmp] = df['/tmp'].to_i if df.include?('/home')
+        out[:df_imageoverlays] = df['/imageoverlays'].to_i if df.include?('/imageoverlays')
       end
 
       # Windows license info (boolean exists/does not exist)
@@ -420,14 +443,29 @@ module DevicesHelper
     return out
   end
 
-  def self.device_school_change_list
+  def self.device_school_change_list(owner, user=nil, current_school_dn=nil)
     # Get a list of schools for the mass tool. I wanted to do this with AJAX
     # calls, getting the list from puavo-rest with the new V4 API, but fetch()
     # and CORS and other domains just won't cooperate...
-    School.search_as_utf8(:filter => '', :attributes => ['displayName', 'cn']).collect do |s|
+
+    schools = School.search_as_utf8(:filter => '', :attributes => ['displayName', 'cn']).collect do |s|
         [s[0], s[1]['displayName'][0], s[1]['cn'][0]]
     end.sort do |a, b|
+        # Sort alphabetically
         a[1].downcase <=> b[1].downcase
     end
+
+    unless owner
+      # School admins can only transfer devices between the schools they're admins of
+      admin_schools = Set.new(Array(user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
+      schools.delete_if { |s| !admin_schools.include?(s[0]) }
+    end
+
+    if current_school_dn
+      # Don't show the current school on the list. Not used on the organisation devices page.
+      schools.delete_if { |s| s[0] == current_school_dn }
+    end
+
+    schools
   end
 end

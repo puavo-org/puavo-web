@@ -142,7 +142,7 @@ module LdapConverters
     end
 
     def write(json_obj)
-      json_obj.to_json
+      [ json_obj.to_json ]
     end
   end
 

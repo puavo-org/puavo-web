@@ -85,11 +85,7 @@ module ApplicationHelper
   STARTED = Time.now
   DEB_PACKAGE = Array(`dpkg -l | grep puavo-web`.split())[2]
   def debug_footer
-    "<footer>
-      hostname: #{ Socket.gethostname }, uptime: #{ (Time.now - STARTED).to_i } seconds<br>
-      version: #{ PuavoUsers::VERSION }, git commit: #{ PuavoUsers::GIT_COMMIT },<br>
-      deb package: #{ DEB_PACKAGE }
-    </footer>".html_safe
+    "<footer>Hostname: #{ Socket.gethostname } Uptime: #{ (Time.now - STARTED).to_i } seconds<br>Commit: #{ PuavoUsers::GIT_COMMIT }</footer>".html_safe
   end
 
   def group_types_for_select
@@ -318,8 +314,8 @@ module ApplicationHelper
     # This isn't a template, so img_tag and such aren't available. Fortunately this works.
     prefix = "/images/language_flags.svg"
 
-    html += "<li class=\"asFlex haveDropdown\" title=\"#{I18n.t('language_selector_title')}\"><svg class=\"flag current\"><use xlink:href=\"#{prefix}##{current}\"></use></svg>\n"
-    html += "<ul class=\"dropdown\">\n"
+    html += "<li class=\"asFlex haveTopDropdown\" title=\"#{I18n.t('language_selector_title')}\"><svg class=\"flag current\"><use xlink:href=\"#{prefix}##{current}\"></use></svg>\n"
+    html += "<ul class=\"topDropdown\">\n"
 
     Rails.configuration.available_ui_locales.each do |l|
       next if l == current

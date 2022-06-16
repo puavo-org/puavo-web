@@ -92,6 +92,17 @@
     padding-right: 5px;
   }
 
+  .email {
+    background: $integrationsEmailBack;
+    color: $integrationsEmailFore;
+  }
+
+  .email:before {
+    content: "\f0e0";
+    font-family: "puavo-icons";
+    padding-right: 5px;
+  }
+
   /* Some other type of integration */
   .other {
     background: $integrationsOtherBack;

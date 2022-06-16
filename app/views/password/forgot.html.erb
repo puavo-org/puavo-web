@@ -3,6 +3,10 @@
 <p><%= t('.description') %></p>
 
 <%= form_for(:forgot, :url => forgot_send_token_password_path, :html => { :method => :put })  do |f| %>
+  <% if params.include?('lang') || @language %>
+  <input type="hidden" id="lang" name="lang" value="<%= params['lang'] || @language %>">
+  <% end %>
+
   <table class="editForm">
     <tr>
       <th><%= label :forgot, :email, t('activeldap.attributes.user.mail') %></th>

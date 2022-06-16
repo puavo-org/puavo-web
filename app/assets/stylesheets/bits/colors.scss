@@ -14,6 +14,9 @@ $headerBorder: #000;
 
 $defaultBoxShadow: rgba(34, 34, 34, 0.75);
 
+/* Highlight admins and owners in tables */
+$adminOwner: #00f;
+
 /*
 --------------------------------------------------------------------------------
 Top bar
@@ -52,6 +55,8 @@ $integrationsOutBack: #8f8;
 $integrationsOutFore: #000;
 $integrationsInOutBack: #f88;
 $integrationsInOutFore: #000;
+$integrationsEmailBack: #44f;
+$integrationsEmailFore: #fff;
 $integrationsLoginBack: #88f;
 $integrationsLoginFore: #fff;
 $integrationsPasswordBack: #ff8;
@@ -93,6 +98,7 @@ $missingDataFore: rgb(255, 0, 0);
 $ownersOnlyBorder: rgb(255, 0, 0);
 
 $footerFore: #999;
+$footerBorder: #ccc;
 
 /* Ordinary links on page content areas */
 $linkFore: #13243f;
@@ -196,7 +202,6 @@ $pceAutocompleteEntryHoverBackground: #00f;
 $pceAutocompleteMatchForeground: #000;
 $pceAutocompleteMatchBackground: #0ff;
 
-
 /* Miscellaneous */
 $mountPointsHeadingBack: #ccc;
 $groupRenameTableHeaderBack: #ccc;
@@ -208,6 +213,12 @@ $usernameListTableBorder: #ccc;
 /* Organisation password requirements info boxes */
 $passwordRequirementsBackground: rgb(217, 237, 247);
 $passwordRequirementsBorder: darken(rgb(217, 237, 247), 10%);
+
+/* School admin permissions page */
+$adminPermissionsAllowBackground: #0f0;
+$adminPermissionsAllowForeground: #000;
+$adminPermissionsDenyBackground: #f00;
+$adminPermissionsDenyForeground: #fff;
 
 /*
 --------------------------------------------------------------------------------
@@ -248,11 +259,17 @@ $listRowHoverBack: #f9f7e6;
 $listRowBorder: #c8c8c8;
 $listFore: #000;
 
+/* Sortable Tables (not supertables) */
+$listSortableColumnHeaderBorder: #999;
+$listSortableColumnHover: linear-gradient(darken($baseOrange, 5%), darken($baseOrangeGradient, 5%));
+$listSelectedColumn: #d0d0d0;
+$listSelectedColumnRowHover: darken(#f9f7e6, 10%);
+
+/* Group member lists */
 $markedForDeletionOddRowBack: #faa;
 $markedForDeletionEvenRowBack: #fcc;
 $markedForDeletionRowHoverBack: #fdd;
 $markedForDeletionBackground: #f66;
-$adminOwner: #00f;
 
 /*
 --------------------------------------------------------------------------------
@@ -266,11 +283,6 @@ $stTabDisabledBackground: #ddd;
 $stTabBackground: #ddd;
 $stTabHoverBackground: #eee;
 $stTabSelectedBackground: #fff;
-
-$stColumnListHoverBackground: #ccc;
-$stColumnListHoverForeground: #000;
-$stColumnListSelected: #bbb;
-$stColumnListDisabled: #888;
 
 $stFiltersRowBorder: #ccc;
 $stFiltersInvalidColumn: #ffa;
@@ -356,3 +368,7 @@ $deviceStatsPercentageBack: #fff;
 $deviceStatsPercentageFore: #080;
 $deviceStatsDeviceListBorder: #aaa;
 $deviceStatsReleaseName: #088;
+
+$deviceStatsReleaseStretch: #008;
+$deviceStatsReleaseBuster: #080;
+$deviceStatsReleaseBullseye: #a00;

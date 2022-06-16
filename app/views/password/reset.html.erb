@@ -2,10 +2,6 @@
 <%= javascript_include_tag 'password_validator', skip_pipeline: true %>
 <% end %>
 
-<% content_for :password_validator do %>
-<%= setup_password_validator(@organisation_name, -1, 'reset_password', 'reset_password_confirmation') %>
-<% end %>
-
 <% content_for :title do %><%= t('.title') %><% end %>
 
 <p><%= t('.description') %></p>
@@ -15,8 +11,8 @@
     <tr>
       <th><%= label :reset, :password, t('.password') %></th>
       <td>
-        <%= show_password_requirements(@organisation_name, -1) %>
-        <%= password_field :reset, :password, :required => 'required' %>
+        <%= show_password_requirements(@organisation_name, @school_id) %>
+        <%= password_field :reset, :password, :required => 'required', autofocus: true %>
       </td>
     </tr>
 
@@ -32,4 +28,12 @@
       </td>
     </tr>
   </table>
+<% end %>
+
+<% content_for :password_validator do %>
+<%= setup_password_validator(@organisation_name,
+                             @school_id,
+                             'reset_password',
+                             'reset_password_confirmation',
+                             []) %>
 <% end %>

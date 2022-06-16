@@ -121,7 +121,9 @@ describe PuavoRest::Password do
       end
 
       post "/password/send_token", {
-        "username" => "bob"
+        "request_id" => "ABCDEFGHIJ",   # I'm not sure if this is really needed
+        "username" => "bob",
+        "email" => "bob@example.com",
       }
       assert_200
 
@@ -134,8 +136,8 @@ describe PuavoRest::Password do
 
       assert_equal "bob@example.com", $mailer.options[:to]
       assert_equal "Reset your password", $mailer.options[:subject]
-      assert_equal "bob", jwt_data["username"]
-      assert_equal "example.puavo.net", jwt_data["organisation_domain"]
+      assert_equal "bob", jwt_data["uid"]
+      assert_equal "example.puavo.net", jwt_data["domain"]
     end
   end
 

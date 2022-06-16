@@ -5,17 +5,17 @@ Given(/^mock password management service$/) do
                :body => { :status => 'successfully' }.to_json, :headers => {})
 
   stub_request(:put, "http://127.0.0.1:9393/password/change/#{ @jwt }").
-        with(:body    => {'new_password' => 'foobar'}.to_json,
+        with(:body    => {'request_id'=>'ABCDEFGHIJ', 'new_password' => 'foobar'}.to_json,
              :headers => {'Accept-Language'=>'en', 'Host'=>'example.puavo.net'}).
         to_return(:status => 200, :body => "", :headers => {})
 end
 
 Given(/^generate new token for "(.*?)"$/) do |username|
   jwt_data = {
-    "iat" => Time.now.to_i,
-
-    "username" => username,
-    "organisation_domain" => "example.puavo.net"
+    iat: Time.now.to_i,
+    id: 1,    # eh
+    uid: username,
+    domain: "example.puavo.net"
   }
   @jwt = JWT.encode(jwt_data, "secret")
 end

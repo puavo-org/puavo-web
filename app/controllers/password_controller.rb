@@ -1,11 +1,19 @@
+# The publicly-accessible password changing and resetting forms. Allows users to change/reset
+# their own password, and teachers/admins to change someone else's password.
+
+require 'digest'
+
 class UserNotFound < StandardError; end
 class TooManySentTokenRequest < StandardError; end
 class RestConnectionError < StandardError; end
+class EmptyPassword < StandardError; end
 class PasswordConfirmationFailed < StandardError; end
 class TokenLifetimeHasExpired < StandardError; end
+class PasswordDoesNotMeetRequirements < StandardError; end
 
 class PasswordController < ApplicationController
   include Puavo::Integrations
+  include Puavo::Password
 
   before_action :set_ldap_connection
   skip_before_action :find_school, :require_login, :require_puavo_authorization
@@ -21,6 +29,9 @@ class PasswordController < ApplicationController
 
     @expired = (params[:password_expired] == 'true')
 
+    @primary_school_id = params.fetch(:primary_school_id, -1)
+    @reduced_ui = params.include?('hidetabs')
+
     setup_customisations()
   end
 
@@ -31,28 +42,12 @@ class PasswordController < ApplicationController
 
     @changing = params.fetch(:changing, '')
     @changed = params.fetch(:changed, '')
+
+    @primary_school_id = params.fetch(:primary_school_id, -1)
+    @reduced_ui = params.include?('hidetabs')
+
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
-  end
-
-  def filter_multiple_attempts(username, request_id)
-    db = Redis::Namespace.new("puavo:password_management:attempt_counter", :redis => REDIS_CONNECTION)
-
-    # if the username key exists in the database, then there have been multiple attempts lately
-    if db.get(username) == "true"
-      logger.error "[#{request_id}] (#{Time.now}) Too many change attempts for user \"#{username}\", request rejected"
-
-      # must setup these or the form breaks
-      setup_language(params.fetch(:lang, ''))
-      setup_customisations()
-      @changing = username
-
-      raise UserError, I18n.t('flash.password.too_many_attempts')
-      return
-    end
-
-    # store the username with automatic expiration in 10 seconds
-    db.set(username, true, :px => 10000, :nx => true)
   end
 
   # PUT /password
@@ -72,12 +67,13 @@ class PasswordController < ApplicationController
       logger.info "[#{request_id}] (#{Time.now}) User \"#{params['login']['uid']}\" " \
                   "in organisation \"#{@organisation_name}\" " \
                   "is trying to change their password, #{ip}"
-      filter_multiple_attempts(params['login']['uid'], request_id)
+      filter_multiple_attempts(request_id, nil, params['login']['uid'])
       mode = :own
     else
       logger.info "[#{request_id}] (#{Time.now}) User \"#{params['login']['uid']}\" " \
                   "is trying to change the password of user \"#{params['user']['uid']}\" " \
                   "in organisation \"#{@organisation_name}\", #{ip}"
+      filter_multiple_attempts(request_id, params['login']['uid'], params['user']['uid'])
       mode = :other
     end
 
@@ -95,6 +91,9 @@ class PasswordController < ApplicationController
     else
       @changed = params.fetch(:changed, '')
     end
+
+    @reduced_ui = params.include?('hidetabs')
+    @primary_school_id = params.fetch(:primary_school_id, -1)
 
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
@@ -144,87 +143,280 @@ class PasswordController < ApplicationController
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
 
+    request_id = generate_synchronous_call_id()
+
     if params[:forgot].empty? || params[:forgot][:email].empty?
       flash[:alert] = I18n.t('password.forgot.description')
       redirect_to forgot_password_path
       return
     end
 
-    user = User.find(:first, :attribute => "mail", :value =>  params[:forgot][:email])
+    begin
+      logger.info("[#{request_id}] A password reset for user \"#{params[:forgot][:email]}\" has been requested")
+      log_request_env(request, request_id)
 
-    send_token_url = password_management_host + "/password/send_token"
+      user = User.find(:first, :attribute => "mail", :value => params[:forgot][:email])
 
-    raise UserNotFound if not user
+      unless user
+        logger.error("[#{request_id}] No user found by that email address")
+        raise "No user found by email \"#{params[:forgot][:email]}\""
+      end
 
-    db = redis_connect
+      logger.info("[#{request_id}] Found user \"#{user.givenName} #{user.sn}\" (\"#{user.uid}\"), " \
+                  "ID=#{user.puavoId}, organisation=\"#{current_organisation_domain}\"")
 
-    raise TooManySentTokenRequest if db.get(user.puavoId)
+      db = redis_connect
 
-    rest_response = HTTP.headers(:host => current_organisation_domain,
-                                      "Accept-Language" => locale)
-      .post(send_token_url,
-            :params => { :username => user.uid })
+      if db.get(user.puavoId)
+        logger.error("[#{request_id}] This user has already received a password reset link, request rejected")
+        raise "A reset link has already been sent for the specified user"
+      end
 
-    raise RestConnectionError if rest_response.status != 200
+      send_token_url = password_management_host + "/password/send_token"
 
-    db.set(user.puavoId, true)
-    db.expire(user.puavoId, 300)
+      tried = false
 
-    respond_to do |format|
-      flash[:message] = I18n.t('password.successfully.send_token')
-      format.html { redirect_to successfully_password_path(:message => "send_token") }
+      begin
+        logger.info("[#{request_id}] Generating the reset email, see the password reset host logs at " \
+                    "#{password_management_host} for details")
+
+        rest_response = HTTP.headers(host: current_organisation_domain, 'Accept-Language': locale)
+                            .post(send_token_url, params: {
+                              # Most of these are just for logging purposes. Abuse cases must
+                              # be traceable afterwards.
+                              request_id: request_id,
+                              id: user.puavoId.to_i,
+                              username: user.uid,
+                              email: params[:forgot][:email],
+                            })
+      rescue => e
+        logger.error("[#{request_id}] request failed: #{e}")
+
+        if e.to_s.includes?('Connection reset by peer') && !tried
+          logger.info("[#{request_id}] Retrying the request once in 1 second...")
+          tried = true
+          sleep 1
+          retry
+        end
+      end
+
+      if rest_response.status == 200
+        unless ENV['RAILS_ENV'] == 'test'
+          # The server sends the JWT back as a string
+          response_data = JSON.parse(rest_response.body.to_s)
+
+          # Store full user data in Redis. The key is SHA384 of the JWT string. We can't
+          # store anything in the public reset link or the JWT itself, because it cannot
+          # be decoded on puavo-web without the secret key that only the reset server has.
+          # So the "public" JWT only contains some user-identifying data (most of which
+          # are public already), but the Redis contains the full information. If the URL
+          # is edited, the JWT hash no longer matches and the data cannot be retrieved.
+          # This protects effectively against attacks.
+          cache_data = {
+            id: user.puavoId.to_i,
+            uid: user.uid,
+            school: user.puavoEduPersonPrimarySchool.to_s.match(/^puavoId=(?<id>\d+),ou=Groups,dc=edu,dc=/)[:id].to_i,
+            domain: current_organisation_domain,
+          }
+
+          key = Digest::SHA384.hexdigest(response_data['jwt'])
+
+          db.set(user.puavoId, true, :ex => 600, :nx => true)
+          db.set(key, cache_data.to_json, :ex => 600, :nx => true)
+
+          logger.info("[#{request_id}] Redis entries saved")
+        end
+      else
+        logger.error("[#{request_id}] puavo-rest call failed, response code was #{rest_response.status}")
+      end
+    rescue => e
+      logger.error("[#{request_id}] Password reset failed: #{e}")
     end
-  rescue UserNotFound
-    flash.now[:alert] = I18n.t('flash.password.email_not_found', :email => params[:forgot][:email])
-    render :action => "forgot"
-  rescue TooManySentTokenRequest
-    flash.now[:alert] = I18n.t('flash.password.too_many_sent_token_request')
-    render :action => "forgot"
-  rescue RestConnectionError
-    flash.now[:alert] = I18n.t('flash.password.connection_failed', :email => params[:forgot][:email])
-    render :action => "forgot"
+
+    # This always succeeds, even if an email cannot be sent. The message contains a logging ID
+    # so the actual reason can be later determined.
+    respond_to do |format|
+      @message = I18n.t('password.successfully.send_token', :request_id => request_id)
+      format.html { render :action => "successfully" }
+    end
   end
 
   # GET /password/:jwt/reset
   # Password reset form
   def reset
-    setup_language(params.fetch(:lang, ''))
-    setup_customisations()
+    request_id = generate_synchronous_call_id()
+    logger.info("[#{request_id}] Rendering the password reset form")
+    log_request_env(request, request_id)
+
+    unless ENV['RAILS_ENV'] == 'test'
+      # Retrieve the full user data from the Redis cache
+      key = Digest::SHA384.hexdigest(params['jwt'])
+      logger.info("[#{request_id}] JWT key: #{key}")
+
+      data = redis_connect.get(key)
+    else
+      # No extra data in test mode. We can't, in fact, cache anything in Redis in test mode.
+      # We can't test the link expiration at all.
+      data = "{}"
+    end
+
+    unless data
+      logger.error("[#{request_id}] No user data found in Redis. The link has expired or it's not valid.")
+      flash[:alert] = t('flash.password.token_lifetime_has_expired')
+      redirect_to forgot_password_path
+    else
+      data = JSON.parse(data)
+      logger.info("[#{request_id}] Data retrieved from Redis: #{data.inspect}")
+
+      # The primary school ID stored in the JWT is used to set up password validation
+      @school_id = data['school'] || -1
+      logger.info("[#{request_id}] Using school ID of #{@school_id} for customisations")
+
+      setup_language(params.fetch(:lang, ''))
+      setup_customisations(@school_id)
+    end
   end
 
   # PUT /password/:jwt/reset
   # Reset the user's password
   def reset_update
+    request_id = generate_synchronous_call_id()
+
+    if ENV['RAILS_ENV'] == 'test'
+      # The password reset requests aren't actually sent anywhere during tests, they're
+      # merely mocked with webmock's stub_request(). But here's the problem: stubbing only
+      # works if the request is 100% identical every time. And the request ID is a random
+      # string. So during tests we have to keep the request ID fixed, otherwise one test
+      # will fail every time because the mock does not recognize the request and it is
+      # actually sent to a password reset host, which does not exist in test environments.
+      # (TODO: Should it exist?)
+      request_id = 'ABCDEFGHIJ'
+    end
+
+    logger.info("[#{request_id}] Processing a password reset form submission")
+    log_request_env(request, request_id)
+
+    unless ENV['RAILS_ENV'] == 'test'
+      # Retrieve the full user data from the Redis cache. The JWT is not validated at this point,
+      # since if it's invalid, the data won't exist in Redis.
+      key = Digest::SHA384.hexdigest(params['jwt'])
+      logger.info("[#{request_id}] JWT hash: #{key}")
+
+      db = redis_connect
+      data = db.get(key)
+
+      unless data
+        # Assume the token has expired or the link is invalid
+        logger.error("[#{request_id}] No user data found in Redis")
+        raise TokenLifetimeHasExpired
+      end
+
+      data = JSON.parse(data)
+      logger.info("[#{request_id}] Data retrieved from Redis: #{data.inspect}")
+    else
+      # No password validation in test mode
+      data = { 'school' => -1 }
+    end
 
     setup_language(params.fetch(:lang, ''))
-    setup_customisations()
+    setup_customisations(data['school'])
 
-    raise PasswordConfirmationFailed if params[:reset][:password] != params[:reset][:password_confirmation]
+    if params[:reset][:password].nil? || params[:reset][:password].empty? ||
+       params[:reset][:password_confirmation].nil? || params[:reset][:password_confirmation].empty?
+      # Protect against intentionally broken form
+      logger.error("[#{request_id}] Empty password/password confirmation")
+      raise EmptyPassword
+    end
+
+    if params[:reset][:password] != params[:reset][:password_confirmation]
+      logger.info("[#{request_id}] Password confirmation mismatch")
+      raise PasswordConfirmationFailed
+    end
+
+    unless ENV['RAILS_ENV'] == 'test'
+      password_errors = []
+      new_password = params[:reset][:password]
+
+      ruleset_name = get_school_password_requirements(@organisation_name, data['school'])
+
+      if ruleset_name
+        # Rule-based password validation
+        logger.info("[#{request_id}] Validating the password against ruleset \"#{ruleset_name}\"")
+        rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
+
+        password_errors =
+          Puavo::Password::validate_password(new_password, rules)
+      end
+
+      # Reject common passwords. Match full words in a tab-separated string.
+      if Puavo::COMMON_PASSWORDS.include?("\t#{new_password}\t")
+        logger.error("[#{request_id}] Rejecting a common/weak password")
+        password_errors << 'common'
+      end
+
+      unless password_errors.empty?
+        # Combine the errors like the live validator does
+        logger.error("[#{request_id}] The password does not meet the requirements (errors=#{password_errors.join(', ')})")
+        raise PasswordDoesNotMeetRequirements
+      end
+    end
 
     change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
 
-    rest_response = HTTP.headers(:host => current_organisation_domain,
-                                      "Accept-Language" => locale)
-      .put(change_password_url,
-           :json => { :new_password => params[:reset][:password] })
+    logger.info("[#{request_id}] Resetting the password, see the password reset host logs at " \
+                "#{password_management_host} for details")
+
+    rest_response = HTTP.headers(host: current_organisation_domain, 'Accept-Language': locale)
+                                 .put(change_password_url, json: {
+                                    request_id: request_id,
+                                    new_password: params[:reset][:password]
+                                 })
 
     if rest_response.status == 404 &&
         JSON.parse(rest_response.body.readpartial)["error"] == "Token lifetime has expired"
+      logger.info("[#{request_id}] The JWT token has expired")
       raise TokenLifetimeHasExpired
     end
 
     respond_to do |format|
       if rest_response.status == 200
-        flash[:message] = I18n.t('password.successfully.update')
-        format.html { redirect_to successfully_password_path(:message => "update") }
+        begin
+          # Remove the reset flag from the user, so a new reset email can be sent. The problem is,
+          # we don't know who the user was. But the reset host sends that information back to us.
+          # The data is in the JWT token, but we won't decode it here.
+          unless ENV['RAILS_ENV'] == 'test'
+            data = JSON.parse(rest_response.body.to_s)
+            db.del(data['id'])
+            db.del(key)
+            logger.info("[#{request_id}] Redis entries cleared")
+          end
+
+          logger.info("[#{request_id}] Password reset complete for user \"#{data['uid']}\" (ID=#{data['id']})")
+        rescue => e
+          logger.error("[#{request_id}] Unable to parse the response received from the password reset host: #{e}")
+          logger.error("[#{request_id}] Raw response data: #{rest_response.body.to_s}")
+          logger.error("[#{request_id}] Redis entries not cleared")
+          logger.info("[#{request_id}] Password reset complete for unknown user")
+        end
+
+        @message = I18n.t('password.successfully.update')
+        format.html { render :action => "successfully" }
       else
-        flash[:alert] = I18n.t('flash.password.can_not_change_password')
+        logger.error("[#{request_id}] Password change failed, puavo-rest returned error:")
+        logger.error("[#{request_id}] #{rest_response.inspect}")
+        flash[:alert] = I18n.t('flash.password.can_not_change_password', :code => request_id)
         format.html { redirect_to reset_password_path }
       end
     end
   rescue PasswordConfirmationFailed
-    flash.now[:alert] = I18n.t('flash.password.confirmation_failed')
-    render :action => "reset"
+    flash[:alert] = I18n.t('flash.password.confirmation_failed')
+    redirect_to reset_password_path
+  rescue EmptyPassword
+    flash[:alert] = I18n.t('flash.password.confirmation_failed')
+    redirect_to reset_password_path
+  rescue PasswordDoesNotMeetRequirements
+    flash[:alert] = I18n.t('password.invalid')
+    redirect_to reset_password_path
   rescue TokenLifetimeHasExpired
     flash[:alert] = I18n.t('flash.password.token_lifetime_has_expired')
     redirect_to forgot_password_path
@@ -232,10 +424,48 @@ class PasswordController < ApplicationController
 
   # "Your password has been reset" form
   def successfully
-
   end
 
   private
+
+  def log_request_env(request, request_id)
+    logger.info("[#{request_id}] REMOTE_ADDR=\"#{request.env['REMOTE_ADDR']}\"")
+    logger.info("[#{request_id}] REMOTE_HOST=\"#{request.env['REMOTE_HOST']}\"")
+    logger.info("[#{request_id}] REQUEST_URI=\"#{request.env['REQUEST_URI']}\"")
+    logger.info("[#{request_id}] user agent=\"#{request.env['HTTP_USER_AGENT']}\"")
+  end
+
+  # Hinder password brute-forcing by imposing a 10-second wait between changing attempts
+  def filter_multiple_attempts(request_id, changer, changee)
+    db = Redis::Namespace.new("puavo:password_management:attempt_counter", :redis => REDIS_CONNECTION)
+
+    if changer.nil?
+      key = changee
+    else
+      key = "#{changer}:#{changee}"
+    end
+
+    if db.exists(key) == 1
+      log_prefix = "[#{request_id}] (#{Time.now})"
+
+      if changer.nil?
+        logger.error "#{log_prefix} Too many change attempts for user \"#{changee}\", request rejected"
+      else
+        logger.error "#{log_prefix} User \"#{changer}\" has tried to change the password of user \"#{changee}\" too many times too quickly, request rejected"
+      end
+
+      # must setup these or the form breaks
+      setup_language(params.fetch(:lang, ''))
+      setup_customisations()
+      @changing = changer.nil? ? changee : changer
+
+      raise UserError, I18n.t('flash.password.too_many_attempts')
+      return
+    end
+
+    # Expire automaticlly in 10 seconds
+    db.set(key, true, :px => 10000, :nx => true)
+  end
 
   def error_message_and_redirect(message)
     flash.now[:alert] = message
@@ -243,6 +473,8 @@ class PasswordController < ApplicationController
 
     setup_language(params.fetch(:lang, ''))
     setup_customisations()
+
+    @reduced_ui = params.include?('hidetabs')
 
     unless params[:user][:uid]
       render :action => "own"
@@ -284,66 +516,39 @@ class PasswordController < ApplicationController
   end
 
   def change_user_password(mode, request_id)
-    # must use -1 because password forms use global requirements
-    case get_school_password_requirements(@organisation_name, -1)
-      when 'Google'
-        # Validate the password against Google's requirements.
-        new_password = params[:user][:new_password]
+    # Try to retain the school ID across form reloads. If it cannot be accessed, use -1 for
+    # organisation-level rules and hope for the best.
+    @primary_school_id = params.fetch(:primary_school_id, -1)
 
-        if new_password.size < 8 then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.gsuite_password_too_short')
-        end
-        if new_password[0] == ' ' || new_password[-1] == ' ' then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.gsuite_password_whitespace')
-        end
-        if !new_password.ascii_only? then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.gsuite_password_ascii_only')
-        end
-      when 'oulu_ad'
-        # Validate the password to contain at least eight characters
-        new_password = params[:user][:new_password]
-        if new_password.size < 8 then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.oulu_ad_password_too_short')
-        end
+    ruleset_name = get_school_password_requirements(@organisation_name, @primary_school_id)
 
-        # There are other limitations here too, but we cannot check for them
-      when 'SixCharsMin'
-        # Validate the password to contain at least six characters.
-        new_password = params[:user][:new_password]
-        if new_password.size < 6 then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.sixcharsmin_password_too_short')
-        end
-      when 'SevenCharsMin'
-        # Validate the password to contain at least seven characters.
-        # TODO: This is inflexible and too repetitive. We need a better system
-        # for validating and enforcing password requirements.
-        new_password = params[:user][:new_password]
-        if new_password.size < 7 then
-          logger.error("[#{request_id}] The new password does not meet the requirements")
-          raise UserError,
-                I18n.t('activeldap.errors.messages.sevencharsmin_password_too_short')
-        end
+    if ruleset_name
+      rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
+
+      logger.info("[#{request_id}] Validating the password against ruleset \"#{ruleset_name}\"")
+
+      password_errors =
+        Puavo::Password::validate_password(params[:user][:new_password], rules)
+
+      unless password_errors.empty?
+        # Combine the errors like the live validator does
+        logger.error("[#{request_id}] The new password does not meet the requirements (errors=#{password_errors.join(', ')}")
+        raise UserError, I18n.t('password.invalid')
+      end
     end
 
     login_uid = params[:login][:uid]
 
-    # if the username(s) contain the domain name, strip it out
-    # must use -1 because password forms use global requirements
+    # If the username(s) contain the domain name, strip it out. -1 for the school ID
+    # works here, because domains are always organisation-wide.
     customisations = get_school_password_form_customisations(@organisation_name, -1)
     domain = customisations[:domain]
 
-    if domain && login_uid.end_with?(domain)
-      login_uid.remove!(domain)
+    Array(domain || []).each do |d|
+      if login_uid.end_with?(d)
+        login_uid.sub!(d, '')
+        break
+      end
     end
 
     external_login_status = external_login(login_uid, params[:login][:password])
@@ -389,11 +594,15 @@ class PasswordController < ApplicationController
     end
 
     @user = @logged_in_user
+
     if params[:user][:uid] then
       target_user_username = params[:user][:uid]
 
-      if domain && target_user_username.end_with?(domain)
-        target_user_username.remove!(domain)
+      Array(domain || []).each do |d|
+        if target_user_username.end_with?(d)
+          target_user_username.sub!(d, '')
+          break
+        end
       end
 
       @user = User.find(:first,
@@ -407,6 +616,51 @@ class PasswordController < ApplicationController
       logger.error("[#{request_id}] Username \"#{target_user_username}\" is invalid")
       raise UserError, I18n.t('flash.password.invalid_user',
                                     :uid => params[:user][:uid])
+    end
+
+    # Try to find the primary school ID of the user whose password is being changed.
+    # If we can determine it, use it to validate the password.
+    if @logged_in_user.puavoEduPersonPrimarySchool
+      @primary_school_id = @logged_in_user.puavoEduPersonPrimarySchool.rdns[0]['puavoId'].to_i
+    else
+      @primary_school_id = @user.puavoEduPersonPrimarySchool.rdns[0]['puavoId'].to_i
+    end
+
+    password_errors = []
+    new_password = params[:user][:new_password]
+
+    if @primary_school_id
+      ruleset_name = get_school_password_requirements(@organisation_name, @primary_school_id)
+
+      if ruleset_name
+        # Rule-based password validation
+        logger.info("[#{request_id}] Validating the password against ruleset \"#{ruleset_name}\"")
+        rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
+
+        password_errors =
+          Puavo::Password::validate_password(new_password, rules)
+
+        if Puavo::PASSWORD_RULESETS[ruleset_name][:deny_names_in_passwords]
+          if new_password.downcase.include?(@user.givenName.downcase) ||
+             new_password.downcase.include?(@user.sn.downcase) ||
+             new_password.downcase.include?(@user.uid.downcase) ||
+             (mode == :other && new_password.downcase.include?(params[:login][:uid].downcase))
+            password_errors << 'contains_name'
+          end
+        end
+      end
+    end
+
+    # Reject common passwords. Match full words in a tab-separated string.
+    if Puavo::COMMON_PASSWORDS.include?("\t#{new_password}\t")
+      logger.error("[#{request_id}] Rejecting a common/weak password")
+      password_errors << 'common'
+    end
+
+    unless password_errors.empty?
+      # Combine the errors like the live validator does
+      logger.error("[#{request_id}] The new password does not meet the requirements (errors=#{password_errors.join(', ')})")
+      raise UserError, I18n.t('password.invalid')
     end
 
     rest_params = {
@@ -562,9 +816,9 @@ class PasswordController < ApplicationController
     end
   end
 
-  def setup_customisations
-    # use -1 because we don't know what the school is
-    customisations = get_school_password_form_customisations(@organisation_name, -1)
+  # Use -1 by default because we don't always know what the school is
+  def setup_customisations(school_id=-1)
+    customisations = get_school_password_form_customisations(@organisation_name, school_id)
 
     @banner = customisations[:banner]
     @domain = customisations[:domain]

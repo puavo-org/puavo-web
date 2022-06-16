@@ -22,7 +22,7 @@
 
   <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more') %></span>
-    <div class="dropdown">
+    <div class="dropdown dropRight">
       <ul>
         <li>
           <%= link_to select_school_device_path(@school, @device) do%>
@@ -32,6 +32,22 @@
       </ul>
 
       <ul>
+        <% if @device.puavoDeviceType == 'laptop' %>
+          <li>
+            <% if @device.has_pending_reset %>
+              <%= link_to clear_reset_mode_device_path(@school, @device), :method => :put do %>
+                <i class="icon-flag-empty"></i><%= t('link.clear_reset_mode') %>
+              <% end %>
+            <% else %>
+              <%= link_to set_reset_mode_device_path(@school, @device),
+                          data: { confirm: t('reset_confirm', object_name: @device.puavoHostname) },
+                          :method => :put do %>
+                <i class="icon-flag"></i><%= t('link.set_reset_mode') %>
+              <% end %>
+            <% end %>
+          </li>
+        <% end %>
+
         <li>
           <% if @device.hostCertificates %>
             <%= link_to revoke_certificate_device_path(@school, @device), data: { confirm: t('general_confirm') }, :method => :delete do %>

@@ -1,3 +1,4 @@
+require 'date'
 require 'net/http'
 require_relative "./puavo_conf_mixin"
 require_relative "./puavo_tag_mixin"
@@ -197,6 +198,33 @@ class DeviceBase < LdapBase
       logger.info "ERROR: Unable to sign certificate"
       logger.info "Exception: #{ e.message }"
     end
+  end
+
+  def has_pending_reset
+    self.puavoDeviceReset \
+      && (reset_state = JSON.parse(self.puavoDeviceReset) rescue nil) \
+      && reset_state.kind_of?(Hash) \
+      && reset_state['request-time'] \
+      && !reset_state['request-fulfilled']
+  end
+
+  def set_reset_mode(current_user)
+    reset_pin = DateTime.now.strftime('%y%V')   # this is not an actual secret
+
+    user_uid        = current_user.uid        || 'NO_UID'
+    user_given_name = current_user.given_name || 'NO_GIVEN_NAME'
+    user_surname    = current_user.surname    || 'NO_SURNAME'
+    user_string     = "#{ user_given_name } #{ user_surname } (#{ user_uid })"
+
+    self.puavoDeviceReset = {
+      'from'              => user_string,
+      'mode'              => 'ask_pin',
+      'operation'         => 'reset',
+      'pin'               => reset_pin,
+      'request-fulfilled' => nil,
+      'request-time'      => DateTime.now.to_s,
+      'run-immediately'   => 'false',
+    }.to_json
   end
 
   def revoke_certificate(organisation_key, dn, password)
@@ -449,6 +477,9 @@ class DeviceBase < LdapBase
        :value_block => lambda{ |value| Array(value).first } },
      { :original_attribute_name => "puavoDeviceMonitorsXML",
        :new_attribute_name => "monitors_xml",
+       :value_block => lambda{ |value| Array(value).first } },
+     { :original_attribute_name => "puavoDeviceReset",
+       :new_attribute_name => "reset",
        :value_block => lambda{ |value| Array(value).first } } ]
   end
 end

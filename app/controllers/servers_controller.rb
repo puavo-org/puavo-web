@@ -148,6 +148,22 @@ class ServersController < ApplicationController
     send_data @server.jpegPhoto, :disposition => 'inline', :type => "image/jpeg"
   end
 
+  # GET servers/:id/raw_hardware_info
+  def raw_hardware_info
+    server = Server.find(params[:id])
+    data = {}
+
+    begin
+      data = JSON.parse(server.puavoDeviceHWInfo)
+    rescue => e
+    end
+
+    send_data data.to_json,
+              type: :json,
+              disposition: "attachment",
+              filename: "#{current_organisation.organisation_key}-#{server.cn}.json"
+  end
+
   # GET /servers/new
   # GET /servers/new.xml
   def new

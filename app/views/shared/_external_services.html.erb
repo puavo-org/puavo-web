@@ -30,12 +30,12 @@
     <table class="editForm">
       <tr>
         <th>Domain</th>
-        <td><%= external_service.puavoServiceDomain %></td>
+        <td><%= Array(external_service.puavoServiceDomain || []).join("<br>").html_safe %></td>
       </tr>
 
       <tr>
         <th><%= t("external_services.email") %></th>
-        <td><%= external_service.mail  %></td>
+        <td><%= external_service.mail %></td>
       </tr>
 
       <tr>
@@ -44,13 +44,30 @@
       </tr>
 
       <tr>
-        <th><%= t("external_services.active") %></th>
+        <th><label for="<%= external_service.dn.to_s %>"><%= t("external_services.active") %></label></th>
         <td>
           <%= check_box_tag("puavoActiveService[]",
                             external_service.dn,
                             is_checked?(external_service),
+                            :id => external_service.dn.to_s,
                             :disabled => is_disabled?(external_service))
           %>
+        </td>
+      </tr>
+
+      <tr>
+        <th>DN</th>
+        <td><%= external_service.dn %></td>
+      </tr>
+
+      <tr>
+        <th><%= t('ldap_create_time') %></th>
+        <td>
+          <% if @extra.include?(external_service.dn.to_s) %>
+          <%= Time.at(@extra[external_service.dn.to_s][:created]).strftime('%Y-%m-%d %H:%M:%S') %> UTC
+          <% else %>
+          ?
+          <% end %>
         </td>
       </tr>
     </table>

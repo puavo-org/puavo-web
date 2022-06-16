@@ -13,7 +13,7 @@ module PuavoRest
 
       samba_sid = Array(get_raw(:sambaSID)).first
       if samba_sid && new?
-        res = LdapModel.raw_filter(organisation["base"], "(sambaSID=#{ escape samba_sid })")
+        res = LdapModel.raw_filter(organisation["base"], "(sambaSID=#{ LdapModel.ldap_escape(samba_sid) })")
         if res && !res.empty?
           other_dn = res.first["dn"].first
           # Internal attribute, use underscore prefix to indicate that

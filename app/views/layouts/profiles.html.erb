@@ -1,19 +1,10 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>
-<% if content_for?(:page_title) %>
-<%= yield(:page_title) %>
-<% elsif current_organisation? %>
-<%= current_organisation.name %>
-<% end %>
-</title>
+<html><head><meta charset="utf-8">
+<title><%= t('profiles.edit.title') %></title>
 <%= stylesheet_link_tag "profile_editor", :media => "all" %>
 </head>
-
 <body>
-<div id="outerWrapper">
+<div id="outerContainer">
 <%= yield %>
 </div>
 </body>

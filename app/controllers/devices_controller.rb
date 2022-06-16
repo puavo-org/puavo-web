@@ -1,7 +1,10 @@
 require "devices_helper"
 
+require_relative '../../rest/lib/inventory.rb'
+
 class DevicesController < ApplicationController
   include Puavo::MassOperations
+  include Puavo::Inventory
 
   before_action :find_school
 
@@ -50,7 +53,11 @@ class DevicesController < ApplicationController
 
     @device = Device.new
 
-    @school_list = DevicesHelper.device_school_change_list()
+    if is_owner?
+      @school_list = DevicesHelper.device_school_change_list(true, current_user, @school.dn.to_s)
+    else
+      @school_list = DevicesHelper.device_school_change_list(false, current_user, @school.dn.to_s)
+    end
 
     if request.format == 'text/html'
       # list of new device types
@@ -113,7 +120,57 @@ class DevicesController < ApplicationController
 
     begin
       device = Device.find(device_id)
-      device.delete
+      device.destroy
+
+      if Puavo::CONFIG['inventory_management']
+        # Notify the external inventory management
+        Puavo::Inventory::device_deleted(logger, Puavo::CONFIG['inventory_management'], device.id.to_i)
+      end
+
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # Mass operation: set/clear the reset mode
+  def mass_op_device_reset
+    begin
+      device_id = params[:device][:id]
+      reset = params[:device][:reset]
+    rescue
+      puts "mass_op_device_reset(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_device_reset(): missing params')
+    end
+
+    ok = false
+
+    begin
+      device = Device.find(device_id)
+      changed = false   # save changes only if something actually does change
+
+      if reset && !device.puavoDeviceReset
+        # set
+        device.set_reset_mode(current_user)
+        changed = true
+      elsif !reset && device.puavoDeviceReset
+        # clear
+        device.puavoDeviceReset = nil
+        changed = true
+      end
+
+      if changed
+        device.save!
+      end
+
+      # don't raise errors when nothing happens
       ok = true
     rescue StandardError => e
       return status_failed_msg(e)
@@ -564,6 +621,25 @@ class DevicesController < ApplicationController
 
     @releases = get_releases
 
+    @reset = nil
+
+    if @device.puavoDeviceReset
+      @reset = JSON.parse(@device.puavoDeviceReset) rescue nil
+
+      unless @reset.kind_of?(Hash) && @reset['request-time'] && !@reset['request-fulfilled']
+        @reset = nil
+      else
+        @reset['request-time'] = DateTime.parse(@reset['request-time']).strftime('%Y-%m-%d %H:%M:%S')
+
+        if @reset['request-fulfilled']
+          @reset['request-fulfilled'] = DateTime.parse(@reset['request-time']).strftime('%Y-%m-%d %H:%M:%S')
+        end
+      end
+    end
+
+    # operation: fast-reset, reset
+    # mode: ask_pin
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @device }
@@ -576,6 +652,22 @@ class DevicesController < ApplicationController
     @device = Device.find(params[:id])
 
     send_data @device.jpegPhoto, :disposition => 'inline', :type => "image/jpeg"
+  end
+
+  # GET /:school_id/devices/:id/raw_hardware_info
+  def raw_hardware_info
+    device = Device.find(params[:id])
+    data = {}
+
+    begin
+      data = JSON.parse(device.puavoDeviceHWInfo)
+    rescue => e
+    end
+
+    send_data data.to_json,
+              type: :json,
+              disposition: "attachment",
+              filename: "#{current_organisation.organisation_key}-#{device.cn}.json"
   end
 
   # GET /devices/new
@@ -766,6 +858,11 @@ class DevicesController < ApplicationController
     @device.revoke_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @device.destroy
 
+    if Puavo::CONFIG['inventory_management']
+      # Notify the external inventory management
+      Puavo::Inventory::device_deleted(logger, Puavo::CONFIG['inventory_management'], params[:id].to_i)
+    end
+
     respond_to do |format|
       format.html { redirect_to(devices_url) }
       format.xml  { head :ok }
@@ -788,10 +885,46 @@ class DevicesController < ApplicationController
     end
   end
 
+  def clear_reset_mode
+    @device = get_device(params[:id])
+    return if @device.nil?
+
+    @device.puavoDeviceReset = nil
+    @device.save!
+
+    respond_to do |format|
+      format.html { redirect_to(device_path(@school, @device), :notice => t('flash.clear_reset_mode')) }
+    end
+  end
+
+  def set_reset_mode
+    @device = get_device(params[:id])
+    return if @device.nil?
+
+    @device.set_reset_mode(current_user)
+    @device.save!
+
+    respond_to do |format|
+      format.html { redirect_to(device_path(@school, @device)) }
+    end
+  end
+
   # GET /:school_id/devices/:id/select_school
   def select_school
     @device = Device.find(params[:id])
     @schools = School.all.select{ |s| s.id != @school.id }
+
+    unless is_owner?
+      # School admins can only transfer devices between the schools they're admins in
+      schools = Set.new(Array(current_user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
+      @schools.delete_if { |s| !schools.include?(s.dn.to_s) }
+    end
+
+    # The current school is not shown on the list, so it can be empty.
+    if @schools.count < 1
+      flash[:notice] = t('flash.devices.no_other_schools')
+      redirect_to device_path(@school, @device)
+    end
 
     # sort the schools, so you can actually find the one you're looking for
     @schools.sort!{ |a, b| a.displayName.downcase <=> b.displayName.downcase }

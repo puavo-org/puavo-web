@@ -12,7 +12,6 @@ Feature: Manage profile
 
 
   Scenario: School admin edit profile
-    Given mock email confirm service for user "ken.jones" with email "ken.jones@puavo.net"
     When I am on the edit profile page
     Then I should be on the login page
     When I fill in "Username" with "ken.jones"
@@ -36,7 +35,7 @@ Feature: Manage profile
     # And I fill in "mouse?" with ""
 
     When I press "Update"
-    Then I should see "Your profile has been successfully updated."
+    Then I should see "Your profile has been successfully updated"
     And I should see the following special ldap attributes on the "User" object with "ken.jones":
     | puavoLocale       | "de_CH.UTF-8" |
     | preferredLanguage | "de"          |
@@ -51,11 +50,9 @@ Feature: Manage profile
     When I fill in "Telephone number" with "+35814987654321"
     And I attach the file at "features/support/test.jpg" to "Image"
     When I press "Update"
-    Then I should see "Your profile has been successfully updated."
-    And I should not see "A confirmation message will be soon sent to your new email address. Click it to verify your address."
+    Then I should see "Your profile has been successfully updated"
 
   Scenario: Student edit email address
-    Given mock email confirm service for user "jane.doe" with email "jane.doe@puavo.net"
     When I am on the edit profile page
     Then I should be on the login page
     When I fill in "Username" with "jane.doe"
@@ -64,8 +61,4 @@ Feature: Manage profile
     Then I should see "Jane Doe"
     When I fill in "Email" with "jane.doe@puavo.net"
     When I press "Update"
-    Then I should see "Your profile has been successfully updated."
-    # FIXME: create "shoult not see..." step
-    #And I should not see the following special ldap attributes on the "User" object with "jane.doe":
-    #| mail | "jane.doe@puavo.net" |
-    And I should see "A confirmation message will be soon sent to your new email address. Click it to verify your address."
+    Then I should see "Your profile has been successfully updated"

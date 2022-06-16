@@ -3,66 +3,58 @@ const COLUMN_DEFINITIONS = {
     abbr: {
         key: "abbr",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
     },
 
     created: {
         key: "created",
         type: ColumnType.UNIXTIME,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.GTE,
+        flags: ColumnFlag.DESCENDING_DEFAULT,
     },
 
     eid: {
         key: "eid",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
     },
 
     id: {
         key: "id",
-        type: ColumnType.INTEGER,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.EQU,
+        type: ColumnType.NUMERIC,
     },
 
     modified: {
         key: "modified",
         type: ColumnType.UNIXTIME,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.LTE,
+        flags: ColumnFlag.DESCENDING_DEFAULT,
     },
 
     members_count: {
         key: "members_count",
-        type: ColumnType.INTEGER,
-        flags: ColumnFlag.SORTABLE,
-        defaultOperator: FilterOperator.LTE,
+        type: ColumnType.NUMERIC,
     },
 
     name: {
         key: "name",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 
 <% if @is_organisation %>
     school: {
         key: "school",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
     },
 <% end %>
 
     type: {
         key: "type",
         type: ColumnType.STRING,
-        flags: ColumnFlag.SORTABLE | ColumnFlag.USER_TRANSFORM,
-        defaultOperator: FilterOperator.EQU,
+        flags: ColumnFlag.USER_TRANSFORM,
+        missing: {
+            display: `<span class="missingData"><%= t('missing_data') %></span>`,
+            sort: "",
+            filter: "",
+        }
     },
 };
 
@@ -133,29 +125,73 @@ const USER_TRANSFORM_FUNCTIONS = {
 };
 
 class MassGroupDeletion extends MassOperation {
-    constructor(parent, container)
-    {
-        super(parent, container);
-    }
-
-    canProceed()
-    {
-        return true;
-    }
-
-    start()
-    {
-    }
-
-    finish()
-    {
-    }
+    constructor(parent, container) { super(parent, container); }
 
     processItem(item)
     {
         return doPOST(
             `/users/${item.school_id}/mass_op_group_delete`,
-            { id: item.id[0] }
+            { id: item.id[INDEX_FILTERABLE] }
+        );
+    }
+};
+
+class MassGroupClear extends MassOperation {
+    constructor(parent, container) { super(parent, container); }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/mass_op_group_clear`,
+            { id: item.id[INDEX_FILTERABLE] }
+        );
+    }
+};
+
+class MassGroupLockMembers extends MassOperation {
+    constructor(parent, container) { super(parent, container); }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/mass_op_group_lock_members`,
+            { id: item.id[INDEX_FILTERABLE], state: true }
+        );
+    }
+};
+
+class MassGroupUnlockMembers extends MassOperation {
+    constructor(parent, container) { super(parent, container); }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/mass_op_group_lock_members`,
+            { id: item.id[INDEX_FILTERABLE], state: false }
+        );
+    }
+};
+
+class MassGroupMarkMembersForDeletion extends MassOperation {
+    constructor(parent, container) { super(parent, container); }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/mass_op_group_mark_members_for_deletion`,
+            { id: item.id[INDEX_FILTERABLE], state: true }
+        );
+    }
+};
+
+class MassGroupUnmarkMembersForDeletion extends MassOperation {
+    constructor(parent, container) { super(parent, container); }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/mass_op_group_mark_members_for_deletion`,
+            { id: item.id[INDEX_FILTERABLE], state: false }
         );
     }
 };
@@ -164,8 +200,38 @@ class MassGroupDeletion extends MassOperation {
 // define titles, IDs and other things in classes, they must be here
 const MASS_OPERATIONS = [
     {
+        id: "clear",
+        title: "<%= t('link.remove_all_members_from_group') %>",
+        flags: 0,
+        cls: MassGroupClear
+    },
+    {
+        id: "lock_users",
+        title: "<%= t('link.lock_all_group_members') %>",
+        flags: 0,
+        cls: MassGroupLockMembers
+    },
+    {
+        id: "unlock_users",
+        title: "<%= t('link.unlock_all_group_members') %>",
+        flags: 0,
+        cls: MassGroupUnlockMembers
+    },
+    {
+        id: "mark_for_deletion",
+        title: "<%= t('link.mark_group_members_for_deletion') %>",
+        flags: 0,
+        cls: MassGroupMarkMembersForDeletion
+    },
+    {
+        id: "unmark_deletion",
+        title: "<%= t('link.unmark_group_members_deletion') %>",
+        flags: 0,
+        cls: MassGroupUnmarkMembersForDeletion
+    },
+    {
         id: "delete",
-        title: "<%= t('groups.index.mass_operations.delete.title') %>",
+        title: "<%= t('link.delete_group') %>",
         flags: 0,
         cls: MassGroupDeletion
     },
@@ -175,7 +241,7 @@ function userActions(item)
 {
     let html = "";
 
-    const link = `/users/${item.school_id}/groups/${item.id}`;
+    const link = `/users/${item.school_id}/groups/${item.id[INDEX_FILTERABLE]}`;
 
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
@@ -185,3 +251,15 @@ function userActions(item)
 
     return html;
 }
+
+function openCallback(item)
+{
+    return `/users/${item.school_id}/groups/${item.id[INDEX_DISPLAYABLE]}`;
+}
+
+const MASS_SELECTS = [
+    ["name", "<%= t('columns.groups.name') %>"],
+    ["abbr", "<%= t('columns.groups.abbreviation') %>"],
+    ["eid", "<%= t('columns.groups.eid') %>"],
+    ["id", "<%= t('columns.puavoid') %>"],
+];

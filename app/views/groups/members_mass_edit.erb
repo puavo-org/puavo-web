@@ -1,0 +1,461 @@
+<% page_title t('titles.schools'), @school.displayName, t('titles.groups'), t('titles.group_members_mass_edit') %>
+
+<img src="/images/spinner.gif" style="opacity: 0; position: absolute; left: -1000px;">
+<div class="superTable" id="tableGroupMembers"></div>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
+<%= javascript_include_tag 'supertable2', skip_pipeline: true %>
+<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
+<% end %>
+
+<% content_for :post_load_javascript do %>
+<script>
+"use strict;"
+
+let GROUPS_LIST = <%= raw JSON.pretty_generate(@initial_groups) %>;
+
+// Localized user role names
+const USER_ROLES = {
+    owner: "<%= t('organisation_owner_role') %>",
+    schooladmin: "<%= t('school_admin_role') %>",
+    admin: "<%= t('puavoEduPersonAffiliation_admin') %>",
+    teacher: "<%= t('puavoEduPersonAffiliation_teacher') %>",
+    student: "<%= t('puavoEduPersonAffiliation_student') %>",
+    staff: "<%= t('puavoEduPersonAffiliation_staff') %>",
+    testuser: "<%= t('puavoEduPersonAffiliation_testuser') %>",
+    parent: "<%= t('puavoEduPersonAffiliation_parent') %>",
+    visitor: "<%= t('puavoEduPersonAffiliation_visitor') %>",
+    unknown: "<%= t('unknown_role') %>",
+};
+
+const DEFAULT_COLUMNS = ["name", "uid", "role", "groups"];
+const DEFAULT_SORTING = { column: "uid", dir: SortOrder.ASCENDING };
+
+const COLUMN_ORDER = [
+    "id",
+    "first",
+    "last",
+    "name",
+    "uid",
+    "role",
+    "groups",
+];
+
+const COLUMN_DEFINITIONS = {
+    id: {
+        key: "id",
+        type: ColumnType.NUMERIC,
+    },
+
+    first: {
+        key: "first",
+        type: ColumnType.STRING,
+        alias: ["first_name", "fn"],
+    },
+
+    last: {
+        key: "last",
+        type: ColumnType.STRING,
+        alias: ["last_name", "ln"],
+    },
+
+    name: {
+        key: "name",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.USER_TRANSFORM,
+    },
+
+    uid: {
+        key: "uid",
+        type: ColumnType.STRING,
+    },
+
+    role: {
+        key: "role",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.USER_TRANSFORM,
+    },
+
+    groups: {
+        key: "groups",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.USER_TRANSFORM,
+    },
+};
+
+// Localized column titles. The keys must be same as in the keys in the column
+// definitions object above.
+const COLUMN_TITLES = {
+    id: "<%= t('columns.puavoid') %>",
+    first: "<%= t('columns.users.first_names') %>",
+    last: "<%= t('columns.users.last_name') %>",
+    name: "<%= t('columns.users.full_name') %>",
+    uid: "<%= t('columns.users.uid') %>",
+    role: "<%= t('columns.users.role') %>",
+    groups: "<%= t('columns.groups.member_groups') %>",
+};
+
+// Localized group types
+const GROUP_TYPES = {
+    "teaching group": "<%= t('group_type.teaching group') %>",
+    "course group": "<%= t('group_type.course group') %>",
+    "year class": "<%= t('group_type.year class') %>",
+    "administrative group": "<%= t('group_type.administrative group') %>",
+    "archive users": "<%= t('group_type.archive users') %>",
+    "other groups": "<%= t('group_type.other groups') %>",
+};
+
+const USER_TRANSFORM_FUNCTIONS = {
+    name: function(entry) {
+        let s = "";
+
+        // Supplementary information
+        const remove = entry.flags && entry.flags.includes("m"),
+              locked = entry.flags && entry.flags.includes("l");
+
+        if (remove)
+            s += `<span class="user-marked-for-deletion">`;
+
+        s += `<a href="/users/${entry.school_id}/users/${entry.id}">${escapeHTML(entry.name)}</a>`;
+
+        if (locked)
+            s += `<i class="icon-lock"></i>`;
+
+        if (remove)
+            s += `</span>`;
+
+        return [
+            s,
+            entry.name
+        ];
+    },
+
+    role: function(entry) {
+        let values = [];
+
+        // Translate user roles
+        for (let i = 0; i < entry.role.length; i++) {
+            const r = entry.role[i];
+
+            if (r in USER_ROLES) {
+                if (r == "owner")
+                    values.push(`<span class="user-owner">${USER_ROLES[r]}</span>`);
+                else if (r == "schooladmin")
+                    values.push(`<span class="user-admin">${USER_ROLES[r]}</span>`);
+                else values.push(USER_ROLES[r]);
+            } else values.push(USER_ROLES['unknown']);
+        }
+
+        return [
+            values.join("<br>"),
+            entry.role.join()
+        ];
+    },
+
+    groups: function(entry) {
+        let values = [],
+            plain = [];
+
+        for (const g of entry.groups) {
+            values.push(`<a href="${g.link}">${g.title}</a> <small>[${g.school}]</small>`);
+            plain.push(g.title);
+        }
+
+        return [
+            values.join("<br>"),
+            plain.join(","),
+            plain.join(","),
+        ];
+    },
+};
+
+// Common base class for group operations
+class GroupOperationBase extends MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+        this.groupIDs = [];
+    }
+
+    _buildInterface(preamble)
+    {
+        this.container.innerHTML = preamble + this.buildGroupsList();
+        this.fillGroupsList();
+        this.setupEvents();
+    }
+
+    canProceed()
+    {
+        if (this.getGroupItems(true).length == 0) {
+            window.alert("<%= t('groups.index.mass_operations.select_something') %>");
+            return false;
+        }
+
+        return true;
+    }
+
+    start()
+    {
+        this.groupIDs = [];
+
+        for (const i of this.getGroupItems(true))
+            this.groupIDs.push(parseInt(i.dataset.id, 10));
+
+        console.log(this.groupIDs);
+    }
+
+    processItem(item)
+    {
+        return doPOST(
+            `/users/${item.school_id}/groups/change_members`,
+            {
+                id: item.id[INDEX_FILTERABLE],
+                mode: this.mode,
+                groups: this.groupIDs,
+            }
+        );
+    }
+
+    buildGroupsList()
+    {
+        const html =
+`<div class="flex flex-cols flex-gap-5px">
+    <div class="flex flex-rows flex-gap-5px"">
+        <input type="search" spellcheck="false" placeholder="<%= t('groups.index.mass_operations.search_placeholder') %>">
+        <div id="groupList" class="scrollList" style="width: 30em; height: 20em;">
+        </div>
+    </div>
+    <div>
+        <button id="reloadGroups"><%= t('groups.index.mass_operations.reload') %></button>
+    </div>
+</div>`;
+
+        return html;
+    }
+
+    fillGroupsList()
+    {
+        let html = "";
+
+        for (const g of GROUPS_LIST) {
+            const type = g.type ? GROUP_TYPES[g.type] : "(?)";
+
+            html += `<div class="item" data-id="${g.id}" data-filter="${g.name.toLowerCase()}">`;
+            html += `<input type="checkbox"></input>${g.name} (${g.abbr}), ${type}</div>`;
+        }
+
+        this.container.querySelector("div#groupList").innerHTML = html;
+    }
+
+    getGroupItems(selected)
+    {
+        let path = "div#groupList > div.item";
+
+        if (selected)
+            path += ".selected";
+
+        return this.container.querySelectorAll(path);
+    }
+
+    onReloadGroups()
+    {
+        const csrf = document.querySelector("meta[name='csrf-token']");
+
+        for (let i of this.container.querySelectorAll("input"))
+            i.disabled = true;
+
+        for (let i of this.container.querySelectorAll("button"))
+            i.disabled = true;
+
+        for (let i of this.getGroupItems())
+            i.classList.add("disabled");
+
+        fetch("/users/<%= @school.id %>/groups/update_groups_list", {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "X-CSRF-Token": csrf ? csrf.content : "",
+            }
+        }).then(function(response) {
+            if (!response.ok)
+                throw response;
+
+            return response.text();
+        }).then(data => {
+            let parsed = null;
+
+            try {
+                parsed = JSON.parse(data);
+            } catch (e) {
+                console.log(data);
+                console.error(e);
+                window.alert("<%= t('groups.index.mass_operations.invalid_response') %>");
+                return;
+            }
+
+            GROUPS_LIST = parsed;
+
+            this.fillGroupsList();
+            this.onFilter();
+            this.setupEvents(false);    // re-set the list entry click handlers
+        }).catch(error => {
+            console.error(error);
+            window.alert("<%= t('groups.index.mass_operations.network_error') %>");
+            return;
+        }).finally(() => {
+            for (let i of this.container.querySelectorAll("input"))
+                i.disabled = false;
+
+            for (let i of this.container.querySelectorAll("button"))
+                i.disabled = false;
+
+            for (let i of this.getGroupItems())
+                i.classList.remove("disabled");
+        });
+    }
+
+    // Filter the group list
+    onFilter()
+    {
+        const search = this.container.querySelector(`input[type="search"]`).value.trim().toLowerCase();
+
+        for (const i of this.getGroupItems()) {
+            const title = i.dataset.filter;
+
+            if (search && title.indexOf(search) == -1)
+                i.classList.add("hidden");
+            else i.classList.remove("hidden");
+        }
+    }
+
+    // Select/deselect group
+    onToggleGroup(target)
+    {
+        if (target.classList.contains("disabled"))
+            return;
+
+        if (target.classList.contains("selected")) {
+            target.classList.remove("selected");
+            target.childNodes[0].checked = false;
+        } else {
+            target.classList.add("selected");
+            target.childNodes[0].checked = true;
+        }
+    }
+
+    setupEvents(initial=true)
+    {
+        if (initial) {
+            this.container.querySelector(`input[type="search"]`)
+                .addEventListener("input", e => this.onFilter());
+
+            this.container.querySelector(`button#reloadGroups`)
+                .addEventListener("click", () => this.onReloadGroups());
+        }
+
+        for (const i of this.getGroupItems())
+            i.addEventListener("click", e => this.onToggleGroup(e.target));
+    }
+}
+
+class AddToGroup extends GroupOperationBase {
+    buildInterface()
+    {
+        this._buildInterface("<%= t('groups.index.mass_operations.add.help') %>");
+        this.mode = "add";
+    }
+};
+
+class RemoveFromGroup extends GroupOperationBase {
+    buildInterface()
+    {
+        this._buildInterface("<%= t('groups.index.mass_operations.remove.help') %>");
+        this.mode = "remove";
+    }
+};
+
+const MASS_OPERATIONS = [
+    {
+        id: "add_to_group",
+        title: "<%= t('groups.index.mass_operations.add.title') %>",
+        flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: AddToGroup
+    },
+
+    {
+        id: "remove_from_group",
+        title: "<%= t('groups.index.mass_operations.remove.title') %>",
+        flags: MassOperationFlags.HAVE_SETTINGS,
+        cls: RemoveFromGroup
+    },
+];
+
+const MASS_SELECTS = [
+    ["uid", "<%= t('columns.users.uid') %>"],
+    ["name", "<%= t('columns.users.full_name') %>"],
+];
+
+// "Unpack" the condensed user/group data into full rows
+function* synthesizeData(raw)
+{
+    for (const [_, u] of Object.entries(raw.users)) {
+        let u2 = {...u};
+
+        // These fields don't exist in the data, generate them on-the-fly
+        u2.school_id = <%= @school.id %>;
+        u2.name = `${u.first} ${u.last}`;
+
+        // Rewrite group information in-place. Group information is highly repetitive
+        // and verbose, so it has been stored in a more compact form and we must
+        // "expand" it to full rows for the table.
+        for (let i = 0; i < u2.groups.length; i++) {
+            const gid = u2.groups[i],
+                  group = raw.groups[gid],
+                  school = raw.schools[group.school];
+
+            const type = group.type ? GROUP_TYPES[group.type] : "(?)"
+
+            u2.groups[i] = {
+                title: `${group.name} (${group.abbr}, ${type})`,
+                link: `/users/${school.id}/groups/${gid}`,
+                school: school.name,
+            };
+        }
+
+        yield u2;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+new SuperTable(
+    // Main container DIV
+    document.getElementById("tableGroupMembers"),
+
+    // Settings
+    {
+        id: "groupMembersTable",
+        csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-members`,
+        flags: TableFlag.DISABLE_EXPORT | TableFlag.DISABLE_VIEW_SAVING | TableFlag.ENABLE_COLUMN_EDITING |
+               TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION |
+               TableFlag.ENABLE_PAGINATION,
+        locale: "<%= supertable_sorting_locale %>",
+        columnDefinitions: COLUMN_DEFINITIONS,
+        columnTitles: COLUMN_TITLES,
+        columnOrder: COLUMN_ORDER,
+        userTransforms: USER_TRANSFORM_FUNCTIONS,
+        massSelects: MASS_SELECTS,
+        massOperations: MASS_OPERATIONS,
+        defaultColumns: DEFAULT_COLUMNS,
+        defaultSorting: DEFAULT_SORTING,
+        dynamicData: "/users/<%= @school.id %>/groups/get_all_groups_members",
+        preFilterFunction: synthesizeData,
+    }
+);
+
+});
+
+</script>
+<% end %>

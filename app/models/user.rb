@@ -6,6 +6,7 @@ class User < LdapBase
   include Puavo::Locale
   include Puavo::Helpers
   include Puavo::Integrations
+  include Puavo::Password
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
@@ -27,9 +28,9 @@ class User < LdapBase
 
   before_update :change_password
 
-  after_save :add_member_uid_to_models
+  after_save :add_member_uid_to_models, :reset_sso_session
 
-  before_destroy :delete_all_associations, :delete_kerberos_principal
+  before_destroy :delete_all_associations, :delete_kerberos_principal, :reset_sso_session
 
   after_create :change_password_no_upstream
 
@@ -49,17 +50,6 @@ class User < LdapBase
   ]
 
   attr_accessor(*@@extra_attributes)
-
-  OVERWRITE_CHARACTERS = {
-    "Ä" => "a",
-    "ä" => "a",
-    "Ö" => "o",
-    "ö" => "o",
-    "Å" => "a",
-    "å" => "a",
-    "é" => "e"
-  }
-
 
   def self.image_size
     { :width => 120, :height => 160 }
@@ -149,36 +139,51 @@ class User < LdapBase
                                     :attribute => I18n.t("activeldap.attributes.user.givenName") ) )
     end
 
-    # Uid validation
-    #
-    # Password confirmation
     if !self.new_password_confirmation.nil? && self.new_password != self.new_password_confirmation
       errors.add( :new_password_confirmation, I18n.t("activeldap.errors.messages.confirmation",
                                         :attribute => I18n.t("activeldap.attributes.user.new_password")) )
     end
 
-    if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty? then
-      case get_school_password_requirements(LdapOrganisation.current.cn, self.primary_school.puavoId)
-        when 'Google'
-          if self.new_password.size < 8 then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_too_short"))
-          elsif self.new_password[0] == ' ' || self.new_password[-1] == ' ' then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_whitespace"))
-          elsif !self.new_password.ascii_only? then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_ascii_only"))
+    # Validate the password against the validation rules specified for this organisation/school
+    if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty?
+      unless self.primary_school.cn == 'administration'
+        if self.new_password
+          password_errors = []
+
+          ruleset_name =
+            get_school_password_requirements(LdapOrganisation.current.cn, self.primary_school.puavoId)
+
+          if ruleset_name
+            # Rule-based password validation
+            rules = Puavo::PASSWORD_RULESETS[ruleset_name]
+
+            password_errors +=
+              Puavo::Password::validate_password(self.new_password, rules[:rules])
+
+            if rules[:deny_names_in_passwords]
+              if self.new_password.downcase.include?(self.givenName.downcase) ||
+                 self.new_password.downcase.include?(self.sn.downcase) ||
+                 self.new_password.downcase.include?(self.uid.downcase)
+                password_errors << 'contains_name'
+              end
+            end
           end
-        when 'oulu_ad'
-          if self.new_password.size < 8 then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.oulu_ad_password_too_short"))
+
+          # Reject common passwords. Match full words in a tab-separated string.
+          if Puavo::COMMON_PASSWORDS.include?("\t#{self.new_password}\t")
+            password_errors << 'common'
           end
-        when 'SixCharsMin'
-          if self.new_password.size < 6 then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.sixcharsmin_password_too_short"))
+
+          unless password_errors.empty?
+            # Combine the errors like the live validator does
+            password_errors = password_errors
+                              .collect { |e| I18n.t("activeldap.errors.messages.password_validation.#{e}") }
+                              .join('<br>')
+                              .html_safe
+
+            errors.add(:new_password, password_errors)
           end
-        when 'SevenCharsMin'
-          if self.new_password.size < 7 then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.sevencharsmin_password_too_short"))
-          end
+        end
       end
     end
 
@@ -196,19 +201,15 @@ class User < LdapBase
     # Format of uid, default configuration:
     #   * allowed characters is a-z0-9.-
     #   * uid must begin with the small letter
-    allow_uppercase_characters_uid = Puavo::Organisation.
-      find(LdapOrganisation.current.cn).
-      value_by_key("allow_uppercase_characters_uid").
-      to_s.chomp == "true" ? true : false rescue false
 
     usernameFailed = false
 
-    unless self.uid.to_s =~ ( allow_uppercase_characters_uid ? /^[a-zA-Z]/ : /^[a-z]/ )
+    unless self.uid.to_s =~ /^[a-z]/
       errors.add( :uid, I18n.t("activeldap.errors.messages.user.must_begin_with") )
       usernameFailed = true
     end
 
-    unless self.uid.to_s =~ ( allow_uppercase_characters_uid ? /^[a-zA-Z0-9.-]+$/ : /^[a-z0-9.-]+$/ )
+    unless self.uid.to_s =~ /^[a-z0-9.-]+$/
       errors.add( :uid, I18n.t("activeldap.errors.messages.user.invalid_characters") )
       usernameFailed = true
     end
@@ -458,16 +459,6 @@ class User < LdapBase
     Array(LdapOrganisation.current.owner).include? self.dn
   end
 
-  def generate_username
-    self.uid = username_escape(self.givenName).to_s + "." + username_escape(self.sn).to_s
-  end
-
-  def username_escape(string)
-    string.strip.split(//).map do |char|
-      OVERWRITE_CHARACTERS.has_key?(char) ? OVERWRITE_CHARACTERS[char] : char
-    end.join.downcase.gsub(/[^a-z]/, '')
-  end
-
   def human_readable_format(attribute)
     case attribute
     when "puavoEduPersonAffiliation"
@@ -542,26 +533,31 @@ class User < LdapBase
   end
 
   def administrative_groups
-    return @administrative_groups if @administrative_groups
-    @administrative_groups = rest_proxy.get("/v3/users/#{ self.uid }/administrative_groups").parse or []
-  end
-
-  def administrative_groups=(group_ids)
-    rest_proxy.put("/v3/users/#{ self.uid }/administrative_groups", :json => { "ids" => group_ids }).parse
+    groups.find_all { |g| g.puavoEduGroupType == 'administrative group' }
   end
 
   def teaching_group
-    return @teaching_group if @teaching_group
-    @teaching_group = rest_proxy.get("/v3/users/#{ self.uid }/teaching_group").parse or {}
+    groups.find { |g| g.puavoEduGroupType == 'teaching group' }
   end
 
   def teaching_group=(group_id)
-    rest_proxy.put("/v3/users/#{ self.uid }/teaching_group", :params => { "id" => group_id }).parse
+    puts "Setting the teaching group to #{group_id}"
+
+    groups.each do |g|
+      next unless g.puavoEduGroupType == 'teaching group'
+      next unless g.id == group_id
+      g.remove_user(self)
+    end
+
+    current = groups.find { |g| g.puavoEduGroupType == 'teaching group' }
+
+    if !current
+      Group.find(group_id).add_user(self)
+    end
   end
 
   def year_class
-    return @year_class if @year_class
-    @year_class = rest_proxy.get("/v3/users/#{ self.uid }/year_class").parse or {}
+    groups.find { |g| g.puavoEduGroupType == 'year class' }
   end
 
   private
@@ -608,12 +604,18 @@ class User < LdapBase
           Group.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
                         :scope => :one,
                         :attributes => ['dn'] ).each do |group_dn, values|
-            LdapBase.ldap_modify_operation(group_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
+            begin
+              LdapBase.ldap_modify_operation(group_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
+            rescue ActiveLdap::LdapError::NoSuchAttribute
+            end
           end
           School.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
                          :scope => :one,
                          :attributes => ['dn'] ).each do |school_dn, values|
-            LdapBase.ldap_modify_operation(school_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
+            begin
+              LdapBase.ldap_modify_operation(school_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
+            rescue ActiveLdap::LdapError::NoSuchAttribute
+            end
           end
           # Remove uid from Domain Users group
           SambaGroup.delete_uid_from_memberUid('Domain Users', old_user.uid)
@@ -629,25 +631,55 @@ class User < LdapBase
       self.uid_has_changed = false
 
       self.groups.each do |group|
-        group.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
+        begin
+          group.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
+        rescue ActiveLdap::LdapError::TypeOrValueExists
+        end
       end
     end
 
     Array(self.school).each do |school|
       unless Array(school.memberUid).include?(self.uid)
-        school.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
+        begin
+          school.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
+        rescue ActiveLdap::LdapError::TypeOrValueExists
+        end
       end
 
       unless Array(school.member).include?(self.dn)
         # There was a "FIXME" in the original code here, but I don't know what it was for.
         # As far as I can tell, it was added in commit ec5094a99 back in 2011, but there was
         # no explanation for what was broken.
-        school.ldap_modify_operation( :add, [{"member" => [self.dn.to_s]}] )
+        begin
+          school.ldap_modify_operation( :add, [{"member" => [self.dn.to_s]}] )
+        rescue ActiveLdap::LdapError::TypeOrValueExists
+        end
+
       end
     end
 
     # Set uid to Domain Users group
     SambaGroup.add_uid_to_memberUid('Domain Users', self.uid)
+  end
+
+  # Invalidate active SSO session cookies for this user, if present
+  def reset_sso_session
+    organisation = Puavo::Organisation.find(LdapOrganisation.current.cn)
+    return unless organisation
+    return if organisation.value_by_key('enable_sso_sessions_in').nil?
+
+    # This organisation has SSO login cookies enabled. If this user has an active session,
+    # remove it immediately.
+    db = Redis::Namespace.new('sso_session', :redis => REDIS_CONNECTION)
+
+    key = db.get("user:#{self.id}")
+    return unless key
+
+    if db.get("data:#{key}")
+      db.del("data:#{key}")
+    end
+
+    db.del("user:#{self.id}")
   end
 
   private

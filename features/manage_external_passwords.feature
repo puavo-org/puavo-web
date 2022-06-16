@@ -46,6 +46,7 @@ Feature: Manage external passwords
     And I fill in "Old password" with "secret"
     And I fill in "user[new_password]" with "newsecret"
     And I fill in "Confirm new password" with "newsecret"
+    And I wait 11 seconds
     And I press "Change password"
     Then I should see "Password changed successfully!"
     And I should not login with "sarah.connor" and "secret"

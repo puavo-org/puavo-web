@@ -1,0 +1,104 @@
+/*
+Various composable style classes. These do not really enable responsive design,
+as they're built on what you the element to *look*, not how it should look.
+I do not yet have skills to build responsive designs. Sorry, mobile users.
+*/
+
+.minimize-width { width: 1px; white-space: nowrap; }
+.width-0 { width: 0; }
+.hidden { display: none !important; }
+.not-visible { visibility: hidden; }
+.width-10p { width: 10%; }
+.width-25p { width: 25%; }
+.width-33p { width: 33%; }
+.width-50p { width: 50%; }
+.width-75p { width: 75%; }
+.width-66p { width: 66%; }
+.width-100p { width: 100%; }
+.nowrap { white-space: nowrap; }
+.no-scroll { overflow: hidden; }
+
+.flex { display: flex; }
+.flex-columns { flex-direction: rows; }
+.flex-rows { flex-direction: column; }
+.flex-vcenter { align-items: center; }
+.flex-gap-5px { gap: 5px; }
+.flex-gap-10px { gap: 10px; }
+.flex-gap-15px { gap: 15px; }
+.flex-gap-20px { gap: 20px; }
+.flex-gap-1em { gap: 1em; }
+.flex-gap-2em { gap: 2em; }
+.flex-no-wrap { flex-wrap: nowrap; }
+.flex-grow-2 { flex-grow: 2; }
+
+.cursor-not-allowed { cursor: not-allowed !important; }
+.cursor-pointer { cursor: pointer; }
+.cursor-default { cursor: default; }
+.cursor-grabbing { cursor: grabbing; }
+.cursor-wait { cursor: wait; }
+
+.no-text-selection { user-select: none; }
+.no-pointer-events { pointer-events: none; }
+.align-center { text-align: center; }
+
+.margin-0 { margin: 0; }
+.margin-5px { margin: 5px; }
+.margin-10px { margin: 10px; }
+.margin-top-0 { margin-top: 0; }
+.margin-top-5px { margin-top: 5px; }
+.margin-top-10px { margin-top: 10px; }
+.margin-top-15px { margin-top: 15px; }
+.margin-top-20px { margin-top: 20px; }
+.margin-left-0 { margin-left: 0; }
+.margin-left-5px { margin-left: 5px; }
+.margin-left-10px { margin-left: 10px; }
+.margin-left-15px { margin-left: 15px; }
+.margin-left-20px { margin-left: 20px; }
+.margin-right-0 { margin-right: 0; }
+.margin-right-5px { margin-right: 5px; }
+.margin-right-10px { margin-right: 10px; }
+.margin-right-15px { margin-right: 15px; }
+.margin-right-20px { margin-right: 20px; }
+.margin-bottom-0 { margin-bottom: 0; }
+.margin-bottom-5px { margin-bottom: 5px; }
+.margin-bottom-10px { margin-bottom: 10px; }
+.margin-bottom-15px { margin-bottom: 15px; }
+.margin-bottom-20px { margin-bottom: 20px; }
+
+.padding-0 { padding: 0; }
+.padding-2px { padding: 2px; }
+.padding-5px { padding: 5px; }
+.padding-10px { padding: 10px; }
+.padding-top-0 { padding-top: 0; }
+.padding-top-5px { padding-top: 5px; }
+.padding-top-10px { padding-top: 10px; }
+.padding-top-20px { padding-top: 20px; }
+.padding-left-0 { padding-left: 0; }
+.padding-left-5px { padding-left: 5px; }
+.padding-left-10px { padding-left: 10px; }
+.padding-left-20px { padding-left: 20px; }
+.padding-right-0 { padding-right: 0; }
+.padding-right-5px { padding-right: 5px; }
+.padding-right-10px { padding-right: 10px; }
+.padding-right-20px { padding-right: 20px; }
+.padding-bottom-0 { padding-bottom: 0; }
+.padding-bottom-5px { padding-bottom: 5px; }
+.padding-bottom-10px { padding-bottom: 10px; }
+.padding-bottom-20px { padding-bottom: 20px; }
+
+.font-70p { font-size: 70%; }
+.font-80p { font-size: 80%; }
+.font-90p { font-size: 90%; }
+.font-100p { font-size: 100%; }
+.font-110p { font-size: 110%; }
+.font-120p { font-size: 120%; }
+.font-130p { font-size: 130%; }
+.font-140p { font-size: 140%; }
+.font-150p { font-size: 150%; }
+
+.line-height-100p { line-height: 100%; }
+.line-height-125p { line-height: 120%; }
+.line-height-150p { line-height: 150%; }
+
+.no-list-bullets { list-style-type: none; }
+.font-monospace { font-family: monospace; }

@@ -1,4 +1,5 @@
 require_relative "./hosts"
+require_relative '../lib/inventory.rb'
 
 module PuavoRest
 class Device < Host
@@ -37,7 +38,7 @@ class Device < Host
   # Like by_hostname, but returns the low-level raw data and only the attributes you ask.
   # (The "raw_by_dn" method wants a DN, and I have a hostname.)
   def self.by_hostname_raw_attrs(hostname, attributes)
-    self.raw_filter(self.ldap_base(), "(&(objectclass=*)(puavoHostname=#{escape(hostname)}))", attributes)
+    self.raw_filter(self.ldap_base(), "(&(objectclass=*)(puavoHostname=#{LdapModel.ldap_escape(hostname)}))", attributes)
   end
 
   # Find device by it's mac address
@@ -555,6 +556,12 @@ class Devices < PuavoSinatra
       device.save_hwinfo!(params[:sysinfo])
 
       rlog.info("received sysinfo from device '#{params['hostname']}'")
+
+      if CONFIG['inventory_management']
+        # Notify the external inventory management
+        Puavo::Inventory::send_device_hardware_info(rlog, CONFIG['inventory_management'], device, params[:sysinfo])
+      end
+
       json({ :status => 'successfully' })
     rescue NotFound => e
       status 404
@@ -566,6 +573,36 @@ class Devices < PuavoSinatra
       rlog.error("sysinfo receiving failed for device '#{params['hostname']}': #{e.message}")
       json({ :status => 'failed', :error => 'failed due to unknown error' })
     end
+  end
+
+  # This interface is for devices to send updates to their information
+  # depending on their state.  It differs from normal "/v3/devices/:hostname"
+  # in that the current state of "puavoDeviceReset"-attribute might affect
+  # whether it should actually be updated.
+  post "/v3/devices/:hostname/state_update" do
+    auth :basic_auth, :kerberos
+    device = Device.by_hostname!(params["hostname"])
+
+    if json_params['reset'] && json_params['reset']['request-fulfilled'] then
+      begin
+        if device.reset && device.reset['request-time'] then
+          cur_request_time = DateTime.parse(device.reset['request-time'])
+          req_fulfilled_time \
+            = DateTime.parse(json_params['reset']['request-fulfilled'])
+          # We will not update reset information in case of a pending request.
+          if req_fulfilled_time < cur_request_time then
+            json_params.delete('reset')
+          end
+        end
+      rescue StandardError => e
+        rlog.warn('unexpected error on reset update, allowing reset: ' \
+                    + e.backtrace.join("\n"))
+      end
+    end
+
+    device.update!(json_params)
+    device.save!
+    json device
   end
 
   post "/v3/devices/:hostname" do
@@ -761,35 +798,30 @@ class Devices < PuavoSinatra
     'serialNumber'                  => { name: 'serial' },
   }
 
-  def v4_do_device_search(id, requested_ldap_attrs)
-    unless id.class == Array
-      raise "v4_do_device_search(): device IDs must be an Array, even if empty"
-    end
-
-    filter = v4_build_puavoid_filter('(objectclass=*)', id)
+  def v4_do_device_search(filters, requested_ldap_attrs)
     base = "ou=Devices,ou=Hosts,#{Organisation.current['base']}"
+    filter_string = v4_combine_filter_parts(filters)
 
-    return Device.raw_filter(base, filter, requested_ldap_attrs)
+    return Device.raw_filter(base, filter_string, requested_ldap_attrs)
   end
 
   # Retrieve all (or some) devices in the organisation
   # GET /v4/devices?fields=...
-  # GET /v4/devices?id=1,2,3,4,...&fields=...
   get '/v4/devices' do
     auth :basic_auth, :kerberos
 
-    raise Unauthorized, :user => nil unless User.current.admin?
+    raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 
     v4_do_operation do
       # which fields to get?
       user_fields = v4_get_fields(params).to_set
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
 
-      # zero or more user IDs
-      id = v4_get_id_from_params(params)
+      # optional filters
+      filters = v4_get_filters_from_params(params, USER_TO_LDAP)
 
       # do the query
-      raw = v4_do_device_search(id, ldap_attrs)
+      raw = v4_do_device_search(filters, ldap_attrs)
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)

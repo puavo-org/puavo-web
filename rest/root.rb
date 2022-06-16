@@ -181,19 +181,23 @@ class Root < PuavoSinatra
   use PuavoRest::UserLists
   use PuavoRest::SambaNextRid
   use PuavoRest::Groups
-  use PuavoRest::Authentication
   use PuavoRest::ExternalLogins
   use PuavoRest::BootserverDNS
   use PuavoRest::MySchoolUsers
 
   if CONFIG["cloud"]
-    use PuavoRest::SSO
+    # You have to choose which one you want
+    if CONFIG["eltern_sso"]
+      use PuavoRest::Eltern
+    else
+      use PuavoRest::SSO
+    end
+
     use PuavoRest::Certs
   end
 
   if CONFIG["password_management"]
     use PuavoRest::Password
-    use PuavoRest::EmailConfirm
   end
 
 end

@@ -29,85 +29,87 @@
       padding: 5px 10px !important;
     }
   }
+}
 
-  .haveDropdown {
-    /* The dropdown menu buttons aren't clickable */
-    cursor: default;
+.haveDropdown {
+  /* The dropdown menu buttons aren't clickable */
+  cursor: default;
+}
+
+/* A tool dropdown menu */
+.dropdown {
+  display: none;
+  position: absolute;
+
+  left: auto;
+
+  /* Some menus get so narrow it's hard to hit them, so impose a minimum width.
+     This width is approximately the width of the parent button. */
+  min-width: 130px;
+
+  background: $toolsDropdownBack;
+  border: 1px solid $toolsDropdownBorder;
+  padding: 5px;
+
+  box-shadow: 0 0 10px $defaultBoxShadow;
+
+  z-index: 2;
+
+  @media #{$screen-breakpoint-one} {
+    margin-right: 13px;
   }
 
-  /* A tool dropdown menu */
-  .dropdown {
-    display: none;
-    position: absolute;
+  ul {
+    list-style: none;
+    margin: 0 0 5px 0;
+    padding: 0 0 5px 0;
 
-    left: auto;
-
-    /* Right-aligned dropdown menus */
-    right: 0;
-    margin-right: 28px;
-    margin-top: -3px;
-
-    /* Some menus get so narrow it's hard to hit them, so impose a minimum width.
-       This width is approximately the width of the parent button. */
-    min-width: 130px;
-
-    background: $toolsDropdownBack;
-    border: 1px solid $toolsDropdownBorder;
-    padding: 5px;
-
-    box-shadow: 0 0 10px $defaultBoxShadow;
-
-    z-index: 2;
-
-    @media #{$screen-breakpoint-one} {
-      margin-right: 13px;
-    }
-
-    ul {
-      list-style: none;
-      margin: 0 0 5px 0;
-      padding: 0 0 5px 0;
-
-      /* Group with separator lines */
-      border-bottom: 1px solid $toolsDropdownSeparator;
-    }
-
-    ul:last-of-type {
-      border: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    /* Dropdown menu entries */
-    li {
-      margin: 1px;
-    }
-
-    a {
-      text-decoration: none;
-      display: block;
-      padding: 5px 10px;
-      color: $toolsContainerLinkFore !important;
-      background: transparent !important;
-      white-space: nowrap;
-      font-size: 100%;
-      width: auto;
-      font-weight: normal !important;
-
-      &:hover {
-        color: $toolsContainerLinkHoverFore !important;
-        background: $toolsContainerLinkHoverBack !important;
-      }
-    }
+    /* Group with separator lines */
+    border-bottom: 1px solid $toolsDropdownSeparator;
   }
 
-  .haveDropdown:hover .btn {
-    background: $buttonHoverBack !important;
+  ul:last-of-type {
+    border: none;
+    padding: 0;
+    margin: 0;
   }
 
-  /* Make the dropdown menu visible */
-  .haveDropdown:hover .dropdown {
-    visibility: visible;
+  /* Dropdown menu entries */
+  li {
+    margin: 1px;
+  }
+
+  a {
+    text-decoration: none;
     display: block;
+    padding: 5px 10px;
+    color: $toolsContainerLinkFore !important;
+    background: transparent !important;
+    white-space: nowrap;
+    font-size: 100%;
+    width: auto;
+    font-weight: normal !important;
+
+    &:hover {
+      color: $toolsContainerLinkHoverFore !important;
+      background: $toolsContainerLinkHoverBack !important;
+    }
   }
+}
+
+/* Right-aligned dropdown menus. By default they are left-aligned. */
+.dropRight {
+  right: 0;
+  margin-right: 28px;
+  margin-top: -3px;
+}
+
+.haveDropdown:hover .btn {
+  background: $buttonHoverBack !important;
+}
+
+/* Make the dropdown menu visible */
+.haveDropdown:hover .dropdown {
+  visibility: visible;
+  display: block;
 }

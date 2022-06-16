@@ -1,9 +1,10 @@
+<img src="/images/spinner.gif" style="opacity: 0; position: absolute; left: -1000px;">
 <div class="superTable" id="tableDevices"></div>
 
 <% content_for :javascript do %>
 <%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
-<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
 <%= javascript_include_tag 'supertable2', skip_pipeline: true %>
+<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
 <% end %>
 
 <% @is_organisation = false %>
@@ -18,7 +19,7 @@
 const DEFAULT_COLUMNS = ["hn", "type", "tags", "mac", "mfer", "model", "serial", "image", "current_image"];
 const DEFAULT_SORTING = { column: "hn", dir: SortOrder.ASCENDING };
 
-window.onload = function(e) {
+document.addEventListener("DOMContentLoaded", function() {
 
 new SuperTable(
     // Main container DIV
@@ -28,27 +29,23 @@ new SuperTable(
     {
         id: "devices",
         csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-devices`,
-        flags: TableFlag.ALLOW_SELECTION | TableFlag.ALLOW_FILTERING | TableFlag.ALLOW_COLUMN_CHANGES,
-
+        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION | TableFlag.ENABLE_PAGINATION,
         locale: "<%= supertable_sorting_locale %>",
-
         columnDefinitions: COLUMN_DEFINITIONS,
         columnTitles: COLUMN_TITLES,
         columnOrder: COLUMN_ORDER,
         userTransforms: USER_TRANSFORM_FUNCTIONS,
         actions: userActions,
+        openCallback: openCallback,
+        massSelects: MASS_SELECTS,
         massOperations: MASS_OPERATIONS,
         defaultColumns: DEFAULT_COLUMNS,
         defaultSorting: DEFAULT_SORTING,
         filterPresets: FILTER_PRESETS,
-        initialFilters: null,
-        defaultFilterColumn: "hn",
-
-        // The URL to get the data from
-        source: "/devices/<%= @school.id %>/get_school_devices_list",
+        dynamicData: "/devices/<%= @school.id %>/get_school_devices_list",
     }
 );
-};
+});
 
 </script>
 <% end %>

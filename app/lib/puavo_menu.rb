@@ -32,8 +32,7 @@ class PuavoMenu < MetaMenu
       link { wlan_school_path(@school) }
       active_on_action "wlan"
       active_on_action "wlan_update"
-      owners_only { true }
-      hide_when { not current_user.organisation_owner? }
+      owners_only { false }
     end
 
     child do
@@ -49,9 +48,9 @@ class PuavoMenu < MetaMenu
     title { t('layouts.application.users')  }
     link { users_path(@school) }
     active_on UsersController
-    active_on GroupsController
     active_on ListsController
     active_on ImportToolController
+    active_on NewImportController
     owners_only { false }
 
     child do
@@ -59,13 +58,6 @@ class PuavoMenu < MetaMenu
       link { users_path(@school) }
       owners_only { false }
       active_on UsersController
-    end
-
-    child do
-      title { t('link.groups') }
-      link { groups_path(@school) }
-      owners_only { false }
-      active_on GroupsController
     end
 
     child do
@@ -78,12 +70,56 @@ class PuavoMenu < MetaMenu
     end
 
     child do
+      title { t('link.new_import') }
+      link { new_import_path(@school) }
+      active_on NewImportController
+      owners_only { true }
+      hide_when { !current_user.organisation_owner? }
+    end
+
+    child do
       title { t('link.lists') }
       link { lists_path(@school) }
       owners_only { false }
       active_on ListsController
     end
+  end
 
+  # GROUPS
+  child do
+    title { t('link.groups')  }
+    link { groups_path(@school) }
+    active_on GroupsController
+    owners_only { false }
+
+    child do
+      title { t('link.groups') }
+      link { groups_path(@school) }
+      active_on GroupsController
+      active_on_action 'index'
+      active_on_action 'show'
+      active_on_action 'edit'
+      active_on_action 'create'
+      active_on_action 'update'
+      owners_only { false }
+    end
+
+    child do
+      title { t('link.group_members_mass_edit') }
+      link { group_members_mass_edit_path(@school) }
+      active_on GroupsController
+      active_on_action 'members_mass_edit'
+      owners_only { true }
+      hide_when { !current_user.organisation_owner? }
+    end
+
+    child do
+      title { t('link.find_groupless_users') }
+      link { find_groupless_users_path(@school) }
+      active_on GroupsController
+      active_on_action 'find_groupless_users'
+      owners_only { false }
+    end
   end
 
   # DEVICES

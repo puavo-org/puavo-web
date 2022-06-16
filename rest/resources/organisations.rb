@@ -176,7 +176,7 @@ class Organisation < LdapModel
     self.owner.each do |dn|
       next if dn == 'uid=admin,o=puavo'
 
-      User.raw_filter(escape(dn), '(objectclass=*)', attrs) do |o|
+      User.raw_filter(LdapModel.ldap_escape(dn), '(objectclass=*)', attrs) do |o|
         out[:owners] << {
           id: o['puavoId'][0].to_i,
           dn: dn,
@@ -204,7 +204,7 @@ class Organisations < PuavoSinatra
   end
 
   def require_admin!
-    if not User.current.admin?
+    unless v4_is_request_allowed?(User.current)
       raise Unauthorized, :user => "Sorry, only administrators can access this resource."
     end
   end

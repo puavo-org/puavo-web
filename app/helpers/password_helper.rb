@@ -2,86 +2,44 @@ module PasswordHelper
   # Renders the Javascript template at the bottom of the page that sets up
   # password field validation.
   def setup_password_validator(organisation_name, school_id,
-                               password_id='user_new_password',
-                               confirm_id='user_new_password_confirmation')
+                               password_field_id, confirm_field_id,
+                               name_field_ids=[],
+                               callback=nil)
 
-    requirements = get_school_password_requirements(organisation_name, school_id)
+    ruleset_name = get_school_password_requirements(organisation_name, school_id)
 
-    logger.info("setup_password_validator(): requirements for school #{school_id} " \
-                "in organisation \"#{organisation_name}\" are \"#{requirements}\"")
+    logger.info("setup_password_validator(): password validation ruleset for school #{school_id} " \
+                "in organisation \"#{organisation_name}\" is \"#{ruleset_name}\"")
 
-    return unless requirements
+    rules = []
+    deny_names = false
 
-    # defaults
-    template = 'password/password_length_only'
-
-    locals = {
-      password_id: password_id,
-      confirm_id: confirm_id,
-
-      # Translate strings and pass them to the Javascript code. ERB templates
-      # can be used with Javascript, but it's hairy, apparently uses different
-      # rules and is primarily meant for AJAX calls. Also some of these strings
-      # are dynamic. I wasted four hours trying to come up with a better
-      # solution, but none of them worked. :-( I hate this kind of code.
-      strings: {
-        ok: t('password.validator_ok'),
-        ascii_only: t('password.validator_ascii_only'),
-        no_whitespace: t('password.validator_no_whitespace'),
-        too_short: t('password.validator_too_short'),
-        too_short_with_count: t('password.validator_too_short_with_count'),
-        passwords_match: t('password.validator_passwords_match'),
-        passwords_dont_match: t('password.validator_passwords_dont_match'),
-      }
-    }
-
-    case requirements
-      when 'Google'
-        template = 'password/password_gsuite'
-
-      # TODO: Create a more flexible system for specifying password requirements
-      when 'oulu_ad'
-        locals[:min_length] = 8
-        template = 'password/password_oulu_ad'
-
-      when 'SixCharsMin'
-        locals[:min_length] = 6
-
-      when 'SevenCharsMin'
-        locals[:min_length] = 7
-    else
-      logger.warn "setup_password_validator(): unknown requirements \"#{requirements}\", validator template not rendered"
-      return
+    if ruleset_name
+      rules = Puavo::PASSWORD_RULESETS[ruleset_name][:rules]
+      deny_names = Puavo::PASSWORD_RULESETS[ruleset_name][:deny_names_in_passwords]
     end
 
-    render partial: template, locals: locals
+    # Always render the validator template, even if there are no rules. If the rule list is empty,
+    # then the validator simply ensures the password confirmation matches the password and
+    # does nothing else.
+    render partial: 'password/password_validator', locals: {
+      password_field_id: password_field_id,
+      confirm_field_id: confirm_field_id,
+      name_field_ids: deny_names ? name_field_ids : [],
+      rules: rules,
+      callback: callback,
+    }
   end
 
   # Creates the small help text that explains the password requirements for this organisation/school
   def show_password_requirements(organisation_name, school_id)
-    requirements = get_school_password_requirements(organisation_name, school_id)
-    return unless requirements
+    ruleset_name = get_school_password_requirements(organisation_name, school_id)
+    return unless ruleset_name
 
-    msg = ''
+    instructions = Puavo::PASSWORD_RULESETS[ruleset_name][:instructions]
+    lang = I18n.locale.to_s
+    return unless instructions.include?(lang)
 
-    case requirements
-      when 'Google'
-        msg = t('password.gsuite_integration_enabled')
-
-      when 'oulu_ad'
-        # this... this is not the proper way of doing it
-        msg = t('password.oulu_ad_integration_enabled')
-
-      when 'SixCharsMin'
-        msg = t('password.six_chars_min')
-
-      when 'SevenCharsMin'
-        msg = t('password.seven_chars_min')
-
-    else
-      return
-    end
-
-    "<p class=\"passwordNotice\">#{msg}</p>".html_safe
+    "<p class=\"passwordNotice\">#{instructions[lang]}</p>".html_safe
   end
 end

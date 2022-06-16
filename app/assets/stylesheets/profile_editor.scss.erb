@@ -1,35 +1,36 @@
 /* The user profile editor */
 
-$bodyBackground: #fff;
-$genericBorder: #ccc;
-$outerBackground: #f8f8f8;
-$outerShadow: #aaa;
-$infoShadow: #aaa;
-$noticeForeground: #888;
+@import "bits/media_queries";
+@import "bits/public_forms";
 
 * {
   box-sizing: border-box;
 }
 
-body {
+html {
+  height: 100%;
   margin: 0;
   padding: 0;
-  font-family: "Cantarell", sans-serif;
-  font-size: 90%;
-  background: $bodyBackground;
 }
 
-#outerWrapper {
-  border: 1px solid $genericBorder;
-  background: $outerBackground;
-  border-radius: 10px;
-  width: 75%;
-  max-width: 1000px;
-  min-width: 640px;
-  margin: 1em auto;
-  box-shadow: 0.5em 0.5em 5px $outerShadow;
+body {
+  background: var(--page-background);
+  font-family: var(--font);
+  margin: 0;
+  padding: 1em 0;
 }
 
+a:focus {
+  outline-color: rgb(82, 148, 226);
+}
+
+#outerContainer {
+  margin: 0 auto;
+  width: 750px;
+  color: var(--content-foreground);
+}
+
+/*
 @media (max-width: 1400px) {
   #outerWrapper {
     width: 80%;
@@ -62,91 +63,61 @@ body {
     box-shadow: none;
   }
 }
-
-header {
-  font-size: 200%;
-  font-weight: bold;
-  border-bottom: 1px solid $genericBorder;
-  text-align: center;
-  padding: 0.25em;
-}
+*/
 
 /*
 Outline schematic:
 
- +-form----------------------------------------------------------------------+
- |                                                                           |
- | +-#upper----------------------------------------------------------------+ |
- | |                                                                       | |
- | | +-#upperWrapper-----------------------------------------------------+ | |
- | | |                                                                   | | |
- | | | +-#left------------+-#right-------------------------------------+ | | |
- | | | |                  |                                            | | | |
- | | | |    User avatar   |          Profile editor                    | | | |
- | | | |                  |                                            | | | |
- | | | |                  |                                            | | | |
- | | | |                  |                                            | | | |
- | | | |                  |                                            | | | |
- | | | |                  |                                            | | | |
- | | | +------------------+--------------------------------------------+ | | |
- | | |                                                                   | | |
- | | +-------------------------------------------------------------------+ | |
- | |                                                                       | |
- | +-#lower----------------------------------------------------------------+ |
- | |                                                                       | |
- | | +-#lowerWrapper-----------------------------------------------------+ | |
- | | |                                                                   | | |
- | | |                               Button(s)                           | | |
- | | |                                                                   | | |
- | | +-------------------------------------------------------------------+ | |
- | |                                                                       | |
- | +-----------------------------------------------------------------------+ |
- |                                                                           |
- +---------------------------------------------------------------------------+
+ +-form------------------------------------------------------------------+
+ | +-#upper------------------------------------------------------------+ |
+ | | +-#left------------+-#right-------------------------------------+ | |
+ | | |                  |                                            | | |
+ | | |    User avatar   |          Profile editor                    | | |
+ | | |                  |                                            | | |
+ | | +------------------+--------------------------------------------+ | |
+ | +-------------------------------------------------------------------+ |
+ | +-#lower------------------------------------------------------------+ |
+ | |                                 Button(s)                         | |
+ | +-------------------------------------------------------------------+ |
+ +-----------------------------------------------------------------------+
 
 - the form element and #upperWrapper are flexbox containers
 - #upper, #lower, #left and #right are flexbox items
 
-#upperWrapper is needed because #upper cannot be made to be a flexbox
-container at the same time as it's used as a flexbox item. (I think.)
-
-#lowerWrapper is used to center the button(s) in the block.
 */
 
 form {
-  width: 90%;
-  margin: 2em auto 1em auto;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
 }
 
 #upper {
-  flex: 2;            /* force max size */
+  display: flex;
+  flex-direction: rows;
+  gap: 10px;
 }
 
 #lower {
-  flex-basis: 100%;   /* force a new line */
-}
-
-#upperWrapper {
-  display: flex;
+  text-align: center;
 }
 
 #left {
-  display: inline;
-}
-
-#right {
-  display: inline;
-  flex: 2;
-  padding-left: 2em;
+  width: 220px;
+  min-width: 220px;
+  max-width: 220px;
+  text-align: center;
 }
 
 #left img {
   min-width: 128px;
   max-width: 200px;
-  border: 1px solid $genericBorder;
-  padding: 3px;
+}
+
+#right {
+  flex-grow: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 #right p {
@@ -156,10 +127,11 @@ form {
 }
 
 .userInfo {
-  border-bottom: 1px solid $genericBorder;
-  padding-bottom: 0.5em;
-  margin-bottom: 2em;
-  text-shadow: 1px 1px 0 $infoShadow;
+  color: var(--service-foreground);
+  background: var(--service-background);
+  border: 1px solid var(--service-border);
+  padding: 0.5em;
+  text-align: center;
 }
 
 .userName {
@@ -173,54 +145,67 @@ form {
   font-style: italic;
 }
 
-section {
-  margin: 0 0 1em 0;
-}
-
 label {
   display: block;
   font-weight: bold;
   margin-bottom: 0.5em;
 }
 
+input[type="text"] {
+  padding: 0.5em;
+}
+
+select {
+  background: var(--input-background);
+  color: var(--input-foreground);
+  border: none;
+  border: 1px solid var(--input-border);
+  margin: 0;
+  padding: 0.35em;
+  border-radius: 3px;
+  flex-grow: 2;
+  font-size: 90%;
+  outline: none;
+}
+
+select:focus {
+  border-color: var(--input-border-active);
+}
+
 input, select, .automaticEmail {
   margin-left: 2em;
-  width: 90%;
+  width: calc(100% - 2em);
 }
 
 input {
   padding: 0.5em;
 }
 
+.automaticEmail {
+  font-size: 90%;
+}
+
 .notice {
   margin-left: 2em;
   padding-top: 5px;
   font-size: 80%;
-  color: $noticeForeground;
+  color: #f0f;
 }
 
-#lower {
-  #lowerWrapper {
-    display: block;
-    margin: 0 auto;
-    width: 75%;
-    text-align: center;
-  }
-
-  input, button {
-    display: inline;
-    width: 75%;
-    margin: 1em;
-    padding: 1em 2em;
-    cursor: pointer;
-  }
+#lower input, #lower button {
+  width: 75%;
+  margin: 1em;
+  padding: 1em 2em;
 }
 
 ::placeholder, ::-webkit-input-placeholder {
   font-style: italic;
 }
 
-/* the messages on the notification page displayed after the profile is saved */
+/* The messages on the notification page displayed after the profile is saved */
 .saveNotice {
-  padding: 0 2em;
+  color: var(--save-foreground);
+  background: var(--save-background);
+  border: 1px solid var(--save-border);
+  padding: 0 1em;
 }

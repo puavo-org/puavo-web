@@ -1,25 +1,24 @@
 <div id="container">
-    <% if @login_content['upper_logo'] %>
-    <div id="upperLogo">
-        <% if @login_content['upper_logo']['href'] %>
-        <a href="<%= @login_content['upper_logo']['href'] %>" target="_blank" title="<%= @login_content['upper_logo']['title'] %>"><img src="<%= File.join(@login_content['prefix'], @login_content['upper_logo']['image']) %>" alt="<%= @login_content['upper_logo']['alt'] %>"></a>
-        <% else %>
-        <img src="<%= File.join(@login_content['prefix'], @login_content['upper_logo']['image']) %>" alt="<%= @login_content['upper_logo']['alt'] %>">
-        <% end %>
-    </div>
+  <% if @login_content['upper_logos'] %>
+  <div id="upperLogos" class="logoRow">
+<%= render 'logorow', logos: @login_content['upper_logos'] %>
+  </div>
+  <% end %>
+
+  <p id="serviceName"><span>Puavo (<%= @organisation.name %>)</span></p>
+
+  <ul id="services">
+  <% @services.each do |service| %>
+    <% key = service.keys.first %>
+    <% link_name = service[key]["link_name"] || t(".service_link_name_#{ key }") %>
+    <li><%= link_to link_name, service[key]["url"] %></li>
+  <% end %>
+  </ul>
+
+  <div id="lowerLogos" class="logoRow">
+    <a href="https://opinsys.fi/" target="_blank"><img src="/login/opinsys_logo.svg" alt="Opinsys Oy" title="Opinsys Oy" width="150" height="34"></a>
+    <% if @login_content['lower_logos'] %>
+<%= render 'logorow', logos: @login_content['lower_logos'] %>
     <% end %>
-
-    <p id="serviceName"><span>Puavo</span></p>
-
-    <ul id="services">
-    <% @services.each do |service| %>
-        <% key = service.keys.first %>
-        <% link_name = service[key]["link_name"] || t(".service_link_name_#{ key }") %>
-        <li><%= link_to link_name, service[key]["url"] %></li>
-    <% end %>
-    </ul>
-
-    <div id="logoRow">
-        <a href="https://opinsys.fi/" target="_blank"><img src="/login/opinsys_logo.svg" alt="Opinsys Oy"></a>
-    </div>
+  </div>
 </div>

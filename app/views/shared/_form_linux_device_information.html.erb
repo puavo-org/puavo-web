@@ -16,12 +16,10 @@
     <td><%= f.text_field :serialNumber %></td>
   </tr>
 
-  <% if (f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice')) || current_user.organisation_owner? %>
   <tr>
     <th><%= f.label :macAddress, nil, for: "macAddress0" %></th>
     <td><%= multiple_text_field(f.object, "macAddress", t('shared.add_macAddress')) %></td>
   </tr>
-  <% end %>
 
   <% if f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
   <tr>

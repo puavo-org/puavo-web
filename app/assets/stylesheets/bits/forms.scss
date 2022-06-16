@@ -13,16 +13,11 @@
 
 fieldset {
   border: 1px solid $formFieldsetBorderColor;
-  padding: 10px;
   margin: 20px 0;
 }
 
 legend {
   padding: 0 5px;
-  font-weight: bold;
-  font-size: 110%;
-  border: 1px solid $formFieldsetBorderColor;
-  border-width: 0 1px;
 }
 
 /* editForms are used for creating and editing users, group, devices,
@@ -164,23 +159,30 @@ input[type="submit"]:hover {
   border: 1px solid $formErrorColor;
 }
 
-/* Administrative groups checkbox list header */
-.administrativeGroups header {
-  border-bottom: 1px dashed $adminGroupsHeaderBorder;
+/* Groups list on user create/edit pages */
+.groupsFilter {
+  input[type="search"] {
+    background: url("/images/magnifier.png") no-repeat scroll 5px center #fff;
+    text-indent: 2em;
+    border: 1px solid var(--st-controls-border);
+    padding: 5px;
+    width: 50%;
+  }
+}
+
+.groupsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 500px;
+  overflow-x: clip;
+  overflow-y: scroll;
+  resize: vertical;
+}
+
+.groupsList .noMatches {
   font-size: 110%;
-  margin-bottom: 5px;
-  margin-left: 10px;
-  margin-top: 10px;
-}
-
-.administrativeGroups header:first-of-type {
-  margin-top: 0;
-}
-
-/* Administrative groups checkbox list entry */
-.administrativeGroups input[type="checkbox"] {
-  margin-left: 30px;
-  margin-right: 0;
+  font-style: italic;
 }
 
 @media #{$screen-breakpoint-one} {

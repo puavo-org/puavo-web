@@ -9,7 +9,6 @@
 
   <div class="basicInfoDetails">
     <h1><%= h @user.displayName %></h1>
-    <% hack_blank = false %>
 
     <% if @user_is_owner %>
     <p class="infoNotice"><%= t('.user_is_an_organisation_owner') %></p>
@@ -28,17 +27,14 @@
 
     <% if @user.puavoLocked == true %>
     <p class="infoWarn"><%= t('.user_is_locked') %></p>
-    <% hack_blank = true %>
     <% end %>
 
     <% unless @user.puavoRemovalRequestTime.nil? %>
     <p class="infoWarn"><%= t('.user_is_marked_for_deletion') %></p>
-    <% hack_blank = true %>
     <% end %>
 
     <% if @user.puavoDoNotDelete %>
     <p class="infoNotice"><%= t('.user_deletion_prevented') %></p>
-    <% hack_blank = true %>
     <% end %>
 
     <p class="infoTitle"><%= t('activeldap.attributes.user.uid') %></p>
@@ -49,11 +45,9 @@
 
     <% if @user.puavoEduPersonAffiliation.include?('student') %>
     <p class="infoTitle"><%= t('activeldap.attributes.user.teaching_group') %></p>
-    <p class="infoValue"><%= @user.teaching_group['name'].nil? ? t('missing_data') : (h @user.teaching_group['name']) %></p>
-    <% if school_has_integration?(@organisation_name, @school.id.to_i, 'primus') %>
+    <p class="infoValue"><%= h @user.teaching_group&.displayName || t('missing_data') %></p>
     <p class="infoTitle"><%= t('activeldap.attributes.user.year_class') %></p>
-    <p class="infoValue"><%= @user.year_class['name'].nil? ? t('missing_data') : (h @user.year_class['name']) %></p>
-    <% end %>
+    <p class="infoValue"><%= h @user.year_class&.displayName || t('missing_data') %></p>
     <% end %>
 
     <% if @learner_id %>
@@ -114,10 +108,10 @@
     <td class="noWrap">
       <ul class="userShowGroups" id="groups_by_roles">
       <% @user_groups.each do |s| %>
-        <li><%= link_to s[0].displayName, school_path(s[0]) %>:<ul>
-          <% s[1].each do |g| %>
+        <li><%= s[:accessible] ? link_to(s[:school].displayName, school_path(s[:school])) : s[:school].displayName %>:<ul>
+          <% s[:groups].each do |g| %>
             <li>
-              <%= link_to g.displayName, group_path(g.school.puavoId, g) %>
+              <%= s[:accessible] ? link_to(g.displayName, group_path(g.school.puavoId, g)) : g.displayName %>
               <% if g.puavoEduGroupType %>
               <small>(<%= h humanize_group_type(g.puavoEduGroupType) %>)</small>
               <% end %>
@@ -201,7 +195,7 @@
 
   <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more') %></span>
-    <div class="dropdown">
+    <div class="dropdown dropRight">
       <% if current_user.organisation_owner? %>
        <ul>
         <li class="ownersOnly">

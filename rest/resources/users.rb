@@ -1,6 +1,8 @@
 require_relative "../lib/password"
 require_relative "../lib/samba_attrs"
 
+require_relative '../lib/eltern.rb'
+
 require 'date'
 require 'securerandom'
 
@@ -98,6 +100,7 @@ class User < LdapModel
     # delete all associations.
     delete_kerberos_principal
     delete_all_associations
+    reset_sso_session
   end
 
   before :update do
@@ -125,6 +128,8 @@ class User < LdapModel
     self.admin_of_school_dns = new_admin
 
     # Then we hope that remove_from_school below will remove the other associations...
+
+    reset_sso_session
   end
 
   def validate
@@ -384,6 +389,10 @@ class User < LdapModel
     schools.each { |s| add_to_school!(s) }
   end
 
+  def reset_sso_session
+    # TODO: Implement this. It's harder than it looks.
+  end
+
   def home_directory=(value)
     add_validation_error(:home_directory, :read_only, "home_directory is read only")
   end
@@ -486,11 +495,11 @@ class User < LdapModel
   # The "raw" version of by_username. No objects here, just raw data,
   # with the attributes you wanted.
   def self.by_username_raw_attrs(username, attributes)
-    raw_filter(ldap_base(), "(uid=#{ escape(username) })", attributes)
+    raw_filter(ldap_base(), "(uid=#{ LdapModel.ldap_escape(username) })", attributes)
   end
 
   def self.by_id_raw_attrs(id, attributes)
-    raw_filter(ldap_base(), "(puavoId=#{ escape(id.to_i) })", attributes)
+    raw_filter(ldap_base(), "(puavoId=#{ LdapModel.ldap_escape(id) })", attributes)
   end
 
   # Find dn string for username
@@ -503,7 +512,7 @@ class User < LdapModel
   end
 
   def self.profile_image(uid)
-    data = raw_filter(ldap_base, "(uid=#{ escape uid })", ["jpegPhoto"])
+    data = raw_filter(ldap_base, "(uid=#{ LdapModel.ldap_escape(uid) })", ["jpegPhoto"])
     if !data || data.size == 0
       raise NotFound, :user => "Cannot find image data for user: #{ uid }"
     end
@@ -847,6 +856,12 @@ class User < LdapModel
     ed.fetch('learner_id', nil)
   end
 
+  def learner_id=(new_learner_id)
+    ed = JSON.parse(self.external_data) rescue {}
+    ed['learner_id'] = new_learner_id
+    self.external_data = ed.to_json
+  end
+
   private
 
   # Add this user to the given school. Private method. This is used on {#save!}
@@ -897,6 +912,8 @@ class User < LdapModel
 end
 
 class Users < PuavoSinatra
+  include PuavoRest::ElternHelpers
+
   DIR = File.expand_path(File.dirname(__FILE__))
   ANONYMOUS_IMAGE_PATH = DIR + "/anonymous.png"
 
@@ -941,18 +958,23 @@ class Users < PuavoSinatra
     return 200
   end
 
-  def too_many_password_change_attempts(username)
-    db = Redis::Namespace.new("puavo:password_management:attempt_counter_rest", :redis => REDIS_CONNECTION)
-
-    # if the username key exists in the database, then there have been multiple attempts lately
-    return true if db.get(username) == "true"
-
-    # store the username with automatic expiration in 10 seconds
-    db.set(username, true, :px => 10000, :nx => true)
-    return false
-  end
-
   put '/v3/users/password' do
+    # Permit localhost by default (for testing purposes), but all other IPs
+    # must be explicitly allowed
+    unless request.ip == "127.0.0.1" || CONFIG.fetch("allow_password_changes_from", []).include?(request.ip)
+      request_id = json_params.fetch('request_id', nil)
+
+      $rest_log.error("[#{request_id}] got a PUT /v3/users/password from unauthorized IP address \"#{request.ip}\"")
+
+      return json({
+        :exit_status => 1,
+        :stderr      => 'your password change request came from an unauthorized IP address',
+        :stdout      => '',
+        :sync_status => 'unauthorized',
+        :request_id  => request_id,
+      })
+    end
+
     auth :basic_auth
 
     request_id = nil
@@ -1020,22 +1042,6 @@ class Users < PuavoSinatra
       "[#{request_id}] \"PUT /v3/users/password\" starting " \
       "for user \"#{json_params['target_user_username']}\""
     )
-
-    if ENV['PUAVO_WEB_CUCUMBER_TESTS'] != 'true'
-      username = json_params['target_user_username']
-
-      if too_many_password_change_attempts(username)
-        $rest_log.error("[#{request_id}] password change rate limit hit for user \"#{username}\"")
-
-        return json({
-          :exit_status => 1,
-          :stderr      => 'password change rate limit hit',
-          :stdout      => '',
-          :sync_status => 'rate_limit',
-          :request_id  => request_id,
-        })
-      end
-    end
 
     res = Puavo.change_passwd(json_params['mode'].to_sym,
                               json_params['host'],
@@ -1324,38 +1330,51 @@ class Users < PuavoSinatra
     'uidNumber'                     => { name: 'uid_number', type: :integer },
   }
 
-  def v4_do_user_search(id, requested_ldap_attrs)
-    unless id.class == Array
-      raise "v4_do_user_search(): user IDs must be an Array, even if empty"
-    end
-
-    filter = v4_build_puavoid_filter('(objectclass=*)', id)
+  def v4_do_user_search(filters, requested_ldap_attrs)
     base = "ou=People,#{Organisation.current['base']}"
+    filter_string = v4_combine_filter_parts(filters)
 
-    return User.raw_filter(base, filter, requested_ldap_attrs)
+    return User.raw_filter(base, filter_string, requested_ldap_attrs)
   end
 
   # Retrieve all (or some) users in the organisation
   # GET /v4/users?fields=...
-  # GET /v4/users?id=1,2,3,...&fields=...
   get '/v4/users' do
     auth :basic_auth, :kerberos
 
-    raise Unauthorized, :user => nil unless User.current.admin?
+    raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 
     v4_do_operation do
       # which fields to get?
       user_fields = v4_get_fields(params).to_set
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
 
-      # zero or more user IDs
-      id = v4_get_id_from_params(params)
+      # optional filters
+      filters = v4_get_filters_from_params(params, USER_TO_LDAP)
 
       # do the query
-      raw = v4_do_user_search(id, ldap_attrs)
+      raw = v4_do_user_search(filters, ldap_attrs)
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
+
+      # Handle supplementary Eltern data if the domain matches
+      if CONFIG['eltern_users'] && Array(CONFIG['eltern_users']['domains']).include?(Organisation.current.domain)
+        eltern_get_all_users&.each do |user|
+          next if !user['first_name'] || user['first_name'].empty?
+
+          if user.include?('children')
+            user['children'].collect! { |c| c['puavo_id'].to_i }
+          end
+
+          user['role'] = ['parent']
+          user['school_ids'] = []
+          user['primary_school_id'] = nil
+
+          out << user
+        end
+      end
+
       out = v4_ensure_is_array(out, 'role', 'email', 'phone', 'admin_school_id', 'school_ids')
 
       return 200, json({

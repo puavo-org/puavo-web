@@ -7,34 +7,45 @@ de:
   language_de_DE: "Deutsch (Deutschland)"
   language_de_CH: "Deutsch (Schweiz)"
   language_fr_CH: "Französisch (Schweiz)"
-  language_id_ID: "Indonesisch"
   language_default: "Vorgabe"
+
+  # "Main menu", from which you can log in or access other services in the organisation
+  menu:
+    index:
+      service_link_name_puavo: "Puavo - Nutzer- und Geräteverwaltung"
+      service_link_name_infotv: "Info-TV"
+      service_link_name_change_password: "Passwort ändern"
+
+  # Main application layout
+  layouts:
+    sessions:
+      title: "Opinsys-Authentifizierung"
 
   # Hyperlinks and buttons
   link:
     change_password: "Setze neues Passwort"
     update: "Aktualisieren"
+    continue: "Fortsetzen"
 
   # Flash messages
   flash:
     password:
-      successful: "Password changed successfully!"
-      failed: "Password change failed. Unfortunately no extra information is available. Please contact support."
-      failed_code: "Password change failed. Unfortunately no extra information is available. Please contact support and give them this code: %{code}."
-      failed_details: "Password change failed: %{details}. Please contact support and give them this code: %{code}."
-      invalid_external_login: "Invalid external login password or username (%{uid})"
-      incomplete_form: "You did not fill in all the required form fields."
-      invalid_login: "Invalid password or username (%{uid})"
-      confirmation_failed: "Password doesn't match the confirmation"
-      invalid_user: "User (%{uid}) does not exist"
-      email_not_found: "Couldn't find email: %{email}"
-      connection_failed: "We're sorry, but something went wrong. Please try again later!"
-      can_not_change_password: "Can't change password. Please try again later! Log code: %{code}."
-      can_not_change_upstream_password: "Can't change password to upstream service. Please try again later!"
-      token_lifetime_has_expired: "Your link has expired. Please enter your email again."
-      too_many_sent_token_request: "We've already sent a reset message to your email address."
-      too_many_attempts: "You must wait 10 seconds between password change attempts."
-      go_away: "You are not a teacher nor an admin. You cannot change other user's passwords."
+      successful: "Die Passwortänderung war erfolgreich!"
+      failed: "Die Passwortänderung war nicht erfolgreich. Leider sind keine zusätzliche Informationen verfügbar. Bitte Support kontaktieren."
+      failed_code: "Die Passwortänderung war nicht erfolgreich. Leider sind keine zusätzliche Informationen verfügbar. Bitte Support kontaktieren und diesen Kode abgeben: %{code}."
+      failed_details: "Die Passwortänderung war nicht erfolgreich: %{details}. Bitte Support kontaktieren und diesen Kode abgeben: %{code}."
+      invalid_external_login: "Das Passwort oder das Benutzerkonto zu einem externen Dienst (%{uid}) ist unrichtig"
+      incomplete_form: "Nicht alle der benötigten Formularfelder wurden ausgefüllt."
+      invalid_login: "Das Benutzerkonto (%{uid}) oder das Passwort ist unrichtig"
+      confirmation_failed: "Das neue Passwort stimmt nicht mit der Passwortbestätigung"
+      invalid_user: "Ein Benutzerkonto (%{uid}) gibt nicht"
+      extlogin_password_changed_but_puavo_failed: "Die Passwortänderung war erfolgreich, aber nicht zu allen Diensten. Bitte Support kontaktieren wenn nötig."
+      connection_failed: Leider ist etwas schief gelaufen. Bitte später wieder versuchen.
+      can_not_change_password: "Die Passwortänderung war aus irgendeinem Grund nicht erfolgreich. Bitte später wieder versuchen! Logkode: %{code}."
+      can_not_change_upstream_password: "Die Passwortänderung zur Quellendienst war aus irgendeinem Grund nicht erfolgreich. Bitte später wieder versuchen!"
+      token_lifetime_has_expired: Ihrer Link ist veraltet. Bitte E-Mail-Adresse wieder angeben.
+      too_many_attempts: "Man muss zehn Sekunden zwischen Passwortänderungen warten."
+      go_away: "Sie dürfen die Passwörter von Anderen nicht verändern, weil Sie keinen Lehrer:in oder Administrator:in sind."
 
   # Forms and form errors. Many of these have specially formatted names and
   # they're structured in a specific way, because they're accessed by form
@@ -51,41 +62,56 @@ de:
         puavoLocale: "Sprache"
     errors:
       messages:
-        gsuite_password_too_short: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens acht Zeichen lang ist."
-        gsuite_password_whitespace: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort nicht mit einem Leerschlag beginnen oder enden darf."
-        gsuite_password_ascii_only: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort nur aus den Zeichen A-Z, a-z, 0-9 und weiteren Interpunktuationen besteht."
-        sixcharsmin_password_too_short: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sechs Zeichen lang ist."
-        sevencharsmin_password_too_short: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sieben Zeichen lang ist."
+        password_validation:
+          too_short: "Das Passwort ist zu kurz"
+          too_long: "Das Passwort ist zu lang"
+          cant_start_or_end_in_whitespace: "Das Passwort darf nicht mit Leerzeichen beginnen oder enden"
+          ascii_only: "Das Password darf nur Buchstaben A-Z und a-z, Nummern und einige übliche Sonderzeichen enthalten"
+          not_complex_enough: "Das Passwort ist zu einfach (enthält nicht alle angeforderte Zeichen)"
+          contains_name: "Das Passwort darf nicht Ihren Vornamen, Familiennamen, oder Benutzernamen enthalten"
+          common: "Dieses Passwort ist schwach und häufig verwendet"
 
   # Password forms
   # (There are more password-related messages in the flash messages section)
   password:
-    gsuite_integration_enabled: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens acht Zeichen lang ist, nicht mit einem Leerschlag beginnen oder enden kann und nur aus den Zeichen A-Z, a-z, 0-9 und weiteren Interpunktuationen besteht."
-    six_chars_min: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sechs Zeichen lang ist."
-    seven_chars_min: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sieben Zeichen lang ist."
     current_password_too_old: "Gemäss der Sicherheitsrichtlinien der Organisation ist das Passwort zu alt und muss erneuert werden."
-    attempts_are_logged_own: "All password change attempts are logged."
-    attempts_are_logged_other: "This form is only meant for teachers and admin users. All password changes and change attempts are logged. We log all usernames, your IP address(es), and timestamps."
+    attempts_are_logged_own: "Die Passwortänderungsversuche werden protokolliert."
+    attempts_are_logged_other: "Dieses Formulär ist nur für Lehrer:innen und Administrator:innen geeignet. Die Passwortänderungen und Passwortänderungsversuche werden mit Benutzerkontos, IP-Adressen und Zeitstempeln protokolliert."
+    invalid: "Das neue Passwort erfüllt nicht die Anforderungen"
     edit:
-      title: "Das Password eines Anderen änderen."
+      title: "Das Password eines Anderen änderen"
       head: "Um das Password eines Anderen zu ändern, tragen Sie Ihren Benutzernamen und Ihr Passwort ein, dann den Benuzternamen und das neue Passwort des Benutzers, dessen Passwort neu gesetzt werden soll. Sie benötigen genügend Rechte um das Passwort eines anderen Benutzers zu ändern."
       changing_user: "Ändernder Benutzer"
       changed_user: "Zu ändernden Benutzer"
       password: "Passwort"
       link_own_password: "Das eigene Passwort änderen"
+      domain_or: " oder "
     own:
       title: "Das eigene Passwort ändern"
       password: "Altes Passwort"
       link_other_password: "Passwort eines Anderen ändern"
+    forgot:
+      title: Reset your password
+      description: "Please enter your email address and we'll send you a link that allows you to set your new password."
+    reset:
+      title: Reset your password
+      password: Enter new password
+      password_confirmation: Re-enter new password
+      description: Please enter your new password
+      submit: Reset password
+    successfully:
+      send_token: "We've sent you an email that will let you reset your password. The link will expire soon, so please open it as quickly as you can.<br><br>If you do not receive the email, please contact Opinsys support and give them this code: %{request_id}."
+      update: Your password has been successfully reset!
 
   # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:
     edit:
-      title: "Mein Profil"
-      save_and_close: "Save and close"
+      title: "Eigene Information"
     show:
-      message: "Your profile has been successfully updated."
-      email_confirm_info: "A confirmation message will be soon sent to your new email address. Click it to verify your address."
+      photo_failed: "Das Speichern vom Profilbild ist leider schief gelaufen. Bitte kontrollieren, dass Sie eine funktionierende Bilddatei gewählt haben, und wieder versuchen."
+      save_failed: "Das Speichern von Ihren Informationen ist leider schief gelaufen. Bitte wieder versuchen, und wenn das Problem weiterhin besteht, Opinsys Support kontaktieren."
+      save_failed_code: "Das Speichern von Ihren Informationen ist leider schief gelaufen. Bitte wieder versuchen, und wenn das Problem weiterhin besteht, Opinsys Support kontaktieren und diesen Kode abgeben: \"%{request_id}\"."
+      updated: "Ihren Informationen sind erfolgreich aktualisiert."
 
   users:
     edit:

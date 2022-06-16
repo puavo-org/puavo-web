@@ -1,23 +1,31 @@
-<div class="contentBox"><header>
-<% if @num_hidden == 0 %>
-<%= t('.title') %> (<%= @members.count %>)
+<% if @members.count == 0 %>
+<p><%= t('.empty_group') %></p>
 <% else %>
-<%= t('.title') %> (<%= @members.count %>) <em>(+<%= @num_hidden %> <%= t('.hidden_title') %></em>)
+<% if @num_hidden == 0 %>
+<p><%= t('.title', count: @members.count) %>:</p>
+<% else %>
+<p><%= t('.title', count: @members.count) %> <em>(<%= t('.hidden_from_you', count: @num_hidden) %></em>):</p>
 <% end %>
-</header><div class="contents">
+<div id="membersTable">
 <table>
+  <tr class="stickyInline">
+    <th><%= t("activeldap.attributes.user.displayName") %> (<%= t("activeldap.attributes.user.uid") %>)</th>
+    <th><%= t('activeldap.attributes.school.displayName') %></th>
+    <th class="width-0"><%= t('groups.index.actions') %></th>
+  </tr>
   <% @members.each do |member| %>
   <% pri_school = member.primary_school %>
   <% if member.puavoRemovalRequestTime %>
-  <tr class="groupUserMarkedForDeletion">
+  <tr class="markedForDeletion">
   <% else %>
   <tr>
   <% end %>
     <td>
       <%= link_to "#{member.displayName} (#{member.uid})", user_path(pri_school, member) %>
-      [<%= pri_school.displayName %>]
       <% if member.puavoLocked %><i class='icon-lock' title="<%= t('users.show.user_is_locked') %>"></i><% end %>
     </td>
+
+    <td><%= pri_school.displayName %></td>
 
     <td>
       <%= link_to(t('.remove'),
@@ -26,9 +34,10 @@
                                            :user_id => member.puavoId),
                     remote: true,
                     method: :put,
-                    class: "btn") %>
+                    class: "btn nowrap") %>
     </td>
   </tr>
   <% end %>
 </table>
-</div></div>
+</div>
+<% end %>

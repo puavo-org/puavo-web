@@ -1,0 +1,7 @@
+  <% logos.each do |logo| %>
+    <% if logo['href'] %>
+    <a href="<%= logo['href'] %>" target="_blank" title="<%= logo['title'] %>"><img src="<%= File.join(@login_content['prefix'], logo['image']) %>" alt="<%= logo['alt'] %>" title="<%= logo['title'] %>" width="<%= logo['width'] %>" height="<%= logo['height'] %>"></a>
+    <% else %>
+    <img src="<%= File.join(@login_content['prefix'], logo['image']) %>" alt="<%= logo['alt'] %>" title="<%= logo['title'] %>" width="<%= logo['width'] %>" height="<%= logo['height'] %>">
+    <% end %>
+  <% end %>

@@ -43,6 +43,8 @@ if ENV['RACK_ENV'] == 'test' then
     "cloud" => true,
     "password_management" => {
       "secret" => "foobar",
+      "lifetime" => 600,
+      "ip_whitelist" => ['127.0.0.1'],
       "smtp" => {
         "from" => "Puavo Org <no-reply@puavo.net>",
         "via_options" => {
@@ -52,8 +54,6 @@ if ENV['RACK_ENV'] == 'test' then
         }
       }
     },
-    "email_confirm" => {
-      "secret" => "barfoo" },
     "redis" => {
       :db => 1
     },
@@ -96,9 +96,9 @@ end
 
 # Load organisations.yml if it exists
 begin
-  ORGANISATIONS = YAML.load_file('/etc/puavo-web/organisations.yml')
+  ORGANISATIONS = YAML.load_file('/etc/puavo-web/organisations.yml').freeze
 rescue => e
-  ORGANISATIONS = {}
+  ORGANISATIONS = {}.freeze
 end
 
 def get_automatic_email(organisation_name)

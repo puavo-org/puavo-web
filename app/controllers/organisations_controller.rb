@@ -15,6 +15,13 @@ class OrganisationsController < ApplicationController
       @release = get_releases().fetch(@organisation.puavoDeviceImage, nil)
     end
 
+    # Dig up the organisation-level timestamps
+    timestamps = LdapBase.search_as_utf8(:filter => "(&(objectClass=puavoEduOrg)(cn=#{@organisation.cn}))",
+                                         :attributes => ["createTimestamp", "modifyTimestamp"])
+
+    @created = convert_timestamp(Time.at(Puavo::Helpers::convert_ldap_time(timestamps[0][1]['createTimestamp'])))
+    @modified = convert_timestamp(Time.at(Puavo::Helpers::convert_ldap_time(timestamps[0][1]['modifyTimestamp'])))
+
     respond_to do |format|
       format.html # show.html.erb
       format.json do
@@ -175,6 +182,59 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  # GET /users/admins
+  def all_admins
+    return if redirected_nonowner_user?
+
+    # Current organisation owners
+    @current_owners = Array(LdapOrganisation.current.owner) #.each
+      .select { |dn| dn != 'uid=admin,o=puavo' }
+      .collect { |dn| dn.to_s }
+      .to_set
+
+    # All admins in this organisation
+    @all_admins = User.find(:all,
+                            :attribute => 'puavoEduPersonAffiliation',
+                            :value => 'admin')
+    .sort { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+    .collect do |u|
+      {
+        user: u,
+        schools: [],
+        pri_school: u.primary_school.dn.to_s,
+        admin_in: Array(u.puavoAdminOfSchool || []).collect { |dn| dn.rdns[0]['puavoId'].to_i }.to_set,
+        permissions: [],
+      }
+    end
+
+    # List default extra permission states
+    @default_permissions = (Puavo::Organisation.find(LdapOrganisation.current.cn).
+                    value_by_key('schooladmin_permissions') || {}).fetch('defaults', {})
+
+    # List schools and extra permissions
+    schools = {}
+
+    @all_admins.each do |a|
+      Array(a[:user].puavoSchool).each do |dn|
+        dns = dn.to_s
+        schools[dns] = School.find(dns) unless schools.include?(dns)
+        a[:schools].push(schools[dn.to_s])
+      end
+
+      # sort the schools alphabetically
+      a[:schools].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+
+      # any extra permissions?
+      unless @current_owners.include?(a[:user].dn.to_s)
+        [:create_users, :delete_users].each do |p|
+          if can_schooladmin_do_this?(a[:user].uid, p)
+            a[:permissions] << p.to_s
+          end
+        end
+      end
+    end
+  end
+
   def all_users
     return if redirected_nonowner_user?
 
@@ -192,7 +252,15 @@ class OrganisationsController < ApplicationController
     @synchronised_deletions = {}
     @synchronised_deletions_by_school = {}
 
+    @schools_list = []
+
     School.all.each do |s|
+      @schools_list << {
+        id: s.id.to_i,
+        dn: s.dn.to_s,
+        name: s.displayName,
+      }
+
       deletions = list_school_synchronised_deletion_systems(@organisation_name, s.id.to_i)
       next if deletions.empty?
 
@@ -228,7 +296,7 @@ class OrganisationsController < ApplicationController
       schools_by_dn[dn] = {
         id: school['puavoId'][0].to_i,
         cn: school['cn'][0],
-        name: school['displayName'][0],
+        name: school['displayName'][0].force_encoding('utf-8'),
       }
 
       Array(school['puavoSchoolAdmin'] || []).each{ |dn| school_admins << dn }
@@ -243,7 +311,7 @@ class OrganisationsController < ApplicationController
     users = []
 
     raw.each do |dn, usr|
-      school = schools_by_dn[usr['puavoSchool'][0]]
+      school = schools_by_dn[usr['puavoEduPersonPrimarySchool'][0]]
 
       # Common attributes
       user = UsersHelper.convert_raw_user(dn, usr, organisation_owners, school_admins)
@@ -252,6 +320,7 @@ class OrganisationsController < ApplicationController
       user[:link] = "/users/#{school[:id]}/users/#{user[:id]}"
       user[:school] = [school[:cn], school[:name]]
       user[:school_id] = school[:id]
+      user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school[:id]]
 
       users << user
     end
@@ -313,7 +382,11 @@ class OrganisationsController < ApplicationController
   def all_devices
     return if redirected_nonowner_user?
 
-    @school_list = DevicesHelper.device_school_change_list()
+    # You can't get here unless you're an owner
+    @is_owner = true
+
+    # List ALL schools, hide nothing
+    @school_list = DevicesHelper.device_school_change_list(true, nil, nil)
 
     respond_to do |format|
       format.html   # all_devices.html.erb

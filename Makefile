@@ -13,7 +13,7 @@ INSTALL_PROGRAM = $(INSTALL)
 build: symlink-config
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
-	npm install --registry http://registry.npmjs.org
+	npm install --registry https://registry.npmjs.org
 	bundle exec rake assets:precompile
 	$(MAKE) js
 

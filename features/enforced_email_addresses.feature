@@ -24,7 +24,6 @@ Feature: Test enforced email addresses in an organisation
     And I should see "Email (automatic)"
     And I check "Test user"
     And I press "Create"
-    And I press "Save"
     Then I should see "example3@hogwarts.magic" within "#contactInformation"
 
   @automatic_email
@@ -52,7 +51,6 @@ Feature: Test enforced email addresses in an organisation
     And I should see "Email (automatic)"
     And I check "Test user"
     And I press "Create"
-    And I press "Save"
     Then I should see "example3@hogwarts.magic" within "#contactInformation"
     Then I am on the edit user page with "example3"
     And I fill in "Username" with "foobar"

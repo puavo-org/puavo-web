@@ -178,18 +178,6 @@ When(/^I change "(.*?)" user type to "(.*?)"$/) do |uid, user_type|
   user.save!
 end
 
-When(/^I add user "(.*?)" to administrative groups "(.*?)"$/) do |uid, groupnames|
-  set_ldap_admin_connection
-  user = User.find(:first, :attribute => 'uid', :value => uid)
-  group_ids = groupnames.split(',').map do |gn|
-                Group.find(:first, :attribute => 'displayName', :value => gn) \
-                  .id
-              end
-
-  user.administrative_groups = group_ids
-  # XXX no user.save! due to weird API
-end
-
 When(/^I add user "(.*?)" to teaching group "(.*?)"$/) do |uid, groupname|
   set_ldap_admin_connection
   user = User.find(:first, :attribute => 'uid', :value => uid)
@@ -197,6 +185,12 @@ When(/^I add user "(.*?)" to teaching group "(.*?)"$/) do |uid, groupname|
 
   user.teaching_group = group.id
   # XXX no user.save! due to weird API
+end
+
+When(/^I select group "(.*?)"$/) do |group_name|
+  within('div.groupsList') do
+    check(group_name)
+  end
 end
 
 # Used when testing password changing timeouts

@@ -100,7 +100,129 @@ class GroupsController < ApplicationController
 
     begin
       group = Group.find(group_id)
-      group.delete
+      group.destroy
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # Mass operation: clear group (remove all users from it)
+  def mass_op_group_clear
+    begin
+      group_id = params[:group][:id]
+    rescue
+      puts "mass_op_group_clear(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_group_clear(): missing params')
+    end
+
+    ok = false
+
+    begin
+      group = Group.find(group_id)
+      ok = _remove_all_group_members(group)
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # Mass operation: lock or unlock all group members
+  def mass_op_group_lock_members
+    begin
+      group_id = params[:group][:id]
+      state = params[:group][:state]
+    rescue
+      puts "mass_op_group_lock_members(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_group_lock_members(): missing params')
+    end
+
+    ok = false
+
+    begin
+      group = Group.find(group_id)
+      _lock_members(group, state)
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # Mass operation: mark (or unmark) all group members for deletion
+  def mass_op_group_mark_members_for_deletion
+    begin
+      group_id = params[:group][:id]
+      state = params[:group][:state]
+    rescue
+      puts "mass_op_group_mark_members_for_deletion(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_group_mark_members_for_deletion(): missing params')
+    end
+
+    ok = false
+
+    begin
+      group = Group.find(group_id)
+      _mark_members_for_deletion(group, state)
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # Mass operation: modify memberships (see below)
+  def mass_op_change_members
+    begin
+      user_id = params[:group][:id]
+      mode = params[:group][:mode]
+      groups = params[:group][:groups]
+    rescue
+      puts "mass_op_change_members(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_change_members(): missing params')
+    end
+
+    ok = false
+
+    begin
+      u = User.find(user_id)
+
+      groups.each do |id|
+        g = Group.find(id)
+
+        # add_user and remove_user handle duplicates and non-existent members gracefully
+        if mode == 'add'
+          g.add_user(u)
+        else
+          g.remove_user(u)
+        end
+      end
+
       ok = true
     rescue StandardError => e
       return status_failed_msg(e)
@@ -254,20 +376,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    now = Time.now.utc
-    count = 0
-
-    @group.members.each do |u|
-      begin
-        if u.puavoRemovalRequestTime.nil?
-          u.puavoRemovalRequestTime = now
-          u.puavoLocked = true
-          u.save
-          count += 1
-        end
-      rescue StandardError => e
-      end
-    end
+    count = _mark_members_for_deletion(@group, true)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_marked', :count => count)
@@ -288,18 +397,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    count = 0
-
-    @group.members.each do |u|
-      begin
-        if u.puavoRemovalRequestTime
-          u.puavoRemovalRequestTime = nil
-          u.save
-          count += 1
-        end
-      rescue StandardError => e
-      end
-    end
+    count = _mark_members_for_deletion(@group, false)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_unmarked', :count => count)
@@ -320,18 +418,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    count = 0
-
-    @group.members.each do |u|
-      begin
-        unless u.puavoLocked
-          u.puavoLocked = true
-          u.save
-          count += 1
-        end
-      rescue StandardError => e
-      end
-    end
+    count = _lock_members(@group, true)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_locked', :count => count)
@@ -352,23 +439,72 @@ class GroupsController < ApplicationController
       return
     end
 
-    count = 0
-
-    @group.members.each do |u|
-      begin
-        if u.puavoLocked
-          u.puavoLocked = nil
-          u.save
-          count += 1
-        end
-      rescue StandardError => e
-      end
-    end
+    count = _lock_members(@group, false)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_unlocked', :count => count)
       format.html { redirect_to group_path(@school, @group) }
     end
+  end
+
+  # GET /:school_id/groups/:group_id/select_new_school
+  def select_new_school
+    @group = get_group(params[:id])
+    return if @group.nil?
+
+    @available_schools = School.all.select { |s| s.id != @group.school.id }
+
+    unless is_owner?
+      # School admins can only transfer groups between the schools they're admins in
+      # TODO: This is starting to be a recurring pattern. See if this could be moved to
+      # its own utility function.
+      only_these = Set.new(Array(current_user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
+      @available_schools.delete_if { |s| !only_these.include?(s.dn.to_s) }
+    end
+
+    if @available_schools.empty?
+      flash[:notice] = t('flash.group.no_other_available_schools')
+      return redirect_to group_path(@school, @group)
+    end
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # PUT /:school_id/groups/:group_id/change_school
+  def change_school
+    @group = get_group(params[:id])
+    return if @group.nil?
+
+    begin
+      school = School.find(params[:school])
+    rescue ActiveLdap::EntryNotFound => e
+      flash[:alert] = t('flash.invalid_school_id')
+      return redirect_to group_path(@school, @group)
+    end
+
+    unless is_owner?
+      only_these = Set.new(Array(current_user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
+
+      unless only_these.include?(school.dn.to_s)
+        flash[:alert] = t('flash.invalid_school_id')
+        return redirect_to group_path(@school, @group)
+      end
+    end
+
+    begin
+      @group.puavoSchool = school.dn
+      @group.save!
+    rescue => e
+      flash[:alert] = t('flash.save_failed')    # Not the best possible error message
+      return redirect_to group_path(@school, @group)
+    end
+
+    flash[:notice] = t('flash.group.school_changed', new_school: school.displayName)
+
+    # Don't use @school or @group.school here, they still point to the previous school
+    return redirect_to group_path(school, @group)
   end
 
   def remove_user
@@ -389,43 +525,232 @@ class GroupsController < ApplicationController
     end
   end
 
+  # GET /:school_id/groups/mass_members_edit
+  def members_mass_edit
+    return if redirected_nonowner_user?
+
+    @initial_groups = get_plain_groups_list(@school.dn)
+
+    respond_to do |format|
+      format.html { render action: 'members_mass_edit' }
+    end
+  end
+
+  # Retrieve groups for the target groups list (this isn't dynamic, the groups list is updated
+  # ONLY when the page is loaded)
+  def get_plain_groups_list(school_dn)
+    Group.search_as_utf8(
+      filter: "(&(objectClass=puavoEduGroup)(puavoSchool=#{Net::LDAP::Filter.escape(school_dn.to_s)}))",
+      attributes: ['puavoId', 'cn', 'displayName', 'puavoSchool', 'puavoEduGroupType', 'member']
+    ).collect do |dn, raw|
+      {
+        id: raw['puavoId'][0].to_i,
+        name: raw['displayName'][0],
+        sortName: raw['displayName'][0].downcase,
+        abbr: raw['cn'][0],
+        type: raw.fetch('puavoEduGroupType', [nil])[0],
+      }
+    end.sort do |a, b|
+      a[:sortName] <=> b[:sortName]
+    end.each do |g|
+      # The "sortName" is used to avoid repeated downcase calls during sorting
+      g.delete(:sortName)
+    end
+  end
+
+  # AJAX call
+  def update_groups_list
+    render json: get_plain_groups_list(@school.dn)
+  end
+
+  # AJAX call
+  def get_all_groups_members
+    dn_to_uid = /\d+/
+
+    schools = {}
+    groups = {}
+    users = {}
+
+    # Grab schools (groups can be in other schools than the current)
+    School.search_as_utf8(
+      attributes: ['puavoId', 'displayName']
+    ).map do |dn, raw|
+      schools[dn] = {
+        id: raw['puavoId'][0].to_i,
+        name: raw['displayName'][0],
+      }
+    end
+
+    # Get users
+    User.search_as_utf8(
+      filter: "(&(objectClass=puavoEduPerson)(puavoSchool=#{@school.dn.to_s}))",
+      attributes: ['puavoId', 'givenName', 'sn', 'uid', 'puavoEduPersonAffiliation',
+                   'puavoLocked', 'puavoRemovalRequestTime']
+    ).map do |dn, raw|
+      uid = raw['puavoId'][0].to_i
+
+      users[uid] = {
+        id: uid,
+        first: raw['givenName'][0],
+        last: raw['sn'][0],
+        uid: raw['uid'][0],
+        role: Array(raw['puavoEduPersonAffiliation'] || []),
+        groups: [],
+      }
+
+      # Supplementary information, included only in the username column
+      flags = []
+
+      flags << 'm' if raw.include?('puavoRemovalRequestTime')
+      flags << 'l' if raw.include?('puavoLocked') && raw['puavoLocked'][0] == 'TRUE'
+
+      users[uid][:flags] = flags.join unless flags.empty?
+    end
+
+    # Get groups and their members
+    Group.search_as_utf8(
+      filter: "(objectClass=puavoEduGroup)",
+      attributes: ['puavoId', 'cn', 'displayName', 'puavoSchool', 'puavoEduGroupType', 'member']
+    ).each do |dn, raw|
+      gid = raw['puavoId'][0].to_i
+
+      groups[gid] = {
+        name: raw['displayName'][0],
+        abbr: raw['cn'][0],
+        type: raw.fetch('puavoEduGroupType', [nil])[0],
+        school: raw['puavoSchool'][0],
+      }
+
+      # Fill in the "groups" member for each user
+      Array(raw['member'] || []).each do |dn|
+        begin
+          # extract the PuavoID from the DN
+          uid = dn_to_uid.match(dn)[0].to_i
+        rescue
+          next
+        end
+
+        users[uid][:groups] << gid if users.include?(uid)
+      end
+    end
+
+    # Wrap it all in one compact structure, that we'll "unpack" with JavaScript
+    data = {
+      schools: schools,
+      groups: groups,
+      users: users,
+    }
+
+    render json: data
+  end
+
   def find_groupless_users
+    # Find all users who have no groups and sort them alphabetically by name
     @users = []
 
     @school.members.each do |m|
       @users << m if m.groups.empty?
     end
 
-    # sort by name
-    @users.sort!{|a, b| a.displayName.downcase <=> b.displayName.downcase }
+    @users.sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+
+    # List potential groups where these users could be added to
+    @move_groups = []
+
+    @school.groups.each do |g|
+      @move_groups << [g.displayName, g.cn, g.id.to_i, g.puavoEduGroupType.nil? ? "(?)" : I18n.t("group_type.#{g.puavoEduGroupType}"), g.members.count]
+    end
+
+    @move_groups.sort! { |a, b| a[0].downcase <=> b[0].downcase }
+
+    # A set of organisation owners' DNs
+    @owners = Array(LdapOrganisation.current.owner)
+               .reject { |dn| dn == 'uid=admin,o=puavo' }
+               .collect { |o| o.to_s }.to_set
 
     respond_to do |format|
-      format.html { render :action => "groupless_users" }
+      format.html { render :action => 'groupless_users' }
     end
   end
 
-  def mark_groupless_users_for_deletion
-    ok = 0
-    failed = 0
+  #
+  def process_groupless_users
+    if !params.include?(:operation) || !['lock', 'mark', 'move'].include?(params[:operation])
+      flash[:alert] = t('groups.groupless_users.missing_params')
+      redirect_to find_groupless_users_path(@school)
+      return
+    end
+
+    # A set of organisation owners' DNs
+    owners = Array(LdapOrganisation.current.owner)
+              .reject { |dn| dn == 'uid=admin,o=puavo' }
+              .collect { |o| o.to_s }.to_set
+
     now = Time.now.utc
+    count = 0
 
-    @school.members.each do |m|
-      next unless m.groups.empty?
-      next if m.puavoRemovalRequestTime
+    case params[:operation]
+      when 'lock'
+        @school.members.each do |m|
+          next unless m.groups.empty?
+          next if owners.include?(m.dn.to_s)
+          next if m.puavoLocked
 
-      begin
-        m.puavoRemovalRequestTime = now
-        m.puavoLocked = true
-        m.save!
-        ok += 1
-      rescue StandardError => e
-        failed += 1
-      end
+          begin
+            m.puavoLocked = true
+            m.save
+            count += 1
+          rescue => e
+          end
+        end
+
+      when 'mark'
+        @school.members.each do |m|
+          next unless m.groups.empty?
+          next if owners.include?(m.dn.to_s)
+          next if m.puavoRemovalRequestTime
+
+          begin
+            m.puavoRemovalRequestTime = now
+            m.puavoLocked = true
+            m.save!
+            count += 1
+          rescue => e
+          end
+        end
+
+      when 'move'
+        if !params.include?(:group)
+          flash[:alert] = t('groups.groupless_users.missing_params')
+          redirect_to find_groupless_users_path(@school)
+          return
+        end
+
+        # Can't use get_group, because it redirects to wrong page!
+        begin
+          group = Group.find(params[:group])
+        rescue ActiveLdap::EntryNotFound => e
+          flash[:alert] = t('flash.invalid_group_id', :id => params[:group])
+          redirect_to find_groupless_users_path(@school)
+          return
+        end
+
+        @school.members.each do |m|
+          next unless m.groups.empty?
+          next if owners.include?(m.dn.to_s)
+
+          begin
+            group.add_user(m)
+            count += 1
+          rescue => e
+            logger.error(e)
+          end
+        end
     end
 
     respond_to do |format|
-      flash[:notice] = t('flash.group.groupless_marked', :ok => ok, :failed => failed)
-      format.html { redirect_to groups_path(@school) }
+      flash[:notice] = t('groups.groupless_users.done', :count => count)
+      format.html { redirect_to find_groupless_users_path(@school) }
     end
   end
 
@@ -434,17 +759,7 @@ class GroupsController < ApplicationController
     @group = get_group(params[:id])
     return if @group.nil?
 
-    members = @group.members
-    ok = true
-
-    members.each do |m|
-      begin
-        @group.remove_user(m)
-      rescue StandardError => e
-        puts "===> Could not remove member #{m} from group #{@group}: #{e}"
-        ok = false
-      end
-    end
+    ok = _remove_all_group_members(@group)
 
     respond_to do |format|
       flash[:notice] = ok ? t('flash.group.group_emptied_ok') : t('flash.group.group_emptied_failed')
@@ -459,28 +774,27 @@ class GroupsController < ApplicationController
     @group = get_group(params[:id])
     return if @group.nil?
 
-    output = CSV.generate(:headers => true, :force_quotes => true) do |csv|
-      csv << ['puavoid', 'username', 'firstname', 'lastname']
+    output = CSV.generate(headers: true) do |csv|
+      csv << ['puavoid', 'first_name', 'last_name', 'uid', 'school_name']
 
       @group.members.each do |m|
-        csv << [m.id, m.uid, m.givenName, m.surname]
+        csv << [m.id, m.givenName, m.surname, m.uid, m.primary_school.displayName]
       end
     end
 
     filename = "#{current_organisation.organisation_key}_#{@group.cn}_members_#{Time.now.strftime("%Y%m%d_%H%M%S")}.csv"
 
     send_data(output,
-              :filename => filename,
-              :type => 'text/csv',
-              :disposition => 'attachment' )
+              filename: filename,
+              type: 'text/csv',
+              disposition: 'attachment' )
   end
 
   def add_user
     @group = Group.find(params[:id])
     @user = User.find(params[:user_id])
 
-    Group.ldap_modify_operation(@group.dn, :add, [{ "memberUid" => [@user.uid]},
-                                                  { "member" => [@user.dn.to_s] }])
+    @group.add_user(@user)
 
     @group.reload
 
@@ -559,4 +873,80 @@ class GroupsController < ApplicationController
       return members, num_hidden
     end
 
+    # Remove all users from a group (don't delete them, just remove them from the group)
+    def _remove_all_group_members(group)
+      members = group.members
+      ok = true
+
+      members.each do |m|
+        begin
+          group.remove_user(m)
+        rescue StandardError => e
+          puts "===> Could not remove member #{m.uid} from group #{group.cn}: #{e}"
+          ok = false
+        end
+      end
+
+      ok
+    end
+
+    # Mark (or unmark) group members for deletion. Returns the number of users updated.
+    def _mark_members_for_deletion(group, mark)
+      now = Time.now.utc
+      count = 0
+
+      group.members.each do |u|
+        begin
+          if mark
+            # Mark for deletion
+            if u.puavoRemovalRequestTime.nil?
+              u.puavoRemovalRequestTime = now
+              u.puavoLocked = true
+              u.save
+              count += 1
+            end
+          else
+            # Remove deletion mark
+            if u.puavoRemovalRequestTime
+              u.puavoRemovalRequestTime = nil
+              u.save
+              count += 1
+            end
+          end
+        rescue StandardError => e
+          puts "====> Could not mark/unmark group member #{u.uid} from group #{group.cn}: #{e}"
+        end
+      end
+
+      return count
+    end
+
+    # Lock or unlock members
+    def _lock_members(group, lock)
+      count = 0
+
+      group.members.each do |u|
+        begin
+          if lock
+            # Lock
+            unless u.puavoLocked
+              u.puavoLocked = true
+              u.save
+              count += 1
+            end
+          else
+            # Unlock
+            if u.puavoLocked
+              u.puavoLocked = nil
+              u.save
+              count += 1
+            end
+          end
+        rescue StandardError => e
+          puts "====> Could not lock/unlock group member #{u.uid} in group #{group.cn}: #{e}"
+        end
+      end
+
+      return count
+    end
 end

@@ -66,19 +66,28 @@ Rails.application.routes.draw do
       match 'groups/:id/delete_all_group_members' => 'groups#delete_all_group_members', :as => "delete_all_group_members", :via => :delete
       match "groups/:id/add_user/:user_id" => "groups#add_user", :as => "add_user_group", :via => :put
       match "groups/:id/user_search" => "groups#user_search", :as => :user_search, :via => :get
+      get 'groups/:id/select_new_school' => 'groups#select_new_school', :as => :select_new_school, :via => :get
+      put 'groups/:id/change_school' => 'groups#change_school', :as => :group_change_school, :via => :put
       get 'groups/:id/get_members_as_csv' => 'groups#get_members_as_csv', :as => :get_members_as_csv
       put 'groups/:id/remove_all_members' => 'groups#remove_all_members', :as => :remove_all_members
 
       get 'get_school_groups_list' => 'groups#get_school_groups_list'
 
       post 'mass_op_group_delete' => 'groups#mass_op_group_delete'
+      post 'mass_op_group_clear' => 'groups#mass_op_group_clear'
+      post 'mass_op_group_mark_members_for_deletion' => 'groups#mass_op_group_mark_members_for_deletion'
+      post 'mass_op_group_lock_members' => 'groups#mass_op_group_lock_members'
+
+      get 'groups/members_mass_edit' => 'groups#members_mass_edit', :as => :group_members_mass_edit
+      get 'groups/get_all_groups_members' => 'groups#get_all_groups_members'
+      get 'groups/update_groups_list' => 'groups#update_groups_list'
+      post 'groups/change_members' => 'groups#mass_op_change_members'
 
       get 'groups/find_groupless_users' => 'groups#find_groupless_users', :as => :find_groupless_users
-      put 'groups/mark_groupless_users_for_deletion' => 'groups#mark_groupless_users_for_deletion', :as => :mark_groupless_users_for_deletion
+      post 'groups/find_groupless_users' => 'groups#process_groupless_users', :as => :process_groupless_users
 
       get 'groups/:id/members' => 'groups#members'
 
-      match 'users/:id/group' => 'users#group', :as => :group_user, :via => :get
       match 'users/:id/add_group' => 'users#add_group', :as => :add_group_user, :via => :put
       match 'import_tool' => 'import_tool#index', :via => :get
       match 'username_redirect/:username' => 'users#username_redirect', :via => :get, :constraints => { :username => /[^\/]+/ }
@@ -100,7 +109,13 @@ Rails.application.routes.draw do
       post 'mass_op_user_mark' => 'users#mass_op_user_mark'
       post 'mass_op_user_clear_column' => 'users#mass_op_user_clear_column'
       post 'mass_op_username_list' => 'users#mass_op_username_list'
+      post 'mass_op_user_change_school' => 'users#mass_op_user_change_school'
 
+      get 'new_import' => 'new_import#index'
+      get 'reload_groups' => 'new_import#reload_groups'
+      get 'get_current_users' => 'new_import#get_current_users'
+      post 'password_pdf' => 'new_import#generate_password_pdf'
+      post 'new_import/import' => 'new_import#import'
     end
 
 
@@ -149,21 +164,10 @@ Rails.application.routes.draw do
             :to => 'password#reset_update',
             :as => :reset_update_password,
             constraints: { jwt: /.+/ } )
-      get( 'successfully/:message',
+      get( 'successfully',
            :to => 'password#successfully',
            :as => :successfully_password )
     end
-
-    match( 'email_confirm' => 'email_confirm#confirm',
-           :as => :confirm_email,
-           :via => :put )
-    match( 'email_confirm/successfully' => 'email_confirm#successfully',
-           :as => :successfully_email_confirm,
-           :via => :get )
-    match( 'email_confirm/:jwt' => 'email_confirm#preview',
-           :as => :preview_email_confirm,
-           :via => :get,
-           :constraints => { jwt: /.+/ } )
 
     get 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins
@@ -171,6 +175,8 @@ Rails.application.routes.draw do
     match 'owners' => 'organisations#owners', :as => :owners_organisation, :via => :get
     match 'remove_owner/:user_id' => 'organisations#remove_owner', :as => :remove_owner_organisations, :via => :put
     match 'add_owner/:user_id' => 'organisations#add_owner', :as => :add_owner_organisations, :via => :put
+
+    match 'all_admins' => 'organisations#all_admins', :as => :all_admins_organisation, :via => :get
 
     match 'wlan' => 'organisations#wlan', :as => :wlan_organisation, :via => :get
     match 'wlan_update' => 'organisations#wlan_update', :as => :wlan_update_organisation, :via => :patch
@@ -192,6 +198,7 @@ Rails.application.routes.draw do
       match 'devices/:id/select_school' => 'devices#select_school', :as => 'select_school_device', :via => :get
       match 'devices/:id/change_school' => 'devices#change_school', :as => 'change_school_device', :via => :post
       match 'devices/:id/image' => 'devices#image', :as => 'image_device', :via => :get
+      match 'devices/:id/raw_hardware_info' => 'devices#raw_hardware_info', :as => 'device_raw_hardware_info', :via => :get
 
       get 'devices/device_statistics' => 'image_statistics#school_images', :as => 'school_image_statistics'
 
@@ -203,6 +210,7 @@ Rails.application.routes.draw do
       post 'mass_op_device_set_field' => 'devices#mass_op_device_set_field'
       post 'mass_op_device_edit_puavoconf' => 'devices#mass_op_device_edit_puavoconf'
       post 'mass_op_device_purchase_info' => 'devices#mass_op_device_purchase_info'
+      post 'mass_op_device_reset' => 'devices#mass_op_device_reset'
 
       resources :devices
 
@@ -210,9 +218,17 @@ Rails.application.routes.draw do
              :as => 'revoke_certificate_device',
              :via => :delete )
 
+      match( 'devices/:id/set_reset_mode' => 'devices#set_reset_mode',
+             :as => 'set_reset_mode_device',
+             :via => :put )
+
+      match( 'devices/:id/clear_reset_mode' => 'devices#clear_reset_mode',
+             :as => 'clear_reset_mode_device',
+             :via => :put )
     end
 
     match 'servers/:id/image' => 'servers#image', :as => 'image_server', :via => :get
+    match 'servers/:id/raw_hardware_info' => 'servers#raw_hardware_info', :as => 'server_raw_hardware_info', :via => :get
     match( 'servers/:id/revoke_certificate' => 'servers#revoke_certificate',
            :as => 'revoke_certificate_server',
            :via => :delete )

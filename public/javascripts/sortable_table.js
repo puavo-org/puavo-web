@@ -11,7 +11,7 @@ the order.
 You must use appropriate CSS to actually style the table. This code only changes style class
 names, nothing more.
 
-(c) Opinsys Oy 2019
+(c) Opinsys Oy 2019-2022
 
 Version history
 ---------------

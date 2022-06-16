@@ -1,0 +1,11 @@
+span.adminPermissions_allow {
+  background: $adminPermissionsAllowBackground;
+  color: $adminPermissionsAllowForeground;
+  padding: 1px 5px;
+}
+
+span.adminPermissions_deny {
+  background: $adminPermissionsDenyBackground;
+  color: $adminPermissionsDenyForeground;
+  padding: 1px 5px;
+}

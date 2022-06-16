@@ -1,307 +1,2047 @@
-"use strict;"
+"use strict";
 
-// Datetime filter year limits. The years are limited because values outside
-// of these are unlikely to appear in the database.
-const MIN_YEAR = 2000,
-      MAX_YEAR = 2050;
+// The filter editor and the whole filtering subsystem of the SuperTable. Contains two filtering
+// interfaces: a mouse-driven "traditional" one, and a more advanced system that uses a simple
+// scripting language. Only one can be active at any given moment, but both are compiled down to a
+// simple RPN "program" that is executed for every row on the table to see if it's visible or not.
+// The table itself does not know anything about this, it only sees the final program.
 
-// Base filter editor class
-class FilterEditBase {
-    constructor(container)
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// COLUMN NAME LOOKUPS
+
+/*
+Each column can have zero or more (unique) alias names that all point to the actual name.
+It's just a simple text replacement system. Some column names used in the raw JSON data
+are very short and cryptic, so it's nice to have easy-to-remember aliases for them.
+*/
+
+class ColumnDefinitions {
+    constructor(rawDefinitions)
     {
-        this.container = container;
+        this.columns = new Map();
+        this.aliases = new Map();
+
+        for (const key of Object.keys(rawDefinitions)) {
+            const def = rawDefinitions[key];
+
+            this.columns.set(key, {
+                type: def.type,
+                flags: def.flags || 0,
+            });
+
+            if ("alias" in def) {
+                for (const a of def.alias) {
+                    // Each alias name must be unique. Explode loudly if they aren't.
+                    if (this.aliases.has(a))
+                        throw new Error(`Alias "${a}" used by columns "${this.aliases.get(a)}" and "${key}"`);
+
+                    this.aliases.set(a, key);
+                }
+            }
+        }
     }
 
-    validate()
+    isColumn(s)
     {
-        // If you return false, the filter being edited cannot be saved
+        return this.columns.has(s) || this.aliases.has(s);
+    }
+
+    // Expands an alias name. If the string isn't an alias, nothing happens.
+    expandAlias(s)
+    {
+        if (!this.aliases.has(s))
+            return s;
+
+        return this.aliases.get(s);
+    }
+
+    // Retrieves a column definition by name. Bad things will happen if the name isn't valid.
+    // (Use isColumn() to validate it first, and expandAlias() to get the full name.)
+    get(s)
+    {
+        return this.columns.get(s);
+    }
+
+    getAliases(s)
+    {
+        let out = new Set();
+
+        for (const a of this.aliases)
+            if (a[1] == s)
+                out.add(a[0]);
+
+        return out;
+    }
+};
+
+// A custom logger that also keeps track of row and column numbers and some other metadata
+class MessageLogger {
+    constructor()
+    {
+        this.messages = [];
+    }
+
+    empty()
+    {
+        return this.messages.length == 0;
+    }
+
+    haveErrors()
+    {
+        for (const m of this.messages)
+            if (m.type == "error")
+                return true;
+
+        return false;
+    }
+
+    clear()
+    {
+        this.messages = [];
+    }
+
+    warn(message, row=-1, col=-1, pos=-1, len=-1, extra=null)
+    {
+        this.messages.push({
+            type: "warning",
+            message: message,
+            row: row,
+            col: col,
+            pos: pos,
+            len: len,
+            extra: extra,
+        });
+    }
+
+    warnToken(message, token, extra=null)
+    {
+        this.messages.push({
+            type: "warning",
+            message: message,
+            row: token.row,
+            col: token.col,
+            pos: token.pos,
+            len: token.len,
+            extra: extra,
+        });
+    }
+
+    error(message, row=-1, col=-1, pos=-1, len=-1, extra=null)
+    {
+        this.messages.push({
+            type: "error",
+            message: message,
+            row: row,
+            col: col,
+            pos: pos,
+            len: len,
+            extra: extra,
+        });
+    }
+
+    errorToken(message, token, extra=null)
+    {
+        this.messages.push({
+            type: "error",
+            message: message,
+            row: token.row,
+            col: token.col,
+            pos: token.pos,
+            len: token.len,
+            extra: extra,
+        });
+    }
+};
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// TOKENIZATION
+
+// Raw token types
+const TokenType = {
+    COLUMN: "col",            // target column name
+    OPERATOR: "opr",          // comparison operator
+    VALUE: "val",             // comparison value (whether it's a string or number is irrelevant here)
+    OPEN_PAREN: "(",
+    CLOSE_PAREN: ")",
+    BOOL_AND: "and",
+    BOOL_OR: "or",
+    BOOL_NOT: "not",
+
+    // Used during parsing to initialize the state machine to a known state.
+    // Using this anywhere else will hurt you badly.
+    START: "start",
+};
+
+// Raw token flags, set by the tokenizer
+const TokenFlags = {
+    REGEXP: 0x01,       // This token contains a regexp string
+    MULTILINE: 0x02,    // This string is multiline (can be used with regexps)
+};
+
+class Tokenizer {
+    constructor()
+    {
+        this.columnDefinitions = null;
+        this.logger = null;
+
+        this.source = null;
+        this.pos = 0;           // character position in the input stream
+        this.row = 1;
+        this.col = 1;
+        this.startPos = 0;
+        this.startRow = 1;
+        this.startCol = 1;
+        this.tokens = [];
+    }
+
+    addToken(type, token, flags=0)
+    {
+        this.tokens.push({
+            type: type,
+            str: token,
+            flags: flags,
+
+            // These are used in error reporting. They're not needed for anything else.
+            row: this.startRow,
+            col: this.startCol,
+            pos: this.startPos,
+            len: this.pos - this.startPos,
+        });
+    }
+
+    done()
+    {
+        return this.pos >= this.source.length;
+    }
+
+    peek()
+    {
+        if (this.done())
+            return null;
+
+        return this.source[this.pos];
+    }
+
+    read()
+    {
+        const c = this.source[this.pos++];
+
+        if (c == "\n") {
+            this.row++;
+            this.col = 0;
+        }
+
+        if (c != "\r") {
+            // Transparently treat \n\r (or \r\n) newlines as just \n
+            this.col++;
+        }
+
+        return c;
+    }
+
+    match(expected)
+    {
+        if (this.done())
+            return false;
+
+        if (this.source[this.pos] != expected)
+            return false;
+
+        this.pos++;
+        this.col++;     // don't call match("\r") if you want the column number to be correct
+
         return true;
     }
 
-    setValue()
+    comment()
     {
+        while (true) {
+            if (this.peek() == "\n" || this.done())
+                break;
+
+            this.read();
+        }
     }
 
-    getValue()
+    content(initial)
     {
-        return null;
+        let quoted = false,
+            escape = false,
+            token = "",
+            flags = 0;
+
+        if (`"'/`.includes(initial)) {
+            // We have three types of values/strings here: unquoted, quoted and regexp.
+            // The only difference between quoted and regexp strings is the terminating
+            // character. For unquoted strings, any unescaped whitespace or characters
+            // that are actually part of the language syntax end the string.
+            quoted = true;
+
+            if (initial == "/")
+                flags |= TokenFlags.REGEXP;
+        } else {
+            // Start the token with a non-quote character
+            token += initial;
+        }
+
+        while (true) {
+            if (this.done()) {
+                if (quoted) {
+                    this.logger.error("unterminated_string",
+                                      this.startRow, this.startCol, this.startPos, this.col - this.startCol);
+                    return true;
+                }
+
+                break;
+            }
+
+            // Can't use read() here, otherwise we can end up reading one character too far
+            const c = this.peek();
+
+            if (c == "\\") {
+                escape = true;
+                this.read();
+                continue;
+            }
+
+            if (escape) {
+                // Process escape codes
+                switch (c) {
+                    case "n":
+                        token += "\n";
+                        flags |= TokenFlags.MULTILINE;
+                        break;
+
+                    case "r":
+                        token += "\r";
+                        break;
+
+                    case "t":
+                        token += "\t";
+                        break;
+
+                    default:
+                        // Unknown escape, pass it through as-is
+                        token += `\\${c}`;
+                        break;
+                }
+            } else {
+                if (quoted) {
+                    // For quoted strings, the initial character also ends the string
+                    if (c == initial) {
+                        this.read();
+                        break;
+                    }
+
+                    if (c == "\n")
+                        flags |= TokenFlags.MULTILINE;
+                } else if (" \n\r\t()&|<>=!#".includes(c)) {
+                    // Only these can end an unquoted string as they're part of the language itself
+                    break;
+                }
+
+                token += c;
+            }
+
+            this.read();
+            escape = false;
+        }
+
+        if (escape) {
+            // Unfinished escape sequence (+1 to skip the escape character)
+            this.logger.error("unexpected_end",
+                              this.startRow, this.startCol, this.startPos, this.col - this.startCol + 1);
+            return true;
+        }
+
+        // Quoted strings are hardcoded to always be values, but unquoted
+        // strings are either values or column names
+        if (!quoted && this.columnDefinitions.isColumn(token))
+            this.addToken(TokenType.COLUMN, this.columnDefinitions.expandAlias(token), flags);
+        else this.addToken(TokenType.VALUE, token, flags);
+
+        return true;
+    }
+
+    token()
+    {
+        // Remember the starting position, so we'll know exact token locations and lengths
+        this.startPos = this.pos;
+        this.startRow = this.row;
+        this.startCol = this.col;
+
+        const c = this.read();
+
+        switch (c) {
+            case " ":
+            case "\t":
+            case "\n":
+            case "\r":
+                // Either already handled in read(), or we can skip these
+                break;
+
+            case "#":
+                this.comment();
+                break;
+
+            case "=":
+                // equality, permit "=" and "=="
+                if (this.match("="))
+                    this.addToken(TokenType.OPERATOR, "=");
+                else this.addToken(TokenType.OPERATOR, "=");
+                break;
+
+            case "!":
+                // ! (unary negation), != (inequality) or !! (database field presence check)
+                if (this.match("="))
+                    this.addToken(TokenType.OPERATOR, "!=");
+                else if (this.match("!"))
+                    this.addToken(TokenType.OPERATOR, "!!");
+                else this.addToken(TokenType.BOOL_NOT, "!");
+                break;
+
+            case "<":
+                // < or <=
+                if (this.match("="))
+                    this.addToken(TokenType.OPERATOR, "<=");
+                else this.addToken(TokenType.OPERATOR, "<");
+                break;
+
+            case ">":
+                // > or >=
+                if (this.match("="))
+                    this.addToken(TokenType.OPERATOR, ">=");
+                else this.addToken(TokenType.OPERATOR, ">");
+                break;
+
+            case "&":
+                // && (and)
+                if (this.match("&"))
+                    this.addToken(TokenType.BOOL_AND, "&&");
+                else this.logger.error("unknown_operator", this.startRow, this.startCol, this.startPos, 2);
+                break;
+
+            case "|":
+                // || (or)
+                if (this.match("|"))
+                    this.addToken(TokenType.BOOL_OR, "||");
+                else this.logger.error("unknown_operator", this.startRow, this.startCol, this.startPos, 2);
+                break;
+
+            case "(":
+                this.addToken(TokenType.OPEN_PAREN, "(");
+                break;
+
+            case ")":
+                this.addToken(TokenType.CLOSE_PAREN, ")");
+                break;
+
+            default:
+                // Could be a column name or a string, or a number, etc.
+                if (this.content(c))
+                    break;
+
+                // I don't currently know any syntactical structure that could end up here
+                this.logger.error("syntax_error", this.startRow, this.startCol, this.startPos, 1);
+                break;
+        }
+    }
+
+    tokenize(logger, columns, source)
+    {
+        this.columnDefinitions = columns;
+        this.logger = logger;
+
+        this.pos = 0;
+        this.source = source;
+        this.row = 1;
+        this.col = 1;
+        this.tokens = [];
+
+        while (!this.done())
+            this.token();
     }
 };
 
-class FilterEditBool extends FilterEditBase {
-    constructor(container)
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// SYNTAX ANALYZER
+
+/*
+This isn't a recursive-descent parser. It just looks at the current token and the token before
+it and makes all the decisions based on those. This parser is only used to validate the filter
+string and move all comparisons into their own array. No AST is build. The remaining tokens
+are stored in a new array that is then fed to the Shunting Yard algorithm.
+*/
+
+class Parser {
+    constructor()
     {
-        super(container);
+        this.columnDefinitions = null;
+        this.logger = null;
 
-        let html = "";
+        this.tokens = [];
+        this.previous = TokenType.START;
+        this.pos = 0;
 
-        html += `<input type="radio" name="type" id="filter-bool-true" checked><label for="filter-bool-true">${_tr('filter_editor.editor.bool_true')}</label><br>`;
-        html += `<input type="radio" name="type" id="filter-bool-false"><label for="filter-bool-false">${_tr('filter_editor.editor.bool_false')}</label>`;
-
-        this.container.innerHTML = html;
+        this.comparisons = [];
+        this.output = [];
     }
 
-    setValue(value)
+    prev()
     {
-        const v = Array.isArray(value) ? value[0] : value;
+        for (let i = 0; i < arguments.length; i++)
+            if (this.previous == arguments[i])
+                return true;
 
-        this.container.querySelector("input#filter-bool-true").checked = (v === true);
-        this.container.querySelector("input#filter-bool-false").checked = (v !== true);
+        return false;
     }
 
-    getValue()
+    peek()
     {
-        return this.container.querySelector("input#filter-bool-true").checked;
-    }
-};
+        if (this.pos + 1 >= this.tokens.length)
+            return false;
 
-class FilterEditInteger extends FilterEditBase {
-    constructor(container)
-    {
-        super(container);
+        const type = this.tokens[this.pos + 1].type;
 
-        let html = "";
+        for (let i = 0; i < arguments.length; i++)
+            if (type == arguments[i])
+                return true;
 
-        html += `<input type="text" id="filter-number-value" style="width: 100%;" placeholder="Numeerinen arvo">`;
-        html += "<p>" + _tr('filter_editor.editor.integer_help') + "</p>";
-
-        this.container.innerHTML = html;
+        return false;
     }
 
-    validate()
+    // Adds a new comparison or finds the existing one. Always returns an index
+    // to a comparison you can use to look up whatever you passed to this.
+    comparison(column, operator, value)
     {
-        let input = this.container.querySelector("input#filter-number-value");
+        for (let i = 0; i < this.comparisons.length; i++) {
+            const c = this.comparisons[i];
 
-        if (input.value.trim().length == 0) {
-            window.alert(_tr('filter_editor.editor.integer_missing_value'));
+            if (c.column.str == column.str &&
+                c.operator.str == operator.str &&
+                c.value.str == value.str &&
+                c.value.flags == value.flags)
+                return i;
+        }
+
+        this.comparisons.push({
+            column: column,
+            operator: operator,
+            value: value,
+        });
+
+        return this.comparisons.length - 1;
+    }
+
+    parse(logger, columns, tokens, lastRow, lastCol)
+    {
+        this.columnDefinitions = columns;
+        this.logger = logger;
+
+        this.tokens = [...tokens];
+        this.previous = TokenType.START;
+        this.pos = 0;
+
+        this.output = [];
+        this.comparisons = [];
+
+        let errors = false,
+            nesting = 0,
+            columnIndex = -1,
+            operatorIndex = -1;
+
+        while (this.pos < this.tokens.length) {
+            const t = this.tokens[this.pos];
+
+            switch (t.type) {
+                case TokenType.START:
+                    break;
+
+                case TokenType.COLUMN:
+                    if (this.prev(TokenType.START, TokenType.OPEN_PAREN,
+                                  TokenType.BOOL_AND, TokenType.BOOL_OR, TokenType.BOOL_NOT)) {
+
+                        // If there is no operator after this, then this is a shorthand "!!"
+                        // syntax. Expand the shorthand by splicing two extra tokens into
+                        // the stream after the column name. This is really ugly, but it works
+                        // and it really does make writing filter expressions nicer.
+                        if (this.pos + 1 >= this.tokens.length ||
+                            this.peek(TokenType.BOOL_AND, TokenType.BOOL_OR, TokenType.CLOSE_PAREN)) {
+
+                            let opr = {...t},
+                                val = {...t};
+
+                            opr.type = TokenType.OPERATOR;
+                            opr.flags = 0;
+                            opr.str = "!!";
+                            opr.len = 2;
+
+                            // Exists or not?
+                            val.type = TokenType.VALUE;
+                            val.flags = 0;
+                            val.str = this.prev(TokenType.BOOL_NOT) ? "0" : "1";
+                            val.len = 1;
+
+                            if (this.prev(TokenType.BOOL_NOT)) {
+                                // In this case, the negation before the colum name is part
+                                // of the coercion. We don't want to negate the result of
+                                // this test, so remove the negation from the opcodes.
+                                // Ugly ugly ugly.
+                                this.output.pop();
+                            }
+
+                            this.tokens.splice(this.pos + 1, 0, opr);
+                            this.tokens.splice(this.pos + 2, 0, val);
+
+                            // Then continue like nothing happened...
+                        }
+
+                        columnIndex = this.pos;
+                        operatorIndex = -1;
+
+                        break;
+                    }
+
+                    this.logger.errorToken("unexpected_column_name", t);
+                    errors = true;
+                    break;
+
+                case TokenType.OPERATOR:
+                    if (this.previous == TokenType.COLUMN) {
+                        operatorIndex = this.pos;
+                        break;
+                    }
+
+                    this.logger.errorToken("expected_column_name", t);
+                    errors = true;
+                    columnIndex = -1;
+                    operatorIndex = -1;
+                    break;
+
+                case TokenType.VALUE:
+                    if (this.previous == TokenType.OPERATOR) {
+                        if (columnIndex == -1) {
+                            this.logger.errorToken("expected_operator", t);
+                            errors = true;
+                            break;
+                        }
+
+                        const index = this.comparison(this.tokens[columnIndex],
+                                                      this.tokens[operatorIndex],
+                                                      this.tokens[this.pos]);
+
+                        this.output.push([index, -1]);
+
+                        columnIndex = -1;
+                        operatorIndex = -1;
+                        break;
+                    }
+
+                    if (this.previous == TokenType.COLUMN) {
+                        this.logger.errorToken("expected_operator", t);
+                        errors = true;
+                    } else {
+                        this.logger.errorToken("expected_column_name", t);
+                        errors = true;
+                    }
+
+                    columnIndex = -1;
+                    operatorIndex = -1;
+                    break;
+
+                case TokenType.BOOL_AND:
+                    if (!this.prev(TokenType.VALUE, TokenType.CLOSE_PAREN)) {
+                        this.logger.errorToken("expected_value_rpar", t);
+                        errors = true;
+                        break;
+                    }
+
+                    this.output.push(["&", 1]);
+                    break;
+
+                case TokenType.BOOL_OR:
+                    if (this.previous == TokenType.COLUMN) {
+                        this.logger.errorToken("expected_operator", t);
+                        errors = true;
+                        break;
+                    }
+
+                    if (!this.prev(TokenType.VALUE, TokenType.CLOSE_PAREN)) {
+                        this.logger.errorToken("expected_value_rpar", t);
+                        errors = true;
+                        break;
+                    }
+
+                    this.output.push(["|", 2]);
+                    break;
+
+                case TokenType.BOOL_NOT:
+                    if (!this.prev(TokenType.START, TokenType.BOOL_AND, TokenType.BOOL_OR,
+                                   TokenType.BOOL_NOT, TokenType.OPEN_PAREN)) {
+                        this.logger.errorToken("unexpected_negation", t);
+                        errors = true;
+                        break;
+                    }
+
+                    this.output.push(["!", 0]);
+                    break;
+
+                case TokenType.OPEN_PAREN:
+                    if (!this.prev(TokenType.START, TokenType.VALUE,
+                                   TokenType.BOOL_AND, TokenType.BOOL_OR, TokenType.BOOL_NOT,
+                                   TokenType.OPEN_PAREN)) {
+                        this.logger.errorToken("unexpected_lpar", t);
+                        errors = true;
+                        break;
+                    }
+
+                    nesting++;
+                    this.output.push(["(", -1]);
+                    break;
+
+                case TokenType.CLOSE_PAREN:
+                    if (!this.prev(TokenType.VALUE, TokenType.CLOSE_PAREN)) {
+                        this.logger.errorToken("unexpected_rpar", t);
+                        errors = true;
+                        break;
+                    }
+
+                    if (nesting < 1) {
+                        this.logger.errorToken("unbalanced_nesting", t);
+                        errors = true;
+                        return false;
+                    }
+
+                    nesting--;
+                    this.output.push([")", -1]);
+                    break;
+
+                default:
+                    this.logger.errorToken("syntax_error", t);
+                    errors = true;
+                    return false;
+            }
+
+            this.previous = t.type;
+            this.pos++;
+        }
+
+        if (!this.prev(TokenType.START, TokenType.VALUE, TokenType.CLOSE_PAREN)) {
+            this.logger.error("unexpected_end", lastRow, lastCol, this.pos);
             return false;
         }
 
-        return true;
+        if (nesting != 0) {
+            this.logger.error("unbalanced_nesting", lastRow, lastCol, this.pos);
+            return false;
+        }
+
+        return !errors;
     }
+};
 
-    setValue(value)
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// RPN CODE GENERATION
+
+/*
+This is a modified Shunting Yard algorithm. It has been changed to only accept logical AND, OR
+and NOT operators instead of addition and such. If you think about it, a "||" is "plus" because
+either side being non-zero is enough, and "&&" is multiplication because both sides must be
+non-zero. "!" is multiplying by -1. And for numbers, you only have 0 and 1 because a comparison
+either succeeds (1) or fails (0). An unmodified Shunting Yard algorithm can therefore handle
+logical expressions if you replace the operators and numbers.
+*/
+
+// Operators, their precedences and associativities
+const Associativity = {
+    LEFT: 0,
+    RIGHT: 1
+};
+
+// If this table is reordered, you must change the parser above to match the new order
+const SHUNTING_OPERATORS = [
+    { op: '!', precedence: 4, assoc: Associativity.LEFT },
+    { op: '&', precedence: 3, assoc: Associativity.LEFT },
+    { op: '|', precedence: 2, assoc: Associativity.LEFT },
+];
+
+class CodeGenerator {
+    compile(input)
     {
-        let input = this.container.querySelector("input#filter-number-value");
+        let output = [];
 
-        // Allow multiple values
-        if (Array.isArray(value))
-            input.value = value.join("|");
-        else input.value = value;
-    }
+        let ops = [],       // operator stack
+            pos = 0;
 
-    getValue()
-    {
-        // Since multiple values are allowed, we must split and clean the string
-        const raw = this.container.querySelector("input#filter-number-value").value.trim().split("|");
-        let clean = [];
+        // This was converted almost verbatim from the pseudocode given on the Wikipedia's
+        // page about the Shunting Yard algorithm. If you want comments, read the page.
+        while (pos < input.length) {
+            const tok = input[pos];
 
-        for (const n of raw) {
-            if (n === null || n == "")
+            // Load a comparison result. All numbers are indexes to the results table.
+            if (typeof(tok[0]) == "number") {
+                output.push(tok);
+                pos++;
                 continue;
+            }
 
+            // Process an operator
+            // tok[0] = operator token, tok[1] = index to OPERATORS[]
+            switch (tok[0]) {
+                case "!":
+                case "&":
+                case "|":
+                {
+                    const opIndex = tok[1],
+                          thisOp = SHUNTING_OPERATORS[opIndex];
+
+                    while (ops.length > 0) {
+                        const top = ops[ops.length - 1];
+
+                        if (top[0] != "(" &&
+                            (SHUNTING_OPERATORS[top[1]].precedence > thisOp.precedence ||
+                                (SHUNTING_OPERATORS[top[1]].precedence == thisOp.precedence &&
+                                    thisOp.assoc == Associativity.LEFT))) {
+
+                            output.push(top);
+                            ops.pop();
+                        } else break;
+                    }
+
+                    ops.push(tok);
+                    break;
+                }
+
+                case "(":
+                    ops.push(tok);
+                    break;
+
+                case ")": {
+                    while (ops.length > 0) {
+                        const top = ops[ops.length - 1];
+
+                        if (top[0] != "(") {
+                            output.push(top);
+                            ops.pop();
+                        } else break;
+                    }
+
+                    if (ops.length == 0)
+                        throw new Error(`Mismatched parenthesis in Shunting Yard (1)`);
+
+                    ops.pop();
+                    break;
+                }
+
+                default:
+                    throw new Error(`Unknown token "${tok[0]}"`);
+            }
+
+            pos++;
+        }
+
+        while (ops.length > 0) {
+            const top = ops[ops.length - 1];
+
+            if (top[0] == "(")
+                throw new Error(`Mismatched parenthesis in Shunting Yard (2)`);
+
+            output.push(top);
+            ops.pop();
+        }
+
+        return output;
+    }
+};
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// COMPARISON EVALUATORS
+
+/*
+The RPN program contains only binary logic. These evaluators actually figure out if the logic
+values being tested are true (1) or false (0). They're "compiled" only once, but they must be
+re-evaluated again for every row that is being checked.
+*/
+
+// All known operators
+const KNOWN_OPERATORS = new Set(["=", "!=", "<", "<=", ">", ">=", "!!"]);
+
+// Which operators can be used with different column types? For example, strings cannot
+// be compared with < or > (actually they can be, but it won't result in what you expect).
+const ALLOWED_OPERATORS = {
+    [ColumnType.BOOL]: new Set(["=", "!=", "!!"]),
+    [ColumnType.NUMERIC]: new Set(["=", "!=", "<", "<=", ">", ">=", "!!"]),
+    [ColumnType.UNIXTIME]: new Set(["=", "!=", "<", "<=", ">", ">=", "!!"]),
+    [ColumnType.STRING]: new Set(["=", "!=", "!!"]),
+};
+
+// Absolute ("YYYY-MM-DD HH:MM:SS") and relative ("-7d") time matchers
+const ABSOLUTE_TIME = /^(?<year>\d{4})-?(?<month>\d{2})?-?(?<day>\d{2})? ?(?<hour>\d{2})?:?(?<minute>\d{2})?:?(?<second>\d{2})?$/,
+      RELATIVE_TIME = /^(?<sign>(\+|-))?(?<value>(\d*))(?<unit>(s|h|d|w|m|y))?$/;
+
+// Storage size matcher ("10M", "1.3G", "50%10G" and so on).
+// XY or Z%XY, where X=value, Y=optional unit, Z=percentage. Permit floats, written with
+// either commas or dots.
+const STORAGE_PARSER = /^((?<percent>(([0-9]*[.,])?[0-9]+))%)?(?<value>(([0-9]*[.,])?[0-9]+))(?<unit>([a-zA-Z]))?$/;
+
+// String->float, understands dots and commas (so locales that use dots or commas for
+// thousands separating will work correctly)
+function floatize(str)
+{
+    return parseFloat(str.replace(",", "."));
+}
+
+// Converts a "YYYY-MM-DD HH:MM:SS" into a Date object, but the catch is that you can omit
+// the parts you don't need, ie. the more you specify, the more accurate it gets. Giving
+// "2021" to this function returns 2021-01-01 00:00:00, "2021-05" returns 2021-05-01 00:00:00,
+// "2021-05-27 19:37" returns 2021-05-27 19:37:00 and so on. The other format this function
+// understands are relative times: if the input value is an integer, then it is added to the
+// CURRENT time and returned. Negative values point to the past, positive point to the future.
+function parseAbsoluteOrRelativeDate(str)
+{
+    let match = ABSOLUTE_TIME.exec(str);
+
+    if (match !== null) {
+        // Parse an absolute datetime
+
+        // This should cut off after the first missing element (ie. if you omit the day,
+        // then hours, minutes and seconds should not be set), but the regexp won't match
+        // it then, so no harm done.
+        const year = parseInt(match.groups.year, 10),
+              month = parseInt(match.groups.month || "1", 10) - 1,
+              day = parseInt(match.groups.day || "1", 10),
+              hour = parseInt(match.groups.hour || "0", 10),
+              minute = parseInt(match.groups.minute || "0", 10),
+              second = parseInt(match.groups.second || "0", 10);
+
+        let d = null;
+
+        try {
+            d = new Date();
+
+            d.setFullYear(year);
+            d.setMonth(month);
+            d.setDate(day);
+            d.setHours(hour);
+            d.setMinutes(minute);
+            d.setSeconds(second);
+            d.setMilliseconds(0);       // the database values have only 1-second granularity
+        } catch (e) {
+            console.error(`parseAbsoluteOrRelativeDate(): can't construct an absolute Date object from "${str}":`);
+            console.error(e);
+            return null;
+        }
+
+        return d;
+    }
+
+    match = RELATIVE_TIME.exec(str);
+
+    if (match === null) {
+        // Don't know what this string means
+        console.error(`parseAbsoluteOrRelativeDate(): "${str}" is neither absolute nor relative date`);
+        return null;
+    }
+
+    // Parse a relative datetime
+    let value = parseInt(match.groups.value, 10);
+
+    // Scale
+    switch (match.groups.unit) {
+        default:
+        case "s":
+            // Seconds are the default, do nothing
+            break;
+
+        case "h":
+            value *= 60 * 60;               // 1 hour in seconds
+            break;
+
+        case "d":
+            value *= 60 * 60 * 24;          // 1 day in seconds
+            break;
+
+        case "w":
+            value *= 60 * 60 * 24 * 7;      // 1 week in seconds
+            break;
+
+        case "m":
+            value *= 60 * 60 * 24 * 30;     // 1 (30-day) month in seconds
+            break;
+
+        case "y":
+            value *= 60 * 60 * 24 * 365;    // 1 year with 365 days (no leap year checks here)
+            break;
+    }
+
+    // Sign
+    if (match.groups.sign !== undefined) {
+        if (match.groups.sign == "-")
+            value *= -1;
+
+        // Treat all other signs are +, even unknown ones (there shouldn't be any, since the
+        // regexp rejects them)
+    }
+
+    let d = new Date();
+
+    try {
+        d.setSeconds(d.getSeconds() + value);
+        d.setMilliseconds(0);       // the database values have only 1-second granularity
+    } catch (e) {
+        console.error(`parseAbsoluteOrRelativeDate(): can't construct a relative Date object from "${str}":`);
+        console.error(e);
+        return null;
+    }
+
+    return d;
+}
+
+class ComparisonCompiler {
+    constructor()
+    {
+        this.logger = null;
+    }
+
+    // Parses and expands a value with unit, like "10M" or "10G" to a full number. Optionally
+    // calculates a percentage value, like "50%10M" is equivalent to writing "5M".
+    __parseStorage(valueToken)
+    {
+        const storage = STORAGE_PARSER.exec(valueToken.str.trim());
+
+        if (storage === null) {
+            // Just a number, no units or percentages
             try {
-                parseInt(n, 10);
+                const v = floatize(valueToken.str);
+
+                if (isNaN(v)) {
+                    console.error(`__parseStorage(): "${valueToken.str}" is not a valid number`);
+                    this.logger.errorToken("not_a_number", valueToken);
+                    return null;
+                }
+
+                return v;
             } catch (e) {
-                continue;
+                console.error(`__parseStorage(): "${valueToken.str}" cannot be parsed as a float`);
+                this.logger.errorToken("not_a_number", valueToken);
+                return null;
             }
-
-            clean.push(parseInt(n, 10));
         }
 
-        return clean;
-    }
-};
+        // The base value. It's easier if we treat everything here as a float.
+        let value = 0;
 
-class FilterEditFloat extends FilterEditInteger {
-    constructor(container)
-    {
-        super(container);
-    }
-
-    getValue()
-    {
-        // Again, multiple values are allowed, so do some cleanup
-        const raw = this.container.querySelector("input#filter-number-value").value.trim().split("|");
-        let clean = [];
-
-        for (const n of raw) {
-            if (n === null || n == "")
-                continue;
-
-            // floats require more logic than integers (all numbers are floats in JS anyway...)
-            if (isNaN(n))
-                continue;
-
-            const f = parseFloat(n);
-
-            if (f === NaN || f === Infinity)
-                continue;
-
-            clean.push(parseFloat(n));
+        try {
+            value = floatize(storage.groups.value);
+        } catch (e) {
+            console.error(`__parseStorage(): "${storage.groups.value}" cannot be parsed as a float`);
+            this.logger.errorToken("not_a_number", valueToken);
+            return null;
         }
 
-        return clean;
-    }
-};
+        // Scale unit
+        let unit = storage.groups.unit;
 
-class FilterEditUnixtime extends FilterEditBase {
-    constructor(container)
-    {
-        super(container);
+        if (unit === undefined || unit === null)
+            unit = "B";
 
-        let html = "";
+        switch (unit) {
+            case "B":
+                // bytes are the default, do nothing
+                break;
 
-        html += `<input type="radio" name="type" id="filter-time-absolute" checked><label for="filter-time-absolute">${_tr('filter_editor.editor.time_absolute')}</label><br>`;
-        html += `<div class="margin-left-25 margin-top-5">`;
-        html += `<input type="text" id="filter-time-absolute-value" maxlength="19" size="20" placeholder="${_tr('filter_editor.editor.time_placeholder')}">`;
-        html += ` <button id="absoluteTimeHelp">${_tr('help')}</button>`;
-        html += `</div><br>`;
-        html += `<input type="radio" name="type" id="filter-time-relative"><label for="filter-time-relative">${_tr('filter_editor.editor.time_relative')}</label><br>`;
-        html += `<div class="margin-left-25 margin-top-5">`;
-        html += `<table>`;
-        html += `<tr><td><label for="filter-time-rel-amount">${_tr('filter_editor.editor.time_relative_title')}</label></td>`;
-        html += `<td><input type="number" size="15" id="filter-time-relative-value" placeholder="0"> <button id="relativeTimeHelp">${_tr('help')}</button></td></tr>`;
-        html += `<tr><td><label for="filter-time-presets">${_tr('filter_editor.editor.time_presets')}</label></td><td><select id="filter-time-presets">`;
-        html += `<option disabled hidden selected>${_tr('selected')}</option>`;
-        html += `<option data-value="-3600">${_tr('filter_editor.editor.time_preset.hours1')}</option>`;
-        html += `<option data-value="-43200">${_tr('filter_editor.editor.time_preset.hours12')}</option>`;
-        html += `<option data-value="-86400">${_tr('filter_editor.editor.time_preset.day1')}</option>`;
-        html += `<option data-value="-604800">${_tr('filter_editor.editor.time_preset.week1')}</option>`;
-        html += `<option data-value="-2592000">${_tr('filter_editor.editor.time_preset.days30')}</option>`;
-        html += `<option data-value="-5184000">${_tr('filter_editor.editor.time_preset.days60')}</option>`;
-        html += `<option data-value="-7776000">${_tr('filter_editor.editor.time_preset.days90')}</option>`;
-        html += `<option data-value="-15552000">${_tr('filter_editor.editor.time_preset.days180')}</option>`;
-        html += `<option data-value="-23328000">${_tr('filter_editor.editor.time_preset.days270')}</option>`;
-        html += `<option data-value="-31536000">${_tr('filter_editor.editor.time_preset.days365')}</option>`;
-        html += `</select></td></tr></table>`;
-        html += `</div>`;
+            case "K":
+                value *= 1024;
+                break;
 
-        this.container.innerHTML = html;
+            case "M":
+                value *= 1024 * 1024;
+                break;
 
-        this.container.querySelector("select#filter-time-presets").addEventListener("change",
-            (e) => this.setRelativeTime(e));
+            case "G":
+                value *= 1024 * 1024 * 1024;
+                break;
 
-        this.container.querySelector("button#absoluteTimeHelp").addEventListener("click",
-            (e) => this.showHelp('filter_editor.editor.time_absolute_help'));
+            case "T":
+                value *= 1024 * 1024 * 1024 * 1024;
+                break;
 
-        this.container.querySelector("button#relativeTimeHelp").addEventListener("click",
-            (e) => this.showHelp('filter_editor.editor.time_direction'));
+            default:
+                console.error(`__parseStorage(): invalid storage unit "${unit}"`);
+                this.logger.errorToken("invalid_storage_unit", valueToken, unit);
+                return null;
+        }
+
+        // Percentage
+        let percent = storage.groups.percent;
+
+        if (percent) {
+            percent = Math.min(Math.max(floatize(percent), 0.0), 100.0);
+            value *= percent / 100.0;
+        }
+
+        return value;
     }
 
-    showHelp(id)
+    __compileBoolean(columnToken, operatorToken, valueToken)
     {
-        window.alert(_tr(id));
+        return {
+            column: columnToken.str,
+            operator: operatorToken.str,
+            value: ["1", "t", "y", "true", "yes", "on"].includes(valueToken.str.toLowerCase()),
+            regexp: false
+        };
     }
 
-    setRelativeTime(selector)
+    __compileNumeric(columnToken, operatorToken, valueToken)
     {
-        this.container.querySelector("input#filter-time-relative-value").value =
-            event.target[event.target.selectedIndex].dataset.value;
-    }
+        const colDef = this.columnDefs.get(this.columnDefs.expandAlias(columnToken.str));
+        let value = undefined;
 
-    validate()
-    {
-        if (this.container.querySelector("input#filter-time-absolute").checked) {
-            const v = this.container.querySelector("input#filter-time-absolute-value").value;
+        if (colDef.flags & ColumnFlag.F_STORAGE) {
+            // Parse a storage specifier, like "5M" or "10G"
+            value = this.__parseStorage(valueToken);
 
-            if (v.trim().length == 0) {
-                window.alert(_tr('filter_editor.editor.time_missing_absolute'));
-                return false;
+            if (value === null)
+                return null;
+        } else {
+            try {
+                if (valueToken.str.indexOf(".") == -1 && valueToken.str.indexOf(",") == -1) {
+                    // Integer
+                    value = parseInt(valueToken.str, 10);
+                } else {
+                    // Float
+                    value = floatize(valueToken.str);
+                }
+
+                if (isNaN(value))
+                    throw new Error("not an integer");
+            } catch (e) {
+                console.error(`ComparisonCompiler::compile(): can't parse a number: ${e.message}`);
+                console.error(e);
+                this.logger.errorToken("not_a_number", valueToken);
+                return null;
             }
+        }
 
-            const d = parseAbsoluteOrRelativeDate(v);
+        return {
+            column: columnToken.str,
+            operator: operatorToken.str,
+            value: value,
+            regexp: false
+        };
+    }
 
-            if (d === null) {
-                window.alert(_tr('filter_editor.editor.time_invalid_absolute'));
-                return false;
-            }
+    __compileUnixtime(columnToken, operatorToken, valueToken)
+    {
+        const out = parseAbsoluteOrRelativeDate(valueToken.str);
 
-            if (d.getFullYear() < MIN_YEAR || d.getFullYear() > MAX_YEAR) {
-                window.alert(I18n.translate('filter_editor.editor.time_invalid_absolute_year', {min: MIN_YEAR, max: MAX_YEAR}));
-                return false;
+        if (out === null) {
+            this.logger.errorToken("unparseable_time", valueToken);
+            return false;
+        }
+
+        return {
+            column: columnToken.str,
+            operator: operatorToken.str,
+            value: out.getTime() / 1000,        // convert to seconds
+            regexp: false
+        }
+    }
+
+    __compileString(columnToken, operatorToken, valueToken)
+    {
+        let regexp = false,
+            value = undefined;
+
+        if (valueToken.flags & TokenFlags.REGEXP) {
+            // Compile a regexp
+            try {
+                value = new RegExp(valueToken.str.trim(),
+                                   valueToken.flags & TokenFlags.MULTILINE ? "miu" : "iu"),
+                regexp = true;
+            } catch (e) {
+                console.error(`ComparisonCompiler::compile(): regexp compilation failed: ${e.message}`);
+                this.logger.errorToken("invalid_regexp", valueToken, e.message);
+                return null;
             }
         } else {
-            let v = this.container.querySelector("input#filter-time-relative-value").value;
-
-            if (v.trim().length == 0) {
-                window.alert(_tr('filter_editor.editor.time_missing_relative'));
-                return false;
-            }
-
-            v = parseInt(v, 10)
-
-            const d = parseAbsoluteOrRelativeDate(v);
-
-            if (d === null) {
-                window.alert(_tr('filter_editor.editor.time_invalid_relative'));
-                return false;
-            }
-
-            if (d.getFullYear() < MIN_YEAR || d.getFullYear() > MAX_YEAR) {
-                window.alert(I18n.translate('filter_editor.editor.time_invalid_relative_year', {min: MIN_YEAR, max: MAX_YEAR, full: d.getFullYear()}));
-                return false;
-            }
+            // A plain string, use as-is
+            value = valueToken.str;
         }
+
+        return {
+            column: columnToken.str,
+            operator: operatorToken.str,
+            value: value,
+            regexp: regexp
+        };
+    }
+
+    // Takes a raw comparison (made of three tokens) and "compiles" it (ie. verifies the data
+    // types, the comparison operator and the value, and converts the stringly-typed value into
+    // "native" JavaScript type). Returns null if it failed.
+    compile(logger, columns, columnToken, operatorToken, valueToken)
+    {
+        this.logger = logger;
+        this.columnDefs = columns;
+
+        // Validate the column and the operator
+        if (!this.columnDefs.isColumn(columnToken.str)) {
+            console.error(`ComparisonCompiler::compile(): unknown column "${columnToken.str}"`);
+            this.logger.errorToken("unknown_column", columnToken);
+            return null;
+        }
+
+        if (!KNOWN_OPERATORS.has(operatorToken.str)) {
+            console.error(`ComparisonCompiler::compile(): invalid operator "${operatorToken.str}"`);
+            this.logger.errorToken("invalid_operator", operatorToken);
+            return null;
+        }
+
+        const colDef = this.columnDefs.get(this.columnDefs.expandAlias(columnToken.str));
+
+        if (!ALLOWED_OPERATORS[colDef.type].has(operatorToken.str)) {
+            console.error(`ComparisonCompiler::compile(): operator "${operatorToken.str}" cannot be used with column type "${colDef.type}"`);
+            this.logger.errorToken("incompatible_operator", operatorToken);
+            return null;
+        }
+
+        if (typeof(valueToken.str) != "string") {
+            console.error(`ComparisonCompiler::compile(): value "${valueToken.str}" is not a string`);
+            this.logger.errorToken("invalid_value", valueToken);
+            return null;
+        }
+
+        // Interpret the comparison value and convert it into a "native" type
+        if (operatorToken.str == "!!") {
+            // Special case: always treat the value as boolean, regardless of what the column is
+            return this.__compileBoolean(columnToken, operatorToken, valueToken);
+        }
+
+        switch (colDef.type) {
+            case ColumnType.BOOL:
+                return this.__compileBoolean(columnToken, operatorToken, valueToken);
+
+            case ColumnType.NUMERIC:
+                return this.__compileNumeric(columnToken, operatorToken, valueToken);
+
+            case ColumnType.UNIXTIME:
+                return this.__compileUnixtime(columnToken, operatorToken, valueToken);
+
+            case ColumnType.STRING:
+                return this.__compileString(columnToken, operatorToken, valueToken);
+
+            default:
+                console.error(`ComparisonCompiler::compile(): unhandled column type "${colDef.type}"`);
+                this.logger.errorToken("unknown_error", columnToken);
+                return null;
+        }
+    }
+};
+
+// Executes a comparison. Returns true if the comparison matches the tested value.
+// Can (sorta) deal with NULL and undefined values.
+function __compareSingleValue(cmp, value)
+{
+    if (cmp.operator != "!!") {
+        if (value === undefined || value === null) {
+            // Treat missing values as false. Actually comparing them with something
+            // is nonsensical. Use the "!!" operator to test if those values actually
+            // are present in the data.
+            return false;
+        }
+    }
+
+    switch (cmp.operator) {
+        case "=":
+            return cmp.regexp ? cmp.value.test(value) : cmp.value === value;
+
+        case "!=":
+            return !(cmp.regexp ? cmp.value.test(value) : cmp.value === value);
+
+        case "<":
+            return value < cmp.value;
+
+        case "<=":
+            return value <= cmp.value;
+
+        case ">":
+            return value > cmp.value;
+
+        case ">=":
+            return value >= cmp.value;
+
+        case "!!":
+            return cmp.value != (value === null || value === undefined);
+
+        default:
+            throw new Error(`compare(): unknown operator "${cmp.operator}"`);
+    }
+}
+
+// Executes a single comparison against a row value. Deals with arrays and NULL/undefined
+// data. Returns true if the comparison matched.
+function compareRowValue(value, cmp)
+{
+    if (value !== undefined && value !== null && Array.isArray(value)) {
+        // Loop over multiple values. Currently only string arrays are supported,
+        // because no other types of arrays exists in the database.
+        if (cmp.operator == "=") {
+            for (const v of value)
+                if (__compareSingleValue(cmp, v))
+                    return true;
+
+            return false;
+        }
+
+        // Assume "!=" because there are only two usable operators with strings
+        for (const v of value)
+            if (!__compareSingleValue(cmp, v))
+                return false;
 
         return true;
     }
 
-    setValue(value)
-    {
-        const v = Array.isArray(value) ? value[0] : value;
+    // Just one value
+    return __compareSingleValue(cmp, value);
+}
 
-        if (typeof(v) == "string") {
-            this.container.querySelector("input#filter-time-absolute").checked = true;
-            this.container.querySelector("input#filter-time-absolute-value").value = value;
-        } else if (typeof(v) == "number") {
-            this.container.querySelector("input#filter-time-relative").checked = true;
-            this.container.querySelector("input#filter-time-relative-value").value = parseInt(v, 10);
-        } else {
-            // Don't know what this is, reset to some sane default
-            this.container.querySelector("input#filter-time-absolute").checked = true;
+// Runs the filter program and returns true if the row matches
+function evaluateFilter(program, comparisonResults)
+{
+    let stack = [],
+        a, b;
+
+    // a simple RPN evaluator
+    for (const instr of program) {
+        switch (instr[0]) {
+            case "!":
+                if (stack.length < 1)
+                    throw new Error("stack underflow while evaluating a logical NOT");
+
+                a = stack.pop();
+                stack.push(!a);
+                break;
+
+            case "&":
+                if (stack.length < 2)
+                    throw new Error("stack underflow while evaluating a logical AND");
+
+                a = stack.pop();
+                b = stack.pop();
+                stack.push(a & b);
+                break;
+
+            case "|":
+                if (stack.length < 2)
+                    throw new Error("stack underflow while evaluating a logical OR");
+
+                a = stack.pop();
+                b = stack.pop();
+
+                stack.push(a | b);
+                break;
+
+            default:
+                // load comparison result
+                stack.push(comparisonResults[instr[0]]);
+                break;
         }
     }
 
-    getValue()
-    {
-        if (this.container.querySelector("input#filter-time-absolute").checked) {
-            return this.container.querySelector("input#filter-time-absolute-value").value.trim();
-        } else {
-            return parseInt(
-                this.container.querySelector("input#filter-time-relative-value").value, 10);
-        }
-    }
+    return stack[0];
+}
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// THE FILTER EDITOR USER INTERFACE
+
+// All known operators and which column types they can be used with
+const OPERATORS = {
+    "=": {
+        allowed: new Set([ColumnType.BOOL, ColumnType.NUMERIC, ColumnType.UNIXTIME, ColumnType.STRING]),
+        multiple: true,
+    },
+
+    "!=": {
+        allowed: new Set([ColumnType.BOOL, ColumnType.NUMERIC, ColumnType.UNIXTIME, ColumnType.STRING]),
+        multiple: true,
+    },
+
+    "<": {
+        allowed: new Set([ColumnType.NUMERIC, ColumnType.UNIXTIME]),
+        multiple: false,
+    },
+
+    "<=": {
+        allowed: new Set([ColumnType.NUMERIC, ColumnType.UNIXTIME]),
+        multiple: false,
+    },
+
+    ">": {
+        allowed: new Set([ColumnType.NUMERIC, ColumnType.UNIXTIME]),
+        multiple: false,
+    },
+
+    ">=": {
+        allowed: new Set([ColumnType.NUMERIC, ColumnType.UNIXTIME]),
+        multiple: false,
+    },
+
+    // interval (closed)
+    "[]": {
+        allowed: new Set([ColumnType.NUMERIC, ColumnType.UNIXTIME]),
+        multiple: true,
+    },
+
+    // reverse interval (closed)
+    "![]": {
+        allowed: new Set([ColumnType.NUMERIC, ColumnType.UNIXTIME]),
+        multiple: true,
+    },
 };
 
-class FilterEditString extends FilterEditBase {
-    constructor(container)
-    {
-        super(container);
+const ColumnTypeStrings = {
+    [ColumnType.BOOL]: "boolean",
+    [ColumnType.NUMERIC]: "numeric",
+    [ColumnType.UNIXTIME]: "unixtime",
+    [ColumnType.STRING]: "string",
+};
 
-        let html = "";
+function makeRandomID()
+{
+    const CHARS = "abcdefghijklmnopqrstuvwxyz";
+    let out = "";
 
-        html += `<input type="text" id="filter-string-value" style="width: 100%;" placeholder="Regexp-arvo">`;
-        html += "<p>" + _tr('filter_editor.editor.string_help') + "</p>";
+    for (let i = 0; i < 20; i++)
+        out += CHARS.charAt(Math.floor(Math.random() * CHARS.length));
+
+    return out;
+}
+
+let filterID_ = 1;
+
+function nextFilterID()
+{
+    return filterID_++;
+}
+
+function hideElements()
+{
+    for (let i = 0; i < arguments.length; i++)
+        arguments[i].classList.add("hidden");
+}
+
+function showElements()
+{
+    for (let i = 0; i < arguments.length; i++)
+        arguments[i].classList.remove("hidden");
+}
+
+function humanOperatorName(operator)
+{
+    switch (operator) {
+        case "=": return "=";
+        case "!=": return "≠";
+        case "<": return "<";
+        case "<=": return "≤";
+        case ">": return ">";
+        case ">=": return "≥";
+        case "[]": return _tr("tabs.filtering.pretty.interval");
+        case "![]": return _tr("tabs.filtering.pretty.not_interval");
+
+        default:
+            throw new Error(`humanOperatorName(): invalid operator "${operator}"`);
+    }
+}
+
+function getDefaultValue(definition)
+{
+    switch (definition.type) {
+        case ColumnType.BOOL:
+            return true;
+
+        case ColumnType.NUMERIC:
+            if (definition.flags & ColumnFlag.F_STORAGE)
+                return "0M";
+
+            return 0;
+
+        case ColumnType.STRING:
+            return "";
+
+        case ColumnType.UNIXTIME:
+            return 0;
+
+        default:
+            throw new Error("getDefaultValue(): invalid column type");
+    }
+}
+
+// Single editable filter
+class EditableFilter {
+constructor()
+{
+    this.active = false;
+    this.column = null;
+    this.operator = null;
+    this.values = [];
+
+    // Current data being edited (the original data is not overwritten until "Save" is pressed)
+    this.editColumn = null;
+    this.editOperator = null;
+    this.editValues = null;
+
+    // True if this is a brand new filter that hasn't been saved yet. Changes how some
+    // operations work (or don't work).
+    this.isNew = false;
+
+    // Editor child class (see below)
+    this.editor = null;
+}
+
+beginEditing()
+{
+    this.editColumn = this.column;
+    this.editOperator = this.operator;
+    this.editValues = [...this.values];
+
+    // The editor is created elsewhere
+}
+
+finishEditing()
+{
+    // Overwrite old values
+    this.column = this.editColumn;
+    this.operator = this.editOperator;
+    this.values = this.editor.getData();
+}
+
+cancelEditing()
+{
+    this.editColumn = null;
+    this.editOperator = null;
+    this.editValues = null;
+
+    // The editor is destroyed elsewhere
+}
+
+// Parses a "raw" filter stored as [active?, column, operator, value1, value2, ... valueN].
+// Returns true if OK.
+load(raw, columnDefinitions)
+{
+    if (!Array.isArray(raw) || raw.length < 4) {
+        console.error(`EditableFilter::fromRaw(): invalid/incomplete raw filter:`);
+        console.error(raw);
+        return false;
+    }
+
+    // The column must be valid. We can tolerate/fix almost everything else, but not this.
+    if (!(raw[1] in columnDefinitions)) {
+        console.warn(`EditableFilter::fromRaw(): column "${raw[1]}" is not valid`);
+        return false;
+    }
+
+    this.active = (raw[0] === true || raw[0] === 1) ? 1 : 0;
+    this.column = raw[1];
+    this.operator = raw[2];
+    this.values = raw.slice(3);
+
+    // Reset invalid operators to "=" because it's the least destructive of them all,
+    // and I'd wager that most filters are simple equality checks
+    if (!(this.operator in OPERATORS)) {
+        console.warn(`EditableFilter::fromRaw(): operator "${this.operator}" is not valid, resetting it to "="`);
+        this.operator = "=";
+    }
+
+    // Is the operator usable with this column type?
+    const opDef = OPERATORS[this.operator],
+          colDef = columnDefinitions[this.column];
+
+    if (!opDef.allowed.has(colDef.type)) {
+        console.warn(`EditableFilter::fromRaw(): operator "${this.operator}" cannot be used with ` +
+                     `column type "${ColumnTypeStrings[colDef.type]}" (column "${this.column}"), ` +
+                     `resetting to "="`);
+        this.operator = "=";
+    }
+
+    // Handle storage units. Remove invalid values.
+    if (colDef.flags & ColumnFlag.F_STORAGE) {
+        let proper = [];
+
+        // Remove invalid entries
+        for (const v of this.values) {
+            try {
+                const m = STORAGE_PARSER.exec(v.toString().trim());
+
+                if (m !== null) {
+                    const unit = (m.groups.unit === undefined || m.groups.unit === null) ? "B" : m.groups.unit;
+                    proper.push(`${m.groups.value}${unit}`);
+                }
+            } catch (e) {
+                console.error(e);
+                continue;
+            }
+        }
+
+        this.values = proper;
+    }
+
+    // Check time strings
+    if (colDef.type == ColumnType.UNIXTIME) {
+        let proper = [];
+
+        for (const v of this.values) {
+            try {
+                if (parseAbsoluteOrRelativeDate(v) !== null)
+                    proper.push(v);
+            } catch (e) {
+                console.error(e);
+                continue;
+            }
+        }
+
+        this.values = proper;
+    }
+
+    if (this.values.length == 0) {
+        // Need to do this check again, because we might have altered the values
+        console.error(`EditableFilter::fromRaw(): filter has no values at all`);
+        return false;
+    }
+
+    // Ensure there's the required number of values for this operator
+    if (this.operator == "[]" || this.operator == "![]") {
+        if (this.values.length == 1) {
+            console.warn(`EditableFilter::fromRaw(): need more than one value, duplicating the single value`);
+            this.values.push(this.values[0]);
+        } else if (this.values.length > 2) {
+            console.warn(`EditableFilter::fromRaw(): intervals can use only two values, removing extras`);
+            this.values = [this.values[0], this.values[1]];
+        }
+    }
+
+    if (this.values.length > 1 && opDef.multiple !== true) {
+        console.warn(`EditableFilter::fromRaw(): operator "${this.operator}" cannot handle multiple values, extra values removed`);
+        this.values = [this.values[0]];
+    }
+
+    return true;
+}
+
+save()
+{
+    return [this.active, this.column, this.operator].concat(this.values);
+}
+
+};  // class EditableFilter
+
+class FilterEditorBase {
+constructor(container, filter, definition)
+{
+    // Target filter
+    this.filter = filter;
+
+    // Does this filter target RAM/HD sizes?
+    this.isStorage = (definition.flags & ColumnFlag.F_STORAGE) ? true : false;
+
+    // Where to put the editor interface
+    this.container = container;
+
+    // Unique UI element prefix
+    this.id = makeRandomID();
+
+    // UI properties
+    this.defaultValue = "";
+    this.fieldSize = 50;
+    this.maxLength = "";
+}
+
+buildUI()
+{
+}
+
+operatorHasChanged(operator)
+{
+    this.buildUI();
+}
+
+getData()
+{
+    throw new Error("you did not override getData()");
+}
+
+// Return [state, message], if state is true then the data is valid, otherwise the
+// message is displayed and the filter is NOT saved (and the editor does not close).
+validate()
+{
+    return [true, null];
+}
+
+// Accessing this.container.query... is so frequent that here's two helpers for it
+$(query) { return this.container.querySelector(query); }
+$all(query) { return this.container.querySelectorAll(query); }
+
+createValueRow(value, showButtons=true, title=null)
+{
+    let row = document.createElement("tr"),
+        html = "";
+
+    if (title !== null)
+        html += `<td>${title}</td>`;
+
+    html += `<td><div class="flex flex-cols flex-gap-5px">`;
+
+    value = value.toString();
+
+    if (this.isStorage) {
+        // Make a unit selector combo box and strip the unit from the value
+        const unit = value.length > 1 ? value.toString().slice(value.length - 1) : null;
+
+        html += `<input type="text" size="${this.fieldSize}" maxlen="" value="${value.length > 1 ? value.slice(0, value.length - 1) : value}">`;
+
+        html += "<select>";
+
+        for (const u of [["B", "B"], ["KiB", "K"], ["MiB", "M"], ["GiB", "G"], ["TiB", "T"]])
+            html += `<option data-unit="${u[1]}" ${u[1] == unit ? "selected" : ""}>${u[0]}</option>`;
+
+        html += "</select>";
+    } else html += `<input type="text" size="${this.fieldSize}" maxlength="${this.maxLength}">`;
+
+    if (showButtons)
+        html += `<button>+</button><button>-</button>`;
+
+    html += "</div></td>";
+
+    row.innerHTML = html;
+
+    if (!this.isStorage)
+        row.querySelector(`input[type="text"]`).value = value;
+
+    if (showButtons)
+        this.addEventHandlers(row);
+
+    return row;
+}
+
+addEventHandlers(row)
+{
+    // +/- button click handlers. Their positions change if the unit combo box is on the row.
+    const add = this.isStorage ? 2 : 1,
+          del = this.isStorage ? 3 : 2;
+
+    row.children[0].children[0].children[add].addEventListener("click", (e) => this.duplicateRow(e));
+    row.children[0].children[0].children[del].addEventListener("click", (e) => this.removeRow(e));
+}
+
+duplicateRow(e)
+{
+    let thisRow = e.target.parentNode.parentNode.parentNode,
+        newRow = thisRow.cloneNode(true);
+
+    if (this.isStorage) {
+        // Turns out that selectedIndex is not part of the DOM. Thank you, JavaScript.
+        // This is so ugly.
+        newRow.children[0].children[0].children[1].selectedIndex =
+            thisRow.children[0].children[0].children[1].selectedIndex;
+    }
+
+    this.addEventHandlers(newRow);
+    thisRow.parentNode.insertBefore(newRow, thisRow.nextSibling);
+}
+
+removeRow(e)
+{
+    let thisRow = e.target.parentNode.parentNode.parentNode;
+
+    thisRow.parentNode.removeChild(thisRow);
+
+    // There must be at least one value at all times, even if it's empty
+    if (this.$all(`table#values tr`).length == 0) {
+        console.log("Creating a new empty value row");
+        this.$("table#values").appendChild(this.createValueRow(this.defaultValue));
+    }
+}
+};  // class FilterEditorBase
+
+class FilterEditorBoolean extends FilterEditorBase {
+buildUI()
+{
+    this.container.innerHTML =
+`<div class="flex flex-rows flex-gap-5px">
+<span><input type="radio" name="${this.id}-value" id="${this.id}-true" ${this.filter.editValues[0] === 1 ? "checked" : ""}><label for="${this.id}-true">${_tr('tabs.filtering.ed.bool.t')}</label></span>
+<span><input type="radio" name="${this.id}-value" id="${this.id}-false" ${this.filter.editValues[0] !== 1 ? "checked" : ""}><label for="${this.id}-false">${_tr('tabs.filtering.ed.bool.f')}</label></span>
+</div>`;
+
+    this.$(`#${this.id}-true`).addEventListener("click", () => { this.filter.editValues = [1]; });
+    this.$(`#${this.id}-false`).addEventListener("click", () => { this.filter.editValues = [0]; });
+}
+
+getData()
+{
+    return [this.filter.editValues[0] === 1 ? 1 : 0];
+}
+};  // class FilterEditorBoolean
+
+class FilterEditorString extends FilterEditorBase {
+buildUI()
+{
+    this.container.innerHTML = `<p>${this.getExplanation()}</p><table id="values"></table>`;
+    let table = this.$("table#values");
+
+    for (const v of this.filter.editValues)
+        table.appendChild(this.createValueRow(v));
+}
+
+getData()
+{
+    let values = [];
+
+    for (const i of this.$all(`table#values tr input[type="text"]`))
+        values.push(i.value.trim());
+
+    return values;
+}
+
+operatorHasChanged(operator)
+{
+    this.$("p").innerHTML = this.getExplanation();
+}
+
+getExplanation()
+{
+    let out = "";
+
+    out += _tr("tabs.filtering.ed.multiple");
+    out += " ";
+    out += _tr((this.filter.editOperator == "=") ? "tabs.filtering.ed.one_hit_is_enough" : "tabs.filtering.ed.no_hits_allowed");
+    out += " ";
+    out += _tr("tabs.filtering.ed.regexp");
+
+    return out;
+}
+};  // class FilterEditorString
+
+class FilterEditorNumeric extends FilterEditorBase {
+constructor(container, filter, definition)
+{
+    super(container, filter, definition);
+
+    this.defaultValue = this.isStorage ? "0M" : "0";
+    this.fieldSize = 10;
+    this.maxLength = "32";
+}
+
+buildUI()
+{
+    const id = this.id;
+    const opr = this.filter.editOperator;
+
+    if (opr == "[]" || opr == "![]") {
+        let help = "";
+
+        if (opr == "[]")
+            help += _tr("tabs.filtering.ed.closed");
+        else help += _tr("tabs.filtering.ed.open");
+
+        this.container.innerHTML = `<p>${help}${this.getExtraHelp()}</p><table id="values"></table>`;
+
+        let table = this.$("table#values");
+
+        table.appendChild(this.createValueRow(this.filter.editValues[0], false, "Min:"));
+        table.appendChild(this.createValueRow(this.filter.editValues[1], false, "Max:"));
+    } else if (opr == "=" || opr == "!=") {
+        let html = `<p>${_tr("tabs.filtering.ed.multiple")}`;
+
+        html += " ";
+        html += _tr((opr == "=") ? "tabs.filtering.ed.one_hit_is_enough" : "tabs.filtering.ed.no_hits_allowed");
+        html += " ";
+
+        html += `${this.getExtraHelp()}</p><table id="values"></table>`;
 
         this.container.innerHTML = html;
+
+        let table = this.$("table#values");
+
+        for (const v of this.filter.editValues)
+            table.appendChild(this.createValueRow(v));
+    } else {
+        this.container.innerHTML = `<p>${_tr("tabs.filtering.ed.single")}${this.getExtraHelp()}</p><table id="values"></table>`;
+        this.$("table#values").appendChild(this.createValueRow(this.filter.editValues[0], false));
+    }
+}
+
+getData()
+{
+    const interval = (this.filter.editOperator == "[]" || this.filter.editOperator == "![]");
+    let values = [];
+
+    // This assumes validate() has been called first and the data is actually valid
+    for (const i of this.$all(`table#values tr input[type="text"]`)) {
+        let n = i.value.trim();
+
+        if (n.length == 0)
+            continue;
+
+        try {
+            n = floatize(n);
+        } catch (e) {
+            continue;
+        }
+
+        if (isNaN(n))
+            continue;
+
+        if (this.isStorage) {
+            const s = i.parentNode.children[1];
+            values.push(`${n}${s.options[s.selectedIndex].dataset.unit}`);  // put the unit back
+        } else values.push(n);
     }
 
-    setValue(value)
-    {
-        this.container.querySelector("input#filter-string-value").value =
-            Array.isArray(value) ? value[0] : value;
+    // min > max, swap
+    // TODO: Make this work with storage
+    if (!this.isStorage && interval && values[0] > values[1])
+        values = [values[1], values[0]];
+
+    return values;
+}
+
+validate()
+{
+    const interval = (this.filter.editOperator == "[]" || this.filter.editOperator == "![]");
+    let valid = 0;
+
+    for (const i of this.$all(`table#values tr input[type="text"]`)) {
+        let n = i.value.trim();
+
+        if (n.length == 0)
+            continue;
+
+        try {
+            n = floatize(n);
+        } catch (e) {
+            return [false, `"${i.value.trim()}" ` + _tr("tabs.filtering.ed.numeric.nan")];
+        }
+
+        if (isNaN(n))
+            return [false, `"${i.value.trim()}" `+ _tr("tabs.filtering.ed.numeric.nan")];
+
+        if (this.isStorage && n < 0)
+            return [false, _tr("tabs.filtering.ed.numeric.negative_storage")];
+
+        valid++;
     }
 
-    getValue()
-    {
-        return this.container.querySelector("input#filter-string-value").value;
+    if (interval && valid < 2)
+        return [false, _tr("tabs.filtering.ed.invalid_interval")];
+
+    if (!interval && valid == 0)
+        return [false, _tr("tabs.filtering.ed.no_values")];
+
+    return [true, null];
+}
+
+getExtraHelp()
+{
+    return "";
+}
+};  // class FilterEditorNumeric
+
+class FilterEditorUnixtime extends FilterEditorNumeric {
+constructor(container, filter, definition)
+{
+    super(container, filter, definition);
+
+    // Use today's date as the default value
+    const d = new Date();
+
+    this.defaultValue = `${d.getFullYear()}-` +
+                        `${String(d.getMonth() + 1).padStart(2, "0")}-` +
+                        `${String(d.getDate()).padStart(2, "0")}`;
+
+    this.fieldSize = 20;
+    this.maxLength = "20";
+}
+
+buildUI()
+{
+    super.buildUI();
+    this.$(`a#${this.id}-help`).addEventListener("click", (e) => this.showHelp(e));
+}
+
+getData()
+{
+    let values = [];
+
+    // Unlike numbers, attempt no string->int conversions here. The filter compiler
+    // engine will deal with interpreting absolute and relative time values.
+    for (const i of this.$all(`table#values tr input[type="text"]`)) {
+        const v = i.value.trim();
+
+        if (v.length == 0)
+            continue;
+
+        values.push(v);
     }
+
+    return values;
+}
+
+validate()
+{
+    const interval = (this.filter.editOperator == "[]" || this.filter.editOperator == "![]");
+    let valid = 0;
+
+    for (const i of this.$all(`table#values tr input[type="text"]`)) {
+        const v = i.value.trim();
+
+        if (v.length == 0)
+            continue;
+
+        if (parseAbsoluteOrRelativeDate(v) === null)
+            return [false, `"${v}"` + _tr("tabs.filtering.ed.time.invalid")];
+
+        valid++;
+    }
+
+    if (interval && valid < 2)
+        return [false, _tr("tabs.filtering.ed.invalid_interval")];
+
+    if (!interval && valid == 0)
+        return [false, _tr("tabs.filtering.ed.no_values")];
+
+    return [true, null];
+}
+
+getExtraHelp()
+{
+    return ` <a href="#" id="${this.id}-help"> ${_tr("tabs.filtering.ed.time.help_link")}</a>.`;
+}
+
+showHelp(e)
+{
+    e.preventDefault();
+    window.alert(_tr("tabs.filtering.ed.time.help"));
+}
+};  // class FilterEditorUnixtime
+
+const RowElem = {
+    BTN_DELETE: 1,
+    BTN_DUPLICATE: 2,
+    CB_ACTIVE: 3,
+    DIV_PRETTY: 4,
+    DIV_EDITOR: 5,
 };
 
 class FilterEditor {
 
-constructor(parentClass, container, columnDefinitions, columnTitles, defaultColumn)
+constructor(parentClass, container, columnDefinitions, columnTitles, filterPresets, filterDefaults, isAdvanced)
 {
     // Who do we tell about filter changes?
     this.parentClass = parentClass;
@@ -310,969 +2050,1367 @@ constructor(parentClass, container, columnDefinitions, columnTitles, defaultColu
     // inside this HTML element.
     this.container = container;
 
-    // Definitions
-    this.columnDefinitions = columnDefinitions;
+    // Column definitions
+    this.plainColumnDefinitions = columnDefinitions;
+    this.columnDefinitions = new ColumnDefinitions(columnDefinitions);
     this.columnTitles = columnTitles;
-    this.defaultColumn = defaultColumn;
 
-    this.ui = {
-        deleteAll: null,
-        jsonToggle: null,
-        jsonSave: null,
-        jsonEditor: null,
-        filterTable: null,
-    };
+    this.updateColumnHelp = true;
+    this.haveHelp = false;
+    this.changed = false;
+    this.isAdvanced = isAdvanced;
 
+    this.filterPresets = filterPresets;
+
+    this.filters = {};      // the traditional filters
     this.showJSON = false;
+    this.defaultFilter = filterDefaults[0];
 
-    // Data
-    this.columns = [];
-    this.columnNames = [];
-    this.filters = [];
+    // The current filter programs. One for the old-style filters, one for the advanced filter.
+    this.comparisons = [];
+    this.program = [];
+    this.comparisonsAdvanced = [];
+    this.programAdvanced = [];
 
-    this.editFilterIndex = null;
-    this.editFilter = null;
-    this.editedFilterRow = null;
-
-    this.disabled = true;
-
-    // The editor popup
-    this.editor = {
-        backdrop: null,     // modal backdrop (prevents interaction with the page)
-        popup: null,        // the popup container
-        column: null,       // the column selector
-        operator: null,     // the operator selector
-        child: null,        // the per-type child editor wrapper DIV
-        childEditor: null,  // the per-type child editor/validator object
-    };
+    // JS event handling shenanigans
+    this.onDeleteFilter = this.onDeleteFilter.bind(this);
+    this.onDuplicateFilter = this.onDuplicateFilter.bind(this);
+    this.onActiveFilter = this.onActiveFilter.bind(this);
+    this.onClickColumnName = this.onClickColumnName.bind(this);
 
     this.buildUI();
-    this.disabled = false;
+    this.enableOrDisable(false);
 }
 
 buildUI()
 {
+    const havePresets = Object.keys(this.filterPresets[0]).length > 0,
+          haveAdvancedPresets = Object.keys(this.filterPresets[1]).length > 0;
+
     let html = "";
 
-    html += `<div class="mainButtons">`;
-    html += `<button id="filter-delete-all" title="${_tr('filter_editor.delete_all_title')}">${_tr('filter_editor.delete_all')}</button>`;
-    html += `<button id="filter-json-toggle" title="${_tr('filter_editor.toggle_json_title')}">${_tr('filter_editor.show_json')}</button>`;
-    html += `<button id="filter-json-save" title="${_tr('filter_editor.save_json_title')}">${_tr('filter_editor.save_json')}</button>`;
+    html += `<div id="traditional" class="filterEditorWrapper">`;
+
+    html +=
+`<div class="flex flex-rows flex-gap-5px"><div class="flex flex-cols flex-gap-5px">
+<button id="deleteAll" class="danger" title="${_tr("tabs.filtering.delete_all_title")}">${_tr("tabs.filtering.delete_all")}</button>
+<button id="toggleJSON" title="${_tr("tabs.filtering.toggle_json_title")}">${_tr("tabs.filtering.show_json")}</button>
+<button id="saveJSON" class="hidden" title="${_tr("tabs.filtering.save_json_title")}">${_tr("tabs.filtering.save_json")}</button>
+</div><textarea id="json" rows="5" class="width-100p jsonEditor hidden" title="${_tr("tabs.filtering.json_title")}"></textarea>
+<table class="filtersTable"></table>
+<div><button id="new">${_tr("tabs.filtering.new_filter")}</button></div>`;
+
+    if (havePresets) {
+        const presets = this.filterPresets[0];
+
+        html += `<div><details><summary>${_tr('tabs.filtering.presets.title')}</summary>`;
+        html += `<div class="flex flex-rows flex-gap-5px margin-top-10px">`;
+        html += `<p class="margin-0 padding-0">${_tr("tabs.filtering.presets.click_to_add")}</p>`;
+        html += `<span><input type="checkbox" id="append-at-end" checked><label for="append-at-end">${_tr('tabs.filtering.presets.append')}</label></span>`;
+        html += `<ul class="margin-0 padding-0 no-list-bullets" id="presets">`;
+
+        for (const key of Object.keys(presets))
+            html += `<li><a href="#" data-id="${key}">${presets[key].title}</a></li>`;
+
+        html += `</ul></details></div></div>`;
+    }
+
     html += `</div>`;
-    html += `<div class="jsonEditor">`;
-    html += `<textarea rows="10"></textarea>`;
     html += `</div>`;
-    html += `<div class="tableWrapper"></div>`;    // this DIV is where the filter table is placed in
+    html += `<div id="advanced">`;
+
+    html +=
+`<div class="flex flex-columns flex-gap-10px width-100p">
+<fieldset class="width-66p">
+<legend>${_tr('tabs.filtering.expression_title')}</legend>
+<textarea id="filter" placeholder="${_tr('tabs.filtering.expression_placeholder')}" rows="5"></textarea>
+<div class="flex flex-columns flex-gap-5px margin-top-5px">
+<button id="save" disabled>${_tr('tabs.filtering.save')}</button>
+<button id="clear" disabled>${_tr('tabs.filtering.clear')}</button>
+<button id="convert" disabled>${_tr('tabs.filtering.convert')}</button>
+</div>
+</fieldset>
+
+<fieldset class="width-33p">
+<legend>${_tr('tabs.filtering.messages_title')}</legend>
+<div id="messages"></div>
+</fieldset>
+</div>`;
+
+    html += `<div class="flex flex-rows flex-gap-10px margin-top-10px">`;
+
+    if (haveAdvancedPresets) {
+        html +=
+`<details>
+<summary>${_tr('tabs.filtering.presets.title')}</summary>
+<div class="padding-10px">
+<p class="line-height-150p margin-0 padding-0">${_tr('tabs.filtering.presets.instructions')}</p>
+<div class="padding-top-10px padding-bottom-10px flex flex-vcenter flex-columns flex-gap-10px">
+<span><input type="checkbox" id="append-at-end-advanced" checked><label for="append-at-end-advanced">${_tr('tabs.filtering.presets.append')}</label></span>
+<span><input type="checkbox" id="add-parenthesis" checked><label for="add-parenthesis">${_tr('tabs.filtering.presets.add_parenthesis')}</label></span>
+</div>
+
+<table class="commonTable presetsTable"><thead>
+<tr><th class="padding-5px">${_tr('tabs.filtering.presets.name')}</th><th class="padding-5px">${_tr('tabs.filtering.presets.expression')}</th></tr>
+</thead><tbody>`;
+
+        for (const key of Object.keys(this.filterPresets[1])) {
+            const preset = this.filterPresets[1][key];
+
+            html +=
+`<tr data-id="${key}">
+<td class="padding-5px"><a href="#" data-id="${key}">${preset.title}</a></td>
+<td class="padding-5px"><code>${escapeHTML(preset.filter)}</code></td>
+</tr>`;
+        }
+
+        html += `</tbody></table>`;
+        html += "</div>";
+        html += `</details>`;
+    }
+
+    html +=
+`<details>
+<summary>${_tr('tabs.filtering.column_list.title')}</summary>
+<div class="padding-10px">
+<p class="line-height-150p margin-0 padding-0">${_tr('tabs.filtering.column_list.hidden_warning')}</p>
+<div id="columnList" class="margin-top-10px"></div>
+</details>`;
+
+    html += `</div>`;
+    html += `</div>`;
 
     this.container.innerHTML = html;
 
-    this.ui.deleteAll = this.container.querySelector("button#filter-delete-all");
-    this.ui.jsonToggle = this.container.querySelector("button#filter-json-toggle");
-    this.ui.jsonSave = this.container.querySelector("button#filter-json-save");
-    this.ui.jsonEditor = this.container.querySelector("textarea");
-    this.ui.filterTable = this.container.querySelector("div.tableWrapper");
+    // Initial mode selection
+    if (this.isAdvanced)
+        this.$("div#traditional").classList.add("hidden");
+    else this.$("div#advanced").classList.add("hidden");
 
-    this.ui.deleteAll.disabled = true;
-    this.ui.jsonToggle.disabled = true;
+    this.$("button#deleteAll").addEventListener("click", () => this.onDeleteAllFilters());
+    this.$("button#toggleJSON").addEventListener("click", () => this.onToggleJSON());
+    this.$("button#saveJSON").addEventListener("click", () => this.onSaveJSON());
+    this.$("button#new").addEventListener("click", () => this.onNewFilter());
+    this.$("textarea#json").addEventListener("input", () => this.validateJSON());
+    this.$("button#save").addEventListener("click", () => this.onSave());
+    this.$("button#clear").addEventListener("click", () => this.onClear());
+    this.$("button#convert").addEventListener("click", () => this.onConvertTraditionalFilter());
+    this.$("textarea#filter").addEventListener("input", () => this.onAdvancedInput());
 
-    this.ui.jsonSave.disabled = true;
-    this.ui.jsonEditor.style.display = "none";
-    this.ui.jsonSave.style.display = "none";
+    // Make the presets clickable
+    if (havePresets) {
+        for (let i of this.$all("div#traditional ul#presets a"))
+            i.addEventListener("click", (e) => this.onLoadPreset(e));
+    }
 
-    this.ui.deleteAll.addEventListener("click", () => this.deleteAllFilters());
-    this.ui.jsonToggle.addEventListener("click", () => this.toggleJSONEditor());
-    this.ui.jsonSave.addEventListener("click", () => this.saveJSONFilters());
-    this.ui.jsonEditor.addEventListener("input", () => this.validateJSONFilters());
+    if (haveAdvancedPresets) {
+        for (let i of this.$all("div#advanced .presetsTable a"))
+            i.addEventListener("click", (e) => this.onLoadPreset(e));
+    }
+
+    this.generateColumnHelp();
 }
 
-enable()
+$(selector) { return this.container.querySelector(selector); }
+$all(selector) { return this.container.querySelectorAll(selector); }
+
+// Called from the parent class
+enableOrDisable(isEnabled)
 {
-    this.ui.deleteAll.disabled = false;
-    this.ui.jsonToggle.disabled = false;
-    this.disabled = false;
+    this.disabled = !isEnabled;
+
+    this.$("textarea#filter").disabled = this.disabled;
+    this.$("button#save").disabled = this.disabled;
+    this.$("button#clear").disabled = this.disabled;
+    this.$("button#convert").disabled = this.disabled;
+
+    this.$("button#deleteAll").disabled = this.disabled;
+    this.$("button#toggleJSON").disabled = this.disabled;
+    this.$("button#saveJSON").disabled = this.disabled;
+    this.$("button#new").disabled = this.disabled;
+
+    // Filter editor row elements
+    for (let row of this.$all("table.filtersTable tr.row")) {
+        const f = this.filters[row.dataset.id];
+
+        if (f.isNew)
+            continue;
+
+        row.children[0].children[0].children[0].disabled = this.disabled;   // delete
+        row.children[0].children[0].children[1].disabled = this.disabled;   // duplicate
+        row.children[1].children[0].disabled = this.disabled;               // active
+    }
 }
 
-disable()
+// Switch between traditional and advanced filtering modes
+toggleMode(advanced)
 {
-    this.ui.deleteAll.disabled = true;
-    this.ui.jsonToggle.disabled = true;
-    this.disabled = true;
+    if (this.isAdvanced == advanced)
+        return;
+
+    this.isAdvanced = advanced;
+
+    if (this.isAdvanced) {
+        this.$("div#traditional").classList.add("hidden");
+        this.$("div#advanced").classList.remove("hidden");
+    } else {
+        this.$("div#traditional").classList.remove("hidden");
+        this.$("div#advanced").classList.add("hidden");
+    }
+
+    this.parentClass.updateFiltering();
 }
 
-// Notify the supertable that we have new filters for it
-notifyParentClass()
+// Load a filter preset
+onLoadPreset(e)
 {
-    this.parentClass.setFilters(this.getFilters(), true);
-    this.parentClass.filtersHaveChanged();
+    e.preventDefault();
+    const id = e.target.dataset.id;
+    const preset = this.filterPresets[this.isAdvanced ? 1 : 0][id];
+
+    if (!preset) {
+        window.alert(`Invalid preset ID "${id}". Please contact Opinsys support.`);
+        return;
+    }
+
+    if (this.isAdvanced) {
+        let f = preset.filter;
+
+        if (this.$("input#add-parenthesis").checked)
+            f = `(${f})`;
+
+        let box = this.$("textarea#filter");
+
+        if (this.$("input#append-at-end-advanced").checked == false)
+            box.value = f;
+        else {
+            // Append or replace?
+            if (box.value.trim().length == 0)
+                box.value = f;
+            else {
+                box.value += "\n";
+                box.value += f;
+            }
+        }
+
+        this.clearMessages();
+        this.changed = true;
+        this.updateUnsavedWarning();
+    } else {
+        // Append or replace?
+        if (this.$("input#append-at-end").checked == false)
+            this.setFilters(preset.filters);
+        else this.setFilters(this.getFilters().concat(preset.filters));
+
+        this.parentClass.saveFilters();
+        this.parentClass.updateFiltering();
+    }
 }
 
-setColumns(columns)
+// Compiles a filter expression and returns the compiled comparisons and RPN code in an array.
+// This does not actually USE the filter for anything, it only compiles the given string.
+compileFilterExpression(input)
 {
-    this.columns = columns;
+    console.log("----- Compiling filter string -----");
 
-    // Sort the columns by their localized names (they look nicer in the column selector
-    // when they're sorted alphabetically)
-    this.columnNames = [];
+    console.log("Input:");
+    console.log(input);
 
-    for (const name of Object.keys(this.columnDefinitions))
-        this.columnNames.push([name, this.columnTitles[name]]);
+    const t0 = performance.now();
 
-    this.columnNames.sort((a, b) => { return a[1].localeCompare(b[1]) });
+    this.clearMessages();
 
-    this.validateFilters();
-    this.buildFilterTable();
-    this.updateJSON();
-}
+    if (input.trim() == "") {
+        // Do nothing if there's nothing to compile
+        console.log("(Doing nothing to an empty string)");
+        return [[], []];
+    }
 
-loadFilters(filters, append)
-{
-    if (!append)
-        this.filters = [];
+    let logger = new MessageLogger();
 
-    if (Array.isArray(filters)) {
-        // Convert the filters into "cooked" format. They contain the same data, but
-        // there are extra fields used for use in the editor.
-        for (const filter of filters) {
-            this.filters.push({
-                ...filter,
-                valid: false,
-                columnValid: false,
-                displayValue: null,
-            });
+    // ----------------------------------------------------------------------------------------------
+    // Tokenization
+
+    let t = new Tokenizer();
+
+    console.log("----- Tokenization -----");
+
+    t.tokenize(logger, this.columnDefinitions, input);
+
+    if (!logger.empty()) {
+        for (const m of logger.messages) {
+            if (m.message == "unexpected_end") {
+                // Don't report the same error multiple times
+                this.listMessages(logger);
+                return null;
+            }
         }
     }
 
-    this.validateFilters();
-    this.buildFilterTable();
+    console.log("Raw tokens:");
+
+    if (t.tokens.length == 0)
+        console.log("  (NONE)");
+    else console.log(t.tokens);
+
+    // ----------------------------------------------------------------------------------------------
+    // Syntax analysis and comparison extraction
+
+    let p = new Parser();
+
+    console.log("----- Syntax analysis/parsing -----");
+
+    // TODO: Should we abort the compilation if this fails? Now we just cram ahead at full speed
+    // and hope for the best.
+    p.parse(logger, this.columnDefinitions, t.tokens, t.lastRow, t.lastCol);
+
+    console.log("Raw comparisons:");
+
+    if (p.comparisons.length == 0)
+        console.log("  (NONE)");
+    else console.log(p.comparisons);
+
+    console.log("Raw parser output:");
+
+    if (p.output.length == 0)
+        console.log("  (NONE)");
+    else console.log(p.output);
+
+    // ----------------------------------------------------------------------------------------------
+    // Compile the actual comparisons
+
+    let comparisons = [];
+
+    console.log("----- Compiling the comparisons -----");
+
+    let cc = new ComparisonCompiler();
+
+    for (const raw of p.comparisons) {
+        const c = cc.compile(logger, this.columnDefinitions, raw.column, raw.operator, raw.value);
+
+        if (c === null) {
+            // null == the comparison was so invalid it could not even be parsed
+            // log it for debugging
+            console.error(raw);
+            continue;
+        }
+
+        if (c === false) {
+            // false == the comparison was syntactically okay, but it wasn't actually correct
+            console.warn("Could not compile comparison");
+            console.warn(raw);
+            continue;
+        }
+
+        comparisons.push(c);
+    }
+
+    if (!logger.empty()) {
+        this.listMessages(logger);
+
+        if (logger.haveErrors()) {
+            // Warnings won't stop the filter string from saved or used
+            console.error("Comparison compilation failed, no filter program produced");
+            return null;
+        }
+    }
+
+    console.log("Compiled comparisons:");
+    console.log(comparisons);
+
+    let program = [];
+
+    console.log("----- Shunting Yard -----");
+
+    // Generate code
+    let cg = new CodeGenerator();
+
+    program = cg.compile(p.output);
+
+    console.log("Final filter program:");
+
+    if (program.length == 0)
+        console.log("  (Empty)");
+
+    for (let i = 0; i < program.length; i++) {
+        const o = program[i];
+
+        switch (o[0]) {
+            case "!":
+                console.log(`(${i}) NEG`);
+                break;
+
+            case "&":
+                console.log(`(${i}) AND`);
+                break;
+
+            case "|":
+                console.log(`(${i}) OR`);
+                break;
+
+            default: {
+                const cmp = comparisons[o[0]];
+                console.log(`(${i}) CMP [${cmp.column} ${cmp.operator} ${cmp.value.toString()}]`);
+                break;
+            }
+        }
+    }
+
+    const t1 = performance.now();
+
+    console.log(`Filter expression compiled to ${program.length} opcode(s), ${comparisons.length} comparison evaluator(s)`);
+    console.log(`Filter expression compilation: ${t1 - t0} ms`);
+
+    return [comparisons, program];
+}
+
+getFilterProgram()
+{
+    return {
+        comparisons: [...(this.isAdvanced ? this.comparisonsAdvanced : this.comparisons)],
+        program: [...(this.isAdvanced ? this.programAdvanced : this.program)]
+    };
+}
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// "TRADITIONAL" FILTERS
+
+// Loads filters from an array, updates the table and builds the filter program
+setFilters(raw)
+{
+    this.filters = {};
+
+    let table = this.$("table.filtersTable");
+
+    table.innerHTML = "";
+
+    for (const r of (Array.isArray(raw) ? raw : [])) {
+        let e = new EditableFilter();
+
+        if (!e.load(r, this.plainColumnDefinitions))
+            continue;
+
+        const id = nextFilterID();
+
+        this.filters[id] = e;
+
+        let row = this.buildFilterRow(id, e);
+
+        this.setFilterRowEvents(row);
+        table.appendChild(row);
+    }
+
     this.updateJSON();
+    this.convertAndCompileFilters();
 }
 
 getFilters()
 {
-    let plainFilters = [];
+    let out = [];
 
-    // "Uncook" the filters, ie. the opposite of loadFilters()
-    for (const filter of this.filters) {
-        plainFilters.push({
-            active: filter.valid && filter.active,
-            column: filter.column,
-            operator: filter.operator,
-            value: filter.value,
-        });
+    for (const row of this.$all("table.filtersTable tr.row")) {
+        const f = this.filters[row.dataset.id];
+
+        if (!f.isNew)
+            out.push(f.save());
     }
 
-    return plainFilters;
+    return out;
 }
 
-validateFilters()
+onDeleteAllFilters()
 {
-    let validColumns = new Set();
+    if (!window.confirm(_tr("tabs.filtering.delete_all_confirm")))
+        return;
 
-    for (const c of this.columns)
-        validColumns.add(c);
+    this.filters = {};
+    this.$("table.filtersTable").innerHTML = "";
 
-    for (let i = 0; i < this.filters.length; i++) {
-        let filter = this.filters[i];
-
-        // Assume all filters are valid until proven otherwise
-        filter.valid = true;
-        filter.columnValid = true;
-        filter.displayValue = filter.value;
-
-        if (!(filter.column in this.columnDefinitions)) {
-            //console.warn(`validateFilters(): filter target column "${filter.column}" is not valid`);
-            filter.valid = false;
-            continue;
-        }
-
-        // Do some pretty printing
-        const def = this.columnDefinitions[filter.column];
-
-        if (filter.value === null) {
-            filter.displayValue = "?";
-            filter.valid = false;
-        } else {
-            switch (def.type) {
-                case ColumnType.BOOL:
-                    filter.displayValue = filter.value ? _tr('filter_editor.editor.bool_true') : _tr('filter_editor.editor.bool_false');
-                    break;
-
-                case ColumnType.UNIXTIME:
-                {
-                    const date = parseAbsoluteOrRelativeDate(filter.value);
-
-                    if (date === null || date.getFullYear() < MIN_YEAR || date.getFullYear() > MAX_YEAR) {
-                        // It wasn't valid, show the raw value
-                        filter.valid = false;
-                        filter.displayValue = filter.value;
-                    } else {
-                        filter.valid = true;
-                        filter.displayValue = padDateTime(date);
-                    }
-
-                    break;
-                }
-
-                case ColumnType.INTEGER:
-                case ColumnType.FLOAT:
-                    // Currently this is the only place where multiple values are actually allowed.
-                    // Regexps allow multiple values separated with |'s, so imitate that style here.
-                    if (Array.isArray(filter.displayValue))
-                        filter.displayValue = filter.displayValue.join("|");
-
-                    break;
-
-                case ColumnType.STRING: {
-                    let v = filter.value.toString().trim();
-
-                    if (v.length == 0 || v == "^$")
-                        v = _tr('empty');
-
-                    filter.displayValue = v;
-
-                    break;
-                }
-
-                default:
-                    break;
-            }
-        }
-
-        if (!validColumns.has(filter.column)) {
-            //console.warn(`validateFilters(): column "${filter.column}" is not visible`);
-            filter.columnValid = false;
-        }
-    }
+    this.updateJSON();
+    this.convertAndCompileFilters();
+    this.parentClass.saveFilters();
+    this.parentClass.updateFiltering();
 }
 
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// THE JSON EDITOR
+onToggleJSON()
+{
+    let box = this.$("textarea#json"),
+        button = this.$("button#saveJSON");
+
+    this.showJSON = !this.showJSON;
+
+    if (this.showJSON)
+        showElements(box, button);
+    else hideElements(box, button);
+
+    this.$("button#toggleJSON").innerText =
+        _tr("tabs.filtering." + (this.showJSON ? "hide_json" : "show_json"));
+}
+
+onSaveJSON()
+{
+    if (!window.confirm(_tr("tabs.filtering.save_json_confirm")))
+        return;
+
+    try {
+        this.setFilters(JSON.parse(this.$("textarea#json").value));
+        this.convertAndCompileFilters();
+        this.parentClass.saveFilters();
+        this.parentClass.updateFiltering();
+    } catch (e) {
+        window.alert(e);
+    }
+}
 
 updateJSON()
 {
-    let parts = [];
-
-    // "Slightly" pretty-printed format, construct the JSON manually, line by line, so
-    // every row contains one filter.
-    for (const filter of this.filters) {
-        parts.push(JSON.stringify({
-            active: filter.active && filter.valid,
-            column: filter.column,
-            operator: filter.operator,
-            value: filter.value,
-        }));
-    }
-
-    this.ui.jsonEditor.value = "[" + parts.join(",\n") + "]";
+    this.$("textarea#json").value = JSON.stringify(this.getFilters());
+    this.$("textarea#json").classList.remove("invalidJSON");
+    this.$("button#saveJSON").disabled = false;
 }
 
-// Open/close the JSON filter editor
-toggleJSONEditor()
+validateJSON()
 {
-    if (!this.showJSON) {
-        this.ui.jsonToggle.innerText = _tr('filter_editor.hide_json');
-        this.ui.jsonEditor.style.display = "block";
-        this.ui.jsonSave.style.display = "inline-block";
-        this.ui.jsonSave.disabled = false;
-        this.showJSON = true;
-    } else {
-        this.ui.jsonToggle.innerText = _tr('filter_editor.show_json');
-        this.ui.jsonEditor.style.display = "none";
-        this.ui.jsonSave.style.display = "none";
-        this.ui.jsonSave.disabled = true;
-        this.showJSON = false;
-    }
-}
+    let box = this.$("textarea#json");
 
-// Called whenever the contents of the JSON textarea changes
-validateJSONFilters()
-{
-    let valid = true;
-
+    // Is the JSON parseable?
     try {
-        JSON.parse(this.ui.jsonEditor.value);
+        JSON.parse(box.value);
+        box.classList.remove("invalidJSON");
+        this.$("button#saveJSON").disabled = false;
     } catch (e) {
-        valid = false;
-    }
-
-    if (valid) {
-        this.ui.jsonEditor.classList.remove("invalidJSON");
-        this.ui.jsonSave.disabled = false;
-    } else {
-        this.ui.jsonEditor.classList.add("invalidJSON");
-        this.ui.jsonSave.disabled = true;
+        box.classList.add("invalidJSON");
+        this.$("button#saveJSON").disabled = true;
     }
 }
 
-// Loads the JSON filters from the textarea and saves them
-saveJSONFilters()
+// Pretty-prints a filter row
+prettyPrintFilter(filter)
 {
-    let parsed = null;
-    let newFilters = [];
+    const colDef = this.plainColumnDefinitions[filter.column],
+          operator = OPERATORS[filter.operator];
 
-    try {
-        parsed = JSON.parse(this.ui.jsonEditor.value);
-    } catch (e) {
-        window.alert(_tr('filter_editor.invalid_json') + "\n\n" + e);
-        return;
+    function formatValue(v)
+    {
+        if (colDef.type == ColumnType.UNIXTIME) {
+            const d = parseAbsoluteOrRelativeDate(v);
+
+            if (d === null)
+                return "?";
+
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
+                   `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        }
+
+        if (colDef.flags & ColumnFlag.F_STORAGE) {
+            if (v.length == 0)
+                return "";
+
+            let unit = v.slice(v.length - 1);
+
+            if (!"BKMGT".includes(unit))
+                return `${v} B`;
+
+            switch (unit) {
+                case "B": unit = "B"; break;
+                case "K": unit = "KiB"; break;
+                case "M": unit = "MiB"; break;
+                case "G": unit = "GiB"; break;
+                case "T": unit = "TiB"; break;
+            }
+
+            return `${v.slice(0, v.length - 1)} ${unit}`
+        }
+
+        return v;
     }
 
-    if (!Array.isArray(parsed)) {
-        window.alert(_tr('filter_editor.not_an_array'));
-        return;
-    }
+    const prettyTrue = _tr("tabs.filtering.ed.bool.t"),
+          prettyFalse = _tr("tabs.filtering.ed.bool.f"),
+          prettyEmpty = _tr("tabs.filtering.pretty.empty"),
+          prettyOr = _tr("tabs.filtering.pretty.or"),
+          prettyNor = _tr("tabs.filtering.pretty.nor");
 
-    const validOperators = new Set([
-        FilterOperator.EQU,
-        FilterOperator.NEQ,
-        FilterOperator.LT,
-        FilterOperator.LTE,
-        FilterOperator.GT,
-        FilterOperator.GTE,
-    ]);
+    let html = "";
 
-    for (const row of parsed) {
-        if (typeof(row) != "object" || !("column" in row) || !("operator" in row) || !("value" in row)) {
-            window.alert(_tr('filter_editor.data_requirements'));
-            return;
-        }
+    html += `<span class="column">${this.columnTitles[filter.column]}</span>`;
+    html += `<span class="operator">${humanOperatorName(filter.operator)}</span>`;
+    html += `<span class="values">`
 
-        if (!(row.column in this.columnDefinitions)) {
-            window.alert(I18n.translate('filter_editor.invalid_column', {column: row.column}));
-            return;
-        }
+    if (filter.operator == "[]" || filter.operator == "![]") {
+        html += `<span class="value">`;
+        html += formatValue(filter.values[0]);
+        html += `</span><span class="sep"> − </span><span class="value">`;
+        html += formatValue(filter.values[1]);
+        html += `</span>`;
+    } else {
+        if (colDef.type == ColumnType.BOOL)
+            html += `<span class="value">${filter.values[0] === 1 ? prettyTrue : prettyFalse}</span>`;
+        else {
+            for (let i = 0, j = filter.values.length; i < j; i++) {
+                if (filter.values[i].length == 0 && colDef.type == ColumnType.STRING)
+                    html += `<span class="value empty">${prettyEmpty}</span>`;
+                else {
+                    html += `<span class="value">`;
+                    html += formatValue(filter.values[i]);
+                    html += "</span>";
+                }
 
-        if (!validOperators.has(row.operator)) {
-            window.alert(I18n.translate('filter_editor.invalid_operator', {operator: row.operator}));
-            return;
-        }
-
-        // Is this operator available for this column type?
-        const def = this.columnDefinitions[row.column];
-
-        let available = false,
-            operatorTitle = "?";
-
-        for (const op of OPERATOR_DEFINITIONS) {
-            if (op.operator == row.operator) {
-                operatorTitle = op.title;
-
-                if (op.availableFor.has(def.type)) {
-                    available = true;
-                    break;
+                if (i + 1 < j - 1)
+                    html += `<span class="sep">, </span>`;
+                else if (i + 1 < j) {
+                    if (filter.operator == "!=")
+                        html += `<span class="sep"> ${prettyNor} </span>`;
+                    else html += `<span class="sep"> ${prettyOr} </span>`;
                 }
             }
         }
+    }
 
-        if (!available) {
-            window.alert(I18n.translate('filter_editor.column_type_mismatch',
-                         {operator: row.operator, title: operatorTitle, column: row.column}));
+    html += "</span>";
+
+    return html;
+}
+
+buildFilterRow(id, filter)
+{
+    let tr = document.createElement("tr");
+
+    tr.id = `row-${id}`;
+    tr.className = "row";
+    tr.dataset.id = id;
+
+    tr.innerHTML =
+`<td class="minimize-width"><div class="buttons">
+<button class="danger" title="${_tr("tabs.filtering.remove_title")}" ${filter.isNew ? "disabled" : ""}>${_tr("tabs.filtering.remove")}</button>
+<button title="${_tr("tabs.filtering.duplicate_title")}" ${filter.isNew ? "disabled" : ""}>${_tr("tabs.filtering.duplicate")}</button></div></td>
+<td class="minimize-width" title="${_tr("tabs.filtering.active_title")}">
+<input type="checkbox" class="active" ${filter.active == 1 ? "checked" : ""} ${filter.isNew ? "disabled" : ""}>
+</td><td><div class="flex flex-rows"><div class="pretty" title="${_tr("tabs.filtering.click_to_edit_title")}">
+${this.prettyPrintFilter(filter)}</div><div></div></td>`;
+
+    return tr;
+}
+
+findTableRow(element)
+{
+    return element.closest(`tr[id^="row-"]`);
+}
+
+getRowElem(row, what)
+{
+    switch (what) {
+        case RowElem.BTN_DELETE:
+            return row.children[0].children[0].children[0];
+
+        case RowElem.BTN_DUPLICATE:
+            return row.children[0].children[0].children[1];
+
+        case RowElem.CB_ACTIVE:
+            return row.children[1].children[0];
+
+        case RowElem.DIV_PRETTY:
+            return row.children[2].children[0].children[0];
+
+        case RowElem.DIV_EDITOR:
+            return row.children[2].children[0].children[1];
+
+        default:
+            return null;
+    }
+}
+
+setFilterRowEvents(row)
+{
+    this.getRowElem(row, RowElem.BTN_DELETE).addEventListener("click", e => this.onDeleteFilter(e));
+    this.getRowElem(row, RowElem.BTN_DUPLICATE).addEventListener("click", e => this.onDuplicateFilter(e));
+    this.getRowElem(row, RowElem.CB_ACTIVE).addEventListener("click", e => this.onActiveFilter(e));
+
+    this.getRowElem(row, RowElem.DIV_PRETTY).addEventListener("click", e => {
+        let row = this.findTableRow(e.target);
+
+        this.filters[row.dataset.id].beginEditing();
+        this.openFilterEditor(row);
+    });
+}
+
+onDeleteFilter(e)
+{
+    let tr = this.findTableRow(e.target);
+    const id = tr.dataset.id;
+    const wasActive = this.filters[id].active;
+
+    delete this.filters[id];
+    tr.parentNode.removeChild(tr);
+
+    this.updateJSON();
+    this.parentClass.saveFilters();
+
+    // Deleting disabled filters don't trigger table rebuilds
+    if (wasActive) {
+        this.convertAndCompileFilters();
+        this.parentClass.updateFiltering();
+    }
+}
+
+onDuplicateFilter(e)
+{
+    let tr = this.findTableRow(e.target);
+    const id = tr.dataset.id;
+
+    let dupe = new EditableFilter();
+
+    if (!dupe.load(this.filters[id].save(), this.plainColumnDefinitions)) {
+        window.alert("Filter duplication failed");
+        return;
+    }
+
+    dupe.active = 0;  // prevent double filtering
+
+    const newID = nextFilterID();
+
+    this.filters[newID] = dupe;
+
+    let newRow = this.buildFilterRow(newID, dupe);
+
+    tr.parentNode.insertBefore(newRow, tr.nextSibling);
+    this.setFilterRowEvents(newRow);
+
+    this.updateJSON();
+    this.parentClass.saveFilters();
+
+    // The duplicated row is disabled, don't update the table
+}
+
+onActiveFilter(e)
+{
+    this.filters[this.findTableRow(e.target).dataset.id].active ^= 1;
+
+    this.updateJSON();
+    this.convertAndCompileFilters();
+    this.parentClass.saveFilters();
+    this.parentClass.updateFiltering();
+}
+
+openFilterEditor(row)
+{
+    const id = row.dataset.id;
+    let filter = this.filters[id];
+
+    hideElements(this.getRowElem(row, RowElem.DIV_PRETTY));
+
+    // Construct an editor interface
+    let wrapper = this.getRowElem(row, RowElem.DIV_EDITOR);
+
+    wrapper.innerHTML =
+`<div class="flex flex-rows">
+<div class="openFilter flex flex-columns flex-gap-5px">
+<select id="column" title="${_tr("tabs.filtering.edit_column_title")}"></select>
+<select id="operator" title="${_tr("tabs.filtering.edit_operator_title")}"></select>
+<button id="save" class="margin-left-20px"><i class="icon-ok"></i>${_tr("tabs.filtering.save")}</button>
+<button id="cancel"><i class="icon-cancel"></i>${_tr("tabs.filtering.cancel")}</button>
+</div><div id="editor" class="editor"></div></div>`;
+
+    wrapper.classList.add("editorWrapper");
+
+    // Sort the columns in alphabetical order
+    let select = wrapper.querySelector("select#column"),
+        columns = [];
+
+    for (const column of Object.keys(this.plainColumnDefinitions))
+        columns.push([column, this.columnTitles[column]]);
+
+    columns.sort((a, b) => { return a[1].localeCompare(b[1]) });
+
+    for (const [column, title] of columns) {
+        let o = document.createElement("option");
+
+        o.innerText = title;
+        o.dataset.column = column;
+        o.selected = (filter.editColumn == column);
+
+        select.appendChild(o);
+    }
+
+    const colDef = this.plainColumnDefinitions[filter.editColumn];
+
+    this.fillOperatorSelector(wrapper.querySelector("select#operator"),
+                              colDef.type, filter.editOperator);
+
+    // Initial type-specific editor child UI
+    this.buildValueEditor(filter, wrapper.querySelector("div#editor"), colDef);
+
+    wrapper.querySelector("select#column").addEventListener("change", (e) => this.onColumnChanged(e));
+    wrapper.querySelector("select#operator").addEventListener("change", (e) => this.onOperatorChanged(e));
+
+    wrapper.querySelector("button#save").addEventListener("click", (e) => {
+        let row = this.findTableRow(e.target);
+        const id = row.dataset.id;
+
+        // Don't save the filter if the value (or values) is incorrect
+        const valid = this.filters[id].editor.validate();
+
+        if (!valid[0]) {
+            window.alert(valid[1]);
             return;
         }
 
-        // Only integers and floats support arrays of values
-        if (Array.isArray(row.value)) {
-            let type = "";
-            let valid = false;
+        this.filters[id].finishEditing();
+        this.filters[id].isNew = false;     // enable normal functionality
+        this.closeFilterEditor(row);
 
-            switch (def.type) {
-                case ColumnType.STRING:
-                default:
+        this.getRowElem(row, RowElem.BTN_DELETE).disabled = false;
+        this.getRowElem(row, RowElem.BTN_DUPLICATE).disabled = false;
+        this.getRowElem(row, RowElem.CB_ACTIVE).disabled = false;
+        this.getRowElem(row, RowElem.DIV_PRETTY).innerHTML = this.prettyPrintFilter(this.filters[id]);
+        this.updateJSON();
+        this.parentClass.saveFilters();
+
+        if (this.filters[id].active) {
+            this.convertAndCompileFilters();
+            this.parentClass.updateFiltering();
+        }
+    });
+
+    wrapper.querySelector("button#cancel").addEventListener("click", (e) => {
+        let row = this.findTableRow(e.target);
+        let filter = this.filters[row.dataset.id];
+        const wasNew = filter.isNew;
+
+        filter.cancelEditing();
+
+        if (wasNew)
+            row.parentNode.removeChild(row);
+        else this.closeFilterEditor(row);
+    });
+}
+
+closeFilterEditor(row)
+{
+    this.filters[row.dataset.id].editor = null;
+
+    let editor = this.getRowElem(row, RowElem.DIV_EDITOR);
+
+    editor.innerHTML = "";
+    editor.classList.remove("editorWrapper");
+
+    showElements(this.getRowElem(row, RowElem.DIV_PRETTY));
+}
+
+buildValueEditor(filter, container, colDef)
+{
+    const editors = {
+        [ColumnType.BOOL]: FilterEditorBoolean,
+        [ColumnType.NUMERIC]: FilterEditorNumeric,
+        [ColumnType.STRING]: FilterEditorString,
+        [ColumnType.UNIXTIME]: FilterEditorUnixtime,
+    };
+
+    if (colDef.type in editors) {
+        filter.editor = new editors[colDef.type](container, filter, colDef);
+        filter.editor.buildUI();
+    } else throw new Error(`Unknown column type ${colDef.type}`);
+}
+
+// Attempts to preserve the current filter values between operator/column changes and applies
+// fixes to the data to ensure the current operator has enough data to work with
+preserveFilterData(filter)
+{
+    if (!filter.editor) {
+        console.warn("preserveFilterData(): no editor?");
+        return;
+    }
+
+    // Grab the values from the form first
+    filter.editValues = filter.editor.getData();
+
+    // Then ensure there are enough values
+    if (filter.editValues.length == 0)
+        filter.editValues.push(getDefaultValue(this.plainColumnDefinitions[filter.editColumn]));
+
+    if ((filter.editOperator == "[]" || filter.editOperator == "![]") && filter.editValues.length < 2)
+        filter.editValues.push(filter.editValues[0]);
+}
+
+onColumnChanged(e)
+{
+    let row = this.findTableRow(e.target);
+    const id = row.dataset.id;
+    let filter = this.filters[id];
+    let wrapper = this.getRowElem(row, RowElem.DIV_EDITOR);
+
+    filter.editColumn = e.target[e.target.selectedIndex].dataset.column;
+
+    // Is the previous operator still valid for this type? If not, reset it to "=",
+    // it's the default (and the safest) operator.
+    const newDef = this.plainColumnDefinitions[filter.editColumn];
+
+    if (!OPERATORS[filter.editOperator].allowed.has(newDef.type))
+        filter.editOperator = "=";
+
+    // Refill the operator selector
+    // TODO: Don't do this if the new column has the same operators available
+    // as the previous column did.
+    this.fillOperatorSelector(wrapper.querySelector("select#operator"),
+                              newDef.type, filter.editOperator);
+
+    this.preserveFilterData(filter);
+
+    // Recreate the editor UI
+    let editor = wrapper.querySelector("div#editor");
+
+    editor.innerHTML = "";
+    filter.editor = null;
+    this.buildValueEditor(filter, editor, newDef);
+}
+
+onOperatorChanged(e)
+{
+    const row = this.findTableRow(e.target);
+    const operator = e.target[e.target.selectedIndex].dataset.operator;
+    let filter = this.filters[row.dataset.id];
+
+    filter.editOperator = operator;
+    this.preserveFilterData(filter);
+
+    filter.editor.operatorHasChanged(operator);
+}
+
+fillOperatorSelector(target, type, initial)
+{
+    target.innerHTML = "";
+
+    for (const opId of ["=", "!=", "<", "<=", ">", ">=", "[]", "![]"]) {
+        if (OPERATORS[opId].allowed.has(type)) {
+            let o = document.createElement("option");
+
+            o.innerText = humanOperatorName(opId);
+            o.dataset.operator = opId;
+            o.selected = (opId == initial);
+
+            target.appendChild(o);
+        }
+    }
+}
+
+onNewFilter()
+{
+    let f = new EditableFilter();
+
+    let initial = null;
+
+    if (this.defaultFilter === undefined || this.defaultFilter === null || this.defaultFilter.length < 4) {
+        // Use the first available column. Probably not the best, but at least the filter will be valid.
+        initial = [0, Object.keys(this.plainColumnDefinitions)[0], "=", ""];
+    } else initial = [...this.defaultFilter];
+
+    initial[3] = getDefaultValue(this.plainColumnDefinitions[initial[1]]);
+
+    if (!f.load(initial, this.plainColumnDefinitions)) {
+        window.alert("Filter creation failed. See the console for details.");
+        return;
+    }
+
+    f.isNew = true;     // disables certain UI elements and makes the Cancel button remove the filter
+
+    const newID = nextFilterID();
+
+    this.filters[newID] = f;
+    let newRow = this.buildFilterRow(newID, f);
+
+    this.setFilterRowEvents(newRow);
+    this.$("table.filtersTable").appendChild(newRow);
+
+    // Open the newly-created filter for editing
+    this.filters[newID].beginEditing();
+    this.openFilterEditor(newRow);
+}
+
+convertTraditionalFilter(filters)
+{
+    let parts = [];
+
+    for (const f of filters) {
+        if (!f[0])          // inactive filter
+            continue;
+
+        if (f.length < 4)   // incomplete filter
+            continue;
+
+        let col = f[1],
+            op = f[2],
+            val = [];
+
+        const colDef = this.plainColumnDefinitions[col];
+
+        // Convert the value
+        for (let v of f.slice(3)) {
+            switch (colDef.type) {
+                case ColumnType.BOOL:
+                    if (v.length == 0)
+                        continue;
+
+                    val.push(v === 1 ? '1' : '0');
+                    break;
+
+                case ColumnType.NUMERIC:
+                    // All possible values should work fine, even storage units, without quotes
+                    if (v.length == 0)
+                        continue;
+
+                    val.push(v);
                     break;
 
                 case ColumnType.UNIXTIME:
-                    type = "Time";
+                    if (v.length == 0)
+                        continue;
+
+                    // Absolute times must be quoted, relative times should work as-is
+                    val.push(ABSOLUTE_TIME.exec(v) !== null ? `"${v}"` : v);
                     break;
 
-                case ColumnType.BOOL:
-                    type = "Boolean";
+                case ColumnType.STRING:
+                default:
+                    // Convert strings to regexps
+                    if (v == "")
+                        val.push(`/^$/`);
+                    else val.push(`/${v}/`);
                     break;
-
-                case ColumnType.INTEGER:
-                case ColumnType.FLOAT:
-                    valid = true;
-                    break;
-            }
-
-            if (!valid) {
-                if (def.type == ColumnType.STRING)
-                    window.alert(_tr('filter_editor.use_regexps'));
-                else window.alert(I18n.translate('filter_editor.only_one_value', {type: type}));
-
-                return false;
             }
         }
 
-        // It's good, store
-        let f = {
-            active: false,
-            column: row.column,
-            operator: row.operator,
-            value: row.value,
-        };
+        // Output a comparison with the converted value
+        if (op == "[]") {
+            // include (closed)
+            if (val.length < 2)
+                continue;
 
-        if ("active" in row)
-            f.active = row.active;
+            parts.push(`(${col} >= ${val[0]} && ${col} <= ${val[1]})`);
+        } else if (op == "![]") {
+            // exclude (open)
+            if (val.length < 2)
+                continue;
 
-        newFilters.push(f);
-    }
+            parts.push(`(${col} < ${val[0]} || ${col} > ${val[1]})`);
+        } else {
+            if (val.length < 1)
+                continue;
 
-    // Save the filters. Do NOT call updateJSON() here because that will overwrite the
-    // textarea contents with the loaded filters and there could be differences!
-    this.filters = newFilters;
-    this.validateFilters();
-    this.buildFilterTable();
-    this.notifyParentClass();
-}
+            if (val.length == 1) {
+                // a single value
+                parts.push(`${col} ${op} ${val[0]}`);
+            } else {
+                // multiple values, either OR'd or AND'd together depending on the operator
+                let sub = [];
 
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// THE FILTER TABLE
+                for (const v of val)
+                    sub.push(`${col} ${op} ${v}`);
 
-makeFilterRow(filter, index)
-{
-    let row = document.createElement("tr");
+                if (op == "=")
+                    sub = sub.join(" || ");
+                else sub = sub.join(" && ");
 
-    row.dataset.index = index;
-
-    if (!filter.valid) {
-        row.classList.add("invalidFilter");
-        row.title = _tr('filter_editor.list.explanation_broken_hover');
-    } else if (!filter.columnValid) {
-        row.classList.add("invalidColumn");
-        row.title = _tr('filter_editor.list.explanation_column_not_visible_hover');
-    }
-
-    // ----- Activation checkbox -----
-
-    let activeTD = document.createElement("td"),
-        checkbox = document.createElement("input");
-
-    checkbox.type = "checkbox";
-    checkbox.checked = filter.active;
-    checkbox.title = _tr('filter_editor.list.explanation_is_active');
-
-    if (!filter.valid)
-        checkbox.disabled = true;
-
-    checkbox.addEventListener("click",
-        (event) => this.onFilterActiveCheckboxClick(event));
-
-    activeTD.classList.add("minimize-width");
-
-    activeTD.appendChild(checkbox);
-    row.appendChild(activeTD);
-
-    // ----- Plain text filter explanation -----
-
-    let explanationTD = document.createElement("td");
-
-    let html = "";
-
-    html += `<div class="explanation" title="${_tr('filter_editor.list.explanation_click_to_edit')}">`;
-    html += `<span class="column">`;
-
-    let found = false;
-
-    for (const col of this.columnNames) {
-        if (col[0] == filter.column) {
-            html += col[1];
-            found = true;
-            break;
+                parts.push("(" + sub + ")");
+            }
         }
     }
 
-    if (!found)
-        html += `<span class="error">(${_tr('filter_editor.list.explanation_unknown_column')})</span>`;
+    // Join the comparisons together
+    return parts.join(" && ");
+}
 
-    html += `</span><span class="op">`;
+// Converts the "traditional" filters into an advanced filter string and compiles it
+convertAndCompileFilters()
+{
+    const result = this.compileFilterExpression(this.convertTraditionalFilter(this.getFilters()));
 
-    found = false;
-
-    for (const op of OPERATOR_DEFINITIONS) {
-        if (op.operator == filter.operator) {
-            html += op.title;
-            found = true;
-            break;
-        }
+    if (result === false || result === null) {
+        window.alert("Could not compile the filter. See the console for details, then contact Opinsys support.");
+        return;
     }
 
-    if (!found)
-        html += `(?)`;
-
-    html += `</span><span class="value">${escapeHTML(filter.displayValue)}</span>`;
-
-    if (!filter.valid)
-        html += `<span class="notification">${_tr('filter_editor.list.explanation_broken')}</span>`;
-    else if (!filter.columnValid)
-        html += `<span class="notification">${_tr('filter_editor.list.explanation_column_not_visible')}</span>`;
-
-    html += "</div>";
-
-    explanationTD.innerHTML = html;
-
-    explanationTD.classList.add("width-100p");
-
-    explanationTD.querySelector("div.explanation").
-        addEventListener("click", (event) => this.openFilterEditor(event));
-
-    row.appendChild(explanationTD);
-
-    // ----- Action buttons -----
-
-    let buttonsTD = document.createElement("td");
-
-    buttonsTD.classList.add("buttons");
-    buttonsTD.classList.add("minimize-width");
-
-    buttonsTD.innerHTML =
-        `<button class="dup" data-index=${index}>${_tr('filter_editor.list.duplicate_row')}</button>` +
-        `<button class="del" data-index=${index}>${_tr('filter_editor.list.remove_row')}</button>`;
-
-    buttonsTD.querySelector("button.dup").addEventListener("click",
-        (event) => this.duplicateFilter(event));
-
-    buttonsTD.querySelector("button.del").addEventListener("click",
-        (event) => this.deleteFilter(event));
-
-    row.appendChild(buttonsTD);
-
-    return row;
+    this.comparisons = result[0];
+    this.program = result[1];
 }
 
-// The "new filter" row at the end of the filter table
-makeNewFilterRow()
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// ADVANCED FILTERS
+
+setFilterString(filter)
 {
-    let html = "";
+    let box = this.$("textarea#filter");
 
-    html += `<td colspan="3">`;
-    html += `<button class="new">${_tr('filter_editor.list.new_row')}</button></td>`;
+    if (typeof(filter) != "string")
+        box.value = "";
+    else box.value = filter;
 
-    let row = document.createElement("tr");
+    this.comparisonsAdvanced = [];
+    this.programAdvanced = [];
 
-    row.dataset.index = "new";
-    row.innerHTML = html;
-    row.querySelector("button").addEventListener("click", (event) => this.openFilterEditor(event));
+    const result = this.compileFilterExpression(box.value);
 
-    return row;
+    if (result === false || result === null)
+        return;
+
+    this.comparisonsAdvanced = result[0];
+    this.programAdvanced = result[1];
 }
 
-buildFilterTable()
+getFilterString()
 {
-    let table = document.createElement("table");
-
-    table.classList.add("table");
-
-    for (let i = 0; i < this.filters.length; i++)
-        table.appendChild(this.makeFilterRow(this.filters[i], i));
-
-    table.appendChild(this.makeNewFilterRow());
-
-    this.ui.filterTable.innerHTML = "";
-    this.ui.filterTable.appendChild(table);
+    return this.$("textarea#filter").value;
 }
 
-deleteAllFilters()
+// Save the advanced filter string
+onSave()
+{
+    const result = this.compileFilterExpression(this.$("textarea#filter").value);
+
+    if (result === false || result === null)
+        return;
+
+    this.comparisonsAdvanced = result[0];
+    this.programAdvanced = result[1];
+    this.changed = false;
+    this.updateUnsavedWarning();
+    this.parentClass.saveFilters();
+    this.parentClass.updateFiltering();
+}
+
+// Clear the advanced filter
+onClear()
+{
+    if (window.confirm(_tr('are_you_sure'))) {
+        this.$("textarea#filter").value = "";
+        this.clearMessages();
+        this.changed = true;
+        this.updateUnsavedWarning();
+    }
+}
+
+// Convert the traditional (mouse-driven) filter into a filter expression string
+onConvertTraditionalFilter()
 {
     if (!window.confirm(_tr('are_you_sure')))
         return;
 
-    this.filters = [];
-    this.closeFilterEditor();
-    this.validateFilters();
-    this.buildFilterTable();
-    this.updateJSON();
-    this.notifyParentClass();
-}
+    const filters = this.getFilters();
 
-// The "active" checkbox of a filter was clicked
-onFilterActiveCheckboxClick(e)
-{
-    if (this.disabled)
-        return;
-
-    const index = parseInt(e.target.parentNode.parentNode.dataset.index, 10),
-          active = e.target.checked;
-
-    if (index < 0 || index > this.filters.length - 1) {
-        window.alert(`Invalid filter index ${event.target.dataset.index}. The filter cannot be activated/deactivated.`);
+    if (filters === null || filters === undefined || filters.length == 0) {
+        window.alert(_tr('traditional_filter_is_empty'));
         return;
     }
 
-    this.filters[index].active = active;
-    this.updateJSON();
-    this.notifyParentClass();
-}
+    const result = this.convertTraditionalFilter(filters);
 
-duplicateFilter(event)
-{
-    if (this.disabled)
-        return;
-
-    const index = parseInt(event.target.dataset.index, 10);
-
-    if (index < 0 || index > this.filters.length - 1) {
-        window.alert(`Invalid filter index ${event.target.dataset.index}. The filter cannot be duplicated.`);
+    if (result === false || result === null) {
+        window.alert("Could not compile the filter. See the console for details, then contact Opinsys support.");
         return;
     }
 
-    this.filters.splice(index + 1, 0, {
-        active: false,
-        column: this.filters[index].column,
-        operator: this.filters[index].operator,
-        value: this.filters[index].value,
-        valid: false,
-        columnValid: false,
-        displayValue: null,
-    });
-
-    this.validateFilters();
-    this.buildFilterTable();
-    this.updateJSON();
-    this.notifyParentClass();
+    this.$("textarea#filter").value = result;
+    this.clearMessages();
+    this.changed = true;
+    this.updateUnsavedWarning();
 }
 
-deleteFilter(event)
+// Advanced filter string has changed
+onAdvancedInput()
 {
-    if (this.disabled)
-        return;
-
-    const index = parseInt(event.target.dataset.index, 10);
-
-    if (index < 0 || index > this.filters.length - 1) {
-        window.alert(`Invalid filter index ${event.target.dataset.index}. The filter cannot be removed.`);
-        return;
-    }
-
-    this.closeFilterEditor();
-    this.filters.splice(index, 1);
-    this.validateFilters();
-    this.buildFilterTable();
-    this.updateJSON();
-    this.notifyParentClass();
+    this.changed = true;
+    this.updateUnsavedWarning();
 }
 
-// -------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
-// FILTER EDITOR POPUP
-
-openFilterEditor(e)
+// Copy the column name to the advanced filter string box
+onClickColumnName(e)
 {
-    if (this.disabled)
+    e.preventDefault();
+    this.$("textarea#filter").value += e.target.dataset.column + " ";
+}
+
+updateUnsavedWarning()
+{
+    let legend = this.$("fieldset legend");
+
+    if (!legend)
         return;
 
-    const node = e.target.parentNode.parentNode;
+    let html = _tr('tabs.filtering.expression_title');
 
-    if (node.dataset.index == "new") {
-        // Create a new empty filter. Find the initially selected column.
-        let columnName = null;
+    if (this.changed)
+        html += ` <span class="unsaved">[${_tr('tabs.filtering.unsaved')}]</span>`;
 
-        if (this.defaultColumn in this.columnDefinitions)
-            columnName = this.defaultColumn;
-        else {
-            // Sigh. The default column does not exist in the column definitions.
-            // Pick the first available column, whatever it is.
-            columnName = Object.keys(this.columnDefinitions)[0];
-            console.warn(`FilterEditor::openFilterEditor(): the default column "${this.defaultColumn}" is not valid!`);
+    legend.innerHTML = html;
+}
+
+generateColumnHelp()
+{
+    const COLUMN_TYPES = {
+        [ColumnType.BOOL]: _tr('tabs.filtering.column_list.type_bool'),
+        [ColumnType.NUMERIC]: _tr('tabs.filtering.column_list.type_numeric'),
+        [ColumnType.UNIXTIME]: _tr('tabs.filtering.column_list.type_unixtime'),
+        [ColumnType.STRING]: _tr('tabs.filtering.column_list.type_string'),
+    };
+
+    let html =
+`<table class="commonTable columnHelp"><thead><tr>
+<th>${_tr('tabs.filtering.column_list.pretty_name')}</th>
+<th>${_tr('tabs.filtering.column_list.database_name')}</th>
+<th>${_tr('tabs.filtering.column_list.type')}</th>
+<th>${_tr('tabs.filtering.column_list.operators')}</th>
+<th>${_tr('tabs.filtering.column_list.nullable')}</th>
+</tr></thead><tbody>`;
+
+    let columnNames = [];
+
+    for (const key of Object.keys(this.plainColumnDefinitions))
+        columnNames.push([key, this.columnTitles[key]]);
+
+    columnNames.sort((a, b) => { return a[1].localeCompare(b[1]) });
+
+    for (const col of columnNames) {
+        html += `<tr><td>${col[1]}</td><td>`;
+
+        const nullable = this.plainColumnDefinitions[col[0]].flags & ColumnFlag.F_NULLABLE;
+
+        let fields = Array.from(this.columnDefinitions.getAliases(col[0]));
+
+        fields.sort();
+        fields.unshift(col[0]);
+
+        html += fields.map((f) => `<a href="#" data-column="${f}">${f}</a>`).join("<br>");
+        html += "</td>";
+
+        const type = this.plainColumnDefinitions[col[0]].type;
+
+        html += `<td>${COLUMN_TYPES[type]}</td>`;
+        html += "<td>";
+
+        const ops = Array.from(ALLOWED_OPERATORS[type]);
+
+        for (let i = 0, j = ops.length; i < j; i++) {
+            if (ops[i] == "!!" && !nullable)
+                continue;
+
+            html += `<code>${escapeHTML(ops[i])}</code>`;
+
+            if (i + 1 < j)
+                html += " ";
         }
 
-        const def = this.columnDefinitions[columnName];
+        html += "</td>";
 
-        this.editFilterIndex = -1;
+        if (nullable)
+            html += `<td>${_tr('tabs.filtering.column_list.is_nullable')}</td>`;
+        else html += "<td></td>";
 
-        this.editFilter = {
-            column: columnName,
-            operator: def.defaultOperator,
-            value: ""
-        };
+        html += "</tr>";
+    }
+
+    html += "</tbody></table>";
+
+    let cont = this.$("div#columnList");
+
+    // Remove old event handlers first
+    if (cont.firstChild)
+        for (let a of cont.querySelectorAll("a"))
+            a.removeEventListener("click", this.onClickColumnName);
+
+    cont.innerHTML = html;
+
+    // Then set up new event handlers
+    for (let a of cont.querySelectorAll("a"))
+        a.addEventListener("click", this.onClickColumnName);
+}
+
+clearMessages()
+{
+    this.$("#messages").innerHTML = `<p class="margin-0 padding-0">${_tr('tabs.filtering.no_messages')}</p>`;
+}
+
+// Update the advanced filter compilation messages box
+listMessages(logger)
+{
+    if (logger.empty())
+        return;
+
+    let html =
+`<table class="commonTable messages width-100p"><thead><tr>
+<th>${_tr('tabs.filtering.row')}</th>
+<th>${_tr('tabs.filtering.column')}</th>
+<th>${_tr('tabs.filtering.message')}</th>
+</tr></thead><tbody>`;
+
+    // The messages aren't necessarily in any particular order, sort them
+    const sorted = [...logger.messages].sort(function(a, b) { return a.row - b.row || a.col - b.col });
+
+    for (const e of sorted) {
+        let cls = [];
+
+        if (e.type == 'error')
+            cls.push("error");
+
+        html +=
+`<tr class="${cls.join(' ')}" data-pos="${e.pos}" data-len="${e.len}">
+<td class="minimize-width align-center">${e.row == -1 ? "" : e.row}</td>
+<td class="minimize-width align-center">${e.col == -1 ? "" : e.col}</td>`;
+
+        html += "<td>";
+        html += _tr('tabs.filtering.' + e.type) + ": ";
+        html += _tr('tabs.filtering.messages.' + e.message);
+
+        if (e.extra !== null)
+            html += `<br>(${e.extra})`;
+
+        html += "</td></tr>";
+    }
+
+    html += "</tbody></table>";
+
+    this.$("#messages").innerHTML = html;
+
+    // Add event listeners. I'm 99% certain this leaks memory, but I'm not sure how to fix it.
+    for (let row of this.$all(`table.messages tbody tr`))
+        row.addEventListener("click", (e) => this.highlightMessage(e));
+}
+
+highlightMessage(e)
+{
+    // Find the target table row. Using "pointer-events" to pass through clicks works, but
+    // it makes browsers not display the "text" cursor when hovering the table and that is
+    // just wrong.
+    let elem = e.target;
+
+    while (elem && elem.nodeName != "TR")
+        elem = elem.parentNode;
+
+    if (!elem) {
+        console.error("highlightMessage(): can't find the clicked table row");
+        return;
+    }
+
+    // Highlight the target
+    const pos = parseInt(elem.dataset.pos, 10),
+          len = parseInt(elem.dataset.len, 10);
+
+    let t = this.$("textarea#filter");
+
+    if (!t) {
+        console.error("highlightMessage(): can't find the textarea element");
+        return;
+    }
+
+    t.focus();
+
+    if (len == -1) {
+        // Move the cursor to the end
+        t.setSelectionRange(t.value.length, t.value.length);
     } else {
-        // Edit an existing filter
-        const index = parseInt(node.dataset.index, 10);
-
-        if (index < 0 || index > this.filters.length - 1) {
-            window.alert(`Invalid filter index ${node.dataset.index}. The filter cannot be edited.`);
-            return;
-        }
-
-        this.editFilterIndex = index;
-
-        this.editFilter = {
-            column: this.filters[index].column,
-            operator: this.filters[index].operator,
-            value: this.filters[index].value
-        };
+        t.selectionStart = pos;
+        t.selectionEnd = pos + len;
     }
-
-    // Construct the editor user interface
-    this.editor.backdrop = document.createElement("div");
-    this.editor.backdrop.id = "modalDialogBackdrop";
-
-    this.editor.popup = document.createElement("div");
-    this.editor.popup.classList.add("filterPopup");
-
-    let html = "";
-
-    const title = _tr((this.editFilterIndex == -1) ? 'filter_editor.popup.title_new' : 'filter_editor.popup.title_edit');
-
-    html += `<div class="upper">`;
-    html += `<div class="title">${title}</div><div class="buttons">`;
-    html += `<button id="ok" class="btn-save">${_tr('filter_editor.popup.save')}</button>`;
-    html += `<button id="cancel" class="btn-cancel">${_tr('filter_editor.popup.cancel')}</button>`;
-    html += `</div></div>`;
-
-    html += `<div class="lower">`;
-    html += `<table>`;
-    html += `<tr><th style="width: 25%;">${_tr('filter_editor.popup.target_title')}</th><td><select id="filterColumn" class="control"></select></td></tr>`;
-    html += `<tr><td colspan="2">`;
-    html += "<p>" + _tr('filter_editor.popup.target_warning') + "</p>";
-    html += `</td></tr>`;
-    html += `<tr><th>${_tr('filter_editor.popup.operator_title')}</th><td><select id="filterOperator" class="control"></select></td></tr>`;
-    html += `<tr><th colspan="2">${_tr('filter_editor.popup.comparison_title')}</th></r>`;
-    html += `<tr><td colspan="2">`;
-    html += `<div id="filterValue"></div>`;
-    html += `</tr></table></div>`;
-
-    this.editor.popup.innerHTML = html;
-    this.editor.column = this.editor.popup.querySelector("select#filterColumn");
-    this.editor.operator = this.editor.popup.querySelector("select#filterOperator");
-    this.editor.child = this.editor.popup.querySelector("div#filterValue");
-
-    // Fill the column selector. Its contents won't change when the editor popup is open.
-    let validColumns = new Set();
-
-    for (const c of this.columns)
-        validColumns.add(c);
-
-    let found = false;
-
-    for (const c of this.columnNames) {
-        let option = document.createElement("option");
-
-        if (validColumns.has(c[0]))
-            option.innerHTML = `${c[1]}`;
-        else {
-            option.innerHTML = `${c[1]} *`;
-            option.classList.add("missing");
-        }
-
-        option.dataset.column = c[0];
-
-        if (c[0] == this.editFilter.column) {
-            option.selected = true;
-            found = true;
-        }
-
-        this.editor.column.appendChild(option);
-    }
-
-    if (!found) {
-        // TODO: What now?
-        console.error(`openFilterEditor(): column "${this.editFilter.column}" is not valid`);
-        window.alert(`Column "${this.editFilter.column}" is invalid. Using the first available column instead.`);
-    }
-
-    this.fillOperatorSelector(this.editor.operator, this.editFilter.column, this.editFilter.operator);
-    this.buildEditorChild();
-
-    // Setup event handling
-    this.editor.column.addEventListener("change",
-        () => this.onFilterEditorColumnChanged());
-
-    this.editor.operator.addEventListener("change",
-        () => this.onFilterEditorOperatorChanged());
-
-    this.editor.popup.querySelector("button#ok").addEventListener("click",
-        () => this.onFilterEditorSave());
-
-    this.editor.popup.querySelector("button#cancel").addEventListener("click",
-        () => this.onFilterEditorCancel());
-
-    if (node.dataset.index != "new") {
-        // Highlight the edited filter row
-        this.editedFilterRow = e.target.parentNode.parentNode;
-        this.editedFilterRow.classList.add("filterBeingEdited");
-    }
-
-    // Make the popup visible
-    this.editor.popup.style.display = "flex";
-    this.editor.backdrop.appendChild(this.editor.popup);
-    document.body.appendChild(this.editor.backdrop);
-}
-
-// Construct the child editor inside the editor popup, that actually edits the filter value
-buildEditorChild()
-{
-    if (this.editor.childEditor) {
-        // Remove the old editor first, if the target column has changed
-        this.editor.child.innerHTML = "";
-        this.editor.childEditor = null;
-    }
-
-    // Figure out the editor we need
-    let type = null;
-
-    if (this.editFilter.column in this.columnDefinitions)
-        type = this.columnDefinitions[this.editFilter.column].type;
-
-    let valid = true;
-
-    switch (type) {
-        case ColumnType.BOOL:
-            type = FilterEditBool;
-            break;
-
-        case ColumnType.INTEGER:
-            type = FilterEditInteger;
-            break;
-
-        case ColumnType.FLOAT:
-            type = FilterEditFloat;
-            break;
-
-        case ColumnType.UNIXTIME:
-            type = FilterEditUnixtime;
-            valid = doesItLookLikeADate(this.editFilter.value);
-            break;
-
-        case ColumnType.STRING:
-        default:    // coerce unknown types into strings
-            type = FilterEditString;
-            break;
-    }
-
-    // Then build it
-    this.editor.childEditor = new type(this.editor.child);
-
-    if (this.editFilterIndex != -1 && valid)
-        this.editor.childEditor.setValue(this.editFilter.value);
-}
-
-fillOperatorSelector(element, column, initial)
-{
-    const def = this.columnDefinitions[column];
-
-    if (def === null || def === undefined) {
-        // If the column is unknown, put "=" in the box and move on. It's the only "reliable"
-        // operator we can use.
-        console.error(`FilterEditor::refillOperatorSelector(): unknown column "${column}"`);
-
-        element.innerHTML = "";
-
-        let option = document.createElement("option");
-
-        option.text = "=";
-        option.dataset.operator = "equ";
-        option.selected = true;
-
-        element.appendChild(option);
-
-        return;
-    }
-
-    element.innerHTML = "";     // purge any existing content
-
-    let found = false;
-
-    for (const op of OPERATOR_DEFINITIONS) {
-        // Is this operator available for this column type?
-        if (!op.availableFor.has(def.type))
-            continue;
-
-        let option = document.createElement("option");
-
-        option.text = op.title;
-        option.dataset.operator = op.operator;
-
-        if (op.operator == (initial ? initial : def.defaultOperator)) {
-            option.selected = true;
-            found = true;
-        }
-
-        element.appendChild(option);
-    }
-
-    if (!found) {
-        console.warn(`Could not select the initial/current operator for column "${column}"`);
-        // TODO: What now?
-    }
-}
-
-onFilterEditorColumnChanged()
-{
-    this.editFilter.column = this.editor.column[this.editor.column.selectedIndex].dataset.column;
-    this.fillOperatorSelector(this.editor.operator, this.editFilter.column, null);
-    this.onFilterEditorOperatorChanged();
-    this.buildEditorChild();
-}
-
-onFilterEditorOperatorChanged()
-{
-    this.editFilter.operator = this.editor.operator[this.editor.operator.selectedIndex].dataset.operator;
-}
-
-closeFilterEditor()
-{
-    // Make sure everything goes away, no DOM references left behind
-    if (this.editor.backdrop) {
-        this.editor.column = null;
-        this.editor.operator = null;
-        this.editor.childEditor = null;
-        this.editor.child = null;
-        this.editor.popup = null;
-        this.editor.backdrop.remove();
-        this.editor.backdrop = null;
-    }
-
-    if (this.editedFilterRow) {
-        this.editedFilterRow.classList.remove("filterBeingEdited");
-        this.editedFilterRow = null;
-    }
-
-    this.editFilterIndex = null;
-    this.editFilter = null;
-}
-
-onFilterEditorSave()
-{
-    if (!this.editor.childEditor.validate()) {
-        // The filter is invalid and it cannot be saved
-        return;
-    }
-
-    const value = this.editor.childEditor.getValue();
-
-    if (this.editFilterIndex == -1) {
-        // Create a new
-        this.filters.push({
-            active: false,
-            column: this.editFilter.column,
-            operator: this.editFilter.operator,
-            value: value,
-            valid: false,
-            columnValid: false,
-            displayValue: null,
-        });
-    } else {
-        // Save changes to an existing filter
-        let filter = this.filters[this.editFilterIndex];
-
-        filter.column = this.editFilter.column;
-        filter.operator = this.editFilter.operator;
-        filter.value = value;
-    }
-
-    this.closeFilterEditor();
-
-    this.validateFilters();
-    this.buildFilterTable();
-    this.updateJSON();
-    this.notifyParentClass();
-}
-
-onFilterEditorCancel()
-{
-    this.closeFilterEditor();
 }
 
 };  // class FilterEditor

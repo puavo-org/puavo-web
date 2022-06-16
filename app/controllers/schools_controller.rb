@@ -9,6 +9,19 @@ class SchoolsController < ApplicationController
       @schools.sort!{|a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
 
+    # Count devices by school
+    @device_counts = {}
+
+    @schools.collect(&:dn).map.each do |dn|
+      @device_counts[dn.to_s] = 0
+    end
+
+    Device.search(:filter => "(objectClass=device)", :attributes => ["puavoSchool"]).each do |d|
+      next unless d[1].include?('puavoSchool')
+      dn = d[1]['puavoSchool'][0]
+      @device_counts[dn] += 1 if @device_counts.include?(dn)
+    end
+
     @have_external_ids = @schools.any?{ |s| s.puavoExternalId }
     @have_school_codes = @schools.any?{ |s| s.puavoSchoolCode }
 
@@ -46,6 +59,9 @@ class SchoolsController < ApplicationController
     extra = School.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
     @school['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @school['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
+
+    # Known image release names
+    @releases = get_releases
 
     respond_to do |format|
       format.html # show.html.erb
@@ -209,7 +225,7 @@ class SchoolsController < ApplicationController
         # FIXME: change notice type (ERROR)
         flash[:alert] = t('flash.school.wrong_user_type')
         format.html { redirect_to( admins_school_path(@school) ) }
-      elsif  @school.add_admin(@user)
+      elsif @school.add_admin(@user)
         flash[:notice] = t('flash.school.school_admin_added',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )
@@ -229,13 +245,7 @@ class SchoolsController < ApplicationController
     @school = School.find(params[:id])
     @user = User.find(params[:user_id])
 
-    # Delete user from the list of Domain Users if it is no in any school administrator
-    if Array(@user.puavoAdminOfSchool).count < 2
-      SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
-    end
-
-    @school.ldap_modify_operation( :delete, [{"puavoSchoolAdmin" => [@user.dn.to_s]}] )
-    @user.ldap_modify_operation( :delete, [{"puavoAdminOfSchool" => [@school.dn.to_s]}] )
+    @school.remove_admin(@user)
 
     respond_to do |format|
       flash[:notice] = t('flash.school.school_admin_removed',
@@ -247,7 +257,7 @@ class SchoolsController < ApplicationController
 
   # GET /schools/1/wlan
   def wlan
-    return if redirected_nonowner_user?
+    return unless can_edit_wlans?
 
     @school = School.find(params[:id])
 
@@ -258,7 +268,7 @@ class SchoolsController < ApplicationController
 
   # PUT /schools/1/wlan/update
   def wlan_update
-    return if redirected_nonowner_user?
+    return unless can_edit_wlans?
 
     @school = School.find(params[:id])
 
@@ -346,6 +356,20 @@ class SchoolsController < ApplicationController
       s['cn'].strip! if s.include?('cn')
 
       return s
+    end
+
+    # Allow admins edit WLANs in schools they're admins of, but nowhere else.
+    # No restrictions for owners.
+    def can_edit_wlans?
+      return true if is_owner?
+
+      admin_in =  Array(current_user.puavoAdminOfSchool || []).collect { |dn| dn.rdns[0]["puavoId"].to_i }
+
+      return true if admin_in.include?(@school.id.to_i)
+
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to school_path(current_user.primary_school)
+      return false
     end
 
 end

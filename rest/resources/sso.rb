@@ -1,121 +1,10 @@
-require "jwt"
 require "addressable/uri"
 require "sinatra/r18n"
+require "sinatra/cookies"
+
 require_relative "./users"
 
 module PuavoRest
-
-class ExternalService < LdapModel
-
-  ldap_map(:dn, :dn){ |dn| Array(dn).first.downcase.strip }
-  ldap_map :cn, :name
-  ldap_map :puavoServiceDomain, :domain
-  ldap_map :puavoServiceSecret, :secret
-  ldap_map :description, :description
-  ldap_map :puavoServiceDescriptionURL, :description_url
-  ldap_map :puavoServiceTrusted, :trusted, LdapConverters::StringBoolean
-  ldap_map :puavoServicePathPrefix, :prefix, :default => "/"
-
-  def self.ldap_base
-    "ou=Services,o=puavo"
-  end
-
-  def self.by_domain(domain)
-    by_attr(:domain, domain, :multiple => true)
-  end
-
-  def self.by_url(url)
-    url = Addressable::URI.parse(url.to_s)
-
-    return LdapModel.setup(:credentials => CONFIG["server"]) do
-
-      # Single domain might have multiple external services configured to
-      # different paths. Match paths from the longest to shortest.
-      ExternalService.by_domain(url.host).sort do |a,b|
-        b["prefix"].size <=> a["prefix"].size
-      end.select do |s|
-        if url.path.to_s.empty?
-          path = "/"
-        else
-          path = url.path
-        end
-        path.start_with?(s["prefix"])
-      end.first
-    end
-
-  end
-
-  # Filters a User.to_hash down to a suitable level for SSO URLs
-  def filtered_user_hash(user)
-    schools_hash = user.schools_hash()    # Does not call json()
-
-    primary_school_id = user.primary_school_id
-
-    # Remove everything that isn't the user's primary school. It would be nice
-    # to include all schools in the hash, but URLs have maximum lengths and if
-    # you have too many schools and groups in it, systems will start rejecting
-    # it and logins will fail.
-    schools_hash.delete_if{ |s| s["id"] != primary_school_id }
-
-    # Remove DNs, they only take up space and aren't on the spec anyway
-    schools_hash.each do |s|
-      s.delete('dn')
-
-      s['groups'].each do |g|
-        g.delete('dn')
-      end
-    end
-
-    year_class = user.year_class
-
-    if year_class
-      yc_name = year_class.name
-    else
-      yc_name = nil
-    end
-
-    # Build the output hash manually, without calling user.to_hash().
-    # Include only the members that are on the spec (plus a few more).
-    {
-      'id' => user.id,
-      'puavo_id' => user.puavo_id,
-      'external_id' => user.external_id,
-      'preferred_language' => user.preferred_language,
-      'user_type' => user.user_type,    # unknown if actually needed
-      'username' => user.username,
-      'first_name' => user.first_name,
-      'last_name' => user.last_name,
-      'email' => user.email,
-      'primary_school_id' => primary_school_id,
-      'year_class' => yc_name,
-      'organisation_name' => user.organisation_name,
-      'organisation_domain' => user.organisation_domain,
-      'external_domain_username' => user.external_domain_username,
-      'schools' => schools_hash,
-      'learner_id' => user.learner_id,
-    }
-  end
-
-  def generate_login_url(user, return_to_url)
-    return_to_url = Addressable::URI.parse(return_to_url.to_s)
-
-    jwt_data = filtered_user_hash(user).merge({
-      # Issued At
-      "iat" => Time.now.to_i,
-      # JWT ID
-      "jti" => UUID.generator.generate,
-
-      # use external_id like in Zendesk?
-      # https://support.zendesk.com/entries/23675367
-
-      "external_service_path_prefix" => prefix
-    })
-
-    jwt = JWT.encode(jwt_data, secret)
-    return_to_url.query_values = (return_to_url.query_values || {}).merge("jwt" => jwt)
-    return return_to_url.to_s
-  end
-end
 
 class SSO < PuavoSinatra
   register Sinatra::R18n
@@ -162,6 +51,31 @@ class SSO < PuavoSinatra
         :user => "Unknown client service #{ return_to.host }"
     end
 
+    request_id = 'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
+    had_session = false
+
+    if session = read_sso_session(request_id)
+      # An SSO session cookie was found in the request, see if we can use it
+      rlog.info("[#{request_id}] verifying the SSO cookie")
+
+      organisation = session['organisation']
+
+      if are_sessions_enabled(organisation, @external_service.domain, request_id)
+        # The session cookie is usable
+        url, _ = @external_service.generate_login_url(session['user'], return_to)
+
+        rlog.info("[#{request_id}] SSO cookie login OK")
+        rlog.info("[#{request_id}] redirecting SSO auth #{session['user']['username']} (#{session['dn']}) to #{url}")
+
+        return redirect url
+      else
+        rlog.error("[#{request_id}] SSO cookie login rejected, the target external service domain (" + \
+                   @external_service.domain.inspect + ") is not on the list of allowed services")
+        had_session = true
+      end
+    end
+
+    # Normal/non-session SSO login
     begin
       auth :basic_auth, :from_post, :kerberos
     rescue KerberosError => err
@@ -191,10 +105,31 @@ class SSO < PuavoSinatra
       return render_form(t.sso.service_not_activated)
     end
 
+    url, user_hash =
+      @external_service.generate_login_url(@external_service.filtered_user_hash(user), return_to)
 
-    url = @external_service.generate_login_url(user, return_to)
-    rlog.info('SSO login ok')
-    rlog.info("redirecting SSO auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
+    rlog.info("[#{request_id}] SSO login ok")
+
+    # If SSO session cookies are enabled for this service in this organisation,
+    # the create a new session
+    domain = @external_service.domain
+    org_key = user.organisation.organisation_key
+
+    if !had_session && are_sessions_enabled(org_key, domain, request_id)
+      rlog.info("[#{request_id}] SSO sessions are enabled for domain \"#{domain}\" in organisation \"#{org_key}\"")
+
+      expires = Time.now.utc + PUAVO_SSO_SESSION_LENGTH
+
+      response.set_cookie(PUAVO_SSO_SESSION_KEY,
+                          value: generate_sso_session(request_id, user_hash, user),
+                          expires: expires)
+
+      rlog.info("[#{request_id}] the SSO session will expire at #{Time.at(expires)}")
+    else
+      rlog.info("[#{request_id}] domain \"#{domain}\" is not eligible for SSO sessions in organisation \"#{org_key}\"")
+    end
+
+    rlog.info("[#{request_id}] redirecting SSO auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
     redirect url
   end
 
@@ -230,6 +165,7 @@ class SSO < PuavoSinatra
       # places. This key tells the form where those resources are.
       "prefix" => "/v3/login",
 
+      "page_title" => t.sso.title,
       "external_service_name" => @external_service["name"],
       "service_title_override" => nil,
       "return_to" => params['return_to'] || params['return'] || nil,
@@ -324,8 +260,8 @@ class SSO < PuavoSinatra
       @login_content['css'] = customisations['css']
     end
 
-    if customisations.include?('upper_logo')
-      @login_content['upper_logo'] = customisations['upper_logo']
+    if customisations.include?('upper_logos')
+      @login_content['upper_logos'] = customisations['upper_logos']
     end
 
     if customisations.include?('header_text')
@@ -336,20 +272,11 @@ class SSO < PuavoSinatra
       @login_content['service_title_override'] = customisations['service_title_override']
     end
 
-    if customisations.include?('bottom_logos')
-      @login_content['bottom_logos'] = customisations['bottom_logos']
+    if customisations.include?('lower_logos')
+      @login_content['lower_logos'] = customisations['lower_logos']
     end
 
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
-  end
-
-  def username_prefill
-    [
-      # what user typed last
-      params["username"],
-      # organisation presetting
-      (@organisation ? "@#{ @organisation["domain"] }" : nil),
-    ].compact.first
   end
 
   def topdomain
@@ -399,7 +326,7 @@ class SSO < PuavoSinatra
     if params["username"].include?("@")
       _, user_org = params["username"].split("@")
       if Organisation.by_domain(ensure_topdomain(user_org)).nil?
-        rlog.info("SSO error: could not find organisation for domain #{ user_org }")
+        rlog.error("SSO error: could not find organisation for domain #{ user_org }")
         render_form(t.sso.bad_username_or_pw)
       end
     end
@@ -439,8 +366,81 @@ class SSO < PuavoSinatra
     def form_authenticity_token
       # FIXME
     end
-
   end
 
+  private
+
+  def are_sessions_enabled(organisation_key, domains, request_id)
+    begin
+      ORGANISATIONS.fetch(organisation_key, {}).fetch('enable_sso_sessions_in', []).each do |test|
+        next if test.nil? || test.empty?
+
+        if test[0] == '^'
+          # A regexp domain
+          re = Regexp.new(test).freeze
+          return true if domains.any? { |d| re.match?(d) }
+        else
+          # A plain text domain
+          return true if domains.include?(test)
+        end
+      end
+    rescue => e
+      rlog.error("[#{request_id}] domain matching failed: #{e}")
+    end
+
+    return false
+  end
+
+  def generate_sso_session(request_id, user_hash, user)
+    key = SecureRandom.hex(64)
+
+    rlog.info("[#{request_id}] creating a new SSO session cookie #{key}")
+
+    data = {
+      dn: user.dn.to_s,   # not included in the JWT, but we need it for logging purposes
+      organisation: user.organisation.organisation_key,   # needed when the session is restored
+      user: user_hash,
+    }
+
+    # The data is not obfuscated or encrypted. Anyone who can access the production
+    # Redis database can also generate the full user information anyway.
+    session_data = data.to_json.to_s
+
+    redis = Redis::Namespace.new('sso_session', redis: REDIS_CONNECTION)
+
+    redis.set("data:#{key}", session_data, nx: true, ex: PUAVO_SSO_SESSION_LENGTH)
+
+    # This is used to locate and invalidate the session if the user is edited/removed
+    redis.set("user:#{user.puavo_id}", key, nx: true, ex: PUAVO_SSO_SESSION_LENGTH)
+
+    key
+  end
+
+  def read_sso_session(request_id)
+    return nil unless request.cookies.include?(PUAVO_SSO_SESSION_KEY)
+
+    key = request.cookies[PUAVO_SSO_SESSION_KEY]
+
+    rlog.info("[#{request_id}] have SSO session cookie #{key} in the request")
+
+    redis = Redis::Namespace.new('sso_session', redis: REDIS_CONNECTION)
+    data = redis.get("data:#{key}")
+
+    unless data
+      rlog.error("[#{request_id}] no session data found by key #{key}; it has expired or it's invalid")
+      return nil
+    end
+
+    rlog.info("[#{request_id}] session lifetime left: #{redis.ttl("data:#{key}")} seconds")
+
+    begin
+      data = JSON.parse(data)
+    rescue => e
+      rlog.error("[#{request_id}] have SSO session data, but it cannot be loaded: #{e}")
+      return nil
+    end
+
+    data
+  end
 end
 end
