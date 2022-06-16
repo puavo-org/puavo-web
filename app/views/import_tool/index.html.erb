@@ -2,6 +2,8 @@
 
 <h1><%= t("import_tool.import_users") %></h1>
 
+<p class="genericWarning"><%= t('import_tool.deprecated') %></p>
+
 <div id="import-tool">
   Loading the tool...
   <% if ENV["RAILS_ENV"] != "production" %>

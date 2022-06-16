@@ -1010,6 +1010,7 @@ fi:
   import_tool:
     import: Tuo
     import_users: Tuo käyttäjiä
+    deprecated: "Tämä työkalu on vanhentunut. Se poistetaan ennen vuoden loppua. Käytä uutta tuontityökalua ja raportoi puutteet ennen vanhan tuontityökalun poistoa. Kyllä, tiedämme että uusi työkalu on vielä beta-vaiheessa."
     add_column: Lisää sarake
     change_type: Vaihda tyyppi
     fill: Täytä

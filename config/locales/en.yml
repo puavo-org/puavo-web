@@ -1010,6 +1010,7 @@ en:
   import_tool:
     import: Import
     import_users: Import users
+    deprecated: "This tool has been deprecated. It will be removed before the year ends. Use the new import tool and report all missing features before the old tool is removed. Yes, we know the new tool is still in beta phase."
     add_column: Add column
     change_type: Change type
     fill: Fill
