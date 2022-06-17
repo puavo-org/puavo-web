@@ -485,6 +485,8 @@ en:
       marked_users_locked_with_fail: "%{succeed} users locked, %{failed} not locked"
       marked_users_locked_none: "There were no unlocked users"
       you_cant_lock_yourself: "You can't lock your own account"
+      locked: "Account locked"
+      unlocked: "Account unlocked"
       cant_mark_yourself_for_deletion: "You can't mark yourself for deletion"
       cant_delete_yourself: "You can't delete yourself"
       added_to_school: "User added to school \"%{name}\""
@@ -838,6 +840,8 @@ en:
       user_is_marked_for_deletion: "This user has been marked for deletion"
       user_deletion_prevented: "This user cannot be deleted"
       user_devices: User devices
+      lock: "Lock user"
+      unlock: "Unlock user"
       mark_for_removal: Mark for deletion
       unmark_for_removal: Remove deletion marking
       marked_for_removal: Marked for deletion

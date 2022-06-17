@@ -485,6 +485,8 @@ fi:
       marked_users_locked_with_fail: "%{succeed} käyttäjän lukitseminen onnistui, %{failed} epäonnistui"
       marked_users_locked_none: "Lukitsemattomia käyttäjiä ei ollut"
       you_cant_lock_yourself: "Et voi lukita omaa tunnustasi"
+      locked: "Tunnus lukittu"
+      unlocked: "Tunnus ei ole enää lukittu"
       cant_mark_yourself_for_deletion: "Et voi merkitä itseäsi poistettavaksi"
       cant_delete_yourself: "Et voi poistaa itseäsi"
       added_to_school: "Käyttäjä lisätty kouluun \"%{name}\""
@@ -838,6 +840,8 @@ fi:
       user_is_marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
       user_deletion_prevented: "Käyttäjän poisto on estetty"
       user_devices: Käyttäjän laitteet
+      lock: "Lukitse tunnus"
+      unlock: "Avaa tunnuksen lukitus"
       mark_for_removal: Merkitse poistettavaksi
       unmark_for_removal: Poista poistomerkintä
       marked_for_removal: Merkitty poistettavaksi

@@ -224,6 +224,20 @@
       <% end %>
       <% end %>
 
+      <ul>
+        <li>
+          <% if @user.puavoLocked == false || @user.puavoLocked.nil? %>
+          <%= link_to lock_user_path(@school, @user) do %>
+            <i class='icon-lock'></i><%= t('.lock') %>
+          <% end %>
+          <% elsif @user.puavoLocked == true %>
+          <%= link_to unlock_user_path(@school, @user) do %>
+            <i class='icon-lock-open'></i><%= t('.unlock') %>
+          <% end %>
+          <% end %>
+        </li>
+      </ul>
+
       <% if @user.puavoRemovalRequestTime %>
       <ul>
         <li>
