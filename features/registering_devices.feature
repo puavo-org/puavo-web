@@ -65,9 +65,9 @@ Feature: Devices registration
     """
     When I enter "test-thin-01" into process "puavo-register"
     When I enter "52:54:00:aa:aa:aa" into process "puavo-register"
-    When I enter "" into process "puavo-register"
-    When I enter "" into process "puavo-register"
-    When I enter "" into process "puavo-register"
+    When I enter "fake serial number" into process "puavo-register"
+    When I enter "fake manufacturer" into process "puavo-register"
+    When I enter "fake model" into process "puavo-register"
     When I enter "cucumber" into process "puavo-register"
     Then I should see the following output from process "puavo-register":
     """
@@ -76,9 +76,9 @@ Feature: Devices registration
     School:                 Example school 1
     Hostname:               test-thin-01
     MAC address(es):        52:54:00:aa:aa:aa
-    Serial number:
-    Device manufacturer:
-    Device model:
+    Serial number:          fake serial number
+    Device manufacturer:    fake manufacturer
+    Device model:           fake model
     Device primary user:    cucumber
 
     Change (a)ll / (d)evice type / (s)chool / (h)ostname / (p)rimary user
