@@ -91,6 +91,8 @@ Rails.application.routes.draw do
       match 'users/:id/add_group' => 'users#add_group', :as => :add_group_user, :via => :put
       match 'import_tool' => 'import_tool#index', :via => :get
       match 'username_redirect/:username' => 'users#username_redirect', :via => :get, :constraints => { :username => /[^\/]+/ }
+      get 'users/:id/lock' => 'users#lock', :as => :lock_user
+      get 'users/:id/unlock' => 'users#unlock', :as => :unlock_user
       match 'users/:id/mark_user_for_deletion' => 'users#mark_for_deletion', :as => :mark_user_for_deletion, :via => :get
       match 'users/:id/unmark_user_for_deletion' => 'users#unmark_for_deletion', :as => :unmark_user_for_deletion, :via => :get
       match 'users/:id/prevent_deletion' => 'users#prevent_deletion', :as => :prevent_deletion, :via => :get

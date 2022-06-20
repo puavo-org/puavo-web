@@ -1183,6 +1183,34 @@ class UsersController < ApplicationController
     redirect_to user_path(params["school_id"], user.id)
   end
 
+  def lock
+    @user = User.find(params[:id])
+
+    if current_user.id == @user.id
+      flash[:alert] = t('flash.user.you_cant_lock_yourself')
+    else
+      @user.puavoLocked = true
+      @user.save
+      flash[:notice] = t('flash.user.locked')
+    end
+
+    respond_to do |format|
+      format.html { redirect_to(user_path(@school, @user)) }
+    end
+  end
+
+  def unlock
+    @user = User.find(params[:id])
+
+    @user.puavoLocked = false
+    @user.save
+    flash[:notice] = t('flash.user.unlocked')
+
+    respond_to do |format|
+      format.html { redirect_to(user_path(@school, @user)) }
+    end
+  end
+
   def mark_for_deletion
     @user = User.find(params[:id])
 
