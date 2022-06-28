@@ -4,7 +4,7 @@
 SuperTable 2: The 2nd Edition
 It's still a monster, but it's more structured now
 
-Version 2.5.6
+Version 2.5.7
 */
 
 // --------------------------------------------------------------------------------------------------
