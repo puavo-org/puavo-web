@@ -217,6 +217,9 @@ fi:
     school: "Koulu"
     primary_school: "Pääkoulu"
 
+    schools:
+      integrations: "Integraatiot"
+
     users:
       first_names: "Etunimet"
       last_name: "Sukunimi"

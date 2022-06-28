@@ -58,7 +58,7 @@ I18n.locale = "<%= I18n.locale %>";
 
         <li class="asFlex haveTopDropdown"><span class="menuTitle"><%= t('.schools') %></span>
           <ul class="topDropdown separators schools">
-            <% if current_user.organisation_owner? %>
+            <% if School.all_with_permissions(current_user).count > 1 %>
             <li><a href="/users"><%= t('.index') %></a></li>
             <% end %>
             <% school_list.each do |school| %>

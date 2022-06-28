@@ -217,6 +217,9 @@ en:
     school: "School"
     primary_school: "Primary school"
 
+    schools:
+      integrations: "Integrations"
+
     users:
       first_names: "First names"
       last_name: "Last name"

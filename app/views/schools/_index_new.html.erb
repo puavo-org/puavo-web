@@ -1,0 +1,254 @@
+<% content_for :javascript do %>
+<%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
+<%= javascript_include_tag 'supertable2', skip_pipeline: true %>
+<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
+<% end %>
+
+<div id="schoolsTitle"><h1><%= LdapOrganisation.current.o %></h1></div>
+
+<div id="tableSchools"></div>
+
+<% if current_user.organisation_owner? %>
+<% content_for :tools do %>
+<ul>
+  <li>
+    <%= link_to new_school_path, class: 'btn' do %>
+      <i class="icon-plus"></i><%= t('link.new_school') %>
+    <% end %>
+  </li>
+</ul>
+<% end %>
+<% end %>
+
+<% content_for :post_load_javascript do %>
+<script>
+"use strict;"
+
+// All available columns, their names and types and other parameters
+const COLUMN_DEFINITIONS = {
+    id: {
+        key: "id",
+        type: ColumnType.NUMERIC,
+        alias: ["puavoid"],
+    },
+
+    name: {
+        key: "name",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.USER_TRANSFORM,
+    },
+
+    integrations: {
+        key: "integrations",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.ARRAY | ColumnFlag.USER_TRANSFORM,
+    },
+
+    prefix: {
+        key: "prefix",
+        type: ColumnType.STRING,
+    },
+
+    boot_servers: {
+        key: "boot_servers",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.USER_TRANSFORM,
+    },
+
+    school_code: {
+        key: "school_code",
+        type: ColumnType.STRING,
+    },
+
+    eid: {
+        key: "eid",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.F_NULLABLE,
+        alias: ["external_id"]
+    },
+
+    num_members: {
+        key: "num_members",
+        type: ColumnType.NUMERIC,
+    },
+
+    num_devices: {
+        key: "num_devices",
+        type: ColumnType.NUMERIC,
+    },
+
+    conf: {
+        key: "conf",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.ARRAY,
+        alias: ["puavoconf", "puavo_conf"],
+        export_name: "puavoconf",
+    },
+};
+
+// Localized column titles. The keys must be same as in the keys in the column
+// definitions object above.
+const COLUMN_TITLES = {
+    id: "<%= t('columns.puavoid') %>",
+    name: "<%= t('activeldap.attributes.school.displayName') %>",
+    integrations: "<%= t('columns.schools.integrations') %>",
+    prefix: "<%= t('activeldap.attributes.school.puavoNamePrefix') %>",
+    boot_servers: "<%= t('activeldap.attributes.school.bootservers') %>",
+    school_code: "<%= t('activeldap.attributes.school.puavoSchoolCode') %>",
+    eid: "<%= t('activeldap.attributes.school.puavoExternalId') %>",
+    num_members: "<%= t('schools.index.members') %>",
+    num_devices: "<%= t('schools.index.devices') %>",
+    conf: "<%= t('columns.puavoconf') %>",
+};
+
+// The default order for columns
+const COLUMN_ORDER = [
+    "id",
+    "name",
+    "integrations",
+    "prefix",
+    "boot_servers",
+    "school_code",
+    "eid",
+    "num_members",
+    "num_devices",
+    "conf",
+];
+
+// Possible integrations, in order they're listed and with tooltips
+const INTEGRATION_TYPES = [
+    ["in", "<%= t('schools.integrations.in') %>" ],
+    ["out", "<%= t('schools.integrations.out') %>"],
+    ["inout", "<%= t('schools.integrations.inout') %>"],
+    ["login", "<%= t('schools.integrations.login') %>"],
+    ["password", "<%= t('schools.integrations.password') %>"],
+    ["email", "<%= t('schools.integrations.email') %>"],
+    ["other", "<%= t('schools.integrations.other') %>"]
+];
+
+const USER_TRANSFORM_FUNCTIONS = {
+    name: function(entry) {
+        return [
+            `<a href="${entry.link}">${escapeHTML(entry.name)}</a>`,
+            entry.name
+        ];
+    },
+
+    integrations: function(entry) {
+        let display = [],
+            sortable = [];
+
+        const available = Object.keys(entry.integrations);
+
+        for (const integration of INTEGRATION_TYPES) {
+            const type = integration[0],
+                  title = integration[1];
+
+            if (available.includes(type)) {
+                switch (type) {
+                    case "in":
+                        for (const system of entry.integrations[type])
+                            display.push(`<li class="${type}" title="${title}">${system}<span class="dirIn"></span>Puavo</li>`);
+
+                        break;
+
+                    case "out":
+                        for (const system of entry.integrations[type])
+                            display.push(`<li class="${type}" title="${title}">Puavo<span class="dirOut"></span>${system}</li>`);
+
+                        break;
+
+                    case "inout":
+                        for (const system of entry.integrations[type])
+                            display.push(`<li class="${type}" title="${title}">Puavo<span class="dirInOut"></span>${system}</li>`);
+
+                        break;
+
+                    default:
+                        for (const system of entry.integrations[type])
+                            display.push(`<li class="${type}" title="${title}">${system}</li>`);
+
+                        break;
+                }
+
+                sortable.push(entry.integrations[type]);
+            }
+        }
+
+        sortable = sortable.flat();
+
+        return [
+            `<ul class="integrations inlineIntegrations">${display.join("<br>")}</ul>`,
+            sortable,
+            sortable
+        ];
+    },
+
+    boot_servers: function(entry) {
+        const plain = entry.boot_servers.map(s => s[0]).join(", "); // used for filtering and sorting
+
+        return [
+            entry.boot_servers.map(s => `<a href="${s[1]}">${s[0]}</a>`).join("<br>"),
+            plain,
+            plain
+        ];
+    }
+};
+
+function schoolActions(entry)
+{
+    return `<a href="/users/schools/${entry.id[INDEX_FILTERABLE]}/edit" class="btn"><%= t('link.edit') %></a>`;
+}
+
+const DEFAULT_COLUMNS = ["name", "integrations", "prefix", "boot_servers", "school_code", "eid", "num_members", "num_devices"];
+const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
+
+const RAW_DATA = <%= raw JSON.pretty_generate(@data) %>;
+
+function* synthesizeData(raw)
+{
+    for (const [_, s] of Object.entries(raw.schools)) {
+        let s2 = {...s};
+
+        // The supertable code always wants a "school_id" for everything, in our case
+        // it's the same as the puavoId.
+        s2.school_id = s.id;
+
+        // Unpack bootserver links
+        s2.boot_servers = [];
+
+        for (const hostname of s.boot_servers)
+            s2.boot_servers.push([hostname, raw.bootservers[hostname]]);
+
+        yield s2;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+new SuperTable(
+    // Main container DIV
+    document.getElementById("tableSchools"),
+
+    // Settings
+    {
+        id: "schools",
+        csvPrefix: `<%= LdapOrganisation.current.o %>-schools`,
+        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.DISABLE_VIEW_SAVING,
+        locale: "<%= supertable_sorting_locale %>",
+        columnDefinitions: COLUMN_DEFINITIONS,
+        columnTitles: COLUMN_TITLES,
+        columnOrder: COLUMN_ORDER,
+        userTransforms: USER_TRANSFORM_FUNCTIONS,
+        actions: schoolActions,
+        //openCallback: openCallback,
+        defaultColumns: DEFAULT_COLUMNS,
+        defaultSorting: DEFAULT_SORTING,
+        staticData: RAW_DATA,
+        preFilterFunction: synthesizeData,
+    }
+);
+});
+
+</script>
+<% end %>

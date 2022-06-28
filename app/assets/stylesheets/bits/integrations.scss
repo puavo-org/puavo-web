@@ -120,11 +120,11 @@
 .inlineIntegrations {
   display: inline;
   list-style-type: none;
-  margin-left: 20px;
   font-size: 90%;
 
   li {
     padding: 2px 5px;
+    line-height: 2;
     border: 1px solid $integrationsBorder;
     white-space: nowrap;
     display: inline;
