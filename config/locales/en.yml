@@ -895,7 +895,13 @@ en:
   new_import:
     title: "User Mass Import and Update"
     beta_warning: "THIS TOOL IS STILL IN BETA PHASE. IT WORKS, BUT BE VERY CAREFUL WITH IT. REPORT ALL BUGS AND IMPROVEMENT IDEAS AT ONCE."
-    data_source_title: "Data source"
+
+    # The source tab
+    source_tab: "1. Select data source"
+    source_help: "You can select either manual input or file upload for the data source. Notice the read settings below; the system can read most CSV variants. Below those is the preview table, which displays the first five rows of the incoming data. The preview is automatically rebuilt every time the manual input or read settings are changed. You can use it to ensure that the data is being read correctly. When the rows look okay, click the \"Read all data and proceed to the import phase\" button below the table to proceed to the actual import phase. You can return to this screen at any time, if you need to change the source or the read settings."
+    manual_title: "Manual input"
+    upload_title: "Upload a file"
+    manual_help: "Enter the imported data:"
     upload_help: "Upload a UTF-8 -encoded CSV or TSV file:"
     infer_columns: "Infer column types from first row identifiers"
     infer_explanation: "If the first row contains identifiers listed on the left column in the table below, the column type is taken from the right column. If the identifier is not in the table, the column will be skipped."
@@ -903,26 +909,34 @@ en:
     infer_right: "Inferred column type"
     trim: "Trim leading and trailing whitespace from values"
     separator: "Separator"
-    separator_help: "Hint: If you copy-paste data directly from LibreOffice Calc into the manual input box, set this to tab."
+    separator_help: "Hint: If you copy-paste data directly from LibreOffice Calc into the manual input box, set this to Tab."
     comma: "Comma (,)"
     semicolon: "Semicolon (;)"
     tab: "Tab (\\t)"
-    preview_title: "Prepare and import data"
+    preview: "Preview"
+
+    # The import tab
+    import_tab: "2. Import data"
+
+    no_data: "No rows to display. Have you selected the data source in the first tab?"
 
     mode:
-      title: "Update method"
+      label: "Update method"
       create_new_update_existing: "Add new users and update existing"
       create_new_skip_existing: "Add new users, skip existing (default)"
       skip_new_update_existing: "Skip new users, update existing"
 
-    row_state: "State"
+    table:
+      mark_all_rows_for_deletion: "Mark ALL rows for deletion"
+      mark_row_for_deletion: "Mark this row for deletion"
+      row_state: "State"
 
-    legend:
-      idle: "The row won't be processed"
-      processing: "The row is being processed right now"
-      success: "The row was a complete success"
-      partial_success: "The row was a partial success"
-      failed: "The row failed completely"
+      legend:
+        idle: "The row won't be processed"
+        processing: "The row is being processed right now"
+        success: "The row was a complete success"
+        partial_success: "The row was a partial success"
+        failed: "The row failed completely"
 
     column_title: "Column type"
     column_tools: "Column tools"
@@ -953,16 +967,14 @@ en:
       delete_column: "Remove column"
 
     buttons:
-      manual: "Manual Input"
-      upload: "Upload a File"
+      read_data: "Read all data and proceed to the import phase"
       show_infers: "Show infers..."
-      parse: "Read data"
       begin: "Begin Import"
+      stop: "Stop import"
       begin_failed: "Re-import failed rows"
       get_duplicates: "Download a list of duplicate usernames"
-      delete_all: "Clear the table"
-      get_passwords: "Download the passwords in a PDF file"
-      export: "Download the table contents as a CSV file"
+      get_passwords: "Download a PDF of the passwords"
+      delete_marked_rows: "Delete the marked rows"
       save: "Save (Enter)"
       cancel: "Cancel (Esc)"
       close: "Close (Esc)"
@@ -988,7 +1000,7 @@ en:
 
       generate_passwords:
         title: "Generate Passwords"
-        custom: "Fill with this"
+        fixed: "Fill with this"
         random: "Fill with random passwords"
         uppercase: "Include uppercase letters (A-Z)"
         lowercase: "Include lowercase letters (a-z)"
@@ -1003,11 +1015,11 @@ en:
         help_selection: "Fill the selected cells with this value"
 
     problems:
-      errors_title: "The following errors were found in the table data. They must be fixed before the import process can be started:"
-      warnings_title: "The following warnings were found in the table data. They won't prevent you from importing the data, but they're something you should take a look at and ensure they won't cause problems later."
+      errors_title: "These problems have to be fixed before the import process can begin:"
+      warnings_title: "These don't prevent the import process, but you should take a look at them and ensure they don't cause problems later on:"
 
-    table:
-      delete_row: "Delete this row"
+    errors:
+      unknown_group: "Unknown/invalid group"
 
     pdf:
       page: "page"

@@ -895,34 +895,48 @@ fi:
   new_import:
     title: "Käyttäjien massatuonti ja -päivitys"
     beta_warning: "TÄMÄ TYÖKALU ON VIELÄ BETA-VAIHEESSA. SE TOIMII, MUTTA OLE HYVIN VAROVAINEN SEN KANSSA. RAPORTOI KAIKKI VIAT JA KEHITYSIDEAT VÄLITTÖMÄSTI."
-    data_source_title: "Datan lähde"
+
+    # The source tab
+    source_tab: "1. Valitse tietolähde"
+    source_help: "Voit valita tuotavien käyttäjätietojen lähteeksi käsisyötteen tai tiedoston. Huomaa syötteen alapuolella olevat lukuasetukset; järjestelmä pystyy lukemaan useimpia CSV-variantteja. Niiden alla on esikatselutaulukko joka näyttää ensimmäiset 5 riviä tuotavasta tiedosta. Esikatselu päivittyy automaattisesti aina kun syötettä tai lukuasetuksia muutetaan. Voit varmistaa sen avulla, että tietoja tulkitaan oikein. Kun rivit näyttävät oikealta, paina taulukon alla olevaa isoa \"Lue kaikki tiedot ja siirry tuontivaiheeseen\" -nappia siirtyäksesi varsinaiseen tuontivaiheseen. Voit palata takaisin tähän ruutuun milloin tahansa, jos sinun on muutettava lähdettä tai lukuasetuksia."
+    manual_title: "Käsisyöte"
+    upload_title: "Lataa tiedosto"
+    manual_help: "Syötä tuotavat tiedot:"
     upload_help: "Lataa UTF-8 -enkoodattu CSV- tai TSV-tiedosto:"
     infer_columns: "Päättele sarakkeiden tyypit ensimmäisen rivin tunnisteista"
-    infer_explanation: "Jos ensimmäinen rivi sisältää alla olevan taulukon ensimmäisessä sarakkeesa listattuja tunnisteita, asetetaan sarakkeen tyyppi oikeassa sarakkeessa olevaksi. Jos tunnistetta ei löydy taulukosta, sarakkeen tyypiksi asetetaan ohitettu."
+    infer_explanation: "Jos ensimmäinen rivi sisältää alla olevan taulukon ensimmäisessä sarakkeesa listattuja tunnisteita, asetetaan sarakkeen tyyppi oikeassa sarakkeessa olevaksi. Jos tunnistetta ei löydy taulukosta, sarakkeen sisältö ohitetaan (voit vielä vaihtaa sen ennen tuontia)."
     infer_left: "Tunniste"
     infer_right: "Päätelty sarakkeen tyyppi"
     trim: "Poista solujen arvoista tyhjät välit alusta ja lopusta"
     separator: "Erotinmerkki"
-    separator_help: "Vihje: Jos kopioit dataa suoraan LibreOffice Calcista käsisyötteeseen, aseta tämä tabiin."
+    separator_help: "Vihje: Jos kopioit rivejä suoraan LibreOffice Calcista käsisyötteeseen, valitse tähän Tab."
     comma: "Pikku (,)"
     semicolon: "Puolipiste (;)"
     tab: "Tab (\\t)"
-    preview_title: "Valmistele ja tuo data"
+    preview: "Esikatselu"
+
+    # The import tab
+    import_tab: "2. Tuo tiedot"
+
+    no_data: "Ei näytettäviä rivejä. Oletko valinnut tietolähteen ensimmäiseltä sivulta?"
 
     mode:
-      title: "Päivitystapa"
+      label: "Päivitystapa"
       create_new_update_existing: "Lisää uudet käyttäjät ja päivitä olemassaolevat"
       create_new_skip_existing: "Lisää uudet käyttäjät, ohita olemassaolevat (oletus)"
       skip_new_update_existing: "Ohita uudet käyttäjät, päivitä olemassaolevat"
 
-    row_state: "Tila"
+    table:
+      mark_all_rows_for_deletion: "Merkitse KAIKKI rivit poistettavaksi"
+      mark_row_for_deletion: "Merkitse rivi poistettavaksi"
+      row_state: "Tila"
 
-    legend:
-      idle: "Riviä ei käsitellä/käsitelty"
-      processing: "Riviä käsitellään juuri nyt"
-      success: "Rivi onnistui täysin"
-      partial_success: "Rivi onnistui osittain"
-      failed: "Rivi epäonistui kokonaan"
+      legend:
+        idle: "Riviä ei käsitellä/käsitelty"
+        processing: "Riviä käsitellään juuri nyt"
+        success: "Rivi onnistui täysin"
+        partial_success: "Rivi onnistui osittain"
+        failed: "Rivi epäonistui kokonaan"
 
     column_title: "Sarakkeen tyyppi"
     column_tools: "Sarakkeen muokkaustyökalut"
@@ -953,16 +967,14 @@ fi:
       delete_column: "Poista sarake"
 
     buttons:
-      manual: "Käsisyöte"
-      upload: "Lataa tiedosto"
+      read_data: "Lue kaikki tiedot ja siirry tuontivaiheeseen"
       show_infers: "Näytä päättelyt..."
-      parse: "Lue data"
       begin: "Aloita tuonti"
+      stop: "Pysäytä tuonti"
       begin_failed: "Tuo epäonnistuneet rivit uudelleen"
       get_duplicates: "Lataa lista duplikaateista käyttäjätunnuksista"
-      delete_all: "Tyhjennä taulukko"
-      get_passwords: "Lataa asetetut salasanat PDF-muodossa"
-      export: "Lataa taulukon sisältö CSV-tiedostona"
+      get_passwords: "Lataa PDF asetetuista salasanoista"
+      delete_marked_rows: "Poista valitut rivit"
       save: "Tallenna (Enter)"
       cancel: "Peruuta (Esc)"
       close: "Sulje (Esc)"
@@ -988,7 +1000,7 @@ fi:
 
       generate_passwords:
         title: "Luo salasanoja"
-        custom: "Täytä tällä"
+        fixed: "Täytä tällä"
         random: "Täytä satunnaisilla salasanoilla"
         uppercase: "Sisällytä isoja kirjaimet (A-Z)"
         lowercase: "Sisällytä pieniä kirjaimia (a-z)"
@@ -1003,11 +1015,11 @@ fi:
         help_selection: "Täytä valitut solut tällä arvolla"
 
     problems:
-      errors_title: "Tuotavassa datassa havaittiin seuraavat virheet. Ne on korjattava ennenkuin tuontioperaatio voidaan aloittaa:"
-      warnings_title: "Tuotavassa datassa havaittiin seuraavat puutteet. Ne eivät estä tuontioperaatiota, mutta sinun kannattaa vilkaista niitä ja varmistaa etteivät ne aiheuta ongelmia myöhemmin:"
+      errors_title: "Nämä virheet tiedoissa on korjatttava ennenkuin tuontiprosessi voidaan aloittaa:"
+      warnings_title: "Nämä eivät estä tuontiprosessia, mutta sinun kannattaa vilkaista niitä ja varmistaa etteivät ne aiheuta ongelmia myöhemmin:"
 
-    table:
-      delete_row: "Poista tämä rivi"
+    errors:
+      unknown_group: "Tuntematon/virheellinen ryhmä"
 
     pdf:
       page: "sivu"
