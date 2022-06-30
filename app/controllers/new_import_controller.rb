@@ -8,8 +8,7 @@ class NewImportController < ApplicationController
   def index
     return if redirected_nonowner_user?
 
-    @school_id = params['school_id'].to_i
-    @initial_groups = get_school_groups(School.find(@school_id).dn.to_s)
+    @initial_groups = get_school_groups(School.find(@school.id).dn.to_s)
 
     respond_to do |format|
       format.html
@@ -239,6 +238,7 @@ class NewImportController < ApplicationController
                 disposition: 'attachment')
     rescue => e
       puts e
+      puts e.backtrace.join("\n")
 
       # Send back an error message
       response = {
@@ -344,7 +344,7 @@ class NewImportController < ApplicationController
         group = Group.find(:first, attribute: 'cn', value: value)
 
         if group.nil?
-          failed << [key, column_to_index[key], 'unknown group']
+          failed << [key, column_to_index[key], t('new_import.errors.unknown_group')]
           next
         end
 
@@ -501,7 +501,7 @@ class NewImportController < ApplicationController
             group = Group.find(:first, attribute: 'cn', value: value)
 
             if group.nil?
-              failed << [key, column_to_index[key], 'unknown group']
+              failed << [key, column_to_index[key], t('new_import.errors.unknown_group')]
               next
             end
 

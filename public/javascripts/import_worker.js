@@ -19,7 +19,7 @@ let start = 0,
 function _beginImport(incoming)
 {
     data = {...incoming};
-    start = 0;
+    start = incoming.startIndex;    // the process can be resumed from arbitrary point
     total = 0;
     attempt = 1;
 }
