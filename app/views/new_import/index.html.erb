@@ -7,155 +7,209 @@
 
 <h1><%= t('new_import.title') %></h1>
 
+<!--
 <div class="betaOuter">
   <div class="betaInner">
     <h2>⚠️ WARNING! VAROITUS! ACHTUNG! ⚠️</h2>
     <%= t('new_import.beta_warning') %>
   </div>
 </div>
+//-->
 
+<!-- The main container. Everything in the importer MUST be inside this DIV! -->
 <div id="import">
 
-<!-- 1. SOURCE DATA -->
-<section><header>1. <%= t('new_import.data_source_title') %></header>
-<div class="flex flex-rows flex-gap-10px margin-top-10px">
+<!-- Tabs -->
+<nav>
+    <button id="page1" class="tab"><%= t('new_import.source_tab') %></button>
+    <button id="page2" class="tab"><%= t('new_import.import_tab') %></button>
+</nav>
 
-<!-- Data source tabs -->
-<div id="source">
-    <div class="tabs">
-        <button id="manual" class="selected"><%= t('new_import.buttons.manual') %></button>
-        <button id="upload"><%= t('new_import.buttons.upload') %></button>
-    </div>
+<!-- The source page -->
+<section id="page1" class="hidden">
 
-    <div class="content">
-        <div id="manual">
-            <textarea rows="5" class="width-100p padding-5px"></textarea>
+<p class="line-height-125p"><%= t('new_import.source_help') %></p>
+
+<div class="flex flex-rows flex-gap-10px">
+    <select id="source" class="padding-5px">
+        <option value="manual"><%= t('new_import.manual_title') %></option>
+        <option value="upload"><%= t('new_import.upload_title') %></option>
+    </select>
+
+    <div class="sourceContents">
+        <div id="manual" class="hidden">
+            <p class="margin-0"><strong><%= t('new_import.manual_help') %></strong></p>
+            <textarea rows="15" class="width-100p padding-5px"></textarea>
         </div>
 
         <div id="upload" class="hidden">
-            <p class="margin-0"><%= t('new_import.upload_help') %></p>
+            <p class="margin-0"><strong><%= t('new_import.upload_help') %></strong></p>
             <input type="file" id="fileUpload" class="margin-top-5px">
         </div>
     </div>
-</div>
 
-<!-- Parser settings popup. The summary is filled in later. -->
-<details id="settings">
-    <summary></summary>
+    <!-- Parser settings popup. The summary is filled in later. -->
+    <details id="settings">
+        <summary></summary>
 
-    <div class="flex flex-rows flex-gap-10px margin-left-20px margin-top-5px margin-bottom-20px">
-        <div class="settingRow">
-          <input type="checkbox" id="inferTypes" checked>
-          <label for="inferTypes"><%= t('new_import.infer_columns') %></label>
+        <div class="flex flex-rows flex-gap-10px margin-left-20px margin-top-5px margin-bottom-20px">
+            <div class="settingRow">
+              <input type="checkbox" id="inferTypes" checked>
+              <label for="inferTypes"><%= t('new_import.infer_columns') %></label>
+            </div>
+
+            <div class="settingRow">
+                <details class="margin-left-20px">
+                    <summary class=""><%= t('new_import.buttons.show_infers') %></summary>
+                    <p><%= t('new_import.infer_explanation') %></p>
+                    <table class="inferTable margin-top-10px">
+                        <thead><tr><th><%= t('new_import.infer_left') %></th><th><%= t('new_import.infer_right') %></th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="width: 10em;">first<br>first_name<br>firstname<br>first name<br>vorname</td>
+                                <td><%= t('new_import.columns.first') %></td>
+                            </tr>
+                            <tr>
+                                <td>last<br>last_name<br>lastname<br>last name<br>name</td>
+                                <td><%= t('new_import.columns.last') %></td></tr>
+                            <tr>
+                                <td>uid<br>user_name<br>username</td>
+                                <td><%= t('new_import.columns.uid') %></td></tr>
+                            <tr>
+                                <td>role<br>type</td>
+                                <td><%= t('new_import.columns.role') %></td></tr>
+                            <tr>
+                                <td>phone<br>telephone<br>telefon</td>
+                                <td><%= t('new_import.columns.phone') %></td></tr>
+                            <tr>
+                                <td>email<br>mail</td>
+                                <td><%= t('new_import.columns.email') %></td></tr>
+                            <tr>
+                                <td>eid<br>external_id<br>externalid</td>
+                                <td><%= t('new_import.columns.eid') %></td>
+                            </tr>
+                            <tr>
+                                <td>password<br>passwort</td>
+                                <td><%= t('new_import.columns.password') %></td>
+                            </tr>
+                            <tr>
+                                <td>pnumber</td>
+                                <td><%= t('new_import.columns.pnumber') %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </details>
+            </div>
+
+            <div class="settingRow">
+                <input type="checkbox" id="trimValues" checked>
+                <label for="trimValues"><%= t('new_import.trim') %></label>
+            </div>
+
+            <div class="settingRow">
+                <fieldset class="margin-0"><legend><%= t('new_import.separator') %></legend>
+                    <p class="margin-5px padding-0 padding-bottom-5px"><%= t('new_import.separator_help') %></p>
+                    <input type="radio" name="separator" id="comma"><label for="comma"><%= t('new_import.comma') %></label><br>
+                    <input type="radio" name="separator" id="semicolon"><label for="semicolon"><%= t('new_import.semicolon') %></label><br>
+                    <input type="radio" name="separator" id="tab" checked><label for="tab"><%= t('new_import.tab') %></label>
+                </fieldset>
+            </div>
         </div>
+    </details>
 
-        <div class="settingRow">
-            <details class="margin-left-20px">
-                <summary class=""><%= t('new_import.buttons.show_infers') %></summary>
-                <p><%= t('new_import.infer_explanation') %></p>
-                <table class="inferTable margin-top-10px">
-                    <thead><tr><th><%= t('new_import.infer_left') %></th><th><%= t('new_import.infer_right') %></th></tr></thead>
-                    <tbody>
-                        <tr>
-                            <td style="width: 10em;">first<br>first_name<br>firstname<br>first name<br>vorname</td>
-                            <td><%= t('new_import.columns.first') %></td>
-                        </tr>
-                        <tr>
-                            <td>last<br>last_name<br>lastname<br>last name<br>name</td>
-                            <td><%= t('new_import.columns.last') %></td></tr>
-                        <tr>
-                            <td>uid<br>user_name<br>username</td>
-                            <td><%= t('new_import.columns.uid') %></td></tr>
-                        <tr>
-                            <td>role<br>type</td>
-                            <td><%= t('new_import.columns.role') %></td></tr>
-                        <tr>
-                            <td>phone<br>telephone<br>telefon</td>
-                            <td><%= t('new_import.columns.phone') %></td></tr>
-                        <tr>
-                            <td>email<br>mail</td>
-                            <td><%= t('new_import.columns.email') %></td></tr>
-                        <tr>
-                            <td>eid<br>external_id<br>externalid</td>
-                            <td><%= t('new_import.columns.eid') %></td>
-                        </tr>
-                        <tr>
-                          <td>password<br>passwort</td>
-                          <td><%= t('new_import.columns.password') %></td>
-                        </tr>
-                        <tr>
-                          <td>pnumber</td>
-                          <td><%= t('new_import.columns.pnumber') %></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </details>
-        </div>
+    <!-- Live preview -->
+    <p class="margin-0"><strong><%= t('new_import.preview') %>:</strong></p>
+    <div id="preview"></div>
 
-        <div class="settingRow">
-          <input type="checkbox" id="trimValues" checked>
-          <label for="trimValues"><%= t('new_import.trim') %></label>
-        </div>
-
-        <div class="settingRow">
-            <fieldset class="margin-0"><legend><%= t('new_import.separator') %></legend>
-                <p class="margin-5px padding-0 padding-bottom-5px"><%= t('new_import.separator_help') %></p>
-                <input type="radio" name="separator" id="comma"><label for="comma"><%= t('new_import.comma') %></label><br>
-                <input type="radio" name="separator" id="semicolon"><label for="semicolon"><%= t('new_import.semicolon') %></label><br>
-                <input type="radio" name="separator" id="tab" checked><label for="tab"><%= t('new_import.tab') %></label>
-            </fieldset>
-        </div>
+    <div>
+        <button id="readData" class="btn width-100p"><%= t('new_import.buttons.read_data') %></button>
     </div>
-</details>
-
-<!-- Parse button -->
-<div>
-    <button id="parseCSV" class="padding-top-5px padding-bottom-5px padding-left-10px padding-right-10px"><%= t('new_import.buttons.parse') %></button>
 </div>
 
-</div>
 </section>
 
-<!-- 2. PARSER PREVIEW AND MANIPULATION TABLE -->
-<section><header>2. <%= t('new_import.preview_title') %></header>
+<!-- The data manipulation and import table -->
+<section id="page2" class="hidden">
 
 <div class="flex flex-rows flex-gap-10px margin-top-10px ">
+    <!-- Control buttons -->
     <div id="controls" class="flex flex-rows flex-gap-10px">
-        <div>
-            <label for="method"><%= t('new_import.mode.title') %>:</label>
-            <select id="method">
+        <div class="buttons">
+            <button id="beginImport" class="btn"><i class='icon-upload'></i><%= t('new_import.buttons.begin') %></button>
+            <button id="stopImport" class="btn hidden"><i class='icon-cancel'></i><%= t('new_import.buttons.stop') %></button>
+            <button id="retryFailed" class="btn" disabled><i class='icon-exchange'></i><%= t('new_import.buttons.begin_failed') %></button>
+            <button id="getDuplicates" class="btn"><i class='icon-download'></i><%= t('new_import.buttons.get_duplicates') %></button>
+            <button id="getPasswordPDF" class="btn"><i class='icon-download'></i><%= t('new_import.buttons.get_passwords') %></button>
+            <button id="deleteMarkedRows" class="btn-danger"><i class='icon-trash'></i><%= t('new_import.buttons.delete_marked_rows') %></button>
+        </div>
+
+        <div class="flex flex-cols flex-gap-5px flex-vcenter">
+            <label for="mode"><%= t('new_import.mode.label') %>:</label>
+
+            <select id="mode" class="margin-right-10px">
                 <option value="0"><%= t('new_import.mode.create_new_update_existing') %></option>
                 <option value="1"><%= t('new_import.mode.create_new_skip_existing') %></option>
                 <option value="2"><%= t('new_import.mode.skip_new_update_existing') %></option>
             </select>
         </div>
-
-        <div class="buttons">
-            <button id="beginImport"><%= t('new_import.buttons.begin') %></button>
-            <button id="retryFailed" disabled><%= t('new_import.buttons.begin_failed') %></button>
-            <button id="getDuplicates"><%= t('new_import.buttons.get_duplicates') %></button>
-            <button id="getPasswords"><%= t('new_import.buttons.get_passwords') %></button>
-            <button id="export"></i><%= t('new_import.buttons.export') %></button>
-            <button id="deleteAll" class="danger"><%= t('new_import.buttons.delete_all') %></button>
-        </div>
     </div>
 
+    <!-- Errors and warnings -->
+    <div id="problems"></div>
+
+    <!-- Status message, progress bar -->
     <div id="status" class="hidden">
-        <div id="message">x</div>
+        <div id="message"></div>
         <div id="progress" class="">
             <progress max="0" value="0"></progress>
-            <div id="counter">100/100</div>
+            <div id="counter">0/0</div>
         </div>
     </div>
 
-    <div id="problems"></div>
-    <div id="output"></div>
+    <!-- The import table -->
+    <div id="output"><p><%= t('new_import.no_data') %></p></div>
 </div>
 </section>
 
 </div>  <!-- the main import container div -->
 
-<!-- Popup templates -->
+<!-- Templates -->
+<template id="template_importTable">
+    <table class="importTable">
+        <thead>
+            <tr class="stickyTop">
+                <th class="align-center">
+                    <input type="checkbox" id="markAllRows" title="<%= t('new_import.table.mark_all_rows_for_deletion') %>">
+                </th>
+                <th>
+                    <span id="legendToggle"><%= t('new_import.table.row_state') %></span>
+                    <div id="legend">
+                        <ul>
+                            <li><div class="idle"></div> <%= t('new_import.table.legend.idle') %></li>
+                            <li><div class="processing"></div> <%= t('new_import.table.legend.processing') %></li>
+                            <li><div class="success"></div> <%= t('new_import.table.legend.success') %></li>
+                            <li><div class="partialSuccess"></div> <%= t('new_import.table.legend.partial_success') %></li>
+                            <li><div class="failed"></div> <%= t('new_import.table.legend.failed') %></li>
+                        </ul>
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</template>
+
+<template id="template_tableRow">
+    <tr>
+        <th class="rowNumber">
+            <div class="flex flex-cols flex-vcenter flex-gap-5px margin-left-5px">
+                <span class="flex-grow-2"></span>
+                <input type="checkbox" title="<%= t('new_import.table.mark_row_for_deletion') %>">
+            </div>
+        </th>
+    </tr>
+</template>
+
 <template id="template_columnHeader">
     <th class="stickyTop">
         <div class="flex flex-cols flex-vcenter">
@@ -175,6 +229,16 @@
             </select>
 
             <button id="controls" class="controls" title="<%= t('new_import.column_tools') %>">&#xe822;</button>
+        </div>
+    </th>
+</template>
+
+<!-- A variant of the template above, used in preview tables -->
+<template id="template_previewColumnHeader">
+    <th>
+        <div class="flex flex-cols flex-vcenter">
+            <div class="colNumber"></div>
+            <div class="colType"><%= t('new_import.columns.skip') %></div>
         </div>
     </th>
 </template>
@@ -270,11 +334,11 @@
 </template>
 
 <template id="template_generatePasswords">
-    <span class="margin-left-15px"><input type="radio" name="method" id="custom"><label for="custom"><%= t('new_import.tools.generate_passwords.custom') %>:</label><input type="text" class="margin-left-5px font-monospace" id="customPassword"></span>
+    <span class="margin-left-15px"><input type="radio" name="method" id="fixed"><label for="fixed"><%= t('new_import.tools.generate_passwords.fixed') %>:</label><input type="text" class="margin-left-5px font-monospace" id="fixedPassword"></span>
 
     <fieldset class="margin-top-5px margin-bottom-0">
         <legend>
-            <span><input type="radio" name="method" id="generate" checked><label for="generate"><%= t('new_import.tools.generate_passwords.random') %>:</label></span>
+            <span><input type="radio" name="method" id="random" checked><label for="random"><%= t('new_import.tools.generate_passwords.random') %>:</label></span>
         </legend>
 
         <div class="flex flex-rows flex-gap-5px margin-top-5px">
@@ -288,49 +352,17 @@
 </template>
 
 <template id="template_errors">
-    <div class="problems errors"><p><%= t('new_import.problems.errors_title') %></p>
-        <ul></ul>
+    <div class="problems errors">
+        <p><%= t('new_import.problems.errors_title') %></p>
+        <ul></ul>       <!-- Filled in dynamically -->
     </div>
 </template>
 
 <template id="template_warnings">
-    <div class="problems warnings"><p><%= t('new_import.problems.warnings_title') %></p>
-        <ul></ul>
+    <div class="problems warnings">
+        <p><%= t('new_import.problems.warnings_title') %></p>
+        <ul></ul>       <!-- Filled in dynamically -->
     </div>
-</template>
-
-<template id="template_importTable">
-    <table id="preview" class="importResults">
-        <thead>
-            <tr class="stickyTop">
-                <th></th>
-                <th>
-                    <span id="legendToggle"><%= t('new_import.row_state') %></span>
-                    <div id="legend">
-                        <ul>
-                            <li><div class="idle"></div> <%= t('new_import.legend.idle') %></li>
-                            <li><div class="processing"></div> <%= t('new_import.legend.processing') %></li>
-                            <li><div class="success"></div> <%= t('new_import.legend.success') %></li>
-                            <li><div class="partialSuccess"></div> <%= t('new_import.legend.partial_success') %></li>
-                            <li><div class="failed"></div> <%= t('new_import.legend.failed') %></li>
-                        </ul>
-                    </div>
-                </th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</template>
-
-<template id="template_tableRow">
-    <tr>
-        <th class="rowNumber">
-            <div class="flex flex-cols flex-vcenter flex-gap-5px margin-left-5px">
-                <span class="flex-grow-2"></span>
-                <a class="delete" title="<%= t('new_import.table.delete_row') %>">&#xe814;</a>
-            </div>
-        </th>
-    </tr>
 </template>
 
 <script>
@@ -372,11 +404,10 @@ initializeImporter({
     columnTitles: LOCALIZED_COLUMN_TITLES,
     groupTypes: LOCALIZED_GROUP_TYPES,
     groups: INITIAL_GROUPS,
-    schoolId: <%= @school_id %>,
+    schoolId: <%= @school.id.to_i %>,
     automaticEmails: false,
     commonPasswords: COMMON_PASSWORDS,
 });
 
 });
-
 </script>
