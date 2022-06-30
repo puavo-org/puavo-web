@@ -165,6 +165,21 @@
     background: $buttonDangerHoverBack;
     color: $buttonDangerFore;
   }
+
+  /* Disabled buttons */
+  .btn:disabled, .btn:disabled:hover, .btn:active:disabled, .btn:focus:disabled {
+    border-color: $buttonBorderHi $buttonBorderLo $buttonBorderLo $buttonBorderHi;
+    color: $buttonForeDisabled;
+    background: $buttonBack;
+    cursor: not-allowed;
+  }
+
+  .btn-danger:disabled, .btn-danger:disabled:hover, .btn-danger:active:disabled, .btn-danger:focus:disabled {
+    border-color: $buttonDangerBorderHi $buttonDangerBorderLo $buttonDangerBorderLo $buttonDangerBorderHi;
+    background: $buttonDangerBack;
+    color: $buttonDangerForeDisabled;
+    cursor: not-allowed;
+  }
 }
 
 /* Server and git commit infos */
