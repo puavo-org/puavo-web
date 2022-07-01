@@ -72,6 +72,11 @@ const COLUMN_DEFINITIONS = {
         type: ColumnType.NUMERIC,
     },
 
+    num_groups: {
+        key: "num_groups",
+        type: ColumnType.NUMERIC,
+    },
+
     num_devices: {
         key: "num_devices",
         type: ColumnType.NUMERIC,
@@ -97,6 +102,7 @@ const COLUMN_TITLES = {
     school_code: "<%= t('activeldap.attributes.school.puavoSchoolCode') %>",
     eid: "<%= t('activeldap.attributes.school.puavoExternalId') %>",
     num_members: "<%= t('schools.index.members') %>",
+    num_groups: "<%= t('schools.index.groups') %>",
     num_devices: "<%= t('schools.index.devices') %>",
     conf: "<%= t('columns.puavoconf') %>",
 };
@@ -105,13 +111,14 @@ const COLUMN_TITLES = {
 const COLUMN_ORDER = [
     "id",
     "name",
-    "integrations",
     "prefix",
-    "boot_servers",
     "school_code",
     "eid",
+    "integrations",
     "num_members",
+    "num_groups",
     "num_devices",
+    "boot_servers",
     "conf",
 ];
 
@@ -200,7 +207,7 @@ function schoolActions(entry)
     return `<a href="/users/schools/${entry.id[INDEX_FILTERABLE]}/edit" class="btn"><%= t('link.edit') %></a>`;
 }
 
-const DEFAULT_COLUMNS = ["name", "integrations", "prefix", "boot_servers", "school_code", "eid", "num_members", "num_devices"];
+const DEFAULT_COLUMNS = ["name", "prefix", "school_code", "eid", "integrations", "num_members", "num_groups", "num_devices", "boot_servers"];
 const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
 
 const RAW_DATA = <%= raw JSON.pretty_generate(@data) %>;

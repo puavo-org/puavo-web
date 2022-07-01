@@ -720,6 +720,7 @@ en:
     index:
       actions: Actions
       members: "Members"
+      groups: "Groups"
       devices: "Devices"
     edit:
       title: Edit school

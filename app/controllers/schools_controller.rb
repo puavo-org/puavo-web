@@ -16,11 +16,18 @@ class SchoolsController < ApplicationController
     }
 
     if @schools.count > 1
-      # Count devices by school
+      # Count groups and devices by school
+      @group_counts = {}
       @device_counts = {}
 
       @schools.collect(&:dn).map.each do |dn|
+        @group_counts[dn.to_s] = 0
         @device_counts[dn.to_s] = 0
+      end
+
+      Group.search(:filter => "(objectClass=puavoEduGroup)", :attributes => ["puavoSchool"]).each do |g|
+        dn = g[1]['puavoSchool'][0]
+        @group_counts[dn] += 1 if @group_counts.include?(dn)
       end
 
       Device.search(:filter => "(objectClass=device)", :attributes => ["puavoSchool"]).each do |d|
@@ -29,8 +36,8 @@ class SchoolsController < ApplicationController
         @device_counts[dn] += 1 if @device_counts.include?(dn)
       end
 
-      @have_external_ids = @schools.any?{ |s| s.puavoExternalId }
-      @have_school_codes = @schools.any?{ |s| s.puavoSchoolCode }
+      @have_external_ids = @schools.any? { |s| s.puavoExternalId }
+      @have_school_codes = @schools.any? { |s| s.puavoSchoolCode }
 
       @schools.each do |s|
         bs_names = []
@@ -52,6 +59,7 @@ class SchoolsController < ApplicationController
           eid: s.puavoExternalId,
           school_code: s.puavoSchoolCode,
           num_members: Array(s.memberUid || []).count,
+          num_groups: @group_counts[s.dn.to_s],
           num_devices: @device_counts[s.dn.to_s],
           boot_servers: bs_names,
           conf: s.puavoConf.nil? ? [] : JSON.parse(s.puavoConf).collect { |k, v| "#{k} = #{v}" },

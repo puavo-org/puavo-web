@@ -720,6 +720,7 @@ fi:
     index:
       actions: Toiminnot
       members: "Jäseniä"
+      groups: "Ryhmiä"
       devices: "Laitteita"
     edit:
       title: Muokkaa koulua
