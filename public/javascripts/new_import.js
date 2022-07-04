@@ -405,8 +405,10 @@ function prepareCSVParserResults(data)
 
             for (let i = 0; i < headers.length; i++) {
                 // Some column types can have multiple choices
-                if (headers[i] in INFERRED_NAMES)
-                    headers[i] = INFERRED_NAMES[headers[i]];
+                const colName = headers[i].toLowerCase();
+
+                if (colName in INFERRED_NAMES)
+                    headers[i] = INFERRED_NAMES[colName];
 
                 // Clear unknown column types, so the column will be skipped
                 if (!(headers[i] in localizedColumnTitles))
