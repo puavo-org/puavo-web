@@ -873,6 +873,7 @@ fi:
       group_search_placeholder: "Etsi ryhmiä nimeltä..."
       no_group_search_hits: "Ei osumia"
       no_groups: "Ei ryhmiä"
+      members: "jäsentä"
 
     change_schools:
       title: "Vaihda kouluja"

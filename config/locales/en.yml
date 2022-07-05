@@ -873,6 +873,7 @@ en:
       group_search_placeholder: "Find groups by name..."
       no_group_search_hits: "No hits"
       no_groups: "No groups"
+      members: "members"
 
     change_schools:
       title: "Change Schools"
