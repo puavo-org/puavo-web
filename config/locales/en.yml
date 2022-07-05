@@ -749,7 +749,7 @@ en:
       billing_info: Billing info
       no_billing_info: "(No billing info)"
       system_information: System Information
-      total_count: "%{count} total)"
+      total_count: "(%{count} total)"
       info: "General Information"
     form:
       add_puavo_billing_info: Add a new billing info
