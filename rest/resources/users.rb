@@ -843,8 +843,6 @@ class User < LdapModel
   # for more info.
   computed_attr :learner_id
   def learner_id
-    return nil unless self.roles.include?('student')
-
     return nil unless self.external_data
 
     begin
