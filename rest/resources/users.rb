@@ -107,6 +107,10 @@ class User < LdapModel
     new_username = username
     old_username = @previous_values[:username]
     if old_username && old_username != new_username then
+      # Store the previous groups in a special variable, so we can restore them
+      # after the renaming
+      @previous_groups = self.groups.collect { |g| g.dn }
+
       # We need to update associations if username has changed, but must use
       # the old username when deleting.
       self.username = old_username
@@ -381,6 +385,20 @@ class User < LdapModel
         add_to_school!(s)
       else
         remove_from_school!(s)
+      end
+    end
+
+    # Restore previous groups. self.groups cannot be relied here. @previous_groups was
+    # set in "before :update" handler above. It's currently not set anywhere else.
+    if @previous_groups
+      @previous_groups.each do |dn|
+        begin
+          group = PuavoRest::Group.by_dn(dn)
+          group.add_member(self)
+          group.save!
+        rescue => e
+          $rest_log.error("Can't put the renamed user back to group \"#{dn}\": #{e}")
+        end
       end
     end
   end
