@@ -310,22 +310,25 @@ class SSO < PuavoSinatra
     end.first
   end
 
-  post "/v3/sso" do
+  post '/v3/sso' do
+    username     = params['username']
+    password     = params['password']
+    organisation = params['organisation']
 
-    if params["username"].include?("@") && params["organisation"]
+    if username.include?('@') && organisation then
       render_form(t.sso.invalid_username)
     end
 
-    if !params["username"].include?("@") && params["organisation"].nil?
-      rlog.error("SSO error: organisation missing from username: #{ params['username'] }")
+    if !username.include?('@') && organisation.nil? then
+      rlog.error("SSO error: organisation missing from username: #{ username }")
       render_form(t.sso.organisation_missing)
     end
 
     user_org = nil
 
-    if params["username"].include?("@")
-      _, user_org = params["username"].split("@")
-      if Organisation.by_domain(ensure_topdomain(user_org)).nil?
+    if username.include?('@') then
+      username, user_org = username.split('@')
+      if Organisation.by_domain(ensure_topdomain(user_org)).nil? then
         rlog.error("SSO error: could not find organisation for domain #{ user_org }")
         render_form(t.sso.bad_username_or_pw)
       end
@@ -333,14 +336,21 @@ class SSO < PuavoSinatra
 
     org = [
       user_org,
-      params["organisation"],
+      organisation,
       request.host,
     ].map do |org|
       Organisation.by_domain(ensure_topdomain(org))
     end.compact.first
 
+    if org then
+      # Try external login first.  Does nothing if external login
+      # is not configured for this organisation.
+      begin
+        ExternalLogin.auth(username, password, org, {})
+      rescue StandardError => e
+        rlog.error("SSO external login error: #{ e.message }")
+      end
 
-    if org
       LdapModel.setup(:organisation => org)
     else
       render_form(t.sso.no_organisation)

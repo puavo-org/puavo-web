@@ -34,7 +34,7 @@ module PuavoRest
   class ExternalLogin
     attr_reader :config
 
-    def initialize
+    def initialize(organisation=nil)
       # Parse config with relevant information for doing external logins.
 
       @rlog = $rest_log
@@ -44,10 +44,9 @@ module PuavoRest
         raise ExternalLoginNotConfigured, 'external login not configured'
       end
 
-      @organisation = LdapModel.organisation
-      raise ExternalLoginError,
-        'could not determine organisation from request host' \
-          unless @organisation && @organisation.domain.kind_of?(String)
+      @organisation = organisation || LdapModel.organisation
+      raise ExternalLoginError, 'could not determine organisation' \
+        unless @organisation && @organisation.domain.kind_of?(String)
 
       organisation_name = @organisation.domain.split('.')[0]
       raise ExternalLoginError,
@@ -372,6 +371,142 @@ module PuavoRest
 
       userinfo
    end
+
+    def self.auth(username, password, organisation, params)
+      rlog = $rest_log
+
+      userinfo = nil
+      user_status = nil
+
+      begin
+        external_login = ExternalLogin.new(organisation)
+        external_login.setup_puavo_connection()
+        external_login.check_user_is_manageable(username)
+
+        login_service = external_login.new_external_service_handler()
+
+        remove_user_if_found = false
+        wrong_credentials    = false
+
+        begin
+          message = 'attempting external login to service' \
+                      + " '#{ login_service.service_name }' by user" \
+                      + " '#{ username }'"
+          rlog.info(message)
+          userinfo = login_service.login(username, password)
+        rescue ExternalLoginUserMissing => e
+          rlog.info("user does not exist in external LDAP: #{e.message}")
+          remove_user_if_found = true
+          userinfo = nil
+        rescue ExternalLoginWrongCredentials => e
+          rlog.info("user provided wrong username/password: #{e.message}")
+          wrong_credentials = true
+          userinfo = nil
+        rescue ExternalLoginError => e
+          raise e
+        rescue StandardError => e
+          # Unexpected errors when authenticating to external service means
+          # it was not available.
+          raise ExternalLoginUnavailable, e
+        end
+
+        if remove_user_if_found then
+          # No user information in external login service, so remove user
+          # from Puavo if there is one.  But instead of removing
+          # we simply generate a new, random password, and mark the account
+          # for removal, in case it was not marked before.  Not removing
+          # right away should allow use to catch some possible accidents
+          # in case the external ldap somehow "loses" some users, and we want
+          # keep user uids stable on our side.
+          user_to_remove = User.by_username(username)
+          if user_to_remove && user_to_remove.mark_for_removal! then
+            rlog.info("puavo user '#{ user_to_remove.username }' is marked" \
+                        + ' for removal')
+          end
+        end
+
+        if wrong_credentials then
+          # Try looking up user from Puavo, but in case a user does not exist
+          # yet (there is a mismatch between username in Puavo and username
+          # in external service), look up the user external_id from external
+          # service so we can try to invalidate the password matching
+          # the right Puavo username.
+          user = User.by_username(username)
+          external_id = (user && user.external_id) \
+                          || login_service.lookup_external_id(username)
+
+          # We must not force the user of admin_dn for this password change,
+          # because this should happen only when password was valid for puavo
+          # but not for external login, in which case we invalidate the puavo
+          # password.
+          new_password = SecureRandom.hex(128)
+          pw_update_status = external_login.set_puavo_password(username,
+                                                               external_id,
+                                                               password,
+                                                               new_password)
+          if pw_update_status == ExternalLoginStatus::UPDATED then
+            msg = 'user password invalidated'
+            rlog.info("user password invalidated for #{ username }")
+            LdapModel.disconnect()
+            return ExternalLogin.status_updated_but_fail(msg)
+          end
+        end
+
+        if !userinfo then
+          msg = 'could not login to external service' \
+                  + " '#{ login_service.service_name }' by user" \
+                  + " '#{ username }', username or password was wrong"
+          rlog.info(msg)
+          raise ExternalLoginWrongCredentials, msg
+        end
+
+        # update user information after successful login
+
+        message = 'successful login to external service' \
+                    + " by user '#{ userinfo['username'] }'"
+        rlog.info(message)
+
+        begin
+          extlogin_status = external_login.update_user_info(userinfo,
+                                                            password,
+                                                            params)
+          user_status \
+            = case extlogin_status
+                when ExternalLoginStatus::NOCHANGE
+                  ExternalLogin.status_nochange()
+                when ExternalLoginStatus::UPDATED
+                  ExternalLogin.status_updated()
+                else
+                  raise 'unexpected update status from update_user_info()'
+              end
+        rescue StandardError => e
+          rlog.warn("error updating user information: #{ e.message }")
+          LdapModel.disconnect()
+          return ExternalLogin.status_updateerror(e.message)
+        end
+
+      rescue BadCredentials => e
+        # this means there was a problem with Puavo credentials (admin dn)
+        user_status = ExternalLogin.status_configerror(e.message)
+      rescue ExternalLoginConfigError => e
+        rlog.info("external login configuration error: #{ e.message }")
+        user_status = ExternalLogin.status_configerror(e.message)
+      rescue ExternalLoginNotConfigured => e
+        rlog.info("external login is not configured: #{ e.message }")
+        user_status = ExternalLogin.status_notconfigured(e.message)
+      rescue ExternalLoginUnavailable => e
+        rlog.warn("external login is unavailable: #{ e.message }")
+        user_status = ExternalLogin.status_unavailable(e.message)
+      rescue ExternalLoginWrongCredentials => e
+        user_status = ExternalLogin.status_badusercreds(e.message)
+      rescue StandardError => e
+        raise InternalError, e
+      end
+
+      LdapModel.disconnect()
+
+      return user_status
+    end
 
     def self.status(status_string, msg)
       { 'msg' => msg, 'status' => status_string }
