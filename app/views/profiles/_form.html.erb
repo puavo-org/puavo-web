@@ -9,7 +9,7 @@
 
       <div id="right">
         <section class="userInfo">
-          <p class="userName"><%= current_user.displayName %></p>
+          <p class="userName"><%= current_user.displayName %> <small>(ID <%= current_user.id %>)</small></p>
           <p class="userSchool"><%= current_user.primary_school.displayName %></p>
         </section>
 
