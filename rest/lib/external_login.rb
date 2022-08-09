@@ -362,6 +362,19 @@ module PuavoRest
         pw_update_status = set_puavo_password(userinfo['username'],
                                               userinfo['external_id'],
                                               password)
+        if pw_update_status == ExternalLoginStatus::UPDATED \
+          && userinfo['password_last_set'] then
+            # must update the password_last_set to match what external ldap has
+            # because password change operation changes the value in Puavo
+            begin
+              user.password_last_set = userinfo['password_last_set']
+              user.save!
+            rescue StandardError => e
+              @rlog.info(
+                'error in updating password_last_set in Puavo' \
+                  + " for user #{ userinfo['username'] }: #{ e.message }")
+            end
+        end
       else
         pw_update_status = ExternalLoginStatus::NOCHANGE
       end
@@ -874,6 +887,18 @@ module PuavoRest
       # We presume that ldap result strings are UTF-8.
       userinfo.each do |key, value|
         Array(value).map { |s| s.force_encoding('UTF-8') }
+      end
+
+      begin
+        # this presumes that external ldap has AD-like pwdLastSet-semantics
+        ad_pwd_last_set = Array(@ldap_userinfo['pwdLastSet']).first
+        raise 'pwdLastSet not found on AD' unless ad_pwd_last_set
+        pwd_last_set = (Time.new(1601, 1, 1) + ad_pwd_last_set/10000000).to_i
+        raise 'pwdLastSet value is clearly wrong' if pwd_last_set < 1000000000
+        userinfo['password_last_set'] = pwd_last_set
+      rescue StandardError => e
+        @rlog.warn('error looking up pwdLastSet in AD for user ' \
+                     + "#{ userinfo['username'] }: #{ e.message }")
       end
 
       # we apply some magicks to determine user school, groups and roles
