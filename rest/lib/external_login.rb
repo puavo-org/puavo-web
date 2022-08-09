@@ -123,65 +123,91 @@ module PuavoRest
                                 @rlog)
     end
 
-    def set_puavo_password(username, external_id, password, new_password,
-                           fallback_to_admin_dn=false)
+    def set_puavo_password(username, external_id, new_password)
       begin
-        users = User.by_attr(:external_id, external_id, :multiple => true)
-        user = users.first
+        user = puavo_user_by_external_id(external_id)
         if !user then
           msg = "user with external id '#{ external_id }' (#{ username }?)" \
-                  + ' not found in Puavo, can not change/invalidate password'
+                  + ' not found in Puavo, can not set password'
           @rlog.info(msg)
           return ExternalLoginStatus::NOCHANGE
-        elsif users.count > 1
-          raise "multiple users with the same external id: #{ external_id }"
         end
 
-        # Do not always use the @admin_dn to set password, because we might
-        # want to invalidate password in case login to an external service
-        # has failed with the password, and we want to do that only when
-        # the new password is valid to Puavo.
+        begin
+          # First test if user password is already valid.  No need to change
+          # it in case new one is the same as old.  The point of this is
+          # to not modify the user ldap entry in case it is not necessary.
+          LdapModel.dn_bind(user.dn, new_password)
+          return ExternalLoginStatus::NOCHANGE
+        rescue StandardError => e
+          @rlog.info("changing puavo password for '#{ username }'")
+        end
 
+        res = Puavo.change_passwd(:no_upstream,
+                                  CONFIG['ldap'],
+                                  @admin_dn,
+                                  nil,
+                                  @admin_password,
+                                  user.username,
+                                  new_password,
+                                  '???')    # we have no request ID here
+        if res[:exit_status] == Net::LDAP::ResultCodeSuccess then
+          return ExternalLoginStatus::UPDATED
+        end
+
+        raise "unexpected exit code (#{ res[:exit_status] }):" \
+                " with admin dn/password: #{ res[:stderr] }"
+
+      rescue StandardError => e
+        raise ExternalLoginError,
+              "error in set_puavo_password(): #{ e.message }"
+      end
+    end
+
+    def maybe_invalidate_puavo_password(username, external_id, old_password)
+      begin
+        user = puavo_user_by_external_id(external_id)
+        if !user then
+          msg = "user with external id '#{ external_id }' (#{ username }?)" \
+                  + ' not found in Puavo, can not try to invalidate password'
+          @rlog.info(msg)
+          return ExternalLoginStatus::NOCHANGE
+        end
+
+        new_password = SecureRandom.hex(128)
+
+        # if old_password is not valid, nothing is done and that is good
         res = Puavo.change_passwd(:no_upstream,
                                   CONFIG['ldap'],
                                   user.dn,
                                   nil,
-                                  password,
+                                  old_password,
                                   user.username,
                                   new_password,
                                   '???')  # we have no request ID here
         case res[:exit_status]
         when Net::LDAP::ResultCodeInvalidCredentials
-          if fallback_to_admin_dn then
-            res = Puavo.change_passwd(:no_upstream,
-                                      CONFIG['ldap'],
-                                      @admin_dn,
-                                      nil,
-                                      @admin_password,
-                                      user.username,
-                                      new_password,
-                                      '???')    # we have no request ID here
-            if res[:exit_status] == Net::LDAP::ResultCodeSuccess then
-              return ExternalLoginStatus::UPDATED
-            end
-
-            raise "unexpected exit code (#{ res[:exit_status] }):" \
-                    " with admin dn/password: #{ res[:stderr] }"
-          end
+          return ExternalLoginStatus::NOCHANGE
         when Net::LDAP::ResultCodeSuccess
-          if password != new_password then
-            return ExternalLoginStatus::UPDATED
-          end
+          return ExternalLoginStatus::UPDATED
         else
           raise "unexpected exit code (#{ res[:exit_status] }): " \
                   + res[:stderr]
         end
       rescue StandardError => e
         raise ExternalLoginError,
-              "error in set_puavo_password(): #{ e.message }"
+              "error in maybe_invalidate_puavo_password(): #{ e.message }"
       end
 
       return ExternalLoginStatus::NOCHANGE
+    end
+
+    def puavo_user_by_external_id(external_id)
+      users = User.by_attr(:external_id, external_id, :multiple => true)
+      if users.count > 1 then
+        raise "multiple users with the same external id: #{ external_id }"
+      end
+      users.first
     end
 
     def manage_groups_for_user(user, external_groups_by_type)
@@ -303,10 +329,7 @@ module PuavoRest
       user_update_status = nil
 
       begin
-        users = User.by_attr(:external_id,
-                             userinfo['external_id'],
-                             :multiple => true)
-        user = users.first
+        user = puavo_user_by_external_id(userinfo['external_id'])
         userinfo = adjust_userinfo(user, userinfo)
 
         if !user then
@@ -314,9 +337,6 @@ module PuavoRest
           user.save!
           @rlog.info("created a new user '#{ userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::UPDATED
-        elsif users.count > 1 then
-          raise 'multiple users with the same external id: ' \
-                  + userinfo['external_id']
         elsif user.check_if_changed_attributes(userinfo) then
           user.update!(userinfo)
           user.removal_request_time = nil
@@ -341,9 +361,7 @@ module PuavoRest
       if password then
         pw_update_status = set_puavo_password(userinfo['username'],
                                               userinfo['external_id'],
-                                              password,
-                                              password,
-                                              true)
+                                              password)
       else
         pw_update_status = ExternalLoginStatus::NOCHANGE
       end
@@ -435,15 +453,10 @@ module PuavoRest
           external_id = (user && user.external_id) \
                           || login_service.lookup_external_id(username)
 
-          # We must not force the user of admin_dn for this password change,
-          # because this should happen only when password was valid for puavo
-          # but not for external login, in which case we invalidate the puavo
-          # password.
-          new_password = SecureRandom.hex(128)
-          pw_update_status = external_login.set_puavo_password(username,
-                                                               external_id,
-                                                               password,
-                                                               new_password)
+          pw_update_status \
+            = external_login.maybe_invalidate_puavo_password(username,
+                                                             external_id,
+                                                             password)
           if pw_update_status == ExternalLoginStatus::UPDATED then
             msg = 'user password invalidated'
             rlog.info("user password invalidated for #{ username }")
