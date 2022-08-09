@@ -838,14 +838,9 @@ class User < LdapModel
   end
 
   def mark_for_removal!
-    mark_set = false
+    self.locked = true
 
-    # ALWAYS delete kerberos principal for users that are marked for removal.
-    # This may seem odd, but we should guard against the case where
-    # a user complains about login not working and subsequently admin has
-    # changed the puavo password to something known to make the account
-    # work, despite it being "marked for removal".
-    delete_kerberos_principal
+    mark_set = false
 
     if self.removal_request_time.nil? then
       self.removal_request_time = Time.now.utc.to_datetime
