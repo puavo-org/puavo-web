@@ -890,12 +890,15 @@ module PuavoRest
       end
 
       begin
-        # this presumes that external ldap has AD-like pwdLastSet-semantics
+        # This presumes that if "pwdLastSet"-attribute exists it has
+        # AD-like semantics.  Google LDAP does not have this attribute
+        # so do not show errors in case it is missing.
         ad_pwd_last_set = Array(@ldap_userinfo['pwdLastSet']).first
-        raise 'pwdLastSet not found on AD' unless ad_pwd_last_set
-        pwd_last_set = (Time.new(1601, 1, 1) + ad_pwd_last_set/10000000).to_i
-        raise 'pwdLastSet value is clearly wrong' if pwd_last_set < 1000000000
-        userinfo['password_last_set'] = pwd_last_set
+        if ad_pwd_last_set then
+          pwd_last_set = (Time.new(1601, 1, 1) + ad_pwd_last_set/10000000).to_i
+          raise 'pwdLastSet value is clearly wrong' if pwd_last_set < 1000000000
+          userinfo['password_last_set'] = pwd_last_set
+        end
       rescue StandardError => e
         @rlog.warn('error looking up pwdLastSet in AD for user ' \
                      + "#{ userinfo['username'] }: #{ e.message }")
