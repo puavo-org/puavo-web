@@ -1647,7 +1647,7 @@ fi:
         administrative_groups: Hallinnolliset ryhmät
         year_class: Vuosiluokka
         learner_id: "Oppijanumero"
-        mpass_materials_charging: "Oppimateriaalien maksullisuus (MPASS)"
+        mpass_materials_charge: "Oppimateriaalien maksullisuus (MPASS)"
       group:
         displayName: "Ryhmän nimi"
         cn: Lyhenne

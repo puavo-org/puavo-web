@@ -632,7 +632,7 @@ class UsersController < ApplicationController
 
     # External data fields
     @learner_id = nil
-    @mpass_materials_charging = nil
+    @mpass_materials_charge = nil
 
     if @user.puavoExternalData
       begin
@@ -640,7 +640,7 @@ class UsersController < ApplicationController
         @learner_id = ed.fetch('learner_id', nil)
 
         if @user.puavoEduPersonAffiliation.include?('student')
-          @mpass_materials_charging = ed.fetch('materials_charging', nil)
+          @mpass_materials_charge = ed.fetch('materials_charge', nil)
         end
       rescue
       end
