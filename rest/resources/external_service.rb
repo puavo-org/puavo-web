@@ -71,7 +71,7 @@ class ExternalService < LdapModel
 
     # Build the output hash manually, without calling user.to_hash().
     # Include only the members that are on the spec (plus a few more).
-    {
+    data = {
       'id' => user.id,
       'puavo_id' => user.puavo_id,
       'external_id' => user.external_id,
@@ -89,6 +89,19 @@ class ExternalService < LdapModel
       'schools' => schools_hash,
       'learner_id' => user.learner_id,
     }
+
+    if user.user_type == 'student'
+      begin
+        ed = JSON.parse(user.external_data)
+
+        if ed.include?('materials_charge')
+          data['materials_charge'] = ed['materials_charge']
+        end
+      rescue
+      end
+    end
+
+    data
   end
 
   def generate_login_url(user_hash, return_to_url)
