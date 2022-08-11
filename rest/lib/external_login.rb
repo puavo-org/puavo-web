@@ -339,12 +339,14 @@ module PuavoRest
           user_update_status = ExternalLoginStatus::UPDATED
         elsif user.check_if_changed_attributes(userinfo) then
           user.update!(userinfo)
+          user.locked = false
           user.removal_request_time = nil
           user.save!
           @rlog.info("updated user information for '#{ userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::UPDATED
         else
-          if user.removal_request_time then
+          if user.locked || user.removal_request_time then
+            user.locked = false
             user.removal_request_time = nil
             user.save!
           end
