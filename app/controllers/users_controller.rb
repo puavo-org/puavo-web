@@ -630,13 +630,18 @@ class UsersController < ApplicationController
       @permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
     end
 
-    # Learner ID
+    # External data fields
     @learner_id = nil
+    @mpass_materials_charging = nil
 
     if @user.puavoExternalData
       begin
         ed = JSON.parse(@user.puavoExternalData)
         @learner_id = ed.fetch('learner_id', nil)
+
+        if @user.puavoEduPersonAffiliation.include?('student')
+          @mpass_materials_charging = ed.fetch('materials_charging', nil)
+        end
       rescue
       end
     end
