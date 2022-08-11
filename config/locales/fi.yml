@@ -691,6 +691,8 @@ fi:
       devices: Tulostusoikeus laitteen mukaan
       device_header_text: "Tulostaminen on sallittu seuraavilta yksittäisiltä laitteilta:"
       device_footer_text: Laitekohtaiset tulostusoikeudet asetetaan laitteen tiedoista
+      select_all: "Valitse kaikki"
+      deselect_all: "Epävalitse kaikki"
 
   # Organisation and school desktop image statistics
   image_statistics:

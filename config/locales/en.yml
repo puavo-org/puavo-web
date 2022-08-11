@@ -691,6 +691,8 @@ en:
       devices: Printer usage permissions by device
       device_header_text: "Printer is allowed for the these devices:"
       device_footer_text: "Printers for devices are set from the device edit page."
+      select_all: "Select all"
+      deselect_all: "Deselect all"
 
   # Organisation and school desktop image statistics
   image_statistics:
