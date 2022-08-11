@@ -243,22 +243,6 @@ describe PuavoRest::Users do
       assert_equal "Brown", data["last_name"]
     end
 
-    it "reverse name is updated if user's name is changed" do
-      @teacher.first_name = 'Bob'
-      @teacher.last_name = 'Brown'
-      @teacher.save!
-
-      basic_authorize "bob", "secret"
-      get "/v3/users/_by_id/#{ @teacher.id }"
-      assert_200
-      data = JSON.parse(last_response.body)
-
-      assert_equal "bob", data["username"]
-      assert_equal "Bob", data["first_name"]
-      assert_equal "Brown", data["last_name"]
-      assert_equal "Brown Bob", data["reverse_name"]
-    end
-
     it "whitespace in email addresses is really removed" do
       # XXX this test perhaps does not belong to puavo-rest tests
       # XXX because puavo-rest does *not* strip whitespace
