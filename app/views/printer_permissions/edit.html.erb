@@ -35,6 +35,13 @@
   <fieldset class="groups">
     <legend><%= t('.groups') %></legend>
 
+    <% unless @school.groups.empty? %>
+    <div class="flex flex-cols flex-gap-10px margin-bottom-10px">
+      <button type="button" id="selectAll"><%= t('.select_all') %></button>
+      <button type="button" id="deselectAll"><%= t('.deselect_all') %></button>
+    </div>
+    <% end %>
+
     <ul class="noBullets">
       <% @school.groups.sort { |a, b| a.displayName.downcase <=> b.displayName.downcase }.each do |group| %>
       <li>
@@ -89,3 +96,17 @@
 <% end %>
 
 </div>
+
+<% unless @school.groups.empty? %>
+<script>
+function selectAllGroups(state)
+{
+    // Must use input[type="checkbox"] here, otherwise we'll select the hidden elements too
+    for (let cb of document.querySelectorAll(`fieldset.groups input[type="checkbox"]`))
+        cb.checked = state;
+}
+
+document.querySelector("button#selectAll").addEventListener("click", () => selectAllGroups(true));
+document.querySelector("button#deselectAll").addEventListener("click", () => selectAllGroups(false));
+</script>
+<% end %>
