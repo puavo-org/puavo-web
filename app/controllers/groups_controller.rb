@@ -345,7 +345,28 @@ class GroupsController < ApplicationController
     end
 
     begin
-      new_list = List.new(@group.members.map{ |u| u.id })
+      if is_owner?
+        new_list = List.new(@group.members.map { |u| u.id }, current_user.uid)
+      else
+        only_these = Set.new(Array(current_user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
+        members = []
+
+        @group.members.collect do |member|
+          # Try to access the primary school of this group member. If it throws an exception,
+          # then the member is in a school the current user (the user viewing this page)
+          # cannot access. A bit hacky...
+          begin
+            member.primary_school.cn
+          rescue
+            next
+          end
+
+          members << member
+        end
+
+        new_list = List.new(members.map { |u| u.id }, current_user.uid)
+      end
+
       new_list.save
       ok = true
     rescue
@@ -365,8 +386,6 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/mark_group_members_for_deletion
   def mark_group_members_for_deletion
-    return if redirected_nonowner_user?
-
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -386,8 +405,6 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/unmark_group_members_deletion
   def unmark_group_members_deletion
-    return if redirected_nonowner_user?
-
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -407,8 +424,6 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/lock_all_members
   def lock_all_members
-    return if redirected_nonowner_user?
-
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -428,8 +443,6 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/unlock_all_members
   def unlock_all_members
-    return if redirected_nonowner_user?
-
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -769,8 +782,6 @@ class GroupsController < ApplicationController
 
   # GET /:school_id/groups/:group_id/get_members_as_csv
   def get_members_as_csv
-    return if redirected_nonowner_user?
-
     @group = get_group(params[:id])
     return if @group.nil?
 
