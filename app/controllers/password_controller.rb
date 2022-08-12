@@ -622,14 +622,14 @@ class PasswordController < ApplicationController
     # If we can determine it, use it to validate the password.
     if @logged_in_user.puavoEduPersonPrimarySchool
       @primary_school_id = @logged_in_user.puavoEduPersonPrimarySchool.rdns[0]['puavoId'].to_i
-    else
+    elsif @user
       @primary_school_id = @user.puavoEduPersonPrimarySchool.rdns[0]['puavoId'].to_i
     end
 
     password_errors = []
     new_password = params[:user][:new_password]
 
-    if @primary_school_id
+    if @user && @primary_school_id
       ruleset_name = get_school_password_requirements(@organisation_name, @primary_school_id)
 
       if ruleset_name
