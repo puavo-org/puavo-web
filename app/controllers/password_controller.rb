@@ -192,7 +192,7 @@ class PasswordController < ApplicationController
       rescue => e
         logger.error("[#{request_id}] request failed: #{e}")
 
-        if e.to_s.includes?('Connection reset by peer') && !tried
+        if e.to_s.include?('Connection reset by peer') && !tried
           logger.info("[#{request_id}] Retrying the request once in 1 second...")
           tried = true
           sleep 1
