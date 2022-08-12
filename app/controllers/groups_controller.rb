@@ -608,16 +608,13 @@ class GroupsController < ApplicationController
         last: raw['sn'][0],
         uid: raw['uid'][0],
         role: Array(raw['puavoEduPersonAffiliation'] || []),
+        locked: raw.include?('puavoLocked') && raw['puavoLocked'][0] == 'TRUE',
         groups: [],
       }
 
-      # Supplementary information, included only in the username column
-      flags = []
-
-      flags << 'm' if raw.include?('puavoRemovalRequestTime')
-      flags << 'l' if raw.include?('puavoLocked') && raw['puavoLocked'][0] == 'TRUE'
-
-      users[uid][:flags] = flags.join unless flags.empty?
+      if raw.include?('puavoRemovalRequestTime') && raw['puavoRemovalRequestTime']
+        users[uid][:marked] = Puavo::Helpers::convert_ldap_time(raw['puavoRemovalRequestTime'])
+      end
     end
 
     # Get groups and their members
