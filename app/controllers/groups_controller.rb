@@ -786,10 +786,26 @@ class GroupsController < ApplicationController
     return if @group.nil?
 
     output = CSV.generate(headers: true) do |csv|
-      csv << ['puavoid', 'first_name', 'last_name', 'uid', 'school_name']
+      csv << ['puavoid', 'first_name', 'last_name', 'uid', 'locked', 'marked_for_deletion', 'primary_school_name', 'primary_school_abbr', 'primary_school_puavoid']
 
       @group.members.each do |m|
-        csv << [m.id, m.givenName, m.surname, m.uid, m.primary_school.displayName]
+        begin
+          row = []
+          row << m.id
+          row << m.givenName
+          row << m.surname
+          row << m.uid
+          row << m.puavoLocked
+          row << m.puavoRemovalRequestTime
+          row << m.primary_school.displayName
+          row << m.primary_school.cn
+          row << m.primary_school.id
+        rescue
+          # Probably an inaccessible user, in another school the current admin has no access to?
+          next
+        end
+
+        csv << row
       end
     end
 
