@@ -39,6 +39,10 @@ input#groupMembersSearch {
     background: none;
   }
 
+  tr:hover {
+    background: $listRowHoverBack;
+  }
+
   tr:last-of-type {
     border-bottom: none;
   }
