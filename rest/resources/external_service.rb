@@ -59,6 +59,8 @@ class ExternalService < LdapModel
       s['groups'].each do |g|
         g.delete('dn')
       end
+
+      s['groups'].delete_if { |g| g['type'] == 'course group' }
     end
 
     year_class = user.year_class
