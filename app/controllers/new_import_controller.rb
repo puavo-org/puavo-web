@@ -198,23 +198,26 @@ class NewImportController < ApplicationController
         grouped_users.each do |group_name, group_users|
           group_users.each_slice(users_per_page).each_with_index do |block, _|
             pdf.start_new_page()
+
+            pdf.font('unicodefont')
+            pdf.font_size(18)
+            headertext = "#{current_organisation.name}, #{@school.displayName}"
+            headertext += ", #{group_name}" if group_name && group_name.length > 0
+            pdf.draw_text(headertext, :at => [0, (pdf.bounds.top - 15)] )
+
             pdf.font('unicodefont')
             pdf.font_size(12)
-            pdf.draw_text("#{current_organisation.name}, #{@school.displayName} " +
-                          "(#{t('new_import.pdf.page')} #{current_page + 1}/#{num_pages}, #{header_timestamp})",
-                          at: pdf.bounds.top_left)
-            pdf.text("\n\n")
+            pdf.draw_text("(#{t('new_import.pdf.page')} #{current_page + 1}/#{num_pages}, #{header_timestamp})",
+                :at => [(pdf.bounds.right - 160), 0] )
+            pdf.text("\n\n\n")
 
             current_page += 1
 
             block.each do |u|
               pdf.font('unicodefont')
+              pdf.font_size(12)
 
               title = "#{u[:last]}, #{u[:first]} (#{u[:uid]})"
-
-              unless u[:tgroup].empty?
-                title += ', ' + u[:tgroup]
-              end
 
               pdf.text(title)
 
@@ -225,10 +228,6 @@ class NewImportController < ApplicationController
           end
         end
       end
-
-      # There's room on the page for this end marker. We never generate full pages.
-      pdf.font('unicodefont')
-      pdf.text("\n(#{t('new_import.pdf.end')})")
 
       filename = "#{current_organisation.organisation_key}_#{@school.cn}_#{filename_timestamp}.pdf"
 
