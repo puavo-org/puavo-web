@@ -155,7 +155,7 @@ class PasswordController < ApplicationController
       logger.info("[#{request_id}] A password reset for user \"#{params[:forgot][:email]}\" has been requested")
       log_request_env(request, request_id)
 
-      user = User.find(:first, :attribute => "mail", :value => params[:forgot][:email])
+      user = User.find(:first, :attribute => "mail", :value => params[:forgot][:email].strip)
 
       unless user
         logger.error("[#{request_id}] No user found by that email address")
