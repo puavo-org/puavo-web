@@ -1355,9 +1355,15 @@ class Users < PuavoSinatra
 
     raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 
+    # Handle supplementary Eltern data if the domain matches
+    do_eltern = CONFIG['eltern_users'] &&
+                Array(CONFIG['eltern_users']['domains']).include?(Organisation.current.domain)
+
     v4_do_operation do
       # which fields to get?
       user_fields = v4_get_fields(params).to_set
+      user_fields << 'id' if do_eltern
+
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
 
       # optional filters
@@ -1369,22 +1375,7 @@ class Users < PuavoSinatra
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
 
-      # Handle supplementary Eltern data if the domain matches
-      if CONFIG['eltern_users'] && Array(CONFIG['eltern_users']['domains']).include?(Organisation.current.domain)
-        eltern_get_all_users&.each do |user|
-          next if !user['first_name'] || user['first_name'].empty?
-
-          if user.include?('children')
-            user['children'].collect! { |c| c['puavo_id'].to_i }
-          end
-
-          user['role'] = ['parent']
-          user['school_ids'] = []
-          user['primary_school_id'] = nil
-
-          out << user
-        end
-      end
+      get_parents(out, puavoid) if do_eltern
 
       out = v4_ensure_is_array(out, 'role', 'email', 'phone', 'admin_school_id', 'school_ids')
 
