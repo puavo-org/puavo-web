@@ -63,6 +63,7 @@ end
 
 def v4_get_filters_from_params(params, user_to_ldap, base_class = '*')
   out = []
+  puavoid = []
 
   Array(params.fetch('filter', nil) || []).each do |f|
     parts = f.split('|')
@@ -92,11 +93,14 @@ def v4_get_filters_from_params(params, user_to_ldap, base_class = '*')
             # multiple values OR'd together
             mvalue = value.map { |v| "(#{field}=#{LdapModel.ldap_escape(v)})" }
             out << "(|#{mvalue.join})"
+            puavoid = value if parts[0] == 'id'
           else
             out << "(#{field}=#{LdapModel.ldap_escape(value[0])})"
+            puavoid << value[0] if parts[0] == 'id'
           end
         else
           out << "(#{field}=#{LdapModel.ldap_escape(value)})"
+          puavoid << value if parts[0] == 'id'
         end
     end
   end
@@ -104,7 +108,10 @@ def v4_get_filters_from_params(params, user_to_ldap, base_class = '*')
   # This must be always in the query for reasons I'm not entirely familiar with
   out.unshift("(objectclass=#{base_class})")
 
-  return out
+  # Ensure these aren't strings
+  puavoid.map!(&:to_i)
+
+  return out, puavoid
 end
 
 # Builds a filter string for LDAP searches

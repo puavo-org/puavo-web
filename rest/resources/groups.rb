@@ -216,7 +216,7 @@ class Groups < PuavoSinatra
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
 
       # optional filters
-      filters = v4_get_filters_from_params(params, USER_TO_LDAP, 'puavoEduGroup')
+      filters, _ = v4_get_filters_from_params(params, USER_TO_LDAP, 'puavoEduGroup')
 
       # do the query
       raw = v4_do_group_search(filters, ldap_attrs)

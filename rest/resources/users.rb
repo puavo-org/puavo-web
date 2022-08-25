@@ -1361,7 +1361,7 @@ class Users < PuavoSinatra
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
 
       # optional filters
-      filters = v4_get_filters_from_params(params, USER_TO_LDAP)
+      filters, puavoid = v4_get_filters_from_params(params, USER_TO_LDAP)
 
       # do the query
       raw = v4_do_user_search(filters, ldap_attrs)
