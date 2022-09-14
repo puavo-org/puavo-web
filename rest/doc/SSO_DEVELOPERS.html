@@ -45,7 +45,7 @@
         <li><code>school_code</code> The Finnish school code. Can be <code>null</code> if it hasn't been specified. Not all schools have this set.</li>
 
         <li><code>roles</code> One or more (there should always be at least one) roles the user has in this school. An array of strings, possible values are:<ul>
-            <li><code>teacher</code>, <code>staff</code>, <code>student</code>, <code>visitor</code>, <code>parent</code>, <code>admin</code>, <code>schooladmin</code> or <code>testuser</code></li>
+            <li><code>teacher</code>, <code>staff</code>, <code>student</code>, <code>visitor</code>, <code>parent</code>, <code>admin</code>, <code>schooladmin</code> and <code>testuser</code></li>
         </ul></li>
 
         <li><code>groups</code> List of groups the user has in the school:<ul>
@@ -56,6 +56,11 @@
                 <li><code>teaching group</code>, <code>year class</code>, <code>administrative group</code>, <code>course</code>, <code>archive users</code> or <code>other groups</code></li>
             </ul></li>
         </ul></li>
+
+      <li><code>learning_materials_charge</code><ul>
+          <li>The value of the MPASS' <code>learningMaterialsCharge</code> attribute for this user in this school. Omitted if the value is not known for this school ("best effort"). When specified, it is formatted as <code>X;YYYYY</code> where X is either 0 or 1, and YYYYY is the school code. <a href="https://wiki.eduuni.fi/pages/viewpage.action?pageId=266420002">More information here</a> (in Finnish).</li>
+      </ul></li>
+
     </ul></li>
 
     <li><code>organisation_name</code><ul>
@@ -68,10 +73,6 @@
 
     <li><code>learner_id</code><ul>
         <li>The 11-digit Finnish national learner ID, prefixed with the OID "1.2.246.562.24.". <a href="https://wiki.eduuni.fi/display/CSCMPASSID/Data+models">Read this for more information</a>. Can be <code>null</code> if the ID has not been set.</li>
-    </ul></li>
-
-    <li><code>materials_charge</code><ul>
-        <li>The value of the MPASS' <code>learningMaterialsCharge</code> attribute. <a href="https://wiki.eduuni.fi/pages/viewpage.action?pageId=266420002">More information here</a> (in Finnish). Omitted if the value is not known ("best effort").</li>
     </ul></li>
 </ul>
 

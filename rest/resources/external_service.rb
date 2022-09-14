@@ -97,7 +97,15 @@ class ExternalService < LdapModel
         ed = JSON.parse(user.external_data)
 
         if ed.include?('materials_charge')
-          data['materials_charge'] = ed['materials_charge']
+          # Inject the materials charge value into the schools array, at the correct school
+          target_school = ed['materials_charge'].split(';')[1]
+
+          data['schools'].each do |s|
+            if s['school_code'] == target_school
+              s['learning_materials_charge'] = ed['materials_charge']
+              break
+            end
+          end
         end
       rescue
       end
