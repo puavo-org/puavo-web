@@ -86,6 +86,18 @@ describe PuavoRest::Sessions do
       @user.save!
       @user.teaching_group = group   # XXX weird that this must be here
 
+      @user2 = PuavoRest::User.new(
+        :email              => 'alice@example.com',
+        :first_name         => 'Alice',
+        :last_name          => 'Brown',
+        :password           => 'trustno1',
+        :roles              => [ 'teacher', 'staff' ],
+        :school_dns         => [ @school.dn.to_s ],
+        :username           => 'alice',
+      )
+      @user2.save!
+      @user2.teaching_group = group   # XXX weird that this must be here
+
       @group = Group.find(:first, :attribute => 'cn', :value => 'group1')
     end
 
@@ -145,6 +157,11 @@ describe PuavoRest::Sessions do
         assert_200
 
         @data = JSON.parse last_response.body
+      end
+
+      it 'roles in an array' do
+        assert_equal(1, @data['user']['user_roles'].size)
+        assert_equal('student', @data['user']['user_roles'][0])
       end
 
       it "laptops have sessions" do
@@ -302,5 +319,32 @@ describe PuavoRest::Sessions do
         assert_equal Integer, data["user"]["groups"].first["gid_number"].class, "gid_number must be number"
       end
     end
+
+    describe 'more roles testing' do
+      before(:each) do
+        @laptop1 = create_device(
+          :puavoHostname => "laptop1",
+          :macAddress => "00:60:2f:D5:F9:61",
+          :puavoSchool => @school.dn,
+          :puavoDeviceType => "laptop"
+        )
+
+        basic_authorize "alice", "trustno1"
+        post "/v3/sessions", {
+          "hostname" => "laptop1",
+          "device_dn" => @laptop1.dn.to_s,
+          "device_password" => @laptop1.ldap_password }
+        assert_200
+
+        @data = JSON.parse last_response.body
+      end
+
+      it 'roles in an array' do
+        assert @data['user']['user_roles'].size == 2
+        assert @data['user']['user_roles'].include?('teacher')
+        assert @data['user']['user_roles'].include?('staff')
+      end
+    end
+
   end
 end

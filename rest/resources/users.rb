@@ -618,7 +618,7 @@ class User < LdapModel
   end
 
   def admin?
-    user_type == "admin"
+    Array(roles).include?('admin')
   end
 
   def groups

@@ -94,6 +94,10 @@
     <li><code>year_class</code><ul>
         <li>A string containing the year class name for students who attend a school that has Primus integration enabled. Will be always <code>null</code> for non-students and students who are not in a Primus-enabled school.</li>
     </ul></li>
+
+    <li><code>user_type</code><ul>
+        <li>Please ignore this. It is an obsolete field containing the "first" role the user has. This field exists only for backwards compatibility; using it for anything is almost certainly a mistake. If you need the user's roles, look them up in the <code>schools</code> array as described above.</li>
+    </ul></li>
 </ul>
 
 <h2>Service activation</h2>

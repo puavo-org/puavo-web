@@ -76,7 +76,8 @@ class Sessions < PuavoSinatra
         'username' => user.username,
         'first_name' => user.first_name,
         'last_name' => user.last_name,
-        'user_type' => user.user_type,
+        'user_type' => user.user_type,        # broken and deprecated, don't use
+        'user_roles' => Array(user.roles),    # use this instead
         'gid_number' => user.gid_number,
         'uid_number' => user.uid_number,
 
