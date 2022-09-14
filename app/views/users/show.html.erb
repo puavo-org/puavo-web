@@ -224,6 +224,16 @@
       <% end %>
       <% end %>
 
+      <% if @have_sso_sessions %>
+      <ul>
+        <li class="ownersOnly">
+          <%= link_to reset_sso_session_path(@school, @user), data: { confirm: t('general_confirm') } do %>
+            <i class='icon-key'></i><%= t('.reset_sso_session') %>
+          <% end %>
+        </li>
+      </ul>
+      <% end %>
+
       <ul>
         <li>
           <% if @user.puavoLocked == false || @user.puavoLocked.nil? %>

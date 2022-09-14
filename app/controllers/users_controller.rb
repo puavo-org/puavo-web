@@ -661,6 +661,11 @@ class UsersController < ApplicationController
       end
     end
 
+    # Does this organisation have any SSO sessions enabled? We don't care what services
+    # they're enabled for, as long as there's at least one.
+    organisation = Puavo::Organisation.find(LdapOrganisation.current.cn)
+    @have_sso_sessions = organisation && !organisation.value_by_key('enable_sso_sessions_in').nil?
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }
@@ -975,6 +980,20 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(users_url) }
       format.xml  { head :ok }
+    end
+  end
+
+  def reset_sso_session
+    return if redirected_nonowner_user?
+
+    @user = get_user(params[:id])
+    return if @user.nil?
+
+    @user.reset_sso_session
+    flash[:notice] = t('flash.user.sso_session_gone')
+
+    respond_to do |format|
+      format.html { redirect_to(user_path(@school, @user)) }
     end
   end
 
