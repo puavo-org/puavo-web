@@ -1788,7 +1788,7 @@ fi:
       password: Vanha salasana
       link_other_password: "Vaihda toisen käyttäjän salasana"
     forgot:
-      title: "Aseta uusi salasana"
+      title: "Unohdin salasanani"
       description: "Anna sähköpostiosoitteesi, niin lähetämme sinne linkin jonka kautta voit asettaa itsellesi uuden salasanan."
     reset:
       title: Aseta uusi salasana

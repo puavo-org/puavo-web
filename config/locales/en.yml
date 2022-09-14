@@ -1788,7 +1788,7 @@ en:
       password: Old password
       link_other_password: Change someone else's password
     forgot:
-      title: Reset your password
+      title: "I forgot my password"
       description: "Please enter your email address and we'll send you a link that allows you to set your new password."
     reset:
       title: Reset your password
