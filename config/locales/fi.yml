@@ -900,7 +900,6 @@ fi:
   # New new user mass import/update tool
   new_import:
     title: "Käyttäjien massatuonti ja -päivitys"
-    beta_warning: "TÄMÄ TYÖKALU ON VIELÄ BETA-VAIHEESSA. SE TOIMII, MUTTA OLE HYVIN VAROVAINEN SEN KANSSA. RAPORTOI KAIKKI VIAT JA KEHITYSIDEAT VÄLITTÖMÄSTI."
 
     # The source tab
     source_tab: "1. Valitse tietolähde"

@@ -46,34 +46,6 @@
   top: 39px;
 }
 
-div.betaOuter {
-  background-size: 64px 64px;
-
-  background-image: linear-gradient(135deg,
-      #000 25%, #ff0 25%,
-      #ff0 50%, #000 50%,
-      #000 75%, #ff0 75%,
-      #ff0 100%
-  );
-
-  max-width: 80%;
-  margin: 10px auto;
-  padding: 10px;
-}
-
-div.betaInner {
-  background: #ffa;
-  padding: 10px;
-  text-align: center;
-  font-size: 120%;
-}
-
-div.betaInner h2 {
-  margin: 0 0 10px 0;
-  padding: 0;
-  border: none;
-}
-
 /* The main importer container */
 #import {
   line-height: 1;

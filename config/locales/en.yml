@@ -900,7 +900,6 @@ en:
   # New new user mass import/update tool
   new_import:
     title: "User Mass Import and Update"
-    beta_warning: "THIS TOOL IS STILL IN BETA PHASE. IT WORKS, BUT BE VERY CAREFUL WITH IT. REPORT ALL BUGS AND IMPROVEMENT IDEAS AT ONCE."
 
     # The source tab
     source_tab: "1. Select data source"
