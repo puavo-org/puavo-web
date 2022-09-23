@@ -143,7 +143,7 @@
     color: $buttonFore;
   }
 
-  .btn:active, .btn:focus {
+  .btn:active {
     border-color: $buttonBorderLo $buttonBorderHi $buttonBorderHi $buttonBorderLo;
     background: $buttonHoverBack;
     color: $buttonFore;
@@ -160,7 +160,7 @@
     color: $buttonDangerFore;
   }
 
-  .btn-danger:active, .btn-danger:focus {
+  .btn-danger:active {
     border-color: $buttonDangerBorderLo $buttonDangerBorderHi $buttonDangerBorderHi $buttonDangerBorderLo;
     background: $buttonDangerHoverBack;
     color: $buttonDangerFore;
