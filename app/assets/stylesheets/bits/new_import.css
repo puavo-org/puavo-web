@@ -16,7 +16,7 @@
 
   --column-controls-border: #888;
 
-  --table-header-background: #ccc;
+  --table-header-background: #ddd;
 
   --selected-back: #8ff;
   --delete-border: #f00;
@@ -138,14 +138,24 @@
   gap: 5px;
 }
 
-#import div#controls .buttons {
+#import div#controls {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#import div#controls div.row {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
 }
 
-#import div#controls select, #import div#controls .buttons button {
+#import div#controls button {
+  margin: 0;
+}
+
+#import div#controls select /*, #import div#controls button*/ {
   padding: 2px 5px;
 }
 
@@ -263,6 +273,12 @@
   display: block !important;
 }
 
+/*
+// TODO: Make the checkboxes easier to click
+.importTable th.checkbox { cursor: pointer; }
+.importTable th.checkbox input { pointer-events: none; }
+*/
+
 .importTable th select {
   background: #fff;
   border: 1px solid var(--column-controls-border);
@@ -281,33 +297,7 @@
   color: #000;
 }
 
-.importTable a.delete {
-  padding: 2px 5px;
-  color: var(--danger) !important;
-  border: 1px solid transparent;
-  background: none;
-  cursor: default;
-  text-decoration: none;
-  font-family: puavo-icons;
-  font-size: 125%;
-  font-weight: normal !important;
-}
-
-.importTable a.delete:hover {
-  background: var(--delete-background);
-  border: 1px solid var(--delete-border);
-}
-
-.importTable .rowNumber {
-  color: var(--indicators);
-}
-
-.importTable .colNumber {
-  color: var(--indicators);
-  margin: 0 10px 0 5px;
-}
-
-.importTable .colType {   /* Preview table column type */
+.importTable .colType {
   background: #fff;
   padding: 2px 5px;
   border: 1px solid var(--column-controls-border);
@@ -320,7 +310,7 @@
   border-color: var(--popup-border) !important;
 }
 
-.importTable.notPreview td {
+.importTable td.value {
   user-select: none;    /* The JavaScript-based multi-cell selection prevents normal text selection anyway */
   cursor: cell;
 }
@@ -338,7 +328,9 @@
   border: 1px solid var(--error-cell-color);
 }
 
-#import .selectedCell {
+.importTable td.divider { }
+
+.importTable .selectedCell {
   background: var(--selected-back);
 }
 
@@ -496,6 +488,13 @@ div.popup div#contents input[type="text"]#value {
   width: 100%;
 }
 
+div.popup div.popupContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 10px;
+}
+
 #import fieldset {
   border: 1px solid var(--generic-border);
 }
@@ -510,31 +509,27 @@ p.methodExplanation {
   border: 1px solid var(--generic-border);
   padding: 5px;
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-#import #status #progress {
-  display: flex;
-  flex-direction: row;
+  flex-direction: rows;
   align-items: center;
   gap: 5px;
 }
 
-#import #status #progress progress {
+#import #status #rowCounts {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 40%;
+}
+
+#import #status progress {
   height: 20px;
   border: 1px solid #000;
-  width: 300px;
+  flex-grow: 2;
 }
 
-#import #status #progress #counter {
-  font-size: 120%;
-  font-weight: bold;
-}
-
-#import #status #progress #counter span.success { background: var(--state-success); }
-#import #status #progress #counter span.partial_success { background: var(--state-partial-success); }
-#import #status #progress #counter span.failed { background: var(--state-failed); }
+#import #status #rowCounts span.success { background: var(--state-success); }
+#import #status #rowCounts span.partial_success { background: var(--state-partial-success); }
+#import #status #rowCounts span.failed { background: var(--state-failed); }
 
 #import #status.error {
   border: 1px solid #f00;

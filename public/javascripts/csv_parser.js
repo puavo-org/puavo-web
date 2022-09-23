@@ -62,7 +62,7 @@ function _splitString(string, separator)
 function _parseCSV(source, settings, isPreview)
 {
     if (source === null || source === undefined) {
-        console.log("[parser] _parseCSV(): the source data is completely empty");
+        console.log("[parser] _parseCSV(): source data is null or undefined");
 
         return {
             state: "ok",
@@ -70,6 +70,7 @@ function _parseCSV(source, settings, isPreview)
             isPreview: isPreview,
             headers: [],
             rows: [],
+            widestRow: 0,
         };
     }
 
@@ -79,37 +80,42 @@ function _parseCSV(source, settings, isPreview)
         // Ensure we nave nice and clean Unicode data
         source = source.normalize("NFC");
 
-        // Remove Windows-style newlines
-        source = source.replace(/\r\n/g, "\n");
+        // Convert \n\r (or \r\n) newlines to just \n
+        source = source.replace(/\r/g, "");
 
         // Remove Unicode BiDi mess no one wants to deal with. Puavo doesn't support
         // right-to-left content anyway.
         source = source
-            .replace(/\u200E/g, '')     // U+200E LEFT-TO-RIGHT MARK (LRM)
-            .replace(/\u200F/g, '')     // U+200F RIGHT-TO-LEFT MARK (RLM)
-            .replace(/\u202A/g, '')     // U+202A LEFT-TO-RIGHT EMBEDDING (LRE)
-            .replace(/\u202B/g, '')     // U+202B RIGHT-TO-LEFT EMBEDDING (RLE)
-            .replace(/\u202C/g, '')     // U+202C POP DIRECTIONAL FORMATTING (PDF)
-            .replace(/\u202D/g, '')     // U+202D LEFT-TO-RIGHT OVERRIDE (LRO)
-            .replace(/\u202E/g, '')     // U+202E RIGHT-TO-LEFT OVERRIDE (RLO)
-            .replace(/\u2066/g, '')     // U+2066 LEFT-TO-RIGHT ISOLATE (LRI)
-            .replace(/\u2067/g, '')     // U+2067 RIGHT-TO-LEFT ISOLATE (RLI)
-            .replace(/\u2068/g, '')     // U+2068 FIRST STRONG ISOLATE (FSI)
-            .replace(/\u2069/g, '')     // U+2069 POP DIRECTIONAL ISOLATE (PDI)
-            .replace(/\u061C/g, '')     // U+061C ARABIC LETTER MARK (ALM)
+            .replace(/\u200C/g, "")     // U+200C ZERO-WIDTH NON-JOINER (ZWNJ)
+            .replace(/\u200D/g, "")     // U+200D ZERO-WIDTH JOINER (ZJW)
+            .replace(/\u200E/g, "")     // U+200E LEFT-TO-RIGHT MARK (LRM)
+            .replace(/\u200F/g, "")     // U+200F RIGHT-TO-LEFT MARK (RLM)
+            .replace(/\u202A/g, "")     // U+202A LEFT-TO-RIGHT EMBEDDING (LRE)
+            .replace(/\u202B/g, "")     // U+202B RIGHT-TO-LEFT EMBEDDING (RLE)
+            .replace(/\u202C/g, "")     // U+202C POP DIRECTIONAL FORMATTING (PDF)
+            .replace(/\u202D/g, "")     // U+202D LEFT-TO-RIGHT OVERRIDE (LRO)
+            .replace(/\u202E/g, "")     // U+202E RIGHT-TO-LEFT OVERRIDE (RLO)
+            .replace(/\u2066/g, "")     // U+2066 LEFT-TO-RIGHT ISOLATE (LRI)
+            .replace(/\u2067/g, "")     // U+2067 RIGHT-TO-LEFT ISOLATE (RLI)
+            .replace(/\u2068/g, "")     // U+2068 FIRST STRONG ISOLATE (FSI)
+            .replace(/\u2069/g, "")     // U+2069 POP DIRECTIONAL ISOLATE (PDI)
+            .replace(/\u061C/g, "")     // U+061C ARABIC LETTER MARK (ALM)
+            .replace(/\u001C/g, "")     // ASCII File Separator
+            .replace(/\u001D/g, "")     // ASCII Group Separator
+            .replace(/\u001E/g, "")     // ASCII Record Separator
+            .replace(/\u001F/g, "")     // ASCII Unit Separator (actually seen in production data)
         ;
 
         let lineNumber = 0,
             rows = [];
 
-        let minColumns = 99999999,
-            maxColumns = 0;
+        let widestRow = 0;
 
         let headers = null;
 
         const maxLines = isPreview ? (settings.wantHeader ? PREVIEW_ROWS + 1 : PREVIEW_ROWS) : 9999999;
 
-        // Split into rows and then split every row
+        // Process each row
         for (const row of source.split("\n")) {
             lineNumber++;
 
@@ -137,16 +143,21 @@ function _parseCSV(source, settings, isPreview)
                     console.log("[parser] Autoremoved the first row comment marker");
                 }
 
+                widestRow = headers.length;
                 continue;
             }
 
-            minColumns = Math.min(minColumns, parts.length);
-            maxColumns = Math.max(maxColumns, parts.length);
+            // After the file has been parsed, each row (including the header row)
+            // will be padded to have the same number of columns. That will be done
+            // elsewhere, though.
+            widestRow = Math.max(widestRow, parts.length);
 
             rows.push({
-                row: lineNumber,
-                columns: parts,
-                state: 0,           // internal table state flags
+                rowFlags: 0,        // internal, filled in elsewhere
+                rowState: 0,        // ditto
+                cellValues: parts,
+                cellFlags: null,    // created later
+                message: null,
             });
         }
 
@@ -160,6 +171,7 @@ function _parseCSV(source, settings, isPreview)
             isPreview: isPreview,
             headers: headers,
             rows: rows,
+            widestRow: widestRow,
         };
     } catch (e) {
         console.error(e);
@@ -170,6 +182,7 @@ function _parseCSV(source, settings, isPreview)
             isPreview: isPreview,
             headers: null,
             rows: null,
+            widestRow: null,
         };
     }
 }

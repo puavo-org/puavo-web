@@ -21,7 +21,7 @@
 
 <p class="line-height-125p"><%= t('new_import.source_help') %></p>
 
-<div class="flex flex-rows flex-gap-10px">
+<div class="flex-rows gap-10px">
     <select id="source" class="padding-5px">
         <option value="manual"><%= t('new_import.manual_title') %></option>
         <option value="upload"><%= t('new_import.upload_title') %></option>
@@ -43,7 +43,7 @@
     <details id="settings">
         <summary></summary>
 
-        <div class="flex flex-rows flex-gap-10px margin-left-20px margin-top-5px margin-bottom-20px">
+        <div class="flex-rows gap-10px margin-left-20px margin-top-5px margin-bottom-20px">
             <div class="settingRow">
               <input type="checkbox" id="inferTypes">
               <label for="inferTypes"><%= t('new_import.infer_columns') %></label>
@@ -122,38 +122,109 @@
 <!-- The data manipulation and import table -->
 <section id="page2" class="hidden">
 
-<div class="flex flex-rows flex-gap-10px margin-top-10px ">
+<template id="template_selectExistingUIDsPopup">
+    <div class="popupContainer">
+        <button id="selectDupesAll"><%= t('new_import.buttons.everyone') %></button>
+        <button id="selectDupesThisSchool"><%= t('new_import.buttons.everyone_in_this_school') %></button>
+        <button id="selectDupesOtherSchools"><%= t('new_import.buttons.everyone_in_other_schools') %></button>
+    </div>
+</template>
+
+<template id="template_selectRowsPopup">
+    <div class="popupContainer">
+        <button id="selectAll"><%= t('new_import.buttons.select_all') %></button>
+        <button id="deselectAll"><%= t('new_import.buttons.deselect_all') %></button>
+        <button id="invertSelection"><%= t('new_import.buttons.invert_selection') %></button>
+        <label class="margin-top-10px"><%= t('new_import.need_to_import_first') %>:</label>
+        <button id="selectIdle"><%= t('new_import.buttons.select_unprocessed_rows') %></button>
+        <button id="selectSuccessfull"><%= t('new_import.buttons.select_successfull_rows') %></button>
+        <button id="selectPartiallySuccessfull"><%= t('new_import.buttons.select_partially_successfull_rows') %></button>
+        <button id="selectFailed"><%= t('new_import.buttons.select_failed_rows') %></button>
+    </div>
+</template>
+
+<template id="template_analyzePopup">
+    <div class="popupContainer">
+        <button id="analyzeDuplicates"><%= t('new_import.buttons.compare_attributes') %></button>
+    </div>
+</template>
+
+<template id="template_exportPopup">
+    <div class="popupContainer">
+        <fieldset class="margin-0 padding-5px"><legend><%= t('new_import.export_target') %></legend>
+            <div class="flex-rows">
+                <span><input type="radio" name="type" id="all" checked><label for="all"><%= t('new_import.buttons.export_all_rows') %></label></span>
+                <span><input type="radio" name="type" id="selected"><label for="selected"><%= t('new_import.buttons.export_selected_rows') %></label></span>
+                <span><input type="radio" name="type" id="unselected"><label for="unselected"><%= t('new_import.buttons.export_unselected_rows') %></label></span>
+            </div>
+        </fieldset>
+
+        <p class="margin-0 margin-top-10px"><%= t('new_import.export_pdf_warning') %></p>
+
+        <button id="exportCSV">CSV</button>
+        <button id="exportPDF">PDF</button>
+        <button id="exportPDFWithPasswords"><%= t('new_import.buttons.export_pdf_with_passwords') %></button>
+    </div>
+</template>
+
+<div class="flex-rows gap-10px margin-top-10px ">
     <!-- Control buttons -->
-    <div id="controls" class="flex flex-rows flex-gap-10px">
-        <div class="buttons">
-            <button id="beginImport" class="btn"><i class='icon-upload'></i><%= t('new_import.buttons.begin') %></button>
-            <button id="stopImport" class="btn hidden"><i class='icon-cancel'></i><%= t('new_import.buttons.stop') %></button>
-            <button id="retryFailed" class="btn" disabled><i class='icon-exchange'></i><%= t('new_import.buttons.begin_failed') %></button>
-            <button id="getDuplicates" class="btn"><i class='icon-download'></i><%= t('new_import.buttons.get_duplicates') %></button>
-            <button id="getPasswordPDF" class="btn"><i class='icon-download'></i><%= t('new_import.buttons.get_passwords') %></button>
-            <button id="deleteMarkedRows" class="btn-danger"><i class='icon-trash'></i><%= t('new_import.buttons.delete_marked_rows') %></button>
+    <div id="controls">
+        <div class="row">
+            <button id="selectRows" class="btn popupToggle" data-template="selectRowsPopup">
+                <%= t('new_import.buttons.select_rows') %>... ▼
+            </button>
+
+            <button id="analyze" class="btn popupToggle" data-template="analyzePopup">
+                <%= t('new_import.buttons.analyze') %>... ▼
+            </button>
+
+            <button id="selectExistingUIDs" class="btn popupToggle" data-template="selectExistingUIDsPopup">
+                <%= t('new_import.buttons.select_existing_uids') %>... ▼
+            </button>
+
+            <button id="export" class="btn popupToggle" data-template="exportPopup">
+                <%= t('new_import.buttons.export') %>... ▼
+            </button>
+
+            <button id="deleteSelectedRows" class="btn btn-danger"><%= t('new_import.buttons.delete_selected_rows') %></button>
+
+            <button id="debug" class="btn" style="margin-left: auto;">Debug</button>
         </div>
 
-        <div class="flex flex-cols flex-gap-5px flex-vcenter">
-            <label for="mode"><%= t('new_import.mode.label') %>:</label>
+        <div class="row">
+            <button id="beginImport" class="btn"><%= t('new_import.buttons.begin') %></button>
+            <!--<button id="beginImportSelected" class="btn"><%= t('new_import.buttons.begin_selected') %></button>//-->
+            <button id="retryFailed" class="btn"></i><%= t('new_import.buttons.begin_failed') %></button>
+            <button id="stopImport" class="btn" disabled><%= t('new_import.buttons.stop') %></button>
 
-            <select id="mode" class="margin-right-10px">
-                <option value="0"><%= t('new_import.mode.create_new_update_existing') %></option>
-                <option value="1"><%= t('new_import.mode.create_new_skip_existing') %></option>
-                <option value="2"><%= t('new_import.mode.skip_new_update_existing') %></option>
-            </select>
+            <div class="margin-left-10px">
+                <label for="mode"><%= t('new_import.mode.label') %>:</label>
+                <select id="mode">
+                    <option value="0"><%= t('new_import.mode.create_new_update_existing') %></option>
+                    <option value="1"><%= t('new_import.mode.create_new_skip_existing') %></option>
+                    <option value="2"><%= t('new_import.mode.skip_new_update_existing') %></option>
+                </select>
+            </div>
         </div>
+
+        <!--
+        <div class="row">
+            <span><input type="checkbox" id="checkOnlySelectedRows"><label for="checkOnlySelectedRows">Tarkista vain valitut rivit virheiden ja ongelmien varalta</label></span>
+            <button id="detectProblemsNow" class="btn">Tarkista nyt</button>
+        </div>
+        //-->
     </div>
 
     <!-- Errors and warnings -->
     <div id="problems"></div>
 
     <!-- Status message, progress bar -->
-    <div id="status" class="hidden">
-        <div id="message"></div>
-        <div id="progress" class="">
-            <progress max="0" value="0"></progress>
-            <div id="counter">0/0</div>
+    <div id="status">
+        <div id="rowCounts">...</div>
+        <div class="flex-rows gap-5px flex-grow-2">
+            <div id="message" class="hidden"></div>
+            <progress max="0" value="0" class="hidden"></progress>
         </div>
     </div>
 
@@ -169,10 +240,8 @@
     <table class="importTable">
         <thead>
             <tr class="stickyTop">
-                <th class="align-center">
-                    <input type="checkbox" id="markAllRows" title="<%= t('new_import.table.mark_all_rows_for_deletion') %>">
-                </th>
-                <th>
+                <th></th>
+                <th class="state">
                     <span id="legendToggle"><%= t('new_import.table.row_state') %></span>
                     <div id="legend">
                         <ul>
@@ -192,19 +261,14 @@
 
 <template id="template_tableRow">
     <tr>
-        <th class="rowNumber">
-            <div class="flex flex-cols flex-vcenter flex-gap-5px margin-left-5px">
-                <span class="flex-grow-2"></span>
-                <input type="checkbox" title="<%= t('new_import.table.mark_row_for_deletion') %>">
-            </div>
-        </th>
+        <th class="checkbox"><input type="checkbox" title="<%= t('new_import.table.select_row') %>"></th>
+        <th class="state"></th>
     </tr>
 </template>
 
 <template id="template_columnHeader">
     <th class="stickyTop">
-        <div class="flex flex-cols flex-vcenter">
-            <div class="colNumber"></div>
+        <div class="flex-cols flex-vcenter">
             <select id="type" title="<%= t('new_import.column_title') %>" class="flex-grow-2">
                 <option value=""><%= t('new_import.columns.skip') %></option>
                 <option value="first"><%= t('new_import.columns.first') %></option>
@@ -227,10 +291,7 @@
 <!-- A variant of the template above, used in preview tables -->
 <template id="template_previewColumnHeader">
     <th>
-        <div class="flex flex-cols flex-vcenter">
-            <div class="colNumber"></div>
-            <div class="colType"><%= t('new_import.columns.skip') %></div>
-        </div>
+        <div class="colType"><%= t('new_import.columns.skip') %></div>
     </th>
 </template>
 
@@ -255,7 +316,7 @@
 </template>
 
 <template id="template_directCellEdit">
-    <div class="flex flex-rows flex-gap-5px padding-5px">
+    <div class="flex-rows gap-5px padding-5px">
         <div id="contents"></div>
         <div class="directButtons">
             <button id="save">OK (Enter)</button>
@@ -283,7 +344,7 @@
 
 <template id="template_selectGroup">
     <label for="abbr"><%= t('new_import.tools.set_group.help') %></label>
-    <div class="flex flex-rows flex-gap-5px">
+    <div class="flex-rows gap-5px">
         <select id="abbr"></select>   <!-- Filled in dynamically -->
         <button id="reload"><%= t('new_import.buttons.reload_groups') %></button>
     </div>
@@ -318,9 +379,10 @@
 
 <template id="template_generateUsernames">
     <label><%= t('new_import.tools.generate_usernames.help') %></label>
-    <div class="flex flex-rows flex-gap-5px margin-top-10px">
+    <div class="flex-rows gap-5px margin-top-10px">
         <span><input type="radio" name="method" id="drop"><label for="drop">ä → a, ö → o, ü → u</label></span>
         <span><input type="radio" name="method" id="replace"><label for="replace">ä → ae, ö → oe, ü → ue</label></span>
+        <span><input type="checkbox" id="first_first_only"><label for="first_first_only" title="<%= t('new_import.tools.generate_usernames.first_first_name_only_help') %>"><%= t('new_import.tools.generate_usernames.first_first_name_only') %></label></span>
     </div>
 </template>
 
@@ -332,12 +394,12 @@
             <span><input type="radio" name="method" id="random" checked><label for="random"><%= t('new_import.tools.generate_passwords.random') %>:</label></span>
         </legend>
 
-        <div class="flex flex-rows flex-gap-5px margin-top-5px">
+        <div class="flex-rows gap-5px margin-top-5px">
             <span><input type="checkbox" id="uppercase"><label for="uppercase"><%= t('new_import.tools.generate_passwords.uppercase') %></label></span>
             <span><input type="checkbox" id="lowercase"><label for="lowercase"><%= t('new_import.tools.generate_passwords.lowercase') %></label></span>
             <span><input type="checkbox" id="numbers"><label for="numbers"><%= t('new_import.tools.generate_passwords.numbers') %></label></span>
             <span><input type="checkbox" id="punctuation"><label for="punctuation"><%= t('new_import.tools.generate_passwords.punct') %></label></span>
-            <div class="flex flex-cols flex-vcenter"><label><%= t('new_import.tools.generate_passwords.length') %>:</label><input type="range" id="length" class="flex-grow-2 margin-left-5px"><div id="lengthValue" class="padding-5px"></div></div>
+            <div class="flex-cols flex-vcenter"><label><%= t('new_import.tools.generate_passwords.length') %>:</label><input type="range" id="length" class="flex-grow-2 margin-left-5px"><div id="lengthValue" class="padding-5px"></div></div>
         </div>
     </fieldset>
 </template>
@@ -395,7 +457,9 @@ initializeImporter({
     columnTitles: LOCALIZED_COLUMN_TITLES,
     groupTypes: LOCALIZED_GROUP_TYPES,
     groups: INITIAL_GROUPS,
+    organisationName: "<%= LdapOrganisation.current.cn %>",
     schoolId: <%= @school.id.to_i %>,
+    schoolName: "<%= @school.cn %>",
     <% if @automatic_email_addresses %>
     automaticEmails: true,
     <% else %>

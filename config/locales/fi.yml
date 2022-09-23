@@ -925,15 +925,18 @@ fi:
 
     no_data: "Ei näytettäviä rivejä. Oletko valinnut tietolähteen ensimmäiseltä sivulta?"
 
+    need_to_import_first: "Nämä toimivat vain tuonnin jälkeen"
+    export_target: "Mitä viedään?"
+    export_pdf_warning: "PDF:t sisältävät vain olemassaolevat käyttäjät."
+
     mode:
       label: "Päivitystapa"
-      create_new_update_existing: "Lisää uudet käyttäjät ja päivitä olemassaolevat"
+      create_new_update_existing: "Lisää uudet käyttäjät, päivitä olemassaolevat"
       create_new_skip_existing: "Lisää uudet käyttäjät, ohita olemassaolevat (oletus)"
       skip_new_update_existing: "Ohita uudet käyttäjät, päivitä olemassaolevat"
 
     table:
-      mark_all_rows_for_deletion: "Merkitse KAIKKI rivit poistettavaksi"
-      mark_row_for_deletion: "Merkitse rivi poistettavaksi"
+      select_row: "Merkitse tämä rivi"
       row_state: "Tila"
 
       legend:
@@ -974,12 +977,34 @@ fi:
     buttons:
       read_data: "Lue kaikki tiedot ja siirry tuontivaiheeseen"
       show_infers: "Näytä päättelyt..."
-      begin: "Aloita tuonti"
+
+      select_existing_uids: "Valitse olemassaolevat käyttäjät"
+      everyone: "Kaikki"
+      everyone_in_this_school: "Kaikki tässä koulussa"
+      everyone_in_other_schools: "Kaikki jossain muussa koulussa"
+      select_rows: "Valitse rivit"
+      select_all: "Valise kaikki rivit"
+      deselect_all: "Epävalitse kaikki rivit"
+      invert_selection: "Käänteinen valinta"
+      select_unprocessed_rows: "Valitse rivit joita ei käsitelty"
+      select_successfull_rows: "Valitse onnistuneet rivit"
+      select_partially_successfull_rows: "Valitse osittain onnistuneet rivit"
+      select_failed_rows: "Valitse epäonnistuneet rivit"
+      export: "Vie"
+      export_all_rows: "Kaikki rivit"
+      export_selected_rows: "Vain valitut rivit"
+      export_unselected_rows: "Vain ei-valitut rivit"
+      export_pdf_with_passwords: "PDF salasanoilla"
+      analyze: "Analysoi"
+      compare_attributes: "Vertaa ei-käyttäjänimi -attribuutteja palvelimen dataan"
+
+      begin: "Tuo kaikki rivit"
+      begin_selected: "Tuo valitut rivit"
       stop: "Pysäytä tuonti"
       begin_failed: "Tuo epäonnistuneet rivit uudelleen"
-      get_duplicates: "Lataa lista duplikaateista käyttäjätunnuksista"
-      get_passwords: "Lataa PDF asetetuista salasanoista"
-      delete_marked_rows: "Poista valitut rivit"
+      get_pdf_without_passwords: "Lataa PDF käyttäjistä"
+      get_pdf_with_passwords: "Lataa PDF käyttäjistä salasanoineen"
+      delete_selected_rows: "Poista valitut rivit"
       save: "Tallenna (Enter)"
       cancel: "Peruuta (Esc)"
       close: "Sulje (Esc)"
@@ -1002,6 +1027,8 @@ fi:
       generate_usernames:
         title: "Luo käyttäjänimiä"
         help: "Etu- ja sukunimet muutetaan pieniksi ja yhdistetään pisteellä. Sen jälkeen tarkkeet poistetaan. ß muutetaan aina muotoon \"ss\", mutta voit valita miten kirjaimet Ä, Ö ja Ü muunnetaan:"
+        first_first_name_only: "Käytä vain ensimmäistä etunimeä"
+        first_first_name_only_help: "Jos käyttäjällä on monta etunimeä (välilyönnein eroteltuna), käytä nimen luonnissa vain niistä ensimmäistä (katkaisu ensimmäisen välilyönnin kohdalta)."
 
       generate_passwords:
         title: "Luo salasanoja"

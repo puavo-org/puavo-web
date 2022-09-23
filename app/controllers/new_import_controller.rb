@@ -26,14 +26,43 @@ class NewImportController < ApplicationController
     users = User.search_as_utf8(
       filter: '(objectClass=puavoEduPerson)',
       attributes: ['puavoId', 'uid']
-    ).collect do |dn, u|
+    ).collect do |_, u|
       {
         id: u['puavoId'][0].to_i,
-        uid: u['uid'][0],
+        uid: u['uid'][0]
       }
     end
 
     render json: users
+  end
+
+  # Extended version of get_current_users(), used in duplicate username detection.
+  # Returns user information, but also includes schools
+  def duplicate_detection
+    extract_dn = /puavoId=(\d+),ou=Groups/
+
+    users = User.search_as_utf8(
+      filter: '(objectClass=puavoEduPerson)',
+      attributes: ['puavoId', 'uid', 'puavoEduPersonPrimarySchool', 'puavoSchool', 'puavoExternalId', 'mail', 'telephoneNumber']
+    ).collect do |_, u|
+      {
+        id: u['puavoId'][0].to_i,
+        uid: u['uid'][0],
+        school: extract_dn.match(u['puavoEduPersonPrimarySchool'][0])[1].to_i,
+        schools: u['puavoSchool'].collect { |dn| extract_dn.match(dn)[1].to_i },
+        eid: u.fetch('puavoExternalId', [nil])[0],
+        email: Array(u['mail'] || []),
+        phone: Array(u['telephoneNumber'] || [])
+      }
+    end
+
+    schools = School.search_as_utf8(
+      attributes: ['puavoId', 'displayName']
+    ).collect do |dn, s|
+      [s['puavoId'][0], s['displayName'][0]]
+    end.to_h
+
+    render json: { users: users, schools: schools }
   end
 
   # Import or update one or more users
@@ -113,18 +142,20 @@ class NewImportController < ApplicationController
     render json: response
   end
 
-  def generate_password_pdf
+  def generate_pdf
     begin
-      uids_with_passwords = JSON.parse(request.body.read.to_s)
+      raw_users = JSON.parse(request.body.read.to_s)
 
       # Get the user's full names from the database
       users = []
 
-      uids_with_passwords.each do |uid, _|
+      raw_users.each do |uid, _|
         u = User.search_as_utf8(
           filter: "(uid=#{Net::LDAP::Filter.escape(uid)})",
           attributes: ['uid', 'givenName', 'sn']
         )
+
+        next if u.nil? || u.empty?  # the report can theoretically contain users who don't exist yet
 
         users << {
           dn: u[0][0],
@@ -132,7 +163,7 @@ class NewImportController < ApplicationController
           first: u[0][1]['givenName'][0],
           last: u[0][1]['sn'][0],
           group: '',    # filled in later
-          password: uids_with_passwords[uid],
+          password: raw_users.fetch(uid, nil),
         }
       end
 
@@ -249,12 +280,13 @@ class NewImportController < ApplicationController
               pdf.font('unicodefont')
               pdf.font_size(12)
 
-              title = "#{u[:last]}, #{u[:first]} (#{u[:uid]})"
+              pdf.text("#{u[:last]}, #{u[:first]} (#{u[:uid]})")
 
-              pdf.text(title)
+              if u[:password]
+                pdf.font('Courier')
+                pdf.text(u[:password])
+              end
 
-              pdf.font('Courier')
-              pdf.text(u[:password])
               pdf.text("\n")
             end
           end

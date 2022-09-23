@@ -925,15 +925,19 @@ en:
 
     no_data: "No rows to display. Have you selected the data source in the first tab?"
 
+    need_to_import_first: "These work after the import is done"
+
+    export_target: "What to export?"
+    export_pdf_warning: "PDF's only include users who actually exist."
+
     mode:
       label: "Update method"
-      create_new_update_existing: "Add new users and update existing"
+      create_new_update_existing: "Add new users, update existing"
       create_new_skip_existing: "Add new users, skip existing (default)"
       skip_new_update_existing: "Skip new users, update existing"
 
     table:
-      mark_all_rows_for_deletion: "Mark ALL rows for deletion"
-      mark_row_for_deletion: "Mark this row for deletion"
+      select_row: "Select this row"
       row_state: "State"
 
       legend:
@@ -974,12 +978,31 @@ en:
     buttons:
       read_data: "Read all data and proceed to the import phase"
       show_infers: "Show infers..."
-      begin: "Begin Import"
+
+      select_existing_uids: "Select existing users"
+      everyone: "Everyone"
+      everyone_in_this_school: "Everyone in this school"
+      everyone_in_other_schools: "Everyone in some other school"
+      select_rows: "Select rows"
+      select_all: "Select all rows"
+      deselect_all: "Deselect all rows"
+      invert_selection: "Invert selection"
+      select_unprocessed_rows: "Select unprocessed rows"
+      select_successfull_rows: "Select successfull rows"
+      select_partially_successfull_rows: "Select partially successfull rows"
+      select_failed_rows: "Select failed rows"
+      export: "Export"
+      export_all_rows: "All rows"
+      export_selected_rows: "Only selected rows"
+      export_unselected_rows: "Only unselected rows"
+      export_pdf_with_passwords: "PDF with passwords"
+      analyze: "Analyse"
+      compare_attributes: "Compare non-username attributes to server data"
+
+      begin: "Import all rows"
       stop: "Stop import"
       begin_failed: "Re-import failed rows"
-      get_duplicates: "Download a list of duplicate usernames"
-      get_passwords: "Download a PDF of the passwords"
-      delete_marked_rows: "Delete the marked rows"
+      delete_selected_rows: "Delete selected rows"
       save: "Save (Enter)"
       cancel: "Cancel (Esc)"
       close: "Close (Esc)"
@@ -1002,6 +1025,8 @@ en:
       generate_usernames:
         title: "Generate Usernames"
         help: "First- and last names are downcased and concatenated with a dot. Then diacritics are removed. ß is always converted into \"ss\", but you can choose below how letters Ä, Ö and Ü will be converted:"
+        first_first_name_only: "Use only the first first name"
+        first_first_name_only_help: "If the user has multiple first names (separated by spaces), only use the first of them when generating the username (cut off from the first space)."
 
       generate_passwords:
         title: "Generate Passwords"
