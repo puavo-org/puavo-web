@@ -1696,7 +1696,7 @@ createValueRow(value, showButtons=true, title=null)
     if (title !== null)
         html += `<td>${title}</td>`;
 
-    html += `<td><div class="flex flex-cols flex-gap-5px">`;
+    html += `<td><div class="flex-cols gap-5px">`;
 
     value = value.toString();
 
@@ -1774,7 +1774,7 @@ class FilterEditorBoolean extends FilterEditorBase {
 buildUI()
 {
     this.container.innerHTML =
-`<div class="flex flex-rows flex-gap-5px">
+`<div class="flex-rows gap-5px">
 <span><input type="radio" name="${this.id}-value" id="${this.id}-true" ${this.filter.editValues[0] === 1 ? "checked" : ""}><label for="${this.id}-true">${_tr('tabs.filtering.ed.bool.t')}</label></span>
 <span><input type="radio" name="${this.id}-value" id="${this.id}-false" ${this.filter.editValues[0] !== 1 ? "checked" : ""}><label for="${this.id}-false">${_tr('tabs.filtering.ed.bool.f')}</label></span>
 </div>`;
@@ -2092,7 +2092,7 @@ buildUI()
     html += `<div id="traditional" class="filterEditorWrapper">`;
 
     html +=
-`<div class="flex flex-rows flex-gap-5px"><div class="flex flex-cols flex-gap-5px">
+`<div class="flex-rows gap-5px"><div class="flex-cols gap-5px">
 <button id="deleteAll" class="danger" title="${_tr("tabs.filtering.delete_all_title")}">${_tr("tabs.filtering.delete_all")}</button>
 <button id="toggleJSON" title="${_tr("tabs.filtering.toggle_json_title")}">${_tr("tabs.filtering.show_json")}</button>
 <button id="saveJSON" class="hidden" title="${_tr("tabs.filtering.save_json_title")}">${_tr("tabs.filtering.save_json")}</button>
@@ -2104,7 +2104,7 @@ buildUI()
         const presets = this.filterPresets[0];
 
         html += `<div><details><summary>${_tr('tabs.filtering.presets.title')}</summary>`;
-        html += `<div class="flex flex-rows flex-gap-5px margin-top-10px">`;
+        html += `<div class="flex-rows gap-5px margin-top-10px">`;
         html += `<p class="margin-0 padding-0">${_tr("tabs.filtering.presets.click_to_add")}</p>`;
         html += `<span><input type="checkbox" id="append-at-end" checked><label for="append-at-end">${_tr('tabs.filtering.presets.append')}</label></span>`;
         html += `<ul class="margin-0 padding-0 no-list-bullets" id="presets">`;
@@ -2120,11 +2120,11 @@ buildUI()
     html += `<div id="advanced">`;
 
     html +=
-`<div class="flex flex-columns flex-gap-10px width-100p">
+`<div class="flex-columns gap-10px width-100p">
 <fieldset class="width-66p">
 <legend>${_tr('tabs.filtering.expression_title')}</legend>
 <textarea id="filter" placeholder="${_tr('tabs.filtering.expression_placeholder')}" rows="5"></textarea>
-<div class="flex flex-columns flex-gap-5px margin-top-5px">
+<div class="flex-columns gap-5px margin-top-5px">
 <button id="save" disabled>${_tr('tabs.filtering.save')}</button>
 <button id="clear" disabled>${_tr('tabs.filtering.clear')}</button>
 <button id="convert" disabled>${_tr('tabs.filtering.convert')}</button>
@@ -2137,7 +2137,7 @@ buildUI()
 </fieldset>
 </div>`;
 
-    html += `<div class="flex flex-rows flex-gap-10px margin-top-10px">`;
+    html += `<div class="flex-rows gap-10px margin-top-10px">`;
 
     if (haveAdvancedPresets) {
         html +=
@@ -2145,7 +2145,7 @@ buildUI()
 <summary>${_tr('tabs.filtering.presets.title')}</summary>
 <div class="padding-10px">
 <p class="line-height-150p margin-0 padding-0">${_tr('tabs.filtering.presets.instructions')}</p>
-<div class="padding-top-10px padding-bottom-10px flex flex-vcenter flex-columns flex-gap-10px">
+<div class="padding-top-10px padding-bottom-10px flex-vcenter flex-columns gap-10px">
 <span><input type="checkbox" id="append-at-end-advanced" checked><label for="append-at-end-advanced">${_tr('tabs.filtering.presets.append')}</label></span>
 <span><input type="checkbox" id="add-parenthesis" checked><label for="add-parenthesis">${_tr('tabs.filtering.presets.add_parenthesis')}</label></span>
 </div>
@@ -2687,7 +2687,7 @@ buildFilterRow(id, filter)
 <button title="${_tr("tabs.filtering.duplicate_title")}" ${filter.isNew ? "disabled" : ""}>${_tr("tabs.filtering.duplicate")}</button></div></td>
 <td class="minimize-width" title="${_tr("tabs.filtering.active_title")}">
 <input type="checkbox" class="active" ${filter.active == 1 ? "checked" : ""} ${filter.isNew ? "disabled" : ""}>
-</td><td><div class="flex flex-rows"><div class="pretty" title="${_tr("tabs.filtering.click_to_edit_title")}">
+</td><td><div class="flex-rows"><div class="pretty" title="${_tr("tabs.filtering.click_to_edit_title")}">
 ${this.prettyPrintFilter(filter)}</div><div></div></td>`;
 
     return tr;
@@ -2805,7 +2805,7 @@ openFilterEditor(row)
 
     wrapper.innerHTML =
 `<div class="flex flex-rows">
-<div class="openFilter flex flex-columns flex-gap-5px">
+<div class="openFilter flex-columns gap-5px">
 <select id="column" title="${_tr("tabs.filtering.edit_column_title")}"></select>
 <select id="operator" title="${_tr("tabs.filtering.edit_operator_title")}"></select>
 <button id="save" class="margin-left-20px"><i class="icon-ok"></i>${_tr("tabs.filtering.save")}</button>

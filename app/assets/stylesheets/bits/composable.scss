@@ -19,18 +19,19 @@ I do not yet have skills to build responsive designs. Sorry, mobile users.
 .no-scroll { overflow: hidden; }
 
 .flex { display: flex; }
-.flex-columns { flex-direction: rows; }
-.flex-rows { flex-direction: column; }
+.flex-columns, .flex-cols { display: flex; flex-direction: rows; }
+.flex-rows { display: flex; flex-direction: column; }
 .flex-vcenter { align-items: center; }
 .flex-vbottom { align-items: flex-end; }
-.flex-gap-5px { gap: 5px; }
-.flex-gap-10px { gap: 10px; }
-.flex-gap-15px { gap: 15px; }
-.flex-gap-20px { gap: 20px; }
-.flex-gap-1em { gap: 1em; }
-.flex-gap-2em { gap: 2em; }
 .flex-no-wrap { flex-wrap: nowrap; }
 .flex-grow-2 { flex-grow: 2; }
+
+.gap-5px { gap: 5px; }
+.gap-10px { gap: 10px; }
+.gap-15px { gap: 15px; }
+.gap-20px { gap: 20px; }
+.gap-1em { gap: 1em; }
+.gap-2em { gap: 2em; }
 
 .cursor-not-allowed { cursor: not-allowed !important; }
 .cursor-pointer { cursor: pointer; }

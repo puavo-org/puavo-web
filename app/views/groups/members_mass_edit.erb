@@ -211,8 +211,8 @@ class GroupOperationBase extends MassOperation {
     buildGroupsList()
     {
         const html =
-`<div class="flex flex-cols flex-gap-5px">
-    <div class="flex flex-rows flex-gap-5px"">
+`<div class="flex-cols gap-5px">
+    <div class="flex-rows gap-5px"">
         <input type="search" spellcheck="false" placeholder="<%= t('groups.index.mass_operations.search_placeholder') %>">
         <div id="groupList" class="scrollList" style="width: 30em; height: 20em;">
         </div>

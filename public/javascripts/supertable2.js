@@ -1171,12 +1171,12 @@ __buildToolsTab(tabBar, frag)
 
     let html = "";
 
-    html = `<div class="flex flex-rows flex-gap-10px">`;
+    html = `<div class="flex-rows gap-10px">`;
 
     if (this.settings.dynamicData) {
         // We have dynamic data source, so permit live reloads
         html +=
-`<div class="flex flex-cols flex-gap-10px">
+`<div class="flex-cols gap-10px">
 <button id="btnReload" disabled>${_tr("tabs.tools.reload")}</button>
 </div>`;
     }
@@ -1185,7 +1185,7 @@ __buildToolsTab(tabBar, frag)
         html +=
 `<details>
 <summary>${_tr("tabs.tools.export.title")}</summary>
-<div class="padding-10px flex flex-vcenter flex-columns flex-gap-10px">
+<div class="padding-10px flex-vcenter flex-columns gap-10px">
 <button id="btnCSV" disabled>${_tr("tabs.tools.export.as_csv")}</button>
 <button id="btnJSON" disabled>${_tr("tabs.tools.export.as_json")}</button>
 <span><input type="checkbox" id="${this.id}-only-visible-rows" checked><label for="${this.id}-only-visible-rows" title="${_tr("tabs.tools.export.only_visible_rows_help")}">${_tr("tabs.tools.export.only_visible_rows")}</label></span>
@@ -1239,12 +1239,12 @@ __buildColumnsTab(tabBar, frag)
 
     let html =
 `<p class="margin-0 padding-0">${_tr('tabs.columns.help')}</p>
-<div class="flex flex-columns margin-top-5px margin-bottom-5px flex-gap-10px">
+<div class="flex-columns margin-top-5px margin-bottom-5px gap-10px">
 <p class="columnStats margin-0 padding-0 margin-top-5px margin-bottom-5px"></p>
 <input type="search" placeholder="${_tr('tabs.columns.search')}" spellcheck="false"></input>
 </div>
-<div class="flex flex-columns flex-gap-5px">
-<div class="flex flex-rows flex-no-wrap scrollList" style="width: 30em; height: 20em;">`;
+<div class="flex-columns gap-5px">
+<div class="flex-rows flex-no-wrap scrollList" style="width: 30em; height: 20em;">`;
 
     // Sort the columns alphabetically by their localized names
     const columnNames =
@@ -1272,7 +1272,7 @@ __buildColumnsTab(tabBar, frag)
 
     html +=
 `</div><div>
-<div class="flex flex-rows flex-gap-5px" id="columnButtons">
+<div class="flex-rows gap-5px" id="columnButtons">
 <button id="save" disabled>${_tr('tabs.columns.save')}</button>
 <button id="reset" disabled>${_tr('tabs.columns.defaults')}</button>
 <button id="selectAll" disabled>${_tr('tabs.columns.all')}</button>
@@ -1307,7 +1307,7 @@ __buildFilteringTab(tabBar, frag)
 
     let html = "";
 
-    html += `<div class="flex flex-vcenter flex-columns flex-gap-10px">`
+    html += `<div class="flex-vcenter flex-columns gap-10px">`
 
     html += `<span><input type="checkbox" id="st-filters-enabled-${this.id}" disabled>` +
             `<label for="st-filters-enabled-${this.id}">${_tr('tabs.filtering.enabled')}` +
@@ -1361,12 +1361,12 @@ __buildMassToolsTab(tabBar, frag)
     let html = "";
 
     html +=
-`<div class="flex flex-rows flex-gap-10px">
+`<div class="flex-rows gap-10px">
 <details><summary>${_tr('tabs.mass.mass_row_select_title')}</summary>
 <div id="massRowTools">
-<div class="flex flex-columns flex-gap-10px margin-top-10px">
+<div class="flex-columns gap-10px margin-top-10px">
 <fieldset><legend>${_tr('tabs.mass.mass_row_whole_table')}</legend>
-<div class="mainButtons flex flex-rows flex-gap-5px">
+<div class="mainButtons flex-rows gap-5px">
 <button id="all">${_tr('tabs.mass.mass_row_select_all')}</button>
 <button id="none">${_tr('tabs.mass.mass_row_deselect_all')}</button>
 <button id="invert">${_tr('tabs.mass.mass_row_invert_selection')}</button>
@@ -1378,9 +1378,9 @@ __buildMassToolsTab(tabBar, frag)
         html +=
 `<fieldset><legend>${_tr('tabs.mass.mass_row_specific_rows')}</legend>
 <p class="margin-0 padding-0">${_tr('tabs.mass.mass_row_help')}</p>
-<div class="flex flex-columns flex-gap-5px margin-top-5px">
+<div class="flex-columns gap-5px margin-top-5px">
 <div id="massRowSelectSource" contentEditable="true" spellcheck="false"></div>
-<div class="flex flex-rows flex-gap-5px">
+<div class="flex-rows gap-5px">
 <span><label for="massRowSelectType">${_tr('tabs.mass.mass_row_type')}</label><select id="massRowSelectType" class="margin-left-5px">`;
 
         for (const m of this.settings.massSelects)
@@ -1397,7 +1397,7 @@ __buildMassToolsTab(tabBar, frag)
     html +=
 `</fieldset></div></details>
 <fieldset><legend>${_tr('tabs.mass.operation_title')}</legend>
-<div id="controls" class="flex flex-columns flex-gap-10px flex-nowrap flex-vcenter">
+<div id="controls" class="flex-columns gap-10px flex-nowrap flex-vcenter">
 <select class="operation" disabled>`;
 
     html += `<option data-id="" hidden disabled selected value>${_tr('selected')}</option>`;
@@ -1456,8 +1456,8 @@ __buildPaginationControls()
     let html = "";
 
     html +=
-`<div class="flex flex-rows flex-gap-5px">
-<div class="flex flex-columns flex-gap-5px flex-vcenter">
+`<div class="flex-rows gap-5px">
+<div class="flex-columns gap-5px flex-vcenter">
 <label for="rowsPerPage">${_tr('paging.rows_per_page')}</label>
 <select id="rowsPerPage" title="${_tr('paging.rows_per_page_title')}" disabled>`
 
@@ -1496,7 +1496,7 @@ __buildPaginationControls()
 buildUI()
 {
     // Can't assume the container DIV already has the required styles
-    this.container.classList.add("superTable", "flex", "flex-rows", "flex-gap-10px");
+    this.container.classList.add("superTable", "flex-rows", "gap-10px");
 
 /*
     // Temporary mode warning message
