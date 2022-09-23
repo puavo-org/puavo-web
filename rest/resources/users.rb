@@ -658,8 +658,28 @@ class User < LdapModel
 
   computed_attr :schools_hash, :schools
   def schools_hash
-    out = schools.map do |school|
-      {
+    # Inject the materials charge value into the schools array, at the correct school
+    mpass_charging_state = nil
+    mpass_charging_school = nil
+
+    if roles.include?('student') && external_data
+      begin
+        ed = JSON.parse(external_data)
+      rescue
+        ed = {}
+      end
+
+      if ed.include?('materials_charge')
+        parts = ed['materials_charge'].split(';')
+        mpass_charging_state = parts[0]
+        mpass_charging_school = parts[1]
+      end
+    end
+
+    out = []
+
+    schools.each do |school|
+      s = {
         "id" => school.id,
         "dn" => school.dn,
         "name" => school.name,
@@ -676,6 +696,12 @@ class User < LdapModel
           }
         end
       }
+
+      if mpass_charging_school && school.school_code == mpass_charging_school
+        s['learning_materials_charge'] = mpass_charging_state
+      end
+
+      out << s
     end
 
     return out
