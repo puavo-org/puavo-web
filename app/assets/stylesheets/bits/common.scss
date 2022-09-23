@@ -138,7 +138,7 @@
     cursor: pointer;
   }
 
-  .btn:hover {
+  .btn:hover, .btn:focus {
     background: $buttonHoverBack;
     color: $buttonFore;
   }
@@ -155,7 +155,7 @@
     color: $buttonDangerFore;
   }
 
-  .btn-danger:hover {
+  .btn-danger:hover, .btn-danger:focus {
     background: $buttonDangerHoverBack;
     color: $buttonDangerFore;
   }
