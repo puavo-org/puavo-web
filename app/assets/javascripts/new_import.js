@@ -5,9 +5,12 @@ Puavo Mass User Import III
 Version 0.9 beta
 */
 
-// Worker threads for CSV parsing and the actual data import/update process
-const CSV_PARSER_WORKER = new Worker("/javascripts/csv_parser.js"),
-      IMPORT_WORKER = new Worker("/javascripts/import_worker.js");
+// Worker threads for CSV parsing and the actual data import/update process.
+// CSV_PARSER_PATH and IMPORT_WORKER_PATH are defined in the page header;
+// they contain the asset paths to the JS files. We can't set them here, since
+// this file is not a template; it has no access to the Rails' asset pipeline.
+const CSV_PARSER_WORKER = new Worker(CSV_PARSER_PATH),
+      IMPORT_WORKER = new Worker(IMPORT_WORKER_PATH);
 
 // For new users, you need at least these columns
 const REQUIRED_COLUMNS_NEW = new Set(["first", "last", "uid", "role"]);

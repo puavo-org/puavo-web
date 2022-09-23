@@ -1,8 +1,14 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.users'), t('titles.users_import') %>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag "i18n/new_import." + I18n.locale.to_s + ".js", skip_pipeline: true %>
-<%= javascript_include_tag 'new_import', skip_pipeline: true %>
+<script>
+// Needed by new_import.js, but it has no access to the Rails' asset pipeline
+const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
+      IMPORT_WORKER_PATH = "<%= javascript_path 'import_worker' %>";
+</script>
+
+<%= javascript_include_tag 'new_import.' + I18n.locale.to_s %>
+<%= javascript_include_tag 'new_import' %>
 <% end %>
 
 <h1><%= t('new_import.title') %></h1>
