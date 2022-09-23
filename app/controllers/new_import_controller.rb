@@ -8,6 +8,7 @@ class NewImportController < ApplicationController
   def index
     return if redirected_nonowner_user?
 
+    @automatic_email_addresses, _ = get_automatic_email_addresses
     @initial_groups = get_school_groups(School.find(@school.id).dn.to_s)
 
     respond_to do |format|

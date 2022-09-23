@@ -396,7 +396,11 @@ initializeImporter({
     groupTypes: LOCALIZED_GROUP_TYPES,
     groups: INITIAL_GROUPS,
     schoolId: <%= @school.id.to_i %>,
+    <% if @automatic_email_addresses %>
+    automaticEmails: true,
+    <% else %>
     automaticEmails: false,
+    <% end %>
     commonPasswords: COMMON_PASSWORDS,
 });
 
