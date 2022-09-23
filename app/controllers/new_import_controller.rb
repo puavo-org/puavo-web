@@ -355,6 +355,14 @@ class NewImportController < ApplicationController
         user.new_password = attributes['password']
       end
 
+      # FIXME: WHY. THIS. IS. NOT. IN. THE. MODEL?!
+      automatic_email_addresses, domain = get_automatic_email_addresses
+
+      if automatic_email_addresses
+        # WHY?
+        user.mail = "#{attributes['uid']}@#{domain}"
+      end
+
       user.save!
     rescue => e
       puts "-"*50
@@ -444,6 +452,13 @@ class NewImportController < ApplicationController
     something_changed = false
     have_unique = false
     have_groups = false
+
+    # Again, why this isn't in the model?!?!?!?!?!
+    automatic_email_addresses, domain = get_automatic_email_addresses
+
+    if automatic_email_addresses
+      attributes['email'] = "#{attributes['uid']}@#{domain}"
+    end
 
     begin
       # Update the changed attributes
