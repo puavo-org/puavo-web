@@ -131,35 +131,66 @@ class NewImportController < ApplicationController
           uid: uid,
           first: u[0][1]['givenName'][0],
           last: u[0][1]['sn'][0],
-          tgroup: '',   # filled in later
+          group: '',    # filled in later
           password: uids_with_passwords[uid],
         }
       end
 
-      # Fill in the teaching groups
+      # Make a list of schools, so we can format group names properly
+      school_names = School.search_as_utf8(attributes: ['displayName']).collect do |dn, s|
+        [dn, s['displayName'][0]]
+      end.to_h
+
+      # Fill in the groups. Try teaching groups first, but if the user does not have
+      # a teaching group, use archiving group next.
+      # TODO: Try *all* the group types, in some predefined priority order.
+      archived_groups = []
       teaching_groups = []
 
       Group.search_as_utf8(
-        filter: '(&(objectClass=puavoEduGroup)(puavoEduGroupType=teaching group))',
-        attributes: ['cn', 'displayName', 'member']
+        filter: '(&(objectClass=puavoEduGroup)(|(puavoEduGroupType=teaching group)(puavoEduGroupType=archive users)))',
+        attributes: ['cn', 'displayName', 'puavoEduGroupType', 'member', 'puavoSchool']
       ).each do |dn, group|
-        teaching_groups << {
-          name: group['displayName'][0],
+        type = group.fetch('puavoEduGroupType', [nil])[0]
+        next unless type
+
+        school_name = school_names.fetch(group['puavoSchool'][0], '?')
+
+        g = {
+          name: "#{school_name}, #{group['displayName'][0]}",
           members: Array(group['member'] || []).to_set.freeze,
         }
+
+        if type == 'teaching group'
+          teaching_groups << g
+        elsif type == 'archive users'
+          archived_groups << g
+        end
       end
 
       users.each do |user|
         teaching_groups.each do |group|
           if group[:members].include?(user[:dn])
-            user[:tgroup] = group[:name]
+            user[:group] = group[:name]
             break
+          end
+        end
+
+        if user[:group] == ''
+          # This user has no teaching group. See if they're in an archived users group.
+          archived_groups.each do |group|
+            if group[:members].include?(user[:dn])
+              user[:group] = group[:name]
+              break
+            end
           end
         end
       end
 
       # Sort the users by their username. Assume it's even somewhat related to their real name.
-      users.sort! { |a, b| [a[:tgroup], a[:last], a[:first], a[:uid]] <=> [b[:tgroup], b[:last], b[:first], b[:uid]] }
+      users.sort! do |a, b|
+        [a[:group], a[:last], a[:first], a[:uid]] <=> [b[:group], b[:last], b[:first], b[:uid]]
+      end
 
       # Figure out the total page count. Each teaching group gets its own page (or pages).
       # I determined empirically that 18 users per page is more or less the maximum.
@@ -168,7 +199,7 @@ class NewImportController < ApplicationController
       num_pages = 0
       current_page = 0
 
-      grouped_users = users.chunk { |u| u[:tgroup] }
+      grouped_users = users.chunk { |u| u[:group] }
 
       grouped_users.each do |group_name, group_users|
         num_pages += group_users.each_slice(users_per_page).count
@@ -202,7 +233,7 @@ class NewImportController < ApplicationController
 
             pdf.font('unicodefont')
             pdf.font_size(18)
-            headertext = "#{current_organisation.name}, #{@school.displayName}"
+            headertext = "#{current_organisation.name}"
             headertext += ", #{group_name}" if group_name && group_name.length > 0
             pdf.draw_text(headertext, :at => [0, (pdf.bounds.top - 15)] )
 
