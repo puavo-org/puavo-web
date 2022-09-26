@@ -453,7 +453,7 @@ class PuavoConfEditor
             values[e.key] = e.getValue();
 
         // pretty-printed output
-        this.storage.value = JSON.stringify(values, null, "\t");
+        this.storage.value = JSON.stringify(values, null, "  ");
 
         // It will be valid now, if someone hand-edited it
         this.storage.classList.remove("pcRawError");
