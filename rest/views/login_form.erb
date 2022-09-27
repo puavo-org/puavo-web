@@ -136,6 +136,15 @@ const TOP_DOMAIN = "<%= @login_content['topdomain'] %>";
 
 document.addEventListener("DOMContentLoaded", function() {
     document.querySelector("form").addEventListener("submit", (e) => {
+        <% if @login_content['display_domain'] %>
+        // We're in a "forced domain" mode, so if the username already
+        // contains the domain name (any domain), remove it.
+        const field = document.querySelector("input#username");
+
+        if (field && field.value.indexOf("@") != -1)
+            field.value = field.value.split("@")[0];
+        <% end %>
+
         // Prevent multiple submissions
         document.querySelector("input#submit").disabled = true;
 
