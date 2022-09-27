@@ -280,7 +280,7 @@ const cellSelection = {
 // UTILITY
 
 // A crude mechanism for updating the saved settings
-const EXPECTED_SETTINGS_VERSION = 2;
+const EXPECTED_SETTINGS_VERSION = 3;
 
 function loadDefaultSettings()
 {
@@ -289,7 +289,7 @@ function loadDefaultSettings()
         mainTab: 0,
         parser: {
             sourceTab: 0,
-            infer: true,
+            infer: false,
             trim: true,
             separator: 0,   // 0=comma, 1=semicolon, 2=tab
         },
