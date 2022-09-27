@@ -17,6 +17,7 @@ Rails.application.config.assets.precompile += \
   search.js
   profile_editor.css
   password_forms.css
+  puavoconf_editor.js
 )
 
 # SuperTable
