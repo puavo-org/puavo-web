@@ -1336,16 +1336,18 @@ class UsersController < ApplicationController
 
       next if !@is_owner && !school_filter.include?(school_dn)
 
+      school_name_sort = school_names[school_dn].downcase
+
       @groups_by_school[school_dn] ||= {
         school_name: school_names[school_dn],
-        school_name_sort: school_names[school_dn].downcase,
+        school_name_sort: school_name_sort,
         groups: []
       }
 
       @groups_by_school[school_dn][:groups] << {
         id: g['puavoId'][0].to_i,
         name: g['displayName'][0],
-        name_sort: g['displayName'][0].downcase,
+        name_sort: "#{school_name_sort} #{g['displayName'][0].downcase}",
         type: group_types[g.fetch('puavoEduGroupType', [nil])[0]],
         member_dn: Array(g['member'] || []).to_set,
       }

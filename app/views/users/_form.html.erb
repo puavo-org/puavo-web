@@ -262,12 +262,12 @@ function filterGroups()
 
     let numVisibleSchools = 0;
 
-    for (let school of schools) {
+    for (const school of schools) {
         // Filter the groups in this school and then show/hide the whole school section
         // if nothing under it is visible
         let numVisibleGroups = 0;
 
-        for (let group of school.querySelectorAll("li")) {
+        for (const group of school.querySelectorAll("li")) {
             if (filter.length == 0) {
                 group.classList.remove("hidden");
                 numVisibleGroups++;
