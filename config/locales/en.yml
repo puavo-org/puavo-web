@@ -1408,10 +1408,12 @@ en:
   lists:
     index:
       title: Unloaded username lists
-      description: "These are lists of previously mass-imported users. Download the list you want and print it on paper. You can then cut the paper into pieces and hand them to the users. Please note that you can download each list only once! The lists are sorted from newest to oldest."
+      help: "These are lists of previously mass-imported users. Download the list you want and print it on paper. You can then cut the paper into pieces and hand them to the users. Please note that you can download each list only once! The lists are sorted from newest to oldest."
       description_empty: There are no unloaded username lists
       created: List created at
+      expires: "List expires at"
       created_by: List created by
+      description: "Description"
       users_count_title: Number of users
       label_generate_password: Set a random password for each user on the list
       label_set_password: Set the following password for each user on the list

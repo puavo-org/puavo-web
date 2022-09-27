@@ -19,6 +19,7 @@ module MixinUserList
       user_list.school_id = data["school_id"]
       user_list.creator = data["creator"]
       user_list.downloaded = data["downloaded"]
+      user_list.description = data.fetch("description", nil)
       return user_list
     end
 
@@ -43,12 +44,13 @@ module MixinUserList
 
 
   module InstanceMethods
-    def initialize(user_ids = nil, creator = nil)
+    def initialize(user_ids = nil, creator = nil, description = nil)
       self.uuid = UUID.generate
       self.created_at = Time.now.to_i
       self.creator = creator
       self.downloaded = false
       self.users = user_ids
+      self.description = description
     end
 
     def as_json
@@ -58,7 +60,8 @@ module MixinUserList
         "school_id" => self.school_id,
         "created_at" => self.created_at,
         "creator" => self.creator,
-        "downloaded" => self.downloaded
+        "downloaded" => self.downloaded,
+        "description" => self.description
       }
     end
 

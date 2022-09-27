@@ -5,15 +5,16 @@ class UserList
   include PuavoRest::MixinUserList
 
   attr_accessor :uuid, :created_at, :school_id, :users, :users_by_groups,
-                :creator, :downloaded
+                :creator, :downloaded, :description
 
-  def initialize(user_ids = nil, creator = nil)
+  def initialize(user_ids = nil, creator = nil, description = nil)
     return if user_ids.nil?
 
     user = PuavoRest::User.by_id(user_ids.first)
     self.school_id = user.school.id
+    self.description = description
 
-    super(user_ids, creator)
+    super(user_ids, creator, description)
   end
 
 end
