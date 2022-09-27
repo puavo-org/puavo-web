@@ -649,6 +649,7 @@ fi:
     columns:
         name: Nimi
         size: Koko
+        checksum: Tarkistussumma
         description: Kuvaus
         actions: Toiminnot
     buttons:

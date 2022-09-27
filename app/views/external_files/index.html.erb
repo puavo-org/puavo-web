@@ -13,6 +13,7 @@
     <th><%= t('external_files.columns.name') %></th>
     <th><%= t('external_files.columns.description') %></th>
     <th><%= t('external_files.columns.size') %></th>
+    <th><%= t('external_files.columns.checksum') %></th>
     <th colspan="2"><%= t('external_files.columns.actions') %></th>
   </tr>
 
@@ -31,6 +32,14 @@
     <td data-title="<%= t('external_files.columns.size') %>">
     <% if file["model"] %>
       <%= file["model"].puavoData.size %>
+    <% else %>
+      <%= t('external_files.no_file') %>
+    <% end %>
+    </td>
+
+    <td data-title="<%= t('external_files.columns.checksum') %>">
+    <% if file["model"] %>
+      <%= file["model"].puavoDataHash %>
     <% else %>
       <%= t('external_files.no_file') %>
     <% end %>

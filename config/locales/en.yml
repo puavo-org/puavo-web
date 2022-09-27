@@ -649,6 +649,7 @@ en:
     columns:
         name: Name
         size: Size
+        checksum: Checksum
         description: Description
         actions: Actions
     buttons:
