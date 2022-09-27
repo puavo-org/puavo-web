@@ -1,3 +1,5 @@
+"use strict";
+
 // =============================================================================
 // Extremely ugly password field validator, v2.2
 // Does not prevent the form from being submitted, but it lets the
