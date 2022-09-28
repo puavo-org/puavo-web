@@ -569,6 +569,7 @@ en:
       network_error: "Network connectivity error"
       unknown_error: "Unknown error"
       unmet_password_requirements: "Password length/complexity requirements were not met"
+      reused_password: "Reused password was rejected"
 
   # Organisations
   organisations:

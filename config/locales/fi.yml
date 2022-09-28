@@ -569,6 +569,7 @@ fi:
       network_error: "Verkkoyhteysongelma"
       unknown_error: "Tuntematon virhe"
       unmet_password_requirements: "Salasanan pituus-/merkkivaatimukset eivät täyttyneet"
+      reused_password: "Uudelleenkäytetty salasana hylättiin"
 
   # Organisations
   organisations:
