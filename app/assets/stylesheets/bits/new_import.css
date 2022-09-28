@@ -524,7 +524,7 @@ p.methodExplanation {
 #import #status progress {
   height: 20px;
   border: 1px solid #000;
-  flex-grow: 2;
+  width: 100%;
 }
 
 #import #status #rowCounts span.success { background: var(--state-success); }
