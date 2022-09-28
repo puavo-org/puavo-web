@@ -1,5 +1,5 @@
 <% content_for :javascript do %>
-<%= javascript_include_tag 'password_validator', skip_pipeline: true %>
+<%= javascript_include_tag 'password_validator' %>
 <% end %>
 
 <% if @have_primus %>
@@ -96,7 +96,7 @@
         <% if @groups_by_school.empty? %>
         (<%= t('.no_groups') %>)
         <% else %>
-        <div class="flex flex-rows flex-gap-10px">
+        <div class="flex-rows gap-10px">
           <div class="groupsFilter">
             <input type="search" class="search" placeholder="<%= t('.group_search_placeholder') %>">
           </div>
@@ -107,7 +107,7 @@
               <ul class="no-list-bullets margin-0 padding-0">
                 <% s[:groups].each do |g| %>
                 <li class="padding-left-20px" data-group-name="<%= g[:name_sort] %>">
-                  <input type="checkbox" name="groups[]" id="<%= g[:id] %>" value="<%= g[:id] %>" <%= g[:member_dn].include?(@is_new_user ? '' : @user.dn.to_s) ? "checked" : "" %>><label for="<%= g[:id] %>"><%= h g[:name] %> (<%= g[:member_dn].count %> jäsentä<%= g[:type] ? ", #{g[:type]}" : "" %>)</label>
+                  <input type="checkbox" name="groups[]" id="<%= g[:id] %>" value="<%= g[:id] %>" <%= g[:member_dn].include?(@is_new_user ? '' : @user.dn.to_s) ? "checked" : "" %>><label for="<%= g[:id] %>"><%= h g[:name] %> (<%= g[:member_dn].count %> <%= t('.members') %><%= g[:type] ? ", #{g[:type]}" : "" %>)</label>
                 </li>
                 <% end %>
               </ul>
@@ -262,12 +262,12 @@ function filterGroups()
 
     let numVisibleSchools = 0;
 
-    for (let school of schools) {
+    for (const school of schools) {
         // Filter the groups in this school and then show/hide the whole school section
         // if nothing under it is visible
         let numVisibleGroups = 0;
 
-        for (let group of school.querySelectorAll("li")) {
+        for (const group of school.querySelectorAll("li")) {
             if (filter.length == 0) {
                 group.classList.remove("hidden");
                 numVisibleGroups++;

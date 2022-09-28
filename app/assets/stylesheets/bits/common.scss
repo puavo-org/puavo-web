@@ -138,12 +138,12 @@
     cursor: pointer;
   }
 
-  .btn:hover {
+  .btn:hover, .btn:focus {
     background: $buttonHoverBack;
     color: $buttonFore;
   }
 
-  .btn:active, .btn:focus {
+  .btn:active {
     border-color: $buttonBorderLo $buttonBorderHi $buttonBorderHi $buttonBorderLo;
     background: $buttonHoverBack;
     color: $buttonFore;
@@ -155,15 +155,30 @@
     color: $buttonDangerFore;
   }
 
-  .btn-danger:hover {
+  .btn-danger:hover, .btn-danger:focus {
     background: $buttonDangerHoverBack;
     color: $buttonDangerFore;
   }
 
-  .btn-danger:active, .btn-danger:focus {
+  .btn-danger:active {
     border-color: $buttonDangerBorderLo $buttonDangerBorderHi $buttonDangerBorderHi $buttonDangerBorderLo;
     background: $buttonDangerHoverBack;
     color: $buttonDangerFore;
+  }
+
+  /* Disabled buttons */
+  .btn:disabled, .btn:disabled:hover, .btn:active:disabled, .btn:focus:disabled {
+    border-color: $buttonBorderHi $buttonBorderLo $buttonBorderLo $buttonBorderHi;
+    color: $buttonForeDisabled;
+    background: $buttonBack;
+    cursor: not-allowed;
+  }
+
+  .btn-danger:disabled, .btn-danger:disabled:hover, .btn-danger:active:disabled, .btn-danger:focus:disabled {
+    border-color: $buttonDangerBorderHi $buttonDangerBorderLo $buttonDangerBorderLo $buttonDangerBorderHi;
+    background: $buttonDangerBack;
+    color: $buttonDangerForeDisabled;
+    cursor: not-allowed;
   }
 }
 

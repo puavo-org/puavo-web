@@ -355,6 +355,8 @@ module Puavo
     OPERATION_REPLY_CODES = Set.new([
       'invalid_username',
       'user_not_found',
+      'unmet_password_requirements',
+      'reused_password',
     ]).freeze
 
     # The 'msg' is a code listed in the above set. It will be translated and displayed

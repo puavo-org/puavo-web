@@ -58,15 +58,14 @@
 <%= end_box %>
 
 <%= start_box t('.members'), extraClass="noFloat fullWidth" %>
-  <div class="flex flex-rows flex-gap-5px">
-    <div class="flex flex-cols flex-gap-5px flex-vcenter">
+  <div class="flex-rows gap-5px">
+    <div class="flex-cols gap-5px flex-vbottom">
       <div>
         <p class="margin-0"><%= t('.description') %></p>
         <input type="search" id="groupMembersSearch" class="searchBox groupMembersSearch" size="50" placeholder="<%= t('.placeholder_for_search') %>">
       </div>
 
-      <% if current_user.organisation_owner? %>
-      <div class="haveDropdown ownersOnly">
+      <div class="haveDropdown">
         <span class="btn"><i class="icon-collapse"></i> <%= t('groups.members.actions') %></span>
         <div class="dropdown">
           <ul>
@@ -122,7 +121,6 @@
           </ul>
         </div>    <!-- dropdown UL div -->
       </div>    <!-- haveDropdown div -->
-      <% end %>
     </div>    <!-- upper div -->
 
     <div id="groupMembers">

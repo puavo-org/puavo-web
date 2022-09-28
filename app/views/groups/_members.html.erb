@@ -10,7 +10,8 @@
 <table>
   <tr class="stickyInline">
     <th><%= t("activeldap.attributes.user.displayName") %> (<%= t("activeldap.attributes.user.uid") %>)</th>
-    <th><%= t('activeldap.attributes.school.displayName') %></th>
+    <th><%= t('activeldap.attributes.user.roles') %></th>
+    <th><%= t('columns.primary_school') %></th>
     <th class="width-0"><%= t('groups.index.actions') %></th>
   </tr>
   <% @members.each do |member| %>
@@ -24,6 +25,8 @@
       <%= link_to "#{member.displayName} (#{member.uid})", user_path(pri_school, member) %>
       <% if member.puavoLocked %><i class='icon-lock' title="<%= t('users.show.user_is_locked') %>"></i><% end %>
     </td>
+
+    <td><%= Array(member.puavoEduPersonAffiliation).collect { |r| t('puavoEduPersonAffiliation_' + r) }.join(', ') %></td>
 
     <td><%= pri_school.displayName %></td>
 

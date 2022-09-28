@@ -59,6 +59,8 @@ class ExternalService < LdapModel
       s['groups'].each do |g|
         g.delete('dn')
       end
+
+      s['groups'].delete_if { |g| g['type'] == 'course group' }
     end
 
     year_class = user.year_class
@@ -71,7 +73,7 @@ class ExternalService < LdapModel
 
     # Build the output hash manually, without calling user.to_hash().
     # Include only the members that are on the spec (plus a few more).
-    {
+    data = {
       'id' => user.id,
       'puavo_id' => user.puavo_id,
       'external_id' => user.external_id,
@@ -89,6 +91,8 @@ class ExternalService < LdapModel
       'schools' => schools_hash,
       'learner_id' => user.learner_id,
     }
+
+    data
   end
 
   def generate_login_url(user_hash, return_to_url)

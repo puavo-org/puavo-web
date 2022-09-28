@@ -97,6 +97,8 @@ Rails.application.routes.draw do
       match 'users/:id/unmark_user_for_deletion' => 'users#unmark_for_deletion', :as => :unmark_user_for_deletion, :via => :get
       match 'users/:id/prevent_deletion' => 'users#prevent_deletion', :as => :prevent_deletion, :via => :get
 
+      get 'users/:id/reset_sso_session' => 'users#reset_sso_session', :as => :reset_sso_session
+
       match 'users/:id/change_schools' => 'users#change_schools', :as => :change_schools, :via => :get
       match 'users/:id/change_schools/add_school/:school' => 'users#add_to_school', :as => :add_user_to_school, :via => :get
       match 'users/:id/change_schools/remove_school/:school' => 'users#remove_from_school', :as => :remove_user_from_school, :via => :get
@@ -116,7 +118,8 @@ Rails.application.routes.draw do
       get 'new_import' => 'new_import#index'
       get 'reload_groups' => 'new_import#reload_groups'
       get 'get_current_users' => 'new_import#get_current_users'
-      post 'password_pdf' => 'new_import#generate_password_pdf'
+      get 'duplicate_detection' => 'new_import#duplicate_detection'
+      post 'generate_pdf' => 'new_import#generate_pdf'
       post 'new_import/import' => 'new_import#import'
     end
 

@@ -560,6 +560,26 @@ class User < LdapBase
     groups.find { |g| g.puavoEduGroupType == 'year class' }
   end
 
+  # Invalidate active SSO session cookies for this user, if present
+  def reset_sso_session
+    organisation = Puavo::Organisation.find(LdapOrganisation.current.cn)
+    return unless organisation
+    return if organisation.value_by_key('enable_sso_sessions_in').nil?
+
+    # This organisation has SSO login cookies enabled. If this user has an active session,
+    # remove it immediately.
+    db = Redis::Namespace.new('sso_session', :redis => REDIS_CONNECTION)
+
+    key = db.get("user:#{self.id}")
+    return unless key
+
+    if db.get("data:#{key}")
+      db.del("data:#{key}")
+    end
+
+    db.del("user:#{self.id}")
+  end
+
   private
 
   def set_special_ldap_value
@@ -660,26 +680,6 @@ class User < LdapBase
 
     # Set uid to Domain Users group
     SambaGroup.add_uid_to_memberUid('Domain Users', self.uid)
-  end
-
-  # Invalidate active SSO session cookies for this user, if present
-  def reset_sso_session
-    organisation = Puavo::Organisation.find(LdapOrganisation.current.cn)
-    return unless organisation
-    return if organisation.value_by_key('enable_sso_sessions_in').nil?
-
-    # This organisation has SSO login cookies enabled. If this user has an active session,
-    # remove it immediately.
-    db = Redis::Namespace.new('sso_session', :redis => REDIS_CONNECTION)
-
-    key = db.get("user:#{self.id}")
-    return unless key
-
-    if db.get("data:#{key}")
-      db.del("data:#{key}")
-    end
-
-    db.del("user:#{self.id}")
   end
 
   private

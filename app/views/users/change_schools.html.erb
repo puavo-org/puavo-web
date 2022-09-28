@@ -2,7 +2,7 @@
 
 <div class="formContainer">
 
-<h1><%= t('.header', :name => @user.displayName) %></h1>
+<h1><%= t('.header', :name => link_to( @user.displayName, "./") ).html_safe %></h1>
 
 <p><%= t('.sync_warning') %></p>
 <p><%= t('.instant_save_warning') %></p>

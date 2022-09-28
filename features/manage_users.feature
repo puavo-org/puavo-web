@@ -102,7 +102,6 @@ Feature: Manage users
     | Student                                         |
     | English (United States)                         |
     | Yes                                             |
-    | Mabey Ben                                       |
     | 556677                                          |
     | 38:58:f6:22:30:ac:3c:91:5f:30:0c:66:43:12:c6:3f |
     And I should see image of "ben"
@@ -401,24 +400,6 @@ Feature: Manage users
     And I select group "Class 4"
     And I press "Create"
     And I should see "donald.duck@calisota.us"
-
-  Scenario: Reverse name is updated
-    Given the following users:
-      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
-      | Donald    | Duck    | donald | 313      | visitor                   |
-    Then I am on the show user page with "donald"
-    And I should see "Donald Duck"
-    And I should see "Duck Donald"
-    #
-    When I follow "Edit..."
-    Then I am on the edit user page with "donald"
-    And I fill in "Given name" with "Duck"
-    And I fill in "Surname" with "Donald"
-    And I fill in "Username" with "duck.donald"
-    And I press "Update"
-    Then I should see "User was successfully updated."
-    And I should see "Duck Donald"
-    And I should see "Donald Duck"
 
   Scenario: Prevent user deletion
     Given the following users:

@@ -4,9 +4,9 @@
 <div class="superTable" id="tableGroupMembers"></div>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
-<%= javascript_include_tag 'supertable2', skip_pipeline: true %>
-<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
+<%= javascript_include_tag 'supertable2.' + I18n.locale.to_s %>
+<%= javascript_include_tag 'supertable2' %>
+<%= javascript_include_tag 'filtereditor' %>
 <% end %>
 
 <% content_for :post_load_javascript do %>
@@ -29,7 +29,7 @@ const USER_ROLES = {
     unknown: "<%= t('unknown_role') %>",
 };
 
-const DEFAULT_COLUMNS = ["name", "uid", "role", "groups"];
+const DEFAULT_COLUMNS = ["name", "uid", "role", "locked", "marked", "groups"];
 const DEFAULT_SORTING = { column: "uid", dir: SortOrder.ASCENDING };
 
 const COLUMN_ORDER = [
@@ -39,6 +39,8 @@ const COLUMN_ORDER = [
     "name",
     "uid",
     "role",
+    "locked",
+    "marked",
     "groups",
 ];
 
@@ -77,6 +79,16 @@ const COLUMN_DEFINITIONS = {
         flags: ColumnFlag.USER_TRANSFORM,
     },
 
+    locked: {
+        key: "locked",
+        type: ColumnType.BOOL,
+    },
+
+    marked: {
+        key: "marked",
+        type: ColumnType.UNIXTIME,
+    },
+
     groups: {
         key: "groups",
         type: ColumnType.STRING,
@@ -93,6 +105,8 @@ const COLUMN_TITLES = {
     name: "<%= t('columns.users.full_name') %>",
     uid: "<%= t('columns.users.uid') %>",
     role: "<%= t('columns.users.role') %>",
+    locked: "<%= t('columns.users.is_locked') %>",
+    marked: "<%= t('columns.users.rrt') %>",
     groups: "<%= t('columns.groups.member_groups') %>",
 };
 
@@ -108,25 +122,8 @@ const GROUP_TYPES = {
 
 const USER_TRANSFORM_FUNCTIONS = {
     name: function(entry) {
-        let s = "";
-
-        // Supplementary information
-        const remove = entry.flags && entry.flags.includes("m"),
-              locked = entry.flags && entry.flags.includes("l");
-
-        if (remove)
-            s += `<span class="user-marked-for-deletion">`;
-
-        s += `<a href="/users/${entry.school_id}/users/${entry.id}">${escapeHTML(entry.name)}</a>`;
-
-        if (locked)
-            s += `<i class="icon-lock"></i>`;
-
-        if (remove)
-            s += `</span>`;
-
         return [
-            s,
+            `<a href="/users/${entry.school_id}/users/${entry.id}">${escapeHTML(entry.name)}</a>`,
             entry.name
         ];
     },
@@ -138,13 +135,7 @@ const USER_TRANSFORM_FUNCTIONS = {
         for (let i = 0; i < entry.role.length; i++) {
             const r = entry.role[i];
 
-            if (r in USER_ROLES) {
-                if (r == "owner")
-                    values.push(`<span class="user-owner">${USER_ROLES[r]}</span>`);
-                else if (r == "schooladmin")
-                    values.push(`<span class="user-admin">${USER_ROLES[r]}</span>`);
-                else values.push(USER_ROLES[r]);
-            } else values.push(USER_ROLES['unknown']);
+            values.push((r in USER_ROLES) ? USER_ROLES[r] : USER_ROLES['unknown']);
         }
 
         return [
@@ -220,8 +211,8 @@ class GroupOperationBase extends MassOperation {
     buildGroupsList()
     {
         const html =
-`<div class="flex flex-cols flex-gap-5px">
-    <div class="flex flex-rows flex-gap-5px"">
+`<div class="flex-cols gap-5px">
+    <div class="flex-rows gap-5px"">
         <input type="search" spellcheck="false" placeholder="<%= t('groups.index.mass_operations.search_placeholder') %>">
         <div id="groupList" class="scrollList" style="width: 30em; height: 20em;">
         </div>

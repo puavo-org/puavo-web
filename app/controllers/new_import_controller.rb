@@ -8,8 +8,8 @@ class NewImportController < ApplicationController
   def index
     return if redirected_nonowner_user?
 
-    @school_id = params['school_id'].to_i
-    @initial_groups = get_school_groups(School.find(@school_id).dn.to_s)
+    @automatic_email_addresses, _ = get_automatic_email_addresses
+    @initial_groups = get_school_groups(School.find(@school.id).dn.to_s)
 
     respond_to do |format|
       format.html
@@ -26,14 +26,43 @@ class NewImportController < ApplicationController
     users = User.search_as_utf8(
       filter: '(objectClass=puavoEduPerson)',
       attributes: ['puavoId', 'uid']
-    ).collect do |dn, u|
+    ).collect do |_, u|
       {
         id: u['puavoId'][0].to_i,
-        uid: u['uid'][0],
+        uid: u['uid'][0]
       }
     end
 
     render json: users
+  end
+
+  # Extended version of get_current_users(), used in duplicate username detection.
+  # Returns user information, but also includes schools
+  def duplicate_detection
+    extract_dn = /puavoId=(\d+),ou=Groups/
+
+    users = User.search_as_utf8(
+      filter: '(objectClass=puavoEduPerson)',
+      attributes: ['puavoId', 'uid', 'puavoEduPersonPrimarySchool', 'puavoSchool', 'puavoExternalId', 'mail', 'telephoneNumber']
+    ).collect do |_, u|
+      {
+        id: u['puavoId'][0].to_i,
+        uid: u['uid'][0],
+        school: extract_dn.match(u['puavoEduPersonPrimarySchool'][0])[1].to_i,
+        schools: u['puavoSchool'].collect { |dn| extract_dn.match(dn)[1].to_i },
+        eid: u.fetch('puavoExternalId', [nil])[0],
+        email: Array(u['mail'] || []),
+        phone: Array(u['telephoneNumber'] || [])
+      }
+    end
+
+    schools = School.search_as_utf8(
+      attributes: ['puavoId', 'displayName']
+    ).collect do |dn, s|
+      [s['puavoId'][0], s['displayName'][0]]
+    end.to_h
+
+    render json: { users: users, schools: schools }
   end
 
   # Import or update one or more users
@@ -113,53 +142,86 @@ class NewImportController < ApplicationController
     render json: response
   end
 
-  def generate_password_pdf
+  def generate_pdf
     begin
-      uids_with_passwords = JSON.parse(request.body.read.to_s)
+      raw_users = JSON.parse(request.body.read.to_s)
 
       # Get the user's full names from the database
       users = []
 
-      uids_with_passwords.each do |uid, _|
+      raw_users.each do |uid, _|
         u = User.search_as_utf8(
           filter: "(uid=#{Net::LDAP::Filter.escape(uid)})",
           attributes: ['uid', 'givenName', 'sn']
         )
+
+        next if u.nil? || u.empty?  # the report can theoretically contain users who don't exist yet
 
         users << {
           dn: u[0][0],
           uid: uid,
           first: u[0][1]['givenName'][0],
           last: u[0][1]['sn'][0],
-          tgroup: '',   # filled in later
-          password: uids_with_passwords[uid],
+          group: '',    # filled in later
+          password: raw_users.fetch(uid, nil),
         }
       end
 
-      # Fill in the teaching groups
+      # Make a list of schools, so we can format group names properly
+      school_names = School.search_as_utf8(attributes: ['displayName']).collect do |dn, s|
+        [dn, s['displayName'][0]]
+      end.to_h
+
+      # Fill in the groups. Try teaching groups first, but if the user does not have
+      # a teaching group, use archiving group next.
+      # TODO: Try *all* the group types, in some predefined priority order.
+      archived_groups = []
       teaching_groups = []
 
       Group.search_as_utf8(
-        filter: '(&(objectClass=puavoEduGroup)(puavoEduGroupType=teaching group))',
-        attributes: ['cn', 'displayName', 'member']
+        filter: '(&(objectClass=puavoEduGroup)(|(puavoEduGroupType=teaching group)(puavoEduGroupType=archive users)))',
+        attributes: ['cn', 'displayName', 'puavoEduGroupType', 'member', 'puavoSchool']
       ).each do |dn, group|
-        teaching_groups << {
-          name: group['displayName'][0],
+        type = group.fetch('puavoEduGroupType', [nil])[0]
+        next unless type
+
+        school_name = school_names.fetch(group['puavoSchool'][0], '?')
+
+        g = {
+          name: "#{school_name}, #{group['displayName'][0]}",
           members: Array(group['member'] || []).to_set.freeze,
         }
+
+        if type == 'teaching group'
+          teaching_groups << g
+        elsif type == 'archive users'
+          archived_groups << g
+        end
       end
 
       users.each do |user|
         teaching_groups.each do |group|
           if group[:members].include?(user[:dn])
-            user[:tgroup] = group[:name]
+            user[:group] = group[:name]
             break
+          end
+        end
+
+        if user[:group] == ''
+          # This user has no teaching group. See if they're in an archived users group.
+          archived_groups.each do |group|
+            if group[:members].include?(user[:dn])
+              user[:group] = group[:name]
+              break
+            end
           end
         end
       end
 
       # Sort the users by their username. Assume it's even somewhat related to their real name.
-      users.sort! { |a, b| [a[:tgroup], a[:last], a[:first], a[:uid]] <=> [b[:tgroup], b[:last], b[:first], b[:uid]] }
+      users.sort! do |a, b|
+        [a[:group], a[:last], a[:first], a[:uid]] <=> [b[:group], b[:last], b[:first], b[:uid]]
+      end
 
       # Figure out the total page count. Each teaching group gets its own page (or pages).
       # I determined empirically that 18 users per page is more or less the maximum.
@@ -168,7 +230,7 @@ class NewImportController < ApplicationController
       num_pages = 0
       current_page = 0
 
-      grouped_users = users.chunk { |u| u[:tgroup] }
+      grouped_users = users.chunk { |u| u[:group] }
 
       grouped_users.each do |group_name, group_users|
         num_pages += group_users.each_slice(users_per_page).count
@@ -199,37 +261,37 @@ class NewImportController < ApplicationController
         grouped_users.each do |group_name, group_users|
           group_users.each_slice(users_per_page).each_with_index do |block, _|
             pdf.start_new_page()
+
+            pdf.font('unicodefont')
+            pdf.font_size(18)
+            headertext = "#{current_organisation.name}"
+            headertext += ", #{group_name}" if group_name && group_name.length > 0
+            pdf.draw_text(headertext, :at => [0, (pdf.bounds.top - 15)] )
+
             pdf.font('unicodefont')
             pdf.font_size(12)
-            pdf.draw_text("#{current_organisation.name}, #{@school.displayName} " +
-                          "(#{t('new_import.pdf.page')} #{current_page + 1}/#{num_pages}, #{header_timestamp})",
-                          at: pdf.bounds.top_left)
-            pdf.text("\n\n")
+            pdf.draw_text("(#{t('new_import.pdf.page')} #{current_page + 1}/#{num_pages}, #{header_timestamp})",
+                :at => [(pdf.bounds.right - 160), 0] )
+            pdf.text("\n\n\n")
 
             current_page += 1
 
             block.each do |u|
               pdf.font('unicodefont')
+              pdf.font_size(12)
 
-              title = "#{u[:last]}, #{u[:first]} (#{u[:uid]})"
+              pdf.text("#{u[:last]}, #{u[:first]} (#{u[:uid]})")
 
-              unless u[:tgroup].empty?
-                title += ', ' + u[:tgroup]
+              if u[:password]
+                pdf.font('Courier')
+                pdf.text(u[:password])
               end
 
-              pdf.text(title)
-
-              pdf.font('Courier')
-              pdf.text(u[:password])
               pdf.text("\n")
             end
           end
         end
       end
-
-      # There's room on the page for this end marker. We never generate full pages.
-      pdf.font('unicodefont')
-      pdf.text("\n(#{t('new_import.pdf.end')})")
 
       filename = "#{current_organisation.organisation_key}_#{@school.cn}_#{filename_timestamp}.pdf"
 
@@ -239,6 +301,7 @@ class NewImportController < ApplicationController
                 disposition: 'attachment')
     rescue => e
       puts e
+      puts e.backtrace.join("\n")
 
       # Send back an error message
       response = {
@@ -290,6 +353,14 @@ class NewImportController < ApplicationController
 
       if attributes.include?('password')
         user.new_password = attributes['password']
+      end
+
+      # FIXME: WHY. THIS. IS. NOT. IN. THE. MODEL?!
+      automatic_email_addresses, domain = get_automatic_email_addresses
+
+      if automatic_email_addresses
+        # WHY?
+        user.mail = "#{attributes['uid']}@#{domain}"
       end
 
       user.save!
@@ -344,7 +415,7 @@ class NewImportController < ApplicationController
         group = Group.find(:first, attribute: 'cn', value: value)
 
         if group.nil?
-          failed << [key, column_to_index[key], 'unknown group']
+          failed << [key, column_to_index[key], t('new_import.errors.unknown_group')]
           next
         end
 
@@ -381,6 +452,13 @@ class NewImportController < ApplicationController
     something_changed = false
     have_unique = false
     have_groups = false
+
+    # Again, why this isn't in the model?!?!?!?!?!
+    automatic_email_addresses, domain = get_automatic_email_addresses
+
+    if automatic_email_addresses
+      attributes['email'] = "#{attributes['uid']}@#{domain}"
+    end
 
     begin
       # Update the changed attributes
@@ -501,7 +579,7 @@ class NewImportController < ApplicationController
             group = Group.find(:first, attribute: 'cn', value: value)
 
             if group.nil?
-              failed << [key, column_to_index[key], 'unknown group']
+              failed << [key, column_to_index[key], t('new_import.errors.unknown_group')]
               next
             end
 

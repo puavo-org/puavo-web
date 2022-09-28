@@ -630,13 +630,18 @@ class UsersController < ApplicationController
       @permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
     end
 
-    # Learner ID
+    # External data fields
     @learner_id = nil
+    @mpass_materials_charge = nil
 
     if @user.puavoExternalData
       begin
         ed = JSON.parse(@user.puavoExternalData)
         @learner_id = ed.fetch('learner_id', nil)
+
+        if @user.puavoEduPersonAffiliation.include?('student')
+          @mpass_materials_charge = ed.fetch('materials_charge', nil)
+        end
       rescue
       end
     end
@@ -655,6 +660,11 @@ class UsersController < ApplicationController
         end
       end
     end
+
+    # Does this organisation have any SSO sessions enabled? We don't care what services
+    # they're enabled for, as long as there's at least one.
+    organisation = Puavo::Organisation.find(LdapOrganisation.current.cn)
+    @have_sso_sessions = organisation && !organisation.value_by_key('enable_sso_sessions_in').nil?
 
     respond_to do |format|
       format.html # show.html.erb
@@ -970,6 +980,20 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(users_url) }
       format.xml  { head :ok }
+    end
+  end
+
+  def reset_sso_session
+    return if redirected_nonowner_user?
+
+    @user = get_user(params[:id])
+    return if @user.nil?
+
+    @user.reset_sso_session
+    flash[:notice] = t('flash.user.sso_session_gone')
+
+    respond_to do |format|
+      format.html { redirect_to(user_path(@school, @user)) }
     end
   end
 
@@ -1312,16 +1336,18 @@ class UsersController < ApplicationController
 
       next if !@is_owner && !school_filter.include?(school_dn)
 
+      school_name_sort = school_names[school_dn].downcase
+
       @groups_by_school[school_dn] ||= {
         school_name: school_names[school_dn],
-        school_name_sort: school_names[school_dn].downcase,
+        school_name_sort: school_name_sort,
         groups: []
       }
 
       @groups_by_school[school_dn][:groups] << {
         id: g['puavoId'][0].to_i,
         name: g['displayName'][0],
-        name_sort: g['displayName'][0].downcase,
+        name_sort: "#{school_name_sort} #{g['displayName'][0].downcase}",
         type: group_types[g.fetch('puavoEduGroupType', [nil])[0]],
         member_dn: Array(g['member'] || []).to_set,
       }

@@ -136,7 +136,7 @@ Feature: Manage passwords
   Scenario: Forgot password
     Given mock password management service
     And I am on the forgot password page
-    Then I should see "Reset your password Please enter your email address and we'll send you a link that allows"
+    Then I should see "I forgot my password Please enter your email address and we'll send you a link that allows"
     When I fill in "Email" with "pavel@foobar.com"
     And I press "Continue"
     Then I should see "We've sent you an email that will let you reset your password."

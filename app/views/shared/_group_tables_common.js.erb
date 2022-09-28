@@ -108,10 +108,18 @@ const USER_TRANSFORM_FUNCTIONS = {
     },
 
     type: function(entry) {
-        return [
-            entry.type in GROUP_TYPES ? GROUP_TYPES[entry.type] : `<span class="missingData"><%= t('missing_data') %></span>`,
-            entry.type
-        ];
+        let type = null;
+
+        if (entry.type in GROUP_TYPES) {
+            type = GROUP_TYPES[entry.type];
+
+            if (entry.type == 'course group')
+                type = `<span class="stCourseGroup">${type}</span>`;
+        } else {
+            type = `<span class="missingData"><%= t('missing_data') %></span>`;
+        }
+
+        return [type, entry.type];
     },
 
     school: function(entry) {

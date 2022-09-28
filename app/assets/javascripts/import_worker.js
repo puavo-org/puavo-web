@@ -19,7 +19,7 @@ let start = 0,
 function _beginImport(incoming)
 {
     data = {...incoming};
-    start = 0;
+    start = incoming.startIndex;    // the process can be resumed from arbitrary point
     total = 0;
     attempt = 1;
 }
@@ -37,8 +37,8 @@ async function _importNextBatch()
         return;
     }
 
-    // Process the rows in BATCH_SIZE blocks, so not every row causes its own HTTP request
-    // and DB authentication and everything else
+    // Process the rows in batches, so not every row causes its own HTTP request
+    // and a database authentication and who knows what else
     const rows = data.rows.slice(start, start + data.batchSize);
 
     while (true) {
@@ -91,7 +91,7 @@ async function _importNextBatch()
                 total += rows.length;       // the array wasn't necessarily evenly-sized
                 attempt = 1;
 
-                console.log(response.rows);
+                //console.log(response.rows);
 
                 postMessage({ message: "progress", total: total, states: response.rows });
                 return;

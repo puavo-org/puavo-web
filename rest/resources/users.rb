@@ -107,6 +107,10 @@ class User < LdapModel
     new_username = username
     old_username = @previous_values[:username]
     if old_username && old_username != new_username then
+      # Store the previous groups in a special variable, so we can restore them
+      # after the renaming
+      @previous_groups = self.groups.collect { |g| g.dn }
+
       # We need to update associations if username has changed, but must use
       # the old username when deleting.
       self.username = old_username
@@ -383,6 +387,20 @@ class User < LdapModel
         remove_from_school!(s)
       end
     end
+
+    # Restore previous groups. self.groups cannot be relied here. @previous_groups was
+    # set in "before :update" handler above. It's currently not set anywhere else.
+    if @previous_groups
+      @previous_groups.each do |dn|
+        begin
+          group = PuavoRest::Group.by_dn(dn)
+          group.add_member(self)
+          group.save!
+        rescue => e
+          $rest_log.error("Can't put the renamed user back to group \"#{dn}\": #{e}")
+        end
+      end
+    end
   end
 
   after :create do
@@ -600,7 +618,7 @@ class User < LdapModel
   end
 
   def admin?
-    user_type == "admin"
+    Array(roles).include?('admin')
   end
 
   def groups
@@ -640,8 +658,28 @@ class User < LdapModel
 
   computed_attr :schools_hash, :schools
   def schools_hash
-    out = schools.map do |school|
-      {
+    # Inject the materials charge value into the schools array, at the correct school
+    mpass_charging_state = nil
+    mpass_charging_school = nil
+
+    if roles.include?('student') && external_data
+      begin
+        ed = JSON.parse(external_data)
+      rescue
+        ed = {}
+      end
+
+      if ed.include?('materials_charge')
+        parts = ed['materials_charge'].split(';')
+        mpass_charging_state = parts[0]
+        mpass_charging_school = parts[1]
+      end
+    end
+
+    out = []
+
+    schools.each do |school|
+      s = {
         "id" => school.id,
         "dn" => school.dn,
         "name" => school.name,
@@ -658,6 +696,12 @@ class User < LdapModel
           }
         end
       }
+
+      if mpass_charging_school && school.school_code == mpass_charging_school
+        s['learning_materials_charge'] = mpass_charging_state
+      end
+
+      out << s
     end
 
     return out
@@ -820,14 +864,9 @@ class User < LdapModel
   end
 
   def mark_for_removal!
-    mark_set = false
+    self.locked = true
 
-    # ALWAYS delete kerberos principal for users that are marked for removal.
-    # This may seem odd, but we should guard against the case where
-    # a user complains about login not working and subsequently admin has
-    # changed the puavo password to something known to make the account
-    # work, despite it being "marked for removal".
-    delete_kerberos_principal
+    mark_set = false
 
     if self.removal_request_time.nil? then
       self.removal_request_time = Time.now.utc.to_datetime
@@ -843,8 +882,6 @@ class User < LdapModel
   # for more info.
   computed_attr :learner_id
   def learner_id
-    return nil unless self.roles.include?('student')
-
     return nil unless self.external_data
 
     begin
@@ -1344,13 +1381,19 @@ class Users < PuavoSinatra
 
     raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 
+    # Handle supplementary Eltern data if the domain matches
+    do_eltern = CONFIG['eltern_users'] &&
+                Array(CONFIG['eltern_users']['domains']).include?(Organisation.current.domain)
+
     v4_do_operation do
       # which fields to get?
       user_fields = v4_get_fields(params).to_set
+      user_fields << 'id' if do_eltern
+
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
 
       # optional filters
-      filters = v4_get_filters_from_params(params, USER_TO_LDAP)
+      filters, puavoid = v4_get_filters_from_params(params, USER_TO_LDAP)
 
       # do the query
       raw = v4_do_user_search(filters, ldap_attrs)
@@ -1358,22 +1401,7 @@ class Users < PuavoSinatra
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
 
-      # Handle supplementary Eltern data if the domain matches
-      if CONFIG['eltern_users'] && Array(CONFIG['eltern_users']['domains']).include?(Organisation.current.domain)
-        eltern_get_all_users&.each do |user|
-          next if !user['first_name'] || user['first_name'].empty?
-
-          if user.include?('children')
-            user['children'].collect! { |c| c['puavo_id'].to_i }
-          end
-
-          user['role'] = ['parent']
-          user['school_ids'] = []
-          user['primary_school_id'] = nil
-
-          out << user
-        end
-      end
+      get_parents(out, puavoid) if do_eltern
 
       out = v4_ensure_is_array(out, 'role', 'email', 'phone', 'admin_school_id', 'school_ids')
 

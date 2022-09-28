@@ -345,7 +345,28 @@ class GroupsController < ApplicationController
     end
 
     begin
-      new_list = List.new(@group.members.map{ |u| u.id })
+      if is_owner?
+        new_list = List.new(@group.members.map { |u| u.id }, current_user.uid)
+      else
+        only_these = Set.new(Array(current_user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
+        members = []
+
+        @group.members.collect do |member|
+          # Try to access the primary school of this group member. If it throws an exception,
+          # then the member is in a school the current user (the user viewing this page)
+          # cannot access. A bit hacky...
+          begin
+            member.primary_school.cn
+          rescue
+            next
+          end
+
+          members << member
+        end
+
+        new_list = List.new(members.map { |u| u.id }, current_user.uid)
+      end
+
       new_list.save
       ok = true
     rescue
@@ -365,8 +386,6 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/mark_group_members_for_deletion
   def mark_group_members_for_deletion
-    return if redirected_nonowner_user?
-
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -386,8 +405,6 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/unmark_group_members_deletion
   def unmark_group_members_deletion
-    return if redirected_nonowner_user?
-
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -407,8 +424,6 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/lock_all_members
   def lock_all_members
-    return if redirected_nonowner_user?
-
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -428,8 +443,6 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/unlock_all_members
   def unlock_all_members
-    return if redirected_nonowner_user?
-
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -595,16 +608,13 @@ class GroupsController < ApplicationController
         last: raw['sn'][0],
         uid: raw['uid'][0],
         role: Array(raw['puavoEduPersonAffiliation'] || []),
+        locked: raw.include?('puavoLocked') && raw['puavoLocked'][0] == 'TRUE',
         groups: [],
       }
 
-      # Supplementary information, included only in the username column
-      flags = []
-
-      flags << 'm' if raw.include?('puavoRemovalRequestTime')
-      flags << 'l' if raw.include?('puavoLocked') && raw['puavoLocked'][0] == 'TRUE'
-
-      users[uid][:flags] = flags.join unless flags.empty?
+      if raw.include?('puavoRemovalRequestTime') && raw['puavoRemovalRequestTime']
+        users[uid][:marked] = Puavo::Helpers::convert_ldap_time(raw['puavoRemovalRequestTime'])
+      end
     end
 
     # Get groups and their members
@@ -769,16 +779,30 @@ class GroupsController < ApplicationController
 
   # GET /:school_id/groups/:group_id/get_members_as_csv
   def get_members_as_csv
-    return if redirected_nonowner_user?
-
     @group = get_group(params[:id])
     return if @group.nil?
 
     output = CSV.generate(headers: true) do |csv|
-      csv << ['puavoid', 'first_name', 'last_name', 'uid', 'school_name']
+      csv << ['puavoid', 'first_name', 'last_name', 'uid', 'locked', 'marked_for_deletion', 'primary_school_name', 'primary_school_abbr', 'primary_school_puavoid']
 
       @group.members.each do |m|
-        csv << [m.id, m.givenName, m.surname, m.uid, m.primary_school.displayName]
+        begin
+          row = []
+          row << m.id
+          row << m.givenName
+          row << m.surname
+          row << m.uid
+          row << m.puavoLocked
+          row << m.puavoRemovalRequestTime
+          row << m.primary_school.displayName
+          row << m.primary_school.cn
+          row << m.primary_school.id
+        rescue
+          # Probably an inaccessible user, in another school the current admin has no access to?
+          next
+        end
+
+        csv << row
       end
     end
 

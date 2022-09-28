@@ -32,11 +32,13 @@
     --button-foreground: #000;
     --button-border: rgb(207, 214, 230);
     --button-foreground-disabled: rgb(152, 154, 158);
+    --button-background-disabled: transparent;
     --button-background-active: rgb(211, 216, 226);
     --button-foreground-active: #000;
     --button-border-active: rgb(183, 192, 211);
     --link-foreground: #5294e2;
     --link-foreground-hover: #2679db;
+    --animation-filter: none;
   }
 }
 
@@ -62,12 +64,14 @@
     --button-foreground: #fff;
     --button-border: rgb(43, 46, 57);
     --button-foreground-disabled: rgb(134, 139, 151);
+    --button-background-disabled: transparent;
     --button-background-active: rgb(46, 51, 64);
     --button-foreground-active: #fff;
     --button-border-active: rgb(82, 148, 226);
     --field-error-foreground: rgb(252, 65, 56);
     --link-foreground: #5294e2;
     --link-foreground-hover: #2679db;
+    --animation-filter: invert(100%);
   }
 }
 
@@ -213,9 +217,23 @@ fieldset > .row {
   font-size: 100%;
 }
 
+#animation {
+  display: inline-block;
+  visibility: hidden;
+  width: 24px;  /* set in the embedded SVG itself, don't touch */
+  margin-left: 64px;
+  margin-right: 20px;
+  filter: var(--animation-filter);
+}
+
 #submit {
-  margin: 0 auto;
-  width: 75%;
+  margin-right: 84px;  /* 24+40+20, see #animation above */
+  flex-grow: 2;
+}
+
+#submit:disabled {
+  background: var(--button-background-disabled);
+  color: var(--button-foreground-disabled);
 }
 
 ::placeholder {

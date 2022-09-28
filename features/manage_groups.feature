@@ -103,7 +103,7 @@ Feature: Manage groups
     | displayName | cn      |
     | Class 4A    | class4a |
     And I am on the group page with "Class 4A"
-    When I follow "Remove"
+    When I follow "Remove group"
     Then I should see "Group was successfully removed."
 
   Scenario: Check group special ldap attributes

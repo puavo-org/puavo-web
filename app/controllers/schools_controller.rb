@@ -1,4 +1,6 @@
 class SchoolsController < ApplicationController
+  include Puavo::Integrations
+
   # GET /schools
   # GET /schools.xml
   def index
@@ -6,24 +8,66 @@ class SchoolsController < ApplicationController
       @schools = School.all.sort
     else
       @schools = School.all_with_permissions current_user
-      @schools.sort!{|a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
 
-    # Count devices by school
-    @device_counts = {}
+    @data = {
+      bootservers: {},
+      schools: [],
+    }
 
-    @schools.collect(&:dn).map.each do |dn|
-      @device_counts[dn.to_s] = 0
+    if @schools.count > 1
+      # Count groups and devices by school
+      @group_counts = {}
+      @device_counts = {}
+
+      @schools.collect(&:dn).map.each do |dn|
+        @group_counts[dn.to_s] = 0
+        @device_counts[dn.to_s] = 0
+      end
+
+      Group.search(:filter => "(objectClass=puavoEduGroup)", :attributes => ["puavoSchool"]).each do |g|
+        dn = g[1]['puavoSchool'][0]
+        @group_counts[dn] += 1 if @group_counts.include?(dn)
+      end
+
+      Device.search(:filter => "(objectClass=device)", :attributes => ["puavoSchool"]).each do |d|
+        next unless d[1].include?('puavoSchool')
+        dn = d[1]['puavoSchool'][0]
+        @device_counts[dn] += 1 if @device_counts.include?(dn)
+      end
+
+      @have_external_ids = @schools.any? { |s| s.puavoExternalId }
+      @have_school_codes = @schools.any? { |s| s.puavoSchoolCode }
+
+      @schools.each do |s|
+        bs_names = []
+
+        s.boot_servers.each do |bs|
+          bs_names << bs.puavoHostname
+
+          unless @data[:bootservers].include?(bs.puavoHostname)
+            @data[:bootservers][bs.puavoHostname] = server_path(bs)
+          end
+        end
+
+        extra = School.find(s.id, :attributes => ['createTimestamp', 'modifyTimestamp'])
+
+        @data[:schools] << {
+          id: s.id.to_i,
+          name: s.displayName,
+          prefix: s.cn,
+          eid: s.puavoExternalId,
+          school_code: s.puavoSchoolCode,
+          num_members: Array(s.memberUid || []).count,
+          num_groups: @group_counts[s.dn.to_s],
+          num_devices: @device_counts[s.dn.to_s],
+          boot_servers: bs_names,
+          conf: s.puavoConf.nil? ? [] : JSON.parse(s.puavoConf).collect { |k, v| "#{k} = #{v}" },
+          integrations: get_school_integrations_by_type(@organisation_name, s.id),
+          link: school_path(s),
+        }
+      end
     end
-
-    Device.search(:filter => "(objectClass=device)", :attributes => ["puavoSchool"]).each do |d|
-      next unless d[1].include?('puavoSchool')
-      dn = d[1]['puavoSchool'][0]
-      @device_counts[dn] += 1 if @device_counts.include?(dn)
-    end
-
-    @have_external_ids = @schools.any?{ |s| s.puavoExternalId }
-    @have_school_codes = @schools.any?{ |s| s.puavoSchoolCode }
 
     respond_to do |format|
       if @schools.count < 2  && !current_user.organisation_owner?

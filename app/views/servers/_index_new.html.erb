@@ -2,9 +2,9 @@
 <div class="superTable" id="tableServers"></div>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag "i18n/supertable2." + I18n.locale.to_s + ".js", skip_pipeline: true %>
-<%= javascript_include_tag 'supertable2', skip_pipeline: true %>
-<%= javascript_include_tag 'filtereditor', skip_pipeline: true %>
+<%= javascript_include_tag 'supertable2.' + I18n.locale.to_s %>
+<%= javascript_include_tag 'supertable2' %>
+<%= javascript_include_tag 'filtereditor' %>
 <% end %>
 
 <% @is_organisation = true %>
@@ -15,6 +15,8 @@
 "use strict;"
 
 <%= render :partial => 'shared/device_tables_common.js' %>
+
+const SERVERS = <%= raw JSON.pretty_generate(@servers) %>;
 
 const DEFAULT_COLUMNS = ["hn", "schools", "available_images", "location", "mac", "mfer", "model", "serial", "current_image"];
 const DEFAULT_SORTING = { column: "hn", dir: SortOrder.ASCENDING };
@@ -29,7 +31,7 @@ new SuperTable(
     {
         id: "servers",
         csvPrefix: `<%= LdapOrganisation.current.o %>-servers`,
-        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION | TableFlag.ENABLE_PAGINATION,
+        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING,
         locale: "<%= supertable_sorting_locale %>",
         columnDefinitions: COLUMN_DEFINITIONS,
         columnTitles: COLUMN_TITLES,
@@ -41,7 +43,7 @@ new SuperTable(
         defaultColumns: DEFAULT_COLUMNS,
         defaultSorting: DEFAULT_SORTING,
         filterPresets: null,
-        dynamicData: "/devices/get_servers_list",
+        staticData: SERVERS,
     }
 );
 });

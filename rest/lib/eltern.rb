@@ -19,6 +19,49 @@ module ElternHelpers
                       :get)
   end
 
+  # Performs additional filtering if 'filter_puavods' is not empty
+  def get_parents(users, filter_puavoids)
+    parents = []
+
+    eltern_get_all_users&.each do |user|
+      next if !user['first_name'] || user['first_name'].empty?
+
+      if user.include?('children')
+        user['children'].collect! { |c| c['puavo_id'].to_i }
+
+        unless filter_puavoids.empty?
+          # Since user filtering is enabled, completely ignore parents whose
+          # children are not included in the requested users
+          user['children'] &= filter_puavoids
+          next if user['children'].empty?
+        end
+      end
+
+      user['role'] = ['parent']
+      user['school_ids'] = []
+      user['primary_school_id'] = nil
+
+      parents << user
+    end
+
+    # Copy parent IDs to children. The existing users are just in a plain array,
+    # but we need to look them up by puavoID. This maps puavoIDs to array indexes.
+    lookup = {}
+    users.each_with_index { |u, index| lookup[u['id']] = index }
+
+    parents.each do |parent|
+      parent['children'].each do |puavo_id|
+        next unless lookup.include?(puavo_id)
+        child = users[lookup[puavo_id]]
+
+        child['parent_ids'] ||= []
+        child['parent_ids'] << parent['puavo_id']
+      end
+    end
+
+    users.concat(parents)
+  end
+
   private
 
   # Generic HTTP(S) POST/GET wrapper with timeouts and retries. Returns nil if the request failed,

@@ -91,7 +91,7 @@ sv:
       password: "Gammalt lösenord"
       link_other_password: "Ändra en annan användares lösenordet"
     forgot:
-      title: "Ange ett nytt lösenord"
+      title: "Glömt lösenord"
       description: "Ange din e-postaddress, var vi skulle skicka en lösenordsändringslänk."
     reset:
       title: Ange ett nytt lösenord

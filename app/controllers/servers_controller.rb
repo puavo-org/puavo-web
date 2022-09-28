@@ -29,6 +29,8 @@ class ServersController < ApplicationController
 
     @is_owner = is_owner?
 
+    @servers = get_servers_list
+
     respond_to do |format|
       format.html # index.html.erb
     end
@@ -110,7 +112,7 @@ class ServersController < ApplicationController
       servers << server
     end
 
-    render :json => servers
+    servers
   end
 
   # GET /servers/1

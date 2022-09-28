@@ -35,13 +35,20 @@
   <fieldset class="groups">
     <legend><%= t('.groups') %></legend>
 
+    <% unless @school.groups.empty? %>
+    <div class="flex-cols gap-10px margin-bottom-10px">
+      <button type="button" id="selectAll"><%= t('.select_all') %></button>
+      <button type="button" id="deselectAll"><%= t('.deselect_all') %></button>
+    </div>
+    <% end %>
+
     <ul class="noBullets">
-      <% @school.groups.each do |group| %>
+      <% @school.groups.sort { |a, b| a.displayName.downcase <=> b.displayName.downcase }.each do |group| %>
       <li>
         <label>
           <%= hidden_field_tag "groups[#{ group.dn }]", false %>
           <%= check_box_tag "groups[#{ group.dn }]", true, group.has_printer?(@printer) %>
-          <%= group.displayName %>
+          <%= group.displayName %> (<%= group.cn %>) <small><%= h humanize_group_type(group.puavoEduGroupType) %></small>
         </label>
       </li>
       <% end %>
@@ -89,3 +96,17 @@
 <% end %>
 
 </div>
+
+<% unless @school.groups.empty? %>
+<script>
+function selectAllGroups(state)
+{
+    // Must use input[type="checkbox"] here, otherwise we'll select the hidden elements too
+    for (let cb of document.querySelectorAll(`fieldset.groups input[type="checkbox"]`))
+        cb.checked = state;
+}
+
+document.querySelector("button#selectAll").addEventListener("click", () => selectAllGroups(true));
+document.querySelector("button#deselectAll").addEventListener("click", () => selectAllGroups(false));
+</script>
+<% end %>

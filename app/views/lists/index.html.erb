@@ -4,7 +4,7 @@
 <div class="genericNotice"><%= t(".description_empty") %></div>
 <% else %>
 <h1><%= t(".title") %></h1>
-<p class="description"><%= t(".description") %><p>
+<p class="description"><%= t(".help") %><p>
 
 <%= show_password_requirements(@organisation_name, @school.id) %>
 
@@ -14,7 +14,9 @@
   <div class="userListRow">
     <div class="userListCol userListMeta">
       <p><strong><%= t(".created") %>:</strong> <span><%= I18n.l(Time.at(list.created_at), :format => '%Y-%m-%d %H:%M:%S') %></span></p>
+      <p><strong><%= t(".expires") %>:</strong> <span><%= I18n.l(Time.at(list.created_at + (60 * 60 * 24 * 30 * 6)), :format => '%Y-%m-%d %H:%M:%S') %></span></p>
       <p><strong><%= t(".created_by") %>:</strong> <%= list.creator %></p>
+      <p><strong><%= t(".description") %>:</strong> <%= list.description %></p>
       <p><strong><%= t(".users_count_title") %>:</strong> <span><%= list.users.count %></span></p>
     </div>
   </div>
