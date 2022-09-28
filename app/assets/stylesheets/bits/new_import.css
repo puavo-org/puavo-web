@@ -224,6 +224,10 @@
   border-bottom: 1px solid var(--import-table-border);
   border-left: 1px solid var(--import-table-border);
   background: var(--table-header-background);
+  padding: 0;
+}
+
+.importTable thead th {
   padding: 5px;
 }
 
@@ -273,11 +277,10 @@
   display: block !important;
 }
 
-/*
-// TODO: Make the checkboxes easier to click
-.importTable th.checkbox { cursor: pointer; }
-.importTable th.checkbox input { pointer-events: none; }
-*/
+.importTable th.checkbox input {
+  width: 25px;
+  height: 25px;
+}
 
 .importTable th select {
   background: #fff;
