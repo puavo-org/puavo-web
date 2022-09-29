@@ -929,9 +929,6 @@ en:
 
     need_to_import_first: "These work after the import is done"
 
-    export_target: "What to export?"
-    export_pdf_warning: "PDF's only include users who actually exist."
-
     mode:
       label: "Update method"
       create_new_update_existing: "Add new users, update existing"
@@ -994,9 +991,6 @@ en:
       select_partially_successfull_rows: "Select partially successfull rows"
       select_failed_rows: "Select failed rows"
       export: "Export"
-      export_all_rows: "All rows"
-      export_selected_rows: "Only selected rows"
-      export_unselected_rows: "Only unselected rows"
       export_pdf_with_passwords: "PDF with passwords"
       username_list: "Username list"
       analyze: "Analyse"
@@ -1046,6 +1040,13 @@ en:
         title_selection: "Fill Selected Cells"
         help_column: "Fill the whole column with this value"
         help_selection: "Fill the selected cells with this value"
+
+      export:
+        target: "What to export?"
+        all_rows: "All rows"
+        selected_rows: "Only selected rows"
+        unselected_rows: "Only unselected rows"
+        pdf_warning: "PDF's only include users who actually exist."
 
       username_list:
         selection_only: "Selected rows only"

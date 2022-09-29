@@ -928,8 +928,6 @@ fi:
     no_data: "Ei näytettäviä rivejä. Oletko valinnut tietolähteen ensimmäiseltä sivulta?"
 
     need_to_import_first: "Nämä toimivat vain tuonnin jälkeen"
-    export_target: "Mitä viedään?"
-    export_pdf_warning: "PDF:t sisältävät vain olemassaolevat käyttäjät."
 
     mode:
       label: "Päivitystapa"
@@ -993,9 +991,6 @@ fi:
       select_partially_successfull_rows: "Valitse osittain onnistuneet rivit"
       select_failed_rows: "Valitse epäonnistuneet rivit"
       export: "Vie"
-      export_all_rows: "Kaikki rivit"
-      export_selected_rows: "Vain valitut rivit"
-      export_unselected_rows: "Vain ei-valitut rivit"
       export_pdf_with_passwords: "PDF salasanoilla"
       username_list: "Käyttäjätunnuslista"
       analyze: "Analysoi"
@@ -1048,6 +1043,13 @@ fi:
         title_selection: "Täytä valitut solut"
         help_column: "Täytä koko sarake tällä arvolla"
         help_selection: "Täytä valitut solut tällä arvolla"
+
+      export:
+        target: "Mitä viedään?"
+        all_rows: "Kaikki rivit"
+        selected_rows: "Vain valitut rivit"
+        unselected_rows: "Vain ei-valitut rivit"
+        pdf_warning: "PDF:t sisältävät vain olemassaolevat käyttäjät."
 
       username_list:
         selection_only: "Vain valitut rivit"

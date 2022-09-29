@@ -157,15 +157,15 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 
 <template id="template_exportPopup">
     <div class="popupContainer">
-        <fieldset class="margin-0 padding-5px"><legend><%= t('new_import.export_target') %></legend>
+        <fieldset class="margin-0 padding-5px"><legend><%= t('new_import.tools.export.target') %></legend>
             <div class="flex-rows">
-                <span><input type="radio" name="type" id="all" checked><label for="all"><%= t('new_import.buttons.export_all_rows') %></label></span>
-                <span><input type="radio" name="type" id="selected"><label for="selected"><%= t('new_import.buttons.export_selected_rows') %></label></span>
-                <span><input type="radio" name="type" id="unselected"><label for="unselected"><%= t('new_import.buttons.export_unselected_rows') %></label></span>
+                <span><input type="radio" name="type" id="all" checked><label for="all"><%= t('new_import.tools.export.all_rows') %></label></span>
+                <span><input type="radio" name="type" id="selected"><label for="selected"><%= t('new_import.tools.export.selected_rows') %></label></span>
+                <span><input type="radio" name="type" id="unselected"><label for="unselected"><%= t('new_import.tools.export.unselected_rows') %></label></span>
             </div>
         </fieldset>
 
-        <p class="margin-0 margin-top-10px"><%= t('new_import.export_pdf_warning') %></p>
+        <p class="margin-0 margin-top-10px"><%= t('new_import.tools.export.pdf_warning') %></p>
 
         <button id="exportCSV">CSV</button>
         <button id="exportPDF">PDF</button>
