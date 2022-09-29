@@ -430,7 +430,7 @@ const findColumn = (id) => {
 
 // Begins an async fetch() GET request for getting a list of current users and returns the
 // promise. You must add the relevant then() parts to the chain and also handle errors.
-function beginFetch(url)
+function beginGET(url)
 {
     return fetch(url, {
         method: "GET",
@@ -1361,7 +1361,7 @@ function onSelectDuplicates(mode)
 
     enableUI(false);
 
-    beginFetch("duplicate_detection").then(data => {
+    beginGET("duplicate_detection").then(data => {
         // Make a list of current users
         const existing = parseServerJSON(data);
 
@@ -1456,7 +1456,7 @@ function onAnalyzeDuplicates()
 {
     enableUI(false);
 
-    beginFetch("duplicate_detection").then(data => {
+    beginGET("duplicate_detection").then(data => {
         const existing = parseServerJSON(data);
 
         if (existing === null) {
@@ -1791,7 +1791,7 @@ function onReloadGroups(e)
 
     const previous = popup.contents.querySelector("select#abbr").value;
 
-    beginFetch("reload_groups").then(data => {
+    beginGET("reload_groups").then(data => {
         const newGroups = parseServerJSON(data);
 
         if (newGroups === null) {
@@ -3156,7 +3156,7 @@ function beginImport(mode)
     }
 
     // Get a list of current users and their puavoIDs in the target organisation
-    beginFetch("get_current_users").then(data => {
+    beginGET("get_current_users").then(data => {
         const existingUsers = parseServerJSON(data);
 
         if (existingUsers === null) {
