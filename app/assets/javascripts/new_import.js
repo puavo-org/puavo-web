@@ -3828,7 +3828,6 @@ function initializeImporter(params)
         loadSettings();
         switchImportTab();
         onChangeSource();
-        updateParsingSummary();
 
         // Setup event handling and restore parser settings
         container.querySelector("nav button#page1").addEventListener("click", () => { onChangeImportTab(0); });
@@ -3931,6 +3930,7 @@ function initializeImporter(params)
         // Reposition the popup when the page is scrolled
         document.addEventListener("scroll", ensurePopupIsVisible);
 
+        updateParsingSummary();
         updatePreview();
     } catch (e) {
         console.error(e);
