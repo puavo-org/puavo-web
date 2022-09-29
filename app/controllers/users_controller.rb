@@ -378,11 +378,20 @@ class UsersController < ApplicationController
         end
       end
 
-      creator = nil
-      creator = params[:user][:creator] if params[:user].include?(:creator)
+      if params[:user].include?(:creator)
+        creator = params[:user][:creator]
+      else
+        creator = nil
+      end
+
+      if params[:user].include?(:description)
+        description = params[:user][:description]
+      else
+        description = nil
+      end
 
       # Okay, they exist. Create the list.
-      new_list = List.new(user_ids, creator)
+      new_list = List.new(user_ids, creator, description)
       new_list.save
 
       ok = true
