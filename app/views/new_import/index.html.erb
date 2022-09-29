@@ -173,6 +173,15 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
     </div>
 </template>
 
+<template id="template_usernameListPopup">
+    <div class="popupContainer">
+        <span><input type="checkbox" id="onlySelection" checked><label for="onlySelection"><%= t('new_import.tools.username_list.selection_only') %></label></span>
+        <label for="unlDescription"><%= t('new_import.tools.username_list.list_title') %>:</label>
+        <input type="text" maxlength="100" id="unlDescription">
+        <button id="doIt" class="margin-top-10px"><%= t('new_import.tools.username_list.create_list') %></button>
+    </div>
+</template>
+
 <div class="flex-rows gap-10px margin-top-10px ">
     <!-- Control buttons -->
     <div id="controls">
@@ -191,6 +200,10 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 
             <button id="export" class="btn popupToggle" data-template="exportPopup">
                 <%= t('new_import.buttons.export') %>... ▼
+            </button>
+
+            <button id="unl" class="btn popupToggle" data-template="usernameListPopup">
+                <%= t('new_import.buttons.username_list') %>... ▼
             </button>
 
             <button id="deleteSelectedRows" class="btn btn-danger"><%= t('new_import.buttons.delete_selected_rows') %></button>
@@ -465,6 +478,7 @@ initializeImporter({
     organisationName: "<%= LdapOrganisation.current.cn %>",
     schoolId: <%= @school.id.to_i %>,
     schoolName: "<%= @school.cn %>",
+    currentUserName: "<%= current_user.givenName %> <%= current_user.sn %> (<%= current_user.uid %>)",
     <% if @automatic_email_addresses %>
     automaticEmails: true,
     <% else %>

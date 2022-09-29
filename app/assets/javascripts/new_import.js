@@ -161,6 +161,9 @@ const importData = {
     currentSchoolName: null,
     currentSchoolID: -1,
 
+    // Name of the current user (currently used only when creating username lists)
+    currentUserName: null,
+
     // Current groups in the target school. Can be specified in the importer initializer, and
     // optionally updated dynamically without reloading the page.
     currentGroups: [],
@@ -3569,6 +3572,69 @@ function exportData(format, selectionType, includePDFPasswords=false)
     }
 }
 
+function onCreateUsernameList(onlySelected, description)
+{
+    const uidCol = findColumn("uid");
+
+    if (uidCol === -1) {
+        window.alert(_tr("errors.required_column_missing", { title: localizedColumnTitles["uid"] }));
+        return;
+    }
+
+    let usernames = [];
+
+    if (onlySelected) {
+        for (const row of importData.rows)
+            if (row.rowFlags & RowFlag.SELECTED)
+                usernames.push(row.cellValues[uidCol]);
+    } else {
+        for (const row of importData.rows)
+            usernames.push(row.cellValues[uidCol]);
+    }
+
+    if (usernames.length == 0) {
+        window.alert(_tr("alerts.no_matching_rows"));
+        return;
+    }
+
+    const postData = {
+        creator: importData.currentUserName,
+        description: description,
+        usernames: usernames,
+    };
+
+    enableUI(false);
+
+    beginPOST("make_username_list", postData).then(data => {
+        const response = parseServerJSON(data);
+
+        if (response === null) {
+            window.alert(_tr("alerts.cant_parse_server_response"));
+            return;
+        }
+
+        console.log(response);
+
+        switch (response.status) {
+            case "ok":
+                window.alert(_tr("alerts.list_created"));
+                break;
+
+            case "missing_users":
+                window.alert(_tr("alerts.list_missing_users") + "\n\n" + response.error.join("\n"));
+                break;
+
+            default:
+                window.alert(_tr("alerts.list_failed") + "\n\n" + response.error);
+                break;
+        }
+    }).catch(error => {
+        window.alert(error);
+    }).finally(() => {
+        enableUI(true);
+    });
+}
+
 function switchImportTab()
 {
     toggleClass(container.querySelector("nav button#page1"), "selected", SETTINGS.mainTab == 0);
@@ -3647,6 +3713,15 @@ function togglePopupButton(e)
         case "analyze":
             contents.querySelector("button#analyzeDuplicates").
                 addEventListener("click", () => onAnalyzeDuplicates());
+            break;
+
+        case "unl":
+            contents.querySelector("button#doIt").addEventListener("click", () => {
+                onCreateUsernameList(
+                    popup.contents.querySelector("input#onlySelection").checked,
+                    popup.contents.querySelector("input#unlDescription").value.trim()
+                );
+            });
             break;
 
         case "export":
@@ -3744,6 +3819,7 @@ function initializeImporter(params)
         importData.currentOrganisationName = params.organisationName;
         importData.currentSchoolID = params.schoolId;
         importData.currentSchoolName = params.schoolName;
+        importData.currentUserName = params.currentUserName;
 
         if ("groups" in params)
             setGroups(params.groups);

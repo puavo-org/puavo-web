@@ -998,6 +998,7 @@ en:
       export_selected_rows: "Only selected rows"
       export_unselected_rows: "Only unselected rows"
       export_pdf_with_passwords: "PDF with passwords"
+      username_list: "Username list"
       analyze: "Analyse"
       compare_attributes: "Compare non-username attributes to server data"
 
@@ -1045,6 +1046,11 @@ en:
         title_selection: "Fill Selected Cells"
         help_column: "Fill the whole column with this value"
         help_selection: "Fill the selected cells with this value"
+
+      username_list:
+        selection_only: "Selected rows only"
+        list_title: "List name or short description (optional)"
+        create_list: "Create list"
 
     problems:
       errors_title: "These problems have to be fixed before the import process can begin:"

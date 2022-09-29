@@ -71,6 +71,9 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
         no_failed_rows: "There are no failed rows",
         no_duplicate_uids: "There are no duplicate usernames.",
         passwords_out_of_sync: "The table contains passwords that have not been imported yet. Thus the generated PDF won't contain passwords that are actually in use. You should import the data first.\n\nAre you sure you want to continue?",
+        list_created: "List created",
+        list_missing_users: "List not created. The following users do not exist on the server:",
+        list_failed: "List not created. Unknown error:",
     },
 
     errors: {

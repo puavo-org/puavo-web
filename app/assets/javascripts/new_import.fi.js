@@ -72,6 +72,9 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
         no_selected_rows: "Valittuja rivejä ei ole",
         no_duplicate_uids: "Duplikaatteja käyttäjätunnuksia ei ole.",
         passwords_out_of_sync: "Taulukossa on salasanoja joita ei ole vielä tuotu. Luotava PDF ei näin ollen sisällä oikeasti käytössä olevia salasanoja. Sinun pitäisi tuoda taulukon tiedot ensin.\n\nHaluatko varmasti jatkaa?",
+        list_created: "Lista luotu",
+        list_missing_users: "Listaa ei luotu. Seuraavia käyttäjiä ei löydy palvelimelta:",
+        list_failed: "Listaa ei luotu. Tuntematon virhe:",
     },
 
     errors: {

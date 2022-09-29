@@ -997,6 +997,7 @@ fi:
       export_selected_rows: "Vain valitut rivit"
       export_unselected_rows: "Vain ei-valitut rivit"
       export_pdf_with_passwords: "PDF salasanoilla"
+      username_list: "Käyttäjätunnuslista"
       analyze: "Analysoi"
       compare_attributes: "Vertaa ei-käyttäjänimi -attribuutteja palvelimen dataan"
 
@@ -1047,6 +1048,11 @@ fi:
         title_selection: "Täytä valitut solut"
         help_column: "Täytä koko sarake tällä arvolla"
         help_selection: "Täytä valitut solut tällä arvolla"
+
+      username_list:
+        selection_only: "Vain valitut rivit"
+        list_title: "Listan nimi tai lyhyt kuvaus (valinnainen)"
+        create_list: "Luo lista"
 
     problems:
       errors_title: "Nämä virheet tiedoissa on korjatttava ennenkuin tuontiprosessi voidaan aloittaa:"

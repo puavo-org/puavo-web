@@ -65,6 +65,51 @@ class NewImportController < ApplicationController
     render json: { users: users, schools: schools }
   end
 
+  def make_username_list
+    response = {
+      status: 'ok',
+      error: nil,
+    }
+
+    begin
+      data = JSON.parse(request.body.read)
+
+      missing = []
+      valid = []
+
+      # Convert usernames into puavoIds. We could extract them from the DNs (that all
+      # raw searches always return), but it seems that we have to give some attributes
+      # to search for.
+      data['usernames'].each do |uid|
+        user = User.search_as_utf8(
+          filter: "(&(objectClass=puavoEduPerson)(uid=#{Net::LDAP::Filter.escape(uid)}))",
+          attributes: ['puavoId']
+        )
+
+        if user.nil? || user.empty?
+          missing << uid
+        else
+          valid << user[0][1]['puavoId'][0].to_i
+        end
+      end
+
+      unless missing.empty?
+        response[:status] = 'missing_users'
+        response[:error] = missing
+      else
+        ll = List.new(valid)
+        ll.creator = data['creator']
+        ll.description = data['description']
+        ll.save
+      end
+    rescue StandardError => e
+      response[:status] = 'failed'
+      response[:error] = e.to_s
+    end
+
+    render json: response
+  end
+
   # Import or update one or more users
   def import
     response = {
