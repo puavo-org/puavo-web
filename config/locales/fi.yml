@@ -716,7 +716,7 @@ fi:
   schools:
     integrations:
       in: "Järjestelmä lähettää dataa Puavoon"
-      out: "Puavosta lähetetään dataa tähän järjestlmään"
+      out: "Puavosta lähetetään dataa tähän järjestelmään"
       inout: "Lähettää dataa Puavoon, vastaanottaa dataa Puavosta"
       password: "Salasanat synkronoidaan Puavosta tähän järjestelmään"
       login: "Kirjautuminen tähän järjestelmään Puavon tunnuksilla"
