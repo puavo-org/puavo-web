@@ -448,6 +448,31 @@ function beginGET(url)
     });
 }
 
+// Like above, but for POST requests. Used like beginGET(), but you can supply optional
+// request body (will be encoded in JSON).
+function beginPOST(url, body=null)
+{
+    return fetch(url, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+            // Use text/plain to avoid RoR from logging the parameters in plain text.
+            // They can contain passwords and other sensitive stuff.
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content,
+        },
+        body: (body !== null) ? JSON.stringify(body) : "",
+    }).then(response => {
+        if (!response.ok)
+            throw response;
+
+        // By parsing the JSON in the "next" stage, we can handle errors better
+        return response.text();
+    });
+}
+
+// All beginGET() and beginPOST() fetches return plain text. This utility function can
+// be used to parse that into JSON. Handles errors, returns NULL if something fails.
 function parseServerJSON(text)
 {
     try {
