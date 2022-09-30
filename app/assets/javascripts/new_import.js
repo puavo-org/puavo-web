@@ -1390,7 +1390,7 @@ function onSelectDuplicates(mode)
 
     enableUI(false);
 
-    beginGET("duplicate_detection").then(data => {
+    beginGET("new_import/duplicate_detection").then(data => {
         // Make a list of current users
         const existing = parseServerJSON(data);
 
@@ -1485,7 +1485,7 @@ function onAnalyzeDuplicates()
 {
     enableUI(false);
 
-    beginGET("duplicate_detection").then(data => {
+    beginGET("new_import/duplicate_detection").then(data => {
         const existing = parseServerJSON(data);
 
         if (existing === null) {
@@ -1820,7 +1820,7 @@ function onReloadGroups(e)
 
     const previous = popup.contents.querySelector("select#abbr").value;
 
-    beginGET("reload_groups").then(data => {
+    beginGET("new_import/reload_groups").then(data => {
         const newGroups = parseServerJSON(data);
 
         if (newGroups === null) {
@@ -3185,7 +3185,7 @@ function beginImport(mode)
     }
 
     // Get a list of current users and their puavoIDs in the target organisation
-    beginGET("get_current_users").then(data => {
+    beginGET("new_import/get_current_users").then(data => {
         const existingUsers = parseServerJSON(data);
 
         if (existingUsers === null) {
@@ -3395,7 +3395,7 @@ function exportPDF(selectionState=null, includePasswords)
 
     enableUI(false);
 
-    fetch("generate_pdf", {
+    fetch("new_import/generate_pdf", {
         method: "POST",
         mode: "cors",
         headers: {
@@ -3606,7 +3606,7 @@ function onCreateUsernameList(onlySelected, description)
 
     enableUI(false);
 
-    beginPOST("make_username_list", postData).then(data => {
+    beginPOST("new_import/make_username_list", postData).then(data => {
         const response = parseServerJSON(data);
 
         if (response === null) {

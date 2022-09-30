@@ -116,11 +116,11 @@ Rails.application.routes.draw do
       post 'mass_op_user_change_school' => 'users#mass_op_user_change_school'
 
       get 'new_import' => 'new_import#index'
-      get 'reload_groups' => 'new_import#reload_groups'
-      get 'get_current_users' => 'new_import#get_current_users'
-      get 'duplicate_detection' => 'new_import#duplicate_detection'
-      post 'make_username_list' => 'new_import#make_username_list'
-      post 'generate_pdf' => 'new_import#generate_pdf'
+      get 'new_import/reload_groups' => 'new_import#reload_groups'
+      get 'new_import/get_current_users' => 'new_import#get_current_users'
+      get 'new_import/duplicate_detection' => 'new_import#duplicate_detection'
+      post 'new_import/make_username_list' => 'new_import#make_username_list'
+      post 'new_import/generate_pdf' => 'new_import#generate_pdf'
       post 'new_import/import' => 'new_import#import'
     end
 
