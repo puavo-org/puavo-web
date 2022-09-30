@@ -1291,7 +1291,7 @@ function detectProblems(selectRows=false)
 
             if (seen.has(value)) {
                 numDuplicate++;
-                flag = true;
+                return false;
             }
 
             if (existsInServer(value, "phone", rowNum, uidCol)) {
