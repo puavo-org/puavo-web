@@ -48,6 +48,7 @@ const INFERRED_NAMES = {
     "externalid": "eid",
     "password": "password",
     "passwort": "password",
+    "pwd": "password",
 };
 
 // How many header columns each row has on the left edge. The status column is part of these.
