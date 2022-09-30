@@ -74,6 +74,9 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
         list_created: "List created",
         list_missing_users: "List not created. The following users do not exist on the server:",
         list_failed: "List not created. Unknown error:",
+        list_not_found: "The list could not be found on the server. Maybe it has been downloaded or deleted? Try reloading the page.",
+        list_missing_users: "The list contains %{count} users who could not be found. They might have been deleted, or they could be in a school you do not have access to.",
+        list_loading_failed: "List loading failed:",
     },
 
     errors: {

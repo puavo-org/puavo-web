@@ -11,6 +11,13 @@ class NewImportController < ApplicationController
     @automatic_email_addresses, _ = get_automatic_email_addresses
     @initial_groups = get_school_groups(School.find(@school.id).dn.to_s)
 
+    @lists = List
+      .all
+      .reject { |l| l.downloaded }
+      .select { |l| l.school_id == @school.id.to_i }
+      .sort { |a, b| a.created_at <=> b.created_at }
+      .reverse
+
     respond_to do |format|
       format.html
     end
@@ -102,6 +109,54 @@ class NewImportController < ApplicationController
         ll.description = data['description']
         ll.save
       end
+    rescue StandardError => e
+      response[:status] = 'failed'
+      response[:error] = e.to_s
+    end
+
+    render json: response
+  end
+
+  def load_username_list
+    response = {
+      status: 'ok',
+      error: nil,
+      usernames: [],
+    }
+
+    begin
+      ll = List.by_id(params['uuid'])
+      raise 'already downloaded' if ll.downloaded
+    rescue StandardError => e
+      response[:status] = 'list_not_found'
+      response[:error] = e.to_s
+      return render json: response
+    end
+
+    begin
+      # Convert puavoIds back into usernames
+      missing = []
+      valid = []
+
+      ll.users.each do |id|
+        user = User.search_as_utf8(
+          filter: "(&(objectClass=puavoEduPerson)(puavoId=#{Net::LDAP::Filter.escape(id.to_s)}))",
+          attributes: ['uid']
+        )
+
+        if user.nil? || user.empty?
+          missing << id.to_i
+        else
+          valid << user[0][1]['uid'][0]
+        end
+      end
+
+      unless missing.empty?
+        response[:status] = 'missing_users'
+        response[:error] = missing
+      end
+
+      response[:usernames] = valid
     rescue StandardError => e
       response[:status] = 'failed'
       response[:error] = e.to_s

@@ -119,6 +119,7 @@ Rails.application.routes.draw do
       get 'new_import/reload_groups' => 'new_import#reload_groups'
       get 'new_import/get_current_users' => 'new_import#get_current_users'
       get 'new_import/duplicate_detection' => 'new_import#duplicate_detection'
+      get 'new_import/load_username_list' => 'new_import#load_username_list'
       post 'new_import/make_username_list' => 'new_import#make_username_list'
       post 'new_import/generate_pdf' => 'new_import#generate_pdf'
       post 'new_import/import' => 'new_import#import'

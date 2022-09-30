@@ -31,6 +31,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
     <select id="source" class="padding-5px">
         <option value="manual"><%= t('new_import.manual_title') %></option>
         <option value="upload"><%= t('new_import.upload_title') %></option>
+        <option value="unl"><%= t('new_import.unl_title') %></option>
     </select>
 
     <div class="sourceContents">
@@ -42,6 +43,40 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
         <div id="upload" class="hidden">
             <p class="margin-0"><strong><%= t('new_import.upload_help') %></strong></p>
             <input type="file" id="fileUpload" class="margin-top-5px">
+        </div>
+
+        <div id="unl" class="hidden">
+            <% if @lists.empty? %>
+            <p class="margin-0"><strong><%= t('new_import.unl_no_lists') %></strong></p>
+            <% else %>
+            <p class="margin-0 line-height-125p"><%= t('new_import.unl_help').html_safe %></p>
+
+            <%
+            created_by = t('new_import.unl_created_by')
+            created_at = t('new_import.unl_created_at')
+            members = t('new_import.unl_members')
+            description = t('new_import.unl_description')
+            %>
+
+            <select class="margin-top-5px">
+                <% @lists.each do |l| %>
+                <%
+                parts = [
+                    "#{created_by}: #{l.creator}",
+                    "#{created_at}: #{Time.at(l.created_at).strftime('%Y-%m-%d %H:%M:%S')}",
+                    "#{members}: #{l.users.count}"
+                ]
+
+                unless l.description.nil? || l.description.empty?
+                    parts << "#{description}: \"#{l.description}\""
+                end
+                %>
+                <option value="<%= l.uuid %>"><%= parts.join('; ') %></option>
+                <% end %>
+            </select>
+            <br><button id="loadUNL" class="margin-top-5px"><%=t('new_import.unl_load') %></button>
+            <br><textarea rows="15" cols="50" class="padding-5px"></textarea>
+            <% end %>
         </div>
     </div>
 

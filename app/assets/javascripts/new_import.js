@@ -724,7 +724,29 @@ CSV_PARSER_WORKER.onmessage = e => {
 // Builds a "mini" import table for previewing the first N rows of data
 function updatePreview()
 {
-    const source = (SETTINGS.parser.sourceTab == 1) ? parser.fileContents : container.querySelector("textarea").value;
+    let source = "";
+
+    // Data source
+    switch (SETTINGS.parser.sourceTab) {
+        case 0:
+        default:
+            // Manual entry
+            source = container.querySelector("div#manual textarea").value;
+            break;
+
+        case 1:
+            // File upload
+            source = parser.fileContents;
+            break;
+
+        case 2:
+            // Username list (a different textarea)
+            source = container.querySelector("div#unl textarea")?.value;
+            break;
+    }
+
+    if (source === undefined || source === null)
+        source = "";
 
     // Launch a worker thread that parses the file
     let settings = {
@@ -768,8 +790,11 @@ function readAllData()
     let source = null;
 
     // Get source data
-    if (SETTINGS.parser.sourceTab == 1) {
-        // file upload
+    if (SETTINGS.parser.sourceTab == 0) {
+        // Manual entry
+        source = container.querySelector("div#manual textarea").value;
+    } else if (SETTINGS.parser.sourceTab == 1) {
+        // File upload
         if (parser.fileContents === null) {
             window.alert(_tr("alerts.no_file"));
             return;
@@ -777,9 +802,12 @@ function readAllData()
 
         source = parser.fileContents;
     } else {
-        // manual entry
-        source = container.querySelector("textarea").value;
+        // Username list (not always available)
+        source = container.querySelector("div#unl textarea")?.value;
     }
+
+    if (source === undefined || source === null)
+        source = "";
 
     // UI reset in case the previous import was stopped half-way
     resetSelection();
@@ -2923,6 +2951,9 @@ function enableUI(state)
     for (let i of container.querySelectorAll("input, select, textarea"))
         i.disabled = !state;
 
+    for (let i of container.querySelectorAll("section#page1 button"))
+        i.disabled = !state;
+
     // Disable the table
     for (let i of container.querySelectorAll("div#output table select, div#output table button"))
         i.disabled = !state;
@@ -3636,6 +3667,56 @@ function onCreateUsernameList(onlySelected, description)
     });
 }
 
+function onLoadUsernameList()
+{
+    const uuid = container.querySelector("div#unl select").value,
+          url = `new_import/load_username_list?uuid=${encodeURIComponent(uuid)}`
+
+    enableUI(false);
+
+    beginGET(url).then(data => {
+        const response = parseServerJSON(data);
+
+        if (response === null) {
+            window.alert(_tr("alerts.cant_parse_server_response"));
+            return;
+        }
+
+        switch (response.status) {
+            case "ok":
+                break;
+
+            case "list_not_found":
+                window.alert(_tr("alerts.list_not_found"));
+                return;
+
+            case "missing_users":
+                window.alert(_tr("alerts.list_missing_users", { count: response.error.length }));
+                break;
+
+            default:
+                window.alert(_tr("alerts.list_loading_failed") + "\n\n" + response.error);
+                return;
+        }
+
+        let usernames = "";
+
+        // Specify the column type if type inferring is enabled
+        if (SETTINGS.parser.infer)
+            usernames += "uid\n";
+
+        usernames += response.usernames.join("\n");
+        container.querySelector("div#unl textarea").value = usernames;
+
+        updatePreview();
+    }).catch(error => {
+        console.log(error);
+        window.alert("Failed. See the console for details.");
+    }).finally(() => {
+        enableUI(true);
+    });
+}
+
 function switchImportTab()
 {
     toggleClass(container.querySelector("nav button#page1"), "selected", SETTINGS.mainTab == 0);
@@ -3655,14 +3736,18 @@ function onChangeImportTab(newTab)
 
 function onChangeSource()
 {
-    const oldSource = SETTINGS.parser.sourceTab;
+    const oldSource = SETTINGS.parser.sourceTab,
+          newSource = container.querySelector("select#source").value;
 
-    if (container.querySelector("select#source").value == "manual")
+    if (newSource == "manual")
         SETTINGS.parser.sourceTab = 0;
-    else SETTINGS.parser.sourceTab = 1;
+    else if (newSource == "upload")
+        SETTINGS.parser.sourceTab = 1;
+    else SETTINGS.parser.sourceTab = 2;
 
-    toggleClass(container.querySelector("div#manual"), "hidden", SETTINGS.parser.sourceTab == 1);
-    toggleClass(container.querySelector("div#upload"), "hidden", SETTINGS.parser.sourceTab == 0);
+    toggleClass(container.querySelector("div#manual"), "hidden", SETTINGS.parser.sourceTab != 0);
+    toggleClass(container.querySelector("div#upload"), "hidden", SETTINGS.parser.sourceTab != 1);
+    toggleClass(container.querySelector("div#unl"), "hidden", SETTINGS.parser.sourceTab != 2);
 
     if (SETTINGS.parser.sourceTab != oldSource)
         updatePreview();
@@ -3835,6 +3920,8 @@ function initializeImporter(params)
         container.querySelector("nav button#page2").addEventListener("click", () => { onChangeImportTab(1); });
         container.querySelector("select#source").addEventListener("change", () => onChangeSource());
 
+        container.querySelector("div#unl button#loadUNL")?.addEventListener("click", onLoadUsernameList);
+
         const settings = container.querySelector("details#settings");
 
         settings.querySelector("input#inferTypes").addEventListener("click", e => { SETTINGS.parser.infer = e.target.checked; });
@@ -3868,6 +3955,7 @@ function initializeImporter(params)
         });
 
         container.querySelector("div#manual textarea").addEventListener("input", updatePreview);
+        container.querySelector("div#unl textarea")?.addEventListener("input", updatePreview);
 
         settings.querySelector("input#inferTypes").checked = SETTINGS.parser.infer;
         settings.querySelector("input#trimValues").checked = SETTINGS.parser.trim;
