@@ -904,6 +904,8 @@ en:
   new_import:
     title: "User Mass Import and Update"
 
+    cant_create_users: "You can't create new users, so the update method (see below) has been locked to updating existing users only."
+
     # The source tab
     source_tab: "1. Select data source"
     source_help: "You can select a manual input, file upload, or a previously-created username list as the data source. Notice the reading settings below; the system can read most CSV variants. Below those is the preview table, which displays the first five rows of the incoming data. The preview is automatically rebuilt every time the manual input or read settings are changed. You can use it to verify that the data is being read correctly. When the rows look okay, click the \"Read all data and proceed to the import phase\" button below the table to proceed to the actual import phase. You can return to this screen at any time, if you need to change the source or the reading settings."

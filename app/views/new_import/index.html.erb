@@ -13,6 +13,10 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 
 <h1><%= t('new_import.title') %></h1>
 
+<% unless @can_create_users %>
+<p class="genericWarning"><%= t('new_import.cant_create_users') %></p>
+<% end %>
+
 <!-- The main container. Everything in the importer MUST be inside this DIV! -->
 <div id="import">
 
@@ -254,8 +258,13 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
             <div class="margin-left-10px">
                 <label for="mode"><%= t('new_import.mode.label') %>:</label>
                 <select id="mode">
+                    <% if @can_create_users %>
                     <option value="0"><%= t('new_import.mode.create_new_update_existing') %></option>
                     <option value="1"><%= t('new_import.mode.create_new_skip_existing') %></option>
+                    <% else %>
+                    <option value="0" disabled><%= t('new_import.mode.create_new_update_existing') %></option>
+                    <option value="1" disabled><%= t('new_import.mode.create_new_skip_existing') %></option>
+                    <% end %>
                     <option value="2"><%= t('new_import.mode.skip_new_update_existing') %></option>
                 </select>
             </div>
@@ -518,6 +527,11 @@ initializeImporter({
     automaticEmails: true,
     <% else %>
     automaticEmails: false,
+    <% end %>
+    <% if @can_create_users %>
+    permitUserCreation: true,
+    <% else %>
+    permitUserCreation: false,
     <% end %>
     commonPasswords: COMMON_PASSWORDS,
 });

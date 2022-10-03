@@ -18,6 +18,12 @@ class NewImportController < ApplicationController
       .sort { |a, b| a.created_at <=> b.created_at }
       .reverse
 
+    @can_create_users = true
+
+    unless is_owner?
+      @can_create_users = can_schooladmin_do_this?(current_user.uid, :create_users)
+    end
+
     respond_to do |format|
       format.html
     end
@@ -198,6 +204,12 @@ class NewImportController < ApplicationController
       column_to_index[col] = index
     end
 
+    can_create_users = true
+
+    unless is_owner?
+      can_create_users = can_schooladmin_do_this?(current_user.uid, :create_users)
+    end
+
     data['rows'].each do |row|
       row_num = row[0]    # the original table row number
       puavo_id = row[1]
@@ -216,6 +228,20 @@ class NewImportController < ApplicationController
 
       if puavo_id == -1
         # Create a new user
+        unless can_create_users
+          # TODO: This probably needs a better message. But getting this far in limited-user
+          # mode requires using the browser's developer tools to override the limitation.
+          # At that point, the user is intentionally breaking the thing.
+          response[:rows] << {
+            row: row_num,
+            state: 'failed',
+            error: 'Haha. No.',
+            failed: [],
+          }
+
+          next
+        end
+
         state, error, failed = create_new_user(attributes, response, column_to_index)
 
         response[:rows] << {
@@ -255,7 +281,8 @@ class NewImportController < ApplicationController
           attributes: ['uid', 'givenName', 'sn']
         )
 
-        next if u.nil? || u.empty?  # the report can theoretically contain users who don't exist yet
+        # the report can theoretically contain users who don't exist yet
+        next if u.nil? || u.empty?
 
         users << {
           dn: u[0][0],

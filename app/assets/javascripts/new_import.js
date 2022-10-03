@@ -3906,6 +3906,7 @@ function initializeImporter(params)
         importData.currentSchoolID = params.schoolId;
         importData.currentSchoolName = params.schoolName;
         importData.currentUserName = params.currentUserName;
+        importData.permitUserCreation = params.permitUserCreation;
 
         if ("groups" in params)
             setGroups(params.groups);
@@ -3963,6 +3964,13 @@ function initializeImporter(params)
         settings.querySelector("input#semicolon").checked = (SETTINGS.parser.separator == 1);
         settings.querySelector("input#tab").checked = (SETTINGS.parser.separator == 2);
 
+        if (!importData.permitUserCreation) {
+            console.log("The current user cannot create new users, resetting the mode to update existing only");
+            SETTINGS.import.mode = 2;
+        }
+
+        container.querySelector("select#mode").value = SETTINGS.import.mode;
+
         container.querySelector(`select#mode`).addEventListener("change", e => {
             SETTINGS.import.mode = parseInt(e.target.value, 10);
             process.previousImportStopped = false;   // otherwise this would get too complicated
@@ -3989,8 +3997,6 @@ function initializeImporter(params)
             addEventListener("click", () => beginImport(ImportRows.FAILED));
 
         container.querySelector("button#stopImport").addEventListener("click", stopImport);
-
-        container.querySelector("select#mode").value = SETTINGS.import.mode;
 
 /*
         container.querySelector("input#checkOnlySelectedRows").addEventListener("click", (e) => {

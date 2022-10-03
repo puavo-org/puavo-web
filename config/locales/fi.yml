@@ -904,6 +904,8 @@ fi:
   new_import:
     title: "Käyttäjien massatuonti ja -päivitys"
 
+    cant_create_users: "Et voi luoda uusia käyttäjiä, joten päivitystapa (katso alempaa) on lukittu olemassaolevien käyttäjien päivitykseen."
+
     # The source tab
     source_tab: "1. Valitse tietolähde"
     source_help: "Voit valita tuotavien käyttäjätietojen lähteeksi käsisyötteen, tiedoston, tai aiemmin luodun käyttäjätunnuslistan. Huomaa syötteen alapuolella olevat lukuasetukset; järjestelmä pystyy lukemaan useimpia CSV-variantteja. Niiden alla on esikatselutaulukko joka näyttää ensimmäiset 5 riviä tuotavasta tiedosta. Esikatselu päivittyy automaattisesti aina kun syötettä tai lukuasetuksia muutetaan. Voit varmistaa sen avulla, että tietoja tulkitaan oikein. Kun rivit näyttävät oikealta, paina taulukon alla olevaa isoa \"Lue kaikki tiedot ja siirry tuontivaiheeseen\" -nappia siirtyäksesi varsinaiseen tuontivaiheseen. Voit palata takaisin tähän ruutuun milloin tahansa, jos sinun on muutettava lähdettä tai lukuasetuksia."
