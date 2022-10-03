@@ -3176,6 +3176,14 @@ function beginImport(mode)
         return;
     }
 
+    const uidCol = findColumn("uid");
+
+    // Verify it anyway, even if detectProblems() should handle it
+    if (uidCol === -1) {
+        window.alert(_tr("errors.required_column_missing", { title: localizedColumnTitles["uid"] }));
+        return;
+    }
+
     let startRow = 0;
     let resume = false;
 
@@ -3227,18 +3235,6 @@ function beginImport(mode)
         }
 
         message.innerText = _tr("status.comparing_data");
-
-        // Find the username column
-        const uidCol = findColumn("uid");
-
-        if (uidCol === -1) {
-            // This shouldn't happen, we've validated the data!
-            enableUI(true);
-            console.error("uidCol is NULL, how did we get this far without usenames?");
-            window.alert("Can't find the UID column index. Please contact support.");
-
-            return;
-        }
 
         const existingUIDs = new Map();
 
