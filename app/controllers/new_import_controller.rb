@@ -444,6 +444,21 @@ class NewImportController < ApplicationController
 
   private
 
+  # Returns a puavo-rest proxy that is authenticated using some super-user account. In order for
+  # non-owner users to be able to access the import tool, we need something that can access ALL
+  # users in the organisation, for duplicate checks, etc. and normal admin users cannot do that.
+  def get_superuser_proxy
+    # The default password will work fine for development puavo-standalone, but in production,
+    # you need something else. Put something like this in /etc/puavo-web/puavo_web.yml:
+    # import_tool:
+    #   superuser_name: "uid=admin,o=puavo"
+    #   superuser_password: "the real password here"
+    credentials = Puavo::CONFIG.fetch('import_tool', {})
+
+    rest_proxy(credentials.fetch('superuser_name', 'uid=admin,o=puavo'),
+               credentials.fetch('superuser_password', 'password'))
+  end
+
   def get_school_groups(school_dn)
     Group.search_as_utf8(
       filter: "(&(objectClass=puavoEduGroup)(puavoSchool=#{school_dn}))",
