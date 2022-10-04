@@ -1008,6 +1008,7 @@ en:
       compare_attributes: "Compare non-username attributes to server data"
 
       begin: "Import all rows"
+      begin_selected: "Import selected rows"
       stop: "Stop import"
       begin_failed: "Re-import failed rows"
       delete_selected_rows: "Delete selected rows"
