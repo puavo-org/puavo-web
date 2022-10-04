@@ -2,7 +2,7 @@
 
 /*
 Puavo Mass User Import III
-Version 0.9 beta
+Version 1.0 alpha
 */
 
 // Worker threads for CSV parsing and the actual data import/update process.
@@ -1416,24 +1416,43 @@ function onSelectDuplicates(mode)
         return;
     }
 
+    // Make a list of usernames on the table, then send them to the server for analysis.
+    // Once the server returns the results, update the table and selection states to match.
+    // This way we don't send thousands of usernames back to the client, when we only
+    // need to know if 10 users already exists.
+    let outgoingUsernames = [];
+
+    for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
+        const row = importData.rows[rowNum];
+
+        if (row.cellFlags[uidCol] & CellFlag.INVALID)
+            continue;
+
+        outgoingUsernames.push(row.cellValues[uidCol].trim());
+    }
+
+    const request = {
+        school_id: importData.currentSchoolID,
+        usernames: outgoingUsernames,
+    };
+
     enableUI(false);
 
-    beginGET("new_import/duplicate_detection").then(data => {
+    beginPOST("new_import/find_existing_users", request).then(data => {
         // Make a list of current users
-        const existing = parseServerJSON(data);
+        const states = parseServerJSON(data);
 
-        if (existing === null) {
+        if (states === null) {
             window.alert(_tr("alerts.cant_parse_server_response"));
             return;
         }
 
-        const users = new Map();
+        if (states.status != "ok") {
+            if (states.error)
+                window.alert(_tr("alerts.data_retrieval_failed_known") + "\n\n" + states.error);
+            else window.alert(_tr("alerts.data_retrieval_failed_unknown"));
 
-        for (let u of existing["users"]) {
-            users.set(u["uid"], {
-                school: u["school"],
-                schools: u["schools"]
-            });
+            return;
         }
 
         // Update selections
@@ -1441,50 +1460,48 @@ function onSelectDuplicates(mode)
 
         statistics.selectedRows = 0;
 
+        let haveErrors = false;
+
         for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
-            const row = importData.rows[rowNum];
-            const checkbox = tableRows[rowNum].querySelector("input");
-
-            if (row.cellFlags[uidCol] & CellFlag.INVALID) {
-                checkbox.checked = false;
-                continue;
-            }
-
-            const uid = row.cellValues[uidCol].trim();
+            const uid = outgoingUsernames[rowNum];
+            const s = states.states[rowNum];
 
             let select = false,
                 message = null;
 
-            switch (mode) {
-                case Duplicates.ALL:
+            switch (s[0]) {
+                case -1:
+                    // Something failed on the server when this user was being looked up
+                    haveErrors = true;
+                    break;
+
+                case 0:
                 default:
-                    select = users.has(uid);
+                    // This user does not exist on the server
                     break;
 
-                case Duplicates.THIS_SCHOOL:
-                    select = users.has(uid) && users.get(uid).school == importData.currentSchoolID;
+                case 1:
+                    // This user exists and is in this school
+                    if (mode == Duplicates.ALL || mode == Duplicates.THIS_SCHOOL)
+                        select = true;
+
                     break;
 
-                case Duplicates.OTHER_SCHOOLS:
-                    if (users.has(uid)) {
-                        const u = users.get(uid);
-                        const n = u.schools.indexOf(importData.currentSchoolID);
-
-                        //console.log(u.schools, n);
-
-                        if (n == -1) {
-                            let msg = [];
-
-                            for (const s of u.schools)
-                                msg.push(existing["schools"][s]);
-
-                            message = _tr("messages.already_in_school", { schools: msg.join(", ") });
-                            select = true;
-                        }
+                case 2:
+                    // This user exists, but they're in some other school
+                    if (mode == Duplicates.ALL)
+                        select = true;
+                    else if (mode == Duplicates.OTHER_SCHOOLS) {
+                        select = true;
+                        message = _tr("messages.already_in_school", { schools: s[1].join(", ") });
                     }
 
                     break;
             }
+
+            // Update the table
+            const row = importData.rows[rowNum];
+            const checkbox = tableRows[rowNum].querySelector("input");
 
             row.message = message;
 
@@ -1521,21 +1538,31 @@ function onAnalyzeDuplicates()
             return;
         }
 
+        if (existing.status != "ok") {
+            if (existing.error)
+                window.alert(_tr("alerts.data_retrieval_failed_known") + "\n\n" + existing.error);
+            else window.alert(_tr("alerts.data_retrieval_failed_unknown"));
+
+            return;
+        }
+
         let eid = new Map(),
             email = new Map(),
             phone = new Map();
 
         for (const u of existing["users"]) {
-            const uid = u["uid"];
+            const uid = u["username"];
 
-            if (u["eid"])
-                eid.set(u["eid"], uid);
+            if (u["external_id"])
+                eid.set(u["external_id"], uid);
 
-            for (const e of u["email"])
-                email.set(e, uid);
+            if (u["email"] !== null)
+                for (const e of u["email"])
+                    email.set(e, uid);
 
-            for (const p of u["phone"])
-                phone.set(p, uid);
+            if (u["phone"] !== null)
+                for (const p of u["phone"])
+                    phone.set(p, uid);
         }
 
         importData.serverUsers.eid = eid;
@@ -3153,6 +3180,7 @@ IMPORT_WORKER.onmessage = e => {
 // Start the user import/update process
 function beginImport(mode)
 {
+    // See if we have data to import
     if (importData.rows.length == 0 || importData.headers.length == 0) {
         window.alert(_tr("alerts.no_data_to_import"));
         return;
@@ -3184,10 +3212,10 @@ function beginImport(mode)
         return;
     }
 
-    let startRow = 0;
-    let resume = false;
-
     // A simple resuming mechanism, in case the previous import was stopped
+    let startRow = 0,
+        resume = false;
+
     if (process.previousImportStopped) {
         if (window.confirm(_tr("alerts.resume_previous"))) {
             startRow = process.lastRowProcessed + 1;
@@ -3197,14 +3225,6 @@ function beginImport(mode)
 
     if (!window.confirm(_tr("alerts.are_you_sure")))
         return;
-
-    let status = container.querySelector("div#status"),
-        message = container.querySelector("div#status div#message");
-
-    message.innerText = _tr("status.fetching_current_users");
-
-    resetSelection();
-    enableUI(false);
 
     // Clear previous states (unless we're resuming)
     if (!resume) {
@@ -3223,8 +3243,71 @@ function beginImport(mode)
         }
     }
 
-    // Get a list of current users and their puavoIDs in the target organisation
-    beginGET("new_import/get_current_users").then(data => {
+    resetSelection();
+
+    let status = container.querySelector("div#status"),
+        message = container.querySelector("div#status div#message");
+
+    message.classList.remove("hidden");
+    message.innerText = _tr("status.fetching_current_users");
+
+    /*
+        Given the state (start from the beginning, or resume), and the current mode
+        (all, selected, failed rows only), make a list of *incoming* usernames and
+        their associated table rows. Each entry on the list is a three-element tuple:
+
+        - username
+        - puavoID (initially NULL for all users (undefined would make sense here, but
+          it isn't a valid "unknown" value in JSON))
+        - original table row number
+    */
+    let usernames = [];
+
+    switch (mode) {
+        case ImportRows.ALL:
+        default:
+            for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
+                const row = importData.rows[rowNum];
+
+                if (row.cellFlags[uidCol] & CellFlag.INVALID)
+                    continue;
+
+                usernames.push([row.cellValues[uidCol], null, rowNum]);
+            }
+
+            break;
+
+        case ImportRows.SELECTED:
+            for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
+                const row = importData.rows[rowNum];
+
+                if (row.cellFlags[uidCol] & CellFlag.INVALID)
+                    continue;
+
+                if (row.rowFlags & RowFlag.SELECTED)
+                    usernames.push([row.cellValues[uidCol], null, rowNum]);
+            }
+
+            break;
+
+        case ImportRows.FAILED:
+            for (let rowNum = 0; rowNum < process.failedRows.length; rowNum++) {
+                const fr = process.failedRows[rowNum];      // row numbers
+
+                usernames.push([importData.rows[fr].cellValues[uidCol], null, fr]);
+            }
+
+            break;
+    }
+
+    // Then send the list to the server. It will compare the usernames against
+    // the list of existing users, and fill in the puavoIDs of existing users.
+    // The server always returns puavoIDs or -1 for the users, it will not leave
+    // them to "null". If it cannot determine the ID of some user, the import
+    // process is halted to prevent failures.
+    enableUI(false);
+
+    beginPOST("new_import/get_current_users", usernames).then(data => {
         const existingUsers = parseServerJSON(data);
 
         if (existingUsers === null) {
@@ -3234,82 +3317,59 @@ function beginImport(mode)
             return;
         }
 
-        message.innerText = _tr("status.comparing_data");
+        if (existingUsers.status != "ok") {
+            if (existingUsers.error)
+                window.alert(_tr("alerts.data_retrieval_failed_known") + "\n\n" + existingUsers.error);
+            else window.alert(_tr("alerts.data_retrieval_failed_unknown"));
 
-        const existingUIDs = new Map();
+            enableUI(true);
 
-        for (const e of existingUsers)
-            existingUIDs.set(e.uid, e.id);
+            return;
+        }
 
+        // Now use the puavoIDs to split the usernames into two arrays: one for existing
+        // users (that will be updated) and one for new users (that will be created).
+        // Both arrays are processed or ignored, depending on the current update mode.
         let numNew = 0,
             numUpdate = 0;
 
         process.workerRows = [];
 
-        // Process either all rows matching the update mode, or only the rows that
-        // failed during the previous loop
-        let numRows = 0;
+        for (let i = 0; i < existingUsers.usernames.length; i++) {
+            const pid = existingUsers.usernames[i][1];
+            const rowNum = usernames[i][2];
 
-        switch (mode) {
-            case ImportRows.ALL:
-            default:
-                numRows = importData.rows.length;
-                break;
+            if (pid == -1) {
+                // New user
+                if (SETTINGS.import.mode == 2)
+                    continue;
 
-            case ImportRows.SELECTED:
-                numRows = checkboxes.length;
-                break;
-
-            case ImportRows.FAILED:
-                numRows = process.failedRows.length;
-                break;
-        }
-
-        for (let i = 0; i < numRows; i++) {
-            let rowNum = null;
-
-            switch (mode) {
-                case ImportRows.ALL:
-                default:
-                    rowNum = i;
-                    break;
-
-                case ImportRows.SELECTED:
-                    rowNum = parseInt(checkboxes[i].parentNode.parentNode.dataset.row, 10);
-                    break;
-
-                case ImportRows.FAILED:
-                    rowNum = process.failedRows[i];
-                    break;
-            }
-
-            const uid = importData.rows[rowNum].cellValues[uidCol];
-
-            // Split the table data into two arrays: one for new users,
-            // and one for users to be updated
-            if (existingUIDs.has(uid)) {
-                if (SETTINGS.import.mode == 0 || SETTINGS.import.mode == 2) {
-                    process.workerRows.push([rowNum, existingUIDs.get(uid)].concat(importData.rows[rowNum].cellValues));
-                    numUpdate++;
-                }
+                numNew++;
             } else {
-                if (SETTINGS.import.mode == 0 || SETTINGS.import.mode == 1) {
-                    process.workerRows.push([rowNum, -1].concat(importData.rows[rowNum].cellValues));
-                    numNew++;
-                }
-            }
-        }
+                // Existing
+                if (SETTINGS.import.mode == 1)
+                    continue;
 
-        process.failedRows = [];
+                numUpdate++;
+            }
+
+            process.workerRows.push([rowNum, pid].concat(importData.rows[rowNum].cellValues));
+        }
 
         console.log(`${numNew} new users, ${numUpdate} updated users`);
 
         if (process.workerRows.length == 0) {
             enableUI(true);
             window.alert(_tr("alerts.no_data_to_import"));
+
             return;
         }
 
+        // This must not be cleared earlier, otherwise mode switch could incorrectly clear
+        // the state
+        process.failedRows = [];
+
+        // Then, finally, begin the update process
         process.alreadyClickedImportOnce = true;
         process.importActive = true;
 
@@ -3640,8 +3700,6 @@ function onCreateUsernameList(onlySelected, description)
             window.alert(_tr("alerts.cant_parse_server_response"));
             return;
         }
-
-        console.log(response);
 
         switch (response.status) {
             case "ok":
