@@ -669,6 +669,8 @@ fi:
   # Printer permissions editing
   printing_permissions_list:
     title: Tulostuksen salliminen
+    available_at_schools: Tulostin saatavilla kouluissa
+    not_available_at_schools: Tulostin ei saatavilla missään koulussa
     by_schools: Kouluittain
     by_wireless: Kouluittain langattoman verkon kautta
     by_groups: Ryhmittäin

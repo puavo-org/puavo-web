@@ -669,6 +669,8 @@ en:
   # Printer permissions editing
   printing_permissions_list:
     title: Printing permissions for
+    available_at_schools: Available at schools
+    not_available_at_schools: Not available at any school
     by_schools: By school
     by_wireless: By schools as wireless
     by_groups: By groups
