@@ -1381,9 +1381,14 @@ class Users < PuavoSinatra
 
     raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 
-    # Handle supplementary Eltern data if the domain matches
-    do_eltern = CONFIG['eltern_users'] &&
-                Array(CONFIG['eltern_users']['domains']).include?(Organisation.current.domain)
+    if params.include?('no_eltern')
+      # Explicitly disable Eltern processing for this request
+      do_eltern = false
+    else
+      # Handle supplementary Eltern data if the domain matches
+      do_eltern = CONFIG['eltern_users'] &&
+                  Array(CONFIG['eltern_users']['domains']).include?(Organisation.current.domain)
+    end
 
     v4_do_operation do
       # which fields to get?
