@@ -49,7 +49,7 @@ class NewImportController < ApplicationController
 
       # Find the puavoID for every user on the list
       users.each do |user|
-        raw_user = JSON.parse(rest.get("/v4/users?fields=id&filter[]=username|is|#{user[0]}").body)
+        raw_user = JSON.parse(rest.get("/v4/users?no_eltern&fields=id&filter[]=username|is|#{user[0]}").body)
 
         if raw_user['status'] != 'ok'
           # Abort the operation here
@@ -95,7 +95,7 @@ class NewImportController < ApplicationController
       rest = get_superuser_proxy
 
       users = JSON.parse(rest.get(
-        '/v4/users?fields=id,username,primary_school_id,school_ids,external_id,email,phone').body)
+        '/v4/users?no_eltern&fields=id,username,primary_school_id,school_ids,external_id,email,phone').body)
       raise if users['status'] != 'ok'
       response[:users] = users['data']
 
@@ -143,7 +143,7 @@ class NewImportController < ApplicationController
 
       data['usernames'].each do |name|
         raw_user = JSON.parse(rest.get(
-          "/v4/users?fields=primary_school_id,school_ids&filter[]=username|is|#{name}").body)
+          "/v4/users?no_eltern&fields=primary_school_id,school_ids&filter[]=username|is|#{name}").body)
 
         if raw_user['status'] != 'ok'
           response[:states] << [-1, nil]
