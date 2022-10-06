@@ -2,7 +2,7 @@
 
 /*
 Puavo Mass User Import III
-Version 0.9 beta
+Version 1.0 alpha
 */
 
 // Worker threads for CSV parsing and the actual data import/update process.
@@ -48,6 +48,7 @@ const INFERRED_NAMES = {
     "externalid": "eid",
     "password": "password",
     "passwort": "password",
+    "pwd": "password",
 };
 
 // How many header columns each row has on the left edge. The status column is part of these.
@@ -160,6 +161,9 @@ const importData = {
     currentOrganisationName: null,
     currentSchoolName: null,
     currentSchoolID: -1,
+
+    // Name of the current user (currently used only when creating username lists)
+    currentUserName: null,
 
     // Current groups in the target school. Can be specified in the importer initializer, and
     // optionally updated dynamically without reloading the page.
@@ -430,7 +434,7 @@ const findColumn = (id) => {
 
 // Begins an async fetch() GET request for getting a list of current users and returns the
 // promise. You must add the relevant then() parts to the chain and also handle errors.
-function beginFetch(url)
+function beginGET(url)
 {
     return fetch(url, {
         method: "GET",
@@ -448,6 +452,31 @@ function beginFetch(url)
     });
 }
 
+// Like above, but for POST requests. Used like beginGET(), but you can supply optional
+// request body (will be encoded in JSON).
+function beginPOST(url, body=null)
+{
+    return fetch(url, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+            // Use text/plain to avoid RoR from logging the parameters in plain text.
+            // They can contain passwords and other sensitive stuff.
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content,
+        },
+        body: (body !== null) ? JSON.stringify(body) : "",
+    }).then(response => {
+        if (!response.ok)
+            throw response;
+
+        // By parsing the JSON in the "next" stage, we can handle errors better
+        return response.text();
+    });
+}
+
+// All beginGET() and beginPOST() fetches return plain text. This utility function can
+// be used to parse that into JSON. Handles errors, returns NULL if something fails.
 function parseServerJSON(text)
 {
     try {
@@ -695,7 +724,29 @@ CSV_PARSER_WORKER.onmessage = e => {
 // Builds a "mini" import table for previewing the first N rows of data
 function updatePreview()
 {
-    const source = (SETTINGS.parser.sourceTab == 1) ? parser.fileContents : container.querySelector("textarea").value;
+    let source = "";
+
+    // Data source
+    switch (SETTINGS.parser.sourceTab) {
+        case 0:
+        default:
+            // Manual entry
+            source = container.querySelector("div#manual textarea").value;
+            break;
+
+        case 1:
+            // File upload
+            source = parser.fileContents;
+            break;
+
+        case 2:
+            // Username list (a different textarea)
+            source = container.querySelector("div#unl textarea")?.value;
+            break;
+    }
+
+    if (source === undefined || source === null)
+        source = "";
 
     // Launch a worker thread that parses the file
     let settings = {
@@ -739,8 +790,11 @@ function readAllData()
     let source = null;
 
     // Get source data
-    if (SETTINGS.parser.sourceTab == 1) {
-        // file upload
+    if (SETTINGS.parser.sourceTab == 0) {
+        // Manual entry
+        source = container.querySelector("div#manual textarea").value;
+    } else if (SETTINGS.parser.sourceTab == 1) {
+        // File upload
         if (parser.fileContents === null) {
             window.alert(_tr("alerts.no_file"));
             return;
@@ -748,9 +802,12 @@ function readAllData()
 
         source = parser.fileContents;
     } else {
-        // manual entry
-        source = container.querySelector("textarea").value;
+        // Username list (not always available)
+        source = container.querySelector("div#unl textarea")?.value;
     }
+
+    if (source === undefined || source === null)
+        source = "";
 
     // UI reset in case the previous import was stopped half-way
     resetSelection();
@@ -1234,7 +1291,7 @@ function detectProblems(selectRows=false)
 
             if (seen.has(value)) {
                 numDuplicate++;
-                flag = true;
+                return false;
             }
 
             if (existsInServer(value, "phone", rowNum, uidCol)) {
@@ -1359,24 +1416,43 @@ function onSelectDuplicates(mode)
         return;
     }
 
+    // Make a list of usernames on the table, then send them to the server for analysis.
+    // Once the server returns the results, update the table and selection states to match.
+    // This way we don't send thousands of usernames back to the client, when we only
+    // need to know if 10 users already exists.
+    let outgoingUsernames = [];
+
+    for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
+        const row = importData.rows[rowNum];
+
+        if (row.cellFlags[uidCol] & CellFlag.INVALID)
+            continue;
+
+        outgoingUsernames.push(row.cellValues[uidCol].trim());
+    }
+
+    const request = {
+        school_id: importData.currentSchoolID,
+        usernames: outgoingUsernames,
+    };
+
     enableUI(false);
 
-    beginFetch("duplicate_detection").then(data => {
+    beginPOST("new_import/find_existing_users", request).then(data => {
         // Make a list of current users
-        const existing = parseServerJSON(data);
+        const states = parseServerJSON(data);
 
-        if (existing === null) {
+        if (states === null) {
             window.alert(_tr("alerts.cant_parse_server_response"));
             return;
         }
 
-        const users = new Map();
+        if (states.status != "ok") {
+            if (states.error)
+                window.alert(_tr("alerts.data_retrieval_failed_known") + "\n\n" + states.error);
+            else window.alert(_tr("alerts.data_retrieval_failed_unknown"));
 
-        for (let u of existing["users"]) {
-            users.set(u["uid"], {
-                school: u["school"],
-                schools: u["schools"]
-            });
+            return;
         }
 
         // Update selections
@@ -1384,50 +1460,48 @@ function onSelectDuplicates(mode)
 
         statistics.selectedRows = 0;
 
+        let haveErrors = false;
+
         for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
-            const row = importData.rows[rowNum];
-            const checkbox = tableRows[rowNum].querySelector("input");
-
-            if (row.cellFlags[uidCol] & CellFlag.INVALID) {
-                checkbox.checked = false;
-                continue;
-            }
-
-            const uid = row.cellValues[uidCol].trim();
+            const uid = outgoingUsernames[rowNum];
+            const s = states.states[rowNum];
 
             let select = false,
                 message = null;
 
-            switch (mode) {
-                case Duplicates.ALL:
+            switch (s[0]) {
+                case -1:
+                    // Something failed on the server when this user was being looked up
+                    haveErrors = true;
+                    break;
+
+                case 0:
                 default:
-                    select = users.has(uid);
+                    // This user does not exist on the server
                     break;
 
-                case Duplicates.THIS_SCHOOL:
-                    select = users.has(uid) && users.get(uid).school == importData.currentSchoolID;
+                case 1:
+                    // This user exists and is in this school
+                    if (mode == Duplicates.ALL || mode == Duplicates.THIS_SCHOOL)
+                        select = true;
+
                     break;
 
-                case Duplicates.OTHER_SCHOOLS:
-                    if (users.has(uid)) {
-                        const u = users.get(uid);
-                        const n = u.schools.indexOf(importData.currentSchoolID);
-
-                        //console.log(u.schools, n);
-
-                        if (n == -1) {
-                            let msg = [];
-
-                            for (const s of u.schools)
-                                msg.push(existing["schools"][s]);
-
-                            message = _tr("messages.already_in_school", { schools: msg.join(", ") });
-                            select = true;
-                        }
+                case 2:
+                    // This user exists, but they're in some other school
+                    if (mode == Duplicates.ALL)
+                        select = true;
+                    else if (mode == Duplicates.OTHER_SCHOOLS) {
+                        select = true;
+                        message = _tr("messages.already_in_school", { schools: s[1].join(", ") });
                     }
 
                     break;
             }
+
+            // Update the table
+            const row = importData.rows[rowNum];
+            const checkbox = tableRows[rowNum].querySelector("input");
 
             row.message = message;
 
@@ -1456,11 +1530,19 @@ function onAnalyzeDuplicates()
 {
     enableUI(false);
 
-    beginFetch("duplicate_detection").then(data => {
+    beginGET("new_import/duplicate_detection").then(data => {
         const existing = parseServerJSON(data);
 
         if (existing === null) {
             window.alert(_tr("alerts.cant_parse_server_response"));
+            return;
+        }
+
+        if (existing.status != "ok") {
+            if (existing.error)
+                window.alert(_tr("alerts.data_retrieval_failed_known") + "\n\n" + existing.error);
+            else window.alert(_tr("alerts.data_retrieval_failed_unknown"));
+
             return;
         }
 
@@ -1469,16 +1551,18 @@ function onAnalyzeDuplicates()
             phone = new Map();
 
         for (const u of existing["users"]) {
-            const uid = u["uid"];
+            const uid = u["username"];
 
-            if (u["eid"])
-                eid.set(u["eid"], uid);
+            if (u["external_id"])
+                eid.set(u["external_id"], uid);
 
-            for (const e of u["email"])
-                email.set(e, uid);
+            if (u["email"] !== null)
+                for (const e of u["email"])
+                    email.set(e, uid);
 
-            for (const p of u["phone"])
-                phone.set(p, uid);
+            if (u["phone"] !== null)
+                for (const p of u["phone"])
+                    phone.set(p, uid);
         }
 
         importData.serverUsers.eid = eid;
@@ -1791,7 +1875,7 @@ function onReloadGroups(e)
 
     const previous = popup.contents.querySelector("select#abbr").value;
 
-    beginFetch("reload_groups").then(data => {
+    beginGET("new_import/reload_groups").then(data => {
         const newGroups = parseServerJSON(data);
 
         if (newGroups === null) {
@@ -2894,6 +2978,9 @@ function enableUI(state)
     for (let i of container.querySelectorAll("input, select, textarea"))
         i.disabled = !state;
 
+    for (let i of container.querySelectorAll("section#page1 button"))
+        i.disabled = !state;
+
     // Disable the table
     for (let i of container.querySelectorAll("div#output table select, div#output table button"))
         i.disabled = !state;
@@ -3093,6 +3180,7 @@ IMPORT_WORKER.onmessage = e => {
 // Start the user import/update process
 function beginImport(mode)
 {
+    // See if we have data to import
     if (importData.rows.length == 0 || importData.headers.length == 0) {
         window.alert(_tr("alerts.no_data_to_import"));
         return;
@@ -3116,10 +3204,18 @@ function beginImport(mode)
         return;
     }
 
-    let startRow = 0;
-    let resume = false;
+    const uidCol = findColumn("uid");
+
+    // Verify it anyway, even if detectProblems() should handle it
+    if (uidCol === -1) {
+        window.alert(_tr("errors.required_column_missing", { title: localizedColumnTitles["uid"] }));
+        return;
+    }
 
     // A simple resuming mechanism, in case the previous import was stopped
+    let startRow = 0,
+        resume = false;
+
     if (process.previousImportStopped) {
         if (window.confirm(_tr("alerts.resume_previous"))) {
             startRow = process.lastRowProcessed + 1;
@@ -3129,14 +3225,6 @@ function beginImport(mode)
 
     if (!window.confirm(_tr("alerts.are_you_sure")))
         return;
-
-    let status = container.querySelector("div#status"),
-        message = container.querySelector("div#status div#message");
-
-    message.innerText = _tr("status.fetching_current_users");
-
-    resetSelection();
-    enableUI(false);
 
     // Clear previous states (unless we're resuming)
     if (!resume) {
@@ -3155,8 +3243,71 @@ function beginImport(mode)
         }
     }
 
-    // Get a list of current users and their puavoIDs in the target organisation
-    beginFetch("get_current_users").then(data => {
+    resetSelection();
+
+    let status = container.querySelector("div#status"),
+        message = container.querySelector("div#status div#message");
+
+    message.classList.remove("hidden");
+    message.innerText = _tr("status.fetching_current_users");
+
+    /*
+        Given the state (start from the beginning, or resume), and the current mode
+        (all, selected, failed rows only), make a list of *incoming* usernames and
+        their associated table rows. Each entry on the list is a three-element tuple:
+
+        - username
+        - puavoID (initially NULL for all users (undefined would make sense here, but
+          it isn't a valid "unknown" value in JSON))
+        - original table row number
+    */
+    let usernames = [];
+
+    switch (mode) {
+        case ImportRows.ALL:
+        default:
+            for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
+                const row = importData.rows[rowNum];
+
+                if (row.cellFlags[uidCol] & CellFlag.INVALID)
+                    continue;
+
+                usernames.push([row.cellValues[uidCol], null, rowNum]);
+            }
+
+            break;
+
+        case ImportRows.SELECTED:
+            for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
+                const row = importData.rows[rowNum];
+
+                if (row.cellFlags[uidCol] & CellFlag.INVALID)
+                    continue;
+
+                if (row.rowFlags & RowFlag.SELECTED)
+                    usernames.push([row.cellValues[uidCol], null, rowNum]);
+            }
+
+            break;
+
+        case ImportRows.FAILED:
+            for (let rowNum = 0; rowNum < process.failedRows.length; rowNum++) {
+                const fr = process.failedRows[rowNum];      // row numbers
+
+                usernames.push([importData.rows[fr].cellValues[uidCol], null, fr]);
+            }
+
+            break;
+    }
+
+    // Then send the list to the server. It will compare the usernames against
+    // the list of existing users, and fill in the puavoIDs of existing users.
+    // The server always returns puavoIDs or -1 for the users, it will not leave
+    // them to "null". If it cannot determine the ID of some user, the import
+    // process is halted to prevent failures.
+    enableUI(false);
+
+    beginPOST("new_import/get_current_users", usernames).then(data => {
         const existingUsers = parseServerJSON(data);
 
         if (existingUsers === null) {
@@ -3166,94 +3317,59 @@ function beginImport(mode)
             return;
         }
 
-        message.innerText = _tr("status.comparing_data");
+        if (existingUsers.status != "ok") {
+            if (existingUsers.error)
+                window.alert(_tr("alerts.data_retrieval_failed_known") + "\n\n" + existingUsers.error);
+            else window.alert(_tr("alerts.data_retrieval_failed_unknown"));
 
-        // Find the username column
-        const uidCol = findColumn("uid");
-
-        if (uidCol === -1) {
-            // This shouldn't happen, we've validated the data!
             enableUI(true);
-            console.error("uidCol is NULL, how did we get this far without usenames?");
-            window.alert("Can't find the UID column index. Please contact support.");
 
             return;
         }
 
-        const existingUIDs = new Map();
-
-        for (const e of existingUsers)
-            existingUIDs.set(e.uid, e.id);
-
+        // Now use the puavoIDs to split the usernames into two arrays: one for existing
+        // users (that will be updated) and one for new users (that will be created).
+        // Both arrays are processed or ignored, depending on the current update mode.
         let numNew = 0,
             numUpdate = 0;
 
         process.workerRows = [];
 
-        // Process either all rows matching the update mode, or only the rows that
-        // failed during the previous loop
-        let numRows = 0;
+        for (let i = 0; i < existingUsers.usernames.length; i++) {
+            const pid = existingUsers.usernames[i][1];
+            const rowNum = usernames[i][2];
 
-        switch (mode) {
-            case ImportRows.ALL:
-            default:
-                numRows = importData.rows.length;
-                break;
+            if (pid == -1) {
+                // New user
+                if (SETTINGS.import.mode == 2)
+                    continue;
 
-            case ImportRows.SELECTED:
-                numRows = checkboxes.length;
-                break;
-
-            case ImportRows.FAILED:
-                numRows = process.failedRows.length;
-                break;
-        }
-
-        for (let i = 0; i < numRows; i++) {
-            let rowNum = null;
-
-            switch (mode) {
-                case ImportRows.ALL:
-                default:
-                    rowNum = i;
-                    break;
-
-                case ImportRows.SELECTED:
-                    rowNum = parseInt(checkboxes[i].parentNode.parentNode.dataset.row, 10);
-                    break;
-
-                case ImportRows.FAILED:
-                    rowNum = process.failedRows[i];
-                    break;
-            }
-
-            const uid = importData.rows[rowNum].cellValues[uidCol];
-
-            // Split the table data into two arrays: one for new users,
-            // and one for users to be updated
-            if (existingUIDs.has(uid)) {
-                if (SETTINGS.import.mode == 0 || SETTINGS.import.mode == 2) {
-                    process.workerRows.push([rowNum, existingUIDs.get(uid)].concat(importData.rows[rowNum].cellValues));
-                    numUpdate++;
-                }
+                numNew++;
             } else {
-                if (SETTINGS.import.mode == 0 || SETTINGS.import.mode == 1) {
-                    process.workerRows.push([rowNum, -1].concat(importData.rows[rowNum].cellValues));
-                    numNew++;
-                }
-            }
-        }
+                // Existing
+                if (SETTINGS.import.mode == 1)
+                    continue;
 
-        process.failedRows = [];
+                numUpdate++;
+            }
+
+            process.workerRows.push([rowNum, pid].concat(importData.rows[rowNum].cellValues));
+        }
 
         console.log(`${numNew} new users, ${numUpdate} updated users`);
 
         if (process.workerRows.length == 0) {
             enableUI(true);
             window.alert(_tr("alerts.no_data_to_import"));
+
             return;
         }
 
+        // This must not be cleared earlier, otherwise mode switch could incorrectly clear
+        // the state
+        process.failedRows = [];
+
+        // Then, finally, begin the update process
         process.alreadyClickedImportOnce = true;
         process.importActive = true;
 
@@ -3366,7 +3482,7 @@ function exportPDF(selectionState=null, includePasswords)
 
     enableUI(false);
 
-    fetch("generate_pdf", {
+    fetch("new_import/generate_pdf", {
         method: "POST",
         mode: "cors",
         headers: {
@@ -3544,6 +3660,118 @@ function exportData(format, selectionType, includePDFPasswords=false)
     }
 }
 
+function onCreateUsernameList(onlySelected, description)
+{
+    const uidCol = findColumn("uid");
+
+    if (uidCol === -1) {
+        window.alert(_tr("errors.required_column_missing", { title: localizedColumnTitles["uid"] }));
+        return;
+    }
+
+    let usernames = [];
+
+    if (onlySelected) {
+        for (const row of importData.rows)
+            if (row.rowFlags & RowFlag.SELECTED)
+                usernames.push(row.cellValues[uidCol]);
+    } else {
+        for (const row of importData.rows)
+            usernames.push(row.cellValues[uidCol]);
+    }
+
+    if (usernames.length == 0) {
+        window.alert(_tr("alerts.no_matching_rows"));
+        return;
+    }
+
+    const postData = {
+        creator: importData.currentUserName,
+        school: importData.currentSchoolID,
+        description: description,
+        usernames: usernames,
+    };
+
+    enableUI(false);
+
+    beginPOST("new_import/make_username_list", postData).then(data => {
+        const response = parseServerJSON(data);
+
+        if (response === null) {
+            window.alert(_tr("alerts.cant_parse_server_response"));
+            return;
+        }
+
+        switch (response.status) {
+            case "ok":
+                window.alert(_tr("alerts.list_created"));
+                break;
+
+            case "missing_users":
+                window.alert(_tr("alerts.list_missing_users", { count: response.error.length }) + "\n\n" + response.error.join("\n"));
+                break;
+
+            default:
+                window.alert(_tr("alerts.list_failed") + "\n\n" + response.error);
+                break;
+        }
+    }).catch(error => {
+        window.alert(error);
+    }).finally(() => {
+        enableUI(true);
+    });
+}
+
+function onLoadUsernameList()
+{
+    const uuid = container.querySelector("div#unl select").value,
+          url = `new_import/load_username_list?uuid=${encodeURIComponent(uuid)}`
+
+    enableUI(false);
+
+    beginGET(url).then(data => {
+        const response = parseServerJSON(data);
+
+        if (response === null) {
+            window.alert(_tr("alerts.cant_parse_server_response"));
+            return;
+        }
+
+        switch (response.status) {
+            case "ok":
+                break;
+
+            case "list_not_found":
+                window.alert(_tr("alerts.list_not_found"));
+                return;
+
+            case "missing_users":
+                window.alert(_tr("alerts.list_missing_users", { count: response.error.length }));
+                break;
+
+            default:
+                window.alert(_tr("alerts.list_loading_failed") + "\n\n" + response.error);
+                return;
+        }
+
+        let usernames = "";
+
+        // Specify the column type if type inferring is enabled
+        if (SETTINGS.parser.infer)
+            usernames += "uid\n";
+
+        usernames += response.usernames.join("\n");
+        container.querySelector("div#unl textarea").value = usernames;
+
+        updatePreview();
+    }).catch(error => {
+        console.log(error);
+        window.alert("Failed. See the console for details.");
+    }).finally(() => {
+        enableUI(true);
+    });
+}
+
 function switchImportTab()
 {
     toggleClass(container.querySelector("nav button#page1"), "selected", SETTINGS.mainTab == 0);
@@ -3563,14 +3791,18 @@ function onChangeImportTab(newTab)
 
 function onChangeSource()
 {
-    const oldSource = SETTINGS.parser.sourceTab;
+    const oldSource = SETTINGS.parser.sourceTab,
+          newSource = container.querySelector("select#source").value;
 
-    if (container.querySelector("select#source").value == "manual")
+    if (newSource == "manual")
         SETTINGS.parser.sourceTab = 0;
-    else SETTINGS.parser.sourceTab = 1;
+    else if (newSource == "upload")
+        SETTINGS.parser.sourceTab = 1;
+    else SETTINGS.parser.sourceTab = 2;
 
-    toggleClass(container.querySelector("div#manual"), "hidden", SETTINGS.parser.sourceTab == 1);
-    toggleClass(container.querySelector("div#upload"), "hidden", SETTINGS.parser.sourceTab == 0);
+    toggleClass(container.querySelector("div#manual"), "hidden", SETTINGS.parser.sourceTab != 0);
+    toggleClass(container.querySelector("div#upload"), "hidden", SETTINGS.parser.sourceTab != 1);
+    toggleClass(container.querySelector("div#unl"), "hidden", SETTINGS.parser.sourceTab != 2);
 
     if (SETTINGS.parser.sourceTab != oldSource)
         updatePreview();
@@ -3622,6 +3854,15 @@ function togglePopupButton(e)
         case "analyze":
             contents.querySelector("button#analyzeDuplicates").
                 addEventListener("click", () => onAnalyzeDuplicates());
+            break;
+
+        case "unl":
+            contents.querySelector("button#doIt").addEventListener("click", () => {
+                onCreateUsernameList(
+                    popup.contents.querySelector("input#onlySelection").checked,
+                    popup.contents.querySelector("input#unlDescription").value.trim()
+                );
+            });
             break;
 
         case "export":
@@ -3719,6 +3960,8 @@ function initializeImporter(params)
         importData.currentOrganisationName = params.organisationName;
         importData.currentSchoolID = params.schoolId;
         importData.currentSchoolName = params.schoolName;
+        importData.currentUserName = params.currentUserName;
+        importData.permitUserCreation = params.permitUserCreation;
 
         if ("groups" in params)
             setGroups(params.groups);
@@ -3727,12 +3970,13 @@ function initializeImporter(params)
         loadSettings();
         switchImportTab();
         onChangeSource();
-        updateParsingSummary();
 
         // Setup event handling and restore parser settings
         container.querySelector("nav button#page1").addEventListener("click", () => { onChangeImportTab(0); });
         container.querySelector("nav button#page2").addEventListener("click", () => { onChangeImportTab(1); });
         container.querySelector("select#source").addEventListener("change", () => onChangeSource());
+
+        container.querySelector("div#unl button#loadUNL")?.addEventListener("click", onLoadUsernameList);
 
         const settings = container.querySelector("details#settings");
 
@@ -3767,12 +4011,20 @@ function initializeImporter(params)
         });
 
         container.querySelector("div#manual textarea").addEventListener("input", updatePreview);
+        container.querySelector("div#unl textarea")?.addEventListener("input", updatePreview);
 
         settings.querySelector("input#inferTypes").checked = SETTINGS.parser.infer;
         settings.querySelector("input#trimValues").checked = SETTINGS.parser.trim;
         settings.querySelector("input#comma").checked = (SETTINGS.parser.separator == 0);
         settings.querySelector("input#semicolon").checked = (SETTINGS.parser.separator == 1);
         settings.querySelector("input#tab").checked = (SETTINGS.parser.separator == 2);
+
+        if (!importData.permitUserCreation) {
+            console.log("The current user cannot create new users, resetting the mode to update existing only");
+            SETTINGS.import.mode = 2;
+        }
+
+        container.querySelector("select#mode").value = SETTINGS.import.mode;
 
         container.querySelector(`select#mode`).addEventListener("change", e => {
             SETTINGS.import.mode = parseInt(e.target.value, 10);
@@ -3801,8 +4053,6 @@ function initializeImporter(params)
 
         container.querySelector("button#stopImport").addEventListener("click", stopImport);
 
-        container.querySelector("select#mode").value = SETTINGS.import.mode;
-
 /*
         container.querySelector("input#checkOnlySelectedRows").addEventListener("click", (e) => {
             process.checkOnlySelectedRows = e.target.checked;
@@ -3830,6 +4080,7 @@ function initializeImporter(params)
         // Reposition the popup when the page is scrolled
         document.addEventListener("scroll", ensurePopupIsVisible);
 
+        updateParsingSummary();
         updatePreview();
     } catch (e) {
         console.error(e);

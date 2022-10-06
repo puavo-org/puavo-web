@@ -541,6 +541,18 @@ class MassUsernameList extends MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
+        this.description = "";
+    }
+
+    buildInterface()
+    {
+        this.container.innerHTML =
+`<label for="description"><%= t('users.index.mass_operations.username_list.description') %>:</label>
+<input type="text" maxlength="100" size="50" id="description">`;
+
+        this.container.querySelector("input#description").addEventListener("change", (e) => {
+            this.description = e.target.value.trim();
+        });
     }
 
     processAllItems(items)
@@ -553,7 +565,11 @@ class MassUsernameList extends MassOperation {
 
         return doPOST(
             "/users/<%= @school.id %>/mass_op_username_list",
-            { user_ids: id, creator: "<%= current_user.uid %>" }
+            {
+                creator: "<%= current_user.givenName %> <%= current_user.sn %> (<%= current_user.uid %>)",
+                description: this.description,
+                user_ids: id,
+            }
         );
     }
 };
@@ -674,7 +690,7 @@ const MASS_OPERATIONS = [
     {
         id: "create_username_list",
         title: "<%= t('users.index.mass_operations.username_list.title') %>",
-        flags: MassOperationFlags.SINGLESHOT,
+        flags: MassOperationFlags.SINGLESHOT | MassOperationFlags.HAVE_SETTINGS,
         cls: MassUsernameList
     },
 <% end %>

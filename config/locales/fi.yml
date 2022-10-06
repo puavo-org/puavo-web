@@ -669,6 +669,8 @@ fi:
   # Printer permissions editing
   printing_permissions_list:
     title: Tulostuksen salliminen
+    available_at_schools: Tulostin saatavilla kouluissa
+    not_available_at_schools: Tulostin ei saatavilla missään koulussa
     by_schools: Kouluittain
     by_wireless: Kouluittain langattoman verkon kautta
     by_groups: Ryhmittäin
@@ -716,7 +718,7 @@ fi:
   schools:
     integrations:
       in: "Järjestelmä lähettää dataa Puavoon"
-      out: "Puavosta lähetetään dataa tähän järjestlmään"
+      out: "Puavosta lähetetään dataa tähän järjestelmään"
       inout: "Lähettää dataa Puavoon, vastaanottaa dataa Puavosta"
       password: "Salasanat synkronoidaan Puavosta tähän järjestelmään"
       login: "Kirjautuminen tähän järjestelmään Puavon tunnuksilla"
@@ -824,6 +826,7 @@ fi:
             pnumber: "Henkilönumero"
         username_list:
           title: "Luo käyttäjätunnuslista"
+          description: "Listan nimi tai lyhyt kuvaus (valinnainen)"
         change_school:
           title: "Vaihda koulua..."
           automation_warning: "Jos lähde- ja/tai kohdekoulussa on käytössä kolmannen osapuolen integraatioita, varmista etukäteen että koulun vaihto ei häiritse niiden toimintaa, ja että ne eivät yritä \"kumota\" muutoksia."
@@ -903,13 +906,23 @@ fi:
   new_import:
     title: "Käyttäjien massatuonti ja -päivitys"
 
+    cant_create_users: "Et voi luoda uusia käyttäjiä, joten päivitystapa (katso alempaa) on lukittu olemassaolevien käyttäjien päivitykseen."
+
     # The source tab
     source_tab: "1. Valitse tietolähde"
-    source_help: "Voit valita tuotavien käyttäjätietojen lähteeksi käsisyötteen tai tiedoston. Huomaa syötteen alapuolella olevat lukuasetukset; järjestelmä pystyy lukemaan useimpia CSV-variantteja. Niiden alla on esikatselutaulukko joka näyttää ensimmäiset 5 riviä tuotavasta tiedosta. Esikatselu päivittyy automaattisesti aina kun syötettä tai lukuasetuksia muutetaan. Voit varmistaa sen avulla, että tietoja tulkitaan oikein. Kun rivit näyttävät oikealta, paina taulukon alla olevaa isoa \"Lue kaikki tiedot ja siirry tuontivaiheeseen\" -nappia siirtyäksesi varsinaiseen tuontivaiheseen. Voit palata takaisin tähän ruutuun milloin tahansa, jos sinun on muutettava lähdettä tai lukuasetuksia."
+    source_help: "Voit valita tuotavien käyttäjätietojen lähteeksi käsisyötteen, tiedoston, tai aiemmin luodun käyttäjätunnuslistan. Huomaa syötteen alapuolella olevat lukuasetukset; järjestelmä pystyy lukemaan useimpia CSV-variantteja. Niiden alla on esikatselutaulukko joka näyttää ensimmäiset 5 riviä tuotavasta tiedosta. Esikatselu päivittyy automaattisesti aina kun syötettä tai lukuasetuksia muutetaan. Voit varmistaa sen avulla, että tietoja tulkitaan oikein. Kun rivit näyttävät oikealta, paina taulukon alla olevaa isoa \"Lue kaikki tiedot ja siirry tuontivaiheeseen\" -nappia siirtyäksesi varsinaiseen tuontivaiheseen. Voit palata takaisin tähän ruutuun milloin tahansa, jos sinun on muutettava lähdettä tai lukuasetuksia."
     manual_title: "Käsisyöte"
     upload_title: "Lataa tiedosto"
+    unl_title: "Käyttäjätunnuslista"
     manual_help: "Syötä tuotavat tiedot:"
     upload_help: "Lataa UTF-8 -enkoodattu CSV- tai TSV-tiedosto:"
+    unl_no_lists: "Lataamattomia käyttäjätunnuslistoja ei ole."
+    unl_help: "<strong>Valitse käyttäjätunnuslista josta nimet luetaan ja paina \"Lataa listan jäsenet\". Listan lataaminen täällä ei poista sitä, toisin kuin mitä <em>Käyttäjätunnuslista</em>-sivulla tapahtuu.</strong> Jos listan haku onnistuu, sen sisältämät nimet näytetään alla olevassa laatikossa. Jos lukuasetuksissa on sarakkeen tyypin päättely päällä, ensimmäiselle riville lisätään automaattisesti \"uid\" (koska sarakkeet ovat käyttäjätunnuksia). Tekstilaatikko toimii muuten samoin kuin käsisyötteessä; voit muokata sen sisältöä vapaasti ja esikatselu päivittyy automaattisesti."
+    unl_created_by: "Luonut"
+    unl_created_at: "luotu"
+    unl_members: "jäseniä"
+    unl_description: "kuvaus"
+    unl_load: "Lataa listan jäsenet"
     infer_columns: "Päättele sarakkeiden tyypit ensimmäisen rivin tunnisteista"
     infer_explanation: "Jos ensimmäinen rivi sisältää alla olevan taulukon ensimmäisessä sarakkeesa listattuja tunnisteita, asetetaan sarakkeen tyyppi oikeassa sarakkeessa olevaksi. Jos tunnistetta ei löydy taulukosta, sarakkeen sisältö ohitetaan (voit vielä vaihtaa sen ennen tuontia)."
     infer_left: "Tunniste"
@@ -928,8 +941,6 @@ fi:
     no_data: "Ei näytettäviä rivejä. Oletko valinnut tietolähteen ensimmäiseltä sivulta?"
 
     need_to_import_first: "Nämä toimivat vain tuonnin jälkeen"
-    export_target: "Mitä viedään?"
-    export_pdf_warning: "PDF:t sisältävät vain olemassaolevat käyttäjät."
 
     mode:
       label: "Päivitystapa"
@@ -993,10 +1004,8 @@ fi:
       select_partially_successfull_rows: "Valitse osittain onnistuneet rivit"
       select_failed_rows: "Valitse epäonnistuneet rivit"
       export: "Vie"
-      export_all_rows: "Kaikki rivit"
-      export_selected_rows: "Vain valitut rivit"
-      export_unselected_rows: "Vain ei-valitut rivit"
       export_pdf_with_passwords: "PDF salasanoilla"
+      username_list: "Käyttäjätunnuslista"
       analyze: "Analysoi"
       compare_attributes: "Vertaa ei-käyttäjänimi -attribuutteja palvelimen dataan"
 
@@ -1047,6 +1056,18 @@ fi:
         title_selection: "Täytä valitut solut"
         help_column: "Täytä koko sarake tällä arvolla"
         help_selection: "Täytä valitut solut tällä arvolla"
+
+      export:
+        target: "Mitä viedään?"
+        all_rows: "Kaikki rivit"
+        selected_rows: "Vain valitut rivit"
+        unselected_rows: "Vain ei-valitut rivit"
+        pdf_warning: "PDF:t sisältävät vain olemassaolevat käyttäjät."
+
+      username_list:
+        selection_only: "Vain valitut rivit"
+        list_title: "Listan nimi tai lyhyt kuvaus (valinnainen)"
+        create_list: "Luo lista"
 
     problems:
       errors_title: "Nämä virheet tiedoissa on korjatttava ennenkuin tuontiprosessi voidaan aloittaa:"

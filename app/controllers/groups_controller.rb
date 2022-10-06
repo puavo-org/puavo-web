@@ -344,9 +344,11 @@ class GroupsController < ApplicationController
       return
     end
 
+    full_name = "#{current_user.givenName} #{current_user.sn} (#{current_user.uid})"
+
     begin
       if is_owner?
-        new_list = List.new(@group.members.map { |u| u.id }, current_user.uid)
+        new_list = List.new(@group.members.map { |u| u.id.to_i }, full_name)
       else
         only_these = Set.new(Array(current_user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
         members = []
@@ -364,7 +366,7 @@ class GroupsController < ApplicationController
           members << member
         end
 
-        new_list = List.new(members.map { |u| u.id }, current_user.uid)
+        new_list = List.new(members.map { |u| u.id.to_i }, full_name)
       end
 
       new_list.save

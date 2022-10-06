@@ -4,6 +4,14 @@
 
 <h1><%= t('printing_permissions_list.title') %>: <%= html_escape @printer.printerDescription %> (<%= @server.puavoHostname %>)</h1>
 
+<%= Array(@server.puavoSchool).count > 0 ?
+    t('printing_permissions_list.available_at_schools') :
+    t('printing_permissions_list.not_available_at_schools') %>
+<% @server.puavoSchool.each do |s| %>
+    <% school = School.find(s) %>
+    <%= link_to school.displayName, edit_printer_permission_path(school, @printer) %>
+<% end %>
+
 <%= form_for(@printer, url: printer_path(@printer)) do |f| %>
   <h3><%= t('printing_permissions_list.by_schools') %></h3>
 

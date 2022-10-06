@@ -669,6 +669,8 @@ en:
   # Printer permissions editing
   printing_permissions_list:
     title: Printing permissions for
+    available_at_schools: Available at schools
+    not_available_at_schools: Not available at any school
     by_schools: By school
     by_wireless: By schools as wireless
     by_groups: By groups
@@ -824,6 +826,7 @@ en:
             pnumber: "Personnel number"
         username_list:
           title: "Create username list"
+          description: "List name or a short explanation (optional)"
         change_school:
           title: "Change school..."
           automation_warning: "If the source and/or destination schools have third-party integrations enabled then ensure in advance that this operation does not interfere with them, and that they do not try to \"undo\" these changes."
@@ -903,13 +906,23 @@ en:
   new_import:
     title: "User Mass Import and Update"
 
+    cant_create_users: "You can't create new users, so the update method (see below) has been locked to updating existing users only."
+
     # The source tab
     source_tab: "1. Select data source"
-    source_help: "You can select either manual input or file upload for the data source. Notice the read settings below; the system can read most CSV variants. Below those is the preview table, which displays the first five rows of the incoming data. The preview is automatically rebuilt every time the manual input or read settings are changed. You can use it to ensure that the data is being read correctly. When the rows look okay, click the \"Read all data and proceed to the import phase\" button below the table to proceed to the actual import phase. You can return to this screen at any time, if you need to change the source or the read settings."
+    source_help: "You can select a manual input, file upload, or a previously-created username list as the data source. Notice the reading settings below; the system can read most CSV variants. Below those is the preview table, which displays the first five rows of the incoming data. The preview is automatically rebuilt every time the manual input or read settings are changed. You can use it to verify that the data is being read correctly. When the rows look okay, click the \"Read all data and proceed to the import phase\" button below the table to proceed to the actual import phase. You can return to this screen at any time, if you need to change the source or the reading settings."
     manual_title: "Manual input"
     upload_title: "Upload a file"
+    unl_title: "Username list"
     manual_help: "Enter the imported data:"
     upload_help: "Upload a UTF-8 -encoded CSV or TSV file:"
+    unl_no_lists: "There are no unloaded username lists."
+    unl_help: "<strong>Select the username list from the box below and click \"Load list members\". Loading the list here does not delete it, unlike what happens on the <em>Username Lists</em> page.</strong> If the list can be loaded, the names on it will appear in the box below. If you've enabled column type inferring in reading settigs, then \"uid\" is inserted at the beginning (because the column contains usernames). The text box works otherwise like the manual input; you can edit its contents freely, and the preview will be live-updated."
+    unl_created_by: "Created by"
+    unl_created_at: "created at"
+    unl_members: "members"
+    unl_description: "description"
+    unl_load: "Load list members"
     infer_columns: "Infer column types from first row identifiers"
     infer_explanation: "If the first row contains identifiers listed on the left column in the table below, the column type is taken from the right column. If the identifier is not in the table, the column will be skipped."
     infer_left: "Identifier"
@@ -928,9 +941,6 @@ en:
     no_data: "No rows to display. Have you selected the data source in the first tab?"
 
     need_to_import_first: "These work after the import is done"
-
-    export_target: "What to export?"
-    export_pdf_warning: "PDF's only include users who actually exist."
 
     mode:
       label: "Update method"
@@ -994,14 +1004,13 @@ en:
       select_partially_successfull_rows: "Select partially successfull rows"
       select_failed_rows: "Select failed rows"
       export: "Export"
-      export_all_rows: "All rows"
-      export_selected_rows: "Only selected rows"
-      export_unselected_rows: "Only unselected rows"
       export_pdf_with_passwords: "PDF with passwords"
+      username_list: "Username list"
       analyze: "Analyse"
       compare_attributes: "Compare non-username attributes to server data"
 
       begin: "Import all rows"
+      begin_selected: "Import selected rows"
       stop: "Stop import"
       begin_failed: "Re-import failed rows"
       delete_selected_rows: "Delete selected rows"
@@ -1045,6 +1054,18 @@ en:
         title_selection: "Fill Selected Cells"
         help_column: "Fill the whole column with this value"
         help_selection: "Fill the selected cells with this value"
+
+      export:
+        target: "What to export?"
+        all_rows: "All rows"
+        selected_rows: "Only selected rows"
+        unselected_rows: "Only unselected rows"
+        pdf_warning: "PDF's only include users who actually exist."
+
+      username_list:
+        selection_only: "Selected rows only"
+        list_title: "List name or short description (optional)"
+        create_list: "Create list"
 
     problems:
       errors_title: "These problems have to be fixed before the import process can begin:"

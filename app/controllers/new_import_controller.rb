@@ -11,6 +11,19 @@ class NewImportController < ApplicationController
     @automatic_email_addresses, _ = get_automatic_email_addresses
     @initial_groups = get_school_groups(School.find(@school.id).dn.to_s)
 
+    @lists = List
+      .all
+      .reject { |l| l.downloaded }
+      .select { |l| l.school_id == @school.id.to_i }
+      .sort { |a, b| a.created_at <=> b.created_at }
+      .reverse
+
+    @can_create_users = true
+
+    unless is_owner?
+      @can_create_users = can_schooladmin_do_this?(current_user.uid, :create_users)
+    end
+
     respond_to do |format|
       format.html
     end
@@ -23,46 +36,242 @@ class NewImportController < ApplicationController
 
   # Get the IDs and usernames of all users in this organisation
   def get_current_users
-    users = User.search_as_utf8(
-      filter: '(objectClass=puavoEduPerson)',
-      attributes: ['puavoId', 'uid']
-    ).collect do |_, u|
-      {
-        id: u['puavoId'][0].to_i,
-        uid: u['uid'][0]
-      }
+    response = {
+      status: 'ok',
+      error: nil,
+      usernames: [],
+    }
+
+    begin
+      rest = get_superuser_proxy
+
+      users = JSON.parse(request.body.read)
+
+      # Find the puavoID for every user on the list
+      users.each do |user|
+        raw_user = JSON.parse(rest.get("/v4/users?no_eltern&fields=id&filter[]=username|is|#{user[0]}").body)
+
+        if raw_user['status'] != 'ok'
+          # Abort the operation here
+          response[:status] = 'rest_status_fail'
+          response[:error] = user[0]
+          return render json: response
+        end
+
+        raw_user = raw_user['data']
+
+        if raw_user.empty?
+          # This user does not exist, use -1 for puavoID
+          user[1] = -1
+        else
+          user[1] = raw_user[0]['id']
+        end
+      end
+
+      # Send the updated data back
+      response[:usernames] = users
+    rescue PuavoRestProxy::BadStatus => e
+      response[:status] = 'puavo_rest_call_failed'
+      response[:error] = e.to_s
+    rescue StandardError => e
+      response[:status] = 'failed'
+      response[:error] = e.to_s
     end
 
-    render json: users
+    render json: response
   end
 
   # Extended version of get_current_users(), used in duplicate username detection.
-  # Returns user information, but also includes schools
+  # Returns user information, but also includes schools.
   def duplicate_detection
-    extract_dn = /puavoId=(\d+),ou=Groups/
+    response = {
+      status: 'ok',
+      error: nil,
+      users: [],
+      schools: {},
+    }
 
-    users = User.search_as_utf8(
-      filter: '(objectClass=puavoEduPerson)',
-      attributes: ['puavoId', 'uid', 'puavoEduPersonPrimarySchool', 'puavoSchool', 'puavoExternalId', 'mail', 'telephoneNumber']
-    ).collect do |_, u|
-      {
-        id: u['puavoId'][0].to_i,
-        uid: u['uid'][0],
-        school: extract_dn.match(u['puavoEduPersonPrimarySchool'][0])[1].to_i,
-        schools: u['puavoSchool'].collect { |dn| extract_dn.match(dn)[1].to_i },
-        eid: u.fetch('puavoExternalId', [nil])[0],
-        email: Array(u['mail'] || []),
-        phone: Array(u['telephoneNumber'] || [])
-      }
+    begin
+      rest = get_superuser_proxy
+
+      users = JSON.parse(rest.get(
+        '/v4/users?no_eltern&fields=id,username,primary_school_id,school_ids,external_id,email,phone').body)
+      raise if users['status'] != 'ok'
+      response[:users] = users['data']
+
+      schools = JSON.parse(rest.get('/v4/schools?fields=id,name').body)
+      raise if schools['status'] != 'ok'
+
+      schools['data'].each do |s|
+        response[:schools][s['id']] = s['name']
+      end
+    rescue PuavoRestProxy::BadStatus => e
+      response[:status] = 'puavo_rest_call_failed'
+      response[:error] = e.to_s
+    rescue StandardError => e
+      puts e.backtrace.join("\n")
+      response[:status] = 'failed'
+      response[:error] = e.to_s
     end
 
-    schools = School.search_as_utf8(
-      attributes: ['puavoId', 'displayName']
-    ).collect do |dn, s|
-      [s['puavoId'][0], s['displayName'][0]]
-    end.to_h
+    render json: response
+  end
 
-    render json: { users: users, schools: schools }
+  # Given a list of usernames, returns informatin about which schools they already exist in
+  def find_existing_users
+    response = {
+      status: 'ok',
+      error: nil,
+      states: []
+    }
+
+    begin
+      rest = get_superuser_proxy
+
+      # Make a list of schools so we can tell which school the user is in
+      schools = {}
+      raw_schools = JSON.parse(rest.get('/v4/schools?fields=id,name').body)
+      raise if raw_schools['status'] != 'ok'
+
+      raw_schools['data'].each do |s|
+        schools[s['id']] = s['name']
+      end
+
+      # Look up each user on the list and fill in the return state
+      data = JSON.parse(request.body.read)
+      this_school = data['school_id']
+
+      data['usernames'].each do |name|
+        raw_user = JSON.parse(rest.get(
+          "/v4/users?no_eltern&fields=primary_school_id,school_ids&filter[]=username|is|#{name}").body)
+
+        if raw_user['status'] != 'ok'
+          response[:states] << [-1, nil]
+          next
+        end
+
+        user = raw_user['data']
+
+        if user.empty?
+          # This user does not exist on the server
+          response[:states] << [0, nil]
+        elsif user[0]['primary_school_id'] == this_school
+          # This user exists in this school
+          response[:states] << [1, nil]
+        else
+          # The user exists in some other school(s), list their names
+          msg = []
+
+          user[0]['school_ids'].each do |sid|
+            msg << schools.fetch(sid, '???')
+          end
+
+          response[:states] << [2, msg]
+        end
+      end
+    rescue PuavoRestProxy::BadStatus => e
+      response[:status] = 'puavo_rest_call_failed'
+      response[:error] = e.to_s
+    rescue StandardError => e
+      response[:status] = 'failed'
+      response[:error] = e.to_s
+    end
+
+    render json: response
+  end
+
+  def make_username_list
+    response = {
+      status: 'ok',
+      error: nil,
+    }
+
+    begin
+      data = JSON.parse(request.body.read)
+
+      missing = []
+      valid = []
+
+      # Convert usernames into puavoIds. We could extract them from the DNs (that all
+      # raw searches always return), but it seems that we have to give some attributes
+      # to search for.
+      data['usernames'].each do |uid|
+        user = User.search_as_utf8(
+          filter: "(&(objectClass=puavoEduPerson)(uid=#{Net::LDAP::Filter.escape(uid)}))",
+          attributes: ['puavoId']
+        )
+
+        if user.nil? || user.empty?
+          missing << uid
+        else
+          valid << user[0][1]['puavoId'][0].to_i
+        end
+      end
+
+      unless missing.empty?
+        response[:status] = 'missing_users'
+        response[:error] = missing
+      else
+        ll = List.new(valid)
+        ll.creator = data['creator']
+        ll.school_id = data['school']
+        ll.description = data['description']
+        ll.save
+      end
+    rescue StandardError => e
+      response[:status] = 'failed'
+      response[:error] = e.to_s
+    end
+
+    render json: response
+  end
+
+  def load_username_list
+    response = {
+      status: 'ok',
+      error: nil,
+      usernames: [],
+    }
+
+    begin
+      ll = List.by_id(params['uuid'])
+      raise 'already downloaded' if ll.downloaded
+    rescue StandardError => e
+      response[:status] = 'list_not_found'
+      response[:error] = e.to_s
+      return render json: response
+    end
+
+    begin
+      # Convert puavoIds back into usernames
+      missing = []
+      valid = []
+
+      ll.users.each do |id|
+        user = User.search_as_utf8(
+          filter: "(&(objectClass=puavoEduPerson)(puavoId=#{Net::LDAP::Filter.escape(id.to_s)}))",
+          attributes: ['uid']
+        )
+
+        if user.nil? || user.empty?
+          missing << id.to_i
+        else
+          valid << user[0][1]['uid'][0]
+        end
+      end
+
+      unless missing.empty?
+        response[:status] = 'missing_users'
+        response[:error] = missing
+      end
+
+      response[:usernames] = valid
+    rescue StandardError => e
+      response[:status] = 'failed'
+      response[:error] = e.to_s
+    end
+
+    render json: response
   end
 
   # Import or update one or more users
@@ -98,6 +307,12 @@ class NewImportController < ApplicationController
       column_to_index[col] = index
     end
 
+    can_create_users = true
+
+    unless is_owner?
+      can_create_users = can_schooladmin_do_this?(current_user.uid, :create_users)
+    end
+
     data['rows'].each do |row|
       row_num = row[0]    # the original table row number
       puavo_id = row[1]
@@ -116,6 +331,20 @@ class NewImportController < ApplicationController
 
       if puavo_id == -1
         # Create a new user
+        unless can_create_users
+          # TODO: This probably needs a better message. But getting this far in limited-user
+          # mode requires using the browser's developer tools to override the limitation.
+          # At that point, the user is intentionally breaking the thing.
+          response[:rows] << {
+            row: row_num,
+            state: 'failed',
+            error: 'Haha. No.',
+            failed: [],
+          }
+
+          next
+        end
+
         state, error, failed = create_new_user(attributes, response, column_to_index)
 
         response[:rows] << {
@@ -137,8 +366,6 @@ class NewImportController < ApplicationController
       end
     end
 
-    #puts response.inspect
-
     render json: response
   end
 
@@ -155,7 +382,8 @@ class NewImportController < ApplicationController
           attributes: ['uid', 'givenName', 'sn']
         )
 
-        next if u.nil? || u.empty?  # the report can theoretically contain users who don't exist yet
+        # the report can theoretically contain users who don't exist yet
+        next if u.nil? || u.empty?
 
         users << {
           dn: u[0][0],
@@ -316,6 +544,21 @@ class NewImportController < ApplicationController
   end
 
   private
+
+  # Returns a puavo-rest proxy that is authenticated using some super-user account. In order for
+  # non-owner users to be able to access the import tool, we need something that can access ALL
+  # users in the organisation, for duplicate checks, etc. and normal admin users cannot do that.
+  def get_superuser_proxy
+    # The default password will work fine for development puavo-standalone, but in production,
+    # you need something else. Put something like this in /etc/puavo-web/puavo_web.yml:
+    # import_tool:
+    #   superuser_name: "uid=admin,o=puavo"
+    #   superuser_password: "the real password here"
+    credentials = Puavo::CONFIG.fetch('import_tool', {})
+
+    rest_proxy(credentials.fetch('superuser_name', 'uid=admin,o=puavo'),
+               credentials.fetch('superuser_password', 'password'))
+  end
 
   def get_school_groups(school_dn)
     Group.search_as_utf8(

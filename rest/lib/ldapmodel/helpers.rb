@@ -41,12 +41,16 @@ PERMIT_MULTIPLE = Set.new(['id']).freeze
 
 # Attempts to detect if the user is high-level enough for this request
 def v4_is_request_allowed?(current)
-  if current
-    return current.admin?
-  end
+  return true if current && current.admin?
 
   # uid=<name>,ou=System Accounts,dc=...
   if /^uid=[a-zA-Z0-9_]+,ou=System Accounts,dc=edu,dc=/.match(LdapModel.settings[:credentials][:dn])
+    return true
+  end
+
+  # uid=<xxxxx>,o=puavo "super accounts" (they're dangerous but valid accounts, and the
+  # rest of the authentication code lets them through, so they must be accepted here too)
+  if /^uid=[a-z][a-z\-]+,o=puavo$/.match(LdapModel.settings[:credentials][:dn])
     return true
   end
 

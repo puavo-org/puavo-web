@@ -13,6 +13,10 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 
 <h1><%= t('new_import.title') %></h1>
 
+<% unless @can_create_users %>
+<p class="genericWarning"><%= t('new_import.cant_create_users') %></p>
+<% end %>
+
 <!-- The main container. Everything in the importer MUST be inside this DIV! -->
 <div id="import">
 
@@ -31,6 +35,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
     <select id="source" class="padding-5px">
         <option value="manual"><%= t('new_import.manual_title') %></option>
         <option value="upload"><%= t('new_import.upload_title') %></option>
+        <option value="unl"><%= t('new_import.unl_title') %></option>
     </select>
 
     <div class="sourceContents">
@@ -42,6 +47,40 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
         <div id="upload" class="hidden">
             <p class="margin-0"><strong><%= t('new_import.upload_help') %></strong></p>
             <input type="file" id="fileUpload" class="margin-top-5px">
+        </div>
+
+        <div id="unl" class="hidden">
+            <% if @lists.empty? %>
+            <p class="margin-0"><strong><%= t('new_import.unl_no_lists') %></strong></p>
+            <% else %>
+            <p class="margin-0 line-height-125p"><%= t('new_import.unl_help').html_safe %></p>
+
+            <%
+            created_by = t('new_import.unl_created_by')
+            created_at = t('new_import.unl_created_at')
+            members = t('new_import.unl_members')
+            description = t('new_import.unl_description')
+            %>
+
+            <select class="margin-top-5px">
+                <% @lists.each do |l| %>
+                <%
+                parts = [
+                    "#{created_by}: #{l.creator}",
+                    "#{created_at}: #{Time.at(l.created_at).strftime('%Y-%m-%d %H:%M:%S')}",
+                    "#{members}: #{l.users.count}"
+                ]
+
+                unless l.description.nil? || l.description.empty?
+                    parts << "#{description}: \"#{l.description}\""
+                end
+                %>
+                <option value="<%= l.uuid %>"><%= parts.join('; ') %></option>
+                <% end %>
+            </select>
+            <br><button id="loadUNL" class="margin-top-5px"><%=t('new_import.unl_load') %></button>
+            <br><textarea rows="15" cols="50" class="padding-5px"></textarea>
+            <% end %>
         </div>
     </div>
 
@@ -86,7 +125,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
                                 <td><%= t('new_import.columns.eid') %></td>
                             </tr>
                             <tr>
-                                <td>password<br>passwort</td>
+                                <td>password<br>passwort<br>pwd</td>
                                 <td><%= t('new_import.columns.password') %></td>
                             </tr>
                             <tr>
@@ -157,19 +196,28 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 
 <template id="template_exportPopup">
     <div class="popupContainer">
-        <fieldset class="margin-0 padding-5px"><legend><%= t('new_import.export_target') %></legend>
+        <fieldset class="margin-0 padding-5px"><legend><%= t('new_import.tools.export.target') %></legend>
             <div class="flex-rows">
-                <span><input type="radio" name="type" id="all" checked><label for="all"><%= t('new_import.buttons.export_all_rows') %></label></span>
-                <span><input type="radio" name="type" id="selected"><label for="selected"><%= t('new_import.buttons.export_selected_rows') %></label></span>
-                <span><input type="radio" name="type" id="unselected"><label for="unselected"><%= t('new_import.buttons.export_unselected_rows') %></label></span>
+                <span><input type="radio" name="type" id="all" checked><label for="all"><%= t('new_import.tools.export.all_rows') %></label></span>
+                <span><input type="radio" name="type" id="selected"><label for="selected"><%= t('new_import.tools.export.selected_rows') %></label></span>
+                <span><input type="radio" name="type" id="unselected"><label for="unselected"><%= t('new_import.tools.export.unselected_rows') %></label></span>
             </div>
         </fieldset>
 
-        <p class="margin-0 margin-top-10px"><%= t('new_import.export_pdf_warning') %></p>
+        <p class="margin-0 margin-top-10px"><%= t('new_import.tools.export.pdf_warning') %></p>
 
         <button id="exportCSV">CSV</button>
         <button id="exportPDF">PDF</button>
         <button id="exportPDFWithPasswords"><%= t('new_import.buttons.export_pdf_with_passwords') %></button>
+    </div>
+</template>
+
+<template id="template_usernameListPopup">
+    <div class="popupContainer">
+        <span><input type="checkbox" id="onlySelection" checked><label for="onlySelection"><%= t('new_import.tools.username_list.selection_only') %></label></span>
+        <label for="unlDescription"><%= t('new_import.tools.username_list.list_title') %>:</label>
+        <input type="text" maxlength="100" id="unlDescription">
+        <button id="doIt" class="margin-top-10px"><%= t('new_import.tools.username_list.create_list') %></button>
     </div>
 </template>
 
@@ -193,6 +241,10 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
                 <%= t('new_import.buttons.export') %>... ▼
             </button>
 
+            <button id="unl" class="btn popupToggle" data-template="usernameListPopup">
+                <%= t('new_import.buttons.username_list') %>... ▼
+            </button>
+
             <button id="deleteSelectedRows" class="btn btn-danger"><%= t('new_import.buttons.delete_selected_rows') %></button>
 
         </div>
@@ -206,8 +258,13 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
             <div class="margin-left-10px">
                 <label for="mode"><%= t('new_import.mode.label') %>:</label>
                 <select id="mode">
+                    <% if @can_create_users %>
                     <option value="0"><%= t('new_import.mode.create_new_update_existing') %></option>
                     <option value="1"><%= t('new_import.mode.create_new_skip_existing') %></option>
+                    <% else %>
+                    <option value="0" disabled><%= t('new_import.mode.create_new_update_existing') %></option>
+                    <option value="1" disabled><%= t('new_import.mode.create_new_skip_existing') %></option>
+                    <% end %>
                     <option value="2"><%= t('new_import.mode.skip_new_update_existing') %></option>
                 </select>
             </div>
@@ -465,10 +522,16 @@ initializeImporter({
     organisationName: "<%= LdapOrganisation.current.cn %>",
     schoolId: <%= @school.id.to_i %>,
     schoolName: "<%= @school.cn %>",
+    currentUserName: "<%= current_user.givenName %> <%= current_user.sn %> (<%= current_user.uid %>)",
     <% if @automatic_email_addresses %>
     automaticEmails: true,
     <% else %>
     automaticEmails: false,
+    <% end %>
+    <% if @can_create_users %>
+    permitUserCreation: true,
+    <% else %>
+    permitUserCreation: false,
     <% end %>
     commonPasswords: COMMON_PASSWORDS,
 });
