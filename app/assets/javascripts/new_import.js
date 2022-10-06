@@ -3687,6 +3687,7 @@ function onCreateUsernameList(onlySelected, description)
 
     const postData = {
         creator: importData.currentUserName,
+        school: importData.currentSchoolID,
         description: description,
         usernames: usernames,
     };

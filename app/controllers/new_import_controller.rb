@@ -214,6 +214,7 @@ class NewImportController < ApplicationController
       else
         ll = List.new(valid)
         ll.creator = data['creator']
+        ll.school_id = data['school']
         ll.description = data['description']
         ll.save
       end
