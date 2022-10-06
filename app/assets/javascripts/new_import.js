@@ -3707,7 +3707,7 @@ function onCreateUsernameList(onlySelected, description)
                 break;
 
             case "missing_users":
-                window.alert(_tr("alerts.list_missing_users") + "\n\n" + response.error.join("\n"));
+                window.alert(_tr("alerts.list_missing_users", { count: response.error.length }) + "\n\n" + response.error.join("\n"));
                 break;
 
             default:
