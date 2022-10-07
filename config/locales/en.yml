@@ -1392,6 +1392,8 @@ en:
       nvme_value: "Value"
     df:
       title: "Partitions free space"
+    uefi:
+      title: "UEFI installation"
     wifi:
       title: "WiFi"
     product:

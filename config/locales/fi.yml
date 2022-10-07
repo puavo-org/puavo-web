@@ -1394,6 +1394,8 @@ fi:
       nvme_value: "Arvo"
     df:
       title: "Osioiden vapaa tila"
+    uefi:
+      title: "UEFI-asennus"
     wifi:
       title: "WiFi"
     product:
