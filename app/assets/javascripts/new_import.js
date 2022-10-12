@@ -1915,6 +1915,7 @@ function onReloadGroups(e)
 // Fill/generate column/selection contents
 function onFillColumn(e)
 {
+    const clicktarget=e.target.id;
     e.preventDefault();
 
     const column = targetColumn.index,
@@ -1957,10 +1958,20 @@ function onFillColumn(e)
             break;
 
         case "group":
-            setTitle("set_group");
-            showButton("add");
-            width = 300;
-            content = makeGroupSelector();
+            if(clicktarget=="parse_groups")
+            {
+                setTitle("parse_groups");
+                showButton("generate");
+                width=400;
+                content = getTemplate("parseGroups");
+            }
+            else
+            {
+                setTitle("set_group");
+                showButton("add");
+                width = 300;
+                content = makeGroupSelector();
+            }
             break;
 
         case "uid":
@@ -2126,8 +2137,17 @@ function onClickFillColumn(e)
                 return;
             }
 
-            value = popup.contents.querySelector("select#abbr").value;
-            console.log(`Filling group in column ${targetColumn.index}, group abbreviation=${value} (overwrite=${overwrite})`);
+            if(popup.contents.querySelector("header").getAttribute("data-for")=="parse_groups")
+            {
+                console.log(`Filling group in column ${targetColumn.index} by parsing rawgroup column`);
+                parseGroups();
+                return;
+            }
+            else
+            {
+                value = popup.contents.querySelector("select#abbr").value;
+                console.log(`Filling group in column ${targetColumn.index}, group abbreviation=${value} (overwrite=${overwrite})`);
+            }
             break;
 
         default:
@@ -2305,6 +2325,13 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
 
         window.alert(msg);
     }
+}
+
+
+//Parse groups based on rawgroup column
+function parseGroups()
+{
+    
 }
 
 // Generates random passwords
@@ -2486,7 +2513,10 @@ function onOpenColumnMenu(e)
         tmpl.querySelector("a#generate_passwords").parentNode.remove();
 
     if (keep != "add_to_group")
+    {
         tmpl.querySelector("a#add_to_group").parentNode.remove();
+        tmpl.querySelector("a#parse_groups").parentNode.remove();
+    }
 
     if (keep != "fill_selection")
         tmpl.querySelector("a#fill_selection").parentNode.remove();
@@ -2507,6 +2537,9 @@ function onOpenColumnMenu(e)
     // Set events
     if (enableFill)
         tmpl.querySelector(`a#${keep}`).addEventListener("click", onFillColumn);
+    if (enableFill && keep =="add_to_group") //the only with double actions
+        tmpl.querySelector("a#parse_groups").addEventListener("click", onFillColumn);
+
 
     tmpl.querySelector("a#insert_column").addEventListener("click", onInsertColumn);
 

@@ -971,6 +971,7 @@ en:
       password: "Password"
       eid: "External ID"
       group: "Group"
+      rawgroup: "Raw group"
       phone: "Phone number"
       email: "Email address"
       pnumber: "Personnel number"
@@ -980,6 +981,7 @@ en:
       fill_selection: "Fill selected cells..."
       set_role: "Set role..."
       generate_usernames: "Generate usernames..."
+      parse_groups: "Parse groups..."
       generate_passwords: "Generate passwords..."
       add_to_group: "Add to group..."
       clear_column: "Clear column"
@@ -1038,6 +1040,9 @@ en:
         help: "First- and last names are downcased and concatenated with a dot. Then diacritics are removed. ß is always converted into \"ss\", but you can choose below how letters Ä, Ö and Ü will be converted:"
         first_first_name_only: "Use only the first first name"
         first_first_name_only_help: "If the user has multiple first names (separated by spaces), only use the first of them when generating the username (cut off from the first space)."
+
+      parse_groups:
+        title: "Parse groups"
 
       generate_passwords:
         title: "Generate Passwords"
