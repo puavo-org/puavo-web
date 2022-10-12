@@ -454,8 +454,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 <template id="template_parseGroups">
     <label><%= t('new_import.tools.parse_groups.help') %></label>
     <div class="flex-rows gap-5px margin-top-10px">
-        <span><input type="radio" name="method" id="drop"><label for="drop">ä → a, ö → o, ü → u</label></span>
-        <span><input type="radio" name="method" id="replace"><label for="replace">ä → ae, ö → oe, ü → ue</label></span>
+    <div id="groupslisted"></div> <!-- Filled in dynamically -->
     </div>
 </template>
 
