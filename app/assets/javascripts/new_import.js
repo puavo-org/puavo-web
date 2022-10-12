@@ -2140,7 +2140,7 @@ function onClickFillColumn(e)
             if(popup.contents.querySelector("header").getAttribute("data-for")=="parse_groups")
             {
                 console.log(`Filling group in column ${targetColumn.index} by parsing rawgroup column`);
-                parseGroups();
+                parseGroups({}, overwrite);
                 return;
             }
             else
@@ -2329,9 +2329,67 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
 
 
 //Parse groups based on rawgroup column
-function parseGroups()
+function parseGroups(magicTable, overwrite)
 {
+    // Verify that there's one source column for us
+    let numRawgroup = 0, 
+        rawCol = 0;
+    for (let i = 0; i < importData.headers.length; i++) {
+        if (importData.headers[i] === "rawgroup") {
+            numRawgroup++;
+            rawCol = i;
+        }
+    }
+
+    if (numRawgroup != 1) {
+        window.alert(_tr("alerts.need_one_raw_group"));
+        return;
+    }
     
+    // Do the parsing
+    const [start, end] = getFillRange();
+
+    let missing = false;
+
+    // Change data and update the table, in one loop
+    let tableRows = container.querySelectorAll("div#output table tbody tr");
+
+    for (let rowNum = start; rowNum < end; rowNum++) {
+        let values = importData.rows[rowNum].cellValues;
+
+        // Missing values?
+        if (values[rawCol].trim().length == 0) {
+            missing = true;
+            continue;
+        }
+
+        // Parse the group names
+        let processedGroup = values[rawCol];
+        if(magicTable[processedGroup])
+            processedGroup = magicTable[processedGroup];
+        else
+            missing = true;
+
+        if (values[targetColumn.index] != "" && !overwrite)
+            continue;
+
+        let tableCell = tableRows[rowNum].children[targetColumn.index + NUM_ROW_HEADERS];
+
+        values[targetColumn.index] = processedGroup;
+        tableCell.innerText = processedGroup;
+        tableCell.classList.remove("empty");
+    }
+
+    // ----------------------------------------------------------------------------------------------
+    // End reports
+
+    // Update the table before displaying the message boxes
+    detectProblems();
+    updateStatistics();
+
+    if (missing)
+        window.alert(_tr("alerts.could_not_parse_all_groups"));
+
 }
 
 // Generates random passwords
