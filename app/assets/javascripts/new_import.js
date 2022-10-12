@@ -1981,17 +1981,26 @@ function onFillColumn(e)
                 content.querySelector("#groupslisted").appendChild(tab);
                 for(let i=0; i<importData.rows.length;i++)
                 {
+                    let unique = true;
                     let values = importData.rows[i].cellValues;
-                    let tr=document.createElement('tr');
-                    let nametd=document.createElement('td');
-                    nametd.textContent=values[rawCol];
-                    tr.appendChild(nametd);
+                    for(let i=0;i<tab.rows.length;i++)
+                    {
+                        if (tab.rows[i].cells[rawCol].innerText == values[rawCol])
+                            unique = false;
+                    }
+                    if(unique)
+                    {
+                        let tr=document.createElement('tr');
+                        let nametd=document.createElement('td');
+                        nametd.textContent=values[rawCol];
+                        tr.appendChild(nametd);
 
-                    let grouptd=document.createElement('td');
-                    grouptd.appendChild(makeGroupSelector());
-                    tr.appendChild(grouptd);
+                        let grouptd=document.createElement('td');
+                        grouptd.appendChild(makeGroupSelector());
+                        tr.appendChild(grouptd);
 
-                    tab.appendChild(tr);
+                        tab.appendChild(tr);
+                    }
                 }
             }
             else
