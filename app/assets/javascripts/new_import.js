@@ -1985,7 +1985,7 @@ function onFillColumn(e)
                     let values = importData.rows[i].cellValues;
                     for(let i=0;i<tab.rows.length;i++)
                     {
-                        if (tab.rows[i].cells[rawCol].innerText == values[rawCol])
+                        if (tab.rows[i].cells[0].innerText == values[rawCol])
                             unique = false;
                     }
                     if(unique)
@@ -2177,17 +2177,11 @@ function onClickFillColumn(e)
 
             if(popup.contents.querySelector("header").getAttribute("data-for")=="parse_groups")
             {
-                let rawCol = -1;
-                for (let i = 0; i < importData.headers.length; i++) {
-                if (importData.headers[i] === "rawgroup") {
-                        rawCol = i;
-                    }
-                }
                 let grouptable=popup.contents.querySelector("#groupslisted").children[0];
                 let groupmappings={};
                 for(let i=0;i<grouptable.rows.length;i++)
                 {
-                    groupmappings[grouptable.rows[i].cells[rawCol].innerText] = grouptable.rows[i].cells[targetColumn.index].children[1].children[0].value;
+                    groupmappings[grouptable.rows[i].cells[0].innerText] = grouptable.rows[i].cells[1].children[1].children[0].value;
                 }
                 console.log(`Filling group in column ${targetColumn.index} by parsing rawgroup column, mappings ${groupmappings}`);
                 parseGroups(groupmappings, overwrite);
