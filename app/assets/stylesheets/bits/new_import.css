@@ -483,6 +483,11 @@ div.directButtons button {
   width: 100%;
 }
 
+
+#columnDialog div#groupslisted th, #columnDialog div#groupslisted td {
+  padding: 2px;
+}
+
 div.popup div#contents {
   margin-bottom: 10px;
 }

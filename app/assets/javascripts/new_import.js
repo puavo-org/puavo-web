@@ -1972,8 +1972,25 @@ function onFillColumn(e)
                     return;
                 }
 
-                let tab=document.createElement('table');
-                content.querySelector("#groupslisted").appendChild(tab);
+                // makeGroupSelector() works here, but it boy does it look ugly (and it does not
+                // even work properly), so we have to duplicate some code
+                let selector = create("select");
+
+                selector.disabled = (importData.currentGroups.length == 0);
+
+                for (const g of importData.currentGroups) {
+                    let o = create("option");
+
+                    o.value = g.abbr;
+                    o.innerText = `${g.name} (${localizedGroupTypes[g.type] || "?"})`;
+
+                    selector.appendChild(o);
+                }
+
+                // TODO: Should these be saved in localstore?
+                selector.selectedIndex = 0;
+
+                let tab = content.querySelector("div#groupslisted table tbody")
                 for(let i=0; i<importData.rows.length;i++)
                 {
                     let unique = true;
@@ -1991,7 +2008,7 @@ function onFillColumn(e)
                         tr.appendChild(nametd);
 
                         let grouptd=document.createElement('td');
-                        grouptd.appendChild(makeGroupSelector());
+                        grouptd.appendChild(selector.cloneNode(true));
                         tr.appendChild(grouptd);
 
                         tab.appendChild(tr);
@@ -2124,7 +2141,7 @@ function onFillColumn(e)
 
     // If this popup has an input field, focus it
     if (type == "first" || type == "last" || type == "phone" || type == "email" ||
-        type == "eid" || type == "pnumber" || type == "")
+        type == "eid" || type == "pnumber" || type == "rawgroup" || type == "")
         popup.contents.querySelector("input#value").focus();
 
     // All types have these two buttons
@@ -2172,11 +2189,12 @@ function onClickFillColumn(e)
 
             if(popup.contents.querySelector("header").getAttribute("data-for")=="parse_groups")
             {
-                let grouptable=popup.contents.querySelector("#groupslisted").children[0];
+                let grouptable=popup.contents.querySelector("#groupslisted table");
+
                 let groupmappings={};
                 for(let i=0;i<grouptable.rows.length;i++)
                 {
-                    groupmappings[grouptable.rows[i].cells[0].innerText] = grouptable.rows[i].cells[1].children[1].children[0].value;
+                    groupmappings[grouptable.rows[i].cells[0].innerText] = grouptable.rows[i].cells[1].children[0].value;
                 }
                 console.log(`Filling group in column ${targetColumn.index} by parsing rawgroup column, mappings ${groupmappings}`);
                 parseGroups(groupmappings, overwrite);
