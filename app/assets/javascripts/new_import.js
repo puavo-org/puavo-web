@@ -1965,16 +1965,11 @@ function onFillColumn(e)
                 width=400;
                 content = getTemplate("parseGroups");
 
-                let rawCol = -1;
-                for (let i = 0; i < importData.headers.length; i++) {
-                if (importData.headers[i] === "rawgroup") {
-                        rawCol = i;
-                    }
-                }
-                if(rawCol < 0)
-                {
-                    content.querySelector("#groupslisted").innerText=_tr("alerts.need_one_raw_group");
-                    break;
+                const rawCol = findColumn("rawgroup");
+
+                if (rawCol === -1) {
+                    window.alert(_tr("alerts.need_one_raw_group"));
+                    return;
                 }
 
                 let tab=document.createElement('table');
