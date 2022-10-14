@@ -2414,21 +2414,12 @@ function parseGroups(magicTable, overwrite)
     for (let rowNum = start; rowNum < end; rowNum++) {
         let values = importData.rows[rowNum].cellValues;
 
-        // Missing values?
-        if (values[rawCol].trim().length == 0) {
-            missing = true;
-            continue;
-        }
-
         // Parse the group names
         let processedGroup = values[rawCol];
         if(magicTable[processedGroup])
             processedGroup = magicTable[processedGroup];
         else
             missing = true;
-
-        if (values[targetColumn.index] != "" && !overwrite)
-            continue;
 
         let tableCell = tableRows[rowNum].children[targetColumn.index + NUM_ROW_HEADERS];
 
