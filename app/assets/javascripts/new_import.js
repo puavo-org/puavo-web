@@ -2376,7 +2376,7 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
 function parseGroups(magicTable, overwrite)
 {
     // Verify that there's one source column for us
-    let numRawgroup = 0, 
+    let numRawgroup = 0,
         rawCol = 0;
     for (let i = 0; i < importData.headers.length; i++) {
         if (importData.headers[i] === "rawgroup") {
@@ -2389,7 +2389,7 @@ function parseGroups(magicTable, overwrite)
         window.alert(_tr("alerts.need_one_raw_group"));
         return;
     }
-    
+
     // Do the parsing
     const [start, end] = getFillRange();
 
@@ -2564,94 +2564,86 @@ function onOpenColumnMenu(e)
     let tmpl = getTemplate("columnMenu");
 
     // By default the menu contains all entries. Remove those that don't apply to this situation.
-    let keep = null,
-        title = null,
+    let keep = [],
+        actions = [],
         enableFill = true,
         enableClear = false;
 
     switch (importData.headers[targetColumn.index]) {
-        case "role":
-            keep = "set_role";
-            break;
-
-        case "uid":
-            keep = "generate_usernames";
-            break;
-
-        case "password":
-            keep = "generate_passwords";
+        case "":
+            // Allow ignored columns to be cleared
             enableClear = true;
             break;
 
+        case "role":
+            keep.push("set_role");
+            actions.push("set_role");
+            enableFill = false;
+            break;
+
+        case "uid":
+            keep.push("generate_usernames");
+            actions.push("generate_usernames");
+            enableFill = false;
+            break;
+
+        case "password":
+            keep.push("generate_passwords");
+            actions.push("generate_passwords");
+            enableFill = false;
+            enableClear = true;
+            break;
+
+        case "rawgroup":
+            // Nothing to do
+            break;
+
         case "group":
-            keep = "add_to_group";
+            keep.push("parse_groups", "add_to_group");
+            actions.push("parse_groups", "add_to_group");
+            enableFill = false;
             enableClear = true;
             break;
 
         case "email":
         case "phone":
         case "eid":
-            enableFill = false;
-            enableClear = true;
-            break;
-
         case "pnumber":
+            // These values must be unique, so filling them with the same value would be pointless
             enableFill = false;
+
+            // But since they're optional, they can be empty
             enableClear = true;
             break;
 
         default:
-            keep = selection ? "fill_selection" : "fill_column";
             break;
     }
 
-    if (keep != "set_role")
-        tmpl.querySelector("a#set_role").parentNode.remove();
+    keep.push("insert_column", "delete_column");
 
-    if (keep != "generate_usernames")
-        tmpl.querySelector("a#generate_usernames").parentNode.remove();
-
-    if (keep != "generate_passwords")
-        tmpl.querySelector("a#generate_passwords").parentNode.remove();
-
-    if (keep != "add_to_group")
-    {
-        tmpl.querySelector("a#add_to_group").parentNode.remove();
-        tmpl.querySelector("a#parse_groups").parentNode.remove();
-    }
-
-    if (keep != "fill_selection")
-        tmpl.querySelector("a#fill_selection").parentNode.remove();
-
-    if (keep != "fill_column")
-        tmpl.querySelector("a#fill_column").parentNode.remove();
-
-    // Only some (rare) column types have a "clear" menu entry
-    if (enableClear) {
-        if (selection)
-            tmpl.querySelector("a#clear_column").parentNode.remove();
-        else tmpl.querySelector("a#clear_selection").parentNode.remove();
-    } else {
-        tmpl.querySelector("a#clear_column").parentNode.remove();
-        tmpl.querySelector("a#clear_selection").parentNode.remove();
-    }
-
-    // Set events
     if (enableFill)
-        tmpl.querySelector(`a#${keep}`).addEventListener("click", onFillColumn);
-    if (enableFill && keep =="add_to_group") //the only with double actions
-        tmpl.querySelector("a#parse_groups").addEventListener("click", onFillColumn);
+        keep.push(selection ? "fill_selection" : "fill_column");
 
+    if (enableClear)
+        keep.push(selection ? "clear_selection" : "clear_column");
 
+    console.log(keep);
+
+    for (const e of tmpl.querySelectorAll("a"))
+        if (!keep.includes(e.id))
+            e.parentNode.remove();
+
+    // These two entries always exist
     tmpl.querySelector("a#insert_column").addEventListener("click", onInsertColumn);
-
-    if (enableClear) {
-        if (selection)
-            tmpl.querySelector("a#clear_selection").addEventListener("click", onClearColumn);
-        else tmpl.querySelector("a#clear_column").addEventListener("click", onClearColumn);
-    }
-
     tmpl.querySelector("a#delete_column").addEventListener("click", onDeleteColumn);
+
+    // But these are optional
+    tmpl.querySelector(`a#${selection ? "fill_selection" : "fill_column"}`)?.addEventListener("click", onFillColumn);
+    tmpl.querySelector(`a#${selection ? "clear_selection" : "clear_column"}`)?.addEventListener("click", onClearColumn);
+
+    for (const a of actions)
+        tmpl.querySelector(`a#${a}`).addEventListener("click", onFillColumn);
 
     // Open the popup menu
     createPopup();
