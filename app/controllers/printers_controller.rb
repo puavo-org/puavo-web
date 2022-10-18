@@ -2,9 +2,33 @@ class PrintersController < ApplicationController
   # POST /devices/printers.json
   def create
     @printer = Printer.new(printer_params)
+    #somewhy, Printer.validate is not run for printers created, so do corresponding things here
+    prev=nil
+    Printer.find( :all,
+                  :attribute => 'printerDescription',
+                  :value => @printer.printerDescription ).each do |pr|
+      if pr.puavoServer == @printer.puavoServer
+        logger.info("matching printer description #{@printer.printerDescription} at #{@printer.puavoServer}, updating")
+        prev=pr
+      else
+        logger.warn("matching printer description, non-matching server, will create new #{@printer.printerDescription}")
+      end
+    end
 
     respond_to do |format|
-      if @printer.save
+      if prev
+        #let's update previous entry. cups also replaces previous data if
+        # a new printer is created with the same queue name
+        prev.printerMakeAndModel=@printer.printerMakeAndModel
+        prev.printerLocation=@printer.printerLocation
+        prev.printerType=@printer.printerType
+        prev.printerURI=@printer.printerURI
+        if prev.save
+          format.json  { render :json => prev, :status => :accepted }
+        else
+          format.json  { render :json => prev.errors, :status => :unprocessable_entity }
+        end
+      elsif @printer.save
         format.json  { render :json => @printer, :status => :created }
       else
         format.json  { render :json => @printer.errors, :status => :unprocessable_entity }
