@@ -400,48 +400,55 @@ class NewImportController < ApplicationController
         [dn, s['displayName'][0]]
       end.to_h
 
-      # Fill in the groups. Try teaching groups first, but if the user does not have
-      # a teaching group, use archiving group next.
-      # TODO: Try *all* the group types, in some predefined priority order.
-      archived_groups = []
-      teaching_groups = []
+      # Make a list of groups, their types, and members
+      groups = []
 
       Group.search_as_utf8(
-        filter: '(&(objectClass=puavoEduGroup)(|(puavoEduGroupType=teaching group)(puavoEduGroupType=archive users)))',
+        filter: '(objectClass=puavoEduGroup)',
         attributes: ['cn', 'displayName', 'puavoEduGroupType', 'member', 'puavoSchool']
       ).each do |dn, group|
         type = group.fetch('puavoEduGroupType', [nil])[0]
-        next unless type
 
         school_name = school_names.fetch(group['puavoSchool'][0], '?')
 
         g = {
           name: "#{school_name}, #{group['displayName'][0]}",
+          type: type,
           members: Array(group['member'] || []).to_set.freeze,
         }
 
-        if type == 'teaching group'
-          teaching_groups << g
-        elsif type == 'archive users'
-          archived_groups << g
-        end
+        groups << g
       end
 
+      # Find a suitable group for each user. Since a user can belong to many groups,
+      # prioritize the groups and try to find the "best" match.
+      group_priority = {
+        'teaching group' => 5,
+        'year class' => 4,
+        'course group' => 3,
+        'administrative group' => 2,
+        'archive users' => 1,
+        'other groups' => 0,
+        nil => -1,
+      }.freeze
+
       users.each do |user|
-        teaching_groups.each do |group|
-          if group[:members].include?(user[:dn])
-            user[:group] = group[:name]
-            break
+        best = nil
+
+        groups.each do |this|
+          next unless this[:members].include?(user[:dn])
+
+          if best.nil? || group_priority[this[:type]] > group_priority[best[:type]]
+            # This group type has a higher priority than the existing group
+            best = this
           end
         end
 
-        if user[:group] == ''
-          # This user has no teaching group. See if they're in an archived users group.
-          archived_groups.each do |group|
-            if group[:members].include?(user[:dn])
-              user[:group] = group[:name]
-              break
-            end
+        if best
+          if best[:type]
+            user[:group] = "#{best[:name]} (#{t('group_type.' + best[:type])})"
+          else
+            user[:group] = "#{best[:name]}"
           end
         end
       end
@@ -494,13 +501,13 @@ class NewImportController < ApplicationController
             pdf.font_size(18)
             headertext = "#{current_organisation.name}"
             headertext += ", #{group_name}" if group_name && group_name.length > 0
-            pdf.draw_text(headertext, :at => [0, (pdf.bounds.top - 15)] )
+            pdf.text(headertext)
 
             pdf.font('unicodefont')
             pdf.font_size(12)
             pdf.draw_text("(#{t('new_import.pdf.page')} #{current_page + 1}/#{num_pages}, #{header_timestamp})",
-                :at => [(pdf.bounds.right - 160), 0] )
-            pdf.text("\n\n\n")
+                          at: [(pdf.bounds.right - 160), 0])
+            pdf.text("\n")
 
             current_page += 1
 

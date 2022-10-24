@@ -31,10 +31,11 @@
   <div class="multilineItem">
     <div class="title"><%= t('activeldap.attributes.school.puavoDeviceImage') %></div>
     <div class="value">
-      <% if @releases.include?(@school.puavoDeviceImage) %>
-      <%= h @school.puavoDeviceImage %> (<span class="releaseName"><%= @releases[@school.puavoDeviceImage] %></span>)</li>
+      <% img = value_or_default_value_by_parent(@school, "puavoDeviceImage") %>
+      <% if @releases.include?(img.gsub(/<[^>]+>/, "").split(" ")[0]) %>
+        <%= h img %> (<span class="releaseName"><%= @releases[img.gsub(/<[^>]+>/, "").split(" ")[0]] %></span>)</li>
       <% else %>
-      <%= h @school.puavoDeviceImage %>
+        <%= h img %>
       <% end %>
     </div>
   </div>

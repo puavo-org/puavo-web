@@ -2,7 +2,7 @@
 
 /*
 Puavo Mass User Import III
-Version 1.0 alpha
+Version 1.0 beta
 */
 
 // Worker threads for CSV parsing and the actual data import/update process.
@@ -56,7 +56,7 @@ const NUM_ROW_HEADERS = 2;
 
 // Batching size for the import process. Reduces the number of network calls, but makes the UI
 // seem slower (as it's not updated very often).
-const BATCH_SIZE = 2;
+const BATCH_SIZE = 5;
 
 // Password length limitations
 const MIN_PASSWORD_LENGTH = 8,
@@ -1384,13 +1384,9 @@ function makeRoleSelector(current=null)
     return tmpl;
 }
 
-function makeGroupSelector(current=null)
+function fillGroupSelector(selector, current=null)
 {
-    const tmpl = getTemplate("selectGroup");
-    const selector = tmpl.querySelector("select#abbr");
-
-    // Fill in the groups list
-    selector.disabled = (importData.currentGroups.length == 0);
+    selector.innerHTML = "";
 
     for (const g of importData.currentGroups) {
         let o = create("option");
@@ -1402,9 +1398,7 @@ function makeGroupSelector(current=null)
         selector.appendChild(o);
     }
 
-    tmpl.querySelector("button#reload").addEventListener("click", onReloadGroups);
-
-    return tmpl;
+    selector.disabled = (importData.currentGroups.length == 0);
 }
 
 function onSelectDuplicates(mode)
@@ -1422,14 +1416,8 @@ function onSelectDuplicates(mode)
     // need to know if 10 users already exists.
     let outgoingUsernames = [];
 
-    for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
-        const row = importData.rows[rowNum];
-
-        if (row.cellFlags[uidCol] & CellFlag.INVALID)
-            continue;
-
-        outgoingUsernames.push(row.cellValues[uidCol].trim());
-    }
+    for (let rowNum = 0; rowNum < importData.rows.length; rowNum++)
+        outgoingUsernames.push(importData.rows[rowNum].cellValues[uidCol].trim());
 
     const request = {
         school_id: importData.currentSchoolID,
@@ -1887,34 +1875,22 @@ function onReloadGroups(e)
 
         // Update the combo on-the-fly, if the popup still exists (it could have been closed
         // while fetch() was doing its job)
-        // TODO: use makeGroupSelector() here?
-        if (popup && popup.contents) {
-            let html = "";
-
-            for (const g of importData.currentGroups)
-                html += `<option value="${g.abbr}" ${g.abbr === previous ? "selected" : ""}>${g.name} (${localizedGroupTypes[g.type] || "?"})</option>`;
-
-            popup.contents.querySelector("select#abbr").innerHTML = html;
-        }
+        if (popup && popup.contents)
+            fillGroupSelector(popup.contents.querySelector("select#abbr"), previous);
     }).catch(error => {
         console.error(error);
         window.alert(_tr("alerts.cant_parse_server_response"));
     }).finally(() => {
         // Re-enable the reload button
-        // FIXME: If the popup is closed while the fetch() is in progress, the list is not
-        // updated. It still shows the contents of the old list! Rebuilding the list every
-        // time the groups popup is opened will fix this.
         e.target.textContent = _tr("buttons.reload_groups");
         e.target.disabled = false;
-
-        if (popup.contents)
-            popup.contents.querySelector("select#abbr").disabled = (importData.currentGroups.length == 0);
     });
 }
 
 // Fill/generate column/selection contents
 function onFillColumn(e)
 {
+    const targetID = e.target.id;
     e.preventDefault();
 
     const column = targetColumn.index,
@@ -1957,10 +1933,62 @@ function onFillColumn(e)
             break;
 
         case "group":
-            setTitle("set_group");
-            showButton("add");
-            width = 300;
-            content = makeGroupSelector();
+            if (targetID == "parse_groups") {
+                setTitle("parse_groups");
+                showButton("generate");
+                width = 400;
+                content = getTemplate("parseGroups");
+
+                const rawCol = findColumn("rawgroup");
+
+                if (rawCol === -1) {
+                    window.alert(_tr("alerts.need_one_raw_group"));
+                    return;
+                }
+
+                // Make a base selector and duplicate it for every row
+                let selector = create("select");
+
+                fillGroupSelector(selector, null);
+
+                let tab = content.querySelector("div#parseGroupsTable table tbody")
+
+                for (let i = 0; i < importData.rows.length; i++) {
+                    let values = importData.rows[i].cellValues,
+                        unique = true;
+
+                    for (let i = 0; i < tab.rows.length; i++)
+                        if (tab.rows[i].cells[0].innerText == values[rawCol])
+                            unique = false;
+
+                    if (unique) {
+                        let tr = document.createElement("tr");
+                        let nametd = document.createElement("td");
+
+                        nametd.textContent = values[rawCol];
+                        tr.appendChild(nametd);
+
+                        let grouptd = document.createElement("td");
+
+                        grouptd.appendChild(selector.cloneNode(true));
+                        tr.appendChild(grouptd);
+
+                        tab.appendChild(tr);
+                    }
+                }
+            } else {
+                setTitle("set_group");
+                showButton("add");
+                width = 300;
+
+                const tmpl = getTemplate("selectGroup");
+
+                fillGroupSelector(tmpl.querySelector("select#abbr"));
+                tmpl.querySelector("button#reload").addEventListener("click", onReloadGroups);
+
+                content = tmpl;
+            }
+
             break;
 
         case "uid":
@@ -2080,7 +2108,7 @@ function onFillColumn(e)
 
     // If this popup has an input field, focus it
     if (type == "first" || type == "last" || type == "phone" || type == "email" ||
-        type == "eid" || type == "pnumber" || type == "")
+        type == "eid" || type == "pnumber" || type == "rawgroup" || type == "")
         popup.contents.querySelector("input#value").focus();
 
     // All types have these two buttons
@@ -2126,8 +2154,25 @@ function onClickFillColumn(e)
                 return;
             }
 
-            value = popup.contents.querySelector("select#abbr").value;
-            console.log(`Filling group in column ${targetColumn.index}, group abbreviation=${value} (overwrite=${overwrite})`);
+            if (popup.contents.querySelector("header").getAttribute("data-for") == "parse_groups") {
+                let groupTable = popup.contents.querySelector("div#parseGroupsTable table tbody"),
+                    groupMappings = {};
+
+                for (let i = 0; i < groupTable.rows.length; i++)
+                    groupMappings[groupTable.rows[i].cells[0].innerText] = groupTable.rows[i].cells[1].children[0].value;
+
+                console.log(`Filling group in column ${targetColumn.index} by parsing rawgroup column, mappings:`);
+
+                for (const [k, v] of Object.entries(groupMappings))
+                    console.log(`"${k}" -> "${v}"`);
+
+                parseGroups(groupMappings, overwrite);
+                return;
+            } else {
+                value = popup.contents.querySelector("select#abbr").value;
+                console.log(`Filling group in column ${targetColumn.index}, group abbreviation=${value} (overwrite=${overwrite})`);
+            }
+
             break;
 
         default:
@@ -2307,6 +2352,62 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
     }
 }
 
+// Parse groups based on the rawgroup column
+function parseGroups(magicTable, overwrite)
+{
+    // Verify that there's one source column for us
+    let numRawgroup = 0,
+        rawCol = 0;
+
+    for (let i = 0; i < importData.headers.length; i++) {
+        if (importData.headers[i] === "rawgroup") {
+            numRawgroup++;
+            rawCol = i;
+        }
+    }
+
+    if (numRawgroup != 1) {
+        window.alert(_tr("alerts.need_one_raw_group"));
+        return;
+    }
+
+    const [start, end] = getFillRange();
+    let missing = false;
+
+    // Change data and update the table, in one loop
+    let tableRows = container.querySelectorAll("div#output table tbody tr");
+
+    for (let rowNum = start; rowNum < end; rowNum++) {
+        let values = importData.rows[rowNum].cellValues;
+
+        if (values[targetColumn.index] != "" && !overwrite)
+            continue;
+
+        // Parse the group names
+        let processedGroup = values[rawCol];
+
+        if (magicTable[processedGroup])
+            processedGroup = magicTable[processedGroup];
+        else missing = true;
+
+        let tableCell = tableRows[rowNum].children[targetColumn.index + NUM_ROW_HEADERS];
+
+        values[targetColumn.index] = processedGroup;
+        tableCell.innerText = processedGroup;
+        tableCell.classList.remove("empty");
+    }
+
+    // ----------------------------------------------------------------------------------------------
+    // End reports
+
+    // Update the table before displaying the message boxes
+    detectProblems();
+    updateStatistics();
+
+    if (missing)
+        window.alert(_tr("alerts.could_not_parse_all_groups"));
+}
+
 // Generates random passwords
 function generatePasswords(overwrite)
 {
@@ -2435,88 +2536,86 @@ function onOpenColumnMenu(e)
     let tmpl = getTemplate("columnMenu");
 
     // By default the menu contains all entries. Remove those that don't apply to this situation.
-    let keep = null,
-        title = null,
+    let keep = [],
+        actions = [],
         enableFill = true,
         enableClear = false;
 
     switch (importData.headers[targetColumn.index]) {
-        case "role":
-            keep = "set_role";
-            break;
-
-        case "uid":
-            keep = "generate_usernames";
-            break;
-
-        case "password":
-            keep = "generate_passwords";
+        case "":
+            // Allow ignored columns to be cleared
             enableClear = true;
             break;
 
+        case "role":
+            keep.push("set_role");
+            actions.push("set_role");
+            enableFill = false;
+            break;
+
+        case "uid":
+            keep.push("generate_usernames");
+            actions.push("generate_usernames");
+            enableFill = false;
+            break;
+
+        case "password":
+            keep.push("generate_passwords");
+            actions.push("generate_passwords");
+            enableFill = false;
+            enableClear = true;
+            break;
+
+        case "rawgroup":
+            // Nothing to do
+            break;
+
         case "group":
-            keep = "add_to_group";
+            keep.push("parse_groups", "add_to_group");
+            actions.push("parse_groups", "add_to_group");
+            enableFill = false;
             enableClear = true;
             break;
 
         case "email":
         case "phone":
         case "eid":
-            enableFill = false;
-            enableClear = true;
-            break;
-
         case "pnumber":
+            // These values must be unique, so filling them with the same value would be pointless
             enableFill = false;
+
+            // But since they're optional, they can be empty
             enableClear = true;
             break;
 
         default:
-            keep = selection ? "fill_selection" : "fill_column";
             break;
     }
 
-    if (keep != "set_role")
-        tmpl.querySelector("a#set_role").parentNode.remove();
+    keep.push("insert_column", "delete_column");
 
-    if (keep != "generate_usernames")
-        tmpl.querySelector("a#generate_usernames").parentNode.remove();
-
-    if (keep != "generate_passwords")
-        tmpl.querySelector("a#generate_passwords").parentNode.remove();
-
-    if (keep != "add_to_group")
-        tmpl.querySelector("a#add_to_group").parentNode.remove();
-
-    if (keep != "fill_selection")
-        tmpl.querySelector("a#fill_selection").parentNode.remove();
-
-    if (keep != "fill_column")
-        tmpl.querySelector("a#fill_column").parentNode.remove();
-
-    // Only some (rare) column types have a "clear" menu entry
-    if (enableClear) {
-        if (selection)
-            tmpl.querySelector("a#clear_column").parentNode.remove();
-        else tmpl.querySelector("a#clear_selection").parentNode.remove();
-    } else {
-        tmpl.querySelector("a#clear_column").parentNode.remove();
-        tmpl.querySelector("a#clear_selection").parentNode.remove();
-    }
-
-    // Set events
     if (enableFill)
-        tmpl.querySelector(`a#${keep}`).addEventListener("click", onFillColumn);
+        keep.push(selection ? "fill_selection" : "fill_column");
 
+    if (enableClear)
+        keep.push(selection ? "clear_selection" : "clear_column");
+
+    console.log(keep);
+
+    for (const e of tmpl.querySelectorAll("a"))
+        if (!keep.includes(e.id))
+            e.parentNode.remove();
+
+    // These two entries always exist
     tmpl.querySelector("a#insert_column").addEventListener("click", onInsertColumn);
-
-    if (enableClear) {
-        if (selection)
-            tmpl.querySelector("a#clear_selection").addEventListener("click", onClearColumn);
-        else tmpl.querySelector("a#clear_column").addEventListener("click", onClearColumn);
-    }
-
     tmpl.querySelector("a#delete_column").addEventListener("click", onDeleteColumn);
+
+    // But these are optional
+    tmpl.querySelector(`a#${selection ? "fill_selection" : "fill_column"}`)?.addEventListener("click", onFillColumn);
+    tmpl.querySelector(`a#${selection ? "clear_selection" : "clear_column"}`)?.addEventListener("click", onClearColumn);
+
+    for (const a of actions)
+        tmpl.querySelector(`a#${a}`).addEventListener("click", onFillColumn);
 
     // Open the popup menu
     createPopup();
@@ -2687,9 +2786,14 @@ function onMouseDoubleClick(e)
             contents.appendChild(makeRoleSelector(value));
             break;
 
-        case "group":
-            contents.appendChild(makeGroupSelector(value));
+        case "group": {
+            const tmpl = getTemplate("selectGroup");
+
+            fillGroupSelector(tmpl.querySelector("select#abbr"), value);
+            tmpl.querySelector("button#reload").addEventListener("click", onReloadGroups);
+            contents.appendChild(tmpl);
             break;
+        }
 
         default: {
             const tmpl = getTemplate("directCellEditText");
@@ -4043,10 +4147,8 @@ function initializeImporter(params)
         container.querySelector("button#beginImport").
             addEventListener("click", () => beginImport(ImportRows.ALL));
 
-/*
-        container.querySelector("button#beginImportSelected").
+        container.querySelector("button#beginImportSelected")?.
             addEventListener("click", () => beginImport(ImportRows.SELECTED));
-*/
 
         container.querySelector("button#retryFailed").
             addEventListener("click", () => beginImport(ImportRows.FAILED));

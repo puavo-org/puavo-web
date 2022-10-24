@@ -340,6 +340,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
                 <option value="password"><%= t('new_import.columns.password') %></option>
                 <option value="eid"><%= t('new_import.columns.eid') %></option>
                 <option value="group"><%= t('new_import.columns.group') %></option>
+                <option value="rawgroup"><%= t('new_import.columns.rawgroup') %></option>
                 <option value="phone"><%= t('new_import.columns.phone') %></option>
                 <option value="email"><%= t('new_import.columns.email') %></option>
                 <option value="pnumber"><%= t('new_import.columns.pnumber') %></option>
@@ -365,6 +366,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
             <li><a id="fill_selection"><i class="icon icon-pencil margin-right-5px"></i><%= t('new_import.menu.fill_selection') %></a></li>
             <li><a id="set_role"><i class="icon icon-pencil margin-right-5px"></i><%= t('new_import.menu.set_role') %></a></li>
             <li><a id="generate_usernames"><i class="icon icon-pencil margin-right-5px"></i><%= t('new_import.menu.generate_usernames') %></a></li>
+            <li><a id="parse_groups"><i class="icon icon-pencil margin-right-5px" id="parse_groups"></i><%= t('new_import.menu.parse_groups') %></a></li>
             <li><a id="generate_passwords"><i class="icon icon-pencil margin-right-5px"></i><%= t('new_import.menu.generate_passwords') %></a></li>
             <li><a id="add_to_group"><i class="icon icon-pencil margin-right-5px"></i><%= t('new_import.menu.add_to_group') %></a></li>
             <li><a id="clear_column"><i class="icon icon-cancel margin-right-5px"></i><%= t('new_import.menu.clear_column') %></a></li>
@@ -417,6 +419,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
     <header data-for="set_role"><%= t('new_import.tools.set_role.title') %></header>
     <header data-for="set_group"><%= t('new_import.tools.set_group.title') %></header>
     <header data-for="generate_usernames"><%= t('new_import.tools.generate_usernames.title') %></header>
+    <header data-for="parse_groups"><%= t('new_import.tools.parse_groups.title') %></header>
     <header data-for="generate_passwords"><%= t('new_import.tools.generate_passwords.title') %></header>
     <header data-for="fill_column"><%= t('new_import.tools.fill.title_column') %></header>
     <header data-for="fill_selection"><%= t('new_import.tools.fill.title_selection') %></header>
@@ -445,6 +448,15 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
         <span><input type="radio" name="method" id="drop"><label for="drop">ä → a, ö → o, ü → u</label></span>
         <span><input type="radio" name="method" id="replace"><label for="replace">ä → ae, ö → oe, ü → ue</label></span>
         <span><input type="checkbox" id="first_first_only"><label for="first_first_only" title="<%= t('new_import.tools.generate_usernames.first_first_name_only_help') %>"><%= t('new_import.tools.generate_usernames.first_first_name_only') %></label></span>
+    </div>
+</template>
+
+<template id="template_parseGroups">
+    <label><%= t('new_import.tools.parse_groups.help') %></label>
+    <div id="parseGroupsTable">
+        <table>
+            <tbody></tbody>     <!-- Filled in dynamically -->
+        </table>
     </div>
 </template>
 
@@ -496,6 +508,7 @@ const LOCALIZED_COLUMN_TITLES = {
     password: "<%= t('new_import.columns.password') %>",
     eid: "<%= t('new_import.columns.eid') %>",
     group: "<%= t('new_import.columns.group') %>",
+    rawgroup: "<%= t('new_import.columns.rawgroup') %>",
     phone: "<%= t('new_import.columns.phone') %>",
     email: "<%= t('new_import.columns.email') %>",
     pnumber: "<%= t('new_import.columns.pnumber') %>",
