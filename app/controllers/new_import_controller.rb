@@ -404,7 +404,6 @@ class NewImportController < ApplicationController
       groups = []
 
       Group.search_as_utf8(
-        #filter: '(&(objectClass=puavoEduGroup)(|(puavoEduGroupType=teaching group)(puavoEduGroupType=archive users)))',
         filter: '(objectClass=puavoEduGroup)',
         attributes: ['cn', 'displayName', 'puavoEduGroupType', 'member', 'puavoSchool']
       ).each do |dn, group|
