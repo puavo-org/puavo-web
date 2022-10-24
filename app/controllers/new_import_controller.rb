@@ -502,13 +502,13 @@ class NewImportController < ApplicationController
             pdf.font_size(18)
             headertext = "#{current_organisation.name}"
             headertext += ", #{group_name}" if group_name && group_name.length > 0
-            pdf.draw_text(headertext, :at => [0, (pdf.bounds.top - 15)] )
+            pdf.text(headertext)
 
             pdf.font('unicodefont')
             pdf.font_size(12)
             pdf.draw_text("(#{t('new_import.pdf.page')} #{current_page + 1}/#{num_pages}, #{header_timestamp})",
-                :at => [(pdf.bounds.right - 160), 0] )
-            pdf.text("\n\n\n")
+                          at: [(pdf.bounds.right - 160), 0])
+            pdf.text("\n")
 
             current_page += 1
 
