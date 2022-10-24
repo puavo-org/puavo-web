@@ -56,7 +56,7 @@ const NUM_ROW_HEADERS = 2;
 
 // Batching size for the import process. Reduces the number of network calls, but makes the UI
 // seem slower (as it's not updated very often).
-const BATCH_SIZE = 2;
+const BATCH_SIZE = 5;
 
 // Password length limitations
 const MIN_PASSWORD_LENGTH = 8,
