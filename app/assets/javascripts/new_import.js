@@ -1951,7 +1951,7 @@ function onFillColumn(e)
 
                 fillGroupSelector(selector, null);
 
-                let tab = content.querySelector("div#groupslisted table tbody")
+                let tab = content.querySelector("div#parseGroupsTable table tbody")
 
                 for (let i = 0; i < importData.rows.length; i++) {
                     let values = importData.rows[i].cellValues,
@@ -2155,7 +2155,7 @@ function onClickFillColumn(e)
             }
 
             if (popup.contents.querySelector("header").getAttribute("data-for") == "parse_groups") {
-                let groupTable = popup.contents.querySelector("#groupslisted table"),
+                let groupTable = popup.contents.querySelector("div#parseGroupsTable table tbody"),
                     groupMappings = {};
 
                 for (let i = 0; i < groupTable.rows.length; i++)

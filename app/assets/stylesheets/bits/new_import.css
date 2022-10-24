@@ -483,9 +483,18 @@ div.directButtons button {
   width: 100%;
 }
 
+#columnDialog div#parseGroupsTable {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 250px;
+  overflow: scroll;
+}
 
-#columnDialog div#groupslisted th, #columnDialog div#groupslisted td {
-  padding: 2px;
+#columnDialog div#parseGroupsTable table th,
+#columnDialog div#parseGroupsTable table td {
+  padding: 3px;
+  border-bottom: 1px solid #ccc;
 }
 
 div.popup div#contents {

@@ -453,10 +453,10 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 
 <template id="template_parseGroups">
     <label><%= t('new_import.tools.parse_groups.help') %></label>
-    <div class="flex-rows gap-5px margin-top-10px">
-        <div id="groupslisted">
-            <table><tbody></tbody></table>      <!-- Filled in dynamically -->
-        </div>
+    <div id="parseGroupsTable">
+        <table>
+            <tbody></tbody>     <!-- Filled in dynamically -->
+        </table>
     </div>
 </template>
 
