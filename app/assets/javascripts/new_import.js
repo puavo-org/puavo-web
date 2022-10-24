@@ -1422,14 +1422,8 @@ function onSelectDuplicates(mode)
     // need to know if 10 users already exists.
     let outgoingUsernames = [];
 
-    for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
-        const row = importData.rows[rowNum];
-
-        if (row.cellFlags[uidCol] & CellFlag.INVALID)
-            continue;
-
-        outgoingUsernames.push(row.cellValues[uidCol].trim());
-    }
+    for (let rowNum = 0; rowNum < importData.rows.length; rowNum++)
+        outgoingUsernames.push(importData.rows[rowNum].cellValues[uidCol].trim());
 
     const request = {
         school_id: importData.currentSchoolID,
