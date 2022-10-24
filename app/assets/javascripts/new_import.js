@@ -1909,7 +1909,7 @@ function onReloadGroups(e)
 // Fill/generate column/selection contents
 function onFillColumn(e)
 {
-    const clicktarget=e.target.id;
+    const targetID = e.target.id;
     e.preventDefault();
 
     const column = targetColumn.index,
@@ -1952,11 +1952,10 @@ function onFillColumn(e)
             break;
 
         case "group":
-            if(clicktarget=="parse_groups")
-            {
+            if (targetID == "parse_groups") {
                 setTitle("parse_groups");
                 showButton("generate");
-                width=400;
+                width = 400;
                 content = getTemplate("parseGroups");
 
                 const rawCol = findColumn("rawgroup");
@@ -1985,37 +1984,37 @@ function onFillColumn(e)
                 selector.selectedIndex = 0;
 
                 let tab = content.querySelector("div#groupslisted table tbody")
-                for(let i=0; i<importData.rows.length;i++)
-                {
-                    let unique = true;
-                    let values = importData.rows[i].cellValues;
-                    for(let i=0;i<tab.rows.length;i++)
-                    {
+
+                for (let i = 0; i < importData.rows.length; i++) {
+                    let values = importData.rows[i].cellValues,
+                        unique = true;
+
+                    for (let i = 0; i < tab.rows.length; i++)
                         if (tab.rows[i].cells[0].innerText == values[rawCol])
                             unique = false;
-                    }
-                    if(unique)
-                    {
-                        let tr=document.createElement('tr');
-                        let nametd=document.createElement('td');
-                        nametd.textContent=values[rawCol];
+
+                    if (unique) {
+                        let tr = document.createElement("tr");
+                        let nametd = document.createElement("td");
+
+                        nametd.textContent = values[rawCol];
                         tr.appendChild(nametd);
 
-                        let grouptd=document.createElement('td');
+                        let grouptd = document.createElement("td");
+
                         grouptd.appendChild(selector.cloneNode(true));
                         tr.appendChild(grouptd);
 
                         tab.appendChild(tr);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 setTitle("set_group");
                 showButton("add");
                 width = 300;
                 content = makeGroupSelector();
             }
+
             break;
 
         case "uid":
@@ -2181,24 +2180,22 @@ function onClickFillColumn(e)
                 return;
             }
 
-            if(popup.contents.querySelector("header").getAttribute("data-for")=="parse_groups")
-            {
-                let grouptable=popup.contents.querySelector("#groupslisted table");
+            if (popup.contents.querySelector("header").getAttribute("data-for") == "parse_groups") {
+                let groupTable = popup.contents.querySelector("#groupslisted table"),
+                    groupMappings = {};
 
-                let groupmappings={};
-                for(let i=0;i<grouptable.rows.length;i++)
-                {
-                    groupmappings[grouptable.rows[i].cells[0].innerText] = grouptable.rows[i].cells[1].children[0].value;
-                }
-                console.log(`Filling group in column ${targetColumn.index} by parsing rawgroup column, mappings ${groupmappings}`);
-                parseGroups(groupmappings, overwrite);
+                for (let i = 0; i < groupTable.rows.length; i++)
+                    groupMappings[groupTable.rows[i].cells[0].innerText] = groupTable.rows[i].cells[1].children[0].value;
+
+                console.log(`Filling group in column ${targetColumn.index} by parsing rawgroup column, mappings ${groupMappings}`);
+                parseGroups(groupMappings, overwrite);
+
                 return;
-            }
-            else
-            {
+            } else {
                 value = popup.contents.querySelector("select#abbr").value;
                 console.log(`Filling group in column ${targetColumn.index}, group abbreviation=${value} (overwrite=${overwrite})`);
             }
+
             break;
 
         default:
@@ -2378,13 +2375,13 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
     }
 }
 
-
-//Parse groups based on rawgroup column
+// Parse groups based on the rawgroup column
 function parseGroups(magicTable, overwrite)
 {
     // Verify that there's one source column for us
     let numRawgroup = 0,
         rawCol = 0;
+
     for (let i = 0; i < importData.headers.length; i++) {
         if (importData.headers[i] === "rawgroup") {
             numRawgroup++;
@@ -2397,9 +2394,7 @@ function parseGroups(magicTable, overwrite)
         return;
     }
 
-    // Do the parsing
     const [start, end] = getFillRange();
-
     let missing = false;
 
     // Change data and update the table, in one loop
@@ -2410,10 +2405,10 @@ function parseGroups(magicTable, overwrite)
 
         // Parse the group names
         let processedGroup = values[rawCol];
-        if(magicTable[processedGroup])
+
+        if (magicTable[processedGroup])
             processedGroup = magicTable[processedGroup];
-        else
-            missing = true;
+        else missing = true;
 
         let tableCell = tableRows[rowNum].children[targetColumn.index + NUM_ROW_HEADERS];
 
@@ -2431,7 +2426,6 @@ function parseGroups(magicTable, overwrite)
 
     if (missing)
         window.alert(_tr("alerts.could_not_parse_all_groups"));
-
 }
 
 // Generates random passwords
