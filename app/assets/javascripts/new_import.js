@@ -1384,13 +1384,9 @@ function makeRoleSelector(current=null)
     return tmpl;
 }
 
-function makeGroupSelector(current=null)
+function fillGroupSelector(selector, current=null)
 {
-    const tmpl = getTemplate("selectGroup");
-    const selector = tmpl.querySelector("select#abbr");
-
-    // Fill in the groups list
-    selector.disabled = (importData.currentGroups.length == 0);
+    selector.innerHTML = "";
 
     for (const g of importData.currentGroups) {
         let o = create("option");
@@ -1402,9 +1398,7 @@ function makeGroupSelector(current=null)
         selector.appendChild(o);
     }
 
-    tmpl.querySelector("button#reload").addEventListener("click", onReloadGroups);
-
-    return tmpl;
+    selector.disabled = (importData.currentGroups.length == 0);
 }
 
 function onSelectDuplicates(mode)
@@ -1881,28 +1875,15 @@ function onReloadGroups(e)
 
         // Update the combo on-the-fly, if the popup still exists (it could have been closed
         // while fetch() was doing its job)
-        // TODO: use makeGroupSelector() here?
-        if (popup && popup.contents) {
-            let html = "";
-
-            for (const g of importData.currentGroups)
-                html += `<option value="${g.abbr}" ${g.abbr === previous ? "selected" : ""}>${g.name} (${localizedGroupTypes[g.type] || "?"})</option>`;
-
-            popup.contents.querySelector("select#abbr").innerHTML = html;
-        }
+        if (popup && popup.contents)
+            fillGroupSelector(popup.contents.querySelector("select#abbr"), previous);
     }).catch(error => {
         console.error(error);
         window.alert(_tr("alerts.cant_parse_server_response"));
     }).finally(() => {
         // Re-enable the reload button
-        // FIXME: If the popup is closed while the fetch() is in progress, the list is not
-        // updated. It still shows the contents of the old list! Rebuilding the list every
-        // time the groups popup is opened will fix this.
         e.target.textContent = _tr("buttons.reload_groups");
         e.target.disabled = false;
-
-        if (popup.contents)
-            popup.contents.querySelector("select#abbr").disabled = (importData.currentGroups.length == 0);
     });
 }
 
@@ -1965,23 +1946,10 @@ function onFillColumn(e)
                     return;
                 }
 
-                // makeGroupSelector() works here, but it boy does it look ugly (and it does not
-                // even work properly), so we have to duplicate some code
+                // Make a base selector and duplicate it for every row
                 let selector = create("select");
 
-                selector.disabled = (importData.currentGroups.length == 0);
-
-                for (const g of importData.currentGroups) {
-                    let o = create("option");
-
-                    o.value = g.abbr;
-                    o.innerText = `${g.name} (${localizedGroupTypes[g.type] || "?"})`;
-
-                    selector.appendChild(o);
-                }
-
-                // TODO: Should these be saved in localstore?
-                selector.selectedIndex = 0;
+                fillGroupSelector(selector, null);
 
                 let tab = content.querySelector("div#groupslisted table tbody")
 
@@ -2012,7 +1980,13 @@ function onFillColumn(e)
                 setTitle("set_group");
                 showButton("add");
                 width = 300;
-                content = makeGroupSelector();
+
+                const tmpl = getTemplate("selectGroup");
+
+                fillGroupSelector(tmpl.querySelector("select#abbr"));
+                tmpl.querySelector("button#reload").addEventListener("click", onReloadGroups);
+
+                content = tmpl;
             }
 
             break;
@@ -2809,9 +2783,14 @@ function onMouseDoubleClick(e)
             contents.appendChild(makeRoleSelector(value));
             break;
 
-        case "group":
-            contents.appendChild(makeGroupSelector(value));
+        case "group": {
+            const tmpl = getTemplate("selectGroup");
+
+            fillGroupSelector(tmpl.querySelector("select#abbr"), value);
+            tmpl.querySelector("button#reload").addEventListener("click", onReloadGroups);
+            contents.appendChild(tmpl);
             break;
+        }
 
         default: {
             const tmpl = getTemplate("directCellEditText");
