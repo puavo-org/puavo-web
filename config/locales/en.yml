@@ -1043,7 +1043,7 @@ en:
 
       parse_groups:
         title: "Parse groups"
-        help: "Group column is parsed from Raw group column using the correspondence table below."
+        help: "The group column is filled by interpreting the values in the \"Raw group column\" using this conversion table:"
 
       generate_passwords:
         title: "Generate Passwords"

@@ -1045,7 +1045,7 @@ fi:
 
       parse_groups:
         title: "Tulkitse ryhmät"
-        help: "Ryhmä-sarake täytetään Käsittelemätön ryhmä -sarakkeen perusteella alla asetettavan vastaavuustaulukon mukaisesti."
+        help: "Ryhmä-sarake täytetään tulkitsemalla \"Käsittelemätön ryhmä\" -sarakkeen arvot alla olevan muunnostaulukon avulla:"
 
       generate_passwords:
         title: "Luo salasanoja"
