@@ -2187,9 +2187,12 @@ function onClickFillColumn(e)
                 for (let i = 0; i < groupTable.rows.length; i++)
                     groupMappings[groupTable.rows[i].cells[0].innerText] = groupTable.rows[i].cells[1].children[0].value;
 
-                console.log(`Filling group in column ${targetColumn.index} by parsing rawgroup column, mappings ${groupMappings}`);
-                parseGroups(groupMappings, overwrite);
+                console.log(`Filling group in column ${targetColumn.index} by parsing rawgroup column, mappings:`);
 
+                for (const [k, v] of Object.entries(groupMappings))
+                    console.log(`"${k}" -> "${v}"`);
+
+                parseGroups(groupMappings, overwrite);
                 return;
             } else {
                 value = popup.contents.querySelector("select#abbr").value;
