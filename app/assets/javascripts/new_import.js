@@ -4147,10 +4147,8 @@ function initializeImporter(params)
         container.querySelector("button#beginImport").
             addEventListener("click", () => beginImport(ImportRows.ALL));
 
-/*
-        container.querySelector("button#beginImportSelected").
+        container.querySelector("button#beginImportSelected")?.
             addEventListener("click", () => beginImport(ImportRows.SELECTED));
-*/
 
         container.querySelector("button#retryFailed").
             addEventListener("click", () => beginImport(ImportRows.FAILED));
