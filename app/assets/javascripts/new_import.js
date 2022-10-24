@@ -2380,6 +2380,9 @@ function parseGroups(magicTable, overwrite)
     for (let rowNum = start; rowNum < end; rowNum++) {
         let values = importData.rows[rowNum].cellValues;
 
+        if (values[targetColumn.index] != "" && !overwrite)
+            continue;
+
         // Parse the group names
         let processedGroup = values[rawCol];
 
