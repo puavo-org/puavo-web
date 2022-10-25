@@ -91,8 +91,8 @@ module ElternHelpers
           return nil
       end
 
-      request.add_field('Host', 'eltern.harz.schule')
-      request.add_field('Authorization', auth['token'])
+      request.add_field('Host', CONFIG['eltern_sso']['organisation_host'])
+      request.add_field('Authorization', CONFIG['eltern_sso']['auth']['token'])
 
       # This isn't a form submission
       request.add_field('Content-Type', 'application/json')
