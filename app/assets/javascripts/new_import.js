@@ -19,9 +19,9 @@ const REQUIRED_COLUMNS_NEW = new Set(["first", "last", "uid", "role"]);
 const REQUIRED_COLUMNS_UPDATE = new Set(["uid"]);
 
 // Inferred column types. Maps various alternative colum name variants to one "unified" name.
-// If the unified (inferred) name does not exist in LOCALIZED_COLUMN_TITLES, bad things
-// will happen. So don't do that. If you edit these, remember to also update the inferring
-// table in the page HTML.
+// If the unified (inferred) name does not exist in LOCALIZED_COLUMN_TITLES, bad things will
+// happen. So don't do that. The table contains even non-inferred names (usually the first
+// entry for that column), so that we can convert all incoming column names through this table.
 const INFERRED_NAMES = {
     "first": "first",
     "first_name": "first",
@@ -4050,6 +4050,45 @@ function dumpDebug()
     console.log("=========== DEBUG DUMP END ===========");
 }
 
+function buildInferTable()
+{
+    /*
+        Build an "inverse" lookup table for the inferred names. For example, if names
+        "a", "b" and "c" all are aliases for column "foo", and names "d" and "e" are
+        aliases for column "bar", the reverse lookup table will look like this:
+
+        {
+            "foo": ["foo", "a", "b", "c"],
+            "bar": ["bar", "d", "e"]
+        }
+    */
+
+    const keys = new Map();
+
+    // Seed the lookup table with non-inferred names. JavaScript's Set maintains insertion
+    // order, which is perfect for us, because now we can use INFERRED_NAMES to control the
+    // order in which the names appear on the table. Set is needed, because the infer table
+    // contains also the non-inferred names, and some column types have no inferred names.
+    for (const [k, v] of Object.entries(localizedColumnTitles))
+        keys.set(k, new Set([k]));
+
+    // Then add infers
+    for (const [k, v] of Object.entries(INFERRED_NAMES))
+        keys.get(v).add(k);
+
+    // Finally build the table
+    let html = "";
+
+    for (const [k, v] of Object.entries(localizedColumnTitles)) {
+        html += `<tr>`;
+        html += `<td><code>${Array.from(keys.get(k)).join(", ")}</code></td>`;
+        html += `<td>${v}</td>`;
+        html += `</tr>`;
+    }
+
+    container.querySelector("details#settings table.inferTable tbody").innerHTML = html;
+}
+
 function initializeImporter(params)
 {
     try {
@@ -4069,6 +4108,8 @@ function initializeImporter(params)
 
         if ("groups" in params)
             setGroups(params.groups);
+
+        buildInferTable();
 
         // Initial UI update
         loadSettings();
