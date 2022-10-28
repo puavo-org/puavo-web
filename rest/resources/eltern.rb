@@ -60,6 +60,9 @@ class Eltern < PuavoSinatra
           raise Unauthorized, :user => "Unknown client service #{ params['return_to'] }"
         end
 
+        # Manually set the role, since the returned data does not contain it already
+        eltern_response['user']['roles'] = ['parent']
+
         url, _ = service.generate_login_url(eltern_response['user'], params['return_to'])
 
         rlog.info("[#{request_id}] redirecting SSO auth #{eltern_response['user']['username']} to #{url}")
