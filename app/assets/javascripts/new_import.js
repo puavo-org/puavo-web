@@ -3764,6 +3764,43 @@ function exportData(format, selectionType, includePDFPasswords=false)
     }
 }
 
+function onDownloadTemplate()
+{
+    let columns = [];
+
+    for (const cb of popup.contents.querySelectorAll(`input[type="checkbox"]:checked`))
+        columns.push(cb.id);
+
+    if (columns.length == 0) {
+        window.alert(_tr("alerts.download_template_nothing_selected"));
+        return;
+    }
+
+    let separator = ",";
+
+    if (popup.contents.querySelector("input#template_semicolon").checked)
+        separator = ";";
+    else if (popup.contents.querySelector("input#template_tab").checked)
+        separator = "\t";
+
+    const contents = columns.join(separator) + "\n";
+
+    try {
+        const b = new Blob([contents], { type: "text/csv" });
+        let a = window.document.createElement("a");
+
+        a.href = window.URL.createObjectURL(b);
+        a.download = "template." + (separator == "\t" ? "tsv" : "csv");
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    } catch (e) {
+        console.log(e);
+        window.alert(`CSV generation failed, see the console for details.`);
+    }
+}
+
 function onCreateUsernameList(onlySelected, description)
 {
     const uidCol = findColumn("uid");
@@ -3925,6 +3962,7 @@ function togglePopupButton(e)
     };
 
     const contents = getTemplate(e.target.dataset.template);
+    let width = null;
 
     // Attach event handlers
     switch (e.target.id) {
@@ -3979,6 +4017,11 @@ function togglePopupButton(e)
 
             break;
 
+        case "downloadTemplate":
+            contents.querySelector("button").addEventListener("click", onDownloadTemplate);
+            width = 300;
+            break;
+
         default:
             break;
     }
@@ -3986,7 +4029,7 @@ function togglePopupButton(e)
     // Show the popup
     createPopup();
     popup.contents.appendChild(contents);
-    attachPopup(e.target, PopupType.POPUP_MENU, null);
+    attachPopup(e.target, PopupType.POPUP_MENU, width);
     displayPopup();
 
     // Autoclose with Esc

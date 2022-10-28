@@ -32,11 +32,17 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 <p class="line-height-125p"><%= t('new_import.source_help') %></p>
 
 <div class="flex-rows gap-10px">
-    <select id="source" class="padding-5px">
-        <option value="manual"><%= t('new_import.manual_title') %></option>
-        <option value="upload"><%= t('new_import.upload_title') %></option>
-        <option value="unl"><%= t('new_import.unl_title') %></option>
-    </select>
+    <div class="flex-cols gap-10px">
+        <select id="source" class="padding-5px width-25p">
+            <option value="manual"><%= t('new_import.manual_title') %></option>
+            <option value="upload"><%= t('new_import.upload_title') %></option>
+            <option value="unl"><%= t('new_import.unl_title') %></option>
+        </select>
+
+        <button id="downloadTemplate" class="btn popupToggle" data-template="downloadTemplatePopup">
+            <%= t('new_import.buttons.download_template') %>... ▼
+        </button>
+    </div>
 
     <div class="sourceContents">
         <div id="manual" class="hidden">
@@ -186,6 +192,43 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
         <label for="unlDescription"><%= t('new_import.tools.username_list.list_title') %>:</label>
         <input type="text" maxlength="100" id="unlDescription">
         <button id="doIt" class="margin-top-10px"><%= t('new_import.tools.username_list.create_list') %></button>
+    </div>
+</template>
+
+<template id="template_downloadTemplatePopup">
+    <div class="popupContainer">
+        <p class="margin-0 margin-top-10px"><%= t('new_import.tools.download_template.title') %></p>
+
+        <fieldset class="margin-0 padding-5px"><legend><%= t('new_import.tools.download_template.columns') %></legend>
+            <div class="flex-cols gap-10px">
+                <div class="flex-rows">
+                    <span><input type="checkbox" id="first" checked><label for="first"><%= t('new_import.columns.first') %></label></span>
+                    <span><input type="checkbox" id="last" checked><label for="last"><%= t('new_import.columns.last') %></label></span>
+                    <span><input type="checkbox" id="uid" checked><label for="uid"><%= t('new_import.columns.uid') %></label></span>
+                    <span><input type="checkbox" id="role" checked><label for="role"><%= t('new_import.columns.role') %></label></span>
+                    <span><input type="checkbox" id="password" checked><label for="password"><%= t('new_import.columns.password') %></label></span>
+                    <span><input type="checkbox" id="eid"><label for="eid"><%= t('new_import.columns.eid') %></label></span>
+                </div>
+
+                <div class="flex-rows">
+                    <span><input type="checkbox" id="rawgroup"><label for="rawgroup"><%= t('new_import.columns.rawgroup') %></label></span>
+                    <span><input type="checkbox" id="group" checked><label for="group"><%= t('new_import.columns.group') %></label></span>
+                    <span><input type="checkbox" id="phone"><label for="phone"><%= t('new_import.columns.phone') %></label></span>
+                    <span><input type="checkbox" id="email"><label for="email"><%= t('new_import.columns.email') %></label></span>
+                    <span><input type="checkbox" id="pnumber"><label for="pnumber"><%= t('new_import.columns.pnumber') %></label></span>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="margin-0 padding-5px"><legend><%= t('new_import.separator') %></legend>
+            <div class="flex-rows">
+                <span><input type="radio" name="template_separator" id="template_comma" checked><label for="template_comma"><%= t('new_import.comma') %> (CSV)</label></span>
+                <span><input type="radio" name="template_separator" id="template_semicolon"><label for="template_semicolon"><%= t('new_import.semicolon') %> (CSV)</label></span>
+                <span><input type="radio" name="template_separator" id="template_tab"><label for="template_tab"><%= t('new_import.tab') %> (TSV)</label></span>
+            </div>
+        </fieldset>
+
+        <button><%= t('new_import.buttons.download_template_file') %></button>
     </div>
 </template>
 

@@ -990,6 +990,8 @@ fi:
       delete_column: "Poista sarake"
 
     buttons:
+      download_template: "Lataa malli"
+      download_template_file: "Lataa"
       read_data: "Lue kaikki tiedot ja siirry tuontivaiheeseen"
       show_infers: "Näytä päättelyt..."
 
@@ -1029,6 +1031,10 @@ fi:
       overwrite_existing: "Ylikirjoita olemassaolevat arvot"
 
     tools:
+      download_template:
+        title: "Voit ladata CSV/TSV-tiedoston joka sisältää otsakkeet alla valituille sarakkeille. Muista valita myös erotinmerkki."
+        columns: "Valitse sarakkeet"
+
       set_role:
         title: "Aseta käyttäjien roolit"
         help: "Valitse käyttäjien rooli (voit valita vain yhden):"

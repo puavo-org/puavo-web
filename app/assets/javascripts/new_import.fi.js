@@ -82,6 +82,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
         list_not_found: "Listaa ei löytynyt palvelimelta. Ehkä se on ladattu tai poistettu? Kokeile ladata sivu uudelleen.",
         list_missing_users: "Listaa ei luotu. Taulukko sisältää %{count} käyttäjää joita ei löydy. Heidät on ehkä poistettu, tai he ovat koulussa johon sinulla ei ole pääsyoikeutta:",
         list_loading_failed: "Listan lataus epäonnistui:",
+        download_template_nothing_selected: "Valitse edes yksi sarake.",
     },
 
     errors: {
