@@ -4246,8 +4246,14 @@ function initializeImporter(params)
         });
 
         container.querySelector("button#readData").addEventListener("click", () => {
-            if (readAllData())
+            if (readAllData()) {
+                // FIXME: The tab is changed while the worker is still doing its thing,
+                // which means the table can briefly display old contents before it gets
+                // updated. The joys of asynchronous operations... I will fix this once
+                // the old importer is removed and I can update the bundler to a more
+                // modern version, and I can then properly modularize this monolith.
                 onChangeImportTab(1);
+            }
         });
 
         container.querySelector("button#deleteSelectedRows").addEventListener("click", onDeleteSelectedRows);
