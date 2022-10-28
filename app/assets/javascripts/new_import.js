@@ -28,27 +28,51 @@ const INFERRED_NAMES = {
     "firstname": "first",
     "first name": "first",
     "vorname": "first",
+    "etunimi": "first",
+
     "last": "last",
     "last_name": "last",
     "lastname": "last",
     "last name": "last",
     "name": "last",
+    "sukunimi": "last",
+
     "uid": "uid",
     "user_name": "uid",
     "username": "uid",
+    "user name": "uid",
+    "käyttäjätunnus": "uid",
+    "käyttäjänimi": "uid",
+
     "role": "role",
     "type": "role",
+    "rooli": "role",
+    "tyyppi": "role",
+
     "phone": "phone",
     "telephone": "phone",
     "telefon": "phone",
+    "puhelin": "phone",
+
     "email": "email",
     "mail": "email",
+
     "eid": "eid",
     "external_id": "eid",
     "externalid": "eid",
+    "ulkoinen id": "eid",
+    "sotuhash": "eid",
+
     "password": "password",
     "passwort": "password",
+    "salasana": "password",
     "pwd": "password",
+
+    "ryhmä": "group",
+
+    "raw_group": "rawgroup",
+    "raw group": "rawgroup",
+    "raakaryhmä": "rawgroup",
 };
 
 // How many header columns each row has on the left edge. The status column is part of these.
