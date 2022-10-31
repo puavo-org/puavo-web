@@ -923,9 +923,9 @@ fi:
     unl_members: "jäseniä"
     unl_description: "kuvaus"
     unl_load: "Lataa listan jäsenet"
-    infer_columns: "Päättele sarakkeiden tyypit ensimmäisen rivin tunnisteista"
-    infer_explanation: "Jos ensimmäinen rivi sisältää alla olevan taulukon ensimmäisessä sarakkeesa listattuja tunnisteita, asetetaan sarakkeen tyyppi oikeassa sarakkeessa olevaksi. Jos tunnistetta ei löydy taulukosta, sarakkeen sisältö ohitetaan (voit vielä vaihtaa sen ennen tuontia)."
-    infer_left: "Tunniste"
+    infer_columns: "Päättele sarakkeiden tyypit ensimmäisen rivin otsakkeista"
+    infer_explanation: "Jos ensimmäinen rivi sisältää alla olevan taulukon ensimmäisessä sarakkeesa listattuja otsakkeita, asetetaan sarakkeen tyyppi oikeassa sarakkeessa olevaksi. Jos otsaketta ei löydy taulukosta, sarakkeen sisältö ohitetaan (voit vielä vaihtaa sen ennen tuontia). Sarakkeiden otsakkeissa voi käyttää välilyöntejä, koska välilyöntiä ei käytetä erottimena."
+    infer_left: "Otsake"
     infer_right: "Päätelty sarakkeen tyyppi"
     trim: "Poista solujen arvoista tyhjät välit alusta ja lopusta"
     separator: "Erotinmerkki"
@@ -990,6 +990,8 @@ fi:
       delete_column: "Poista sarake"
 
     buttons:
+      download_template: "Lataa malli"
+      download_template_file: "Lataa"
       read_data: "Lue kaikki tiedot ja siirry tuontivaiheeseen"
       show_infers: "Näytä päättelyt..."
 
@@ -1029,6 +1031,10 @@ fi:
       overwrite_existing: "Ylikirjoita olemassaolevat arvot"
 
     tools:
+      download_template:
+        title: "Voit ladata CSV/TSV-tiedoston joka sisältää otsakkeet alla valituille sarakkeille. Muista valita myös erotinmerkki."
+        columns: "Valitse sarakkeet"
+
       set_role:
         title: "Aseta käyttäjien roolit"
         help: "Valitse käyttäjien rooli (voit valita vain yhden):"

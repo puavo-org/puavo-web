@@ -19,36 +19,60 @@ const REQUIRED_COLUMNS_NEW = new Set(["first", "last", "uid", "role"]);
 const REQUIRED_COLUMNS_UPDATE = new Set(["uid"]);
 
 // Inferred column types. Maps various alternative colum name variants to one "unified" name.
-// If the unified (inferred) name does not exist in LOCALIZED_COLUMN_TITLES, bad things
-// will happen. So don't do that. If you edit these, remember to also update the inferring
-// table in the page HTML.
+// If the unified (inferred) name does not exist in LOCALIZED_COLUMN_TITLES, bad things will
+// happen. So don't do that. The table contains even non-inferred names (usually the first
+// entry for that column), so that we can convert all incoming column names through this table.
 const INFERRED_NAMES = {
     "first": "first",
     "first_name": "first",
     "firstname": "first",
     "first name": "first",
     "vorname": "first",
+    "etunimi": "first",
+
     "last": "last",
     "last_name": "last",
     "lastname": "last",
     "last name": "last",
     "name": "last",
+    "sukunimi": "last",
+
     "uid": "uid",
     "user_name": "uid",
     "username": "uid",
+    "user name": "uid",
+    "käyttäjätunnus": "uid",
+    "käyttäjänimi": "uid",
+
     "role": "role",
     "type": "role",
+    "rooli": "role",
+    "tyyppi": "role",
+
     "phone": "phone",
     "telephone": "phone",
     "telefon": "phone",
+    "puhelin": "phone",
+
     "email": "email",
     "mail": "email",
+
     "eid": "eid",
     "external_id": "eid",
     "externalid": "eid",
+    "ulkoinen id": "eid",
+    "sotuhash": "eid",
+
     "password": "password",
     "passwort": "password",
+    "salasana": "password",
     "pwd": "password",
+
+    "ryhmä": "group",
+
+    "raw_group": "rawgroup",
+    "raw group": "rawgroup",
+    "raakaryhmä": "rawgroup",
 };
 
 // How many header columns each row has on the left edge. The status column is part of these.
@@ -3764,6 +3788,43 @@ function exportData(format, selectionType, includePDFPasswords=false)
     }
 }
 
+function onDownloadTemplate()
+{
+    let columns = [];
+
+    for (const cb of popup.contents.querySelectorAll(`input[type="checkbox"]:checked`))
+        columns.push(cb.id);
+
+    if (columns.length == 0) {
+        window.alert(_tr("alerts.download_template_nothing_selected"));
+        return;
+    }
+
+    let separator = ",";
+
+    if (popup.contents.querySelector("input#template_semicolon").checked)
+        separator = ";";
+    else if (popup.contents.querySelector("input#template_tab").checked)
+        separator = "\t";
+
+    const contents = columns.join(separator) + "\n";
+
+    try {
+        const b = new Blob([contents], { type: "text/csv" });
+        let a = window.document.createElement("a");
+
+        a.href = window.URL.createObjectURL(b);
+        a.download = "template." + (separator == "\t" ? "tsv" : "csv");
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    } catch (e) {
+        console.log(e);
+        window.alert(`CSV generation failed, see the console for details.`);
+    }
+}
+
 function onCreateUsernameList(onlySelected, description)
 {
     const uidCol = findColumn("uid");
@@ -3925,6 +3986,7 @@ function togglePopupButton(e)
     };
 
     const contents = getTemplate(e.target.dataset.template);
+    let width = null;
 
     // Attach event handlers
     switch (e.target.id) {
@@ -3979,6 +4041,11 @@ function togglePopupButton(e)
 
             break;
 
+        case "downloadTemplate":
+            contents.querySelector("button").addEventListener("click", onDownloadTemplate);
+            width = 300;
+            break;
+
         default:
             break;
     }
@@ -3986,7 +4053,7 @@ function togglePopupButton(e)
     // Show the popup
     createPopup();
     popup.contents.appendChild(contents);
-    attachPopup(e.target, PopupType.POPUP_MENU, null);
+    attachPopup(e.target, PopupType.POPUP_MENU, width);
     displayPopup();
 
     // Autoclose with Esc
@@ -4050,6 +4117,45 @@ function dumpDebug()
     console.log("=========== DEBUG DUMP END ===========");
 }
 
+function buildInferTable()
+{
+    /*
+        Build an "inverse" lookup table for the inferred names. For example, if names
+        "a", "b" and "c" all are aliases for column "foo", and names "d" and "e" are
+        aliases for column "bar", the reverse lookup table will look like this:
+
+        {
+            "foo": ["foo", "a", "b", "c"],
+            "bar": ["bar", "d", "e"]
+        }
+    */
+
+    const keys = new Map();
+
+    // Seed the lookup table with non-inferred names. JavaScript's Set maintains insertion
+    // order, which is perfect for us, because now we can use INFERRED_NAMES to control the
+    // order in which the names appear on the table. Set is needed, because the infer table
+    // contains also the non-inferred names, and some column types have no inferred names.
+    for (const [k, v] of Object.entries(localizedColumnTitles))
+        keys.set(k, new Set([k]));
+
+    // Then add infers
+    for (const [k, v] of Object.entries(INFERRED_NAMES))
+        keys.get(v).add(k);
+
+    // Finally build the table
+    let html = "";
+
+    for (const [k, v] of Object.entries(localizedColumnTitles)) {
+        html += `<tr>`;
+        html += `<td><code>${Array.from(keys.get(k)).join(", ")}</code></td>`;
+        html += `<td>${v}</td>`;
+        html += `</tr>`;
+    }
+
+    container.querySelector("details#settings table.inferTable tbody").innerHTML = html;
+}
+
 function initializeImporter(params)
 {
     try {
@@ -4069,6 +4175,8 @@ function initializeImporter(params)
 
         if ("groups" in params)
             setGroups(params.groups);
+
+        buildInferTable();
 
         // Initial UI update
         loadSettings();
@@ -4138,8 +4246,14 @@ function initializeImporter(params)
         });
 
         container.querySelector("button#readData").addEventListener("click", () => {
-            if (readAllData())
+            if (readAllData()) {
+                // FIXME: The tab is changed while the worker is still doing its thing,
+                // which means the table can briefly display old contents before it gets
+                // updated. The joys of asynchronous operations... I will fix this once
+                // the old importer is removed and I can update the bundler to a more
+                // modern version, and I can then properly modularize this monolith.
                 onChangeImportTab(1);
+            }
         });
 
         container.querySelector("button#deleteSelectedRows").addEventListener("click", onDeleteSelectedRows);

@@ -7,14 +7,14 @@ module PuavoRest
 module ElternHelpers
   def eltern_authenticate(username, password, request_id)
     do_eltern_request(request_id,
-                      CONFIG['eltern_sso']['endpoint'],
+                      CONFIG['eltern_sso']['server'],
                       CONFIG['eltern_sso']['auth'],
                       :post, { 'email' => username, 'password' => password })
   end
 
   def eltern_get_all_users(request_id='')
     do_eltern_request(request_id,
-                      CONFIG['eltern_users']['endpoint'],
+                      CONFIG['eltern_users']['server'],
                       CONFIG['eltern_users']['auth'],
                       :get)
   end
@@ -91,8 +91,8 @@ module ElternHelpers
           return nil
       end
 
-      request.add_field('Host', 'eltern.harz.schule')
-      request.add_field('Authorization', auth['token'])
+      request.add_field('Host', CONFIG['eltern_sso']['organisation_host'])
+      request.add_field('Authorization', CONFIG['eltern_sso']['auth']['token'])
 
       # This isn't a form submission
       request.add_field('Content-Type', 'application/json')
