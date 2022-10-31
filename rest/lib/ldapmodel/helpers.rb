@@ -42,6 +42,7 @@ PERMIT_MULTIPLE = Set.new(['id']).freeze
 # Attempts to detect if the user is high-level enough for this request
 def v4_is_request_allowed?(current)
   return true if current && current.admin?
+  return true if current && current.server_user?
 
   # uid=<name>,ou=System Accounts,dc=...
   if /^uid=[a-zA-Z0-9_]+,ou=System Accounts,dc=edu,dc=/.match(LdapModel.settings[:credentials][:dn])
