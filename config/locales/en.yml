@@ -1819,6 +1819,7 @@ en:
         puavoImageSeriesSourceURL: Image series source URL
       printer:
         printerDescription: Printer name
+        printerInfo: Printer name in CUPS
         printerMakeAndModel: Manufacturer and model
         printerLocation: Location
         printerType: Type

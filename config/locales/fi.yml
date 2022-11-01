@@ -1820,6 +1820,7 @@ fi:
         puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
       printer:
         printerDescription: Tulostimen nimi
+        printerInfo: Tulostimen nimi tulostuspalvelimella
         printerMakeAndModel: Valmistaja ja malli
         printerLocation: Sijainti
         printerType: Tyyppi
