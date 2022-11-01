@@ -128,6 +128,7 @@ end
 [
   {
     :printerDescription => "HP",
+    :printerInfo => "HP-tulostin eteisessä"
     :printerLocation => "Eteinen",
     :printerMakeAndModel => "hp",
     :printerType => "1234",

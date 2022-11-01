@@ -6,6 +6,7 @@ def create_printer(server, name)
   printer = Printer.new
   printer.attributes = {
     :printerDescription => name,
+    :printerInfo => "printer in school",
     :printerLocation => "school2",
     :printerMakeAndModel => "foo",
     :printerType => "1234",
