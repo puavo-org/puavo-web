@@ -226,7 +226,7 @@ class OrganisationsController < ApplicationController
 
       # any extra permissions?
       unless @current_owners.include?(a[:user].dn.to_s)
-        [:create_users, :delete_users].each do |p|
+        [:create_users, :delete_users, :import_users].each do |p|
           if can_schooladmin_do_this?(a[:user].uid, p)
             a[:permissions] << p.to_s
           end

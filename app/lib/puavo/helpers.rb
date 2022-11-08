@@ -11,9 +11,13 @@ module Puavo
       permissions = Puavo::Organisation.find(LdapOrganisation.current.cn).
                       value_by_key('schooladmin_permissions')
 
-      return true unless permissions
+      unless permissions
+        return false if action == :import_users   # deny for all admins by default
+        return true
+      end
 
-      defaults = permissions.fetch('defaults', {})
+      # Block the import tool by default (it's *the* exception)
+      defaults = permissions.fetch('defaults', { 'import_users' => 'deny'})
 
       this_user = permissions.fetch('by_username', {}).fetch(username, {}) || {}
 

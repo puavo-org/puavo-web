@@ -6,7 +6,11 @@ class NewImportController < ApplicationController
   UNIQUE_ATTRS = ['eid', 'phone', 'email'].freeze
 
   def index
-    return if redirected_nonowner_user?
+    if !is_owner? && !can_schooladmin_do_this?(current_user.uid, :import_users)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to users_path
+      return
+    end
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
     @initial_groups = get_school_groups(School.find(@school.id).dn.to_s)
