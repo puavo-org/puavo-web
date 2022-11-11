@@ -187,7 +187,7 @@ class Root < PuavoSinatra
 
   if CONFIG["cloud"]
     # You have to choose which one you want
-    if CONFIG["eltern_sso"]
+    if ENV.include?('ENABLE_ELTERN_SSO')
       use PuavoRest::Eltern
     else
       use PuavoRest::SSO
