@@ -123,6 +123,10 @@ module ElternHelpers
     rescue => e
       rlog.error("[#{request_id}] do_eltern_request(): request failed: #{e}")
 
+      Array(e.backtrace).reverse.each do |b|
+        rlog.error("[#{request_id}] #{b}")
+      end
+
       # Retry to weed out intermittent network errors
       if attempt < 3
         rlog.info("[#{request_id}] do_eltern_request(): attempt #{attempt + 1} in 1 second...")
