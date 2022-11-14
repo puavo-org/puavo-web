@@ -2,7 +2,7 @@
 
 /*
 Puavo Mass User Import III
-Version 1.0 beta
+Version 1.0
 */
 
 // Worker threads for CSV parsing and the actual data import/update process.

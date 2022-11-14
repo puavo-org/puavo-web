@@ -660,12 +660,10 @@ class UsersController < ApplicationController
 
     if Array(@user.puavoEduPersonAffiliation || []).include?('admin')
       unless @user_is_owner
-        if can_schooladmin_do_this?(@user.uid, :create_users)
-          @extra_permissions_list << 'create_users'
-        end
-
-        if can_schooladmin_do_this?(@user.uid, :delete_users)
-          @extra_permissions_list << 'delete_users'
+        [:create_users, :delete_users, :import_users].each do |action|
+          if can_schooladmin_do_this?(@user.uid, action)
+            @extra_permissions_list << action.to_s
+          end
         end
       end
     end

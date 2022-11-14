@@ -126,7 +126,7 @@ fi:
     printer_permissions: Tulostinoikeudet
     show_printer_permissions: Listaa tulostinoikeudet...
     change_school: "Vaihda koulua..."
-    new_import: "(Uusi) tuo"
+    new_import: "Tuo ja päivitä käyttäjiä"
     group_members_mass_edit: "Jäsenten massamuokkaus"
 
   # Main application layout
@@ -865,6 +865,7 @@ fi:
         title: "Sallitut lisäoikeudet"
         create_users: "voi luoda käyttäjiä"
         delete_users: "voi poistaa käyttäjiä"
+        import_users: "käyttäjien massalisäystyökalu"
     new:
       title: "Lisää uusi käyttäjä"
     edit:
@@ -1094,9 +1095,9 @@ fi:
 
   # New mass import/update tool
   import_tool:
-    import: Tuo
+    import: Tuo (vanha)
     import_users: Tuo käyttäjiä
-    deprecated: "Tämä työkalu on vanhentunut. Se poistetaan ennen vuoden loppua. Käytä uutta tuontityökalua ja raportoi puutteet ennen vanhan tuontityökalun poistoa. Kyllä, tiedämme että uusi työkalu on vielä beta-vaiheessa."
+    deprecated: "Tämä työkalu on vanhentunut. Se poistetaan marras-joulukuun 2022 aikana. On aika sanoa sille hyvästit. Koska näet tämän viestin, olet organisaation omistajissa ja voit siten käyttää uutta tuontityökalua. Käytä sitä tämän sijaan. Kiitos."
     add_column: Lisää sarake
     change_type: Vaihda tyyppi
     fill: Täytä
@@ -1820,6 +1821,7 @@ fi:
         puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
       printer:
         printerDescription: Tulostimen nimi
+        printerInfo: Tulostimen nimi tulostuspalvelimella
         printerMakeAndModel: Valmistaja ja malli
         printerLocation: Sijainti
         printerType: Tyyppi

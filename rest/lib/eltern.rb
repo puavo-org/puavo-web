@@ -8,14 +8,16 @@ module ElternHelpers
   def eltern_authenticate(username, password, request_id)
     do_eltern_request(request_id,
                       CONFIG['eltern_sso']['server'],
-                      CONFIG['eltern_sso']['auth'],
-                      :post, { 'email' => username, 'password' => password })
+                      CONFIG['eltern_sso']['auth']['token'],
+                      :post,
+                      CONFIG['eltern_sso']['organisation_host'],
+                      { 'email' => username, 'password' => password })
   end
 
   def eltern_get_all_users(request_id='')
     do_eltern_request(request_id,
                       CONFIG['eltern_users']['server'],
-                      CONFIG['eltern_users']['auth'],
+                      CONFIG['eltern_users']['auth']['token'],
                       :get)
   end
 
@@ -66,7 +68,7 @@ module ElternHelpers
 
   # Generic HTTP(S) POST/GET wrapper with timeouts and retries. Returns nil if the request failed,
   # otherwise returns the JSON the server sent.
-  def do_eltern_request(request_id, url, auth, method, post_body=nil)
+  def do_eltern_request(request_id, url, auth, method, host=nil, post_body=nil)
     attempt = 1
 
     begin
@@ -91,8 +93,8 @@ module ElternHelpers
           return nil
       end
 
-      request.add_field('Host', CONFIG['eltern_sso']['organisation_host'])
-      request.add_field('Authorization', CONFIG['eltern_sso']['auth']['token'])
+      request.add_field('Host', host) if host
+      request.add_field('Authorization', auth)
 
       # This isn't a form submission
       request.add_field('Content-Type', 'application/json')
@@ -123,6 +125,10 @@ module ElternHelpers
       return data
     rescue => e
       rlog.error("[#{request_id}] do_eltern_request(): request failed: #{e}")
+
+      Array(e.backtrace).reverse.each do |b|
+        rlog.error("[#{request_id}] #{b}")
+      end
 
       # Retry to weed out intermittent network errors
       if attempt < 3

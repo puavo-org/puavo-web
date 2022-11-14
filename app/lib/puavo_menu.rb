@@ -73,8 +73,8 @@ class PuavoMenu < MetaMenu
       title { t('link.new_import') }
       link { new_import_path(@school) }
       active_on NewImportController
-      owners_only { true }
-      hide_when { !current_user.organisation_owner? }
+      owners_only { false }
+      hide_when { !current_user.organisation_owner? && !can_schooladmin_do_this?(current_user.uid, :import_users) }
     end
 
     child do

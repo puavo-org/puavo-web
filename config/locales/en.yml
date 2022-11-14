@@ -126,7 +126,7 @@ en:
     printer_permissions: Printing permissions
     show_printer_permissions: List printing premissions...
     change_school: "Change school..."
-    new_import: "(New) Import"
+    new_import: "Import and update users"
     group_members_mass_edit: "Members mass edit"
 
   # Main application layout
@@ -865,6 +865,7 @@ en:
         title: "Additional granted permissions"
         create_users: "can create users"
         delete_users: "can delete users"
+        import_users: "user mass import tool"
     new:
       title: New user
     edit:
@@ -1093,9 +1094,9 @@ en:
 
   # New mass import/update tool
   import_tool:
-    import: Import
+    import: Import (legacy)
     import_users: Import users
-    deprecated: "This tool has been deprecated. It will be removed before the year ends. Use the new import tool and report all missing features before the old tool is removed. Yes, we know the new tool is still in beta phase."
+    deprecated: "This tool has been deprecated. It will be removed in November or December of 2022. It's time to say goodbye to it. Because you can see this message, it means you're an organisation owner and thus you can access the new import tool. Please use it instead. Thank you."
     add_column: Add column
     change_type: Change type
     fill: Fill
@@ -1819,6 +1820,7 @@ en:
         puavoImageSeriesSourceURL: Image series source URL
       printer:
         printerDescription: Printer name
+        printerInfo: Printer name in CUPS
         printerMakeAndModel: Manufacturer and model
         printerLocation: Location
         printerType: Type

@@ -7,6 +7,7 @@ class PrinterQueue < LdapModel
   ldap_map :printerLocation, :location
   ldap_map :printerType, :type
   ldap_map :printerURI, :local_uri
+  ldap_map :printerInfo, :info
   ldap_map :printerDescription, :description
   ldap_map :printerDescription, :name
   ldap_map :puavoServer, :server_dn

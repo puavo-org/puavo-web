@@ -19,8 +19,9 @@ class PrintersController < ApplicationController
       if prev
         #let's update previous entry. cups also replaces previous data if
         # a new printer is created with the same queue name
-        prev.printerMakeAndModel=@printer.printerMakeAndModel
+        prev.printerInfo=@printer.printerInfo
         prev.printerLocation=@printer.printerLocation
+        prev.printerMakeAndModel=@printer.printerMakeAndModel
         prev.printerType=@printer.printerType
         prev.printerURI=@printer.printerURI
         if prev.save
@@ -164,6 +165,7 @@ class PrintersController < ApplicationController
     def printer_params
       return params.require(:printer).permit(
         :printerDescription,    # used when adding a printer
+        :printerInfo,
         :printerLocation,
         :printerMakeAndModel,
         :printerType,

@@ -88,6 +88,7 @@ class Host < LdapModel
       host_object = self.by_hostname!(hostname)
     end
     host = host_object.to_hash
+    host.delete('hw_info')    # devices are not interested in this
 
     host['conf'] = host_object.generate_extended_puavo_conf
 

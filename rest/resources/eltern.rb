@@ -42,7 +42,7 @@ class Eltern < PuavoSinatra
         eltern_response = eltern_authenticate(params['username'], params['password'], request_id)
 
         if eltern_response.nil?
-          rlog.error("[#{request_id}] eltern_auth() returned nil")
+          rlog.error("[#{request_id}] eltern_authenticate() returned nil")
           render_form("Authentication system failure. Try again in a minute. If the problem persists, contact Opinsys support and give them this code: #{request_id}.")
         end
 

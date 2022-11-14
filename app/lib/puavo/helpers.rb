@@ -8,13 +8,25 @@ module Puavo
     # Returns true if the specified user (in the current organisation) has any
     # extra permissions granted for them
     def can_schooladmin_do_this?(username, action)
+      # Default deny all unknown actions
+      return false unless [:create_users, :delete_users, :import_users].include?(action)
+
+      # The default permissions
+      defaults = {
+        'create_users' => 'allow',
+        'delete_users' => 'allow',
+        'import_users' => 'deny',
+      }
+
+      # Load default overrides
       permissions = Puavo::Organisation.find(LdapOrganisation.current.cn).
                       value_by_key('schooladmin_permissions')
 
-      return true unless permissions
+      permissions = {} unless permissions
 
-      defaults = permissions.fetch('defaults', {})
+      defaults.merge!(permissions.fetch('defaults', {}))
 
+      # Apply per-user exceptions
       this_user = permissions.fetch('by_username', {}).fetch(username, {}) || {}
 
       if this_user.include?('all')
