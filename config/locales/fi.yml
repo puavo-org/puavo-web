@@ -1644,13 +1644,13 @@ fi:
         groups: "Järjestelmäryhmät"
         dn: Bind DN
       school:
-        cn: "Ryhmän nimi"
+        cn: "Lyhenne"
         displayName: Koulun nimi
         puavoNamePrefix: Etuliite
         puavoSchoolCode: Koulukoodi
         puavoSchoolHomePageURL: Koulun kotisivu
         description: Kuvaus
-        puavoSchoolNameAbbreviation: "Ryhmän lyhenne"
+        puavoSchoolNameAbbreviation: "Lyhenne"
         telephoneNumber: Puhelinnumero
         facsimileTelephoneNumber: Faxin numero
         l: Sijainti
