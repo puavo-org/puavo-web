@@ -859,11 +859,14 @@ module PuavoRest
     def get_userinfo(username)
       raise 'ldap userinfo not set' unless @username && @ldap_userinfo
 
+      # Use .dup here for userinfo values so that we can use force_encoding
+      # (that may fail on frozen strings).
+
       userinfo = {
-        'external_id' => lookup_external_id(username),
-        'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
-        'last_name'   => Array(@ldap_userinfo['sn']).first.to_s,
-        'username'    => username,
+        'external_id' => lookup_external_id(username).dup,
+        'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s.dup,
+        'last_name'   => Array(@ldap_userinfo['sn']).first.to_s.dup,
+        'username'    => username.dup,
       }
 
       if userinfo['first_name'].empty? then
@@ -883,7 +886,7 @@ module PuavoRest
 
       if @external_learner_id_field then
         userinfo['learner_id'] \
-          = Array(@ldap_userinfo[@external_learner_id_field]).first.to_s
+          = Array(@ldap_userinfo[@external_learner_id_field]).first.to_s.dup
       end
 
       # We presume that ldap result strings are UTF-8.
