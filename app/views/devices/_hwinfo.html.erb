@@ -62,10 +62,21 @@ end
 
 <% end %>
 
+<!-- Windows infection -->
+
+<% if @info.include?('windows') %>
+
+<tr>
+  <th class="main"><%= t('hwinfo.windows.installed') %></th>
+  <td colspan="2"><%= @info['windows'].fetch('is_installed', true) ? t('helpers.boolean_true') : t('helpers.boolean_false') %></td>
+</tr>
+
+<% end %>
+
 <% if @info.include?('windows_license') && !@info['windows_license'].nil? %>
 
 <tr>
-  <th class="main"><%= t('hwinfo.windows_license') %></th>
+  <th class="main"><%= t('hwinfo.windows.license') %></th>
   <td colspan="2"><%= @info['windows_license'].gsub("\n", '<br>').html_safe %></td>
 </tr>
 
@@ -309,6 +320,7 @@ end
   <th><%= t('hwinfo.bios.version') %></th>
   <td><%= @info['bios_version'] || '?' %></td>
 </tr>
+
 <tr class="sectionEnd">
   <th><%= t('hwinfo.bios.date') %></th>
   <td><%= @info['bios_release_date'] || '?' %></td>
@@ -317,14 +329,19 @@ end
 <!-- Serial numbers -->
 
 <tr>
-  <th class="main" rowspan="2"><%= t('hwinfo.serial.title') %></th>
+  <th class="main" rowspan="3"><%= t('hwinfo.serial.title') %></th>
   <th><%= t('hwinfo.serial.device') %></th>
   <td><%= @info['serialnumber'] || '?' %></td>
 </tr>
 
-<tr class="sectionEnd">
+<tr>
   <th><%= t('hwinfo.serial.mainboard') %></th>
   <td><%= @info['boardserialnumber'] || '?' %></td>
+</tr>
+
+<tr class="sectionEnd">
+  <th>SKU</th>
+  <td><%= @info['sku'] || '?' %></td>
 </tr>
 
 <!-- lspci values -->
@@ -414,6 +431,83 @@ end
 <tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.battery.title') %></th>
   <td colspan="2"><%= t('hwinfo.battery.no_battery') %></td>
+</tr>
+
+<% end %>
+
+<!-- local puavo-conf values -->
+
+<% if @info.include?('puavoconf') && @info['puavoconf'].include?('local') %>
+
+<tr class="sectionEnd">
+  <th class="main"><%= t('hwinfo.local_puavoconf.title') %></th>
+  <td colspan="2">
+    <table class="smart">
+      <thead>
+        <tr>
+          <th><%= t('hwinfo.local_puavoconf.key') %></th>
+          <th><%= t('hwinfo.local_puavoconf.value') %></th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @info['puavoconf']['local'].each do |key, value| %>
+      <tr><th><%= key %></th><td><code><%= value %></code></th></tr>
+      <% end %>
+      </tbody>
+    </table>
+  </td>
+</tr>
+
+<% end %>
+
+<!-- installed puavo-pkg packages -->
+
+<% if @info.include?('puavopkgs') %>
+
+<tr class="sectionEnd">
+  <th class="main"><%= t('hwinfo.puavopkg.title') %></th>
+  <td colspan="2">
+    <p class="margin-top-0"><%= t('hwinfo.puavopkg.totals', num_packages: @info['puavopkgs'].fetch('installed', []).count, disk_space: @info['puavopkgs'].fetch('diskspace_used', '?')) %></p>
+
+    <table class="smart">
+      <thead>
+        <tr>
+          <th><%= t('hwinfo.puavopkg.package_name') %></th>
+          <th><%= t('hwinfo.puavopkg.version') %></th>
+          <th><%= t('hwinfo.puavopkg.package_id') %></th>
+          <th><%= t('hwinfo.puavopkg.upstream_hash') %></th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @info['puavopkgs'].fetch('installed', []).each do |key, value| %>
+      <tr>
+        <th><%= key %></th>
+        <td><%= value.fetch('version', nil) %></td>
+        <td><code><%= value.fetch('package-id', nil) %></code></td>
+        <td><code><%= value.fetch('upstream_pack', nil) %></code></td>
+      </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </td>
+</tr>
+
+<% end %>
+
+<!-- last login -->
+
+<% if @info.include?('logins') %>
+
+<tr class="sectionEnd">
+  <th class="main"><%= t('hwinfo.logins.title') %></th>
+  <td colspan="2">
+    <%
+    last = @info['logins'].fetch('last', {})
+    ts = Time.parse(last['timestamp']).localtime.strftime('%Y-%m-%d %H:%M:%S')
+    %>
+
+    <p><%= t('hwinfo.logins.last_login', username: last['uid'], at: ts) %></p>
+  </td>
 </tr>
 
 <% end %>

@@ -1359,7 +1359,9 @@ en:
       name: "Image"
       release: "Name"
       kernel: "Kernel"
-    windows_license: "Windows License Information"
+    windows:
+      installed: "Windows installed?"
+      license: "Windows License Information"
     cpu:
       title: "Processor"
       cores: "Cores"
@@ -1441,6 +1443,20 @@ en:
     abitti:
       title: "Abitti version"
       unknown: "(Unknown)"
+    local_puavoconf:
+      title: "Local PuavoConf settings"
+      key: "Key"
+      value: "Value"
+    puavopkg:
+      title: "puavo-pkg"
+      totals: "%{num_packages} packages, %{disk_space} total bytes of disk space used."
+      package_name: "Package name"
+      version: "Version"
+      package_id: "Package ID"
+      upstream_hash: "Upstream hash"
+    logins:
+      title: "Logins to the device"
+      last_login: "Last user to log in: %{username}, %{at}."
 
   # Username lists for mass password resets (created by mass imports)
   lists:

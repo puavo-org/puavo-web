@@ -1360,7 +1360,9 @@ fi:
       name: "Päätekuva"
       release: "Julkaisu"
       kernel: "Kernel"
-    windows_license: "Windows-lisenssitiedot"
+    windows:
+      installed: "Windows asennettu?"
+      license: "Windows-lisenssitiedot"
     cpu:
       title: "Prosessori"
       cores: "Ytimiä"
@@ -1442,6 +1444,20 @@ fi:
     abitti:
       title: "Abitti-versio"
       unknown: "(Tuntematon)"
+    local_puavoconf:
+      title: "Paikalliset PuavoConf-asetukset"
+      key: "Avain"
+      value: "Arvo"
+    puavopkg:
+      title: "puavo-pkg"
+      totals: "%{num_packages} pakettia, levytilaa käytetty yhteensä %{disk_space} tavua."
+      package_name: "Paketin nimi"
+      version: "Versio"
+      package_id: "Paketin ID"
+      upstream_hash: "Upstream hash"
+    logins:
+      title: "Laitteelle kirjautumiset"
+      last_login: "Viimeisin kirjautuja: %{username}, %{at}."
 
   # Username lists for mass password resets (created by mass imports)
   lists:
