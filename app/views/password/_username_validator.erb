@@ -1,0 +1,41 @@
+<script>
+function validateUsername(elem)
+{
+    const name = elem.value;
+
+    let message = "";
+
+    if (name.match(/^[ \t\n]+/))
+        message = "<%= t('activeldap.errors.messages.username_validation.leading_whitespace') %>";
+    else if (name.match(/[ \t\n]+$/))
+        message = "<%= t('activeldap.errors.messages.username_validation.trailing_whitespace') %>";
+    else if (name.indexOf("@") != -1)
+        message = "<%= t('activeldap.errors.messages.username_validation.domain') %>";
+    else if (name.match(/[A-Z]/))
+        message = "<%= t('activeldap.errors.messages.username_validation.uppercase') %>";
+    else if (name.length > 0 && !name.match(/^[a-z]([a-z0-9.-]*)$/))        // regexp adapted from the user model validator
+        message = "<%= t('activeldap.errors.messages.username_validation.invalid_characters') %>";
+
+    // No Rails, you don't have to escape these...
+    message = message.replaceAll("&#39;", "'").replace("&quot;", "\"");
+
+    document.querySelector(elem.dataset.message).innerText = message;
+}
+
+function setupUsernameValidation(fieldPath, messagePath)
+{
+    const field = document.querySelector(fieldPath);
+
+    if (!field) {
+        console.error(`setupUsernameValidation(): target field "${fieldPath}" not found!`);
+        return;
+    }
+
+    // Setup checking
+    field.dataset.message = messagePath;
+    field.addEventListener("input", (e) => validateUsername(e.target));
+
+    // Do the initial check
+    validateUsername(field);
+}
+</script>

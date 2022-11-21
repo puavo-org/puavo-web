@@ -1586,6 +1586,12 @@ en:
           unknown_json_error: "PuavoConf JSON parsing failed due to an unknown error"
           not_a_hash: "PuavoConf is not in key/value pair format"
           unsupported_value_types: "Unsupported types in PuavoConf values"
+        username_validation:
+          leading_whitespace: "The username starts with whitespace"
+          trailing_whitespace: "The username ends in whitespace"
+          domain: "Don't use the @ character, or put a domain name after it"
+          uppercase: "Don't use uppercase letters"
+          invalid_characters: "The username contains illegal characters"
         password_validation:
           too_short: "The password is too short"
           too_long: "The password is too long"

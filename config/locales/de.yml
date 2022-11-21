@@ -62,6 +62,12 @@ de:
         puavoLocale: "Sprache"
     errors:
       messages:
+        username_validation:
+          leading_whitespace: "Der Anfang des Benutzernamens enthält Leerzeichen"
+          trailing_whitespace: "Das Ende des Benutzernamens enthält Leerzeichen"
+          domain: "Nach dem Benutzernamen kein @-Zeichen und Domain eintippen, bitte"
+          uppercase: "Bitte keine großen Buchstaben im Benutzernamen verwenden"
+          invalid_characters: "Der Benutzername enthält Zeichen die nicht zugelassen sind"
         password_validation:
           too_short: "Das Passwort ist zu kurz"
           too_long: "Das Passwort ist zu lang"

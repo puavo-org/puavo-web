@@ -62,6 +62,12 @@ sv:
         puavoLocale: "Språk"
     errors:
       messages:
+        username_validation:
+          leading_whitespace: "I början av användarnamnet finns blanksteg"
+          trailing_whitespace: "I slutet av användarnamnet finns blanksteg"
+          domain: "Skriv inte tecknet @ eller domain efter användarnamnet"
+          uppercase: "Använda inte stora bokstäver i användarnamnet"
+          invalid_characters: "Användarnamnet innehåller förbjudna tecken"
         password_validation:
           too_short: "Lösenordet är för kort"
           too_long: "Lösenordet är för långt"

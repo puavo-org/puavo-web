@@ -40,7 +40,7 @@
   <table class="editForm">
     <tr>
       <th><%= label :login, :uid, t('activeldap.attributes.user.uid') %></th>
-      <td>
+      <td id="username">
         <% if @domain %>
         <div class="passwordDomainContainer">
         <%= text_field :login, :uid, :value => @changing, :autofocus => (@changing.nil? || @changing.empty?) ? true : false, :required => "required" %>
@@ -49,6 +49,7 @@
         <% else %>
         <%= text_field :login, :uid, :value => @changing, :autofocus => (@changing.nil? || @changing.empty?) ? true : false, :required => "required" %>
         <% end %>
+        <span class="field_error"></span>
       </td>
     </tr>
 
@@ -87,3 +88,11 @@
                              'user_new_password_confirmation',
                              ['login_uid']) %>
 <% end %>
+
+<%= render('username_validator') %>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    setupUsernameValidation("table.editForm td#username input", "table.editForm td#username span.field_error");
+});
+</script>

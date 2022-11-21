@@ -1587,6 +1587,12 @@ fi:
           unknown_json_error: "PuavoConfin JSON-parsinnassa tuntematon virhe"
           not_a_hash: "PuavoConf ei ole avain-/arvopari-muotoa"
           unsupported_value_types: "PuavoConfin arvoissa ei-tuettuja tyyppejä"
+        username_validation:
+          leading_whitespace: "Käyttäjänimen alussa on välilyöntejäX"
+          trailing_whitespace: "Käyttäjänimen lopussa on välilyöntejäX"
+          domain: "Älä kirjoita käyttäjätunnukseen @-merkkiä tai sen perään domainiaX"
+          uppercase: "Älä käytä käyttäjätunnuksessa isoja kirjaimiaX"
+          invalid_characters: "Käyttäjätunnus sisältää kiellettyjä merkkejäX"
         password_validation:
           too_short: "Salasana on liian lyhyt"
           too_long: "Salasana on liian pitkä"
