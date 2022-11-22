@@ -1993,8 +1993,17 @@ function onFillColumn(e)
                         tr.appendChild(nametd);
 
                         let grouptd = document.createElement("td");
-
-                        grouptd.appendChild(selector.cloneNode(true));
+                        let thisselect=selector.cloneNode(true)
+                        grouptd.appendChild(thisselect);
+                        for(let j = 0; j < thisselect.options.length;j++) // try to automatically guess the right one, this often is enough
+                        {
+                            let len=(thisselect.options[j].text.length > nametd.textContent.length ? nametd.textContent.length : thisselect.options[j].text.length)
+                            if(thisselect.options[j].text.substring(0,len).toLowerCase() == nametd.textContent.substring(0,len).toLowerCase())
+                            {
+                                thisselect.options[j].selected = true
+                                continue
+                            }
+                        }
                         tr.appendChild(grouptd);
 
                         tab.appendChild(tr);
