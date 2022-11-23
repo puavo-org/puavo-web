@@ -2497,13 +2497,13 @@ function generatePasswords(overwrite)
     let available = "";
 
     if (popup.contents.querySelector("input#uppercase").checked)
-        available += shuffleString("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        available += shuffleString("ABCDEFGHJKLMNPQRSTUVWXYZ");
 
     if (popup.contents.querySelector("input#lowercase").checked)
-        available += shuffleString("abcdefghijklmnopqrstuvwxyz");
+        available += shuffleString("abcdefghijkmnopqrstuvwxyz");
 
     if (popup.contents.querySelector("input#numbers").checked)
-        available += shuffleString("0123456789");
+        available += shuffleString("123456789");
 
     if (popup.contents.querySelector("input#punctuation").checked)
         available += shuffleString(".,;:@£$+?#%&=\"/\\{}[]()");
