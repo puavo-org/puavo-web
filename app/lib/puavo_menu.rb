@@ -61,15 +61,6 @@ class PuavoMenu < MetaMenu
     end
 
     child do
-      title { t('import_tool.import') }
-      link { import_tool_path(@school) }
-      active_on ImportToolController
-      owners_only { true }
-      # XXX: Feature switch!
-      hide_when { !current_user.organisation_owner? }
-    end
-
-    child do
       title { t('link.new_import') }
       link { new_import_path(@school) }
       active_on NewImportController

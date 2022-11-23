@@ -48,9 +48,6 @@ js-translations-watch: js-translations
 js-watch:
 	webpack -w
 
-js-server:
-	webpack-dev-server --port 4000 --host 0.0.0.0 --inline --progress
-
 js-clean:
 	rm -rf public/import_tool.js public/import_tool.js.map
 
