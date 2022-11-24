@@ -8,6 +8,7 @@
 <table class="list printersList" id="printers_<%= index %>">
   <tr class="thead">
     <th><%= sortable_list_column_header(t('activeldap.attributes.printer.printerDescription')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.printer.printerInfo')) %></th>
     <th><%= sortable_list_column_header(t('activeldap.attributes.printer.printerMakeAndModel')) %></th>
     <th><%= sortable_list_column_header(t('activeldap.attributes.printer.printerLocation')) %></th>
     <th><%= t('actions') %></th>
@@ -16,6 +17,7 @@
   <% server[:printers].each do |printer| %>
   <tr>
     <td data-title="<%= t("activeldap.attributes.printer.printerDescription") %>"><%= h printer.printerDescription %></td>
+    <td data-title="<%= t("activeldap.attributes.printer.printerInfo") %>"><%= h printer.printerInfo %></td>
     <td data-title="<%= t("activeldap.attributes.printer.printerMakeAndModel") %>"><%= h printer.printerMakeAndModel %></td>
     <td data-title="<%= t("activeldap.attributes.printer.printerLocation") %>"><%= h printer.printerLocation %></td>
     <td data-title="<%= t("actions") %>" class="tableActions">

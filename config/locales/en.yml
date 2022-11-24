@@ -1781,6 +1781,7 @@ en:
         printerDescription: Description
         printerURI: URI
         printerLocation: Location
+        printerInfo: Name in CUPS
         printerMakeAndModel: Make and model
         image: Image
         puavoDeviceAutoPowerOffMode: Auto power off mode

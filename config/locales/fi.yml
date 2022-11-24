@@ -1782,6 +1782,7 @@ fi:
         printerDescription: Kuvaus
         printerURI: Laiteosoite
         printerLocation: Sijainti
+        printerInfo: Nimi tulostuspalvelimella
         printerMakeAndModel: Merkki ja malli
         image: Kuva
         puavoDeviceAutoPowerOffMode: Automaattisammutuksen tila
