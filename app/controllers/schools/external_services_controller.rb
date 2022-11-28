@@ -1,24 +1,22 @@
 class Schools::ExternalServicesController < ExternalServicesBase
+  def show
+    # Don't show services that aren't active in this school (and aren't
+    # activated on organisation-level)
+    organisation_activated = Array(LdapOrganisation.current.puavoActiveService).map { |dn| dn.to_s }.to_set
 
+    activated = Array(@school.puavoActiveService).map { |dn| dn.to_s }.to_set
+    activated += organisation_activated
 
-  before_action do
-    @model = @school
+    @external_services.reject! { |e| !activated.include?(e[:dn]) }
+
+    @external_services.each do |e|
+      e[:org_level] = organisation_activated.include?(e[:dn])
+    end
+
+    @is_school = true
+
+    respond_to do |format|
+      format.html # show.html.erb
+    end
   end
-
-  def put_path
-    schools_external_services_path
-  end
-
-  def is_disabled?(external_service)
-    services = Array(LdapOrganisation.current.puavoActiveService)
-    return services.include?(external_service.dn)
-  end
-
-  def is_checked?(external_service)
-    return (
-      is_disabled?(external_service) ||
-      Array(@model.puavoActiveService).include?(external_service.dn)
-    )
-  end
-
 end

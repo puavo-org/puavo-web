@@ -1,30 +1,13 @@
 class OrganisationExternalServicesController < ExternalServicesBase
-
-  before_action do
-    @model = LdapOrganisation.current
-  end
-
   def show
     return if redirected_nonowner_user?
-    super
-  end
 
-  def update
-    return if redirected_nonowner_user?
-    super
-  end
+    # Don't show services that aren't active in this organisation
+    activated = Array(LdapOrganisation.current.puavoActiveService).map { |dn| dn.to_s }.to_set
+    @external_services.reject! { |e| !activated.include?(e[:dn]) }
 
-  def put_path
-    organisation_external_services_path
+    respond_to do |format|
+      format.html # show.html.erb
+    end
   end
-
-  def is_disabled?(*)
-    # Checkboxes cannot be disabled on organisation level form
-    false
-  end
-
-  def is_checked?(external_service)
-    Array(@model.puavoActiveService).include?(external_service.dn)
-  end
-
 end

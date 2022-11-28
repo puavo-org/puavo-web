@@ -1,92 +1,66 @@
 <!-- shared/_external_services starts -->
-<h1><%= t("external_services.title") %></h1>
+<% if @is_school %>
+<h1><%= t('external_services.title_school') %></h1>
+<% else %>
+<h1><%= t('external_services.title_organisation') %></h1>
+<% end %>
 
-<p><%= t("external_services.description") %></p>
+<p><%= t('external_services.description') %></p>
 
-<%= form_tag(put_path, :method => :put) do %>
-  <% @external_services.each do |external_service| %>
-    <% if is_disabled?(external_service) %>
-    <div class="disabledExternalService">
-    <% end %>
-    <h2 class="margin-0 padding-0"><%= external_service.cn %></h2>
+<p><%= t('external_services.activation') %></p>
 
-    <% if is_disabled?(external_service) %>
-      <p class="genericNotice">
-      <% if @is_owner %>
-      <%= t("external_services.disabled_description",
-            :organisation => link_to(t("external_services.organisation"), organisation_external_services_path)).html_safe %>
-      <% else %>
-      <%= t("external_services.disabled_description_no_link") %>
-      <% end %>
-      </p>
-    <% end %>
+<% if @external_services.empty? %>
 
-    <p><%= external_service.description %></p>
+<% if @is_school %>
+<p class="genericNotice"><%= t('external_services.no_services_school') %></p>
+<% else %>
+<p class="genericNotice"><%= t('external_services.no_services_organisation') %></p>
+<% end %>
 
-    <% if external_service.puavoServiceDescriptionURL %>
-    <p><a href="<%= external_service.puavoServiceDescriptionURL %>" target="_new"><%= t("external_services.additional_info") %></a></p>
-    <% end %>
+<% else %>
+<% @external_services.sort { |a, b| a[:name].downcase <=> b[:name].downcase }.each do |es| %>
 
-    <table class="editForm">
-      <tr>
-        <th>Domain</th>
-        <td><%= Array(external_service.puavoServiceDomain || []).join("<br>").html_safe %></td>
-      </tr>
+<h2><%= es[:name] %></h2>
 
-      <tr>
-        <th><%= t("external_services.email") %></th>
-        <td><%= external_service.mail %></td>
-      </tr>
+<% if es[:org_level] %>
+<p class="genericNotice"><%= t('external_services.organisation_wide_activation') %></p>
+<% end %>
 
-      <tr>
-        <th><%= t("external_services.path_prefix") %></th>
-        <td><%= external_service.puavoServicePathPrefix %></td>
-      </tr>
+<% if es[:description] %>
+<p><%= es[:description] %></p>
+<% end %>
 
-      <tr>
-        <th><label for="<%= external_service.dn.to_s %>"><%= t("external_services.active") %></label></th>
-        <td>
-          <%= check_box_tag("puavoActiveService[]",
-                            external_service.dn,
-                            is_checked?(external_service),
-                            :id => external_service.dn.to_s,
-                            :disabled => is_disabled?(external_service))
-          %>
-        </td>
-      </tr>
+<% if es[:url] %>
+<p><a href="<%= es[:url] %>" target="_new"><%= t("external_services.additional_info") %></a></p>
+<% end %>
 
-      <tr>
-        <th>DN</th>
-        <td><%= external_service.dn %></td>
-      </tr>
+<table class="editForm">
+  <tr>
+    <th>Domain</th>
+    <td><%= es[:domains].join("<br>").html_safe %></td>
+  </tr>
 
-      <tr>
-        <th><%= t('ldap_create_time') %></th>
-        <td>
-          <% if @extra.include?(external_service.dn.to_s) %>
-          <%= Time.at(@extra[external_service.dn.to_s][:created]).strftime('%Y-%m-%d %H:%M:%S') %> UTC
-          <% else %>
-          ?
-          <% end %>
-        </td>
-      </tr>
-    </table>
+  <tr>
+    <th><%= t("external_services.email") %></th>
+    <td><%= es[:mail] %></td>
+  </tr>
 
-    <% if is_disabled?(external_service) %>
-    </div>
-    <% end %>
+  <tr>
+    <th><%= t("external_services.path_prefix") %></th>
+    <td><%= es[:prefix] %></td>
+  </tr>
 
-    <br>
-  <% end %>
+  <tr>
+    <th>DN</th>
+    <td><%= es[:dn] %></td>
+  </tr>
 
-  <br>
+  <tr>
+    <th><%= t('ldap_create_time') %></th>
+    <td><%= es[:created] %></td>
+  </tr>
+</table>
+<% end %>
 
-  <table class="editForm">
-    <tr class="buttonRow">
-      <td>
-        <%= submit_tag t("external_services.save"), class: 'btn' %>
-      </td>
-    </tr>
-  </table>
 <% end %>
 <!-- shared/_external_services ends -->

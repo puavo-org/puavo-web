@@ -431,7 +431,6 @@ en:
     save_failed: "%{model} cannot be saved!"
     wlan_updated: WLAN settings successfully updated
     wlan_save_failed: "WLAN settings could not be saved: %{error}"
-    external_services_saved: "Saved!"
     device_created: "Device was successfully created."
     device_updated: "Device was successfully updated."
     server_created: "Server was successfully created."
@@ -631,16 +630,17 @@ en:
 
   # External services (organisation and school)
   external_services:
-    title: External Services
-    description: "External service activation enables logging to the service with Opinsys credentials. User's full name, email, organisation name and school name will be given to the external service during login."
-    email: Maintainer Email
-    path_prefix: Path prefix
-    active: Active
-    additional_info: Additional info...
-    save: Save
-    disabled_description: This service is activated on the %{organisation} level for all schools.
-    disabled_description_no_link: This service is activated on the organisation level for all schools.
-    organisation: organisation level
+    title: "External Services"
+    title_organisation: "External services activated for this organisation"
+    title_school: "External services activated for this school"
+    description: "External services are systems that support log-ins with Opinsys credentials. Once the user has been authenticated, their name, username, roles, school information, and organisation information is passed to the service."
+    activation: "This page only lists the activated services. Due to security reasons, only Opinsys employees can create, edit and activate external services."
+    no_services_organisation: "No external services have been activated for this organisation"
+    no_services_school: "No external services have been activated for this school"
+    email: "Maintainer Email"
+    path_prefix: "Path prefix"
+    additional_info: "Additional info..."
+    organisation_wide_activation: "This service has been activated on the organisation level for all schools."
 
   # Organisation/external files
   external_files:

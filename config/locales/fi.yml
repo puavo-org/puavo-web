@@ -431,7 +431,6 @@ fi:
     save_failed: "Tallennus epäonnistui!"
     wlan_updated: WLAN-asetukset päivitetty
     wlan_save_failed: "WLAN-asetusten tallennus epäonnistui: %{error}"
-    external_services_saved: "Tallennettu!"
     device_created: "Laite luotiin onnistuneesti"
     device_updated: "Laite päivitettiin onnistuneesti"
     server_created: "Palvelin luotiin onnistuneesti"
@@ -631,16 +630,17 @@ fi:
 
   # External services (organisation and school)
   external_services:
-    title: Ulkoiset palvelut
-    description: "Ulkoisen palvelun aktivointi mahdollistaa palveluun kirjautumisen Opinsys-käyttäjätunnuksella ja -salasanalla. Aktivoidulle palvelulle siirretään kirjautumisen yhteydessä käyttäjän koko nimi, sähköposti, organisaation nimi ja koulun nimi."
-    email: Ylläpitäjän sähköpostiosoite
-    path_prefix: Polun etuliite
-    active: Aktiivinen
-    additional_info: Lisätietoja...
-    save: Tallenna
-    disabled_description: Tämä palvelu on aktivoitu %{organisation} kaikkiin kouluihin.
-    disabled_description_no_link: Tämä palvelu on aktivoitu organisaatiotasolla kaikkiin kouluihin.
-    organisation: organisaatiotasolla
+    title: "Ulkoiset palvelut"
+    title_organisation: "Organisaatiossa aktivoidut ulkoiset palvelut"
+    title_school: "Koulussa aktivoidut ulkoiset palvelut"
+    description: "Ulkoiset palvelut ovat järjestelmiä joihin voi kirjautua Opinsys-tunnuksilla. Käyttäjän kirjaudutta heidän nimi, käyttäjänimi, roolit, koulutiedot ja organisaatiotiedot välitetään kohdepalvelulle. Palveluita voi aktivoida myös koulukohtaisesti."
+    activation: "Tämä sivu vain listaa aktivoidut palvelut. Tietoturvasyistä johtuen ulkoisia palveluita voivat luoda, muokata ja aktivoida vain Opinsysin työntekijät. "
+    no_services_organisation: "Ulkoisia palveluita ei ole aktivoitu tälle koululle."
+    no_services_school: "Ulkoisia palveluita ei ole aktivoitu tässä organisaatiossa."
+    email: "Ylläpitäjän sähköpostiosoite"
+    path_prefix: "Polun etuliite"
+    additional_info: "Lisätietoja..."
+    organisation_wide_activation: "Tämä palvelu on aktivoitu organisaatiotasolla kaikkiin kouluihin."
 
   # Organisation/external files
   external_files:

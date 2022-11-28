@@ -45,8 +45,9 @@ I18n.locale = "<%= I18n.locale %>";
             <li><%= link_to t('.all_users'), "/all_users" %></li>
             <li class="org-separator"></li>
             <li><%= link_to t('.all_groups'), "/all_groups" %></li>
-            <% if Puavo::EXTERNAL_FILES %>
             <li class="org-separator"></li>
+            <li><%= link_to t('external_services.title'),  organisation_external_services_path %></li>
+            <% if Puavo::EXTERNAL_FILES %>
             <li><%= link_to t('.external_files'), external_files_path %></li>
             <% end %>
             <li class="org-separator"></li>
