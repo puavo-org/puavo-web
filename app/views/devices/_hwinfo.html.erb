@@ -291,7 +291,7 @@ end
 <!-- UEFI installation -->
 <tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.uefi.title') %></th>
-  <td colspan="2"><%= @info.has_key?('uefi') ? @info['uefi'] : '?' %></td>
+  <td colspan="2"><%= @info.has_key?('uefi') ? translate_boolean_value(@info['uefi']) : '?' %></td>
 </tr>
 
 <!-- WiFi -->
