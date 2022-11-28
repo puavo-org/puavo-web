@@ -1687,36 +1687,36 @@ function onDeleteSelectedRows()
     }
 
     // Make a list of selected table rows
-    let markedRows = [];
+    let selectedRows = [];
 
     for (let cb of container.querySelectorAll(`div#output table tbody tr input[type="checkbox"]:checked`))
-        markedRows.push(parseInt(cb.closest("tr").dataset.row, 10));
+        selectedRows.push(parseInt(cb.closest("tr").dataset.row, 10));
 
-    if (markedRows.length == 0) {
-        window.alert(_tr("alerts.no_marked_rows"));
+    if (selectedRows.length == 0) {
+        window.alert(_tr("alerts.no_selected_rows"));
         return;
     }
 
-    if (markedRows.length == importData.rows.length) {
+    if (selectedRows.length == importData.rows.length) {
         // Confirm whole table removal
         if (!window.confirm(_tr("alerts.delete_everything")))
             return;
     } else {
-        if (!window.confirm(_tr("alerts.delete_marked_rows", { count: markedRows.length })))
+        if (!window.confirm(_tr("alerts.delete_selected_rows", { count: selectedRows.length })))
             return;
     }
 
     resetSelection();
 
-    if (markedRows.length == importData.rows.length) {
+    if (selectedRows.length == importData.rows.length) {
         // Faster path for whole table deletion
         noDataToDisplay();
     } else {
         // Delete the selected rows. Live-update the table (don't rebuild it wholly).
         let tableRows = container.querySelectorAll("div#output table tbody tr");
 
-        for (let i = markedRows.length - 1; i >= 0; i--) {
-            const rowNum = markedRows[i];
+        for (let i = selectedRows.length - 1; i >= 0; i--) {
+            const rowNum = selectedRows[i];
 
             console.log(`Removing row ${rowNum}`);
             importData.rows.splice(rowNum, 1);
