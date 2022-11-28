@@ -479,7 +479,9 @@ end
         </tr>
       </thead>
       <tbody>
-      <% @info['puavopkgs'].fetch('installed', []).each do |key, value| %>
+      <% packages = @info['puavopkgs'].fetch('installed', []) %>
+      <% packages.keys.sort.each do |key| %>
+      <% value = packages[key] %>
       <tr>
         <th><%= key %></th>
         <td><%= value.fetch('version', nil) %></td>
