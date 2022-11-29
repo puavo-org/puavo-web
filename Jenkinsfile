@@ -78,21 +78,7 @@ EOF
         sh '''
           apt-get update
           apt-get -y dist-upgrade
-          apt-get install -y devscripts dpkg-dev make rsync wget
-        '''
-      }
-    }
-
-    stage('Prepare the puavo-standalone environment') {
-      // XXX Why does the build need this environment to work?
-      // XXX (This should only be necessary for testing puavo-users etc.)
-      steps {
-        // Setup puavo-standalone.  Use the wget-to-shell mechanism, because,
-        // even though installing "ansible"- and "puavo-standalone"-packages
-        // and running "ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml"
-        // should work, we probably want to test that this works as well:
-        sh '''
-          wget -qO - https://github.com/puavo-org/puavo-standalone/raw/bullseye/setup.sh | sh
+          apt-get install -y devscripts dpkg-dev make rsync
         '''
       }
     }
