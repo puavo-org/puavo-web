@@ -78,21 +78,33 @@ EOF
         sh '''
           apt-get update
           apt-get -y dist-upgrade
-          apt-get install -y devscripts dpkg-dev make rsync wget
+          apt-get install -y devscripts dpkg-dev make rsync
         '''
       }
     }
 
-    stage('Prepare the puavo-standalone environment') {
-      // XXX Why does the build need this environment to work?
-      // XXX (This should only be necessary for testing puavo-users etc.)
+    stage('Checkout the Puavo OS repository') {
       steps {
-        // Setup puavo-standalone.  Use the wget-to-shell mechanism, because,
-        // even though installing "ansible"- and "puavo-standalone"-packages
-        // and running "ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml"
-        // should work, we probably want to test that this works as well:
+        sh 'mkdir -p puavo-os'
+        dir('puavo-os') {
+          git branch: 'bullseye-ldapmaster',
+          url: 'https://github.com/puavo-org/puavo-os.git';
+        }
+      }
+    }
+
+    stage('Build Puavo OS (cloud) packages') {
+      steps {
         sh '''
-          wget -qO - https://github.com/puavo-org/puavo-standalone/raw/bullseye/setup.sh | sh
+          cd puavo-os
+          make setup-buildhost
+
+          # We can treat a docker container as if it is a puavo-os system
+          # so package builds can proceed:
+          ln -fns "$(pwd)" /puavo-os
+
+          make prepare
+          make build-debs-cloud
         '''
       }
     }
