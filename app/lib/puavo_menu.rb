@@ -49,7 +49,6 @@ class PuavoMenu < MetaMenu
     link { users_path(@school) }
     active_on UsersController
     active_on ListsController
-    active_on ImportToolController
     active_on NewImportController
     owners_only { false }
 
