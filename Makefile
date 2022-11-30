@@ -13,9 +13,7 @@ INSTALL_PROGRAM = $(INSTALL)
 build: symlink-config
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
-	npm install --registry https://registry.npmjs.org
 	bundle exec rake assets:precompile
-	$(MAKE) js
 
 update-gemfile-lock: clean
 	rm -f Gemfile.lock
@@ -31,25 +29,9 @@ clean-assets:
 	rm -rf public/assets
 	rm -rf tmp/cache/assets
 
-clean: clean-assets js-clean
+clean: clean-assets
 	rm -rf .bundle
 	rm -rf vendor/bundle
-	rm -rf node_modules
-
-js: js-translations
-	NODE_ENV=production webpack -p --progress
-
-js-translations:
-	bundle exec rake i18n:js:export
-
-js-translations-watch: js-translations
-	chokidar config/locales/* -c '$(MAKE) js-translations'
-
-js-watch:
-	webpack -w
-
-js-clean:
-	rm -rf public/import_tool.js public/import_tool.js.map
 
 clean-deb:
 	rm -f ../puavo-*.tar.gz ../puavo-*.deb ../puavo-*.dsc ../puavo-*.changes
@@ -75,8 +57,6 @@ install: clean-for-install mkdirs
 		Gemfile.lock \
 		Makefile \
 		monkeypatches.rb \
-		package.json \
-		node_modules \
 		public \
 		Rakefile \
 		README.md \
