@@ -85,7 +85,7 @@ EOF
 
     stage('Checkout the Puavo OS repository') {
       steps {
-        sh 'mkdir -p puavo-os'
+        sh 'mkdir -p puavo-os && chown --reference=. puavo-os'
         dir('puavo-os') {
           git branch: 'bullseye-ldapmaster',
           url: 'https://github.com/puavo-org/puavo-os.git';
