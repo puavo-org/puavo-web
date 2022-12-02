@@ -87,8 +87,20 @@ EOF
       steps {
         sh 'mkdir -p puavo-os && chown --reference=. puavo-os'
         dir('puavo-os') {
-          git branch: 'bullseye-ldapmaster',
-          url: 'https://github.com/puavo-org/puavo-os.git';
+          checkout([
+            $class: 'GitSCM',
+            branches: [[name: 'bullseye-ldapmaster']],
+            doGenerateSubmoduleConfigurations: false,
+            extensions: [[
+              $class: 'SubmoduleOption',
+              disableSubmodules: false,
+              parentCredentials: true,
+              recursiveSubmodules: true,
+              reference: '',
+              trackingSubmodules: false
+            ]],
+          submoduleCfg: [],
+          userRemoteConfigs: [[url: 'https://github.com/puavo-org/puavo-os.git']]])
         }
       }
     }
