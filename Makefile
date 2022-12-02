@@ -10,7 +10,7 @@ RAILS_CONFIG_DIR = $(INSTALL_DIR)/config
 INSTALL = install
 INSTALL_PROGRAM = $(INSTALL)
 
-build: symlink-config
+build:
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
 	npm install --registry https://registry.npmjs.org
@@ -104,18 +104,6 @@ install: clean-for-install mkdirs
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-owner
-
-symlink-config:
-	ln -sf /etc/puavo-web/ldap.yml config/ldap.yml
-	ln -sf /etc/puavo-web/organisations.yml config/organisations.yml
-	ln -sf /etc/puavo-web/puavo_web.yml config/puavo_web.yml
-	ln -sf /etc/puavo-web/puavo_external_files.yml config/puavo_external_files.yml
-	ln -sf /etc/puavo-web/redis.yml config/redis.yml
-	ln -sf /etc/puavo-web/secrets.yml config/secrets.yml
-	ln -sf /etc/puavo-web/services.yml config/services.yml
-	ln -sf /etc/puavo-web/unicorn.rb config/unicorn.rb
-	ln -sf /etc/puavo-web/releases.json config/releases.json
-	ln -sf /etc/puavo-web/puavoconf_definitions.json config/puavoconf_definitions.json
 
 test-rest:
 	$(MAKE) -C rest test
