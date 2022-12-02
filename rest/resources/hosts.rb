@@ -168,10 +168,6 @@ class Host < LdapModel
       raise 'received data failed basic sanity checks'
     end
 
-    # Strip network info; we don't need it and it can contain sensitive
-    # information.
-    data.delete('network_interfaces')
-
     # We can't assume the source device's clock is correct, but we can assume
     # the server's clock is. Replace the timestamp.
     data['timestamp'] = Time.now.to_i
