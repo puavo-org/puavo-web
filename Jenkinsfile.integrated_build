@@ -186,7 +186,8 @@ EOF
             ~/.ssh/id_rsa
         '''
 
-        sh 'make upload-debs'
+        // XXX do not upload before we can be more sure these packages are okay
+        // sh 'make upload-debs'
       }
     }
   }
