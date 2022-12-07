@@ -90,8 +90,7 @@ install: clean-for-install mkdirs
 	cp -r rest/resources $(INSTALL_DIR)/rest
 	cp -r rest/views $(INSTALL_DIR)/rest
 	cp -r rest/public $(INSTALL_DIR)/rest
-	cp $(RAILS_CONFIG_DIR)/database.yml \
-	   $(RAILS_CONFIG_DIR)/ldap.yml \
+	cp $(RAILS_CONFIG_DIR)/ldap.yml \
 	   $(RAILS_CONFIG_DIR)/organisations.yml \
 	   $(RAILS_CONFIG_DIR)/puavoconf_definitions.json \
 	   $(RAILS_CONFIG_DIR)/puavo_external_files.yml \
