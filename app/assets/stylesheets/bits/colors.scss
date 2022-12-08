@@ -192,17 +192,19 @@ $puavoConfBorder: #bbb;
 $pceDeleteForeground: #f00;
 $pceDeleteBackground: none;
 $pceDeleteBorder: transparent;
-$pceDeleteHoverForeground: #000;
+$pceDeleteHoverForeground: #f00;
 $pceDeleteHoverBackground: #f88;
 $pceDeleteHoverBorder: #f00;
 $pceError: #f00;
+$pceErrorBackground: #f88;
 $pceAutocompleteBackground: #fff;
 $pceAutocompleteForeground: #000;
+$pceAutocompleteBorder: #000;
 $pceAutocompleteHint: #888;
 $pceAutocompleteEntryHoverForeground: #fff;
-$pceAutocompleteEntryHoverBackground: #00f;
+$pceAutocompleteEntryHoverBackground: #ccc;
 $pceAutocompleteMatchForeground: #000;
-$pceAutocompleteMatchBackground: #0ff;
+$pceAutocompleteMatchBackground: #ccc;
 
 /* Miscellaneous */
 $mountPointsHeadingBack: #ccc;

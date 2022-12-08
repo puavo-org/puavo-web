@@ -2,89 +2,117 @@
   border: 1px solid $pceError;
 }
 
-.pcEdit {
-  display: block;
+.pcEditorWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pcTable {
   width: 100%;
 }
 
-.pcEdit ::placeholder {
-  font-style: italic;
-}
-
-.pcEdit table {
+.pcTable table {
   border-collapse: collapse;
   width: 100%;
   padding: 0 !important;
   margin: 0 !important;
 }
 
-.pcEdit td {
+.pcTable td {
   margin: 0 !important;
-  padding: 5px !important;
+  padding: 2px !important;
 }
 
-.pcEdit .buttons {
+.pcTable .buttons {
   width: 0;       /* minimize cell width */
 }
 
-.pcEdit .buttons a {
+.pcTable .buttons button {
   cursor: pointer;
-  padding: 5px;
+  padding: 2px 5px;
 }
 
-.pcEdit .buttons a.delete {
+.pcTable .buttons button.delete {
   color: $pceDeleteForeground !important;
   background: $pceDeleteBackground !important;
-  border: 1px solid $pceDeleteBorder  !important;
+  border: 1px solid $pceDeleteBorder !important;
 }
 
-.pcEdit .buttons a.delete:hover {
+.pcTable .buttons .delete:hover {
   color: $pceDeleteHoverForeground !important;
   background: $pceDeleteHoverBackground !important;
   border: 1px solid $pceDeleteHoverBorder !important;
 }
 
-.pcEdit .key {
+.pcTable .key {
   width: 0;
 }
 
-.pcEdit .value {
-  width: 100%;
+.pcTable .value {
 }
 
-.pcEdit div.editor {
-  display: block;
-  width: 100%;
+.pcTable div.editor {
 }
 
-.pcEdit div.editor input[type="text"] {
-  width: 100%;
+.pcTable div.editor table tr {
+  background: none;
+}
+
+.pcTable div.editor input[type="text"] {
   padding: 5px !important;
 }
 
-.pcEdit div.editor label {
+.pcTable div.editor label {
   font-size: 100%;
   margin-right: 1em;
 }
 
-.pcEdit input.new {
+.pcTable input.new {
   width: 100%;
 }
 
-.pcEdit textarea {
+.pcTable textarea {
   width: 100%;
 }
 
-.pcEdit .invalid {
+.pcTable .invalid {
   border: 1px solid $pceError;
+}
+
+.pcTable div.editor div.details table {
+  width: auto !important;
+}
+
+.pcTable div.editor div.details table td {
+  padding: 3px;
+}
+
+.pcTable div.editor div.details select {
+  padding: 2px !important;
+}
+
+.pcTable div.editor div.details input[type="text"] {
+  width: auto !important;
+  padding: 2px !important;
+}
+
+.pcTable div.editor div.details table tr.invalid {
+  background: $pceErrorBackground;
+  border: none;
+}
+
+.pcTable div.editor div.details {
+  max-height: 250px;
+  overflow-y: auto;
 }
 
 /* The autocomplete suggestions list */
 .pcSuggestions {
   position: absolute;
   z-index: 1;
-  border: 1px solid #000;
-  background: #fff;
+  border: 1px solid $pceAutocompleteBorder;
+  background: $pceAutocompleteBackground;
   visibility: hidden;
   margin: 0;
   padding: 2px;
@@ -106,6 +134,7 @@
 }
 
 .pcSuggestions div.new {
+  color: #000;
   font-style: italic;
 }
 
@@ -115,21 +144,28 @@
 }
 
 .pcSuggestions div.entry {
+  color: #000;
+  white-space: nowrap;
 }
 
-.pcSuggestions div.entry:hover {
-  color: $pceAutocompleteEntryHoverForeground;
-  background: $pceAutocompleteEntryHoverBackground;
+.pcSuggestions dfn {
+  margin-left: 10px;
+  color: #888;
+  font-size: 90%;
+  text-overflow: ellipsis;
+}
+
+.pcSuggestions div.entry.selected, .pcSuggestions div.entry:hover {
+  background: #00f;
+  color: #fff;
+}
+
+.pcSuggestions div.entry.selected dfn, .pcSuggestions div.entry:hover dfn {
+  color: #ccc;
 }
 
 .pcSuggestions span {
   pointer-events: none;
-}
-
-.pcSuggestions span.hint {
-  margin-left: 1em;
-  color: $pceAutocompleteHint;
-  font-style: italic;
 }
 
 .pcSuggestions span.match {
