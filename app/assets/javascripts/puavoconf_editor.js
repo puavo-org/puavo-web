@@ -207,7 +207,7 @@ class ConfigPuavomenuTags extends ConfigEntry {
     load()
     {
         const TAG_SPLITTER = /,|;|\ /,
-              TAG_MATCHER = /^(?<action>(\+|\-))?((?<namespace>c|cat|category|m|menu|p|prog|program|t|tag)\:)?(?<target>[a-z0-9\-_\.]+)$/;
+              TAG_MATCHER = /^(?<action>(\+|\-))?((?<namespace>c|cat|category|m|menu|p|prog|program|t|tag)\:)?(?<target>[a-zA-Z0-9\-_\.]+)$/;
 
         this.tags = [];
 
@@ -516,7 +516,7 @@ class ConfigPuavomenuTags extends ConfigEntry {
             return false;
 
         // Highlight tags whose target contains unacceptable characters
-        if (tag.target.match(/[^a-z0-9\-_\.]/))
+        if (tag.target.match(/[^a-zA-Z0-9\-_\.]/))
             return false;
 
         return true;
