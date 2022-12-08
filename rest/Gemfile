@@ -11,13 +11,13 @@ gem "activeldap", :require => "active_ldap"
 gem "rmagick"     # ok
 gem "uuid"        # ok
 gem "nokogiri"    # ok
-gem "gettext_i18n_rails", '1.9.0'
+gem "gettext_i18n_rails" # ok
 
 gem "sinatra"     # ok
 gem "sinatra-contrib" # ok
 gem "uuid"        # ok
 gem "puma"        # ok
-gem "rack-rewrite", '1.5.1'
+gem "rack-rewrite" # ok
 gem "rack", "2.1.4"   # 2.2.x breaks some VirtualHostBase tests
 gem "addressable" # ok
 gem "jwt"         # ok
@@ -31,9 +31,9 @@ gem "yajl-ruby"   # ok
 gem "colorize"    # ok
 gem "redis-namespace" # ok
 gem "httparty"    # ok
-gem "pony", '1.13.1'
+gem "pony"        # ok
 gem "gibberish"   # ok
-gem "sinatra-support", '1.2.2', :require => "sinatra/support"
+gem "sinatra-support", :require => "sinatra/support"
 gem "redlock"     # ok
 gem "http"        # ok
 gem "dnsruby"     # ok
@@ -42,8 +42,8 @@ gem "net-ldap"    # ok
 gem "byebug"      # ok
 gem "ntlm-http"   # ok
 gem "ttfunk"      # ok
-gem "gettext", '3.4.3'
-gem "r18n-core", '5.0.1'
+gem "gettext"     # ok
+gem "r18n-core"   # ok
 
 group :test do
   gem "shotgun"   # ok

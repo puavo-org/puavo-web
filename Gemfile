@@ -17,28 +17,28 @@ gem "unicorn"     # ok
 gem "gibberish"   # ok
 gem "http"        # ok
 gem "json"        # ok
-gem "sinatra-support", '1.2.2', :require => "sinatra/support"
+gem "sinatra-support", :require => "sinatra/support"
 gem "jwt"         # ok
 gem "jwe"         # ok
 gem "sshkey"      # ok
-gem "i18n-js", '3.9.2'
+gem "i18n-js"     # ok
 gem "byebug"      # ok
-gem "gettext_i18n_rails", '1.8.1'
+gem "gettext_i18n_rails"  # ok
 gem "ttfunk"      # ok
-gem "gettext", '3.4.3'
+gem "gettext"     # ok
 gem "redis-namespace" # ok
 gem "sassc-rails" # ok
 gem "jquery-rails" # ok
 gem "parse-cron"  # ok
 
 group :test do
-  gem "capybara", '3.35.3'
+  gem "capybara"  # ok
   gem "colorize"  # ok
-  gem "cucumber", "5.3.0"   # cucumber-rails is not compatible with cucumber 6
-  gem "cucumber-rails", '2.5.1'
+  gem "cucumber"  # ok
+  gem "cucumber-rails" # ok
   gem "greenletters"  # ok
-  gem "rspec", '3.11.0'
-  gem "rspec-rails", '5.1.2'
+  gem "rspec"     # ok
+  gem "rspec-rails" # ok
   gem "timecop"   # ok
   gem "webmock"   # ok
 end
