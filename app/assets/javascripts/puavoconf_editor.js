@@ -485,7 +485,7 @@ class ConfigPuavomenuTags extends ConfigEntry {
     </td>
 
     <td>
-        <input id="target" type="text" size="20" maxlength="100" pattern="[a-z0-9\-_\.]+">
+        <input id="target" type="text" size="20" maxlength="100" pattern="[a-zA-Z0-9\-_\.]+">
     </td>
 
     <td class="width-0 nowrap">
