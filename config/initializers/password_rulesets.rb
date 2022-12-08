@@ -146,4 +146,4 @@ def parse_password_validation_rulesets(data)
 end
 
 Puavo::PASSWORD_RULESETS =
-  parse_password_validation_rulesets(YAML.load_file("#{Rails.root}/config/puavo_web.yml"))
+  parse_password_validation_rulesets(YAML.load_file("#{ PuavoUsers::config_dir }/puavo_web.yml"))

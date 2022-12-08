@@ -35,6 +35,12 @@ if defined?(Bundler)
 end
 
 module PuavoUsers
+  def self.config_dir
+    ENV['RAILS_ENV'] == 'production' \
+      ? '/etc/puavo-web' \
+      : File.join(Rails.root, 'config')
+  end
+
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1
