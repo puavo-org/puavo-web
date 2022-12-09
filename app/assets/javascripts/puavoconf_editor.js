@@ -669,6 +669,16 @@ constructor(params)
     this.newInput.addEventListener("input", () => this.handleNewEntryInput());
     this.newInput.addEventListener("keydown", e => this.handleNewEntryKeys(e));
 
+    this.newInput.addEventListener("focusout", (e) => {
+        // focusout fires immediately and closes the suggestions list when you
+        // try to click it, so we need some hacky timer junk here. It'd be nice
+        // if I could see *which* element was clicked, so I could simply not
+        // close the popup if it was the target element, but AFAIK that cannot
+        // be done reliably in JavaScript... 250 milliseconds is long enough
+        // for a mouse click, but it's dangerously short.
+        setTimeout(() => { this.hideSuggestions() }, 250);
+    });
+
     this.container.querySelector(`div.raw input`).addEventListener("click", e => {
         this.storage.style.display = e.target.checked ? "initial" : "none";
     });
@@ -756,11 +766,6 @@ rawEdited()
 entryHasChanged(key, value, fullRebuild=false)
 {
     this.save();
-
-    // Something changed so drastically in the editor that we need to
-    // reposition the suggestions list if it's open
-    if (fullRebuild && this.suggestionsList.length > 0 && this.currentSuggestion != -1)
-        this.positionSuggestions();
 }
 
 // Adds a new editable puavo-conf entry. All entries have an internal "editor"
@@ -838,14 +843,15 @@ deleteRow(event)
 
     if (this.suggestions.style.visibility == "visible")
         this.buildSuggestions();
-
-    this.newInput.focus();
 }
 
 // Creates a new entry with the given name, and inserts it into the table.
 // A new "new entry" row is created below it.
 createNewEntry(key)
 {
+    if (key === undefined || key === null || key.trim().length == 0)
+        return;
+
     // Refuse to create duplicate entries
     for (const entry of this.entries)
         if (entry.key == key)
@@ -864,7 +870,6 @@ createNewEntry(key)
     }
 
     this.newInput.value = "";
-    this.newInput.focus();
 
     this.save();
 }
@@ -920,7 +925,7 @@ handleNewEntryKeys(event)
                 key = event.target.value.trim();
             }
 
-            if (key === null || key.length == 0)
+            if (key === null || key === undefined || key.trim().length == 0)
                 return;
 
             // Reset suggestions for the next entry
@@ -949,17 +954,21 @@ handleNewEntryKeys(event)
 
             break;
 
-        // Scroll down
+        // Scroll down (or show the list if it's hidden)
         case "ArrowDown":
             event.preventDefault();
 
             if (this.suggestionsList.length == 0) {
-                const needle = this.newInput.value.trim().toLowerCase();
+                this.buildSuggestions();
+                break;
+            }
 
-                if (needle.length == 0) {
-                    this.buildSuggestions();
-                    break;
-                }
+            if (this.suggestions.style.visibility != "visible") {
+                if (this.suggestionsList.length > 0)
+                    this.currentSuggestion = 0;
+
+                this.suggestions.style.visibility = "visible";
+                break;
             }
 
             if (this.currentSuggestion < this.suggestionsList.length - 1)
@@ -1013,8 +1022,6 @@ handleNewEntryKeys(event)
                 if (event.code == "PageUp")
                     delta = -delta;
 
-                console.log(delta);
-
                 this.currentSuggestion = Math.max(0, Math.min(this.currentSuggestion + delta, this.suggestionsList.length - 1));
             }
 
@@ -1052,13 +1059,12 @@ hideSuggestions()
 
 buildSuggestions()
 {
-    const needle = this.newInput.value.trim().toLowerCase();
+    const needle = this.newInput.value.trim();
     const showAll = needle.length == 0;
+    let existing = new Set();
 
     this.suggestionsList = [];
     this.currentSuggestion = -1;
-
-    let existing = new Set();
 
     // Find all matching definitions. Partial matches are enough.
     if (showAll || needle.length > 0) {
@@ -1071,7 +1077,6 @@ buildSuggestions()
     }
 
     this.suggestionsList.sort();
-
     this.suggestions.innerHTML = "";
 
     if (this.suggestionsList.length == 0) {
@@ -1084,48 +1089,49 @@ buildSuggestions()
         });
 
         newEntry.addEventListener("click", e => this.createNewEntry(needle));
-
         this.suggestions.appendChild(newEntry);
-    } else {
-        // Construct a list of matching items
-        for (const key of this.suggestionsList) {
-            let e = create("div", { cls: "entry" });
 
-            e.dataset.key = key;
-            e.addEventListener("click", e => this.createNewEntry(e.target.dataset.key));
-
-            let html = "";
-
-            if (showAll)
-                html = key;
-            else {
-                // Highlight the matching part
-                const pos = key.indexOf(needle);
-
-                html = `${key.substr(0, pos)}` +
-                       `<span class="match">${key.substr(pos, needle.length)}</span>` +
-                       `${key.substr(pos + needle.length)}`;
-
-                if (key in this.definitions) {
-                    const def = this.definitions[key];
-
-                    if (def["default"])
-                        html += `<dfn>(${def["default"]})</dfn>`;
-
-                    if (def.description)
-                        html += `<dfn>${def.description}</dfn>`;
-                }
-            }
-
-            e.innerHTML = html;
-            this.suggestions.appendChild(e);
-        }
-
-        this.currentSuggestion = 0;
-        this.suggestions.childNodes[this.currentSuggestion].classList.add("selected");
-        this.ensureItemIsVisible(this.currentSuggestion);
+        this.positionSuggestions();
+        return;
     }
 
+    // Construct a list of matching items
+    for (const key of this.suggestionsList) {
+        let e = create("div", { cls: "entry" });
+
+        e.dataset.key = key;
+        e.addEventListener("click", e => this.createNewEntry(e.target.dataset.key));
+
+        let html = "";
+
+        if (showAll)
+            html = key;
+        else {
+            // Highlight the matching part
+            const pos = key.indexOf(needle);
+
+            html = `${key.substr(0, pos)}` +
+                   `<span class="match">${key.substr(pos, needle.length)}</span>` +
+                   `${key.substr(pos + needle.length)}`;
+
+            if (key in this.definitions) {
+                const def = this.definitions[key];
+
+                if (def["default"])
+                    html += `<dfn>(${def["default"]})</dfn>`;
+
+                if (def.description)
+                    html += `<dfn>${def.description}</dfn>`;
+            }
+        }
+
+        e.innerHTML = html;
+        this.suggestions.appendChild(e);
+    }
+
+    this.currentSuggestion = 0;
+    this.suggestions.childNodes[this.currentSuggestion].classList.add("selected");
+    this.ensureItemIsVisible(this.currentSuggestion);
     this.positionSuggestions();
 }
 
