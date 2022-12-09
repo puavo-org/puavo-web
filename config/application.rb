@@ -35,6 +35,11 @@ if defined?(Bundler)
 end
 
 module PuavoUsers
+  def self.config_file(name)
+    suffix = (ENV['RAILS_ENV'] == 'production') ? '' : '.example'
+    File.join(Rails.root, 'config', "#{ name }#{ suffix }")
+  end
+
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1

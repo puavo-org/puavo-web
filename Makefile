@@ -70,16 +70,12 @@ install: clean-for-install mkdirs
 	cp -r rest/resources $(INSTALL_DIR)/rest
 	cp -r rest/views $(INSTALL_DIR)/rest
 	cp -r rest/public $(INSTALL_DIR)/rest
-	cp $(RAILS_CONFIG_DIR)/secrets.yml.example $(CONF_DIR)/secrets.yml
-	cp $(RAILS_CONFIG_DIR)/services.yml.example $(CONF_DIR)/services.yml
-	cp $(RAILS_CONFIG_DIR)/organisations.yml.development $(CONF_DIR)/organisations.yml
-	cp $(RAILS_CONFIG_DIR)/ldap.yml.development $(CONF_DIR)/ldap.yml
-	cp $(RAILS_CONFIG_DIR)/redis.yml.development $(CONF_DIR)/redis.yml
-	cp $(RAILS_CONFIG_DIR)/puavo_web.yml.development $(CONF_DIR)/puavo_web.yml
-	cp $(RAILS_CONFIG_DIR)/unicorn.rb.example $(CONF_DIR)/unicorn.rb
-	cp $(RAILS_CONFIG_DIR)/puavo_external_files.yml.example $(CONF_DIR)/puavo_external_files.yml
-	cp $(RAILS_CONFIG_DIR)/releases.json.example $(CONF_DIR)/releases.json
-	cp $(RAILS_CONFIG_DIR)/puavoconf_definitions.json.example $(CONF_DIR)/puavoconf_definitions.json
+
+	for conf_file in ldap.yml organisations.yml puavoconf_definitions.json \
+			 puavo_external_files.yml puavo_web.yml redis.yml \
+			 releases.json secrets.yml services.yml unicorn.rb; do \
+	  cp $(RAILS_CONFIG_DIR)/$${conf_file}.example $(CONF_DIR)/$${conf_file}; \
+	done
 
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
