@@ -62,6 +62,7 @@ class SchoolsController < ApplicationController
           num_groups: @group_counts[s.dn.to_s],
           num_devices: @device_counts[s.dn.to_s],
           boot_servers: bs_names,
+          tags: Array(s.puavoTag),
           conf: s.puavoConf.nil? ? [] : JSON.parse(s.puavoConf).collect { |k, v| "#{k} = #{v}" },
           integrations: get_school_integrations_by_type(@organisation_name, s.id),
           link: school_path(s),

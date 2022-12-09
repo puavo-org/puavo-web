@@ -55,6 +55,12 @@ const COLUMN_DEFINITIONS = {
         flags: ColumnFlag.USER_TRANSFORM,
     },
 
+    tags: {
+        key: "tags",
+        type: ColumnType.STRING,
+        flags: ColumnFlag.ARRAY,
+    },
+
     school_code: {
         key: "school_code",
         type: ColumnType.STRING,
@@ -99,6 +105,7 @@ const COLUMN_TITLES = {
     integrations: "<%= t('columns.schools.integrations') %>",
     prefix: "<%= t('activeldap.attributes.school.puavoSchoolNameAbbreviation') %>",
     boot_servers: "<%= t('activeldap.attributes.school.bootservers') %>",
+    tags: "<%= t('columns.tags') %>",
     school_code: "<%= t('activeldap.attributes.school.puavoSchoolCode') %>",
     eid: "<%= t('activeldap.attributes.school.puavoExternalId') %>",
     num_members: "<%= t('schools.index.members') %>",
@@ -115,6 +122,7 @@ const COLUMN_ORDER = [
     "school_code",
     "eid",
     "integrations",
+    "tags",
     "num_members",
     "num_groups",
     "num_devices",

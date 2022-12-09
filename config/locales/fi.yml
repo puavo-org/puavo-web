@@ -216,6 +216,7 @@ fi:
     puavoconf: "PuavoConf"
     school: "Koulu"
     primary_school: "Pääkoulu"
+    tags: "Tagit"
 
     schools:
       integrations: "Integraatiot"
