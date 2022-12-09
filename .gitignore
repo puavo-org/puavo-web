@@ -18,17 +18,6 @@
 # emacs backup files?
 *~
 
-# Ignore configuration files
-/config/database.yml
-
-config/ldap.yml
-config/organisations.yml
-config/puavo_devices.yml
-config/puavo_external_files.yml
-config/services.yml
-config/secrets.yml
-config/releases.json
-config/puavoconf_definitions.json
 node_modules/
 public/assets/
 public/javascripts/i18n.js
@@ -54,6 +43,3 @@ rest/tags
 
 .byebug_history
 greenletters.log
-config/puavo_web.yml
-config/redis.yml
-config/unicorn.rb
