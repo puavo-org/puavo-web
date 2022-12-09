@@ -74,7 +74,7 @@ install: clean-for-install mkdirs
 	for conf_file in ldap.yml organisations.yml puavoconf_definitions.json \
 			 puavo_external_files.yml puavo_web.yml redis.yml \
 			 releases.json secrets.yml services.yml unicorn.rb; do \
-	  cp $(RAILS_CONFIG_DIR)/$${conf_file}.example $(CONF_DIR)/$${conf_file}; \
+	  cp $(RAILS_CONFIG_DIR)/$${conf_file} $(CONF_DIR)/$${conf_file}; \
 	  ln -fns "/etc/puavo-web/$${conf_file}" "$(RAILS_CONFIG_DIR)/$${conf_file}"; \
 	done
 
