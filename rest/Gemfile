@@ -4,52 +4,51 @@ source "http://rubygems.org"
 # runs (ActiveLdap models).
 gem "rails", "5.2.8.1"
 gem "sprockets", "3.7.2"
-gem "sqlite3"     # ok
-gem "prawn"       # ok
-gem "net-ldap"    # ok
+gem "sqlite3"
+gem "prawn"
+gem "net-ldap"
 gem "activeldap", :require => "active_ldap"
-gem "rmagick"     # ok
-gem "uuid"        # ok
-gem "nokogiri"    # ok
-gem "gettext_i18n_rails" # ok
+gem "rmagick"
+gem "uuid"
+gem "nokogiri"
+gem "gettext_i18n_rails"
 
-gem "sinatra"     # ok
-gem "sinatra-contrib" # ok
-gem "uuid"        # ok
-gem "puma"        # ok
-gem "rack-rewrite" # ok
+gem "sinatra"
+gem "sinatra-contrib"
+gem "uuid"
+gem "puma"
+gem "rack-rewrite"
 gem "rack", "2.1.4"   # 2.2.x breaks some VirtualHostBase tests
-gem "addressable" # ok
-gem "jwt"         # ok
-gem "jwe"         # ok
-gem "json"        # ok
-gem "gssapi"      # ok
-gem "sinatra-r18n" #ok
-gem "pry"         # ok
-gem "redis"       # ok
-gem "yajl-ruby"   # ok
-gem "colorize"    # ok
-gem "redis-namespace" # ok
-gem "httparty"    # ok
-gem "pony"        # ok
-gem "gibberish"   # ok
+gem "addressable"
+gem "jwt"
+gem "jwe"
+gem "json"
+gem "gssapi"
+gem "sinatra-r18n"
+gem "pry"
+gem "redis"
+gem "yajl-ruby"
+gem "colorize"
+gem "redis-namespace"
+gem "httparty"
+gem "pony"
+gem "gibberish"
 gem "sinatra-support", :require => "sinatra/support"
-gem "redlock"     # ok
-gem "http"        # ok
-gem "dnsruby"     # ok
-gem "mechanize"   # ok
-gem "net-ldap"    # ok
-gem "byebug"      # ok
-gem "ntlm-http"   # ok
-gem "ttfunk"      # ok
-gem "gettext"     # ok
-gem "r18n-core"   # ok
+gem "redlock"
+gem "http"
+gem "dnsruby"
+gem "mechanize"
+gem "net-ldap"
+gem "byebug"
+gem "ttfunk"
+gem "gettext"
+gem "r18n-core"
 
 group :test do
-  gem "shotgun"   # ok
-  gem "timecop"   # ok
-  gem "webmock"   # ok
-  gem "m"         # ok
-  gem "minitest"  # ok
-  gem "yard"      # ok
+  gem "shotgun"
+  gem "timecop"
+  gem "webmock"
+  gem "m"
+  gem "minitest"
+  gem "yard"
 end
