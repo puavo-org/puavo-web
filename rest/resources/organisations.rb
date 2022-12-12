@@ -23,6 +23,8 @@ class Organisation < LdapModel
   ldap_map :puavoImageSeriesSourceURL, :image_series_source_urls, LdapConverters::ArrayValue
   ldap_map :puavoConf, :puavoconf, LdapConverters::PuavoConfObj
 
+  ldap_map :eduOrgHomePageURI, :homepage
+
   ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
   ldap_map :puavoDeviceOnHour,           :daytime_start_hour
   ldap_map :puavoDeviceOffHour,          :daytime_end_hour
@@ -116,6 +118,10 @@ class Organisation < LdapModel
   def preferred_image
     image = get_own(:preferred_image)
     image ? image.strip : nil
+  end
+
+  def homepage
+    get_own(:homepage)
   end
 
   computed_attr :owners
