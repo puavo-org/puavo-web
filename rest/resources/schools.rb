@@ -175,6 +175,14 @@ class School < LdapModel
     end
   end
 
+  def homepage
+    if get_own(:homepage).nil?
+      organisation.homepage
+    else
+      get_own(:homepage)
+    end
+  end
+
   def puavoconf
     (organisation.puavoconf || {}) \
       .merge(get_own(:puavoconf) || {})
