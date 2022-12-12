@@ -833,6 +833,7 @@ en:
           operation: "Action:"
           operation_move: "Change the user's primary school to the target school"
           operation_move_keep: "Keep the current primary school in the other schools"
+          operation_remove_prev_groups: "Remove from all groups in the previous primary school"
           operation_add: "Add to the target school"
           operation_remove: "Remove from the target school (will fail if the school is the user's primary/only school)"
           target_school: "Target school:"

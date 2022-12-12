@@ -585,6 +585,7 @@ class MassUserChangeSchool extends MassOperation {
 
         this.operation = 0;
         this.keep = false;
+        this.removePrev = false;
         this.schoolID = firstSchoolID;
     }
 
@@ -599,7 +600,8 @@ class MassUserChangeSchool extends MassOperation {
     <td>
         <div class="flex-rows gap-5px">
             <span><input type="radio" name="operation" id="move" value="move" checked><label for="move"><%= t('users.index.mass_operations.change_school.operation_move') %></label></span>
-            <span class="margin-left-20px margin-bottom-5px"><input type="checkbox" name="keep" id="keep"><label for="keep"><%= t('users.index.mass_operations.change_school.operation_move_keep') %></label></span>
+            <span class="margin-left-20px"><input type="checkbox" name="keep" id="keep"><label for="keep"><%= t('users.index.mass_operations.change_school.operation_move_keep') %></label></span>
+            <span class="margin-left-20px margin-bottom-5px"><input type="checkbox" name="remove_prev" id="remove_prev" checked><label for="remove_prev"><%= t('users.index.mass_operations.change_school.operation_remove_prev_groups') %></label></span>
             <span><input type="radio" name="operation" id="add" value="add"><label for="add"><%= t('users.index.mass_operations.change_school.operation_add') %></label></span>
             <span><input type="radio" name="operation" id="remove" value="remove"><label for="remove"><%= t('users.index.mass_operations.change_school.operation_remove') %></label></span>
         </div>
@@ -631,6 +633,7 @@ class MassUserChangeSchool extends MassOperation {
 
         this.container.querySelector("#move").addEventListener("click", () => { this.operation = 0; });
         this.container.querySelector("#keep").addEventListener("click", (e) => { this.keep = e.target.checked; });
+        this.container.querySelector("#remove_prev").addEventListener("click", (e) => { this.removePrev = e.target.checked; });
         this.container.querySelector("#add").addEventListener("click", () => { this.operation = 1; });
         this.container.querySelector("#remove").addEventListener("click", () => { this.operation = 2; });
     }
@@ -647,6 +650,7 @@ class MassUserChangeSchool extends MassOperation {
                 id: item.id[INDEX_FILTERABLE],
                 operation: this.operation,
                 keep: this.keep,
+                remove_prev: this.removePrev,
                 school_id: this.schoolID,
                 school_dn: SCHOOLS[this.schoolID].dn,
             }

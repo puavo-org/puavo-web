@@ -834,6 +834,7 @@ fi:
           operation: "Toiminto:"
           operation_move: "Vaihda kohdekoulu käyttäjän pääkouluksi"
           operation_move_keep: "Siirrä nykyinen pääkoulu lisäkouluihin (ei kovin käytännöllinen oppilailla)"
+          operation_remove_prev_groups: "Poista kaikista edellisen pääkoulun ryhmistä"
           operation_add: "Lisää kohdekouluun, jos ei ole jo"
           operation_remove: "Poista kohdekoulusta, jos on (epäonnistuu jos kohdekoulu on käyttäjän pääkoulu tai ainoa koulu)"
           target_school: "Kohdekoulu:"

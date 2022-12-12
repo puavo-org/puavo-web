@@ -412,6 +412,7 @@ class UsersController < ApplicationController
       user_id = params[:user][:id]
       operation = params[:user][:operation]
       keep_previous = params[:user][:keep]
+      remove_prev = params[:user][:remove_prev]
       school_id = params[:user][:school_id]
       school_dn = params[:user][:school_dn]
     rescue
@@ -424,6 +425,9 @@ class UsersController < ApplicationController
 
     begin
       user = User.find(user_id)
+
+      # Needed when removing the user from the old groups (see later)
+      remove_groups_from = user.puavoEduPersonPrimarySchool.to_s
 
       if operation == 0
         # Move (change primary school)
@@ -482,6 +486,15 @@ class UsersController < ApplicationController
           end
 
           puts "-" * 50
+        end
+
+        if remove_prev
+          # Remove the user from the previous school's groups
+          user = User.find(user_id)
+
+          user.groups.each do |group|
+            group.remove_user(user) if group.puavoSchool == remove_groups_from
+          end
         end
 
         ok = true
