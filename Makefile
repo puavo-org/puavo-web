@@ -10,7 +10,7 @@ RAILS_CONFIG_DIR = $(INSTALL_DIR)/config
 INSTALL = install
 INSTALL_PROGRAM = $(INSTALL)
 
-build: symlink-config
+build: config-to-example
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
 	bundle exec rake assets:precompile
@@ -81,19 +81,23 @@ install: clean-for-install mkdirs
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-owner
 
-symlink-config:
-	ln -sf /etc/puavo-web/ldap.yml config/ldap.yml
-	ln -sf /etc/puavo-web/organisations.yml config/organisations.yml
-	ln -sf /etc/puavo-web/puavo_web.yml config/puavo_web.yml
-	ln -sf /etc/puavo-web/puavo_external_files.yml config/puavo_external_files.yml
-	ln -sf /etc/puavo-web/redis.yml config/redis.yml
-	ln -sf /etc/puavo-web/secrets.yml config/secrets.yml
-	ln -sf /etc/puavo-web/services.yml config/services.yml
-	ln -sf /etc/puavo-web/unicorn.rb config/unicorn.rb
-	ln -sf /etc/puavo-web/releases.json config/releases.json
-	ln -sf /etc/puavo-web/puavoconf_definitions.json config/puavoconf_definitions.json
+.PHONY: config-to-example
+config-to-example:
+	for conf_file in ldap.yml organisations.yml puavoconf_definitions.json \
+			 puavo_external_files.yml puavo_web.yml redis.yml \
+			 releases.json secrets.yml services.yml unicorn.rb; do \
+	  ln -fns "$${conf_file}.example" "config/$${conf_file}"; \
+	done
 
-test-rest:
+.PHONY: config-to-system
+config-to-system:
+	for conf_file in ldap.yml organisations.yml puavoconf_definitions.json \
+			 puavo_external_files.yml puavo_web.yml redis.yml \
+			 releases.json secrets.yml services.yml unicorn.rb; do \
+	  ln -fns "/etc/puavo-web/$${conf_file}" "config/$${conf_file}"; \
+	done
+
+test-rest: config-to-system
 	$(MAKE) -C rest test
 
 test-acceptance:
@@ -101,7 +105,7 @@ test-acceptance:
 	bundle exec cucumber --exclude registering_devices
 
 .PHONY: test
-test:
+test: config-to-system
 	bundle exec rspec --format documentation
 	bundle exec rails runner acl/runner.rb
 	AUTOMATIC_EMAIL_ADDRESSES=enabled bundle exec cucumber --color --tags @automatic_email \
@@ -115,7 +119,7 @@ test:
 seed:
 	bundle exec rails runner db/seeds.rb
 
-server:
+server: config-to-system
 	bundle exec rails server -b 0.0.0.0 -p 8081
 
 .PHONY: deb
