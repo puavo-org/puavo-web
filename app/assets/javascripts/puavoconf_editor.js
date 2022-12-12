@@ -317,7 +317,7 @@ class ConfigPuavomenuTags extends ConfigEntry {
     {
         if (this.value === null || this.value.trim().length == 0 || this.tags.length == 0) {
             // Provide a new tag button
-            this.details.innerHTML = `<button class="margin-top-10px margin-left-10px">+</button>`;
+            this.details.innerHTML = `<button type="button" class="margin-top-10px margin-left-10px">+</button>`;
             this.details.querySelector("button").addEventListener("click", () => {
                 this.tags.splice(0, 0, {
                     valid: true,
@@ -489,10 +489,10 @@ class ConfigPuavomenuTags extends ConfigEntry {
     </td>
 
     <td class="width-0 nowrap">
-        <button id="add">+</button>
-        <button id="delete">-</button>
-        <button id="up">↑</button>
-        <button id="down">↓</button>
+        <button id="add" type="button">+</button>
+        <button id="delete" type="button">-</button>
+        <button id="up" type="button">↑</button>
+        <button id="down" type="button">↓</button>
     </td>
 </tr>`;
 
@@ -882,6 +882,7 @@ _createEntryRow(entry)
 
     let deleteButton = create("button", { cls: "delete", text: "✖" });
 
+    deleteButton.type = "button";
     deleteButton.title = translate(this.language, "delete");
     deleteButton.addEventListener("click", e => this.deleteRow(e));
     buttons.appendChild(deleteButton);
