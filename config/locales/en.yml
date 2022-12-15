@@ -216,6 +216,7 @@ en:
     puavoconf: "PuavoConf"
     school: "School"
     primary_school: "Primary school"
+    tags: "Tags"
 
     schools:
       integrations: "Integrations"
