@@ -469,6 +469,8 @@ end
   <td colspan="2">
     <p class="margin-top-0"><%= t('hwinfo.puavopkg.totals', num_packages: @info['puavopkgs'].fetch('installed', []).count, disk_space: @info['puavopkgs'].fetch('diskspace_used', '?')) %></p>
 
+    <% packages = @info['puavopkgs'].fetch('installed', {}) %>
+    <% unless packages.empty? %>
     <table class="smart">
       <thead>
         <tr>
@@ -479,7 +481,6 @@ end
         </tr>
       </thead>
       <tbody>
-      <% packages = @info['puavopkgs'].fetch('installed', {}) %>
       <% packages.keys.sort.each do |key| %>
       <% value = packages[key] %>
       <tr>
@@ -491,6 +492,7 @@ end
       <% end %>
       </tbody>
     </table>
+    <% end %>
   </td>
 </tr>
 
