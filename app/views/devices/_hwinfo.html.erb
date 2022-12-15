@@ -505,12 +505,12 @@ end
 <tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.logins.title') %></th>
   <td colspan="2">
-    <%
-    last = @info['logins'].fetch('last', {})
-    ts = Time.parse(last['timestamp']).localtime.strftime('%Y-%m-%d %H:%M:%S')
-    %>
-
-    <p><%= t('hwinfo.logins.last_login', username: last['uid'], at: ts) %></p>
+    <% last = @info['logins'].fetch('last', {}) %>
+    <% if last['uid'].nil? || last['timestamp'].nil? %>
+    <p><%= t('hwinfo.logins.last_login', username: '?', at: '?') %></p>
+    <% else %>
+    <p><%= t('hwinfo.logins.last_login', username: last['uid'], at: Time.parse(last['timestamp']).localtime.strftime('%Y-%m-%d %H:%M:%S')) %></p>
+    <% end %>
   </td>
 </tr>
 
