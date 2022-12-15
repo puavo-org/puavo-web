@@ -479,7 +479,7 @@ end
         </tr>
       </thead>
       <tbody>
-      <% packages = @info['puavopkgs'].fetch('installed', []) %>
+      <% packages = @info['puavopkgs'].fetch('installed', {}) %>
       <% packages.keys.sort.each do |key| %>
       <% value = packages[key] %>
       <tr>
