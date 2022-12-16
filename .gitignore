@@ -57,3 +57,6 @@ greenletters.log
 config/puavo_web.yml
 config/redis.yml
 config/unicorn.rb
+
+# puavo-os directory might be included in Jenkins builds
+puavo-os
