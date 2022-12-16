@@ -45,7 +45,7 @@ mkdirs:
 	mkdir -p $(INSTALL_DIR)/rest
 	mkdir -p $(DESTDIR)$(sbindir)
 
-install: clean-for-install mkdirs
+install: clean-for-install mkdirs config-to-system
 	cp -r \
 		VERSION \
 		GIT_COMMIT \
