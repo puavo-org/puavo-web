@@ -89,7 +89,7 @@ EOF
         dir('puavo-os') {
           checkout([
             $class: 'GitSCM',
-            branches: [[name: 'bullseye-ldapmaster']],
+            branches: [[name: 'bullseye']],
             doGenerateSubmoduleConfigurations: false,
             extensions: [[
               $class: 'SubmoduleOption',
