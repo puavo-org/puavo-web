@@ -685,7 +685,6 @@ const USER_TRANSFORM_FUNCTIONS = {
         let extra = "";
 
 <% unless @is_servers %>
-        console.log(entry);
         if (entry.reset_from)
             extra = ` <i class="icon-attention iconError" title="<%= t('devices.index.pending_reset') %>"></i>`;
 <% end %>
