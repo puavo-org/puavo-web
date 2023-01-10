@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 # gems shared with puavo-rest
 gem "rails", "5.2.8.1"
-gem "sprockets", "3.7.2"
+gem "sprockets"
 gem "sqlite3"
 gem "prawn"
 gem "net-ldap"
