@@ -82,7 +82,7 @@ main {
     margin: 0 auto;
     padding: 5px 5px 5px 32px;
     border: 1px solid var(--generic-border);
-    background: url("/img/search.svg") no-repeat 1% center var(--search-background-color);
+    background: url("/v3/img/search.svg") no-repeat 1% center var(--search-background-color);
     background-size: 24px;
 }
 
