@@ -422,6 +422,83 @@ fi:
       invalid_regexp: "Virheellinen regexp-lause "
       unknown_search_term_type: "Tuntematon hakutermien tyyppi "
 
+  # Common SuperTable elements
+  supertable:
+    export:
+      top_button: "Lataa"
+      title: "Lataa taulukon sisältö tiedostona:"
+      only_visible_rows_checkbox: "Vain näkyvät rivit"
+      only_visible_rows_title: "Jos ruksattu, vain rivit joita ei suodateta pois tallennetaan. Muutoin kaikki rivit tallennetaan."
+      only_visible_cols_checkbox: "Vain näkyvät sarakkeet"
+      only_visible_cols_title: "Jos ruksattu, vain valitut sarakkeet tallennetaan. Muutoin kaikki sarakkeet tallennetaan."
+    columns:
+      top_button: "Sarakkeet"
+      explanation: "Voit järjestellä sarakkeita raahaamalla niiden otsakkeita taulukossa hiirellä. Klikkaus = lajittele, raahaus = järjestele."
+      search_placeholder: "Etsi"
+      save: "Tallenna"
+      default_columns: "Oletukset"
+      select_all: "Valitse kaikki"
+      deselect_all: "Poista kaikki valinnat"
+      default_order: "Lajittele sarakkeet oletusjärjestykseen"
+    filtering:
+      top_button: "Suodatuseditori"
+      top_enabled: "Suodata"
+      top_reverse: "Käänteinen"
+      advanced_checkbox: "Laajennettu suodatin"
+      presets_button: "Valmiit suodatinmallit"
+      traditional:
+        delete_all: "Poista kaikki suodattimet"
+        show_json: "Näytä JSON-editori"
+        hide_json: "Sulje JSON-editori"
+        save_json: "Tallenna JSON-suodatin"
+        filter:
+          is_active: "Onko tämä suodatin aktiivinen?"
+          click_to_edit: "Klikkaa muokataksesi..."
+          delete: "Poista"
+        editor:
+          column: "Kohdesarake"
+          operator: "Vertailuoperaattori"
+          save: "Tallenna"
+      advanced:
+        expression_title: "Suodatinlauseke"
+        expression_placeholder: "Syötä suodatinlauseke tähän"
+        save: "Tallenna"
+        clear: "Tyhjennä"
+        convert_traditional: "Kopioi ja muunna perinteinen suodatin"
+        messages_title: "Käännösviestit"
+      presets:
+        traditional_help: "Lataa suodatinmalli klikkaamalla sen nimeä alla olevassa listassa. Voit valita korvaako uusi suodatin kaikki, vai lisätäänkö sen sisältö olemassaolevien loppuun. Näin voit koota isojakin suodattimia pienistä paloista."
+        advanced_help: "Alla olevassa taulukossa on valmiiksi kirjoitettuja suodatinmalleja. Klikkaa haluamasi mallin nimeä kopioidaksesi sen lausekkeen tekstilaatikkoon. Voit valita korvaako malli laatikon sisällön kokonaan vai lisätäänkö malli jo olemassaolevan sisällön loppuun. Koska suodatinlausekkeessa voi käyttää sulkuja ja loogisia &&, || ja ! -operaatioita, voit halutessasi lisätä mallin ympärille sulut samalla kun se kopioidaan laatikkoon. Näin voit koota palasista vaikka kuinka monimutkaisen suodattimen helposti. Voit myös kopioida lausekkeen suoraan taulukosta mikäli kumpikaan lisäystapa ei ole sopiva."
+        append: "Lisää loppuun, älä korvaa kokonaan"
+        parenthesis: "Lisää lausekkeen ympärille sulut"
+        name: "Nimi"
+        contents: "Mallin sisältö"
+    mass:
+      top_button: "Massatoiminnot"
+      row_select:
+        title: "Rivien massavalinta"
+        whole_table_title: "Koko taulukko"
+        select_all: "Valitse kaikki rivit"
+        deselect_all: "Epävalitse kaikki rivit"
+        invert_selection: "Käänteinen valinta"
+        deselect_successfull: "Epävalitse onnistuneesti käsitellyt rivit"
+        specific_rows_title: "Vain tietyt rivit"
+        explanation: "Syötä yksi tai useampi nimi, lyhenne, ID, tai jokin muu yksilöllinen tunniste. Valitse sitten niiden tyyppi, ja paina \"Valitse\" tai \"Poista valinnat\". Rivit jotka eivät täsmänneet mihinkään muutetaan <span class=\"unmatchedRow\">eri väriseksi</span>. Voit muokata niitä ja suorittaa valinnan uudelleen. Duplikaatit ja tyhjät rivit poistetaan."
+        type: "Tyyppi"
+        select: "Valitse"
+        deselect: "Poista valinnat"
+      operation_title: "Operaatio"
+      execute_button: "Suorita"
+      settings_title: "Operaation asetukset"
+    paging:
+      top_rows_per_page: "Montako riviä näytetään per sivu"
+      top_first_page: "Ensimmäinen sivu"
+      top_previous_page: "Edellinen sivu"
+      top_jump_to_page: "Hyppää sivulle..."
+      top_next_page: "Seuraava sivu"
+      top_last_page: "Viimeinen sivu"
+      popup_title: "Hyppää suoraan sivulle:"
+
   # Flash messages
   flash:
     you_must_be_an_owner: "Sinulla ei ole riittävästi oikeuksia avata pyytämääsi sivua."

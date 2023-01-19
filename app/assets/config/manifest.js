@@ -4,10 +4,8 @@
 //= link bundles/modal_popup.js
 
 // Supertable
-//= link supertable2.js
-//= link filtereditor.js
-//= link supertable2.fi.js
-//= link supertable2.en.js
+//= link bundles/supertable3.js
+//= link i18n/supertable3.js
 
 // User mass import/update
 //= link bundles/import_tool.js

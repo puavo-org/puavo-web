@@ -151,541 +151,530 @@ SUPERTABLES
 ----------------------------------------------------------------------------------------------------
 */
 
-.stAdmin {
-  color: $adminOwner;
-}
-
-.stCourseGroup {
-  color: $courseGroup;
-}
-
-.stControls .mobileTitle { display: none; }   /* Will be fixed later. Maybe. Hopefully. */
-
-.superTable { }
-
-/* The temporary mode warning indicator */
-#stTemporaryMode {
-    border: 1px solid var(--st-temporary-border);
-    background: var(--st-temporary-bg);
-    color: var(--st-temporary-fg);
-    padding: 10px;
-    font-size: 100%;
-}
-
-/* Container for the supertable and its controls */
-.stControls {
-    font-size: 100%;
-    /*font-family: Cantarell, Ubuntu, Segoe UI, Arial, sans-serif;*/
-}
-
-.stControls button,
-.stControls select {
-    font-size: 100%;
-    padding: 4px 10px;
-    font-family: "Arial", "sans-serif";
-}
-
-.stControls button {
-    border: 1px solid var(--st-buttons-border);
-    background: var(--st-buttons-back);
-    border-radius: 3px;
-    padding: 4px 10px;
-}
-
-.stControls button:hover {
-    border: 1px solid var(--st-buttons-hover-border);
-    background: var(--st-buttons-hover-back);
-}
-
-.stControls button:disabled,
-.stControls button.danger:disabled,
-.stControls button:hover:disabled,
-.stControls button.danger:hover:disabled {
-    cursor: not-allowed;
-    color: var(--st-buttons-disabled);
-}
-
-.stControls button.danger {
-    border: 1px solid var(--st-buttons-danger-border);
-    background: var(--st-buttons-danger-back);
-    color: var(--st-buttons-danger-fore);
-}
-
-.stControls button.danger:hover {
-    border: 1px solid var(--st-buttons-danger-border);
-    background: var(--st-buttons-danger-hover-back);
-    color: var(--st-buttons-danger-fore);
-}
-
-.stControls textarea {
-    background: var(--st-textarea-bg);
-    color: var(--st-textarea-fg);
-    border: 1px solid var(--st-common-border);
-    padding: 5px;
-    width: 100%;
-}
-
-.stControls textarea:disabled {
-    background: var(--st-textarea-disabled-bg);
-    color: var(--st-textarea-disabled-fg);
-}
-
-.stControls fieldset {
-    border: 1px solid var(--st-fieldset-border);
-    margin: 0;
-}
-
-.stControls fieldset legend {
-    margin-left: 0px;
-}
-
-.stControls summary {
-    background: var(--st-summary-bg);
-    color: var(--st-summary-fg);
-    cursor: pointer;
-    padding: 5px;
-}
-
-.stControls summary:hover {
-    background: var(--st-summary-hover-bg);
-    color: var(--st-summary-hover-fg);
-}
-
-.stControls details[open] {
-    background: var(--st-details-open-bg);
-    color: var(--st-details-open-fg);
-}
-
-.stControls details[open] > summary {
-    background: var(--st-summary-hover-bg);
-    color: var(--st-summary-hover-fg);
-}
-
-/* The SuperTable controls tab bar */
-.stTabBar {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-}
-
-.stTabBar li {
-    display: inline;
-    padding: 5px 20px;
-    margin-right: 2px;
-    background: var(--st-tab-bg);
-    color: var(--st-tab-fg);
-    border: 1px solid var(--st-controls-border);
-    border-radius: 3px 3px 0 0;
-    min-width: 150px;
-    text-align: center;
-    cursor: pointer;
-}
-
-.stTabBar li:hover {
-    background: var(--st-tab-hover-bg);
-    color: var(--st-tab-hover-fg);
-}
-
-.stTabBar li.selected {
-    background: var(--st-tab-active-bg);
-    color: var(--st-tab-active-fg);
-    border-bottom: 1px solid var(--st-tab-active-bg);
-    cursor: default;
-    font-weight: bold;
-}
-
-.stTabBar li.disabled,
-.stTabBar li.disabled:hover {
-    background: var(--st-tab-disabled-bg);
-    color: var(--st-tab-disabled-fg);
-    cursor: not-allowed;
-}
-
-/* Tab container DIV */
-.stTab {
-    background: var(--st-tab-container-bg);
-    color: var(--st-tab-container-fg);
-    border: 1px solid var(--st-controls-border);
-    margin-top: -1px;
-    padding: 10px;
-}
-
-/* Column editing */
-.stTab input[type="search"] {
-    background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 2px center;
-    text-indent: 1.5em;
-    border: 1px solid var(--st-controls-border);
-    padding: 2px;
-    min-width: 240px;
-}
-
-.stTab input[type="search"]::placeholder {
-    font-style: italic;
-}
-
-.stTab .scrollList {
-    border: 1px solid var(--st-common-border);
-    overflow-x: hidden;
-    overflow-y: scroll;
-    resize: vertical;
-    min-height: 5em;
-}
-
-.stTab .scrollList .item {
-    display: flex;
-    align-items: center;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.stTab .scrollList .item { color: var(--st-tab-container-fg); }
-.stTab .scrollList .item:hover { background: var(--st-scroll-list-hover-bg); }
-.stTab .scrollList .disabled { color: var(--st-scroll-list-disabled-fg); }
-
-.stTab .scrollList .item input {
-    pointer-events: none;       /* The checkbox is there just for the looks */
-    margin-right: 10px;
-}
-
-.stTab .scrollList .columnName { font-style: italic; pointer-events: none; }
-
-/* Some commonly used subtables in the SuperTable controls */
-.stControls .commonTable {
-    background: var(--st-commontable-bg);
-    color: var(--st-commontable-fg);
-}
-
-.stControls .commonTable th {
-    background: var(--st-commontable-th-bg);
-    color: var(--st-commontable-th-fg);
-}
-
-.stControls .commonTable th,
-.stControls .commonTable td {
-    border: 1px solid var(--st-commontable-border);
-    padding: 5px;
-}
-
-/* Supertable filtering */
-.stFilters .unsaved {
-    color: var(--st-filters-unsaved-fg);
-}
-
-.stFilters textarea {
-    display: block;
-    font-size: 140%;
-}
-
-.stFilters .toggleable {
-    margin-top: 10px;
-}
-
-.stFilters .filterEditorWrapper {
-    border: none;
-    padding: 0;
-}
-
-.stFilters .filtersTable { width: 100%; }
-
-.stFilters .filtersTable tr.row {      /* Must use .row, otherwise filter editor value tables are affected */
-    border-top: 1px solid var(--st-filters-table-separator);
-    border-bottom: 1px solid var(--st-filters-table-separator);
-}
-
-.stFilters .filtersTable td { padding: 2px 0; }
-
-.stFilters .filtersTable .buttons {
-    display: flex;
-    flex-direction: rows;
-    gap: 3px;
-}
-
-.stFilters .filtersTable .active {
-    margin: 0 10px;
-}
-
-.stFilters .filtersTable .pretty {
-    display: flex;
-    flex-direction: rows;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    padding: 5px;
-}
-
-.stFilters .filtersTable .pretty:hover {
-    background: var(--st-filters-pretty-hover-back);
-}
-
-.stFilters .filtersTable .pretty > * { pointer-events: none; }
-
-.stFilters .filtersTable .pretty .column {
-    padding-left: 3px;
-    font-weight: bold;
-    font-size: 100%;
-}
-
-.stFilters .filtersTable .pretty .operator {
-    font-weight: bold;
-    color: var(--st-filters-operator);
-    font-size: 100%;
-}
-
-.stFilters .filtersTable .pretty .value {
-    color: var(--st-filters-value);
-    font-size: 100%;
-}
-
-.stFilters .filtersTable .pretty .empty {
-    font-style: italic;
-    color: var(--st-filters-value);
-}
-
-.stFilters .filtersTable .pretty .sep {
-}
-
-.stFilters .filtersTable .editorWrapper {
-    background: var(--st-filters-editorwrapper-back);
-    padding: 0;
-    margin: 0;
-}
-
-.stFilters .filtersTable select#column {
-    font-weight: bold;
-    font-size: 100%;
-}
-
-.stFilters .filtersTable select#operator {
-    font-weight: bold;
-    color: var(--st-filters-operator);
-    font-size: 100%;
-}
-
-.stFilters .filtersTable .openFilter {
-    background: var(--st-filters-open-back);
-    padding: 5px;
-}
-
-.stFilters .filtersTable .openFilter button#save i { color: var(--st-filters-save-icon); }
-.stFilters .filtersTable .openFilter button#cancel i { color: var(--st-filters-cancel-icon); }
-
-.stFilters .filtersTable .editor {
-    font-size: 100%;
-    margin: 0;
-    padding: 5px;
-}
-
-.stFilters .filtersTable .editor p { margin: 0; }
-.stFilters .filtersTable .editor table td { padding: 2px; }
-.stFilters .filtersTable .editor input { color: var(--st-filters-value); }
-
-.stFilters .filtersTable .editor table#values {
-    margin-top: 5px;
-}
-
-.stFilters .jsonEditor {
-    border: 1px solid #888;
-}
-
-.stFilters .invalidJSON {
-    border: 1px solid red;
-}
-
-/* Filter parser messages table */
-.stFilters .messages th {
-    text-align: left;
-    padding: 5px;
-}
-
-.stFilters .messages tbody tr {
-    cursor: pointer;
-}
-
-.stFilters .messages td {
-    border: 1px solid var(--st-common-border);
-    padding: 3px;
-}
-
-.stFilters .messages .error {
-    background: var(--st-filters-error-bg);
-    color: var(--st-filters-error-fg);
-}
-
-/* Filter presets table */
-.stFilters .presetsTable code {
-    background: var(--st-commontable-code-bg);
-    color: var(--st-commontable-code-fg);
-    padding: 2px 5px;
-    font-size: 120%;
-    display: inline-block;
-}
-
-/* Column help table */
-.stFilters .hiddenColumn {
-    background: var(--st-columnhelp-invisible-bg);
-    color: var(--st-columnhelp-invisible-fg);
-}
-
-.stFilters .columnHelp code {
-    background: var(--st-commontable-code-bg);
-    color: var(--st-commontable-code-fg);
-    padding: 2px 5px;
-    font-size: 120%;
-    display: inline-block;
-}
-
-/* Mass tools */
-.stMass div#massRowSelectSource {
-    border: 1px solid var(--st-border);
-    padding: 5px;
-    font-size: 120%;
-    outline: none;
-    font-family: monospace;
-    width: 30em;
-    overflow: scroll;
-    resize: both;
-}
-
-.stMass .unmatchedRow {
-    background-color: var(--st-row-fail-bg);
-}
-
-.stMass progress {
-    min-width: 250px;
-    border-radius: 0;
-}
-
-.stMass .counter {
-    font-weight: bold;
-    font-size: 110%;
-}
-
-.stStatusOuter {
-    border: 1px solid var(--st-status-border);
-    display: flex;
-}
-
-/* The status box */
-.stStatus {
-    background: var(--st-status-bg);
-    color: var(--st-status-fg);
-    padding: 5px;
-    font-size: 100%;
-    min-height: 32px;
-    display: flex;
-    align-items: center;
-    width: 30%;
-}
-
-.stStatus .success {
-    background: var(--st-status-success-bg);
-    color: var(--st-status-success-fg);
-}
-
-.stStatus .fail {
-    background: var(--st-status-fail-bg);
-    color: var(--st-status-fail-fg);
-}
-
-/* Pagination */
-.stPaging {
-    border-left: 1px solid var(--st-status-border);
-    padding: 5px;
-    flex-grow: 2;
-}
-
-.stPaging #pageCounter {
-    font-size: 120%;
-}
-
 /* The update error message */
 .stError {
-    background: var(--st-error-bg);
-    color: var(--st-error-fg);
-    border: 1px solid var(--st-error-border);
-    padding: 5px;
+  background: var(--st-error-bg);
+  color: var(--st-error-fg);
+  border: 1px solid var(--st-error-border);
+  padding: 5px;
 }
+
+/* Main container for the table. Use carefully! */
+.superTable { }
 
 /* A wrapper DIV around the main table */
 .stTableWrapper { }
 
-/* The supertable itself */
+/* The TABLE element */
 .stTable {
-    width: 100%;
-    background: var(--st-bg);
-    color: var(--st-fg);
+  width: 100%;
+  background: var(--st-bg);
+  color: var(--st-fg);
 
-    /*
-    Sticky headers and collapsed cell borders do not mix beautifully; the header cells lose
-    their borders. The workaround (read: hack) is to give the table top and right borders...
-    */
-    border-top: 1px solid var(--st-border);
-    border-right: 1px solid var(--st-border);
-    border-collapse: separate;
-    border-spacing: 0;
+  /*
+  Sticky headers and collapsed cell borders do not mix beautifully; the header cells lose
+  their borders. The workaround (read: hack) is to give the table top and right borders...
+  */
+  border-top: 1px solid var(--st-border);
+  border-right: 1px solid var(--st-border);
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .stTable td, .stTable th {
-    /*
-    ...and then set the opposite borders to cells. Now it looks nice again. I don't know how
-    long this hack will continue to work.
-    */
-    border-bottom: 1px solid var(--st-border);
-    border-left: 1px solid var(--st-border);
-    padding: 5px;
+  /*
+  ...and then set the opposite borders to all cells. Now it looks nice again. I don't know how
+  long this hack will continue to work.
+  */
+  border-bottom: 1px solid var(--st-border);
+  border-left: 1px solid var(--st-border);
+  padding: 5px;
 }
 
-.stTable th {
-    /*background: var(--st-header-bg);*/
-    background: $listHeadingBack;
-    color: var(--st-header-fg);
-    text-align: left;
+/*
+----------------------------------------------------------------------------------------------------
+TABLE HEADER ROWS
+----------------------------------------------------------------------------------------------------
+*/
 
-    /* Make the header cells sticky. Also see the notice above about disappearing cell borders. */
-    position: sticky;
-    top: 38px;  /* WARNING! Empirically determined! Will break in the future! */
+.stTable thead {
+  /* Make the header cells sticky. Also see the notice above about disappearing cell borders. */
+  position: sticky;
+  top: 39px;
+
+  /* By default it's all centered */
+  text-align: left;
 }
 
-.stTable th.sortable:hover {
-    background: $stTableHeaderHoverBackground;
-    color: var(--st-sortable-hover-fg);
+.stTable thead tr#controls th {  /* Need a very specific selector, won't work otherwise */
+  background: #fff;
+  font-size: 100%;
+  font-weight: normal;
+  margin: 0;
+  padding: 5px;
 }
 
-.stTable td {
-    padding: 5px;
-    font-size: 100%;
+.stTable thead tr#controls div#wrap {
 }
 
-/* Supertable sort header cells */
-.stTable th div {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-    pointer-events: none;
+.stTable thead tr#controls div#top {
 }
 
-.stTable th div span {
-    display: inline;
+.stTable thead tr#controls section {
+  padding-right: 15px;
+  border-right: 1px solid #888;
 }
 
-.stTable th div span.arrow {
-    margin-left: auto;
-    font-family: puavo-icons;
-    font-weight: normal;
-    padding-left: 5px;
+.stTable thead tr#controls section:last-of-type {
+  padding-right: none;
+  border-right: none;
+}
+
+.stTable thead tr#controls section span {
+  white-space: nowrap;
+}
+
+.stTable thead tr#controls section label {
+  white-space: nowrap;
+}
+
+/* Table statistics */
+.stTable thead tr#controls section#stats { }
+
+/* A generic container for all sorts of "tools" */
+.stTable thead tr#controls div.toolContainer { }
+
+/* Sortable header cells */
+.stTable thead tr#headers th {
+  background: $listHeadingBack;
+  color: var(--st-header-fg);
+}
+
+.stTable thead tr#headers th.sortable:hover {
+  background: $stTableHeaderHoverBackground;
+  color: var(--st-sortable-hover-fg);
+}
+
+.stTable thead tr#headers th.sorted {
+  /* Permanently highlight the currently sorted column */
+  background: $stTableHeaderHoverBackground;
+}
+
+/*
+x .stTable th.sorted { background: $stTableHeaderHoverBackground; }
+.stTable .sorted { background: var(--st-row-sorted-column); }
+.stTable tbody tr:hover { background: var(--st-row-hover-bg); }
+.stTable tbody tr:hover .sorted { background: var(--st-row-sorted-hover-bg); }
+*/
+
+
+/* Column names and sort direction arrows */
+.stTable thead tr#headers th div {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  pointer-events: none;   /* event pass-through */
+}
+
+.stTable thead tr#headers th div span {
+  display: inline;
+}
+
+.stTable thead tr#headers th div span.arrow {
+  margin-left: auto;
+  font-family: puavo-icons;
+  font-weight: normal;
+  padding-left: 5px;
+}
+
+/* Pagination controls container */
+.stTable thead #paging { }
+
+.stTable thead #paging label {
+  font-size: 80%;
+}
+
+/*
+----------------------------------------------------------------------------------------------------
+HEADER CONTROLS
+----------------------------------------------------------------------------------------------------
+*/
+
+div.checkboxScrollListOuter {
+  border: 1px solid var(--st-common-border);
+}
+
+div.checkboxScrollListOuter input[type="search"] {
+  background: url("/images/magnifier.png") no-repeat scroll 5px center #fff;
+  text-indent: 2em;
+  border: none;
+  border-bottom: 1px solid var(--st-common-border);
+  padding: 5px;
+  width: 100%;
+}
+
+div.checkboxScrollList {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  resize: vertical;
+  width: 100%;
+  height: 20em;
+  max-height: 40em;
+  min-height: 10em;
+  font-size: 100%;
+}
+
+div.checkboxScrollList .item {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+div.checkboxScrollList .item { color: var(--st-tab-container-fg); }
+div.checkboxScrollList .item:hover { background: var(--st-scroll-list-hover-bg); }
+
+div.checkboxScrollList .item input {
+  pointer-events: none;       /* The checkbox is there just for the looks */
+  margin-right: 10px;
+}
+
+/* Expandable details elements */
+.stTable thead summary {
+  background: var(--st-summary-bg);
+  color: var(--st-summary-fg);
+  cursor: pointer;
+  padding: 5px;
+}
+
+.stTable thead summary:hover {
+  background: var(--st-summary-hover-bg);
+  color: var(--st-summary-hover-fg);
+}
+
+.stTable thead details[open] {
+  background: var(--st-details-open-bg);
+  color: var(--st-details-open-fg);
+}
+
+.stTable thead details[open] > summary {
+  background: var(--st-summary-hover-bg);
+  color: var(--st-summary-hover-fg);
+}
+
+/* Column editing popup */
+div#popupColumns {
+  width: 40em;
+  max-width: 40em;
+}
+
+div#popupColumns #columnContainer {
+  border: 1px solid var(--st-common-border);
+  width: 90%;
+}
+
+/*
+div#popupColumns input[type="search"] {
+  background: url("/images/magnifier.png") no-repeat scroll 5px center #fff;
+  text-indent: 2em;
+  border: none;
+  border-bottom: 1px solid var(--st-common-border);
+  padding: 5px;
+  width: 100%;
+}
+
+div#popupColumns #columnList {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  resize: vertical;
+  width: 100%;
+  height: 20em;
+  max-height: 40em;
+  min-height: 10em;
+  font-size: 100%;
+}
+
+div#popupColumns #columnList .item {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+div#popupColumns #columnList .item { color: var(--st-tab-container-fg); }
+div#popupColumns #columnList .item:hover { background: var(--st-scroll-list-hover-bg); }
+
+div#popupColumns #columnList .item input {
+  pointer-events: none;
+  margin-right: 10px;
+}
+*/
+
+div#popupColumns #columnList .columnName {
+  font-style: italic;
+  pointer-events: none;
+}
+
+div#popupColumns #columnStats {
+  margin-top: 20px;
+  font-size: 100%;
+}
+
+/* Mass tools */
+.stTable thead div.toolContainer #source {
+  border: 1px solid var(--st-border);
+  padding: 5px;
+  font-size: 120%;
+  outline: none;
+  font-family: monospace;
+  width: 30em;
+  overflow: scroll;
+  resize: both;
+}
+
+.stTable thead div.toolContainer .unmatchedRow {
+  background: #faa;
+}
+
+.stTable thead div.toolContainer .massControls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+.stTable thead div.toolContainer div.massControls progress {
+  min-width: 250px;
+  border-radius: 0;
+}
+
+.stTable thead div.toolContainer div.massControls .counter {
+  font-weight: bold;
+  font-size: 110%;
+}
+
+.stTable thead div.toolContainer div.massControls .counter .success {
+  background: var(--st-status-success-bg);
+  color: var(--st-status-success-fg);
+}
+
+.stTable thead div.toolContainer div.massControls .counter .fail {
+  background: var(--st-status-fail-bg);
+  color: var(--st-status-fail-fg);
+}
+
+.stTable thead fieldset {
+  border-top: 1px solid #ccc;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  padding: 5px 0 0 0;
+  margin: 0;
+}
+
+.stTable thead fieldset legend {
+  margin-left: 10px;
+  padding: 0 5px;
+}
+
+.stTable thead table {
+  border: 1px solid var(--st-border);
+}
+
+.stTable thead table tr:hover {
+  background: none;
+}
+
+.stTable thead fieldset#settings div#ui {
+  /* Container for the mass tool settings interface */
+  margin: 0;
+  padding: 0;
+}
+
+/* Hack to make mass tool settings UIs a bit more nicer. This also means that if you actually
+need to show tabular data in them, you'll have to live without borders. */
+.stTable thead fieldset#settings div#ui table,
+.stTable thead fieldset#settings div#ui th,
+.stTable thead fieldset#settings div#ui td {
+  border: none;
+}
+
+/* Filtering */
+.stTable thead div#filteringContainer textarea#json.error {
+  border: 1px solid red;
+}
+
+div.filterList {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+/* Traditional filters */
+div.filterList .filterBox {
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+}
+
+div.filterList .filter {
+  border: 1px solid #ccc;
+  align-items: stretch;
+}
+
+.stTable thead .newFilter {
+  border: 1px dashed #888;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 110%;
+  align-items: center;
+}
+
+/* A few special styles for the editable traditional filters */
+.stTable thead .editableFilter div {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.stTable thead .editableFilter div.danger {
+  background: #fdd;
+  border-radius: 0 4px 4px 0;
+}
+
+.stTable thead .editableFilter div.danger button {
+  border: none;
+  background: none;
+  color: #f00;
+}
+
+.stTable thead .editableFilter div:hover { background: #ddd; }
+.stTable thead .editableFilter div.danger:hover { background: #faa; }
+
+.stTable thead .editableFilter input, .editableFilter button {
+  pointer-events: none;
+}
+
+div.filterList .filter .parts {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+div.filterList .filter span {
+  pointer-events: none;
+}
+
+div.filterList .filter span.column {
+  /* Target column name */
+  font-weight: bold;
+}
+
+div.filterList .filter span.operator {
+  /* Comparison operator */
+  font-weight: bold;
+  color: var(--st-filters-operator);
+}
+
+div.filterList .filter span.value {
+  /* Compared value */
+  color: var(--st-filters-value);
+}
+
+div.filterList .filter span.empty {
+  /* Indicate an empty/missing value */
+  font-style: italic;
+  color: var(--st-filters-value);
+}
+
+.traditionalPopup div#upper {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+}
+
+.traditionalPopup div#upper button {
+  white-space: nowrap;
+}
+
+.traditionalPopup div#upper button#save i { color: var(--st-filters-save-icon); }
+.traditionalPopup div#upper button#cancel i { color: var(--st-filters-cancel-icon); }
+
+.traditionalPopup div#editor p.help {
+  /* Prevent long help texts from stretching the popup to ridiculous widths */
+  max-width: 30em;
+}
+
+.stTable thead div#advanced span.unsaved {
+  color: var(--st-filters-unsaved-fg);
+}
+
+.stTable thead div#advanced table.messages tr {
+  cursor: pointer;
+}
+
+.stTable thead div#advanced table.messages .error {
+  background: var(--st-filters-error-bg);
+  color: var(--st-filters-error-fg);
+}
+
+/*
+The entire supertable control section is inside a table header element, and now we'll put
+a *TABLE* in there... have to undo some of the supertable styles.
+*/
+.commonTable, .commonTable th, .commonTable td {
+  border: 1px solid var(--st-border) !important;
+}
+
+.commonTable th, .commonTable td {
+  padding: 5px;
+}
+
+.commonTable thead {
+  position: static !important;
+  top: auto !important;
+}
+
+.commonTable th {
+  background: var(--st-commontable-th-bg) !important;
+  color: var(--st-commontable-th-fg) !important;
+}
+
+/* I don't know why I am doing this */
+div#filteringPreview span.par { color: #088; }
+div#filteringPreview span.bool { color: #00f; margin: 0 5px; }
+div#filteringPreview span.neg { color: #fff; background: #f00; }
+div#filteringPreview span.cmp { padding: 2px; }
+div#filteringPreview span.col { font-weight: bold; }
+div#filteringPreview span.opr { color: #808; margin: 0 5px; }
+div#filteringPreview span.val-b { color: #f00; }
+div#filteringPreview span.val-n { color: #f00; }
+div#filteringPreview span.val-t { color: #00f; }
+div#filteringPreview span.val-s { color: #0a0; }
+div#filteringPreview span.val-r { color: #f40; }
+div#filteringPreview span.val-o { color: #888; }
+
+/*
+----------------------------------------------------------------------------------------------------
+TABLE BODY ROWS
+----------------------------------------------------------------------------------------------------
+*/
+
+.stTable tbody td {
+  padding: 5px;
+  font-size: 10pt;
 }
 
 /* Row hover and row state interactions */
-.stTable th.sorted { background: $stTableHeaderHoverBackground; }
-.stTable .sorted { background: var(--st-row-sorted-column); }
+.stTable tbody .sorted { background: var(--st-row-sorted-column); }
 .stTable tbody tr:hover { background: var(--st-row-hover-bg); }
 .stTable tbody tr:hover .sorted { background: var(--st-row-sorted-hover-bg); }
 
 .stTable tbody tr.success {
-    background: var(--st-row-success-bg);
-    color: var(--st-row-processed-fg) !important;
+  background: var(--st-row-success-bg);
+  color: var(--st-row-processed-fg) !important;
 }
 
 .stTable tbody tr.success:hover { background: var(--st-row-success-hover-bg) !important; }
@@ -693,8 +682,8 @@ SUPERTABLES
 .stTable tbody tr.success:hover .sorted { background: var(--st-row-success-sorted-hover-bg) !important; }
 
 .stTable tbody tr.fail {
-    background: var(--st-row-fail-bg);
-    color: var(--st-row-processed-fg) !important;
+  background: var(--st-row-fail-bg);
+  color: var(--st-row-processed-fg) !important;
 }
 
 .stTable tbody tr.fail:hover { background: var(--st-row-fail-hover-bg) !important; }
@@ -703,62 +692,77 @@ SUPERTABLES
 
 /* Row checkboxes */
 .stTable .headerCheckbox {
-    display: block;
-    width: 20px;
-    height: 20px;
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 .stTable .checkbox {
-    /* Prevent text/table cell selections during range selections */
-    user-select: none;
+  /* Prevent text/table cell selections during range selections */
+  user-select: none;
 }
 
 .stTable .checkbox span {
-    border: 1px solid var(--st-checkbox-border);
-    display: block;
-    width: 20px;
-    height: 20px;
-    background: var(--st-checkbox-bg);
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    pointer-events: none;
+  border: 1px solid var(--st-checkbox-border);
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: var(--st-checkbox-bg);
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  pointer-events: none;
 }
 
 .stTable .checkbox span.checked {
-    background-image: url("/images/cross.svg");
-    background-color: var(--st-checkbox-bg);
-    background-size: 80%;
+  background-image: url("/images/cross.svg");
+  background-color: var(--st-checkbox-bg);
+  background-size: 80%;
 }
 
 /* The previously selected row indicator */
-.stTable .previousRow { outline: 2px dotted var(--st-previous-row); }
+.stTable .previousRow {
+  outline: 2px dotted var(--st-previous-row);
+}
 
 /* Supertable cell header drag item */
 .stDragHeader {
-    background: $stTableHeaderHoverBackground;
-    color: var(--st-sortable-hover-fg);
-    border: 1px solid var(--st-border);
-    position: absolute;
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    margin: 0;
-    font-weight: bold;
-    z-index: 10;
-    cursor: grabbing;
-    opacity: 0.85;
-    user-select: none;
+  background: var(--st-sortable-hover-bg);
+  color: var(--st-sortable-hover-fg);
+  border: 1px solid var(--st-border);
+  position: absolute;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  margin: 0;
+  font-weight: bold;
+  z-index: 10;
+  cursor: grabbing;
+  opacity: 0.85;
+  user-select: none;
 }
 
 /* Supertable drop target position indicator */
 .stDropMarker {
-    background: var(--st-dropmarker);
-    border: none;
-    position: absolute;
-    width: 5px;
-    display: block;
-    z-index: 9;
+  background: var(--st-dropmarker);
+  border: none;
+  position: absolute;
+  width: 5px;
+  display: block;
+  z-index: 9;
 }
+
+/*
+div.popup p, div.popup label {
+    font-size: 80%;
+}
+*/
+
+div.popup div#presets p.help {
+  margin: 0;
+  padding: 0;
+  max-width: 40em;
+}
+
 
 /*
 ----------------------------------------------------------------------------------------------------

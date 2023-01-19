@@ -1,0 +1,243 @@
+<!-- SuperTable upper part controls -->
+<template id="template_tableControls">
+    <table class="stTable">
+        <thead>
+            <tr id="controls">
+                <th colspan="2">        <!-- the colspan value is dynamically updated based on the actual column count -->
+                    <div id="wrap" class="flex-rows gap-10px">
+                        <div id="top" class="flex-cols flex-vcenter flex-wrap gap-10px">
+                            <section>
+                                <button id="export" type="button"><%= t("supertable.export.top_button") %> ▼</button>
+                                <button id="columns" type="button"><%= t("supertable.columns.top_button") %> ▼</button>
+                            </section>
+
+                            <section id="filteringControls">
+                                <label><input type="checkbox" id="enabled"><%= t("supertable.filtering.top_enabled") %></label>
+                                (<label><input type="checkbox" id="reverse"><%= t("supertable.filtering.top_reverse") %></label>)
+                                <label><input type="checkbox" id="editor"><%= t("supertable.filtering.top_button") %> ▼</label>
+                            </section>
+
+                            <section id="massSpan">
+                                <label><input type="checkbox" id="mass"><%= t("supertable.mass.top_button") %> ▼</label>
+                            </section>
+
+                            <section id="paging">
+                                <div class="flex-columns gap-5px flex-vcenter">
+                                    <select id="rowsPerPage" title="<%= t("supertable.paging.top_rows_per_page") %>"></select>
+                                    <button id="first" title="<%= t("supertable.paging.top_first_page") %>" disabled="">&lt;&lt;</button>
+                                    <button id="prev" title="<%= t("supertable.paging.top_previous_page") %>" disabled="">&lt;</button>
+                                    <button id="page" title="<%= t("supertable.paging.top_jump_to_page") %>">&nbsp;</button>
+                                    <button id="next" title="<%= t("supertable.paging.top_next_page") %>">&gt;</button>
+                                    <button id="last" title="<%= t("supertable.paging.top_last_page") %>">&gt;&gt;</button>
+                                </div>
+                            </section>
+
+                            <section id="stats"></section>
+                        </div>
+
+                        <div id="filteringContainer" class="toolContainer hidden">
+                            <div class="margin-bottom-5px"><input type="checkbox" id="advanced"><label for="advanced"><%= t("supertable.filtering.advanced_checkbox") %></label></div>
+
+                            <div id="traditional">
+                                <div class="flex-rows gap-5px">
+                                    <div class="flex-columns flex-vcenter gap-5px">
+                                        <button id="deleteAll"><%= t("supertable.filtering.traditional.delete_all") %></button>
+                                        <button id="showJSON"><%= t("supertable.filtering.traditional.show_json") %></button>
+                                        <button id="hideJSON" class="hidden"><%= t("supertable.filtering.traditional.hide_json") %></button>
+                                        <button id="saveJSON" class="hidden"><%= t("supertable.filtering.traditional.save_json") %></button>
+                                        <button id="traditionalPresets"><%= t("supertable.filtering.presets_button") %> ▼</button>
+                                    </div>
+
+                                    <textarea id="json" rows="3" class="hidden width-100p"></textarea>
+
+                                    <div class="filterList"></div>
+                                </div>
+                            </div>
+
+                            <div id="advanced" class="hidden">
+                                <div class="flex-columns gap-10px">
+                                    <fieldset class="width-50p">
+                                        <legend><%= t("supertable.filtering.advanced.expression_title") %></legend>
+
+                                        <textarea id="filter" placeholder="<%= t("supertable.filtering.advanced.expression_placeholder") %>" rows="3" class="width-100p"></textarea>
+
+                                        <div class="flex-columns gap-5px margin-top-5px">
+                                            <button id="save"><%= t("supertable.filtering.advanced.save") %></button>
+                                            <button id="clear"><%= t("supertable.filtering.advanced.clear") %></button>
+                                            <button id="convert"><%= t("supertable.filtering.advanced.convert_traditional") %></button>
+                                            <button id="advancedPresets"><%= t("supertable.filtering.presets_button") %> ▼</button>
+                                        </div>
+                                    </fieldset>
+
+                                    <fieldset class="width-50p">
+                                        <legend><%= t("supertable.filtering.advanced.messages_title") %></legend>
+                                        <div id="messages"><p class="margin-0 padding-0"></p></div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="filteringPreview" class="toolContainer filterList flex-vcenter"></div>
+
+                        <div id="massContainer" class="toolContainer hidden">
+                            <div class="flex-rows gap-10px">
+                                <details>
+                                    <summary><%= t("supertable.mass.row_select.title") %></summary>
+                                    <div id="massSelects">
+                                        <div class="flex-columns gap-20px margin-top-10px">
+                                            <fieldset>
+                                                <legend><%= t("supertable.mass.row_select.whole_table_title") %></legend>
+                                                <div class="flex-rows gap-5px">
+                                                    <button id="all"><%= t("supertable.mass.row_select.select_all") %></button>
+                                                    <button id="none"><%= t("supertable.mass.row_select.deselect_all") %></button>
+                                                    <button id="invert"><%= t("supertable.mass.row_select.invert_selection") %></button>
+                                                    <button id="successfull"><%= t("supertable.mass.row_select.deselect_successfull") %></button>
+                                                </div>
+                                            </fieldset>
+
+                                            <fieldset id="massSelects">
+                                                <legend><%= t("supertable.mass.row_select.specific_rows_title") %></legend>
+                                                <p class="margin-0 padding-0"><%= t("supertable.mass.row_select.explanation").html_safe %></p>
+                                                <div class="flex-columns gap-5px margin-top-5px">
+                                                    <div id="source" spellcheck="false" contenteditable="true"></div>
+                                                    <div class="flex-rows gap-5px">
+                                                        <label><%= t("supertable.mass.row_select.type") %>:<select id="selectType" class="margin-left-5px"></select></label>
+                                                        <button id="massRowSelect" class="margin-top-5px"><%= t("supertable.mass.row_select.select") %></button>
+                                                        <button id="massRowDeselect"><%= t("supertable.mass.row_select.deselect") %></button>
+                                                        <div id="massRowSelectStatus">&nbsp;</div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <fieldset>
+                                    <legend><%= t("supertable.mass.operation_title") %></legend>
+                                    <div class="massControls">
+                                        <select class="operation">
+                                            <option data-id="" hidden disabled selected value><%= t("default_select_value") %>...</option>
+                                        </select>
+                                        <button disabled=""><%= t("supertable.mass.execute_button") %></button>
+                                        <progress class="hidden"></progress>
+                                        <span class="counter hidden"></span>
+                                    </div>
+                                </fieldset>
+
+                                <fieldset id="settings" class="hidden">
+                                    <legend><%= t("supertable.mass.settings_title") %></legend>
+                                    <div id="ui"></div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+            <tr id="headers"></tr>
+        </thead>
+        <tbody id="data"></tbody>
+    </table>
+</template>
+
+<!-- Traditional filter "box" -->
+<template id="template_traditionalFilter">
+    <div class="active" title="<%= t("supertable.filtering.traditional.filter.is_active") %>"><input type="checkbox"></div>
+    <div class="parts" title="<%= t("supertable.filtering.traditional.filter.click_to_edit") %>"></div>
+    <div class="danger" title="<%= t("supertable.filtering.traditional.filter.delete") %>"><button>✖</button>
+</template>
+
+<!-- Edit a traditional filter -->
+<template id="template_editTraditionalFilter">
+    <div class="flex flex-rows traditionalPopup padding-5px">
+        <div class="flex-columns gap-5px" id="upper">
+            <section class="flex-grow-2">
+                <div class="flex flex-columns gap-5px width-100p">
+                    <select id="column" class="flex-grow-2" title="<%= t("supertable.filtering.traditional.editor.column") %>"></select>
+                    <select id="operator" title="<%= t("supertable.filtering.traditional.editor.operator") %>"></select>
+                </div>
+            </section>
+
+            <button id="save"><%= t("supertable.filtering.traditional.editor.save") %></button>
+        </div>
+
+        <div id="editor" class="editor"></div>
+    </div>
+</template>
+
+<!-- Filter presets table -->
+<template id="template_filterPresets">
+    <div id="presets" class="flex-rows gap-10px padding-5px">
+        <p class="help" id="help-traditional"><%= t("supertable.filtering.presets.traditional_help") %></p>
+        <p class="help" id="help-advanced"><%= t("supertable.filtering.presets.advanced_help") %></p>
+
+        <div class="flex-columns gap-10px">
+            <label><input type="checkbox" id="append" checked><%= t("supertable.filtering.presets.append") %></label>
+            <label><input type="checkbox" id="parenthesis"><%= t("supertable.filtering.presets.parenthesis") %></label>
+        </div>
+
+        <table class="commonTable font-90p">
+            <thead>
+                <tr>
+                    <th><%= t("supertable.filtering.presets.name") %></th>
+                    <th><%= t("supertable.filtering.presets.contents") %></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</template>
+
+<!-- Table export popup -->
+<template id="template_exportPopup">
+    <div id="popupTable" class="padding-5px">
+        <div class="flex-rows gap-10px">
+            <p class="margin-0 padding-0"><%= t("supertable.export.title") %></p>
+
+            <div class="flex-vcenter flex-columns gap-10px">
+                <button id="btnCSV">CSV</button>
+                <button id="btnJSON">JSON</button>
+                <label title="<%= t("supertable.export.only_visible_rows_title") %>"><input type="checkbox" id="only-visible-rows" checked><%= t("supertable.export.only_visible_rows_checkbox") %></label>
+                <label title="<%= t("supertable.export.only_visible_cols_title") %>"><input type="checkbox" id="only-visible-cols" checked><%= t("supertable.export.only_visible_cols_checkbox") %></label>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Visible columns edit popup -->
+<template id="template_columnsPopup">
+    <div id="popupColumns" class="padding-5px">
+        <div class="flex-rows gap-10px">
+            <p class="margin-0 padding-0"><%= t("supertable.columns.explanation") %></p>
+
+            <div class="flex-columns gap-10px width-100p">
+                <div id="columnContainer" class="checkboxScrollListOuter">
+                    <div>
+                        <input type="search" placeholder="<%= t("supertable.columns.search_placeholder") %>" spellcheck="false"></input>
+                    </div>
+                    <div id="columnList" class="checkboxScrollList"></div>
+                </div>
+
+                <div class="flex flex-rows gap-5px">
+                    <button id="save"><%= t("supertable.columns.save") %></button>
+                    <button id="reset"><%= t("supertable.columns.default_columns") %></button>
+                    <div class="separator"></div>
+                    <button id="selectAll"><%= t("supertable.columns.select_all") %></button>
+                    <button id="deselectAll"><%= t("supertable.columns.deselect_all") %></button>
+                    <div class="separator"></div>
+                    <button id="resetOrder"><%= t("supertable.columns.default_order") %></button>
+                    <div id="columnStats"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Paging popup -->
+<template id="template_jumpToPagePopup">
+    <div id="popupPage" class="padding-5px">
+        <div class="flex-rows gap-5px">
+            <label><%= t("supertable.paging.popup_title") %></label>
+            <select size="10"></select>
+        </div>
+    </div>
+</template>

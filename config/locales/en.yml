@@ -422,6 +422,83 @@ en:
       invalid_regexp: "Invalid regexp "
       unknown_search_term_type: "Unknown search term type "
 
+  # Common SuperTable elements
+  supertable:
+    export:
+      top_button: "Export"
+      title: "Export the table contents in a file:"
+      only_visible_rows_checkbox: "Only visible rows"
+      only_visible_rows_title: "If checked, only the rows that aren't filtered will be exported. Otherwise all rows are exported."
+      only_visible_cols_checkbox: "Only visible columns"
+      only_visible_cols_title: "If checked, only the currently selected columns will be exported. Otherwise all columns are exported."
+    columns:
+      top_button: "Columns"
+      explanation: "You can reorder the columns by dragging their headers with the mouse. Click = sort, drag = reorder."
+      search_placeholder: "Search"
+      save: "Save"
+      default_columns: "Defaults"
+      select_all: "Select all"
+      deselect_all: "Deselect all"
+      default_order: "Sort the columns in default order"
+    filtering:
+      top_button: "Filter editor"
+      top_enabled: "Filter"
+      top_reverse: "Reverse"
+      advanced_checkbox: "Advanced filtering"
+      presets_button: "Filter presets"
+      traditional:
+        delete_all: "Delete all filters"
+        show_json: "Show the JSON editor"
+        hide_json: "Hide the JSON editor"
+        save_json: "Save the JSON filter"
+        filter:
+          is_active: "Is this filter active?"
+          click_to_edit: "Click to edit..."
+          delete: "Delete"
+        editor:
+          column: "Target column"
+          operator: "Comparison operator"
+          save: "Save"
+      advanced:
+        expression_title: "Filter expression"
+        expression_placeholder: "Enter the filter expression here"
+        save: "Save"
+        clear: "Clear"
+        convert_traditional: "Copy and convert the traditional filter"
+        messages_title: "Compilation messages"
+      presets:
+        traditional_help: "Load a filter preset by clicking its name on the list below. You can choose if the new filter should replace the existing one, or if its contents should be appended at the end. This way, you can build large filters by combining smaller parts."
+        advanced_help: "The table below lists premade filter templates. Click the title of the template to copy it into the filter text box. You can select whether the template replaces the existing filter string, or if it's merely appended at the end. Because you can use parenthesis and logical operators (&&, || and !) for grouping, you can have the inserted template to be automatically surrounded with parenthesis. This way, you can piece together multiple expressions and construct complex filters easily. You can of also select and copy the filter expression directly from the table if neither insertion method suits your needs."
+        append: "Append at the end, don't replace"
+        parenthesis: "Surround the expression in parenthesis"
+        name: "Name"
+        contents: "Preset contents"
+    mass:
+      top_button: "Mass tools"
+      row_select:
+        title: "Row mass selection"
+        whole_table_title: "Whole table"
+        select_all: "Select all rows"
+        deselect_all: "Deselect all rows"
+        invert_selection: "Invert selection"
+        deselect_successfull: "Deselect successfully processed rows"
+        specific_rows_title: "Specific rows only"
+        explanation: "Enter one or more name, abbreviation, ID, or some other unique identifier. Then select their type and press \"Select\" or \"Deselect\". Rows that didn't match anything will be <span class=\"unmatchedRow\">colored differently</span>. You can edit them and then do the selection again. Duplicates and empty rows are removed."
+        type: "Type"
+        select: "Select"
+        deselect: "Deselect"
+      operation_title: "Operaton"
+      execute_button: "Execute"
+      settings_title: "Operation settings"
+    paging:
+      top_rows_per_page: "How many rows are shown on each page"
+      top_first_page: "First page"
+      top_previous_page: "Previous page"
+      top_jump_to_page: "Jump to page..."
+      top_next_page: "Next page"
+      top_last_page: "Last page"
+      popup_title: "Jump directly to page:"
+
   # Flash messages
   flash:
     you_must_be_an_owner: "You do not have enough rights to access that page."
