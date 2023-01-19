@@ -2,8 +2,12 @@
 
 /*
 Puavo Mass User Import III
-Version 1.0
+Version 1.0.1
 */
+
+import { create, getTemplate, toggleClass } from "../common/dom.js";
+import { _tr, clamp } from "../common/utils.js";
+import { loadSettings, saveSettings } from "./settings.js";
 
 // Worker threads for CSV parsing and the actual data import/update process.
 // CSV_PARSER_PATH and IMPORT_WORKER_PATH are defined in the page header;
@@ -307,137 +311,9 @@ const cellSelection = {
 // --------------------------------------------------------------------------------------------------
 // UTILITY
 
-// A crude mechanism for updating the saved settings
-const EXPECTED_SETTINGS_VERSION = 3;
-
-function loadDefaultSettings()
+export function clampPasswordLength(value)
 {
-    SETTINGS = {
-        version: EXPECTED_SETTINGS_VERSION,
-        mainTab: 0,
-        parser: {
-            sourceTab: 0,
-            infer: false,
-            trim: true,
-            separator: 0,   // 0=comma, 1=semicolon, 2=tab
-        },
-        import: {
-            mode: 1,        // 0=full sync, 1=import new users only, 2=update existing users only
-            overwrite: true,
-            username: {
-                umlauts: 0,
-                first_first_only: true,
-            },
-            password: {
-                randomize: true,
-                uppercase: true,
-                lowercase: true,
-                numbers: true,
-                punct: false,
-                length: 12,
-            },
-        }
-    };
-}
-
-// Try to save all settings to localhost
-function saveSettings()
-{
-    try {
-        localStorage.setItem("importSettings", JSON.stringify(SETTINGS));
-    } catch (e) {
-        console.error("saveSettings(): failed to save the settings:");
-        console.error(e);
-    }
-}
-
-// Try to restore all settings from localhost. If they cannot be loaded,
-// resets them to defaults and saves them.
-function loadSettings()
-{
-    loadDefaultSettings();
-
-    const raw = localStorage.getItem("importSettings");
-
-    if (!raw) {
-        // Initialize new settings
-        saveSettings();
-        return;
-    }
-
-    let settings = null;
-
-    try {
-        settings = JSON.parse(raw);
-    } catch (e) {
-        console.error("loadSettings(): can't parse the stored JSON:");
-        console.error(e);
-        saveSettings();
-        return;
-    }
-
-    if (settings.version === EXPECTED_SETTINGS_VERSION)
-        SETTINGS = {...SETTINGS, ...settings};
-    else {
-        console.warn("Settings version number changed, reset everything");
-        saveSettings();
-    }
-
-    SETTINGS.import.password.length = clampPasswordLength(SETTINGS.import.password.length);
-}
-
-// A shorter to type alias
-const _tr = (id, params={}) => I18n.translate(id, params);
-
-// Returns a usable copy of a named HTML template. It's a DocumentFragment, not text,
-// so it must be handled with DOM methods.
-const getTemplate = (id) => document.querySelector(`template#template_${id}`).content.cloneNode(true);
-
-// Math.clamp() does not exist at the moment
-const clamp = (value, min, max) => Math.min(Math.max(min, value), max);
-
-const clampPasswordLength = (value) => clamp(value, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH);
-
-// Adds or removes 'cls' from target's classList, depending on 'state' (true=add, false=remove)
-function toggleClass(target, cls, state)
-{
-    if (!target) {
-        console.error(`toggleClass(): target element is NULL! (cls="${cls}", state=${state})`);
-        return;
-    }
-
-    if (state)
-        target.classList.add(cls);
-    else target.classList.remove(cls);
-}
-
-// Creates a new HTML element and sets is attributes
-function create(tag, params={})
-{
-    let e = document.createElement(tag);
-
-    if ("id" in params && params.id !== undefined)
-        e.id = params.id;
-
-    if ("cls" in params && params.cls !== undefined) {
-        if (Array.isArray(params.cls))
-            e.className = params.cls.join(" ");
-        else e.className = params.cls;
-    }
-
-    if ("html" in params && params.html !== undefined)
-        e.innerHTML = params.html;
-
-    if ("text" in params && params.text !== undefined)
-        e.innerText = params.text;
-
-    if ("textnode" in params && params.textnode !== undefined)
-        e.appendChild(document.createTextNode(params.textnode));
-
-    if ("title" in params && params.title !== undefined)
-        e.title = params.title;
-
-    return e;
+    return clamp(value, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH);
 }
 
 // Updates the current group list
@@ -2038,17 +1914,17 @@ function onFillColumn(e)
 
             content.querySelector("#drop").addEventListener("click", () => {
                 SETTINGS.import.username.umlauts = 0;
-                saveSettings();
+                saveSettings(SETTINGS);
             });
 
             content.querySelector("#replace").addEventListener("click", () => {
                 SETTINGS.import.username.umlauts = 1;
-                saveSettings();
+                saveSettings(SETTINGS);
             });
 
             content.querySelector("#first_first_only").addEventListener("click", (e) => {
                 SETTINGS.import.username.first_first_only = e.target.checked;
-                saveSettings();
+                saveSettings(SETTINGS);
             });
 
             break;
@@ -2087,7 +1963,7 @@ function onFillColumn(e)
                         SETTINGS.import.password.length = clampPasswordLength(parseInt(e.target.value, 10));
                     else SETTINGS.import.password[e.target.id] = e.target.checked;
 
-                    saveSettings();
+                    saveSettings(SETTINGS);
                 });
             };
 
@@ -2096,7 +1972,7 @@ function onFillColumn(e)
                 // have to use nextSibling
                 e.target.nextSibling.innerText = e.target.value
                 SETTINGS.import.password.length = clampPasswordLength(parseInt(e.target.value, 10));
-                saveSettings();
+                saveSettings(SETTINGS);
             });
 
             break;
@@ -2136,7 +2012,7 @@ function onFillColumn(e)
     ow.checked = SETTINGS.import.overwrite;
     ow.addEventListener("click", e => {
         SETTINGS.import.overwrite = e.target.checked;
-        saveSettings();
+        saveSettings(SETTINGS);
     });
 
     // If this popup has an input field, focus it
@@ -3958,7 +3834,7 @@ function onChangeImportTab(newTab)
 {
     if (newTab != SETTINGS.mainTab) {
         SETTINGS.mainTab = newTab;
-        saveSettings();
+        saveSettings(SETTINGS);
         switchImportTab();
     }
 }
@@ -4165,7 +4041,7 @@ function buildInferTable()
     container.querySelector("details#settings table.inferTable tbody").innerHTML = html;
 }
 
-function initializeImporter(params)
+export function initializeImporter(params)
 {
     try {
         container = params.container;
@@ -4188,7 +4064,7 @@ function initializeImporter(params)
         buildInferTable();
 
         // Initial UI update
-        loadSettings();
+        SETTINGS = loadSettings();
         switchImportTab();
         onChangeSource();
 
@@ -4209,7 +4085,7 @@ function initializeImporter(params)
 
         for (let i of settings.querySelectorAll("input")) {
             i.addEventListener("click", e => {
-                saveSettings();
+                saveSettings(SETTINGS);
                 updateParsingSummary();
                 updatePreview();
             });

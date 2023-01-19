@@ -1,5 +1,8 @@
 //= link application.js
 
+// Modal popups
+//= link bundles/modal_popup.js
+
 // Supertable
 //= link supertable2.js
 //= link filtereditor.js
@@ -7,9 +10,8 @@
 //= link supertable2.en.js
 
 // User mass import/update
-//= link new_import.js
-//= link new_import.fi.js
-//= link new_import.en.js
+//= link bundles/import_tool.js
+//= link i18n/import_tool.js
 //= link csv_parser.js
 //= link import_worker.js
 

@@ -382,16 +382,7 @@
   );
 }
 
-#popupBackdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  display: block;
-}
-
+/*
 div.popup {
   border: 2px solid var(--popup-border);
   background: var(--popup-background);
@@ -399,6 +390,7 @@ div.popup {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.75);
   font-size: 80%;
 }
+*/
 
 div.popup header {
   font-size: 110%;
@@ -434,7 +426,7 @@ div.directButtons button {
 .cellEditPassword { font-family: "monospace"; font-size: 90%; }
 
 .columnMenu {
-  padding: 5px;
+  padding: 0;
 }
 
 .columnMenu ul {
@@ -509,7 +501,7 @@ div.popup div.popupContainer {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  margin: 10px;
+  margin: 5px;
 }
 
 #import fieldset {

@@ -7,8 +7,8 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
       IMPORT_WORKER_PATH = "<%= javascript_path 'import_worker' %>";
 </script>
 
-<%= javascript_include_tag 'new_import.' + I18n.locale.to_s %>
-<%= javascript_include_tag 'new_import' %>
+<%= javascript_include_tag 'bundles/import_tool' %>
+<%= javascript_include_tag 'i18n/import_tool' %>
 <% end %>
 
 <h1><%= t('new_import.title') %></h1>
@@ -391,7 +391,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 </template>
 
 <template id="template_directCellEdit">
-    <div class="flex-rows gap-5px padding-5px">
+    <div class="flex-rows gap-5px">
         <div id="contents"></div>
         <div class="directButtons">
             <button id="save">OK (Enter)</button>
