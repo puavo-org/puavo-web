@@ -1,12 +1,12 @@
 <% content_for :javascript do %>
-<%= javascript_include_tag 'puavoconf_editor' %>
+<%= javascript_include_tag 'bundles/puavoconf_editor' %>
 <% end %>
 
 <% content_for :post_load_javascript do %>
 <script>
 const PUAVOCONF_DEFINITIONS = <%= get_puavoconf_definitions() %>;
 
-new PuavoConfEditor({
+new PCE.Editor({
     prefix: "puavoconf1",
     container: document.getElementById("puavoConfEditor"),
     definitions: PUAVOCONF_DEFINITIONS,

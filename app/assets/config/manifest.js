@@ -15,7 +15,7 @@
 
 // Miscellaneous
 //= link password_validator.js
-//= link puavoconf_editor.js
+//= link bundles/puavoconf_editor.js
 
 // Stylesheets
 //= link application.css
