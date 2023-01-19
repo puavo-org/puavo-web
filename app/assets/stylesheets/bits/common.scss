@@ -232,3 +232,21 @@ class names.
   91.6% { transform: rotate(330deg); }
   100% { transform: rotate(360deg); }
 }
+
+#popupBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: block;
+}
+
+div.popup {
+  border: 2px solid var(--popup-border);
+  background: var(--popup-background);
+  padding: 5px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.75);
+  font-size: 80%;
+}
