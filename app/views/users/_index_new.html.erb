@@ -4,14 +4,15 @@
 <% end %>
 <% end %>
 
-<img src="/images/spinner.gif" style="opacity: 0; position: absolute; left: -1000px;">
-<div class="superTable" id="tableUsers"></div>
-
 <% content_for :javascript do %>
-<%= javascript_include_tag 'supertable2.' + I18n.locale.to_s %>
-<%= javascript_include_tag 'supertable2' %>
-<%= javascript_include_tag 'filtereditor' %>
+<%= javascript_include_tag 'bundles/modal_popup' %>
+<%= javascript_include_tag 'bundles/supertable3' %>
+<%= javascript_include_tag 'i18n/supertable3' %>
 <% end %>
+
+<%= render 'shared/supertable_controls' %>
+
+<div class="superTable" id="tableUsers"></div>
 
 <% @is_organisation = false %>
 
@@ -22,34 +23,35 @@
 <%= render :partial => 'shared/user_tables_common.js' %>
 
 const DEFAULT_COLUMNS = ["uid", "name", "role", "eid"];
-const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
+const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
 
 document.addEventListener("DOMContentLoaded", function() {
+    modalPopup.setupGlobalEvents();
 
-new SuperTable(
-    // Main container DIV
-    document.getElementById("tableUsers"),
+    new ST.SuperTable(
+        // Main container DIV
+        document.getElementById("tableUsers"),
 
-    // Settings
-    {
-        id: "users",
-        csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-users`,
-        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION | TableFlag.ENABLE_PAGINATION,
-        locale: "<%= supertable_sorting_locale %>",
-        columnDefinitions: COLUMN_DEFINITIONS,
-        columnTitles: COLUMN_TITLES,
-        columnOrder: COLUMN_ORDER,
-        userTransforms: USER_TRANSFORM_FUNCTIONS,
-        actions: userActions,
-        openCallback: openCallback,
-        massSelects: MASS_SELECTS,
-        massOperations: MASS_OPERATIONS,
-        defaultColumns: DEFAULT_COLUMNS,
-        defaultSorting: DEFAULT_SORTING,
-        filterPresets: FILTER_PRESETS,
-        dynamicData: "/users/<%= @school.id %>/get_school_users_list",
-    }
-);
+        // Settings
+        {
+            id: "users",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-users`,
+            flags: ST.TableFlag.ENABLE_COLUMN_EDITING | ST.TableFlag.ENABLE_FILTERING | ST.TableFlag.ENABLE_SELECTION | ST.TableFlag.ENABLE_PAGINATION,
+            locale: "<%= supertable_sorting_locale %>",
+            columnDefinitions: COLUMN_DEFINITIONS,
+            columnTitles: COLUMN_TITLES,
+            columnOrder: COLUMN_ORDER,
+            userTransforms: USER_TRANSFORM_FUNCTIONS,
+            actions: userActions,
+            openCallback: openCallback,
+            massSelects: MASS_SELECTS,
+            massOperations: MASS_OPERATIONS,
+            defaultColumns: DEFAULT_COLUMNS,
+            defaultSorting: DEFAULT_SORTING,
+            filterPresets: FILTER_PRESETS,
+            dynamicData: "/users/<%= @school.id %>/get_school_users_list",
+        }
+    );
 });
 
 </script>

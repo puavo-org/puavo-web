@@ -2,121 +2,121 @@
 const COLUMN_DEFINITIONS = {
     id: {
         key: "id",
-        type: ColumnType.NUMERIC,
+        type: ST.ColumnType.NUMERIC,
         alias: ["puavoid"],
     },
 
     first: {
         key: "first",
-        type: ColumnType.STRING,
+        type: ST.ColumnType.STRING,
         alias: ["first_name", "fn"],
     },
 
     last: {
         key: "last",
-        type: ColumnType.STRING,
+        type: ST.ColumnType.STRING,
         alias: ["last_name", "ln"],
     },
 
     name: {
         key: "name",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.USER_TRANSFORM,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.USER_TRANSFORM,
     },
 
     uid: {
         key: "uid",
-        type: ColumnType.STRING,
+        type: ST.ColumnType.STRING,
         alias: ["username"],
     },
 
     eid: {
         key: "eid",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.F_NULLABLE,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.F_NULLABLE,
         alias: ["external_id"]
     },
 
     learner_id: {
         key: "learner_id",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.F_NULLABLE,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.F_NULLABLE,
         alias: ["lid"],
     },
 
     role: {
         key: "role",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.USER_TRANSFORM,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.USER_TRANSFORM,
     },
 
     phone: {
         key: "phone",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.ARRAY | ColumnFlag.F_NULLABLE,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
         alias: ["phone_number"],
     },
 
     email: {
         key: "email",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.ARRAY | ColumnFlag.F_NULLABLE,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
     },
 
     pnumber: {
         key: "pnumber",
-        type: ColumnType.STRING,
+        type: ST.ColumnType.STRING,
     },
 
     home: {
         key: "home",
-        type: ColumnType.STRING,
+        type: ST.ColumnType.STRING,
     },
 
     rrt: {
         key: "rrt",
-        type: ColumnType.UNIXTIME,
-        flags: ColumnFlag.USER_TRANSFORM | ColumnFlag.F_NULLABLE,
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.F_NULLABLE,
         alias: ["removal_request_time"]
     },
 
     dnd: {
         key: "dnd",
-        type: ColumnType.BOOL,
-        flags: ColumnFlag.F_NULLABLE,
+        type: ST.ColumnType.BOOL,
+        flags: ST.ColumnFlag.F_NULLABLE,
         alias: ["do_not_delete"]
     },
 
     locked: {
         key: "locked",
-        type: ColumnType.BOOL,
-        flags: ColumnFlag.F_NULLABLE,
+        type: ST.ColumnType.BOOL,
+        flags: ST.ColumnFlag.F_NULLABLE,
     },
 
     created: {
         key: "created",
-        type: ColumnType.UNIXTIME,
-        flags: ColumnFlag.DESCENDING_DEFAULT,
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     modified: {
         key: "modified",
-        type: ColumnType.UNIXTIME,
-        flags: ColumnFlag.DESCENDING_DEFAULT,
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
 <% if @is_organisation %>
     school: {
         key: "school",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.USER_TRANSFORM,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.USER_TRANSFORM,
     },
 <% end %>
 
     schools: {
         key: "schools",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.USER_TRANSFORM,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.USER_TRANSFORM,
     },
 };
 
@@ -207,7 +207,7 @@ const USER_TRANSFORM_FUNCTIONS = {
         if (entry.rrt)
             s += `<span class="stUserMarkedForDeletion">`;
 
-        s += `<a href="${entry.link}">${escapeHTML(entry.name)}</a>`;
+        s += `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`;
 
         if (entry.locked)
             s += `<i class="icon-lock"></i>`;
@@ -225,7 +225,7 @@ const USER_TRANSFORM_FUNCTIONS = {
         if (entry.rrt === undefined || entry.rrt === null || entry.rrt === 0)
             return ["", 0];
 
-        const [valid, t] = convertTimestamp(entry.rrt);
+        const [valid, t] = ST.convertTimestamp(entry.rrt);
 
         if (!valid)
             return ["?", 0];
@@ -274,7 +274,7 @@ const USER_TRANSFORM_FUNCTIONS = {
 };
 
 <% if @is_owner %>
-class MassUserDeletion extends MassOperation {
+class MassUserDeletion extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
@@ -302,32 +302,32 @@ class MassUserDeletion extends MassOperation {
         // Do some pre-filtering here, to prevent useless network traffic.
         // All of these tests are also done on the server end in case the
         // user tries to cheat by, for example, adjusting their system time.
-        const dnd = item.dnd[INDEX_EXISTS] === true && item.dnd[INDEX_FILTERABLE] !== undefined,
-              marked = item.rrt[INDEX_EXISTS] === true && item.rrt[INDEX_FILTERABLE] !== undefined,
-              locked = item.locked[INDEX_EXISTS] === true && item.locked[INDEX_FILTERABLE] === true;
+        const dnd = item.dnd[ST.INDEX_EXISTS] === true && item.dnd[ST.INDEX_FILTERABLE] !== undefined,
+              marked = item.rrt[ST.INDEX_EXISTS] === true && item.rrt[ST.INDEX_FILTERABLE] !== undefined,
+              locked = item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === true;
 
         if (dnd)
-            return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
+            return ST.itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
 
         if (!marked)
-            return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>");
+            return ST.itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>");
 
         const now = Math.floor(Date.now() / 1000);
-        const next = item.rrt[INDEX_FILTERABLE] + (60 * 60 * 24 * 7);   // 7 days in seconds
+        const next = item.rrt[ST.INDEX_FILTERABLE] + (60 * 60 * 24 * 7);   // 7 days in seconds
 
         if (next > now)
-            return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.marked_too_recently') %>");
+            return ST.itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.marked_too_recently') %>");
 
         // Good to go
-        return doPOST(
+        return ST.doPOST(
             `/users/${item.school_id}/mass_op_user_delete`,
-            { id: item.id[INDEX_FILTERABLE] }
+            { id: item.id[ST.INDEX_FILTERABLE] }
         );
     }
 };
 <% end %>
 
-class MassUserLocking extends MassOperation {
+class MassUserLocking extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
@@ -374,12 +374,12 @@ class MassUserLocking extends MassOperation {
     processItem(item)
     {
         // Do nothing if the user is already in the desired locking state
-        if (item.locked[INDEX_EXISTS] === true && item.locked[INDEX_FILTERABLE] === this.lock) {
+        if (item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === this.lock) {
             console.log("already in the desired state");
-            return itemProcessedStatus(true);
+            return ST.itemProcessedStatus(true);
         }
 
-        return doPOST(
+        return ST.doPOST(
             `/users/${item.school_id}/mass_op_user_lock`,
             { id: item.id[1], lock: this.lock }
         );
@@ -391,7 +391,7 @@ class MassUserLocking extends MassOperation {
     }
 };
 
-class MassUserMarkForDeletion extends MassOperation {
+class MassUserMarkForDeletion extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
@@ -450,32 +450,32 @@ class MassUserMarkForDeletion extends MassOperation {
     {
         // Pre-filter users, avoid useless network requests. All of these checks
         // are also done on the server end.
-        const dnd = item.dnd[INDEX_EXISTS] === true && item.dnd[INDEX_FILTERABLE] !== undefined,
-              marked = item.rrt[INDEX_EXISTS] === true && item.rrt[INDEX_FILTERABLE] !== undefined;
+        const dnd = item.dnd[ST.INDEX_EXISTS] === true && item.dnd[ST.INDEX_FILTERABLE] !== undefined,
+              marked = item.rrt[ST.INDEX_EXISTS] === true && item.rrt[ST.INDEX_FILTERABLE] !== undefined;
 
         if (dnd) {
             // deletion prevented
-            return itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
+            return ST.itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
         }
 
         if (marked && this.operation == 0) {
             // Already marked for deletion and not in force mode
-            return itemProcessedStatus(true);
+            return ST.itemProcessedStatus(true);
         }
 
         if (!marked && this.operation == 2) {
             // Not marked for deletion
-            return itemProcessedStatus(true);
+            return ST.itemProcessedStatus(true);
         }
 
-        return doPOST(
+        return ST.doPOST(
             `/users/${item.school_id}/mass_op_user_mark`,
-            { id: item.id[INDEX_FILTERABLE], operation: this.operation }
+            { id: item.id[ST.INDEX_FILTERABLE], operation: this.operation }
         );
     }
 };
 
-class MassUserClearColumn extends MassOperation {
+class MassUserClearColumn extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
@@ -537,7 +537,7 @@ class MassUserClearColumn extends MassOperation {
 };
 
 <% unless @is_organisation %>
-class MassUsernameList extends MassOperation {
+class MassUsernameList extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
@@ -561,9 +561,9 @@ class MassUsernameList extends MassOperation {
         let id = [];
 
         for (const i of items)
-            id.push(i[0].id[INDEX_FILTERABLE]);
+            id.push(i[0].id[ST.INDEX_FILTERABLE]);
 
-        return doPOST(
+        return ST.doPOST(
             "/users/<%= @school.id %>/mass_op_username_list",
             {
                 creator: "<%= current_user.givenName %> <%= current_user.sn %> (<%= current_user.uid %>)",
@@ -576,7 +576,7 @@ class MassUsernameList extends MassOperation {
 <% end %>
 
 <% if @is_owner %>
-class MassUserChangeSchool extends MassOperation {
+class MassUserChangeSchool extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
@@ -644,10 +644,10 @@ class MassUserChangeSchool extends MassOperation {
 
         // Unfortunately there's nothing to optimize yet, we must issue a network request
         // for every selected user
-        return doPOST(
+        return ST.doPOST(
             `/users/${item.school_id}/mass_op_user_change_school`,
             {
-                id: item.id[INDEX_FILTERABLE],
+                id: item.id[ST.INDEX_FILTERABLE],
                 operation: this.operation,
                 keep: this.keep,
                 remove_prev: this.removePrev,
@@ -664,7 +664,7 @@ const MASS_OPERATIONS = [
     {
         id: "delete",
         title: "<%= t('users.index.mass_operations.delete.title') %>",
-        //flags: MassOperationFlags.HAVE_SETTINGS,
+        //flags: ST.MassOperationFlags.HAVE_SETTINGS,
         cls: MassUserDeletion,
     },
 <% end %>
@@ -672,21 +672,21 @@ const MASS_OPERATIONS = [
     {
         id: "lock",
         title: "<%= t('users.index.mass_operations.lock.title') %>",
-        flags: MassOperationFlags.HAVE_SETTINGS,
+        flags: ST.MassOperationFlags.HAVE_SETTINGS,
         cls: MassUserLocking
     },
 
     {
         id: "mark_for_deletion",
         title: "<%= t('users.index.mass_operations.mark.title') %>",
-        flags: MassOperationFlags.HAVE_SETTINGS,
+        flags: ST.MassOperationFlags.HAVE_SETTINGS,
         cls: MassUserMarkForDeletion
     },
 
     {
         id: "clear_columm",
         title: "<%= t('users.index.mass_operations.clear_column.title') %>",
-        flags: MassOperationFlags.HAVE_SETTINGS,
+        flags: ST.MassOperationFlags.HAVE_SETTINGS,
         cls: MassUserClearColumn
     },
 
@@ -694,7 +694,7 @@ const MASS_OPERATIONS = [
     {
         id: "create_username_list",
         title: "<%= t('users.index.mass_operations.username_list.title') %>",
-        flags: MassOperationFlags.SINGLESHOT | MassOperationFlags.HAVE_SETTINGS,
+        flags: ST.MassOperationFlags.SINGLESHOT | ST.MassOperationFlags.HAVE_SETTINGS,
         cls: MassUsernameList
     },
 <% end %>
@@ -703,7 +703,7 @@ const MASS_OPERATIONS = [
     {
         id: "change_school",
         title: "<%= t('users.index.mass_operations.change_school.title') %>",
-        flags: MassOperationFlags.HAVE_SETTINGS,
+        flags: ST.MassOperationFlags.HAVE_SETTINGS,
         cls: MassUserChangeSchool
     },
 <% end %>
@@ -832,8 +832,8 @@ function userActions(item)
 {
     let html = "";
 
-    const link = `/users/${item.school_id}/users/${item.id[INDEX_FILTERABLE]}`;
-    const dnd = item.dnd[INDEX_EXISTS] === true && item.dnd[INDEX_FILTERABLE] !== undefined;
+    const link = `/users/${item.school_id}/users/${item.id[ST.INDEX_FILTERABLE]}`;
+    const dnd = item.dnd[ST.INDEX_EXISTS] === true && item.dnd[ST.INDEX_FILTERABLE] !== undefined;
 
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
@@ -877,7 +877,7 @@ function userActions(item)
 
 function openCallback(item)
 {
-    return `/users/${item.school_id}/users/${item.id[INDEX_DISPLAYABLE]}`;
+    return `/users/${item.school_id}/users/${item.id[ST.INDEX_DISPLAYABLE]}`;
 }
 
 const MASS_SELECTS = [

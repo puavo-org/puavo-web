@@ -1,9 +1,9 @@
 <% page_title t('titles.organisation'), t('titles.all_users') %>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag 'supertable2.' + I18n.locale.to_s %>
-<%= javascript_include_tag 'supertable2' %>
-<%= javascript_include_tag 'filtereditor' %>
+<%= javascript_include_tag 'bundles/modal_popup' %>
+<%= javascript_include_tag 'bundles/supertable3' %>
+<%= javascript_include_tag 'i18n/supertable3' %>
 <% end %>
 
 <% @is_organisation = true %>
@@ -30,7 +30,7 @@
 
 <% end %>
 
-<img src="/images/spinner.gif" style="opacity: 0; position: absolute; left: -1000px;">
+<%= render 'shared/supertable_controls' %>
 <div class="superTable" id="tableUsers"></div>
 
 <% content_for :post_load_javascript do %>
@@ -40,10 +40,12 @@
 <%= render :partial => 'shared/user_tables_common.js' %>
 
 const DEFAULT_COLUMNS = ["school", "uid", "name", "role", "eid", "locked", "dnd", "rrt"];
-const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
+const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
 
 document.addEventListener("DOMContentLoaded", function() {
-    new SuperTable(
+    modalPopup.setupGlobalEvents();
+
+    new ST.SuperTable(
         // Main container DIV
         document.getElementById("tableUsers"),
 
@@ -51,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function() {
         {
             id: "orgUsers",
             csvPrefix: `<%= LdapOrganisation.current.o %>-users`,
-            flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION | TableFlag.ENABLE_PAGINATION,
+            flags: ST.TableFlag.ENABLE_COLUMN_EDITING | ST.TableFlag.ENABLE_FILTERING | ST.TableFlag.ENABLE_SELECTION | ST.TableFlag.ENABLE_PAGINATION,
             locale: "<%= supertable_sorting_locale %>",
             columnDefinitions: COLUMN_DEFINITIONS,
             columnTitles: COLUMN_TITLES,
