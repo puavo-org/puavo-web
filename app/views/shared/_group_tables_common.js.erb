@@ -2,54 +2,54 @@
 const COLUMN_DEFINITIONS = {
     abbr: {
         key: "abbr",
-        type: ColumnType.STRING,
+        type: ST.ColumnType.STRING,
     },
 
     created: {
         key: "created",
-        type: ColumnType.UNIXTIME,
-        flags: ColumnFlag.DESCENDING_DEFAULT,
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     eid: {
         key: "eid",
-        type: ColumnType.STRING,
+        type: ST.ColumnType.STRING,
     },
 
     id: {
         key: "id",
-        type: ColumnType.NUMERIC,
+        type: ST.ColumnType.NUMERIC,
     },
 
     modified: {
         key: "modified",
-        type: ColumnType.UNIXTIME,
-        flags: ColumnFlag.DESCENDING_DEFAULT,
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     members_count: {
         key: "members_count",
-        type: ColumnType.NUMERIC,
+        type: ST.ColumnType.NUMERIC,
     },
 
     name: {
         key: "name",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.USER_TRANSFORM,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.USER_TRANSFORM,
     },
 
 <% if @is_organisation %>
     school: {
         key: "school",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.USER_TRANSFORM,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.USER_TRANSFORM,
     },
 <% end %>
 
     type: {
         key: "type",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.USER_TRANSFORM,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.USER_TRANSFORM,
         missing: {
             display: `<span class="missingData"><%= t('missing_data') %></span>`,
             sort: "",
@@ -102,7 +102,7 @@ const COLUMN_ORDER = [
 const USER_TRANSFORM_FUNCTIONS = {
     name: function(entry) {
         return [
-            `<a href="${entry.link}">${escapeHTML(entry.name)}</a>`,
+            `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`,
             entry.name
         ];
     },
@@ -132,74 +132,74 @@ const USER_TRANSFORM_FUNCTIONS = {
     },
 };
 
-class MassGroupDeletion extends MassOperation {
+class MassGroupDeletion extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
 
     processItem(item)
     {
-        return doPOST(
+        return ST.doPOST(
             `/users/${item.school_id}/mass_op_group_delete`,
-            { id: item.id[INDEX_FILTERABLE] }
+            { id: item.id[ST.INDEX_FILTERABLE] }
         );
     }
 };
 
-class MassGroupClear extends MassOperation {
+class MassGroupClear extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
 
     processItem(item)
     {
-        return doPOST(
+        return ST.doPOST(
             `/users/${item.school_id}/mass_op_group_clear`,
-            { id: item.id[INDEX_FILTERABLE] }
+            { id: item.id[ST.INDEX_FILTERABLE] }
         );
     }
 };
 
-class MassGroupLockMembers extends MassOperation {
+class MassGroupLockMembers extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
 
     processItem(item)
     {
-        return doPOST(
+        return ST.doPOST(
             `/users/${item.school_id}/mass_op_group_lock_members`,
-            { id: item.id[INDEX_FILTERABLE], state: true }
+            { id: item.id[ST.INDEX_FILTERABLE], state: true }
         );
     }
 };
 
-class MassGroupUnlockMembers extends MassOperation {
+class MassGroupUnlockMembers extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
 
     processItem(item)
     {
-        return doPOST(
+        return ST.doPOST(
             `/users/${item.school_id}/mass_op_group_lock_members`,
-            { id: item.id[INDEX_FILTERABLE], state: false }
+            { id: item.id[ST.INDEX_FILTERABLE], state: false }
         );
     }
 };
 
-class MassGroupMarkMembersForDeletion extends MassOperation {
+class MassGroupMarkMembersForDeletion extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
 
     processItem(item)
     {
-        return doPOST(
+        return ST.doPOST(
             `/users/${item.school_id}/mass_op_group_mark_members_for_deletion`,
-            { id: item.id[INDEX_FILTERABLE], state: true }
+            { id: item.id[ST.INDEX_FILTERABLE], state: true }
         );
     }
 };
 
-class MassGroupUnmarkMembersForDeletion extends MassOperation {
+class MassGroupUnmarkMembersForDeletion extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
 
     processItem(item)
     {
-        return doPOST(
+        return ST.doPOST(
             `/users/${item.school_id}/mass_op_group_mark_members_for_deletion`,
-            { id: item.id[INDEX_FILTERABLE], state: false }
+            { id: item.id[ST.INDEX_FILTERABLE], state: false }
         );
     }
 };
@@ -249,7 +249,7 @@ function userActions(item)
 {
     let html = "";
 
-    const link = `/users/${item.school_id}/groups/${item.id[INDEX_FILTERABLE]}`;
+    const link = `/users/${item.school_id}/groups/${item.id[ST.INDEX_FILTERABLE]}`;
 
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
@@ -262,7 +262,7 @@ function userActions(item)
 
 function openCallback(item)
 {
-    return `/users/${item.school_id}/groups/${item.id[INDEX_DISPLAYABLE]}`;
+    return `/users/${item.school_id}/groups/${item.id[ST.INDEX_DISPLAYABLE]}`;
 }
 
 const MASS_SELECTS = [
