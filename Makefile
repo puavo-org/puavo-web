@@ -50,8 +50,7 @@ clean: clean-assets
 	rm -rf node_modules
 
 js-clean:
-	# TODO: I don't think is is really necessary
-	rm -rf app/assets/javascripts/*.js.map
+	rm -rf app/assets/javascripts/bundles/*
 
 js-server:
 	$(ESBUILD) $(ESBUILD_FLAGS) --watch --outdir=$(JS_OUTPUT) $(JS_INPUT)
@@ -83,6 +82,8 @@ install: clean-for-install mkdirs config-to-system
 		Gemfile.lock \
 		Makefile \
 		monkeypatches.rb \
+		package.json \
+		node_modules \
 		public \
 		Rakefile \
 		README.md \
