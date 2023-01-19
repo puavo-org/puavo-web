@@ -1,10 +1,12 @@
 <% content_for :javascript do %>
-<%= javascript_include_tag 'supertable2.' + I18n.locale.to_s %>
-<%= javascript_include_tag 'supertable2' %>
-<%= javascript_include_tag 'filtereditor' %>
+<%= javascript_include_tag 'bundles/modal_popup' %>
+<%= javascript_include_tag 'bundles/supertable3' %>
+<%= javascript_include_tag 'i18n/supertable3' %>
 <% end %>
 
 <div id="schoolsTitle"><h1><%= LdapOrganisation.current.o %></h1></div>
+
+<%= render 'shared/supertable_controls' %>
 
 <div id="tableSchools"></div>
 
@@ -28,70 +30,70 @@
 const COLUMN_DEFINITIONS = {
     id: {
         key: "id",
-        type: ColumnType.NUMERIC,
+        type: ST.ColumnType.NUMERIC,
         alias: ["puavoid"],
     },
 
     name: {
         key: "name",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.USER_TRANSFORM,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.USER_TRANSFORM,
     },
 
     integrations: {
         key: "integrations",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.ARRAY | ColumnFlag.USER_TRANSFORM,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.USER_TRANSFORM,
     },
 
     prefix: {
         key: "prefix",
-        type: ColumnType.STRING,
+        type: ST.ColumnType.STRING,
     },
 
     boot_servers: {
         key: "boot_servers",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.USER_TRANSFORM,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.USER_TRANSFORM,
     },
 
     tags: {
         key: "tags",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.ARRAY,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
     },
 
     school_code: {
         key: "school_code",
-        type: ColumnType.STRING,
+        type: ST.ColumnType.STRING,
     },
 
     eid: {
         key: "eid",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.F_NULLABLE,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.F_NULLABLE,
         alias: ["external_id"]
     },
 
     num_members: {
         key: "num_members",
-        type: ColumnType.NUMERIC,
+        type: ST.ColumnType.NUMERIC,
     },
 
     num_groups: {
         key: "num_groups",
-        type: ColumnType.NUMERIC,
+        type: ST.ColumnType.NUMERIC,
     },
 
     num_devices: {
         key: "num_devices",
-        type: ColumnType.NUMERIC,
+        type: ST.ColumnType.NUMERIC,
     },
 
     conf: {
         key: "conf",
-        type: ColumnType.STRING,
-        flags: ColumnFlag.ARRAY,
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
         alias: ["puavoconf", "puavo_conf"],
         export_name: "puavoconf",
     },
@@ -144,7 +146,7 @@ const INTEGRATION_TYPES = [
 const USER_TRANSFORM_FUNCTIONS = {
     name: function(entry) {
         return [
-            `<a href="${entry.link}">${escapeHTML(entry.name)}</a>`,
+            `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`,
             entry.name
         ];
     },
@@ -212,11 +214,11 @@ const USER_TRANSFORM_FUNCTIONS = {
 
 function schoolActions(entry)
 {
-    return `<a href="/users/schools/${entry.id[INDEX_FILTERABLE]}/edit" class="btn"><%= t('link.edit') %></a>`;
+    return `<a href="/users/schools/${entry.id[ST.INDEX_FILTERABLE]}/edit" class="btn"><%= t('link.edit') %></a>`;
 }
 
 const DEFAULT_COLUMNS = ["name", "prefix", "school_code", "eid", "integrations", "num_members", "num_groups", "num_devices", "boot_servers"];
-const DEFAULT_SORTING = { column: "name", dir: SortOrder.ASCENDING };
+const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
 
 const RAW_DATA = <%= raw JSON.pretty_generate(@data) %>;
 
@@ -240,29 +242,29 @@ function* synthesizeData(raw)
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+    modalPopup.setupGlobalEvents();
 
-new SuperTable(
-    // Main container DIV
-    document.getElementById("tableSchools"),
+    new ST.SuperTable(
+        // Main container DIV
+        document.getElementById("tableSchools"),
 
-    // Settings
-    {
-        id: "schools",
-        csvPrefix: `<%= LdapOrganisation.current.o %>-schools`,
-        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.DISABLE_VIEW_SAVING,
-        locale: "<%= supertable_sorting_locale %>",
-        columnDefinitions: COLUMN_DEFINITIONS,
-        columnTitles: COLUMN_TITLES,
-        columnOrder: COLUMN_ORDER,
-        userTransforms: USER_TRANSFORM_FUNCTIONS,
-        actions: schoolActions,
-        //openCallback: openCallback,
-        defaultColumns: DEFAULT_COLUMNS,
-        defaultSorting: DEFAULT_SORTING,
-        staticData: RAW_DATA,
-        preFilterFunction: synthesizeData,
-    }
-);
+        // Settings
+        {
+            id: "schools",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-schools`,
+            flags: ST.TableFlag.ENABLE_COLUMN_EDITING | ST.TableFlag.ENABLE_FILTERING | ST.TableFlag.DISABLE_VIEW_SAVING,
+            locale: "<%= supertable_sorting_locale %>",
+            columnDefinitions: COLUMN_DEFINITIONS,
+            columnTitles: COLUMN_TITLES,
+            columnOrder: COLUMN_ORDER,
+            userTransforms: USER_TRANSFORM_FUNCTIONS,
+            actions: schoolActions,
+            defaultColumns: DEFAULT_COLUMNS,
+            defaultSorting: DEFAULT_SORTING,
+            staticData: RAW_DATA,
+            preFilterFunction: synthesizeData,
+        }
+    );
 });
 
 </script>
