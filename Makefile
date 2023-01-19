@@ -13,6 +13,8 @@ INSTALL_PROGRAM = $(INSTALL)
 build: config-to-example
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
+	npm ci --registry https://registry.npmjs.org
+	$(MAKE) js
 	bundle exec rake assets:precompile
 
 update-gemfile-lock: clean
@@ -32,6 +34,7 @@ clean-assets:
 clean: clean-assets
 	rm -rf .bundle
 	rm -rf vendor/bundle
+	rm -rf node_modules
 
 clean-deb:
 	rm -f ../puavo-*.tar.gz ../puavo-*.deb ../puavo-*.dsc ../puavo-*.changes
