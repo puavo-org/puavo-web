@@ -1,11 +1,11 @@
-<img src="/images/spinner.gif" style="opacity: 0; position: absolute; left: -1000px;">
-<div class="superTable" id="tableServers"></div>
-
 <% content_for :javascript do %>
-<%= javascript_include_tag 'supertable2.' + I18n.locale.to_s %>
-<%= javascript_include_tag 'supertable2' %>
-<%= javascript_include_tag 'filtereditor' %>
+<%= javascript_include_tag 'bundles/modal_popup' %>
+<%= javascript_include_tag 'bundles/supertable3' %>
+<%= javascript_include_tag 'i18n/supertable3' %>
 <% end %>
+
+<%= render 'shared/supertable_controls' %>
+<div class="superTable" id="tableServers"></div>
 
 <% @is_organisation = true %>
 <% @is_servers = true %>
@@ -19,34 +19,34 @@
 const SERVERS = <%= raw JSON.pretty_generate(@servers) %>;
 
 const DEFAULT_COLUMNS = ["hn", "schools", "available_images", "location", "mac", "mfer", "model", "serial", "current_image"];
-const DEFAULT_SORTING = { column: "hn", dir: SortOrder.ASCENDING };
+const DEFAULT_SORTING = { column: "hn", dir: ST.SortOrder.ASCENDING };
 
 document.addEventListener("DOMContentLoaded", function() {
+    modalPopup.setupGlobalEvents();
 
-new SuperTable(
-    // Main container DIV
-    document.getElementById("tableServers"),
+    new ST.SuperTable(
+        // Main container DIV
+        document.getElementById("tableServers"),
 
-    // Settings
-    {
-        id: "servers",
-        csvPrefix: `<%= LdapOrganisation.current.o %>-servers`,
-        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING,
-        locale: "<%= supertable_sorting_locale %>",
-        columnDefinitions: COLUMN_DEFINITIONS,
-        columnTitles: COLUMN_TITLES,
-        columnOrder: COLUMN_ORDER,
-        userTransforms: USER_TRANSFORM_FUNCTIONS,
-        actions: userActions,
-        openCallback: openCallbackServers,
-        massOperations: null,
-        defaultColumns: DEFAULT_COLUMNS,
-        defaultSorting: DEFAULT_SORTING,
-        filterPresets: null,
-        staticData: SERVERS,
-    }
-);
+        // Settings
+        {
+            id: "servers",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-servers`,
+            flags: ST.TableFlag.ENABLE_COLUMN_EDITING | ST.TableFlag.ENABLE_FILTERING,
+            locale: "<%= supertable_sorting_locale %>",
+            columnDefinitions: COLUMN_DEFINITIONS,
+            columnTitles: COLUMN_TITLES,
+            columnOrder: COLUMN_ORDER,
+            userTransforms: USER_TRANSFORM_FUNCTIONS,
+            actions: userActions,
+            openCallback: openCallbackServers,
+            massOperations: null,
+            defaultColumns: DEFAULT_COLUMNS,
+            defaultSorting: DEFAULT_SORTING,
+            filterPresets: null,
+            staticData: SERVERS,
+        }
+    );
 });
-
 </script>
 <% end %>

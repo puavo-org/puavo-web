@@ -1,11 +1,11 @@
-<img src="/images/spinner.gif" style="opacity: 0; position: absolute; left: -1000px;">
-<div class="superTable" id="tableDevices"></div>
-
 <% content_for :javascript do %>
-<%= javascript_include_tag 'supertable2.' + I18n.locale.to_s %>
-<%= javascript_include_tag 'supertable2' %>
-<%= javascript_include_tag 'filtereditor' %>
+<%= javascript_include_tag 'bundles/modal_popup' %>
+<%= javascript_include_tag 'bundles/supertable3' %>
+<%= javascript_include_tag 'i18n/supertable3' %>
 <% end %>
+
+<%= render 'shared/supertable_controls' %>
+<div class="superTable" id="tableDevices"></div>
 
 <% @is_organisation = false %>
 <% @is_servers = false %>
@@ -17,34 +17,35 @@
 <%= render :partial => 'shared/device_tables_common.js' %>
 
 const DEFAULT_COLUMNS = ["hn", "type", "tags", "mac", "mfer", "model", "serial", "image", "current_image"];
-const DEFAULT_SORTING = { column: "hn", dir: SortOrder.ASCENDING };
+const DEFAULT_SORTING = { column: "hn", dir: ST.SortOrder.ASCENDING };
 
 document.addEventListener("DOMContentLoaded", function() {
+    modalPopup.setupGlobalEvents();
 
-new SuperTable(
-    // Main container DIV
-    document.getElementById("tableDevices"),
+    new ST.SuperTable(
+        // Main container DIV
+        document.getElementById("tableDevices"),
 
-    // Settings
-    {
-        id: "devices",
-        csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-devices`,
-        flags: TableFlag.ENABLE_COLUMN_EDITING | TableFlag.ENABLE_FILTERING | TableFlag.ENABLE_SELECTION | TableFlag.ENABLE_PAGINATION,
-        locale: "<%= supertable_sorting_locale %>",
-        columnDefinitions: COLUMN_DEFINITIONS,
-        columnTitles: COLUMN_TITLES,
-        columnOrder: COLUMN_ORDER,
-        userTransforms: USER_TRANSFORM_FUNCTIONS,
-        actions: userActions,
-        openCallback: openCallback,
-        massSelects: MASS_SELECTS,
-        massOperations: MASS_OPERATIONS,
-        defaultColumns: DEFAULT_COLUMNS,
-        defaultSorting: DEFAULT_SORTING,
-        filterPresets: FILTER_PRESETS,
-        dynamicData: "/devices/<%= @school.id %>/get_school_devices_list",
-    }
-);
+        // Settings
+        {
+            id: "devices",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-devices`,
+            flags: ST.TableFlag.ENABLE_COLUMN_EDITING | ST.TableFlag.ENABLE_FILTERING | ST.TableFlag.ENABLE_SELECTION | ST.TableFlag.ENABLE_PAGINATION,
+            locale: "<%= supertable_sorting_locale %>",
+            columnDefinitions: COLUMN_DEFINITIONS,
+            columnTitles: COLUMN_TITLES,
+            columnOrder: COLUMN_ORDER,
+            userTransforms: USER_TRANSFORM_FUNCTIONS,
+            actions: userActions,
+            openCallback: openCallback,
+            massSelects: MASS_SELECTS,
+            massOperations: MASS_OPERATIONS,
+            defaultColumns: DEFAULT_COLUMNS,
+            defaultSorting: DEFAULT_SORTING,
+            filterPresets: FILTER_PRESETS,
+            dynamicData: "/devices/<%= @school.id %>/get_school_devices_list",
+        }
+    );
 });
 
 </script>
