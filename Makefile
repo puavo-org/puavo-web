@@ -10,6 +10,19 @@ RAILS_CONFIG_DIR = $(INSTALL_DIR)/config
 INSTALL = install
 INSTALL_PROGRAM = $(INSTALL)
 
+ESBUILD = node_modules/.bin/esbuild
+# es2020 has all the features currently used in the system, so target it.
+# --minify is not enabled by default, because source maps are broken (some
+# componen (Sprockets?) insists they're in public/assets, which isn't true,
+# but I can't find a way to change that).
+ESBUILD_FLAGS = --bundle --charset=utf8 --target=es2020 #--minify #--sourcemap
+JS_OUTPUT = app/assets/javascripts/bundles
+JS_INPUT = \
+	app/assets/javascripts/modal_popup.js \
+	app/assets/javascripts/supertable3.js \
+	app/assets/javascripts/puavoconf_editor.js \
+	app/assets/javascripts/import_tool.js
+
 build: config-to-example
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
@@ -17,7 +30,7 @@ build: config-to-example
 	$(MAKE) js
 	bundle exec rake assets:precompile
 
-update-gemfile-lock: clean
+update-gemfile-lock: clean js-clean
 	rm -f Gemfile.lock
 	GEM_HOME=.tmpgem bundle install
 	rm -rf .tmpgem
@@ -35,6 +48,16 @@ clean: clean-assets
 	rm -rf .bundle
 	rm -rf vendor/bundle
 	rm -rf node_modules
+
+js-clean:
+	# TODO: I don't think is is really necessary
+	rm -rf app/assets/javascripts/*.js.map
+
+js-server:
+	$(ESBUILD) $(ESBUILD_FLAGS) --watch --outdir=$(JS_OUTPUT) $(JS_INPUT)
+
+js:
+	$(ESBUILD) $(ESBUILD_FLAGS) --minify --outdir=$(JS_OUTPUT) $(JS_INPUT)
 
 clean-deb:
 	rm -f ../puavo-*.tar.gz ../puavo-*.deb ../puavo-*.dsc ../puavo-*.changes
