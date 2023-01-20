@@ -442,7 +442,7 @@ fi:
       default_order: "Lajittele sarakkeet oletusjärjestykseen"
     filtering:
       top_button: "Suodatuseditori"
-      top_enabled: "Suodata"
+      top_enabled: "Suodatus päällä"
       top_reverse: "Käänteinen"
       advanced_checkbox: "Laajennettu suodatin"
       presets_button: "Valmiit suodatinmallit"

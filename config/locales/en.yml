@@ -441,8 +441,8 @@ en:
       deselect_all: "Deselect all"
       default_order: "Sort the columns in default order"
     filtering:
-      top_button: "Filter editor"
-      top_enabled: "Filter"
+      top_button: "Filtering editor"
+      top_enabled: "Enable filtering"
       top_reverse: "Reverse"
       advanced_checkbox: "Advanced filtering"
       presets_button: "Filter presets"
@@ -487,7 +487,7 @@ en:
         type: "Type"
         select: "Select"
         deselect: "Deselect"
-      operation_title: "Operaton"
+      operation_title: "Operation"
       execute_button: "Execute"
       settings_title: "Operation settings"
     paging:
