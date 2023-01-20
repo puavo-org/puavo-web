@@ -6,19 +6,21 @@
                 <th colspan="2">        <!-- the colspan value is dynamically updated based on the actual column count -->
                     <div id="wrap" class="flex-rows gap-10px">
                         <div id="top" class="flex-cols flex-vcenter flex-wrap gap-10px">
-                            <section>
+                            <section class="gap-5px">
                                 <button id="export" type="button"><%= t("supertable.export.top_button") %> ▼</button>
                                 <button id="columns" type="button"><%= t("supertable.columns.top_button") %> ▼</button>
                             </section>
 
                             <section id="filteringControls">
-                                <label><input type="checkbox" id="enabled"><%= t("supertable.filtering.top_enabled") %></label>
+                                <label class="margin-right-10px"><input type="checkbox" id="enabled"><%= t("supertable.filtering.top_enabled") %></label>
                                 (<label><input type="checkbox" id="reverse"><%= t("supertable.filtering.top_reverse") %></label>)
-                                <label><input type="checkbox" id="editor"><%= t("supertable.filtering.top_button") %> ▼</label>
+                                <label class="margin-left-10px cursor-pointer"><input type="checkbox" id="editor" class="hidden"><%= t("supertable.filtering.top_button") %></label>
+                                <div class="arrow"></div>
                             </section>
 
                             <section id="massSpan">
-                                <label><input type="checkbox" id="mass"><%= t("supertable.mass.top_button") %> ▼</label>
+                                <label class="cursor-pointer"><input type="checkbox" id="mass" class="hidden"><%= t("supertable.mass.top_button") %></label>
+                                <div class="arrow"></div>
                             </section>
 
                             <section id="paging">

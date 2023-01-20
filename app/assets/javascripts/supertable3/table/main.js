@@ -1,6 +1,6 @@
 import { TableFlag, ColumnFlag, ColumnType, SortOrder, INDEX_EXISTS, INDEX_DISPLAYABLE, INDEX_FILTERABLE, INDEX_SORTABLE } from "./constants.js";
 import { _tr, escapeHTML } from "../../common/utils.js";
-import { create, destroy, getTemplate } from "../../common/dom.js";
+import { create, destroy, getTemplate, toggleClass } from "../../common/dom.js";
 import { transformRawData, filterData, sortData } from "./data.js";
 import { MassOperationFlags, MassOperation } from "./mass_operations.js";
 import { FilterEditor } from "../filters/editor/fe_main.js";
@@ -597,6 +597,7 @@ buildUI()
 
         frag.querySelector("thead div#top input#editor").addEventListener("click", (e) => {
             this.filterEditor.setVisibility(e.target.checked);
+            this.toggleArrow(e.target);
             this.saveSettings();
         });
 
@@ -624,16 +625,14 @@ buildUI()
             this.ui.filters.show.checked = true;
             this.filterEditor.setVisibility(true);
         }
+
+        this.toggleArrow(this.ui.filters.show);
     }
 
     if (this.settings.flags & TableFlag.ENABLE_SELECTION) {
         frag.querySelector("thead div#top input#mass").addEventListener("click", (e) => {
-            let c = this.container.querySelector("tr#controls div#massContainer");
-
-            if (e.target.checked)
-                c.classList.remove("hidden");
-            else c.classList.add("hidden");
-
+            toggleClass(this.container.querySelector("tr#controls div#massContainer"), "hidden", !e.target.checked);
+            this.toggleArrow(e.target);
             this.saveSettings();
         });
 
@@ -691,6 +690,8 @@ buildUI()
             this.ui.mass.show.checked = true;
             frag.querySelector("tr#controls div#massContainer").classList.remove("hidden");
         }
+
+        this.toggleArrow(this.ui.mass.show);
     } else {
         // Remove the mass tools checkbox
         frag.querySelector("tr#controls section#massSpan").remove();
@@ -791,6 +792,24 @@ enableUI(isEnabled)
 
         this.ui.mass.proceed.disabled = !isEnabled && this.data.selectedItems.size == 0;
     }
+}
+
+// Rotates the toggle arrow
+toggleArrow(element)
+{
+    if (!element) {
+        console.warning("toggleArrow(): element is NULL");
+        return;
+    }
+
+    const label = element.parentNode;
+
+    if (!label || label.tagName != "LABEL") {
+        console.warning("toggleArrow(): the element's parent is not a label node");
+        return;
+    }
+
+    label.nextSibling.nextSibling.innerText = element.checked ? "▼" : "▶";
 }
 
 // Sets and shows the error message

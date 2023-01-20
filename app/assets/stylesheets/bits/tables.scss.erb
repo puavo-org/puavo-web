@@ -223,6 +223,10 @@ TABLE HEADER ROWS
 .stTable thead tr#controls section {
   padding-right: 15px;
   border-right: 1px solid #888;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 .stTable thead tr#controls section:last-of-type {
@@ -236,6 +240,12 @@ TABLE HEADER ROWS
 
 .stTable thead tr#controls section label {
   white-space: nowrap;
+}
+
+.stTable thead tr#controls section div.arrow {
+  /* Don't shift the line contents back and forth */
+  min-width: 1em;
+  margin-left: 5px;
 }
 
 /* Table statistics */
