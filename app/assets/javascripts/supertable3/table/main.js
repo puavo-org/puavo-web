@@ -1,9 +1,3 @@
-/*
-jarmo@toimisto-jarmo:~/palvelin$ node_modules/.bin/esbuild --bundle --outdir=app/static/js app/javascript/supertable3.js app/javascript/puavoconf_editor.js app/javascript/import_tool.js --target=es2020 --minify --watch --sourcemap --charset=utf8
-
-((uid = /^test.user.[0-9a-fA-F]+$/ || uid = "jarmo") && !locked != 0) || rrt >= "2010-01-01 00:00:00"
-*/
-
 import { TableFlag, ColumnFlag, ColumnType, SortOrder, INDEX_EXISTS, INDEX_DISPLAYABLE, INDEX_FILTERABLE, INDEX_SORTABLE } from "./constants.js";
 import { _tr, escapeHTML } from "../../common/utils.js";
 import { create, destroy, getTemplate } from "../../common/dom.js";
