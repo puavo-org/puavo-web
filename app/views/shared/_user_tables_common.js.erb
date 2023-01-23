@@ -529,9 +529,9 @@ class MassUserClearColumn extends ST.MassOperation {
 
     processItem(item)
     {
-        return doPOST(
+        return ST.doPOST(
             `/users/${item.school_id}/mass_op_user_clear_column`,
-            { id: item.id[INDEX_FILTERABLE], column: this.column }
+            { id: item.id[ST.INDEX_FILTERABLE], column: this.column }
         );
     }
 };
