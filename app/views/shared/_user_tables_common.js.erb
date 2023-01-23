@@ -289,14 +289,6 @@ class MassUserDeletion extends ST.MassOperation {
         return window.confirm(`<%= t('destroy_generic_sync_warning') %>`);
     }
 
-    start()
-    {
-    }
-
-    finish()
-    {
-    }
-
     processItem(item)
     {
         // Do some pre-filtering here, to prevent useless network traffic.
@@ -331,63 +323,51 @@ class MassUserLocking extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
-
-        // The default state (lock)
         this.lock = true;
     }
 
     buildInterface()
     {
         this.container.innerHTML =
-`<form>
-<table class="settingsChild">
+`<table class="settingsChild">
 <tr>
     <th><%= t('users.index.mass_operations.lock.action') %></th>
     <td>
-        <input type="radio" name="mul_action_type" id="mul_action_lock" checked>
-        <label for="mul_action_lock"><%= t('users.index.mass_operations.lock.lock') %></label><br>
-        <input type="radio" name="mul_action_type" id="mul_action_unlock">
-        <label for="mul_action_unlock"><%= t('users.index.mass_operations.lock.unlock') %></label>
+        <div class="flex-rows">
+            <label><input type="radio" name="mul_action_type" id="mul_action_lock" checked><%= t('users.index.mass_operations.lock.lock') %></label>
+            <label><input type="radio" name="mul_action_type" id="mul_action_unlock"><%= t('users.index.mass_operations.lock.unlock') %></label>
+        </div>
     </td>
 </tr>
-</table>
-</form>`;
-
-        this.container.querySelector("#mul_action_lock")
-            .addEventListener("click", event => this.setLockState(event, true));
-        this.container.querySelector("#mul_action_unlock")
-            .addEventListener("click", event => this.setLockState(event, false));
+</table>`;
     }
 
     start()
     {
-        this.container.querySelector("#mul_action_lock").disabled = true;
-        this.container.querySelector("#mul_action_unlock").disabled = true;
+        if (this.container.querySelector("#mul_action_lock").checked)
+            this.lock = true;
+        else this.lock = false;
+
+        for (let i of this.container.querySelectorAll("input"))
+            i.disabled = true;
     }
 
     finish()
     {
-        this.container.querySelector("#mul_action_lock").disabled = false;
-        this.container.querySelector("#mul_action_unlock").disabled = false;
+        for (let i of this.container.querySelectorAll("input"))
+            i.disabled = false;
     }
 
     processItem(item)
     {
         // Do nothing if the user is already in the desired locking state
-        if (item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === this.lock) {
-            console.log("already in the desired state");
+        if (item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === this.lock)
             return ST.itemProcessedStatus(true);
-        }
 
         return ST.doPOST(
             `/users/${item.school_id}/mass_op_user_lock`,
             { id: item.id[1], lock: this.lock }
         );
-    }
-
-    setLockState(event, state)
-    {
-        this.lock = state;
     }
 };
 
@@ -403,47 +383,34 @@ class MassUserMarkForDeletion extends ST.MassOperation {
     buildInterface()
     {
         this.container.innerHTML =
-`<form>
-<table class="settingsChild">
+`<table class="settingsChild">
 <tr>
     <th><%= t('users.index.mass_operations.mark.action') %></th>
     <td>
-        <input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark" checked>
-        <label for="mass_user_mark_mark"><%= t('users.index.mass_operations.mark.mark') %></label><br>
-        <input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark_force">
-        <label for="mass_user_mark_mark_force"><%= t('users.index.mass_operations.mark.mark_force') %></label><br>
-        <input type="radio" name="mass_user_mark_action" id="mass_user_mark_unmark">
-        <label for="mass_user_mark_unmark"><%= t('users.index.mass_operations.mark.unmark') %></label>
+        <div class="flex-rows">
+            <label><input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark" checked><%= t('users.index.mass_operations.mark.mark') %></label>
+            <label><input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark_force"><%= t('users.index.mass_operations.mark.mark_force') %></label>
+            <label><input type="radio" name="mass_user_mark_action" id="mass_user_mark_unmark"><%= t('users.index.mass_operations.mark.unmark') %></label>
+        </div>
     </td>
 </tr>
-</table>
-</form>`;
+</table>`;
 
-        this.container.querySelector("#mass_user_mark_mark")
-            .addEventListener("click", event => this.setOperation(event, 0));
-        this.container.querySelector("#mass_user_mark_mark_force")
-            .addEventListener("click", event => this.setOperation(event, 1));
-        this.container.querySelector("#mass_user_mark_unmark")
-            .addEventListener("click", event => this.setOperation(event, 2));
-    }
-
-    setOperation(event, op)
-    {
-        this.operation = op;
+        this.container.querySelector("#mass_user_mark_mark").addEventListener("click", () => this.operation = 0);
+        this.container.querySelector("#mass_user_mark_mark_force").addEventListener("click", () => this.operation = 1);
+        this.container.querySelector("#mass_user_mark_unmark").addEventListener("click", () => this.operation = 2);
     }
 
     start()
     {
-        this.container.querySelector("#mass_user_mark_mark").disabled = true;
-        this.container.querySelector("#mass_user_mark_mark_force").disabled = true;
-        this.container.querySelector("#mass_user_mark_unmark").disabled = true;
+        for (let i of this.container.querySelectorAll("input"))
+            i.disabled = true;
     }
 
     finish()
     {
-        this.container.querySelector("#mass_user_mark_mark").disabled = false;
-        this.container.querySelector("#mass_user_mark_mark_force").disabled = false;
-        this.container.querySelector("#mass_user_mark_unmark").disabled = false;
+        for (let i of this.container.querySelectorAll("input"))
+            i.disabled = false;
     }
 
     processItem(item)
@@ -479,52 +446,44 @@ class MassUserClearColumn extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
+
+        this.column = "eid";
     }
 
     buildInterface()
     {
         this.container.innerHTML =
-`<form>
-<table class="settingsChild">
+`<table class="settingsChild">
 <tr>
     <th><%= t('users.index.mass_operations.clear_column.column_title') %></th>
     <td>
-        <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_eid" checked>
-        <label for="mass_user_clear_column_eid"><%= t('users.index.mass_operations.clear_column.columns.eid') %></label><br>
+        <div class="flex-rows">
+            <label><input type="radio" name="mass_user_clear_column" value="eid" checked><%= t('users.index.mass_operations.clear_column.columns.eid') %></label>
 <% unless @automatic_email_addresses %>
-        <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_email">
-        <label for="mass_user_clear_column_email"><%= t('users.index.mass_operations.clear_column.columns.email') %></label><br>
+            <label><input type="radio" name="mass_user_clear_column" value="email"><%= t('users.index.mass_operations.clear_column.columns.email') %></label>
 <% end %>
-        <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_telephone">
-        <label for="mass_user_clear_column_telephone"><%= t('users.index.mass_operations.clear_column.columns.telephone') %></label><br>
-        <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_learner_id">
-        <label for="mass_user_clear_column_learner_id"><%= t('users.index.mass_operations.clear_column.columns.learner_id') %></label><br>
-        <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_pnumber">
-        <label for="mass_user_clear_column_pnumber"><%= t('users.index.mass_operations.clear_column.columns.pnumber') %></label>
+            <label><input type="radio" name="mass_user_clear_column" value="telephone"><%= t('users.index.mass_operations.clear_column.columns.telephone') %></label>
+            <label><input type="radio" name="mass_user_clear_column" value="learner_id"><%= t('users.index.mass_operations.clear_column.columns.learner_id') %></label>
+            <label><input type="radio" name="mass_user_clear_column" value="pnumber"><%= t('users.index.mass_operations.clear_column.columns.pnumber') %></label>
+        </div>
     </td>
 </tr>
-</table>
-</form>`;
+</table>`;
 
-        this.column = "eid";
-
-        this.container.querySelector("#mass_user_clear_column_eid")
-            .addEventListener("click", event => this.setColumn(event, "eid"));
-<% unless @automatic_email_addresses %>
-        this.container.querySelector("#mass_user_clear_column_email")
-            .addEventListener("click", event => this.setColumn(event, "email"));
-<% end %>
-        this.container.querySelector("#mass_user_clear_column_telephone")
-            .addEventListener("click", event => this.setColumn(event, "telephone"));
-        this.container.querySelector("#mass_user_clear_column_learner_id")
-            .addEventListener("click", event => this.setColumn(event, "learner_id"));
-        this.container.querySelector("#mass_user_clear_column_pnumber")
-            .addEventListener("click", event => this.setColumn(event, "pnumber"));
+        for (let i of this.container.querySelectorAll("input"))
+            i.addEventListener("click", (e) => this.column = e.target.value);
     }
 
-    setColumn(event, col)
+    start()
     {
-        this.column = col;
+        for (let i of this.container.querySelectorAll("input"))
+            i.disabled = true;
+    }
+
+    finish()
+    {
+        for (let i of this.container.querySelectorAll("input"))
+            i.disabled = false;
     }
 
     processItem(item)
@@ -550,9 +509,7 @@ class MassUsernameList extends ST.MassOperation {
 `<label for="description"><%= t('users.index.mass_operations.username_list.description') %>:</label>
 <input type="text" maxlength="100" size="50" id="description">`;
 
-        this.container.querySelector("input#description").addEventListener("change", (e) => {
-            this.description = e.target.value.trim();
-        });
+        this.container.querySelector("input#description").addEventListener("change", (e) => this.description = e.target.value.trim());
     }
 
     processAllItems(items)
