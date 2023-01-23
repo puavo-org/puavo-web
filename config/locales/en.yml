@@ -916,6 +916,7 @@ en:
           operation_remove: "Remove from the target school (will fail if the school is the user's primary/only school)"
           target_school: "Target school:"
           cant_remove_primary_school: "Can't remove user from their primary school"
+          no_available_schools: "Select the target school from the list. The school cannot be the same as the current school. If you can't select anything from the list, it means you have no access to any other schools and you can't run this mass operation."
 
     show:
       system_information: System information

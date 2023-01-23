@@ -85,6 +85,9 @@ class UsersController < ApplicationController
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
+    # Make a list of all schools in this organisation. Even limited users who can't access all
+    # schools must still see their names, so they can be listed in "other schools" lists for
+    # users.
     @schools_list = []
 
     School.all.each do |s|
@@ -94,6 +97,9 @@ class UsersController < ApplicationController
         name: s.displayName,
       }
     end
+
+    # We'll maintain a separate list of schools this user is allowed to access. Unused for owners.
+    @allowed_schools = @is_owner ? nil : Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
 
     # List of systems where user deletions are synchronised
     @synchronised_deletions = {}

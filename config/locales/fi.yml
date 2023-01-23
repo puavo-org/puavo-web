@@ -916,6 +916,7 @@ fi:
           operation_remove: "Poista kohdekoulusta, jos on (epäonnistuu jos kohdekoulu on käyttäjän pääkoulu tai ainoa koulu)"
           target_school: "Kohdekoulu:"
           cant_remove_primary_school: "Käyttäjää ei voi poistaa hänen pääkoulustaan"
+          no_available_schools: "Valitse kohdekoulu listalta. Koulu ei voi olla sama kuin nykyinen koulu. Jos listalta ei voi valita yhtään koulua, se tarkoittaa ettei sinulla ole pääsyä muihin kouluihin etkä voi ajaa tätä massatoimintoa."
 
     show:
       system_information: "Järjestelmätietoja"

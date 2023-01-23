@@ -575,67 +575,82 @@ class MassUsernameList extends ST.MassOperation {
 };
 <% end %>
 
-<% if @is_owner %>
 class MassUserChangeSchool extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
 
-        const firstSchoolID = Object.keys(SCHOOLS)[0];
-
+        // Same defaults as on the form below
         this.operation = 0;
         this.keep = false;
-        this.removePrev = false;
-        this.schoolID = firstSchoolID;
+        this.removePrev = true;
+        this.schoolID = null;
     }
 
     buildInterface()
     {
         let html = `
 <p class="genericWarning"><%= t('users.index.mass_operations.change_school.automation_warning') %></p>
-<form>
 <table class="settingsChild">
 <tr>
     <th><%= t('users.index.mass_operations.change_school.operation') %></label></th>
     <td>
         <div class="flex-rows gap-5px">
-            <span><input type="radio" name="operation" id="move" value="move" checked><label for="move"><%= t('users.index.mass_operations.change_school.operation_move') %></label></span>
-            <span class="margin-left-20px"><input type="checkbox" name="keep" id="keep"><label for="keep"><%= t('users.index.mass_operations.change_school.operation_move_keep') %></label></span>
-            <span class="margin-left-20px margin-bottom-5px"><input type="checkbox" name="remove_prev" id="remove_prev" checked><label for="remove_prev"><%= t('users.index.mass_operations.change_school.operation_remove_prev_groups') %></label></span>
-            <span><input type="radio" name="operation" id="add" value="add"><label for="add"><%= t('users.index.mass_operations.change_school.operation_add') %></label></span>
-            <span><input type="radio" name="operation" id="remove" value="remove"><label for="remove"><%= t('users.index.mass_operations.change_school.operation_remove') %></label></span>
+            <label><input type="radio" name="operation" id="move" value="move" checked><%= t('users.index.mass_operations.change_school.operation_move') %></label>
+            <label class="margin-left-20px"><input type="checkbox" name="keep" id="keep"><%= t('users.index.mass_operations.change_school.operation_move_keep') %></label>
+            <label class="margin-left-20px margin-bottom-5px"><input type="checkbox" name="remove_prev" id="remove_prev" checked><%= t('users.index.mass_operations.change_school.operation_remove_prev_groups') %></label>
+            <label><input type="radio" name="operation" id="add" value="add"><%= t('users.index.mass_operations.change_school.operation_add') %></label>
+            <label><input type="radio" name="operation" id="remove" value="remove"><%= t('users.index.mass_operations.change_school.operation_remove') %></label>
         </div>
     </td>
 </tr>
 <tr>
     <th><label for="mass_user_change_school"><%= t('users.index.mass_operations.change_school.target_school') %></label></th>
     <td>
-        <select id="mass_user_change_school">`;
+        <select id="mass_user_change_school">
 
-        // Sort the schools alphabetically and put them in the combo box
-        let sortedSchools = [];
+        <% @schools_list.sort { |a, b| a[:name].downcase <=> b[:name].downcase }.each do |s| %>
+            <% next if !@allowed_schools.nil? && !@allowed_schools.include?(s[:dn]) %>
+            <% next if !@is_organisation && s[:dn] == @school.dn.to_s %>
+            <option value="<%= s[:id] %>"><%= s[:name] %></option>
+        <% end %>
 
-        for (const id of Object.keys(SCHOOLS))
-            sortedSchools.push([id, SCHOOLS[id].name]);
-
-        sortedSchools.sort((a, b) => { return a[1].localeCompare(b[1]) });
-
-        for (const s of sortedSchools)
-            html += `<option data-id="${s[0]}">${SCHOOLS[s[0]].name}</option>`;
-
-        html += `</select></td></tr></table></form>`;
+        </select></td></tr></table>`;
 
         this.container.innerHTML = html;
+    }
 
-        this.container.querySelector("#mass_user_change_school").addEventListener("change", (e) => {
-            this.schoolID = e.target.options[e.target.selectedIndex].dataset.id;
-        });
+    canProceed()
+    {
+        if (this.container.querySelector("select#mass_user_change_school").selectedIndex == -1) {
+            window.alert("<%= t('users.index.mass_operations.change_school.no_available_schools').html_safe %>");
+            return false;
+        }
 
-        this.container.querySelector("#move").addEventListener("click", () => { this.operation = 0; });
-        this.container.querySelector("#keep").addEventListener("click", (e) => { this.keep = e.target.checked; });
-        this.container.querySelector("#remove_prev").addEventListener("click", (e) => { this.removePrev = e.target.checked; });
-        this.container.querySelector("#add").addEventListener("click", () => { this.operation = 1; });
-        this.container.querySelector("#remove").addEventListener("click", () => { this.operation = 2; });
+        return true;
+    }
+
+    start()
+    {
+        // Store the settings for the run
+        if (this.container.querySelector("input#move").checked)
+            this.operation = 0;
+        else if (this.container.querySelector("input#add").checked)
+            this.operation = 1;
+        else this.operation = 2;
+
+        this.keep = this.container.querySelector("input#keep").checked;
+        this.removePrev = this.container.querySelector("input#remove_prev").checked;
+        this.schoolID = this.container.querySelector("select#mass_user_change_school").value;
+
+        for (let i of this.container.querySelectorAll("input, select"))
+            i.disabled = true;
+    }
+
+    finish()
+    {
+        for (let i of this.container.querySelectorAll("input, select"))
+            i.disabled = false;
     }
 
     processItem(item)
@@ -657,7 +672,6 @@ class MassUserChangeSchool extends ST.MassOperation {
         );
     }
 };
-<% end %>
 
 const MASS_OPERATIONS = [
 <% if @is_owner %>
@@ -699,14 +713,12 @@ const MASS_OPERATIONS = [
     },
 <% end %>
 
-<% if @is_owner %>
     {
         id: "change_school",
         title: "<%= t('users.index.mass_operations.change_school.title') %>",
         flags: ST.MassOperationFlags.HAVE_SETTINGS,
         cls: MassUserChangeSchool
     },
-<% end %>
 ];
 
 const FILTER_PRESETS = [
