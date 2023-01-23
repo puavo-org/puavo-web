@@ -27,6 +27,7 @@ build: config-to-example
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
 	npm ci --registry https://registry.npmjs.org
+	find node_modules/\@esbuild/ -type f ! -regex "linux-x64" -delete
 	$(MAKE) js
 	bundle exec rake assets:precompile
 
