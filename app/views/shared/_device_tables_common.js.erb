@@ -1069,16 +1069,20 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
 
             case "tfd":         // Tri-state true/false/default "boolean"
                 ui =
-`<label><input type="radio" name="value-radio" id="value-radio-default" checked><%= t('devices.index.mass_operations.set_field.default') %></label><br>
-<label><input type="radio" name="value-radio" id="value-radio-yes"><%= t('devices.index.mass_operations.set_field.yes') %></label><br>
-<label><input type="radio" name="value-radio" id="value-radio-no"><%= t('devices.index.mass_operations.set_field.no') %></label>`;
+`<div class="flex-rows">
+<label><input type="radio" name="value-radio" id="value-radio-default" checked><%= t('devices.index.mass_operations.set_field.default') %></label>
+<label><input type="radio" name="value-radio" id="value-radio-yes"><%= t('devices.index.mass_operations.set_field.yes') %></label>
+<label><input type="radio" name="value-radio" id="value-radio-no"><%= t('devices.index.mass_operations.set_field.no') %></label>
+</div>`;
                 break;
 
             case "autopoweroff":    // Custom UI for the automatic poweroff setting
                 ui =
-`<label><input type="radio" name="value-radio" id="value-radio-default" checked><%= t('devices.index.mass_operations.set_field.default') %></label><br>
-<label><input type="radio" name="value-radio" id="value-radio-off"><%= t('devices.index.mass_operations.set_field.off') %></label><br>
-<label><input type="radio" name="value-radio" id="value-radio-custom"><%= t('devices.index.mass_operations.set_field.custom') %></label>`;
+`<div class="flex-rows">
+<label><input type="radio" name="value-radio" id="value-radio-default" checked><%= t('devices.index.mass_operations.set_field.default') %></label>
+<label><input type="radio" name="value-radio" id="value-radio-off"><%= t('devices.index.mass_operations.set_field.off') %></label>
+<label><input type="radio" name="value-radio" id="value-radio-custom"><%= t('devices.index.mass_operations.set_field.custom') %></label>
+</div>`;
                 break;
         }
 
@@ -1305,7 +1309,7 @@ class MassDevicePurchaseInfo extends ST.MassOperation {
 
         if (!mustSendRequest) {
             // nothing actually changed (or nothing was checked?)
-            return itemProcessedStatus(true);
+            return ST.itemProcessedStatus(true);
         }
 
         return ST.doPOST(
@@ -1322,6 +1326,11 @@ class MassDevicePuavoconfEditor extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
+
+        this.key = null;
+        this.value = null;
+        this.action = 0;
+        this.type = "string";
     }
 
     buildInterface()
@@ -1343,16 +1352,20 @@ class MassDevicePuavoconfEditor extends ST.MassOperation {
 <tr>
     <th><%= t('devices.index.mass_operations.puavoconf.type') %></th>
     <td>
-        <label><input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_string" checked><%= t('devices.index.mass_operations.puavoconf.type_string') %></label>
-        <label><input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_int"><%= t('devices.index.mass_operations.puavoconf.type_int') %></label>
-        <label><input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_bool"><%= t('devices.index.mass_operations.puavoconf.type_bool') %></label>
+        <div class="flex-columns">
+            <label><input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_string" checked><%= t('devices.index.mass_operations.puavoconf.type_string') %></label>
+            <label><input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_int"><%= t('devices.index.mass_operations.puavoconf.type_int') %></label>
+            <label><input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_bool"><%= t('devices.index.mass_operations.puavoconf.type_bool') %></label>
+        </div>
     </td>
 </tr>
 <tr>
     <th><%= t('devices.index.mass_operations.puavoconf.action') %></th>
     <td>
-        <label><input type="radio" name="mass_device_pc_action" id="mass_device_pc_action_add" checked><%= t('devices.index.mass_operations.puavoconf.add') %></label><br>
-        <label><input type="radio" name="mass_device_pc_action" id="mass_device_pc_action_remove"><%= t('devices.index.mass_operations.puavoconf.remove') %></label>
+        <div class="flex-rows">
+            <label><input type="radio" name="mass_device_pc_action" id="mass_device_pc_action_add" checked><%= t('devices.index.mass_operations.puavoconf.add') %></label>
+            <label><input type="radio" name="mass_device_pc_action" id="mass_device_pc_action_remove"><%= t('devices.index.mass_operations.puavoconf.remove') %></label>
+        </div>
     </td>
 </tr>
 </table>`;
@@ -1362,27 +1375,11 @@ class MassDevicePuavoconfEditor extends ST.MassOperation {
         this.action = 0;
         this.type = "string";
 
-        this.container.querySelector("#mass_device_pc_action_add")
-            .addEventListener("click", event => this.setAction(event, 0));
-        this.container.querySelector("#mass_device_pc_action_remove")
-            .addEventListener("click", event => this.setAction(event, 1));
-
-        this.container.querySelector("#mass_device_pc_type_string")
-            .addEventListener("click", event => this.setType(event, "string"));
-        this.container.querySelector("#mass_device_pc_type_int")
-            .addEventListener("click", event => this.setType(event, "int"));
-        this.container.querySelector("#mass_device_pc_type_bool")
-            .addEventListener("click", event => this.setType(event, "bool"));
-    }
-
-    setAction(event, action)
-    {
-        this.action = action;
-    }
-
-    setType(event, type)
-    {
-        this.type = type;
+        this.container.querySelector("#mass_device_pc_action_add").addEventListener("click", () => this.action = 0);
+        this.container.querySelector("#mass_device_pc_action_remove").addEventListener("click", () => this.action = 1);
+        this.container.querySelector("#mass_device_pc_type_string").addEventListener("click", () => this.type = "string");
+        this.container.querySelector("#mass_device_pc_type_int").addEventListener("click", () => this.type = "int");
+        this.container.querySelector("#mass_device_pc_type_bool").addEventListener("click", () => this.type = "bool");
     }
 
     canProceed()
@@ -1414,44 +1411,38 @@ class MassDeviceChangeSchool extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
+        this.newSchoolDN = null;
     }
 
     buildInterface()
     {
         let html =
-        <% if @school_list.empty? %>
+<% if @school_list.empty? %>
         `<p class="genericWarning"><%= t('devices.index.mass_operations.change_school.no_other_schools') %></p>`;
-        <% else %>
+<% else %>
         `<label><%= t('devices.index.mass_operations.change_school.school_title') %><select id="mass_device_change_school" class="margin-left-5px">
 <% @school_list.each do |s| %>
-            <option data-dn="<%= s[0] %>"><%= s[1] %> (<%= s[2] %>)</option>
+            <option value="<%= s[0] %>"><%= s[1] %> (<%= s[2] %>)</option>
 <% end%>
         </select></label>`;
-        <% end %>
+<% end %>
 
         this.container.innerHTML = html;
-
-        this.haveSchools = <%= !@school_list.empty? %>;
-
-        <% unless @school_list.empty? %>
-        this.newSchoolDN = "<%= @school_list.first[0] %>";
-
-        this.container.querySelector("#mass_device_change_school")
-            .addEventListener("change", event => this.changeNewSchool(event));
-        <% end %>
-    }
-
-    changeNewSchool(event)
-    {
-        this.newSchoolDN = event.target.children[event.target.selectedIndex].dataset.dn;
     }
 
     canProceed()
     {
-        if (!this.haveSchools)
-            window.alert("<%= t('devices.index.mass_operations.change_school.no_other_schools_alert') %>");
+<% if @school_list.empty? %>
+        window.alert("<%= t('devices.index.mass_operations.change_school.no_other_schools_alert') %>");
+        return false;
+<% else %>
+        return true;
+<% end %>
+    }
 
-        return this.haveSchools;
+    start()
+    {
+        this.newSchoolDN = this.container.querySelector("#mass_device_change_school").value;
     }
 
     processItem(item)
@@ -1492,39 +1483,40 @@ class MassDeviceReset extends ST.MassOperation {
     buildInterface()
     {
         this.container.innerHTML =
-`<form>
-<table class="settingsChild">
+`<table class="settingsChild">
 <tr>
     <th><%= t('devices.index.mass_operations.reset.action') %></th>
     <td>
-        <label><input type="radio" name="reset_action_type" id="reset_set" checked><%= t('devices.index.mass_operations.reset.reset') %></label><br>
-        <label><input type="radio" name="reset_action_type" id="reset_clear"><%= t('devices.index.mass_operations.reset.clear') %></label>
+        <div class="flex-rows">
+            <label><input type="radio" name="reset_action_type" id="reset_set" checked><%= t('devices.index.mass_operations.reset.reset') %></label>
+            <label><input type="radio" name="reset_action_type" id="reset_clear"><%= t('devices.index.mass_operations.reset.clear') %></label>
+        </div>
     </td>
 </tr>
-</table>
-</form>`;
-
-        this.container.querySelector("#reset_set").addEventListener("click", () => { this.reset = true; });
-        this.container.querySelector("#reset_clear").addEventListener("click", () => { this.reset = false; });
+</table>`;
     }
 
     start()
     {
-        this.container.querySelector("#reset_set").disabled = true;
-        this.container.querySelector("#reset_clear").disabled = true;
+        if (this.container.querySelector("#reset_set").checked)
+            this.reset = true;
+        else this.reset = false;
+
+        for (let i of this.container.querySelectorAll("input, select"))
+            i.disabled = true;
     }
 
     finish()
     {
-        this.container.querySelector("#reset_set").disabled = false;
-        this.container.querySelector("#reset_clear").disabled = false;
+        for (let i of this.container.querySelectorAll("input, select"))
+            i.disabled = false;
     }
 
     processItem(item)
     {
         if (item.type[ST.INDEX_FILTERABLE] !== "laptop") {
             // Only laptops can be mass reset
-            return itemProcessedStatus(false, "<%= t('devices.index.mass_operations.reset.not_a_laptop') %>");
+            return ST.itemProcessedStatus(false, "<%= t('devices.index.mass_operations.reset.not_a_laptop') %>");
         }
 
         //console.log(`${item.id[ST.INDEX_FILTERABLE]}: ${item.reset_from[ST.INDEX_EXISTS]}, ${this.reset}`);
@@ -1532,7 +1524,7 @@ class MassDeviceReset extends ST.MassOperation {
         // All "reset" members will be omitted if the device is not in reset mode
         if (item.reset_from[ST.INDEX_EXISTS] === this.reset) {
             console.log(`Device ${item.id[ST.INDEX_FILTERABLE]} is already in the desired reset state, skipping`);
-            return itemProcessedStatus(true);
+            return ST.itemProcessedStatus(true);
         }
 
         return ST.doPOST(
