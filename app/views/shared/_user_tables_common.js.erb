@@ -242,7 +242,7 @@ const USER_TRANSFORM_FUNCTIONS = {
 
             if (r in USER_ROLES) {
                 if (r == "owner" || r == "schooladmin")
-                    values.push(`<span class="stAdmin">${USER_ROLES[r]}</span>`);
+                    values.push(`<span class="adminOrOwner">${USER_ROLES[r]}</span>`);
                 else values.push(USER_ROLES[r]);
             } else values.push(USER_ROLES['unknown']);
         }
