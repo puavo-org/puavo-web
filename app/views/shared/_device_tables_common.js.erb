@@ -222,6 +222,16 @@ const COLUMN_DEFINITIONS = {
         export_name: "kernel_version",
     },
 
+    ll_uid: {
+        key: "ll_uid",
+        type: ST.ColumnType.STRING,
+    },
+
+    ll_time: {
+        key: "ll_time",
+        type: ST.ColumnType.UNIXTIME,
+    },
+
     location: {
         key: "location",
         type: ST.ColumnType.STRING,
@@ -458,6 +468,8 @@ const COLUMN_TITLES = {
     image_series: "<%= t('columns.devices.image_series') %>",
     krn_args: "<%= t('columns.devices.kernel_args') %>",
     krn_ver: "<%= t('columns.devices.kernel_version') %>",
+    ll_uid: "<%= t('columns.devices.last_login_uid') %>",
+    ll_time: "<%= t('columns.devices.last_login_time') %>",
     location: "<%= t('columns.devices.location') %>",
     loc_lat: "<%= t('columns.devices.loc_lat') %>",
     loc_lon: "<%= t('columns.devices.loc_lon') %>",
@@ -589,6 +601,8 @@ const COLUMN_ORDER = [
     "reset_pin",
     "reset_operation",
 <% end %>
+    "ll_uid",
+    "ll_time",
 ];
 
 function doStorage(value)

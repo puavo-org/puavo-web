@@ -291,6 +291,8 @@ en:
       purchase_loc: "Purchase location"
       purchase_url: "Purchase URL"
       purchase_support: "Support contract"
+      last_login_uid: "Last logged-in user"
+      last_login_time: "Last log-in"
       location: "Location"
       loc_lat: "Latitude"
       loc_lon: "Longitude"

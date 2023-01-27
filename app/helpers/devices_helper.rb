@@ -435,6 +435,17 @@ module DevicesHelper
       out[:lspci] = info['lspci_values']
 
       out[:lsusb] = info['lsusb_values']
+
+      if info['logins'] && info['logins']['last']
+        last = info['logins']['last']
+
+        out[:ll_uid] = last['uid'] if last['uid']
+
+        begin
+          out[:ll_time] = Time.parse(last['timestamp']).to_i if last['timestamp']
+        rescue
+        end
+      end
     rescue => e
       # oh dear
       puts e

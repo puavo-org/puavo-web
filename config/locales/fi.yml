@@ -291,6 +291,8 @@ fi:
       purchase_loc: "Hankintapaikka"
       purchase_url: "Hankinta-URL"
       purchase_support: "Tukiyhteyshenkilö"
+      last_login_uid: "Viimeisin kirjautuja"
+      last_login_time: "Viimeisin kirjautuminen"
       location: "Sijainti"
       loc_lat: "Leveysaste"
       loc_lon: "Pituusaste"
