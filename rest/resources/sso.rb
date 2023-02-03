@@ -39,6 +39,10 @@ class SSO < PuavoSinatra
     end
   end
 
+  def make_request_id
+    'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
+  end
+
   def respond_auth
     if return_to.nil?
       raise BadInput, :user => "return_to missing"
@@ -51,7 +55,7 @@ class SSO < PuavoSinatra
         :user => "Unknown client service #{ return_to.host }"
     end
 
-    request_id = 'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
+    request_id = make_request_id
     had_session = false
 
     if session = read_sso_session(request_id)
@@ -131,6 +135,85 @@ class SSO < PuavoSinatra
 
     rlog.info("[#{request_id}] redirecting SSO auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
     redirect url
+  end
+
+  # Remove the SSO session cookie if it exists
+  get '/v3/sso/logout' do
+    request_id = make_request_id
+
+    # Validate params
+    unless request.cookies.include?(PUAVO_SSO_SESSION_KEY)
+      rlog.warn("[#{request_id}] received a logout request, but there is no session cookie in the request")
+      return 400, 'no session cookie in the request'
+    end
+
+    redirect_to = params.fetch('redirect_to', nil)
+
+    if redirect_to.nil? || redirect_to.strip.empty?
+      rlog.warn("[#{request_id}] received a logout request, but the redirect URL is empty")
+      return 400, 'missing redirect URL'
+    end
+
+    service_url = params.fetch('service_url', nil)
+
+    if service_url.nil? || service_url.strip.empty?
+      rlog.warn("[#{request_id}] received a logout request, but the service URL is empty")
+      return 400, 'missing service URL'
+    end
+
+    # Validate the session cookie
+    key = request.cookies[PUAVO_SSO_SESSION_KEY]
+    redis = Redis::Namespace.new('sso_session', redis: REDIS_CONNECTION)
+    data = redis.get("data:#{key}")
+
+    unless data
+      rlog.error("[#{request_id}] received a session logout request, but cookie \"#{key}\" has no session attached to it")
+      return 400, 'unknown session'
+    end
+
+    begin
+      data = JSON.parse(data)
+    rescue StandardError => e
+      rlog.error("[#{request_id}] received a session logout request for valid key \"#{key}\", but the session JSON cannot be parsed: #{e}")
+      return 400, 'unknown session'
+    end
+
+    # Is the redirect URL allowed? We wont redirect the browser to just any arbitrary URL.
+    organisation = data['organisation']
+
+    rlog.info("[#{request_id}] attempting to log out session \"#{key}\" in organisation \"#{organisation}\", the redirect URL is \"#{redirect_to}\"")
+
+    match = ORGANISATIONS.fetch(organisation, {}).fetch('accepted_sso_logout_urls', []).find do |test|
+      if test.nil? || test.empty?
+        false
+      else
+        Regexp.new(test).match?(redirect_to)
+      end
+    end
+
+    unless match
+      rlog.error("[#{request_id}] the redirect URL is not permitted")
+      return 400, 'invalid redirect URL'
+    end
+
+    # TODO: Check if the service that originated the logout request is the same that created it?
+    # This can potentially make logout procedures very complicated, but it would increase security.
+
+    # Purge the session and redirect
+    rlog.info("[#{request_id}] proceeding with the logout")
+
+    user_id = data['user']['id']
+
+    if redis.get("data:#{key}")
+      redis.del("data:#{key}")
+    end
+
+    if redis.get("user:#{user_id}")
+      redis.del("user:#{user_id}")
+    end
+
+    rlog.info("[#{request_id}] logout complete, redirecting the browser")
+    return redirect(redirect_to)
   end
 
   get "/v3/sso" do
