@@ -121,7 +121,7 @@ class SSO < PuavoSinatra
       expires = Time.now.utc + PUAVO_SSO_SESSION_LENGTH
 
       response.set_cookie(PUAVO_SSO_SESSION_KEY,
-                          value: generate_sso_session(request_id, user_hash, user),
+                          value: generate_sso_session(request_id, user_hash, user, @external_service),
                           expires: expires)
 
       rlog.info("[#{request_id}] the SSO session will expire at #{Time.at(expires)}")
@@ -401,7 +401,7 @@ class SSO < PuavoSinatra
     return false
   end
 
-  def generate_sso_session(request_id, user_hash, user)
+  def generate_sso_session(request_id, user_hash, user, service)
     key = SecureRandom.hex(64)
 
     rlog.info("[#{request_id}] creating a new SSO session cookie #{key}")
@@ -409,6 +409,7 @@ class SSO < PuavoSinatra
     data = {
       dn: user.dn.to_s,   # not included in the JWT, but we need it for logging purposes
       organisation: user.organisation.organisation_key,   # needed when the session is restored
+      original_service: service.dn.to_s,      # which external service the user is logging in to
       user: user_hash,
     }
 
