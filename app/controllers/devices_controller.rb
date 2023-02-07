@@ -780,6 +780,10 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       if primary_user_ok && @device.save
+        if Puavo::CONFIG['inventory_management']
+          # Notify the external inventory management
+          Puavo::Inventory::device_created(logger, Puavo::CONFIG['inventory_management'], @device, current_organisation.organisation_key)
+        end
         format.html { redirect_to(device_path(@school, @device), :notice => t('flash.device_created')) }
         format.xml  { render :xml => @device, :status => :created, :location => device_path(@school, @device) }
         format.json  { render :json => @device, :status => :created, :location => device_path(@school, @device) }
@@ -839,6 +843,10 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       if !failed && @device.update_attributes(dp)
+        if Puavo::CONFIG['inventory_management']
+          # Notify the external inventory management
+          Puavo::Inventory::device_modified(logger, Puavo::CONFIG['inventory_management'], @device, current_organisation.organisation_key)
+        end
         format.html { redirect_to(device_path(@school, @device), :notice => t('flash.device_updated')) }
         format.xml  { head :ok }
       else

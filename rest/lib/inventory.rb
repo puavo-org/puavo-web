@@ -6,23 +6,40 @@ require 'json'
 module Puavo
   module Inventory
     def self.send_device_hardware_info(logger, config, device, hw_info)
-      self.send_device_change(logger, config, 'device_hwinfo_update', {
-        'id' => device.puavo_id.to_i,
-        'hostname' => device.hostname,
-        'domain' => device.organisation.domain,
-        'type' => device.type,
-        'school_id' => device.school.id.to_i,
-        'school_dn' => device.school.dn,
-        'school_name' => device.school.name,
-        'hw_info' => hw_info.to_s
-      })
+      self.send_device_change(logger, config, 'device_hwinfo_update',
+         ( inventory_notification_from_device(device)
+           .merge( { 'hw_info' => hw_info.to_s } ) ) )
+    end
+
+    def self.device_created(logger, config, device, organisation)
+      self.send_device_change(logger, config, 'device_created',
+           inventory_notification_from_device(device, organisation) )
+    end
+
+    def self.device_modified(logger, config, device)
+      self.send_device_change(logger, config, 'device_modified',
+           inventory_notification_from_device(device, organisation) )
     end
 
     def self.device_deleted(logger, config, id)
       self.send_device_change(logger, config, 'device_deleted', { "id" => id })
     end
 
+
     private
+
+     def self.inventory_notification_from_device device, organisation=nil
+       { # some requests come from rest and some from web, so we'll try to handle both formats
+         'id' => device.puavo_id.to_i,
+         'hostname' => (device.respond_to?(:hostname) ? device.hostname : device.puavoHostname),
+         'domain' => organisation || device.organisation.domain,
+         'type' => (device.respond_to?(:type) ? device.type : device.puavoDeviceType),
+         'school_id' => (device.school.id.to_i if device.respond_to?(:school)),
+         'school_dn' => (device.school.dn if device.respond_to?(:school)),
+         'school_name' => (device.school.name if device.respond_to?(:school)),
+         'serial' => (device.respond_to?(:serial) ? device.serial : device.serialNumber),
+       }
+     end
 
     def self.send_device_change(logger, config, command, params)
       uri = URI.parse(config['host'] + '/v0/devicechanges')
