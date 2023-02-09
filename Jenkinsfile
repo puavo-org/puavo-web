@@ -9,6 +9,10 @@ pipeline {
   }
 
   stages {
+    stage('Fix repository permissions') {
+      steps { sh 'chown -R root:root .' }
+    }
+
     stage('Setup APT repositories') {
       steps {
         // Debian Docker container contains a policy to not start services

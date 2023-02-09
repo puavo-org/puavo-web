@@ -9,6 +9,10 @@ pipeline {
   }
 
   stages {
+    stage('Fix repository permissions') {
+      steps { sh 'chown -R root:root .' }
+    }
+
     stage('Setup APT repositories') {
       steps {
         // Debian Docker container contains a policy to not start services
@@ -85,7 +89,6 @@ EOF
 
     stage('Checkout the Puavo OS repository') {
       steps {
-        sh 'mkdir -p puavo-os && chown --reference=. puavo-os'
         dir('puavo-os') {
           checkout([
             $class: 'GitSCM',
