@@ -16,7 +16,7 @@ module Puavo
            inventory_notification_from_device(device, organisation) )
     end
 
-    def self.device_modified(logger, config, device)
+    def self.device_modified(logger, config, device, organisation)
       self.send_device_change(logger, config, 'device_modified',
            inventory_notification_from_device(device, organisation) )
     end
