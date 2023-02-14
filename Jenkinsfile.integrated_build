@@ -89,22 +89,7 @@ EOF
 
     stage('Checkout the Puavo OS repository') {
       steps {
-        dir('puavo-os') {
-          checkout([
-            $class: 'GitSCM',
-            branches: [[name: 'bullseye']],
-            doGenerateSubmoduleConfigurations: false,
-            extensions: [[
-              $class: 'SubmoduleOption',
-              disableSubmodules: false,
-              parentCredentials: true,
-              recursiveSubmodules: true,
-              reference: '',
-              trackingSubmodules: false
-            ]],
-          submoduleCfg: [],
-          userRemoteConfigs: [[url: 'https://github.com/puavo-org/puavo-os.git']]])
-        }
+        sh 'git clone --branch bullseye --recursive https://github.com/puavo-org/puavo-os.git'
       }
     }
 
