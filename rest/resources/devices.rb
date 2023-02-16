@@ -21,6 +21,7 @@ class Device < Host
   ldap_map :puavoPrinterDeviceURI,         :printer_device_uri
   ldap_map :puavoPrinterQueue,             :printer_queue_dns,        LdapConverters::ArrayValue
   ldap_map :puavoSchool,                   :school_dn
+  ldap_map :serialNumber,                  :serial_number
 
   def self.ldap_base
     "ou=Devices,ou=Hosts,#{ organisation["base"] }"
