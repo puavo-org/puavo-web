@@ -789,7 +789,7 @@ en:
     no_images: "No hardware information has been received from any device"
     sorting: "Sorting"
     download: "Download the raw data in JSON format..."
-    sort_by_image: "Image base name (<span class=\"release-bullseye\">bullseye</span>, <span class=\"release-buster\">buster</span>, <span class=\"release-stretch\">stretch</span>, others) and release timestamp (newest first)"
+    sort_by_image: "Image base name (<span class=\"release-bookworm\">Bookworm</span>, <span class=\"release-bullseye\">Bullseye</span>, <span class=\"release-buster\">Buster</span>, <span class=\"release-stretch\">Stretch</span>, others) and release timestamp (newest first)"
     sort_by_usage: "Number of devices using the image"
     image_name_column: "Image name (<span class=\"releaseName\">release name</span>, if known)"
     usage_column: "Device count / total devices (%)"

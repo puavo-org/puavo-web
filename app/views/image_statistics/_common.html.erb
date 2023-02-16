@@ -68,6 +68,8 @@ function buildTable(images, sorting)
             cls = "buster";
         else if (imageName.includes("bullseye"))
             cls = "bullseye";
+        else if (imageName.includes("bookworm"))
+            cls = "bookworm";
 
         html += `<span class="release-${cls}">${imageName}</span>`;
 
@@ -143,13 +145,16 @@ function sortByImage(raw)
         });
     }
 
-    let bullseye = [],
+    let bookworm = [],
+        bullseye = [],
         buster = [],
         stretch = [],
         other = [];
 
     for (const image of Object.keys(raw)) {
-        if (image.indexOf("bullseye") != -1)
+        if (image.indexOf("bookworm") != -1)
+            bookworm.push(image);
+        else if (image.indexOf("bullseye") != -1)
             bullseye.push(image);
         else if (image.indexOf("buster") != -1)
             buster.push(image);
@@ -158,12 +163,13 @@ function sortByImage(raw)
         else other.push(image);
     }
 
+    bookworm = sortImages(bookworm);
     bullseye = sortImages(bullseye);
     buster = sortImages(buster);
     stretch = sortImages(stretch);
     other = sortImages(other);
 
-    return [].concat(bullseye, buster, stretch, other);
+    return [].concat(bookworm, bullseye, buster, stretch, other);
 }
 
 function download()

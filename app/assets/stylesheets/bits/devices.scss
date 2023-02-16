@@ -182,6 +182,7 @@ span.release-other { }
 span.release-stretch { color: $deviceStatsReleaseStretch; }
 span.release-buster { color: $deviceStatsReleaseBuster; }
 span.release-bullseye { color: $deviceStatsReleaseBullseye; }
+span.release-bookworm { color: $deviceStatsReleaseBookworm; }
 
 .releaseName {
   color: $deviceStatsReleaseName;
