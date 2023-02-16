@@ -37,7 +37,7 @@ module Puavo
          'school_id' => (device.school.id.to_i if device.respond_to?(:school)),
          'school_dn' => (device.school.dn if device.respond_to?(:school)),
          'school_name' => (device.school.name if device.respond_to?(:school)),
-         'serial' => (device.respond_to?(:serial) ? device.serial : device.serialNumber),
+         'serial' => (device.respond_to?(:serial) ? device.serial : device.serial_number),
        }
      end
 
