@@ -32,7 +32,7 @@ module Puavo
        { # some requests come from rest and some from web, so we'll try to handle both formats
          'id' => device.puavo_id.to_i,
          'hostname' => (device.respond_to?(:hostname) ? device.hostname : device.puavoHostname),
-         'domain' => organisation || device.organisation.domain,
+         'domain' => organisation || device.organisation.domain,
          'type' => (device.respond_to?(:type) ? device.type : device.puavoDeviceType),
          'school_id' => (device.school.id.to_i if device.respond_to?(:school)),
          'school_dn' => (device.school.dn if device.respond_to?(:school)),
