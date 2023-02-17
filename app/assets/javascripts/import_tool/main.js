@@ -55,89 +55,6 @@ const CSV_PARSER_WORKER = new Worker(CSV_PARSER_PATH),
 // --------------------------------------------------------------------------------------------------
 // DATA
 
-// Everything in the import tool happens inside this container element
-let container = null;
-
-// Localized strings. Supplied by the user in the initializer.
-let localizedColumnTitles = {},
-    localizedGroupTypes = {};
-
-// Current settings. Call loadDefaultSettings() to load the defaults.
-let SETTINGS = {};
-
-// Tab-separated string of common passwords. Make sure this starts and ends in a tab,
-// so substring searching works.
-let commonPasswords = "\tpassword\tsalasana\tpasswort\t";
-
-// True if email addresses are automatic in this school/organisation, and thus email address
-// columns will be ignored.
-let automaticEmails = false;
-
-const parser = {
-    // Raw contents of the uploaded file (manual entry uses the textarea directly), grabbed
-    // whenever user selects a file (it cannot be done when the import actually begins, it has to
-    // be done in advance, when the file select event fires).
-    fileContents: null,
-
-    // If not null, contains the error message the CSV parser returned
-    error: null,
-};
-
-const importData = new ImportData();
-
-const process = {
-    // True if an import job is currently active
-    importActive: false,
-
-    // True if the user has already imported/updated something
-    alreadyClickedImportOnce: false,
-
-    // If the password column exists and its contents are edited, the generated PDF will be
-    // out-of-sync unless they're synced first. This flag warns the user about that.
-    passwordsAlteredSinceImport: false,
-
-    // If true, the import process will be stopped after the current batch is finished
-    // (it cannot be stopped mid-way; even if you terminate the worker thread, the server
-    // is busy processing the batch and there's no way to stop it)
-    stopRequested: false,
-
-    // Allow continuing from the previously-stopped row
-    previousImportStopped: false,
-
-/*
-    // If true, only the selected rows are checked in detectProblems(). This is a dangerous
-    // setting, but it can be useful if you have erroneous rows and you just want to import
-    // the non-erroneous rows and you've selected them.
-    // TODO: this works, but it has some problems, will be fixed later.
-    checkOnlySelectedRows: false,
-*/
-
-    // A copy of importData.rows made at the start of the import process. This ensures the
-    // original data is not modified in any way under any circumstances.
-    workerRows: [],
-
-    // List of failed rows (numbers). The user can retry them.
-    failedRows: [],
-
-    // Records the last processed row. This is used to resume the import process if it was stopped.
-    lastRowProcessed: 0,
-};
-
-// Row statistics
-const statistics = {
-    // Generic stats
-    totalRows: 0,
-    selectedRows: 0,
-    rowsWithErrors: 0,
-
-    // Import stats
-    rowsToBeImported: 0,
-    totalRowsProcessed: 0,
-    success: 0,
-    partialSuccess: 0,
-    failed: 0,
-};
-
 // Popup menu/dialog. When the popup is opened, it is attached to the 'attachTo' HTML element.
 // How the popup is positioned relative to the element depends on the element type. When the
 // page is scrolled, the popup is repositioned so that it follows the attached element.
@@ -148,35 +65,123 @@ const popup = {
     attachmentType: null,       // see 'PopupType' below
 };
 
-// The column we're editing when the column popup/dialog is open
-const targetColumn = {
-    column: null,
-    index: -1
-};
+// Global state
+const state = {
+    // Everything in the import tool happens inside this container element
+    container: null,
 
-// The (row, col) coordinates and the TD element we're directly editing (double-click)
-const directCellEdit = {
-    pos: null,
-    target: null,
-};
+    // Localized strings. Supplied by the user in the initializer.
+    localizedColumnTitles: {},
+    localizedGroupTypes: {},
 
-// Multiple selected cells
-const cellSelection = {
-    active: false,
+    // Current settings. Call loadDefaultSettings() to load the defaults.
+    SETTINGS: {},
 
-    // X and Y coordinates of the mouse cursor at the time the left mouse button went down
-    mouseTrackPos: null,
+    // Tab-separated string of common passwords. Make sure this starts and ends in a tab,
+    // so substring searching works.
+    commonPasswords: "\tpassword\tsalasana\tpasswort\t",
 
-    // The HTML element under the mouse when the selection began
-    initialClick: null,
+    // True if email addresses are automatic in this school/organisation, and thus email address
+    // columns will be ignored.
+    automaticEmails: false,
 
-    // Last updated cell during a range selection
-    previousCell: null,
+    parser: {
+        // Raw contents of the uploaded file (manual entry uses the textarea directly), grabbed
+        // whenever user selects a file (it cannot be done when the import actually begins, it has to
+        // be done in advance, when the file select event fires).
+        fileContents: null,
 
-    // Indexes, -1 if nothing is selected
-    column: -1,
-    start: -1,
-    end: -1,
+        // If not null, contains the error message the CSV parser returned
+        error: null,
+    },
+
+    // The column we're editing when the column popup/dialog is open
+    targetColumn: {
+        column: null,
+        index: -1
+    },
+
+    // The (row, col) coordinates and the TD element we're directly editing (double-click)
+    directCellEdit: {
+        pos: null,
+        target: null,
+    },
+
+    // Cell selection
+    selection: {
+        active: false,
+
+        // X and Y coordinates of the mouse cursor at the time the left mouse button went down
+        mouseTrackPos: null,
+
+        // The HTML element under the mouse when the selection began
+        initialClick: null,
+
+        // Last updated cell during a range selection
+        previousCell: null,
+
+        // Indexes, -1 if nothing is selected
+        column: -1,
+        start: -1,
+        end: -1,
+    },
+
+    // Row statistics
+    statistics: {
+        // Generic stats
+        totalRows: 0,
+        selectedRows: 0,
+        rowsWithErrors: 0,
+
+        // Import stats
+        rowsToBeImported: 0,
+        totalRowsProcessed: 0,
+        success: 0,
+        partialSuccess: 0,
+        failed: 0,
+    },
+
+    // The imported data
+    importData: new ImportData(),
+
+    // The mass import process state
+    process: {
+        // True if an import job is currently active
+        importActive: false,
+
+        // True if the user has already imported/updated something
+        alreadyClickedImportOnce: false,
+
+        // If the password column exists and its contents are edited, the generated PDF will be
+        // out-of-sync unless they're synced first. This flag warns the user about that.
+        passwordsAlteredSinceImport: false,
+
+        // If true, the import process will be stopped after the current batch is finished
+        // (it cannot be stopped mid-way; even if you terminate the worker thread, the server
+        // is busy processing the batch and there's no way to stop it)
+        stopRequested: false,
+
+        // Allow continuing from the previously-stopped row
+        previousImportStopped: false,
+
+/*
+        // If true, only the selected rows are checked in detectProblems(). This is a dangerous
+        // setting, but it can be useful if you have erroneous rows and you just want to import
+        // the non-erroneous rows and you've selected them.
+        // TODO: this works, but it has some problems, will be fixed later.
+        checkOnlySelectedRows: false,
+*/
+
+        // A copy of importData.rows made at the start of the import process. This ensures the
+        // original data is not modified in any way under any circumstances.
+        workerRows: [],
+
+        // List of failed rows (numbers). The user can retry them.
+        failedRows: [],
+
+        // Records the last processed row. This is used to resume the import process if it was stopped.
+        lastRowProcessed: 0,
+    },
 };
 
 // --------------------------------------------------------------------------------------------------
@@ -186,7 +191,7 @@ const cellSelection = {
 // Re-enables column settings buttons
 function clearMenuButtons()
 {
-    for (let button of container.querySelectorAll("div#output table thead button.controls")) {
+    for (let button of state.container.querySelectorAll("div#output table thead button.controls")) {
         button.classList.remove("activeMenu");
         button.disabled = false;
     }
@@ -314,29 +319,29 @@ function updateParsingSummary()
 {
     let parts = [];
 
-    if (container.querySelector("#comma").checked)
+    if (state.container.querySelector("#comma").checked)
         parts.push(_tr("parser.commas"));
-    else if (container.querySelector("#tab").checked)
+    else if (state.container.querySelector("#tab").checked)
         parts.push(_tr("parser.tabs"));
     else parts.push(_tr("parser.semicolons"));
 
-    if (container.querySelector("#inferTypes").checked)
+    if (state.container.querySelector("#inferTypes").checked)
         parts.push(_tr('parser.infer'));
 
-    if (container.querySelector("#trimValues").checked)
+    if (state.container.querySelector("#trimValues").checked)
         parts.push(_tr('parser.trim'));
 
-    container.querySelector("details#settings summary").innerHTML =
+    state.container.querySelector("details#settings summary").innerHTML =
         `${_tr('parser.title')} (${parts.join(", ")})`;
 }
 
 // Called when the CSV parser is finished. Update either the preview table, or the
 // main import table.
 CSV_PARSER_WORKER.onmessage = e => {
-    parser.error = null;
+    state.parser.error = null;
 
     if (e.data.state == "error") {
-        parser.error = e.data.message;
+        state.parser.error = e.data.message;
 
         // Don't overwrite existing data, if any
         return;
@@ -356,7 +361,7 @@ CSV_PARSER_WORKER.onmessage = e => {
                 headers[i] = INFERRED_NAMES[colName];
 
             // Clear unknown column types, so the column will be skipped
-            if (!(headers[i] in localizedColumnTitles))
+            if (!(headers[i] in state.localizedColumnTitles))
                 headers[i] = "";
         }
     }
@@ -382,15 +387,15 @@ CSV_PARSER_WORKER.onmessage = e => {
 
     // Preview update must not clobber potentially already existing table data, and vice versa
     if (e.data.isPreview) {
-        importData.previewHeaders = headers;
-        importData.previewRows = rows;
+        state.importData.previewHeaders = headers;
+        state.importData.previewRows = rows;
     } else {
-        importData.headers = headers;
-        importData.rows = rows;
-        statistics.totalRows = rows.length;
+        state.importData.headers = headers;
+        state.importData.rows = rows;
+        state.statistics.totalRows = rows.length;
     }
 
-    buildImportTable(container.querySelector(e.data.isPreview ? "div#preview" : "div#output"),
+    buildImportTable(state.container.querySelector(e.data.isPreview ? "div#preview" : "div#output"),
                      headers, rows, e.data.isPreview);
 
     if (!e.data.isPreview) {
@@ -406,21 +411,21 @@ function updatePreview()
     let source = "";
 
     // Data source
-    switch (SETTINGS.parser.sourceTab) {
+    switch (state.SETTINGS.parser.sourceTab) {
         case 0:
         default:
             // Manual entry
-            source = container.querySelector("div#manual textarea").value;
+            source = state.container.querySelector("div#manual textarea").value;
             break;
 
         case 1:
             // File upload
-            source = parser.fileContents;
+            source = state.parser.fileContents;
             break;
 
         case 2:
             // Username list (a different textarea)
-            source = container.querySelector("div#unl textarea")?.value;
+            source = state.container.querySelector("div#unl textarea")?.value;
             break;
     }
 
@@ -430,14 +435,14 @@ function updatePreview()
     // Launch a worker thread that parses the file
     let settings = {
         separator: ";",
-        wantHeader: container.querySelector("#inferTypes").checked,
-        trimValues: container.querySelector("#trimValues").checked,
+        wantHeader: state.container.querySelector("#inferTypes").checked,
+        trimValues: state.container.querySelector("#trimValues").checked,
     };
 
-    if (container.querySelector("#comma").checked)
+    if (state.container.querySelector("#comma").checked)
         settings.separator =  ",";
 
-    if (container.querySelector("#tab").checked)
+    if (state.container.querySelector("#tab").checked)
         settings.separator =  "\t";
 
     CSV_PARSER_WORKER.postMessage({
@@ -450,39 +455,39 @@ function updatePreview()
 // Launch a worker thread for parsing the input file / manual entry
 function readAllData()
 {
-    if (process.alreadyClickedImportOnce && importData.rows.length > 0) {
+    if (state.process.alreadyClickedImportOnce && state.importData.rows.length > 0) {
         if (!window.confirm(_tr("alerts.already_imported")))
             return false;
     }
 
-    process.alreadyClickedImportOnce = false;
+    state.process.alreadyClickedImportOnce = false;
 
     // The next import must start from the beginning
-    process.previousImportStopped = false;
+    state.process.previousImportStopped = false;
 
     // This is technically true...
-    process.passwordsAlteredSinceImport = true;
+    state.process.passwordsAlteredSinceImport = true;
 
-    container.querySelector("div#status div#message").classList.add("hidden");
-    container.querySelector("div#status progress").classList.add("hidden");
+    state.container.querySelector("div#status div#message").classList.add("hidden");
+    state.container.querySelector("div#status progress").classList.add("hidden");
 
     let source = null;
 
     // Get source data
-    if (SETTINGS.parser.sourceTab == 0) {
+    if (state.SETTINGS.parser.sourceTab == 0) {
         // Manual entry
-        source = container.querySelector("div#manual textarea").value;
-    } else if (SETTINGS.parser.sourceTab == 1) {
+        source = state.container.querySelector("div#manual textarea").value;
+    } else if (state.SETTINGS.parser.sourceTab == 1) {
         // File upload
-        if (parser.fileContents === null) {
+        if (state.parser.fileContents === null) {
             window.alert(_tr("alerts.no_file"));
             return;
         }
 
-        source = parser.fileContents;
+        source = state.parser.fileContents;
     } else {
         // Username list (not always available)
-        source = container.querySelector("div#unl textarea")?.value;
+        source = state.container.querySelector("div#unl textarea")?.value;
     }
 
     if (source === undefined || source === null)
@@ -494,14 +499,14 @@ function readAllData()
     // Launch a worker thread that parses the file
     let settings = {
         separator: ";",
-        wantHeader: container.querySelector("#inferTypes").checked,
-        trimValues: container.querySelector("#trimValues").checked
+        wantHeader: state.container.querySelector("#inferTypes").checked,
+        trimValues: state.container.querySelector("#trimValues").checked
     };
 
-    if (container.querySelector("#comma").checked)
+    if (state.container.querySelector("#comma").checked)
         settings.separator =  ",";
 
-    if (container.querySelector("#tab").checked)
+    if (state.container.querySelector("#tab").checked)
         settings.separator =  "\t";
 
     CSV_PARSER_WORKER.postMessage({
@@ -521,17 +526,17 @@ function readAllData()
 // Called when there's no data to import. Ensures everything is cleared.
 function noDataToDisplay()
 {
-    if (container) {
-        container.querySelector("div#output").innerHTML = _tr('status.no_data_to_display');
-        container.querySelector("div#status div#message").classList.add("hidden");
-        container.querySelector("div#status progress").classList.add("hidden");
+    if (state.container) {
+        state.container.querySelector("div#output").innerHTML = _tr('status.no_data_to_display');
+        state.container.querySelector("div#status div#message").classList.add("hidden");
+        state.container.querySelector("div#status progress").classList.add("hidden");
     }
 
-    parser.error = null;
-    importData.headers = [];
-    importData.rows = [];
-    process.workerRows = [];
-    process.failedRows = [];
+    state.parser.error = null;
+    state.importData.headers = [];
+    state.importData.rows = [];
+    state.process.workerRows = [];
+    state.process.failedRows = [];
 
     updateStatistics();
 }
@@ -539,7 +544,7 @@ function noDataToDisplay()
 // Re-number column indexes in their header row datasets
 function renumberTableColumns()
 {
-    const headings = container.querySelectorAll("div#output table thead th");
+    const headings = state.container.querySelectorAll("div#output table thead th");
 
     // +1 for the messages column
     if (headings.length <= NUM_ROW_HEADERS + 1) {
@@ -556,16 +561,16 @@ function renumberTableColumns()
 function getFillRange()
 {
     let start = 0,
-        end = importData.rows.length;
+        end = state.importData.rows.length;
 
-    if (cellSelection.column == targetColumn.index &&
-        cellSelection.start !== -1 &&
-        cellSelection.end !== -1) {
+    if (state.selection.column == state.targetColumn.index &&
+        state.selection.start !== -1 &&
+        state.selection.end !== -1) {
 
         // We have a selection targeting this column (end is +1 because
         // the selection range is inclusive)
-        start = Math.min(cellSelection.start, cellSelection.end);
-        end = Math.max(cellSelection.start, cellSelection.end) + 1;
+        start = Math.min(state.selection.start, state.selection.end);
+        end = Math.max(state.selection.start, state.selection.end) + 1;
     }
 
     console.log(`getFillRange(): start=${start}, end=${end}`);
@@ -576,69 +581,69 @@ function getFillRange()
 // Ends multi-cell selection
 function resetSelection()
 {
-    cellSelection.active = false;
-    cellSelection.mouseTrackPos = null;
-    cellSelection.initialClick = null;
-    cellSelection.previousCell = null;
-    cellSelection.column = -1;
-    cellSelection.start = -1;
-    cellSelection.end = -1;
+    state.selection.active = false;
+    state.selection.mouseTrackPos = null;
+    state.selection.initialClick = null;
+    state.selection.previousCell = null;
+    state.selection.column = -1;
+    state.selection.start = -1;
+    state.selection.end = -1;
 
-    for (let cell of container.querySelectorAll("table tbody td.selectedCell"))
+    for (let cell of state.container.querySelectorAll("table tbody td.selectedCell"))
         cell.classList.remove("selectedCell");
 }
 
 // Updates multi-cell selection highlighting
 function highlightSelection()
 {
-    if (!cellSelection.active || cellSelection.start == -1 || cellSelection.end == -1)
+    if (!state.selection.active || state.selection.start == -1 || state.selection.end == -1)
         return;
 
-    const start = Math.min(cellSelection.start, cellSelection.end),
-          end = Math.max(cellSelection.start, cellSelection.end);
+    const start = Math.min(state.selection.start, state.selection.end),
+          end = Math.max(state.selection.start, state.selection.end);
 
     // Remove highlights from all cells that aren't in the selection range anymore
-    for (let cell of container.querySelectorAll("table tbody td.selectedCell")) {
+    for (let cell of state.container.querySelectorAll("table tbody td.selectedCell")) {
         const row = cell.parentNode.rowIndex - 1;
 
-        if (cell.cellIndex == cellSelection.column && row >= start && row <= end)
+        if (cell.cellIndex == state.selection.column && row >= start && row <= end)
             continue;
 
         cell.classList.remove("selectedCell");
     }
 
     // Then add it back to all cells that are in the range
-    const tableRows = container.querySelectorAll("div#output table tbody tr");
+    const tableRows = state.container.querySelectorAll("div#output table tbody tr");
 
     for (let rowNum = start; rowNum <= end; rowNum++)
-        tableRows[rowNum].children[cellSelection.column + NUM_ROW_HEADERS].classList.add("selectedCell");
+        tableRows[rowNum].children[state.selection.column + NUM_ROW_HEADERS].classList.add("selectedCell");
 }
 
 function updateStatistics()
 {
     let html = "";
 
-    html += `<div>${statistics.totalRows} ${_tr("status.total_rows")}; ${statistics.selectedRows} ${_tr("status.selected_rows")}</div>`;
+    html += `<div>${state.statistics.totalRows} ${_tr("status.total_rows")}; ${state.statistics.selectedRows} ${_tr("status.selected_rows")}</div>`;
 
     // These numbers are not shown until something gets imported, but afterwards they're
     // always visible, showing the results of the previous import
-    if ((process.importActive || process.alreadyClickedImportOnce) && (importData.rows.length > 0)) {
+    if ((state.process.importActive || state.process.alreadyClickedImportOnce) && (state.importData.rows.length > 0)) {
         html +=
-            `<div>${_tr("status.importing_rows")} ${statistics.totalRowsProcessed}/${process.workerRows.length} (` +
-            `<span class="success">${statistics.success} ${_tr("status.success")}</span>, ` +
-            `<span class="partial_success">${statistics.partialSuccess} ${_tr("status.partial_success")}</span>, ` +
-            `<span class="failed">${statistics.failed} ${_tr("status.failed")}</span>)</div>`;
+            `<div>${_tr("status.importing_rows")} ${state.statistics.totalRowsProcessed}/${state.process.workerRows.length} (` +
+            `<span class="success">${state.statistics.success} ${_tr("status.success")}</span>, ` +
+            `<span class="partial_success">${state.statistics.partialSuccess} ${_tr("status.partial_success")}</span>, ` +
+            `<span class="failed">${state.statistics.failed} ${_tr("status.failed")}</span>)</div>`;
     }
 
-    container.querySelector("div#status div#rowCounts").innerHTML = html;
+    state.container.querySelector("div#status div#rowCounts").innerHTML = html;
 }
 
 // Try to detect problems and potential errors/warnings in the table data
 function detectProblems(selectRows=false)
 {
-    let output = container.querySelector("div#problems");
+    let output = state.container.querySelector("div#problems");
 
-    if (importData.rows === null || importData.rows.length == 0) {
+    if (state.importData.rows === null || state.importData.rows.length == 0) {
         // The table is empty
         noDataToDisplay();
         output.innerHTML = "";
@@ -674,25 +679,25 @@ function fillGroupSelector(selector, current=null)
 {
     selector.innerHTML = "";
 
-    for (const g of importData.currentGroups) {
+    for (const g of state.importData.currentGroups) {
         let o = create("option");
 
         o.value = g.abbr;
         o.selected = (current === g.abbr);
-        o.innerText = `${g.name} (${localizedGroupTypes[g.type] || "?"})`;
+        o.innerText = `${g.name} (${state.localizedGroupTypes[g.type] || "?"})`;
 
         selector.appendChild(o);
     }
 
-    selector.disabled = (importData.currentGroups.length == 0);
+    selector.disabled = (state.importData.currentGroups.length == 0);
 }
 
 function onSelectDuplicates(mode)
 {
-    const uidCol = importData.findColumn("uid");
+    const uidCol = state.importData.findColumn("uid");
 
     if (uidCol === -1) {
-        window.alert(_tr("errors.required_column_missing", { title: localizedColumnTitles["uid"] }));
+        window.alert(_tr("errors.required_column_missing", { title: state.localizedColumnTitles["uid"] }));
         return;
     }
 
@@ -702,11 +707,11 @@ function onSelectDuplicates(mode)
     // need to know if 10 users already exists.
     let outgoingUsernames = [];
 
-    for (let rowNum = 0; rowNum < importData.rows.length; rowNum++)
-        outgoingUsernames.push(importData.rows[rowNum].cellValues[uidCol].trim());
+    for (let rowNum = 0; rowNum < state.importData.rows.length; rowNum++)
+        outgoingUsernames.push(state.importData.rows[rowNum].cellValues[uidCol].trim());
 
     const request = {
-        school_id: importData.currentSchoolID,
+        school_id: state.importData.currentSchoolID,
         usernames: outgoingUsernames,
     };
 
@@ -730,13 +735,13 @@ function onSelectDuplicates(mode)
         }
 
         // Update selections
-        const tableRows = container.querySelectorAll(`div#output table tbody tr`);
+        const tableRows = state.container.querySelectorAll(`div#output table tbody tr`);
 
-        statistics.selectedRows = 0;
+        state.statistics.selectedRows = 0;
 
         let haveErrors = false;
 
-        for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
+        for (let rowNum = 0; rowNum < state.importData.rows.length; rowNum++) {
             const uid = outgoingUsernames[rowNum];
             const s = states.states[rowNum];
 
@@ -774,7 +779,7 @@ function onSelectDuplicates(mode)
             }
 
             // Update the table
-            const row = importData.rows[rowNum];
+            const row = state.importData.rows[rowNum];
             const checkbox = tableRows[rowNum].querySelector("input");
 
             row.message = message;
@@ -782,7 +787,7 @@ function onSelectDuplicates(mode)
             if (select) {
                 row.rowFlags |= RowFlag.SELECTED;
                 checkbox.checked = true;
-                statistics.selectedRows++;
+                state.statistics.selectedRows++;
             } else {
                 row.rowFlags &= ~RowFlag.SELECTED;
                 checkbox.checked = false;
@@ -839,9 +844,9 @@ function onAnalyzeDuplicates()
                     phone.set(p, uid);
         }
 
-        importData.serverUsers.eid = eid;
-        importData.serverUsers.email = email;
-        importData.serverUsers.phone = phone;
+        state.importData.serverUsers.eid = eid;
+        state.importData.serverUsers.email = email;
+        state.importData.serverUsers.phone = phone;
 
         // The "true" argument actually selects the rows
         detectProblems(true);
@@ -856,16 +861,16 @@ function onAnalyzeDuplicates()
 // Select, deselect or invert row selections
 function onSelectRows(operation)
 {
-    const rows = container.querySelectorAll(`div#output table tbody tr input[type="checkbox"]`);
+    const rows = state.container.querySelectorAll(`div#output table tbody tr input[type="checkbox"]`);
 
-    statistics.selectedRows = 0;
+    state.statistics.selectedRows = 0;
 
     switch (operation) {
         case 0:
             for (let cb of rows)
                 cb.checked = false;
 
-            for (let row of importData.rows)
+            for (let row of state.importData.rows)
                 row.rowFlags &= ~RowFlag.SELECTED;
 
             break;
@@ -874,10 +879,10 @@ function onSelectRows(operation)
             for (let cb of rows)
                 cb.checked = true;
 
-            for (let row of importData.rows)
+            for (let row of state.importData.rows)
                 row.rowFlags |= RowFlag.SELECTED;
 
-            statistics.selectedRows = rows.length;
+            state.statistics.selectedRows = rows.length;
             break;
 
         case -1:
@@ -885,10 +890,10 @@ function onSelectRows(operation)
                 cb.checked = !cb.checked;
 
                 if (cb.checked)
-                    statistics.selectedRows++;
+                    state.statistics.selectedRows++;
             }
 
-            for (let row of importData.rows) {
+            for (let row of state.importData.rows) {
                 if (row.rowFlags & RowFlag.SELECTED)
                     row.rowFlags &= ~RowFlag.SELECTED;
                 else row.rowFlags |= RowFlag.SELECTED;
@@ -903,35 +908,35 @@ function onSelectRows(operation)
 function onRowCheckboxClick(e)
 {
     const rowNum = parseInt(e.target.parentNode.parentNode.dataset.row, 10);
-    const row = importData.rows[rowNum];
+    const row = state.importData.rows[rowNum];
 
     if (e.target.checked) {
         row.rowFlags |= RowFlag.SELECTED;
-        statistics.selectedRows++;
+        state.statistics.selectedRows++;
     } else {
         row.rowFlags &= ~RowFlag.SELECTED;
-        statistics.selectedRows--;
+        state.statistics.selectedRows--;
     }
 
-    /*if (process.checkOnlySelectedRows)
+    /*if (state.process.checkOnlySelectedRows)
         detectProblems();
     else*/ updateStatistics();
 }
 
 function onSelectProcessedRows(mode)
 {
-    const checkboxes = container.querySelectorAll(`div#output table tbody tr input[type="checkbox"]`);
+    const checkboxes = state.container.querySelectorAll(`div#output table tbody tr input[type="checkbox"]`);
 
-    statistics.selectedRows = 0;
+    state.statistics.selectedRows = 0;
 
-    for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
-        const row = importData.rows[rowNum],
+    for (let rowNum = 0; rowNum < state.importData.rows.length; rowNum++) {
+        const row = state.importData.rows[rowNum],
               checkbox = checkboxes[rowNum];
 
         if (row.rowState == mode) {
             row.rowFlags |= RowFlag.SELECTED;
             checkbox.checked = true;
-            statistics.selectedRows++;
+            state.statistics.selectedRows++;
         } else {
             row.rowFlags &= ~RowFlag.SELECTED;
             checkbox.checked = false;
@@ -943,7 +948,7 @@ function onSelectProcessedRows(mode)
 
 function onDeleteSelectedRows()
 {
-    if (process.previousImportStopped) {
+    if (state.process.previousImportStopped) {
         window.alert(_tr("alerts.cant_remove_rows_after_stopping"));
         return;
     }
@@ -951,7 +956,7 @@ function onDeleteSelectedRows()
     // Make a list of selected table rows
     let selectedRows = [];
 
-    for (let cb of container.querySelectorAll(`div#output table tbody tr input[type="checkbox"]:checked`))
+    for (let cb of state.container.querySelectorAll(`div#output table tbody tr input[type="checkbox"]:checked`))
         selectedRows.push(parseInt(cb.closest("tr").dataset.row, 10));
 
     if (selectedRows.length == 0) {
@@ -959,7 +964,7 @@ function onDeleteSelectedRows()
         return;
     }
 
-    if (selectedRows.length == importData.rows.length) {
+    if (selectedRows.length == state.importData.rows.length) {
         // Confirm whole table removal
         if (!window.confirm(_tr("alerts.delete_everything")))
             return;
@@ -970,34 +975,34 @@ function onDeleteSelectedRows()
 
     resetSelection();
 
-    if (selectedRows.length == importData.rows.length) {
+    if (selectedRows.length == state.importData.rows.length) {
         // Faster path for whole table deletion
         noDataToDisplay();
     } else {
         // Delete the selected rows. Live-update the table (don't rebuild it wholly).
-        let tableRows = container.querySelectorAll("div#output table tbody tr");
+        let tableRows = state.container.querySelectorAll("div#output table tbody tr");
 
         for (let i = selectedRows.length - 1; i >= 0; i--) {
             const rowNum = selectedRows[i];
 
             console.log(`Removing row ${rowNum}`);
-            importData.rows.splice(rowNum, 1);
+            state.importData.rows.splice(rowNum, 1);
             tableRows[rowNum].parentNode.removeChild(tableRows[rowNum]);
         }
 
         // Reindex the remaining rows
-        if (importData.rows.length == 0)
+        if (state.importData.rows.length == 0)
             noDataToDisplay();
         else {
-            const rows = container.querySelectorAll("div#output table tbody tr");
+            const rows = state.container.querySelectorAll("div#output table tbody tr");
 
             for (let rowNum = 0; rowNum < rows.length; rowNum++)
                 rows[rowNum].dataset.row = rowNum;
         }
     }
 
-    statistics.totalRows = importData.rows.length;
-    statistics.selectedRows = 0;
+    state.statistics.totalRows = state.importData.rows.length;
+    state.statistics.selectedRows = 0;
 
     detectProblems();
     updateStatistics();
@@ -1008,12 +1013,12 @@ function onColumnTypeChanged(e)
 {
     const columnIndex = parseInt(e.target.parentNode.parentNode.dataset.column, 10);
 
-    importData.headers[columnIndex] = e.target.value;
-    const isUnused = (importData.headers[columnIndex] == "");
+    state.importData.headers[columnIndex] = e.target.value;
+    const isUnused = (state.importData.headers[columnIndex] == "");
 
     resetSelection();
 
-    for (const tableRow of container.querySelectorAll("div#output table tbody tr")) {
+    for (const tableRow of state.container.querySelectorAll("div#output table tbody tr")) {
         const tableCell = tableRow.children[columnIndex + NUM_ROW_HEADERS];
 
         // detectProblems() removes the error class, but only
@@ -1021,7 +1026,7 @@ function onColumnTypeChanged(e)
         tableCell.classList.remove("error");
 
         toggleClass(tableCell, "skipped", isUnused);
-        toggleClass(tableCell, "password", importData.headers[columnIndex] == "password");
+        toggleClass(tableCell, "password", state.importData.headers[columnIndex] == "password");
     }
 
     detectProblems();
@@ -1039,27 +1044,27 @@ function onDeleteColumn(e)
     clearMenuButtons();
     resetSelection();
 
-    const column = targetColumn.index;
+    const column = state.targetColumn.index;
 
     console.log(`Deleting column ${column}`);
 
     // Remove the column from the parsed data
-    for (let row of importData.rows) {
+    for (let row of state.importData.rows) {
         row.cellValues.splice(column, 1);
         row.cellFlags.splice(column, 1);
     }
 
-    importData.headers.splice(column, 1);
+    state.importData.headers.splice(column, 1);
 
     // Remove the table column
-    for (let tableRow of container.querySelector("div#output table").rows)
+    for (let tableRow of state.container.querySelector("div#output table").rows)
         tableRow.deleteCell(column + NUM_ROW_HEADERS);
 
     // If there are no columns left, remove all rows
-    if (importData.headers.length == 0) {
-        importData.rows = [];
-        statistics.totalRows = 0;
-        statistics.selectedRows = 0;
+    if (state.importData.headers.length == 0) {
+        state.importData.rows = [];
+        state.statistics.totalRows = 0;
+        state.statistics.selectedRows = 0;
     }
 
     renumberTableColumns();
@@ -1077,17 +1082,17 @@ function onClearColumn(e)
     closePopup();
     clearMenuButtons();
 
-    const column = targetColumn.index,
+    const column = state.targetColumn.index,
           [start, end] = getFillRange();
 
     console.log(`Clearing column ${column}`);
 
     for (let row = start; row < end; row++) {
-        importData.rows[row].cellValues[column] = "";
-        importData.rows[row].cellFlags[column] = 0;
+        state.importData.rows[row].cellValues[column] = "";
+        state.importData.rows[row].cellFlags[column] = 0;
     }
 
-    const tableRows = container.querySelectorAll("div#output table tbody tr");
+    const tableRows = state.container.querySelectorAll("div#output table tbody tr");
 
     for (let row = start; row < end; row++) {
         const tableCell = tableRows[row].children[column + NUM_ROW_HEADERS];
@@ -1109,24 +1114,24 @@ function onInsertColumn(e)
     clearMenuButtons();
     resetSelection();
 
-    const column = targetColumn.index;
+    const column = state.targetColumn.index;
 
     console.log(`Inserting a new column after column ${column}`);
 
-    for (let row of importData.rows) {
+    for (let row of state.importData.rows) {
         row.cellValues.splice(column + 1, 0, "");
         row.cellFlags.splice(column + 1, 0, 0);
     }
 
-    importData.headers.splice(column + 1, 0, "");
+    state.importData.headers.splice(column + 1, 0, "");
 
     // Insert a header cell. The index number isn't important, as the columns are reindexed after.
-    const row = container.querySelector("div#output table thead tr");
+    const row = state.container.querySelector("div#output table thead tr");
 
     row.insertBefore(buildColumnHeader(0, ""), row.children[column + NUM_ROW_HEADERS + 1]);
 
     // Then empty table cells
-    for (let tableRow of container.querySelector("div#output table tbody").rows) {
+    for (let tableRow of state.container.querySelector("div#output table tbody").rows) {
         const tableCell = create("td");
 
         tableCell.innerText = "";
@@ -1157,7 +1162,7 @@ function onReloadGroups(e)
             return;
         }
 
-        importData.setGroups(newGroups);
+        state.importData.setGroups(newGroups);
 
         // Update the combo on-the-fly, if the popup still exists (it could have been closed
         // while fetch() was doing its job)
@@ -1179,11 +1184,11 @@ function onFillColumn(e)
     const targetID = e.target.id;
     e.preventDefault();
 
-    const column = targetColumn.index,
-          type = importData.headers[column];
+    const column = state.targetColumn.index,
+          type = state.importData.headers[column];
 
-    const selection = (cellSelection.column == targetColumn.index &&
-                       cellSelection.start !== -1 && cellSelection.end !== -1);
+    const selection = (state.selection.column == state.targetColumn.index &&
+                       state.selection.start !== -1 && state.selection.end !== -1);
 
     const dialog = getTemplate("fillDialogCommon");
 
@@ -1225,7 +1230,7 @@ function onFillColumn(e)
                 width = 400;
                 content = getTemplate("parseGroups");
 
-                const rawCol = importData.findColumn("rawgroup");
+                const rawCol = state.importData.findColumn("rawgroup");
 
                 if (rawCol === -1) {
                     window.alert(_tr("alerts.need_one_raw_group"));
@@ -1239,8 +1244,8 @@ function onFillColumn(e)
 
                 let tab = content.querySelector("div#parseGroupsTable table tbody")
 
-                for (let i = 0; i < importData.rows.length; i++) {
-                    let values = importData.rows[i].cellValues,
+                for (let i = 0; i < state.importData.rows.length; i++) {
+                    let values = state.importData.rows[i].cellValues,
                         unique = true;
 
                     for (let i = 0; i < tab.rows.length; i++)
@@ -1294,23 +1299,23 @@ function onFillColumn(e)
             content = getTemplate("generateUsernames");
 
             // Restore settings and setup events for saving them when changed
-            check("drop", SETTINGS.import.username.umlauts == 0);
-            check("replace", SETTINGS.import.username.umlauts == 1);
-            check("first_first_only", SETTINGS.import.username.first_first_only == true);
+            check("drop", state.SETTINGS.import.username.umlauts == 0);
+            check("replace", state.SETTINGS.import.username.umlauts == 1);
+            check("first_first_only", state.SETTINGS.import.username.first_first_only == true);
 
             content.querySelector("#drop").addEventListener("click", () => {
-                SETTINGS.import.username.umlauts = 0;
-                saveSettings(SETTINGS);
+                state.SETTINGS.import.username.umlauts = 0;
+                saveSettings(state.SETTINGS);
             });
 
             content.querySelector("#replace").addEventListener("click", () => {
-                SETTINGS.import.username.umlauts = 1;
-                saveSettings(SETTINGS);
+                state.SETTINGS.import.username.umlauts = 1;
+                saveSettings(state.SETTINGS);
             });
 
             content.querySelector("#first_first_only").addEventListener("click", (e) => {
-                SETTINGS.import.username.first_first_only = e.target.checked;
-                saveSettings(SETTINGS);
+                state.SETTINGS.import.username.first_first_only = e.target.checked;
+                saveSettings(state.SETTINGS);
             });
 
             break;
@@ -1323,14 +1328,14 @@ function onFillColumn(e)
             content = getTemplate("generatePasswords");
 
             // Restore settings and setup events for saving them when changed
-            check("fixed", !SETTINGS.import.password.randomize);
-            check("random", SETTINGS.import.password.randomize);
-            check("uppercase", SETTINGS.import.password.uppercase);
-            check("lowercase", SETTINGS.import.password.lowercase);
-            check("numbers", SETTINGS.import.password.numbers);
-            check("punctuation", SETTINGS.import.password.punctuation);
+            check("fixed", !state.SETTINGS.import.password.randomize);
+            check("random", state.SETTINGS.import.password.randomize);
+            check("uppercase", state.SETTINGS.import.password.uppercase);
+            check("lowercase", state.SETTINGS.import.password.lowercase);
+            check("numbers", state.SETTINGS.import.password.numbers);
+            check("punctuation", state.SETTINGS.import.password.punctuation);
 
-            const len = clampPasswordLength(parseInt(SETTINGS.import.password.length, 10));
+            const len = clampPasswordLength(parseInt(state.SETTINGS.import.password.length, 10));
             let e = content.querySelector(`input#length`);
 
             e.min = MIN_PASSWORD_LENGTH;
@@ -1342,14 +1347,14 @@ function onFillColumn(e)
             for (let i of content.querySelectorAll("input")) {
                 i.addEventListener("click", e => {
                     if (e.target.id == "fixed")
-                        SETTINGS.import.password.randomize = false;
+                        state.SETTINGS.import.password.randomize = false;
                     else if (e.target.id == "random")
-                        SETTINGS.import.password.randomize = true;
+                        state.SETTINGS.import.password.randomize = true;
                     else if (e.target.id == "length")
-                        SETTINGS.import.password.length = clampPasswordLength(parseInt(e.target.value, 10));
-                    else SETTINGS.import.password[e.target.id] = e.target.checked;
+                        state.SETTINGS.import.password.length = clampPasswordLength(parseInt(e.target.value, 10));
+                    else state.SETTINGS.import.password[e.target.id] = e.target.checked;
 
-                    saveSettings(SETTINGS);
+                    saveSettings(state.SETTINGS);
                 });
             };
 
@@ -1357,8 +1362,8 @@ function onFillColumn(e)
                 // "content" (and thus querySelector()) does not exist in this context,
                 // have to use nextSibling
                 e.target.nextSibling.innerText = e.target.value
-                SETTINGS.import.password.length = clampPasswordLength(parseInt(e.target.value, 10));
-                saveSettings(SETTINGS);
+                state.SETTINGS.import.password.length = clampPasswordLength(parseInt(e.target.value, 10));
+                saveSettings(state.SETTINGS);
             });
 
             break;
@@ -1395,10 +1400,10 @@ function onFillColumn(e)
     // Restore settings and set event handling so that changed settings are saved
     let ow = popup.contents.querySelector(`input[type="checkbox"]#overwrite`);
 
-    ow.checked = SETTINGS.import.overwrite;
+    ow.checked = state.SETTINGS.import.overwrite;
     ow.addEventListener("click", e => {
         SETTINGS.import.overwrite = e.target.checked;
-        saveSettings(SETTINGS);
+        saveSettings(state.SETTINGS);
     });
 
     // If this popup has an input field, focus it
@@ -1418,7 +1423,7 @@ function onFillColumn(e)
 // Actually do the column filling/generation
 function onClickFillColumn(e)
 {
-    const type = importData.headers[targetColumn.index];
+    const type = state.importData.headers[state.targetColumn.index];
     const overwrite = popup.contents.querySelector("input#overwrite").checked;
     let value, value2;
 
@@ -1428,23 +1433,23 @@ function onClickFillColumn(e)
             // value reused for the umlaut conversion type selection
             value = popup.contents.querySelector("input#drop").checked;
             value2 = popup.contents.querySelector("input#first_first_only").checked;
-            console.log(`Generating usernames for column ${targetColumn.index}, mode=${value}, first_first_only=${value2} (overwrite=${overwrite})`);
+            console.log(`Generating usernames for column ${state.targetColumn.index}, mode=${value}, first_first_only=${value2} (overwrite=${overwrite})`);
             generateUsernames(!value, value2, overwrite);
             return;
 
         case "password":
-            console.log(`Generating/filling passwords for column ${targetColumn.index}, (overwrite=${overwrite})`);
+            console.log(`Generating/filling passwords for column ${state.targetColumn.index}, (overwrite=${overwrite})`);
             generatePasswords(overwrite);
-            process.passwordsAlteredSinceImport = true;
+            state.process.passwordsAlteredSinceImport = true;
             return;
 
         case "role":
             value = popup.contents.querySelector("select#role").value,
-            console.log(`Filling roles in column ${targetColumn.index}, role=${value}`);
+            console.log(`Filling roles in column ${state.targetColumn.index}, role=${value}`);
             break;
 
         case "group":
-            if (importData.currentGroups.length === 0) {
+            if (state.importData.currentGroups.length === 0) {
                 window.alert(_tr("alerts.no_groups"));
                 return;
             }
@@ -1456,7 +1461,7 @@ function onClickFillColumn(e)
                 for (let i = 0; i < groupTable.rows.length; i++)
                     groupMappings[groupTable.rows[i].cells[0].innerText] = groupTable.rows[i].cells[1].children[0].value;
 
-                console.log(`Filling group in column ${targetColumn.index} by parsing rawgroup column, mappings:`);
+                console.log(`Filling group in column ${state.targetColumn.index} by parsing rawgroup column, mappings:`);
 
                 for (const [k, v] of Object.entries(groupMappings))
                     console.log(`"${k}" -> "${v}"`);
@@ -1465,31 +1470,31 @@ function onClickFillColumn(e)
                 return;
             } else {
                 value = popup.contents.querySelector("select#abbr").value;
-                console.log(`Filling group in column ${targetColumn.index}, group abbreviation=${value} (overwrite=${overwrite})`);
+                console.log(`Filling group in column ${state.targetColumn.index}, group abbreviation=${value} (overwrite=${overwrite})`);
             }
 
             break;
 
         default:
             value = popup.contents.querySelector("input#value").value;
-            console.log(`Filling column ${targetColumn.index} with "${value}" (overwrite=${overwrite})`);
+            console.log(`Filling column ${state.targetColumn.index} with "${value}" (overwrite=${overwrite})`);
             break;
     }
 
     // Update the table in-place
-    let tableRows = container.querySelectorAll("div#output table tbody tr");
+    let tableRows = state.container.querySelectorAll("div#output table tbody tr");
 
     const [start, end] = getFillRange();
 
     for (let i = start; i < end; i++) {
-        let values = importData.rows[i].cellValues;
+        let values = state.importData.rows[i].cellValues;
 
-        if (values[targetColumn.index] != "" && !overwrite)
+        if (values[state.targetColumn.index] != "" && !overwrite)
             continue;
 
-        let tableCell = tableRows[i].children[targetColumn.index + NUM_ROW_HEADERS];
+        let tableCell = tableRows[i].children[state.targetColumn.index + NUM_ROW_HEADERS];
 
-        values[targetColumn.index] = value;
+        values[state.targetColumn.index] = value;
         tableCell.innerText = value;
 
         if (value == "")
@@ -1538,17 +1543,17 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
         numLast = 0,
         lastCol = 0;
 
-    const headers = container.querySelectorAll("div#output table thead th");
+    const headers = state.container.querySelectorAll("div#output table thead th");
 
-    for (let i = 0; i < importData.headers.length; i++) {
+    for (let i = 0; i < state.importData.headers.length; i++) {
         // The possibility of having multiple first name/last name columns is small, but
         // it can happen to an absent-minded user. Let's handle that case too.
-        if (importData.headers[i] === "first") {
+        if (state.importData.headers[i] === "first") {
             numFirst++;
             firstCol = i;
         }
 
-        if (importData.headers[i] === "last") {
+        if (state.importData.headers[i] === "last") {
             numLast++;
             lastCol = i;
         }
@@ -1573,10 +1578,10 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
     let unconvertable = [];
 
     // Change data and update the table, in one loop
-    let tableRows = container.querySelectorAll("div#output table tbody tr");
+    let tableRows = state.container.querySelectorAll("div#output table tbody tr");
 
     for (let rowNum = start; rowNum < end; rowNum++) {
-        let values = importData.rows[rowNum].cellValues;
+        let values = state.importData.rows[rowNum].cellValues;
 
         // Missing values?
         if (values[firstCol].trim().length == 0) {
@@ -1611,12 +1616,12 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
             continue;
         }
 
-        if (values[targetColumn.index] != "" && !overwrite)
+        if (values[state.targetColumn.index] != "" && !overwrite)
             continue;
 
-        let tableCell = tableRows[rowNum].children[targetColumn.index + NUM_ROW_HEADERS];
+        let tableCell = tableRows[rowNum].children[state.targetColumn.index + NUM_ROW_HEADERS];
 
-        values[targetColumn.index] = username;
+        values[state.targetColumn.index] = username;
         tableCell.innerText = username;
         tableCell.classList.remove("empty");
     }
@@ -1654,8 +1659,8 @@ function parseGroups(magicTable, overwrite)
     let numRawgroup = 0,
         rawCol = 0;
 
-    for (let i = 0; i < importData.headers.length; i++) {
-        if (importData.headers[i] === "rawgroup") {
+    for (let i = 0; i < state.importData.headers.length; i++) {
+        if (state.importData.headers[i] === "rawgroup") {
             numRawgroup++;
             rawCol = i;
         }
@@ -1670,12 +1675,12 @@ function parseGroups(magicTable, overwrite)
     let missing = false;
 
     // Change data and update the table, in one loop
-    let tableRows = container.querySelectorAll("div#output table tbody tr");
+    let tableRows = state.container.querySelectorAll("div#output table tbody tr");
 
     for (let rowNum = start; rowNum < end; rowNum++) {
-        let values = importData.rows[rowNum].cellValues;
+        let values = state.importData.rows[rowNum].cellValues;
 
-        if (values[targetColumn.index] != "" && !overwrite)
+        if (values[state.targetColumn.index] != "" && !overwrite)
             continue;
 
         // Parse the group names
@@ -1685,9 +1690,9 @@ function parseGroups(magicTable, overwrite)
             processedGroup = magicTable[processedGroup];
         else missing = true;
 
-        let tableCell = tableRows[rowNum].children[targetColumn.index + NUM_ROW_HEADERS];
+        let tableCell = tableRows[rowNum].children[state.targetColumn.index + NUM_ROW_HEADERS];
 
-        values[targetColumn.index] = processedGroup;
+        values[state.targetColumn.index] = processedGroup;
         tableCell.innerText = processedGroup;
         tableCell.classList.remove("empty");
     }
@@ -1706,7 +1711,7 @@ function parseGroups(magicTable, overwrite)
 // Generates random passwords
 function generatePasswords(overwrite)
 {
-    const tableRows = container.querySelectorAll("div#output table tbody tr");
+    const tableRows = state.container.querySelectorAll("div#output table tbody tr");
     const [start, end] = getFillRange();
 
     // ----------------------------------------------------------------------------------------------
@@ -1724,14 +1729,14 @@ function generatePasswords(overwrite)
         }
 
         for (let rowNum = start; rowNum < end; rowNum++) {
-            const values = importData.rows[rowNum].cellValues;
+            const values = state.importData.rows[rowNum].cellValues;
 
-            if (values[targetColumn.index] != "" && !overwrite)
+            if (values[state.targetColumn.index] != "" && !overwrite)
                 continue;
 
-            const tableCell = tableRows[rowNum].children[targetColumn.index + NUM_ROW_HEADERS];
+            const tableCell = tableRows[rowNum].children[state.targetColumn.index + NUM_ROW_HEADERS];
 
-            values[targetColumn.index] = password;
+            values[state.targetColumn.index] = password;
             tableCell.innerText = password;
             tableCell.classList.remove("empty");
         }
@@ -1786,12 +1791,12 @@ function generatePasswords(overwrite)
     }
 
     for (let rowNum = start; rowNum < end; rowNum++) {
-        const values = importData.rows[rowNum].cellValues;
+        const values = state.importData.rows[rowNum].cellValues;
 
-        if (values[targetColumn.index] != "" && !overwrite)
+        if (values[state.targetColumn.index] != "" && !overwrite)
             continue;
 
-        const tableCell = tableRows[rowNum].children[targetColumn.index + NUM_ROW_HEADERS];
+        const tableCell = tableRows[rowNum].children[state.targetColumn.index + NUM_ROW_HEADERS];
 
         // Generate a random password
         const max = available.length;
@@ -1805,7 +1810,7 @@ function generatePasswords(overwrite)
 
         password = shuffleString(password);
 
-        values[targetColumn.index] = password;
+        values[state.targetColumn.index] = password;
         tableCell.innerText = password;
         tableCell.classList.remove("empty");
     }
@@ -1817,14 +1822,14 @@ function generatePasswords(overwrite)
 // Open the column popup menu
 function onOpenColumnMenu(e)
 {
-    targetColumn.column = e.target.parentNode.parentNode;
-    targetColumn.index = parseInt(targetColumn.column.dataset.column, 10);
+    state.targetColumn.column = e.target.parentNode.parentNode;
+    state.targetColumn.index = parseInt(state.targetColumn.column.dataset.column, 10);
 
     e.target.classList.add("activeMenu");
     e.target.disabled = true;       // pressing Enter/Space would open another popup menu
 
-    const selection = (cellSelection.column == targetColumn.index &&
-                       cellSelection.start !== -1 && cellSelection.end !== -1);
+    const selection = (state.selection.column == state.targetColumn.index &&
+                       state.selection.start !== -1 && state.selection.end !== -1);
 
     let fillTitle = null;
 
@@ -1836,7 +1841,7 @@ function onOpenColumnMenu(e)
         enableFill = true,
         enableClear = false;
 
-    switch (importData.headers[targetColumn.index]) {
+    switch (state.importData.headers[state.targetColumn.index]) {
         case "":
             // Allow ignored columns to be cleared
             enableClear = true;
@@ -1928,7 +1933,7 @@ function onOpenColumnMenu(e)
 // Potentially start a multi-cell selection
 function onMouseDown(e)
 {
-    if (process.importActive)
+    if (state.process.importActive)
         return;
 
     if (e.target.tagName != "TD")
@@ -1944,17 +1949,17 @@ function onMouseDown(e)
 
     e.preventDefault();
 
-    cellSelection.mouseTrackPos = {
+    state.selection.mouseTrackPos = {
         x: e.clientX,
         y: e.clientY
     };
 
-    cellSelection.initialClick = e.target;
-    cellSelection.column = -1;
-    cellSelection.start = -1;
-    cellSelection.end = -1;
+    state.selection.initialClick = e.target;
+    state.selection.column = -1;
+    state.selection.start = -1;
+    state.selection.end = -1;
 
-    for (let cell of container.querySelectorAll("table tbody td.selectedCell"))
+    for (let cell of state.container.querySelectorAll("table tbody td.selectedCell"))
         cell.classList.remove("selectedCell");
 
     // Start tracking the mouse and see if this is a single-cell click, or a multi-cell drag
@@ -1965,15 +1970,15 @@ function onMouseDown(e)
 // Stop multi-cell selection
 function onMouseUp(e)
 {
-    if (process.importActive)
+    if (state.process.importActive)
         return;
 
     e.preventDefault();
 
-    cellSelection.active = false;
-    cellSelection.mouseTrackPos = null;
-    cellSelection.initialClick = null;
-    cellSelection.previousCell = null;
+    state.selection.active = false;
+    state.selection.mouseTrackPos = null;
+    state.selection.initialClick = null;
+    state.selection.previousCell = null;
 
     document.removeEventListener("mouseup", onMouseUp);
     document.removeEventListener("mousemove", onMouseMove);
@@ -1982,14 +1987,14 @@ function onMouseUp(e)
 // Initiate/update multi-cell selection
 function onMouseMove(e)
 {
-    if (process.importActive)
+    if (state.process.importActive)
         return;
 
     e.preventDefault();
 
-    if (cellSelection.active) {
+    if (state.selection.active) {
         // Update multi-cell drag selection
-        if (e.target == cellSelection.previousCell)
+        if (e.target == state.selection.previousCell)
             return;
 
         let current = document.elementFromPoint(e.clientX, e.clientY);
@@ -2000,22 +2005,22 @@ function onMouseMove(e)
             return;
         }
 
-        const newEnd = clamp(current.parentNode.rowIndex - 1, 0, importData.rows.length);
+        const newEnd = clamp(current.parentNode.rowIndex - 1, 0, state.importData.rows.length);
 
-        if (newEnd != cellSelection.end) {
-            cellSelection.end = newEnd;
+        if (newEnd != state.selection.end) {
+            state.selection.end = newEnd;
             highlightSelection();
         }
 
-        cellSelection.previousCell = e.target;
+        state.selection.previousCell = e.target;
         return;
     }
 
     // See if we should start a multi-cell selection. We need some tolerance here, because
     // the mouse can move a pixel or two during double-clicks, and we don't want those tiny
     // movements to trigger a selection.
-    const dx = e.clientX - cellSelection.mouseTrackPos.x,
-          dy = e.clientY - cellSelection.mouseTrackPos.y;
+    const dx = e.clientX - state.selection.mouseTrackPos.x,
+          dy = e.clientY - state.selection.mouseTrackPos.y;
 
     const dist = Math.sqrt(dx * dx + dy * dy);
 
@@ -2023,21 +2028,21 @@ function onMouseMove(e)
         return;
 
     // Yes, start multi-cell selection
-    for (let cell of container.querySelectorAll("table tbody td.selectedCell"))
+    for (let cell of state.container.querySelectorAll("table tbody td.selectedCell"))
         cell.classList.remove("selectedCell");
 
-    cellSelection.initialClick.classList.add("selectedCell");
+    state.selection.initialClick.classList.add("selectedCell");
 
-    cellSelection.active = true;
-    cellSelection.column = cellSelection.initialClick.cellIndex - NUM_ROW_HEADERS;
-    cellSelection.start = cellSelection.initialClick.parentNode.rowIndex - 1;
+    state.selection.active = true;
+    state.selection.column = state.selection.initialClick.cellIndex - NUM_ROW_HEADERS;
+    state.selection.start = state.selection.initialClick.parentNode.rowIndex - 1;
 
-    console.log(`Multi-cell selection initiated, col=${cellSelection.column}, row=${cellSelection.start}`);
+    console.log(`Multi-cell selection initiated, col=${state.selection.column}, row=${state.selection.start}`);
 
     // The mouse can be move across multiple cells during the dragging period
-    if (e.target == cellSelection.initialClick)
-        cellSelection.end = e.target.parentNode.rowIndex - 1;
-    else cellSelection.end = document.elementFromPoint(e.clientX, e.clientY).parentNode.rowIndex - 1;
+    if (e.target == state.selection.initialClick)
+        state.selection.end = e.target.parentNode.rowIndex - 1;
+    else state.selection.end = document.elementFromPoint(e.clientX, e.clientY).parentNode.rowIndex - 1;
 
     highlightSelection();
 }
@@ -2045,7 +2050,7 @@ function onMouseMove(e)
 // Directly edit a cell's value
 function onMouseDoubleClick(e)
 {
-    if (process.importActive)
+    if (state.process.importActive)
         return;
 
     if (e.target.tagName != "TD")
@@ -2061,17 +2066,17 @@ function onMouseDoubleClick(e)
 
     e.preventDefault();
 
-    directCellEdit.pos = {
+    state.directCellEdit.pos = {
         row: e.target.parentNode.rowIndex - 1,
         col: e.target.cellIndex - NUM_ROW_HEADERS
     };
 
-    directCellEdit.target = e.target;
+    state.directCellEdit.target = e.target;
 
-    const type = importData.headers[directCellEdit.pos.col];
+    const type = state.importData.headers[state.directCellEdit.pos.col];
     let value = e.target.innerText;
 
-    console.log(`Editing cell (${directCellEdit.pos.row}, ${directCellEdit.pos.col}) directly, type=${type}`);
+    console.log(`Editing cell (${state.directCellEdit.pos.row}, ${state.directCellEdit.pos.col}) directly, type=${type}`);
 
     const tmpl = getTemplate("directCellEdit");
     const contents = tmpl.querySelector("div#contents");
@@ -2132,10 +2137,10 @@ function onMouseDoubleClick(e)
 // Save the new value of a cell that's being edited directly
 function onSaveCellValue(e)
 {
-    if (!popup || !directCellEdit.target)
+    if (!popup || !state.directCellEdit.target)
         return;
 
-    const type = importData.headers[directCellEdit.pos.col];
+    const type = state.importData.headers[state.directCellEdit.pos.col];
     let newValue = "";
 
     // Some column types have their own special editors, figure out what the new value is
@@ -2164,20 +2169,20 @@ function onSaveCellValue(e)
     }
 
     // Save the value and update the table
-    importData.rows[directCellEdit.pos.row].cellValues[directCellEdit.pos.col] = newValue;
-    directCellEdit.target.innerText = newValue;
+    state.importData.rows[state.directCellEdit.pos.row].cellValues[state.directCellEdit.pos.col] = newValue;
+    state.directCellEdit.target.innerText = newValue;
 
     if (type == "password") {
         // Prevent password PDF generation unless the table is imported first
-        process.passwordsAlteredSinceImport = true;
+        state.process.passwordsAlteredSinceImport = true;
     }
 
     if (newValue == "")
-        directCellEdit.target.classList.add("empty");
-    else directCellEdit.target.classList.remove("empty");
+        state.directCellEdit.target.classList.add("empty");
+    else state.directCellEdit.target.classList.remove("empty");
 
-    directCellEdit.pos = null;
-    directCellEdit.target = null;
+    state.directCellEdit.pos = null;
+    state.directCellEdit.target = null;
 
     closePopup();
     detectProblems();
@@ -2193,7 +2198,7 @@ function onKeyDown(e)
     if (e.keyCode == 27)
         closePopup();
 
-    if (e.keyCode == 13 && directCellEdit.target)
+    if (e.keyCode == 13 && state.directCellEdit.target)
         onSaveCellValue(null);
 }
 
@@ -2204,7 +2209,7 @@ function buildColumnHeader(index, type, isPreview=false)
 
     if (isPreview) {
         if (type != "")
-            tmpl.querySelector("div.colType").innerText = localizedColumnTitles[type];
+            tmpl.querySelector("div.colType").innerText = state.localizedColumnTitles[type];
     } else {
         if (type != "")
             tmpl.querySelector("select#type").value = type;
@@ -2222,8 +2227,8 @@ function buildColumnHeader(index, type, isPreview=false)
 function buildImportTable(output, headers, rows, isPreview, selectedOnly = false)
 {
     // Handle special cases
-    if (parser.error) {
-        output.innerHTML = `<p class="error">ERROR: ${parser.error}</p>`;
+    if (state.parser.error) {
+        output.innerHTML = `<p class="error">ERROR: ${state.parser.error}</p>`;
         return;
     }
 
@@ -2281,11 +2286,11 @@ function buildImportTable(output, headers, rows, isPreview, selectedOnly = false
             tr.dataset.row = rowNum;
 
         let checkbox = tableRow.querySelector(`input[type="checkbox"]`),
-            state = tr.querySelector("th.state");
+            stateTH = tr.querySelector("th.state");
 
         if (isPreview) {
             checkbox.remove();
-            state.remove();
+            stateTH.remove();
         } else {
             checkbox.checked = row.rowFlags & RowFlag.SELECTED;
 
@@ -2305,7 +2310,7 @@ function buildImportTable(output, headers, rows, isPreview, selectedOnly = false
                 default: break;
             }
 
-            state.classList.add(stateCls);
+            stateTH.classList.add(stateCls);
         }
 
         for (let colNum = 0; colNum < numColumns; colNum++) {
@@ -2318,7 +2323,7 @@ function buildImportTable(output, headers, rows, isPreview, selectedOnly = false
             if (!knownColumns.has(colNum))
                 td.classList.add("skipped");
 
-            if (importData.headers[colNum] == "password")
+            if (state.importData.headers[colNum] == "password")
                 td.classList.add("password");
 
             if (colNum == 0)
@@ -2368,88 +2373,88 @@ function buildImportTable(output, headers, rows, isPreview, selectedOnly = false
 // Worker threads are also always async, so doing network stuff in them is easy, but it's not
 // (always) easy to do them in the non-async main thread.
 
-export function enableUI(state)
+export function enableUI(newState)
 {
-    for (let i of container.querySelectorAll(`div#controls button`))
+    for (let i of state.container.querySelectorAll(`div#controls button`))
         if (i.id != "stopImport")
-            i.disabled = !state;
+            i.disabled = !newState;
 
-    for (let i of container.querySelectorAll("input, select, textarea"))
-        i.disabled = !state;
+    for (let i of state.container.querySelectorAll("input, select, textarea"))
+        i.disabled = !newState;
 
-    for (let i of container.querySelectorAll("section#page1 button"))
-        i.disabled = !state;
+    for (let i of state.container.querySelectorAll("section#page1 button"))
+        i.disabled = !newState;
 
     // Disable the table
-    for (let i of container.querySelectorAll("div#output table select, div#output table button"))
-        i.disabled = !state;
+    for (let i of state.container.querySelectorAll("div#output table select, div#output table button"))
+        i.disabled = !newState;
 
     if (popup && popup.contents) {
         // Popup menus can have buttons and input elements
         for (let i of popup.contents.querySelectorAll("button, input"))
-            i.disabled = !state;
+            i.disabled = !newState;
     }
 }
 
 function progressBegin(isResume)
 {
     if (!isResume) {
-        statistics.totalRowsProcessed = 0;
-        statistics.success = 0;
-        statistics.partialSuccess = 0;
-        statistics.failed = 0;
+        state.statistics.totalRowsProcessed = 0;
+        state.statistics.success = 0;
+        state.statistics.partialSuccess = 0;
+        state.statistics.failed = 0;
 
-        process.lastRowProcessed = 0;
+        state.process.lastRowProcessed = 0;
 
-        const elem = container.querySelector("div#status progress");
+        const elem = state.container.querySelector("div#status progress");
 
-        elem.setAttribute("max", process.workerRows.length);
+        elem.setAttribute("max", state.process.workerRows.length);
         elem.setAttribute("value", 0);
     }
 
     updateStatistics();
 
-    container.querySelector("div#status div#message").classList.remove("hidden");
-    container.querySelector("div#status progress").classList.remove("hidden");
-    container.querySelector("button#beginImport").disabled = true;
-    container.querySelector("button#stopImport").disabled = false;
+    state.container.querySelector("div#status div#message").classList.remove("hidden");
+    state.container.querySelector("div#status progress").classList.remove("hidden");
+    state.container.querySelector("button#beginImport").disabled = true;
+    state.container.querySelector("button#stopImport").disabled = false;
 }
 
 function progressUpdate()
 {
-    container.querySelector("div#status progress").setAttribute("value",
-                            statistics.totalRowsProcessed);
+    state.container.querySelector("div#status progress").setAttribute("value",
+                                  state.statistics.totalRowsProcessed);
     updateStatistics();
 }
 
 function progressEnd(success)
 {
-    if (process.stopRequested)
-        container.querySelector("div#status div#message").innerText = _tr("status.stopped");
-    else container.querySelector("div#status div#message").innerText = _tr("status.complete");
+    if (state.process.stopRequested)
+        state.container.querySelector("div#status div#message").innerText = _tr("status.stopped");
+    else state.container.querySelector("div#status div#message").innerText = _tr("status.complete");
 
-    process.importActive = false;
+    state.process.importActive = false;
 
     updateStatistics();
 
-    container.querySelector("button#beginImport").disabled = false;
-    container.querySelector("button#stopImport").disabled = true;
+    state.container.querySelector("button#beginImport").disabled = false;
+    state.container.querySelector("button#stopImport").disabled = true;
 }
 
 function markRowsAsBeingProcessed(from, to)
 {
-    const tableRows = container.querySelectorAll("div#output table tbody tr");
+    const tableRows = state.container.querySelectorAll("div#output table tbody tr");
 
     for (let row = from; row < to; row++) {
-        if (row > process.workerRows.length - 1)
+        if (row > state.process.workerRows.length - 1)
             break;
 
         // Each workerRow knows the actual table row number. They aren't
         // necessarily sequential, since the user can choose which rows
         // are processed.
-        const rowNum = process.workerRows[row][0];
+        const rowNum = state.process.workerRows[row][0];
 
-        importData.rows[rowNum].rowState = RowState.PROCESSING;
+        state.importData.rows[rowNum].rowState = RowState.PROCESSING;
 
         const cell = tableRows[rowNum].querySelector("th.state");
 
@@ -2464,7 +2469,7 @@ IMPORT_WORKER.onmessage = e => {
             console.log(`[main] Worker sent "${e.data.message}", total=${e.data.total}`);
 
             // UI update, based on the row states the server sent back
-            const tableRows = container.querySelectorAll("div#output table tbody tr");
+            const tableRows = state.container.querySelectorAll("div#output table tbody tr");
 
             for (const r of e.data.states) {
                 let cls = "";
@@ -2473,25 +2478,25 @@ IMPORT_WORKER.onmessage = e => {
                     case "failed":
                     default:
                         cls = "failed";
-                        statistics.failed++;
-                        process.failedRows.push(r.row);
-                        importData.rows[r.row].rowState = RowState.FAILED;
+                        state.statistics.failed++;
+                        state.process.failedRows.push(r.row);
+                        state.importData.rows[r.row].rowState = RowState.FAILED;
                         break;
 
                     case "partial_ok":
                         cls = "partialSuccess";
-                        statistics.partialSuccess++;
-                        importData.rows[r.row].rowState = RowState.PARTIAL_SUCCESS;
+                        state.statistics.partialSuccess++;
+                        state.importData.rows[r.row].rowState = RowState.PARTIAL_SUCCESS;
                         break;
 
                     case "ok":
                         cls = "success";
-                        statistics.success++;
-                        importData.rows[r.row].rowState = RowState.SUCCESS;
+                        state.statistics.success++;
+                        state.importData.rows[r.row].rowState = RowState.SUCCESS;
                         break;
                 }
 
-                process.lastRowProcessed = Math.max(process.lastRowProcessed, r.row);
+                state.process.lastRowProcessed = Math.max(state.process.lastRowProcessed, r.row);
 
                 const cell = tableRows[r.row].querySelector("th.state");
                 const message = tableRows[r.row].querySelector("td.message");
@@ -2508,55 +2513,55 @@ IMPORT_WORKER.onmessage = e => {
                         console.log(`Marking column "${col}" (${n}) on row ${r.row} as failed: ${msg}`);
                         tableRows[r.row].cells[n + NUM_ROW_HEADERS].classList.add("error");
                         tableRows[r.row].cells[n + NUM_ROW_HEADERS].title = msg;
-                        importData.rows[r.row].cellFlags[n] |= CellFlag.INVALID;
+                        state.importData.rows[r.row].cellFlags[n] |= CellFlag.INVALID;
                     }
                 }
 
-                statistics.totalRowsProcessed++;
+                state.statistics.totalRowsProcessed++;
             }
 
-            console.log(`[main] lastRowProcessed: ${process.lastRowProcessed} (length=${importData.rows.length})`);
+            console.log(`[main] lastRowProcessed: ${state.process.lastRowProcessed} (length=${state.importData.rows.length})`);
 
-            if (process.stopRequested && process.lastRowProcessed < importData.rows.length - 1) {
+            if (state.process.stopRequested && state.process.lastRowProcessed < state.importData.rows.length - 1) {
                 // Stop
                 progressUpdate();
                 progressEnd();
                 enableUI(true);
-                process.stopRequested = false;
-                process.previousImportStopped = true;
+                state.process.stopRequested = false;
+                state.process.previousImportStopped = true;
                 break;
             }
 
             // Proceed to the next batch
             progressUpdate();
-            markRowsAsBeingProcessed(statistics.totalRowsProcessed, statistics.totalRowsProcessed + BATCH_SIZE);
+            markRowsAsBeingProcessed(state.statistics.totalRowsProcessed, state.statistics.totalRowsProcessed + BATCH_SIZE);
             IMPORT_WORKER.postMessage({ message: "continue" });
             break;
         }
 
         case "server_error": {
             // Mark the failed rows
-            const tableRows = container.querySelectorAll("div#output table tbody tr");
-            const failed = container.querySelectorAll("div#output table tbody th.state.processing");
+            const tableRows = state.container.querySelectorAll("div#output table tbody tr");
+            const failed = state.container.querySelectorAll("div#output table tbody th.state.processing");
 
             for (const cell of failed) {
                 const rowNum = parseInt(cell.closest("tr").dataset.row, 10);
 
-                process.failedRows.push(rowNum);
+                state.process.failedRows.push(rowNum);
 
                 cell.classList.remove("processing");
                 cell.classList.add("failed");
 
                 tableRows[rowNum].querySelector("td.message").innerText = e.data.error;
-                importData.rows[rowNum].rowState = RowState.FAILED;
+                state.importData.rows[rowNum].rowState = RowState.FAILED;
 
-                statistics.failed++;
+                state.statistics.failed++;
             }
 
             progressEnd();
             enableUI(true);
 
-            container.querySelector("div#status div#message").innerText = _tr("status.aborted");
+            state.container.querySelector("div#status div#message").innerText = _tr("status.aborted");
 
             window.alert("Server failure. Try again in a minute.");
             break;
@@ -2567,7 +2572,7 @@ IMPORT_WORKER.onmessage = e => {
             console.log(`[main] Worker sent "${e.data.message}"`);
             progressEnd();
             enableUI(true);
-            process.previousImportStopped = false;
+            state.process.previousImportStopped = false;
             break;
 
         default:
@@ -2580,34 +2585,34 @@ IMPORT_WORKER.onmessage = e => {
 function beginImport(mode)
 {
     // See if we have data to import
-    if (importData.rows.length == 0 || importData.headers.length == 0) {
+    if (state.importData.rows.length == 0 || state.importData.headers.length == 0) {
         window.alert(_tr("alerts.no_data_to_import"));
         return;
     }
 
-    if (importData.errors.length > 0) {
+    if (state.importData.errors.length > 0) {
         window.alert(_tr("alerts.fix_errors_first"));
         return;
     }
 
-    if (mode == ImportRows.FAILED && process.failedRows.length == 0) {
+    if (mode == ImportRows.FAILED && state.process.failedRows.length == 0) {
         window.alert(_tr("alerts.no_failed_rows"));
         return;
     }
 
     const checkboxes = (mode == ImportRows.SELECTED) ?
-        container.querySelectorAll(`div#output table tbody tr input[type="checkbox"]:checked`) : [];
+        state.container.querySelectorAll(`div#output table tbody tr input[type="checkbox"]:checked`) : [];
 
     if (mode == ImportRows.SELECTED && checkboxes.length == 0) {
         window.alert(_tr("alerts.no_selected_rows"));
         return;
     }
 
-    const uidCol = importData.findColumn("uid");
+    const uidCol = state.importData.findColumn("uid");
 
     // Verify it anyway, even if detectProblems() should handle it
     if (uidCol === -1) {
-        window.alert(_tr("errors.required_column_missing", { title: localizedColumnTitles["uid"] }));
+        window.alert(_tr("errors.required_column_missing", { title: state.localizedColumnTitles["uid"] }));
         return;
     }
 
@@ -2615,9 +2620,9 @@ function beginImport(mode)
     let startRow = 0,
         resume = false;
 
-    if (process.previousImportStopped) {
+    if (state.process.previousImportStopped) {
         if (window.confirm(_tr("alerts.resume_previous"))) {
-            startRow = process.lastRowProcessed + 1;
+            startRow = state.process.lastRowProcessed + 1;
             resume = true;
         }
     }
@@ -2627,16 +2632,16 @@ function beginImport(mode)
 
     // Clear previous states (unless we're resuming)
     if (!resume) {
-        for (const row of importData.rows)
+        for (const row of state.importData.rows)
             row.rowState = RowState.IDLE;
 
-        for (const row of container.querySelectorAll("div#output table tbody tr th.state")) {
+        for (const row of state.container.querySelectorAll("div#output table tbody tr th.state")) {
             row.classList.add("idle");
             row.classList.remove("processing", "failed", "partialSuccess", "success");
             row.innerText = "";
         }
 
-        for (const cell of container.querySelectorAll("div#output table tbody td.error")) {
+        for (const cell of state.container.querySelectorAll("div#output table tbody td.error")) {
             cell.classList.remove("error");
             cell.title = "";
         }
@@ -2644,8 +2649,8 @@ function beginImport(mode)
 
     resetSelection();
 
-    let status = container.querySelector("div#status"),
-        message = container.querySelector("div#status div#message");
+    let status = state.container.querySelector("div#status"),
+        message = state.container.querySelector("div#status div#message");
 
     message.classList.remove("hidden");
     message.innerText = _tr("status.fetching_current_users");
@@ -2665,8 +2670,8 @@ function beginImport(mode)
     switch (mode) {
         case ImportRows.ALL:
         default:
-            for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
-                const row = importData.rows[rowNum];
+            for (let rowNum = 0; rowNum < state.importData.rows.length; rowNum++) {
+                const row = state.importData.rows[rowNum];
 
                 if (row.cellFlags[uidCol] & CellFlag.INVALID)
                     continue;
@@ -2677,8 +2682,8 @@ function beginImport(mode)
             break;
 
         case ImportRows.SELECTED:
-            for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
-                const row = importData.rows[rowNum];
+            for (let rowNum = 0; rowNum < state.importData.rows.length; rowNum++) {
+                const row = state.importData.rows[rowNum];
 
                 if (row.cellFlags[uidCol] & CellFlag.INVALID)
                     continue;
@@ -2690,10 +2695,10 @@ function beginImport(mode)
             break;
 
         case ImportRows.FAILED:
-            for (let rowNum = 0; rowNum < process.failedRows.length; rowNum++) {
-                const fr = process.failedRows[rowNum];      // row numbers
+            for (let rowNum = 0; rowNum < state.process.failedRows.length; rowNum++) {
+                const fr = state.process.failedRows[rowNum];      // row numbers
 
-                usernames.push([importData.rows[fr].cellValues[uidCol], null, fr]);
+                usernames.push([state.importData.rows[fr].cellValues[uidCol], null, fr]);
             }
 
             break;
@@ -2732,7 +2737,7 @@ function beginImport(mode)
         let numNew = 0,
             numUpdate = 0;
 
-        process.workerRows = [];
+        state.process.workerRows = [];
 
         for (let i = 0; i < existingUsers.usernames.length; i++) {
             const pid = existingUsers.usernames[i][1];
@@ -2740,24 +2745,24 @@ function beginImport(mode)
 
             if (pid == -1) {
                 // New user
-                if (SETTINGS.import.mode == 2)
+                if (state.SETTINGS.import.mode == 2)
                     continue;
 
                 numNew++;
             } else {
                 // Existing
-                if (SETTINGS.import.mode == 1)
+                if (state.SETTINGS.import.mode == 1)
                     continue;
 
                 numUpdate++;
             }
 
-            process.workerRows.push([rowNum, pid].concat(importData.rows[rowNum].cellValues));
+            state.process.workerRows.push([rowNum, pid].concat(state.importData.rows[rowNum].cellValues));
         }
 
         console.log(`${numNew} new users, ${numUpdate} updated users`);
 
-        if (process.workerRows.length == 0) {
+        if (state.process.workerRows.length == 0) {
             enableUI(true);
             window.alert(_tr("alerts.no_data_to_import"));
 
@@ -2766,14 +2771,14 @@ function beginImport(mode)
 
         // This must not be cleared earlier, otherwise mode switch could incorrectly clear
         // the state
-        process.failedRows = [];
+        state.process.failedRows = [];
 
         // Then, finally, begin the update process
-        process.alreadyClickedImportOnce = true;
-        process.importActive = true;
+        state.process.alreadyClickedImportOnce = true;
+        state.process.importActive = true;
 
         // *Technically* this should be set after the import is complete, not before...
-        process.passwordsAlteredSinceImport = false;
+        state.process.passwordsAlteredSinceImport = false;
 
         progressBegin(resume);
         markRowsAsBeingProcessed(startRow, startRow + BATCH_SIZE);
@@ -2784,12 +2789,12 @@ function beginImport(mode)
 
         IMPORT_WORKER.postMessage({
             message: "start",
-            school: importData.currentSchoolID,
+            school: state.importData.currentSchoolID,
             csrf: document.querySelector("meta[name='csrf-token']").content,
             startIndex: startRow,
             batchSize: BATCH_SIZE,
-            headers: importData.headers,
-            rows: process.workerRows,
+            headers: state.importData.headers,
+            rows: state.process.workerRows,
         });
     }).catch(error => {
         console.error(error);
@@ -2800,11 +2805,11 @@ function beginImport(mode)
 
 function stopImport()
 {
-    if (process.stopRequested)
-        container.querySelector("div#status div#message").innerText = _tr("status.stopping_impatient");
+    if (state.process.stopRequested)
+        state.container.querySelector("div#status div#message").innerText = _tr("status.stopping_impatient");
     else {
-        container.querySelector("div#status div#message").innerText = _tr("status.stopping");
-        process.stopRequested = true;
+        state.container.querySelector("div#status div#message").innerText = _tr("status.stopping");
+        state.process.stopRequested = true;
     }
 }
 
@@ -2851,21 +2856,21 @@ function onDownloadTemplate()
 
 function onCreateUsernameList(onlySelected, description)
 {
-    const uidCol = importData.findColumn("uid");
+    const uidCol = state.importData.findColumn("uid");
 
     if (uidCol === -1) {
-        window.alert(_tr("errors.required_column_missing", { title: localizedColumnTitles["uid"] }));
+        window.alert(_tr("errors.required_column_missing", { title: state.localizedColumnTitles["uid"] }));
         return;
     }
 
     let usernames = [];
 
     if (onlySelected) {
-        for (const row of importData.rows)
+        for (const row of state.importData.rows)
             if (row.rowFlags & RowFlag.SELECTED)
                 usernames.push(row.cellValues[uidCol]);
     } else {
-        for (const row of importData.rows)
+        for (const row of state.importData.rows)
             usernames.push(row.cellValues[uidCol]);
     }
 
@@ -2875,8 +2880,8 @@ function onCreateUsernameList(onlySelected, description)
     }
 
     const postData = {
-        creator: importData.currentUserName,
-        school: importData.currentSchoolID,
+        creator: state.importData.currentUserName,
+        school: state.importData.currentSchoolID,
         description: description,
         usernames: usernames,
     };
@@ -2913,7 +2918,7 @@ function onCreateUsernameList(onlySelected, description)
 
 function onLoadUsernameList()
 {
-    const uuid = container.querySelector("div#unl select").value,
+    const uuid = state.container.querySelector("div#unl select").value,
           url = `new_import/load_username_list?uuid=${encodeURIComponent(uuid)}`
 
     enableUI(false);
@@ -2946,11 +2951,11 @@ function onLoadUsernameList()
         let usernames = "";
 
         // Specify the column type if type inferring is enabled
-        if (SETTINGS.parser.infer)
+        if (state.SETTINGS.parser.infer)
             usernames += "uid\n";
 
         usernames += response.usernames.join("\n");
-        container.querySelector("div#unl textarea").value = usernames;
+        state.container.querySelector("div#unl textarea").value = usernames;
 
         updatePreview();
     }).catch(error => {
@@ -2963,37 +2968,37 @@ function onLoadUsernameList()
 
 function switchImportTab()
 {
-    toggleClass(container.querySelector("nav button#page1"), "selected", SETTINGS.mainTab == 0);
-    toggleClass(container.querySelector("nav button#page2"), "selected", SETTINGS.mainTab == 1);
-    toggleClass(container.querySelector("section#page1"), "hidden", SETTINGS.mainTab == 1);
-    toggleClass(container.querySelector("section#page2"), "hidden", SETTINGS.mainTab == 0);
+    toggleClass(state.container.querySelector("nav button#page1"), "selected", state.SETTINGS.mainTab == 0);
+    toggleClass(state.container.querySelector("nav button#page2"), "selected", state.SETTINGS.mainTab == 1);
+    toggleClass(state.container.querySelector("section#page1"), "hidden", state.SETTINGS.mainTab == 1);
+    toggleClass(state.container.querySelector("section#page2"), "hidden", state.SETTINGS.mainTab == 0);
 }
 
 function onChangeImportTab(newTab)
 {
-    if (newTab != SETTINGS.mainTab) {
-        SETTINGS.mainTab = newTab;
-        saveSettings(SETTINGS);
+    if (newTab != state.SETTINGS.mainTab) {
+        state.SETTINGS.mainTab = newTab;
+        saveSettings(state.SETTINGS);
         switchImportTab();
     }
 }
 
 function onChangeSource()
 {
-    const oldSource = SETTINGS.parser.sourceTab,
-          newSource = container.querySelector("select#source").value;
+    const oldSource = state.SETTINGS.parser.sourceTab,
+          newSource = state.container.querySelector("select#source").value;
 
     if (newSource == "manual")
-        SETTINGS.parser.sourceTab = 0;
+        state.SETTINGS.parser.sourceTab = 0;
     else if (newSource == "upload")
-        SETTINGS.parser.sourceTab = 1;
-    else SETTINGS.parser.sourceTab = 2;
+        state.SETTINGS.parser.sourceTab = 1;
+    else state.SETTINGS.parser.sourceTab = 2;
 
-    toggleClass(container.querySelector("div#manual"), "hidden", SETTINGS.parser.sourceTab != 0);
-    toggleClass(container.querySelector("div#upload"), "hidden", SETTINGS.parser.sourceTab != 1);
-    toggleClass(container.querySelector("div#unl"), "hidden", SETTINGS.parser.sourceTab != 2);
+    toggleClass(state.container.querySelector("div#manual"), "hidden", state.SETTINGS.parser.sourceTab != 0);
+    toggleClass(state.container.querySelector("div#upload"), "hidden", state.SETTINGS.parser.sourceTab != 1);
+    toggleClass(state.container.querySelector("div#unl"), "hidden", state.SETTINGS.parser.sourceTab != 2);
 
-    if (SETTINGS.parser.sourceTab != oldSource)
+    if (state.SETTINGS.parser.sourceTab != oldSource)
         updatePreview();
 }
 
@@ -3057,22 +3062,22 @@ function togglePopupButton(e)
 
         case "export":
             contents.querySelector("button#exportCSV").addEventListener("click", () => {
-                exportData(importData, "csv", selectionType(), SETTINGS, false);
+                exportData(state.importData, "csv", selectionType(), state.SETTINGS, false);
             });
 
             contents.querySelector("button#exportPDF").addEventListener("click", () => {
-                exportData(importData, "pdf", selectionType(), SETTINGS, false);
+                exportData(state.importData, "pdf", selectionType(), state.SETTINGS, false);
             });
 
             contents.querySelector("button#exportPDFWithPasswords").addEventListener("click", () => {
-                // Do this check here, because the export function has no access to process.*.
-                if (process.passwordsAlteredSinceImport) {
+                // Do this check here, because the export function has no access to state.process.*.
+                if (state.process.passwordsAlteredSinceImport) {
                     // The PDF is useless if it contains passwords that haven't been imported
                     if (!window.confirm(_tr("alerts.passwords_out_of_sync")))
                         return;
                 }
 
-                exportData(importData, "pdf", selectionType(), SETTINGS, true);
+                exportData(state.importData, "pdf", selectionType(), state.SETTINGS, true);
             });
 
             break;
@@ -3108,18 +3113,18 @@ function dumpDebug()
 
     console.log("========== DEBUG DUMP START ==========");
 
-    console.log(`rows: ${importData.rows.length} columns: ${importData.headers.length}`);
-    console.log(`statistics: total=${statistics.totalRows}  selected=${statistics.selectedRows}  ` +
-                `errors=${statistics.rowsWithErrors}  tobei=${statistics.rowsToBeImported}  ` +
-                `totalproc=${statistics.totalRowsProcessed}  success=${statistics.success}  ` +
-                `partial=${statistics.partialSuccess}  failed=${statistics.failed}`);
+    console.log(`rows: ${state.importData.rows.length} columns: ${state.importData.headers.length}`);
+    console.log(`statistics: total=${state.statistics.totalRows}  selected=${state.statistics.selectedRows}  ` +
+                `errors=${state.statistics.rowsWithErrors}  tobei=${state.statistics.rowsToBeImported}  ` +
+                `totalproc=${state.statistics.totalRowsProcessed}  success=${state.statistics.success}  ` +
+                `partial=${state.statistics.partialSuccess}  failed=${state.statistics.failed}`);
 
     let header = "#####            col=[";
 
-    for (let colNum = 0; colNum < importData.headers.length; colNum++) {
+    for (let colNum = 0; colNum < state.importData.headers.length; colNum++) {
         header += colNum.toString().padStart(2, " ");
 
-        if (colNum < importData.headers.length - 1)
+        if (colNum < state.importData.headers.length - 1)
             header += " ";
     }
 
@@ -3127,8 +3132,8 @@ function dumpDebug()
 
     console.log(header);
 
-    for (let rowNum = 0; rowNum < importData.rows.length; rowNum++) {
-        const row = importData.rows[rowNum];
+    for (let rowNum = 0; rowNum < state.importData.rows.length; rowNum++) {
+        const row = state.importData.rows[rowNum];
 
         let text = `${rowNum.toString().padStart(5, "0")}: ` +
                    `sel=${row.rowFlags & RowFlag.SELECTED ? 1 : 0} ` +
@@ -3136,7 +3141,7 @@ function dumpDebug()
 
         let columns = [];
 
-        for (let colNum = 0; colNum < importData.headers.length; colNum++) {
+        for (let colNum = 0; colNum < state.importData.headers.length; colNum++) {
             if (row.cellValues[colNum] == "")
                 columns.push(" e");
             else {
@@ -3172,7 +3177,7 @@ function buildInferTable()
     // order, which is perfect for us, because now we can use INFERRED_NAMES to control the
     // order in which the names appear on the table. Set is needed, because the infer table
     // contains also the non-inferred names, and some column types have no inferred names.
-    for (const [k, v] of Object.entries(localizedColumnTitles))
+    for (const [k, v] of Object.entries(state.localizedColumnTitles))
         keys.set(k, new Set([k]));
 
     // Then add infers
@@ -3182,72 +3187,72 @@ function buildInferTable()
     // Finally build the table
     let html = "";
 
-    for (const [k, v] of Object.entries(localizedColumnTitles)) {
+    for (const [k, v] of Object.entries(state.localizedColumnTitles)) {
         html += `<tr>`;
         html += `<td><code>${Array.from(keys.get(k)).join(", ")}</code></td>`;
         html += `<td>${v}</td>`;
         html += `</tr>`;
     }
 
-    container.querySelector("details#settings table.inferTable tbody").innerHTML = html;
+    state.container.querySelector("details#settings table.inferTable tbody").innerHTML = html;
 }
 
 export function initializeImporter(params)
 {
     try {
-        container = params.container;
+        state.container = params.container;
 
         // Prepare data
-        localizedColumnTitles = params.columnTitles;
-        localizedGroupTypes = params.groupTypes;
-        automaticEmails = params.automaticEmails || false;
-        commonPasswords = params.commonPasswords || commonPasswords;
+        state.localizedColumnTitles = params.columnTitles;
+        state.localizedGroupTypes = params.groupTypes;
+        state.automaticEmails = params.automaticEmails || false;
+        state.commonPasswords = params.commonPasswords || state.commonPasswords;
 
-        importData.currentOrganisationName = params.organisationName;
-        importData.currentSchoolID = params.schoolId;
-        importData.currentSchoolName = params.schoolName;
-        importData.currentUserName = params.currentUserName;
-        importData.permitUserCreation = params.permitUserCreation;
+        state.importData.currentOrganisationName = params.organisationName;
+        state.importData.currentSchoolID = params.schoolId;
+        state.importData.currentSchoolName = params.schoolName;
+        state.importData.currentUserName = params.currentUserName;
+        state.importData.permitUserCreation = params.permitUserCreation;
 
         if ("groups" in params)
-            importData.setGroups(params.groups);
+            state.importData.setGroups(params.groups);
 
         buildInferTable();
 
         // Initial UI update
-        SETTINGS = loadSettings();
+        state.SETTINGS = loadSettings();
         switchImportTab();
         onChangeSource();
 
         // Setup event handling and restore parser settings
-        container.querySelector("nav button#page1").addEventListener("click", () => { onChangeImportTab(0); });
-        container.querySelector("nav button#page2").addEventListener("click", () => { onChangeImportTab(1); });
-        container.querySelector("select#source").addEventListener("change", () => onChangeSource());
+        state.container.querySelector("nav button#page1").addEventListener("click", () => { onChangeImportTab(0); });
+        state.container.querySelector("nav button#page2").addEventListener("click", () => { onChangeImportTab(1); });
+        state.container.querySelector("select#source").addEventListener("change", () => onChangeSource());
 
-        container.querySelector("div#unl button#loadUNL")?.addEventListener("click", onLoadUsernameList);
+        state.container.querySelector("div#unl button#loadUNL")?.addEventListener("click", onLoadUsernameList);
 
-        const settings = container.querySelector("details#settings");
+        const settings = state.container.querySelector("details#settings");
 
-        settings.querySelector("input#inferTypes").addEventListener("click", e => { SETTINGS.parser.infer = e.target.checked; });
-        settings.querySelector("input#trimValues").addEventListener("click", e => { SETTINGS.parser.trim = e.target.checked; });
-        settings.querySelector("input#comma").addEventListener("click", e => { SETTINGS.parser.separator = 0; });
-        settings.querySelector("input#semicolon").addEventListener("click", e => { SETTINGS.parser.separator = 1; });
-        settings.querySelector("input#tab").addEventListener("click", e => { SETTINGS.parser.separator = 2; });
+        settings.querySelector("input#inferTypes").addEventListener("click", e => { state.SETTINGS.parser.infer = e.target.checked; });
+        settings.querySelector("input#trimValues").addEventListener("click", e => { state.SETTINGS.parser.trim = e.target.checked; });
+        settings.querySelector("input#comma").addEventListener("click", e => { state.SETTINGS.parser.separator = 0; });
+        settings.querySelector("input#semicolon").addEventListener("click", e => { state.SETTINGS.parser.separator = 1; });
+        settings.querySelector("input#tab").addEventListener("click", e => { state.SETTINGS.parser.separator = 2; });
 
         for (let i of settings.querySelectorAll("input")) {
             i.addEventListener("click", e => {
-                saveSettings(SETTINGS);
+                saveSettings(state.SETTINGS);
                 updateParsingSummary();
                 updatePreview();
             });
         }
 
-        container.querySelector("input#fileUpload").addEventListener("change", e => {
+        state.container.querySelector("input#fileUpload").addEventListener("change", e => {
             // Parse the "uploaded" file
             let reader = new FileReader();
 
             reader.onload = () => {
-                parser.fileContents = reader.result;
+                state.parser.fileContents = reader.result;
                 updatePreview();
             };
 
@@ -3258,30 +3263,30 @@ export function initializeImporter(params)
             reader.readAsText(e.target.files[0], "utf-8");
         });
 
-        container.querySelector("div#manual textarea").addEventListener("input", updatePreview);
-        container.querySelector("div#unl textarea")?.addEventListener("input", updatePreview);
+        state.container.querySelector("div#manual textarea").addEventListener("input", updatePreview);
+        state.container.querySelector("div#unl textarea")?.addEventListener("input", updatePreview);
 
-        settings.querySelector("input#inferTypes").checked = SETTINGS.parser.infer;
-        settings.querySelector("input#trimValues").checked = SETTINGS.parser.trim;
-        settings.querySelector("input#comma").checked = (SETTINGS.parser.separator == 0);
-        settings.querySelector("input#semicolon").checked = (SETTINGS.parser.separator == 1);
-        settings.querySelector("input#tab").checked = (SETTINGS.parser.separator == 2);
+        settings.querySelector("input#inferTypes").checked = state.SETTINGS.parser.infer;
+        settings.querySelector("input#trimValues").checked = state.SETTINGS.parser.trim;
+        settings.querySelector("input#comma").checked = (state.SETTINGS.parser.separator == 0);
+        settings.querySelector("input#semicolon").checked = (state.SETTINGS.parser.separator == 1);
+        settings.querySelector("input#tab").checked = (state.SETTINGS.parser.separator == 2);
 
-        if (!importData.permitUserCreation) {
+        if (!state.importData.permitUserCreation) {
             console.log("The current user cannot create new users, resetting the mode to update existing only");
-            SETTINGS.import.mode = 2;
+            state.SETTINGS.import.mode = 2;
         }
 
-        container.querySelector("select#mode").value = SETTINGS.import.mode;
+        state.container.querySelector("select#mode").value = state.SETTINGS.import.mode;
 
-        container.querySelector(`select#mode`).addEventListener("change", e => {
-            SETTINGS.import.mode = parseInt(e.target.value, 10);
-            process.previousImportStopped = false;   // otherwise this would get too complicated
-            saveSettings(SETTINGS);
+        state.container.querySelector(`select#mode`).addEventListener("change", e => {
+            state.SETTINGS.import.mode = parseInt(e.target.value, 10);
+            state.process.previousImportStopped = false;   // otherwise this would get too complicated
+            saveSettings(state.SETTINGS);
             detectProblems();
         });
 
-        container.querySelector("button#readData").addEventListener("click", () => {
+        state.container.querySelector("button#readData").addEventListener("click", () => {
             if (readAllData()) {
                 // FIXME: The tab is changed while the worker is still doing its thing,
                 // which means the table can briefly display old contents before it gets
@@ -3292,35 +3297,35 @@ export function initializeImporter(params)
             }
         });
 
-        container.querySelector("button#deleteSelectedRows").addEventListener("click", onDeleteSelectedRows);
+        state.container.querySelector("button#deleteSelectedRows").addEventListener("click", onDeleteSelectedRows);
 
-        container.querySelector("button#beginImport").
+        state.container.querySelector("button#beginImport").
             addEventListener("click", () => beginImport(ImportRows.ALL));
 
-        container.querySelector("button#beginImportSelected")?.
+        state.container.querySelector("button#beginImportSelected")?.
             addEventListener("click", () => beginImport(ImportRows.SELECTED));
 
-        container.querySelector("button#retryFailed").
+        state.container.querySelector("button#retryFailed").
             addEventListener("click", () => beginImport(ImportRows.FAILED));
 
-        container.querySelector("button#stopImport").addEventListener("click", stopImport);
+        state.container.querySelector("button#stopImport").addEventListener("click", stopImport);
 
 /*
-        container.querySelector("input#checkOnlySelectedRows").addEventListener("click", (e) => {
-            process.checkOnlySelectedRows = e.target.checked;
+        state.container.querySelector("input#checkOnlySelectedRows").addEventListener("click", (e) => {
+            state.process.checkOnlySelectedRows = e.target.checked;
             detectProblems();
         });
 
-        container.querySelector("button#detectProblemsNow").addEventListener("click", () => detectProblems(false));
+        state.container.querySelector("button#detectProblemsNow").addEventListener("click", () => detectProblems(false));
 */
 
-        const debug = container.querySelector("button#debug");
+        const debug = state.container.querySelector("button#debug");
 
         if (debug)
             debug.addEventListener("click", dumpDebug);
 
         // Popup buttons/dialogs
-        for (const p of container.querySelectorAll("button.popupToggle"))
+        for (const p of state.container.querySelectorAll("button.popupToggle"))
             p.addEventListener("click", (e) => togglePopupButton(e));
 
         // Close any popups that might be active
@@ -3337,7 +3342,7 @@ export function initializeImporter(params)
     } catch (e) {
         console.error(e);
 
-        params.container.innerHTML =
+        params.state.container.innerHTML =
             `<p class="error">Importer initialization failed. Please see the browser console for technical ` +
             `details, then contact Opinsys Oy for assistance.</p>`;
 

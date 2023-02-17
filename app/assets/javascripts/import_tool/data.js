@@ -31,6 +31,9 @@ export class ImportData {
         // Name of the current user (currently used only when creating username lists)
         this.currentUserName = null;
 
+        // True if the current user can create new users
+        this.permitUserCreation = false;
+
         // Current groups in the target school. Can be specified in the importer initializer, and
         // optionally updated dynamically without reloading the page.
         this.currentGroups = [];
