@@ -1,4 +1,4 @@
-import { clampPasswordLength } from "./main.js";
+import { clampPasswordLength } from "./utils.js";
 
 // A crude mechanism for updating the saved settings
 const EXPECTED_SETTINGS_VERSION = 3;
