@@ -137,83 +137,93 @@ class SSO < PuavoSinatra
     redirect url
   end
 
-  # Remove the SSO session cookie if it exists
+  # Remove the SSO session if it exists. Redirects the browser to the specifiec redirect URL
+  # afterwards. This is intended to be used in browsers, to implement a "real" logout. If there
+  # is no session, only does the redirect. The redirect URLs must be allowed in advance.
   get '/v3/sso/logout' do
     request_id = make_request_id
 
-    # Validate params
-    unless request.cookies.include?(PUAVO_SSO_SESSION_KEY)
-      rlog.warn("[#{request_id}] received a logout request, but there is no session cookie in the request")
-      return 400, 'no session cookie in the request'
-    end
+    rlog.info("[#{request_id}] new SSO logout request")
 
+    # The redirect URL is always required. No way around it, as it's the only security
+    # measure against malicious logout URLs.
     redirect_to = params.fetch('redirect_to', nil)
 
     if redirect_to.nil? || redirect_to.strip.empty?
-      rlog.warn("[#{request_id}] received a logout request, but the redirect URL is empty")
-      return 400, 'missing redirect URL'
+      rlog.warn("[#{request_id}] no redirect_to parameter in the request")
+      logout_error("Missing the redirect URL. Logout cannot be processed. Request ID: #{request_id}.")
     end
 
-    service_url = params.fetch('service_url', nil)
+    rlog.info("[#{request_id}] the redirect URL is \"#{redirect_to}\"")
 
-    if service_url.nil? || service_url.strip.empty?
-      rlog.warn("[#{request_id}] received a logout request, but the service URL is empty")
-      return 400, 'missing service URL'
-    end
-
-    # Validate the session cookie
-    key = request.cookies[PUAVO_SSO_SESSION_KEY]
     redis = Redis::Namespace.new('sso_session', redis: REDIS_CONNECTION)
-    data = redis.get("data:#{key}")
 
-    unless data
-      rlog.error("[#{request_id}] received a session logout request, but cookie \"#{key}\" has no session attached to it")
-      return 400, 'unknown session'
+    # Extract session data
+    if request.cookies.include?(PUAVO_SSO_SESSION_KEY)
+      session_data = logout_get_session_data(request, redis, request_id)
+    else
+      rlog.warn("[#{request_id}] no session cookie in the request")
     end
 
-    begin
-      data = JSON.parse(data)
-    rescue StandardError => e
-      rlog.error("[#{request_id}] received a session logout request for valid key \"#{key}\", but the session JSON cannot be parsed: #{e}")
-      return 400, 'unknown session'
+    # Which redirect URLs are allowed? If there is a session, use the URLs allowed for the organisation.
+    # Otherwise allow all the URLs in all organisations.
+    if session_data
+      organisation = session_data['organisation']
+      rlog.info("[#{request_id}] organisation is \"#{organisation}\"")
+
+      allowed_redirects = ORGANISATIONS.fetch(organisation, {}).fetch('accepted_sso_logout_urls', [])
+    else
+      allowed_redirects = ORGANISATIONS.collect do |_, org|
+        org.fetch('accepted_sso_logout_urls', [])
+      end.flatten
     end
 
-    # Is the redirect URL allowed? We wont redirect the browser to just any arbitrary URL.
-    organisation = data['organisation']
+    allowed_redirects = allowed_redirects.to_set
+    rlog.info("[#{request_id}] have #{allowed_redirects.count} allowed redirect URLs")
 
-    rlog.info("[#{request_id}] attempting to log out session \"#{key}\" in organisation \"#{organisation}\", the redirect URL is \"#{redirect_to}\"")
-
-    match = ORGANISATIONS.fetch(organisation, {}).fetch('accepted_sso_logout_urls', []).find do |test|
-      if test.nil? || test.empty?
-        false
-      else
-        Regexp.new(test).match?(redirect_to)
-      end
-    end
+    match = allowed_redirects.find { |test| Regexp.new(test).match?(redirect_to) }
 
     unless match
       rlog.error("[#{request_id}] the redirect URL is not permitted")
-      return 400, 'invalid redirect URL'
+      logout_error("The supplied redirect URL is not permitted. Logout cannot be processed for " \
+                   "security reasons. Request ID: #{request_id}.")
     end
 
-    # TODO: Check if the service that originated the logout request is the same that created it?
-    # This can potentially make logout procedures very complicated, but it would increase security.
+    rlog.info("[#{request_id}] the redirect URL is allowed")
 
-    # Purge the session and redirect
-    rlog.info("[#{request_id}] proceeding with the logout")
+    if session_data
+      # TODO: Check if the service that originated the logout request is the same that created it?
+      # This can potentially make logout procedures very complicated, but it would increase security.
 
-    user_id = data['user']['id']
+      # Purge the session and redirect
+      rlog.info("[#{request_id}] proceeding with the logout")
 
-    if redis.get("data:#{key}")
-      redis.del("data:#{key}")
+      key = request.cookies[PUAVO_SSO_SESSION_KEY]
+      user_id = session_data['user']['id']
+
+      if redis.get("data:#{key}")
+        redis.del("data:#{key}")
+      end
+
+      if redis.get("user:#{user_id}")
+        redis.del("user:#{user_id}")
+      end
+
+      rlog.info("[#{request_id}] logout complete, redirecting the browser")
+    else
+      rlog.info("[#{request_id}] logout not done, redirecting the browser")
     end
 
-    if redis.get("user:#{user_id}")
-      redis.del("user:#{user_id}")
-    end
-
-    rlog.info("[#{request_id}] logout complete, redirecting the browser")
     return redirect(redirect_to)
+  end
+
+  def logout_error(message)
+    @login_content = {
+      'error_message' => message,
+      'prefix' => '/v3/login',      # make the built-in CSS work
+    }
+
+    halt 401, { 'Content-Type' => 'text/html' }, erb(:logout_error, :layout => :layout)
   end
 
   get "/v3/sso" do
@@ -535,6 +545,24 @@ class SSO < PuavoSinatra
     end
 
     data
+  end
+
+  def logout_get_session_data(request, redis, request_id)
+    key = request.cookies[PUAVO_SSO_SESSION_KEY]
+    rlog.info("[#{request_id}] session key is \"#{key}\"")
+
+    data = redis.get("data:#{key}")
+
+    unless data
+      rlog.error("[#{request_id}] no session data found in Redis")
+      return nil
+    end
+
+    JSON.parse(data)
+  rescue StandardError => e
+    rlog.error("[#{request_id}] cannot load session data:")
+    rlog.error("[#{request_id}] #{e.backtrace.join("\n")}")
+    nil
   end
 end
 end
