@@ -4126,7 +4126,7 @@ export function initializeImporter(params)
         container.querySelector(`select#mode`).addEventListener("change", e => {
             SETTINGS.import.mode = parseInt(e.target.value, 10);
             process.previousImportStopped = false;   // otherwise this would get too complicated
-            saveSettings();
+            saveSettings(SETTINGS);
             detectProblems();
         });
 
