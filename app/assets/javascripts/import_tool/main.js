@@ -1404,14 +1404,14 @@ function onFillColumn(e)
     // Restore settings and set event handling so that changed settings are saved
     let ow = popup.contents.querySelector(`input[type="checkbox"]#overwrite`);
 
-    if (supportsOverwrite) {
-        ow.checked = state.SETTINGS.import.overwrite;
+    ow.checked = state.SETTINGS.import.overwrite;
 
+    if (supportsOverwrite) {
         ow.addEventListener("click", e => {
             state.SETTINGS.import.overwrite = e.target.checked;
             saveSettings(state.SETTINGS);
         });
-    } else popup.contents.querySelector(`input[type="checkbox"]#overwrite`).parentNode.remove();
+    } else popup.contents.querySelector(`input[type="checkbox"]#overwrite`).parentNode.classList.add("hidden");
 
     // If this popup has an input field, focus it
     if (type == "first" || type == "last" || type == "phone" || type == "email" ||
