@@ -90,26 +90,34 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}), {
         required_column_missing: "A required column \"%{title}\" is missing",
         need_uid_column_in_update_mode: "The username column is required in the update only -mode.",
         need_something_to_update_in_update_mode: "In the update only -mode, you need at least one column (in addition to the username column) that contains data you want to update",
+
         empty_first: "%{count} row(s) with an empty first name",
         empty_last: "%{count} row(s) with an empty last name",
+
         empty_uid: "%{count} row(s) with an empty username",
-        duplicate_uid: "%{count} row(s) with duplicate usernames (indicated with red borders)",
-        invalid_uid: "%{count} row(s) with invalid username (indicated with red borders)",
-        short_uid: "%{count} row(s) with usernames that are less than 3 characters long (indicated with red borders)",
+        duplicate_uid: "%{count} row(s) with duplicate usernames (indicated with red borders). First %{first_n} are: %{values}.",
+        invalid_uid: "%{count} row(s) with invalid username (indicated with red borders). First %{first_n} are: %{values}.",
+        short_uid: "%{count} row(s) with usernames that are less than 3 characters long (indicated with red borders). First %{first_n} are: %{values}.",
+
         missing_role: "%{count} row(s) with missing or invalid role (indicated with red borders)",
-        duplicate_eid: "%{count} row(s) with a duplicate external ID (indicated with red borders)",
-        eid_already_in_use: "%{count} row(s) with an external ID that is already used by someone else (indicated with red borders)",
-        duplicate_email: "%{count} row(s) with a duplicate email address (indicated with red borders)",
-        email_already_in_use: "%{count} row(s) with an email address that is already used by someone else (indicated with red borders)",
-        duplicate_phone: "%{count} rows(s) with a duplicate telephone number (indicated with red borders)",
-        phone_already_in_use: "%{count} rows(s) with a telephone number that is already used by someone else (indicated with red borders)",
-        automatic_emails: "Automatic email address generation is enabled in this school, so the email address column must be removed",
-        common_password: "%{count} row(s) with a common, poor-quality password",
         no_role_mass_change: "The roles of existing users cannot be mass changed, so the Role column is useless and it will be always ignored",
+
+        duplicate_eid: "%{count} row(s) with a duplicate external ID (indicated with red borders). First %{first_n} are: %{values}.",
+        eid_already_in_use: "%{count} row(s) with an external ID that is already used by someone else (indicated with red borders). First %{first_n} are: %{values}.",
+
+        invalid_email: "%{count} row(s) with an invalid email address (indicated with red borders). First %{first_n} are: %{values}.",
+        duplicate_email: "%{count} row(s) with a duplicate email address (indicated with red borders). First %{first_n} are: %{values}.",
+        email_already_in_use: "%{count} row(s) with an email address that is already used by someone else (indicated with red borders). First %{first_n} are: %{values}.",
+        automatic_emails: "Automatic email address generation is enabled in this school, so the email address column must be removed",
+
+        invalid_phone: "%{count} row(s) with an invalid phone number (indicated with red borders). First %{first_n} are: %{values}.",
+        duplicate_phone: "%{count} rows(s) with a duplicate telephone number (indicated with red borders). First %{first_n} are: %{values}.",
+        phone_already_in_use: "%{count} rows(s) with a telephone number that is already used by someone else (indicated with red borders). First %{first_n} are: %{values}.",
+
+        common_password: "%{count} row(s) with a common, poor-quality password",
+
         no_group_column: "No group column (new users are usually added to a teaching group when their accounts are created)",
         no_password_column: "No password column (here it's easy to set passwords for new users)",
-        invalid_email: "%{count} row(s) with an invalid email address (indicated with red borders)",
-        invalid_phone: "%{count} row(s) with an invalid phone number (indicated with red borders)",
     },
 });
 
@@ -203,25 +211,33 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}), {
         required_column_missing: "Vaadittu sarake \"%{title}\" puuttuu",
         need_uid_column_in_update_mode: "Päivitys-tilassa tarvitset käyttäjänimisarakkeen",
         need_something_to_update_in_update_mode: "Päivitys-tilassa tarvitset vähintään yhden ei-käyttäjänimi -sarakkeen jonka sisällön haluat päivittää",
+
         empty_first: "%{count} rivi(ä) joissa on tyhjä etunimi",
         empty_last: "%{count} rivi(ä) joissa on tyhjä sukunimi",
+
         empty_uid: "%{count} rivi(ä) joissa on tyhjä käyttäjänimi",
-        duplicate_uid: "%{count} rivi(ä) joilla esiintyy sama käyttäjänimi useaan kertaan (merkitty punaisilla reunoilla)",
-        invalid_uid: "%{count} rivi(ä) joilla esiintyy virheellinen tai väärän muotoinen käyttäjänimi (merkitty punaisilla reunoilla)",
-        short_uid: "%{count} rivi(ä) joissa on alle 3 merkkiä pitkä käyttäjänimi (merkitty punaisilla reunoilla)",
+        duplicate_uid: "%{count} rivi(ä) joilla esiintyy sama käyttäjänimi useaan kertaan (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}.",
+        invalid_uid: "%{count} rivi(ä) joilla esiintyy virheellinen tai väärän muotoinen käyttäjänimi (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}.",
+        short_uid: "%{count} rivi(ä) joissa on alle 3 merkkiä pitkä käyttäjänimi (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}.",
+
         missing_role: "%{count} rivi(ä) joissa on puuttuva tai virheellinen rooli (merkitty punaisilla reunoilla)",
-        duplicate_eid: "%{count} rivi(ä) joilla esiintyy sama ulkoinen ID useaan kertaan (merkitty punaisilla reunoilla)",
-        eid_already_in_use: "%{count} rivi(ä) joilla esiintyy ulkoinen ID joka on jo jollain muulla käyttäjällä (merkitty punaisilla reunoilla)",
-        duplicate_email: "%{count} rivi(ä) joilla esiintyy sama sähköpostiosoite useaan kertaan (merkitty punaisilla reunoilla)",
-        email_already_in_use: "%{count} rivi(ä) joilla esiintyy sähköpostiosoite joka on jo jollain muulla käyttäjällä (merkitty punaisilla reunoilla)",
-        duplicate_phone: "%{count} rivi(ä) joilla esiintyy sama puhelinnumero useaan kertaan (merkitty punaisilla reunoilla)",
-        phone_already_in_use: "%{count} rivi(ä) joilla esiintyy puhelinnumero joka on jo jollain muulla käyttäjällä (merkitty punaisilla reunoilla)",
-        automatic_emails: "Automaattinen sähköpostiosoitteiden muodostus on päällä tässä koulussa, joten sähköpostisarake on poistettava",
-        common_password: "%{count} rivi(ä) joilla esiintyy huonolaatuinen yleisesti käytetty salasana",
         no_role_mass_change: "Olemassaolevien käyttäjien rooleja ei voi massavaihtaa, joten Rooli-sarake on turha ja se ohitetaan aina",
+
+        duplicate_eid: "%{count} rivi(ä) joilla esiintyy sama ulkoinen ID useaan kertaan (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}.",
+        eid_already_in_use: "%{count} rivi(ä) joilla esiintyy ulkoinen ID joka on jo jollain muulla käyttäjällä (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}.",
+
+        invalid_email: "%{count} rivi(ä) joilla esiintyy virheellinen sähköpostiosoite (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}.",
+        duplicate_email: "%{count} rivi(ä) joilla esiintyy sama sähköpostiosoite useaan kertaan (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}.",
+        email_already_in_use: "%{count} rivi(ä) joilla esiintyy sähköpostiosoite joka on jo jollain muulla käyttäjällä (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}.",
+        automatic_emails: "Automaattinen sähköpostiosoitteiden muodostus on päällä tässä koulussa, joten sähköpostisarake on poistettava",
+
+        invalid_phone: "%{count} rivi(ä) joilla esiintyy virheellinen puhelinnumero (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}.",
+        duplicate_phone: "%{count} rivi(ä) joilla esiintyy sama puhelinnumero useaan kertaan (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}.",
+        phone_already_in_use: "%{count} rivi(ä) joilla esiintyy puhelinnumero joka on jo jollain muulla käyttäjällä (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}.",
+
+        common_password: "%{count} rivi(ä) joilla esiintyy huonolaatuinen yleisesti käytetty salasana",
+
         no_group_column: "Ryhmäsarake puuttuu (uudet käyttäjät yleensä lisätään johonkin opetusryhmään tuonnin aikana)",
         no_password_column: "Salasanasarake puuttuu (uusille käyttäjille on helppo asettaa tässä salasanat)",
-        invalid_email: "%{count} rivi(ä) joilla esiintyy virheellinen sähköpostiosoite (merkitty punaisilla reunoilla)",
-        invalid_phone: "%{count} rivi(ä) joilla esiintyy virheellinen puhelinnumero (merkitty punaisilla reunoilla)",
     },
 });

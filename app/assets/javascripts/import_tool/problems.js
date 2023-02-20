@@ -12,6 +12,10 @@ import {
 import { _tr } from "../common/utils.js";
 import { create, getTemplate } from "../common/dom.js";
 
+// How many entries to list when listing invalid entries (usernames, external IDs, etc.).
+// Don't set this too high, or the resulting list can break the layout.
+const FIRST_N = 10;
+
 // Try to detect problems and potential errors/warnings in the table data
 export function doDetectProblems(data, container, commonPasswords, localizedColumnTitles, automaticEmails, selectRows, updateOnly)
 {
@@ -183,6 +187,9 @@ export function doDetectProblems(data, container, commonPasswords, localizedColu
             numInvalid = 0;
 
         const usernames = new Set();
+        let invalid = [],
+            short = [],
+            duplicate = [];
 
         validateCells(uidCol, (value, cell) => {
             if (isEmpty(value)) {
@@ -194,16 +201,19 @@ export function doDetectProblems(data, container, commonPasswords, localizedColu
 
             if (usernames.has(u)) {
                 numDuplicate++;
+                duplicate.push(u);
                 return false;
             }
 
             if (u.length < 3) {
                 numShort++;
+                short.push(u);
                 return false;
             }
 
             if (!USERNAME_REGEXP.test(u)) {
                 numInvalid++;
+                invalid.push(u);
                 return false;
             }
 
@@ -212,17 +222,36 @@ export function doDetectProblems(data, container, commonPasswords, localizedColu
             return true;
         });
 
+        invalid = invalid.slice(0, FIRST_N);
+        short = short.slice(0, FIRST_N);
+        duplicate = duplicate.slice(0, FIRST_N);
+
         if (numEmpty > 0)
             data.errors.push(_tr('errors.empty_uid', { count: numEmpty }));
 
-        if (numDuplicate > 0)
-            data.errors.push(_tr('errors.duplicate_uid', { count: numDuplicate }));
+        if (numDuplicate > 0) {
+            data.errors.push(_tr('errors.duplicate_uid', {
+                count: numDuplicate,
+                first_n: FIRST_N,
+                values: duplicate.join(", ")
+            }));
+        }
 
-        if (numShort > 0)
-            data.errors.push(_tr('errors.short_uid', { count: numShort }));
+        if (numShort > 0) {
+            data.errors.push(_tr('errors.short_uid', {
+                count: numShort,
+                first_n: FIRST_N,
+                values: short.join(", ")
+            }));
+        }
 
-        if (numInvalid > 0)
-            data.errors.push(_tr('errors.invalid_uid', { count: numInvalid }));
+        if (numInvalid > 0) {
+            data.errors.push(_tr('errors.invalid_uid', {
+                count: numInvalid,
+                first_n: FIRST_N,
+                values: invalid.join(", ")
+            }));
+        }
     }
 
     // Roles
@@ -248,18 +277,24 @@ export function doDetectProblems(data, container, commonPasswords, localizedColu
             numUsed = 0;
 
         const eid = new Set();
+        let duplicate = [],
+            used = [];
 
         validateCells(eidCol, (value, cell, rowNum) => {
             if (isEmpty(value))
                 return true;
 
-            if (eid.has(value.trim())) {
+            const e = value.trim();
+
+            if (eid.has(e)) {
                 numDuplicate++;
+                duplicate.push(e);
                 return false;
             }
 
-            if (existsInServer(value, "eid", rowNum, uidCol)) {
+            if (existsInServer(e, "eid", rowNum, uidCol)) {
                 numUsed++;
+                used.push(e);
                 return false;
             }
 
@@ -268,11 +303,24 @@ export function doDetectProblems(data, container, commonPasswords, localizedColu
             return true;
         });
 
-        if (numDuplicate > 0)
-            data.errors.push(_tr('errors.duplicate_eid', { count: numDuplicate }));
+        duplicate = duplicate.slice(0, FIRST_N);
+        used = used.slice(0, FIRST_N);
 
-        if (numUsed > 0)
-            data.errors.push(_tr('errors.eid_already_in_use', { count: numUsed }));
+        if (numDuplicate > 0) {
+            data.errors.push(_tr('errors.duplicate_eid', {
+                count: numDuplicate,
+                first_n: FIRST_N,
+                values: duplicate.join(", ")
+            }));
+        }
+
+        if (numUsed > 0) {
+            data.errors.push(_tr('errors.eid_already_in_use', {
+                count: numUsed,
+                first_n: FIRST_N,
+                values: used.join(", ")
+            }));
+        }
     }
 
     // Email addresses
@@ -287,23 +335,31 @@ export function doDetectProblems(data, container, commonPasswords, localizedColu
                 numInvalid = 0;
 
             const seen = new Set();
+            let duplicate = [],
+                invalid = [],
+                used = [];
 
             validateCells(emailCol, (value, cell, rowNum) => {
                 if (isEmpty(value))
                     return true;
 
-                if (seen.has(value.trim())) {
+                const e = value.trim();
+
+                if (seen.has(e)) {
                     numDuplicate++;
+                    duplicate.push(e);
                     return false;
                 }
 
-                if (!EMAIL_REGEXP.test(value)) {
+                if (!EMAIL_REGEXP.test(e)) {
                     numInvalid++;
+                    invalid.push(e);
                     return false;
                 }
 
-                if (existsInServer(value, "email", rowNum, uidCol)) {
+                if (existsInServer(e, "email", rowNum, uidCol)) {
                     numUsed++;
+                    used.push(e);
                     return false;
                 }
 
@@ -311,14 +367,33 @@ export function doDetectProblems(data, container, commonPasswords, localizedColu
                 return true;
             });
 
-            if (numDuplicate > 0)
-                data.errors.push(_tr('errors.duplicate_email', { count: numDuplicate }));
+            duplicate = duplicate.slice(0, FIRST_N);
+            used = used.slice(0, FIRST_N);
+            invalid = invalid.slice(0, FIRST_N);
 
-            if (numUsed > 0)
-                data.errors.push(_tr('errors.email_already_in_use', { count: numUsed }));
+            if (numDuplicate > 0) {
+                data.errors.push(_tr('errors.duplicate_email', {
+                    count: numDuplicate,
+                    first_n: FIRST_N,
+                    values: duplicate.join(", ")
+                }));
+            }
 
-            if (numInvalid > 0)
-                data.errors.push(_tr('errors.invalid_email', { count: numInvalid }));
+            if (numUsed > 0) {
+                data.errors.push(_tr('errors.email_already_in_use', {
+                    count: numUsed,
+                    first_n: FIRST_N,
+                    values: used.join(", ")
+                }));
+            }
+
+            if (numInvalid > 0) {
+                data.errors.push(_tr('errors.invalid_email', {
+                    count: numInvalid,
+                    first_n: FIRST_N,
+                    values: invalid.join(", ")
+                }));
+            }
         }
     }
 
@@ -329,26 +404,34 @@ export function doDetectProblems(data, container, commonPasswords, localizedColu
             numInvalid = 0;
 
         const seen = new Set();
+        let duplicate = [],
+            invalid = [],
+            used = [];
 
         validateCells(phoneCol, (value, cell, rowNum) => {
             if (isEmpty(value))
                 return true;
 
-            if (seen.has(value)) {
+            const p = value.trim();
+
+            if (seen.has(p)) {
                 numDuplicate++;
+                duplicate.push(p);
                 return false;
             }
 
-            if (existsInServer(value, "phone", rowNum, uidCol)) {
-                numDuplicate++;
+            if (existsInServer(p, "phone", rowNum, uidCol)) {
+                numUsed++;
+                used.push(p);
                 return false;
             }
 
             // For some reason, LDAP really does not like if the telephone attribute is
             // just a "-". And when I say "does not like", I mean "it completely crashes".
             // We found out that in the hard way.
-            if (value.trim() == "-" || !PHONE_REGEXP.test(value)) {
+            if (p == "-" || !PHONE_REGEXP.test(p)) {
                 numInvalid++;
+                invalid.push(p);
                 return false;
             }
 
@@ -356,14 +439,33 @@ export function doDetectProblems(data, container, commonPasswords, localizedColu
             return true;
         });
 
-        if (numDuplicate > 0)
-            data.errors.push(_tr('errors.duplicate_phone', { count: numDuplicate }));
+        duplicate = duplicate.slice(0, FIRST_N);
+        used = used.slice(0, FIRST_N);
+        invalid = invalid.slice(0, FIRST_N);
 
-        if (numUsed > 0)
-            data.errors.push(_tr('errors.phone_already_in_use', { count: numUsed }));
+        if (numDuplicate > 0) {
+            data.errors.push(_tr('errors.duplicate_phone', {
+                count: numDuplicate,
+                first_n: FIRST_N,
+                values: duplicate.join(", ")
+            }));
+        }
 
-        if (numInvalid > 0)
-            data.errors.push(_tr('errors.invalid_phone', { count: numInvalid }));
+        if (numUsed > 0) {
+            data.errors.push(_tr('errors.phone_already_in_use', {
+                count: numUsed,
+                first_n: FIRST_N,
+                values: used.join(", ")
+            }));
+        }
+
+        if (numInvalid > 0) {
+            data.errors.push(_tr('errors.invalid_phone', {
+                count: numInvalid,
+                first_n: FIRST_N,
+                values: invalid.join(", ")
+            }));
+        }
     }
 
     // Passwords
