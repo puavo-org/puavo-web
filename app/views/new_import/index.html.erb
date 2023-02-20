@@ -472,11 +472,14 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 </template>
 
 <template id="template_generatePasswords">
-    <span class="margin-left-15px"><input type="radio" name="method" id="fixed"><label for="fixed"><%= t('new_import.tools.generate_passwords.fixed') %>:</label><input type="text" class="margin-left-5px font-monospace" id="fixedPassword"></span>
+    <span class="margin-left-15px">
+        <label><input type="radio" name="method" id="fixed"><%= t('new_import.tools.generate_passwords.fixed') %>:</label>
+        <input type="text" class="margin-left-5px font-monospace" id="fixedPassword">
+    </span>
 
     <fieldset class="margin-top-5px margin-bottom-0">
         <legend>
-            <span><input type="radio" name="method" id="random" checked><label for="random"><%= t('new_import.tools.generate_passwords.random') %>:</label></span>
+            <label for="random"><input type="radio" name="method" id="random" checked><%= t('new_import.tools.generate_passwords.random') %>:</label>
         </legend>
 
         <div class="flex-rows gap-5px margin-top-5px">
