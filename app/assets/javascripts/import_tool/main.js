@@ -1848,6 +1848,9 @@ function onOpenColumnMenu(e)
         enableFill = true,
         enableClear = false;
 
+    // Menu width, in pixels. Override if needed.
+    let width = 200;
+
     switch (state.importData.headers[state.targetColumn.index]) {
         case "":
             // Allow ignored columns to be cleared
@@ -1926,7 +1929,7 @@ function onOpenColumnMenu(e)
 
     // Open the popup menu
     createPopup();
-    popup.contents.style.width = "200px";
+    popup.contents.style.width = `${width}px`;
     popup.contents.appendChild(tmpl);
 
     const location = e.target.getBoundingClientRect();
