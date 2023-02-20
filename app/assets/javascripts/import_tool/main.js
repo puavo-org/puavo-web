@@ -1216,6 +1216,10 @@ function onFillColumn(e)
     let width = 250,
         content = null;
 
+    // By default, the "overwrite existing values" checkbox is displayed. Set to false to
+    // hide it.
+    let supportsOverwrite = true;
+
     switch (type) {
         case "role":
             setTitle("set_role");
@@ -1400,11 +1404,14 @@ function onFillColumn(e)
     // Restore settings and set event handling so that changed settings are saved
     let ow = popup.contents.querySelector(`input[type="checkbox"]#overwrite`);
 
-    ow.checked = state.SETTINGS.import.overwrite;
-    ow.addEventListener("click", e => {
-        state.SETTINGS.import.overwrite = e.target.checked;
-        saveSettings(state.SETTINGS);
-    });
+    if (supportsOverwrite) {
+        ow.checked = state.SETTINGS.import.overwrite;
+
+        ow.addEventListener("click", e => {
+            state.SETTINGS.import.overwrite = e.target.checked;
+            saveSettings(state.SETTINGS);
+        });
+    } else popup.contents.querySelector(`input[type="checkbox"]#overwrite`).parentNode.remove();
 
     // If this popup has an input field, focus it
     if (type == "first" || type == "last" || type == "phone" || type == "email" ||
