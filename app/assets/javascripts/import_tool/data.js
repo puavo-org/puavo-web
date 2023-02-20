@@ -57,6 +57,19 @@ export class ImportData {
         return -1;
     }
 
+    // Counts how many times this type of column appears in the headers. Multiple columns
+    // of the same type are errors.
+    countColumnsByType(id)
+    {
+        let count = 0;
+
+        for (let i = 0; i < this.headers.length; i++)
+            if (this.headers[i] === id)
+                count++;
+
+        return count;
+    }
+
     // Sets the new groups. The groups are sorted in alphabetical order automatically.
     setGroups(groups)
     {
