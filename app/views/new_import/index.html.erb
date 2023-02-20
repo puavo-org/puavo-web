@@ -96,8 +96,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 
         <div class="flex-rows gap-10px margin-left-20px margin-top-5px margin-bottom-20px">
             <div class="settingRow">
-              <input type="checkbox" id="inferTypes">
-              <label for="inferTypes"><%= t('new_import.infer_columns') %></label>
+              <label><input type="checkbox" id="inferTypes"><%= t('new_import.infer_columns') %></label>
             </div>
 
             <div class="settingRow">
@@ -112,16 +111,18 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
             </div>
 
             <div class="settingRow">
-                <input type="checkbox" id="trimValues" checked>
-                <label for="trimValues"><%= t('new_import.trim') %></label>
+                <label><input type="checkbox" id="trimValues" checked><%= t('new_import.trim') %></label>
             </div>
 
             <div class="settingRow">
                 <fieldset class="margin-0"><legend><%= t('new_import.separator') %></legend>
                     <p class="margin-5px padding-0 padding-bottom-5px"><%= t('new_import.separator_help') %></p>
-                    <input type="radio" name="separator" id="comma"><label for="comma"><%= t('new_import.comma') %></label><br>
-                    <input type="radio" name="separator" id="semicolon"><label for="semicolon"><%= t('new_import.semicolon') %></label><br>
-                    <input type="radio" name="separator" id="tab" checked><label for="tab"><%= t('new_import.tab') %></label>
+
+                    <div class="flex-rows">
+                        <label><input type="radio" name="separator" id="comma"><%= t('new_import.comma') %></label>
+                        <label><input type="radio" name="separator" id="semicolon"><%= t('new_import.semicolon') %></label>
+                        <label><input type="radio" name="separator" id="tab" checked><%= t('new_import.tab') %></label>
+                    </div>
                 </fieldset>
             </div>
         </div>
@@ -172,9 +173,9 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
     <div class="popupContainer">
         <fieldset class="margin-0 padding-5px"><legend><%= t('new_import.tools.export.target') %></legend>
             <div class="flex-rows">
-                <span><input type="radio" name="type" id="all" checked><label for="all"><%= t('new_import.tools.export.all_rows') %></label></span>
-                <span><input type="radio" name="type" id="selected"><label for="selected"><%= t('new_import.tools.export.selected_rows') %></label></span>
-                <span><input type="radio" name="type" id="unselected"><label for="unselected"><%= t('new_import.tools.export.unselected_rows') %></label></span>
+                <label><input type="radio" name="type" id="all" checked><%= t('new_import.tools.export.all_rows') %></label>
+                <label><input type="radio" name="type" id="selected"><%= t('new_import.tools.export.selected_rows') %></label>
+                <label><input type="radio" name="type" id="unselected"><%= t('new_import.tools.export.unselected_rows') %></label>
             </div>
         </fieldset>
 
@@ -188,7 +189,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 
 <template id="template_usernameListPopup">
     <div class="popupContainer">
-        <span><input type="checkbox" id="onlySelection" checked><label for="onlySelection"><%= t('new_import.tools.username_list.selection_only') %></label></span>
+        <label><input type="checkbox" id="onlySelection" checked><%= t('new_import.tools.username_list.selection_only') %></label>
         <label for="unlDescription"><%= t('new_import.tools.username_list.list_title') %>:</label>
         <input type="text" maxlength="100" id="unlDescription">
         <button id="doIt" class="margin-top-10px"><%= t('new_import.tools.username_list.create_list') %></button>
@@ -202,29 +203,29 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
         <fieldset class="margin-0 padding-5px"><legend><%= t('new_import.tools.download_template.columns') %></legend>
             <div class="flex-cols gap-10px">
                 <div class="flex-rows">
-                    <span><input type="checkbox" id="first" checked><label for="first"><%= t('new_import.columns.first') %></label></span>
-                    <span><input type="checkbox" id="last" checked><label for="last"><%= t('new_import.columns.last') %></label></span>
-                    <span><input type="checkbox" id="uid" checked><label for="uid"><%= t('new_import.columns.uid') %></label></span>
-                    <span><input type="checkbox" id="role" checked><label for="role"><%= t('new_import.columns.role') %></label></span>
-                    <span><input type="checkbox" id="password" checked><label for="password"><%= t('new_import.columns.password') %></label></span>
-                    <span><input type="checkbox" id="eid"><label for="eid"><%= t('new_import.columns.eid') %></label></span>
+                    <label><input type="checkbox" id="first" checked><%= t('new_import.columns.first') %></label>
+                    <label><input type="checkbox" id="last" checked><%= t('new_import.columns.last') %></label>
+                    <label><input type="checkbox" id="uid" checked><%= t('new_import.columns.uid') %></label>
+                    <label><input type="checkbox" id="role" checked><%= t('new_import.columns.role') %></label>
+                    <label><input type="checkbox" id="password" checked><%= t('new_import.columns.password') %></label>
+                    <label><input type="checkbox" id="eid"><%= t('new_import.columns.eid') %></label>
                 </div>
 
                 <div class="flex-rows">
-                    <span><input type="checkbox" id="rawgroup"><label for="rawgroup"><%= t('new_import.columns.rawgroup') %></label></span>
-                    <span><input type="checkbox" id="group" checked><label for="group"><%= t('new_import.columns.group') %></label></span>
-                    <span><input type="checkbox" id="phone"><label for="phone"><%= t('new_import.columns.phone') %></label></span>
-                    <span><input type="checkbox" id="email"><label for="email"><%= t('new_import.columns.email') %></label></span>
-                    <span><input type="checkbox" id="pnumber"><label for="pnumber"><%= t('new_import.columns.pnumber') %></label></span>
+                    <label><input type="checkbox" id="rawgroup"><%= t('new_import.columns.rawgroup') %></label>
+                    <label><input type="checkbox" id="group" checked><%= t('new_import.columns.group') %></label>
+                    <label><input type="checkbox" id="phone"><%= t('new_import.columns.phone') %></label>
+                    <label><input type="checkbox" id="email"><%= t('new_import.columns.email') %></label>
+                    <label><input type="checkbox" id="pnumber"><%= t('new_import.columns.pnumber') %></label>
                 </div>
             </div>
         </fieldset>
 
         <fieldset class="margin-0 padding-5px"><legend><%= t('new_import.separator') %></legend>
             <div class="flex-rows">
-                <span><input type="radio" name="template_separator" id="template_comma" checked><label for="template_comma"><%= t('new_import.comma') %> (CSV)</label></span>
-                <span><input type="radio" name="template_separator" id="template_semicolon"><label for="template_semicolon"><%= t('new_import.semicolon') %> (CSV)</label></span>
-                <span><input type="radio" name="template_separator" id="template_tab"><label for="template_tab"><%= t('new_import.tab') %> (TSV)</label></span>
+                <label><input type="radio" name="template_separator" id="template_comma" checked><%= t('new_import.comma') %> (CSV)</label>
+                <label><input type="radio" name="template_separator" id="template_semicolon"><%= t('new_import.semicolon') %> (CSV)</label>
+                <label><input type="radio" name="template_separator" id="template_tab"><%= t('new_import.tab') %> (TSV)</label>
             </div>
         </fieldset>
 
@@ -267,8 +268,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
             <button id="stopImport" class="btn" disabled><%= t('new_import.buttons.stop') %></button>
 
             <div class="margin-left-10px">
-                <label for="mode"><%= t('new_import.mode.label') %>:</label>
-                <select id="mode">
+                <label><%= t('new_import.mode.label') %>: <select id="mode">
                     <% if @can_create_users %>
                     <option value="0"><%= t('new_import.mode.create_new_update_existing') %></option>
                     <option value="1"><%= t('new_import.mode.create_new_skip_existing') %></option>
@@ -277,7 +277,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
                     <option value="1" disabled><%= t('new_import.mode.create_new_skip_existing') %></option>
                     <% end %>
                     <option value="2"><%= t('new_import.mode.skip_new_update_existing') %></option>
-                </select>
+                </select></label>
             </div>
         </div>
 
@@ -436,7 +436,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
     <header data-for="fill_selection"><%= t('new_import.tools.fill.title_selection') %></header>
     <div id="columnDialog">
         <div id="contents"></div>
-        <span><input type="checkbox" id="overwrite" checked><label for="overwrite"><%= t('new_import.buttons.overwrite_existing') %></label></span>
+        <label><input type="checkbox" id="overwrite" checked><%= t('new_import.buttons.overwrite_existing') %></label>
         <div class="buttons">
             <button id="fill" data-for="set"><%= t('new_import.buttons.set') %></button>
             <button id="fill" data-for="add"><%= t('new_import.buttons.add') %></button>
@@ -456,9 +456,9 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 <template id="template_generateUsernames">
     <label><%= t('new_import.tools.generate_usernames.help') %></label>
     <div class="flex-rows gap-5px margin-top-10px">
-        <span><input type="radio" name="method" id="drop"><label for="drop">ä → a, ö → o, ü → u</label></span>
-        <span><input type="radio" name="method" id="replace"><label for="replace">ä → ae, ö → oe, ü → ue</label></span>
-        <span><input type="checkbox" id="first_first_only"><label for="first_first_only" title="<%= t('new_import.tools.generate_usernames.first_first_name_only_help') %>"><%= t('new_import.tools.generate_usernames.first_first_name_only') %></label></span>
+        <label><input type="radio" name="method" id="drop">ä → a, ö → o, ü → u</label>
+        <label><input type="radio" name="method" id="replace">ä → ae, ö → oe, ü → ue</label>
+        <label title="<%= t('new_import.tools.generate_usernames.first_first_name_only_help') %>"><input type="checkbox" id="first_first_only"><%= t('new_import.tools.generate_usernames.first_first_name_only') %></label>
     </div>
 </template>
 
@@ -480,11 +480,14 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
         </legend>
 
         <div class="flex-rows gap-5px margin-top-5px">
-            <span><input type="checkbox" id="uppercase"><label for="uppercase"><%= t('new_import.tools.generate_passwords.uppercase') %></label></span>
-            <span><input type="checkbox" id="lowercase"><label for="lowercase"><%= t('new_import.tools.generate_passwords.lowercase') %></label></span>
-            <span><input type="checkbox" id="numbers"><label for="numbers"><%= t('new_import.tools.generate_passwords.numbers') %></label></span>
-            <span><input type="checkbox" id="punctuation"><label for="punctuation"><%= t('new_import.tools.generate_passwords.punct') %></label></span>
-            <div class="flex-cols flex-vcenter"><label><%= t('new_import.tools.generate_passwords.length') %>:</label><input type="range" id="length" class="flex-grow-2 margin-left-5px"><div id="lengthValue" class="padding-5px"></div></div>
+            <label><input type="checkbox" id="uppercase"><%= t('new_import.tools.generate_passwords.uppercase') %></label>
+            <label><input type="checkbox" id="lowercase"><%= t('new_import.tools.generate_passwords.lowercase') %></label>
+            <label><input type="checkbox" id="numbers"><%= t('new_import.tools.generate_passwords.numbers') %></label>
+            <label><input type="checkbox" id="punctuation"><%= t('new_import.tools.generate_passwords.punct') %></label>
+            <div class="flex-cols flex-vcenter">
+                <label><%= t('new_import.tools.generate_passwords.length') %>:</label>
+                <input type="range" id="length" class="flex-grow-2 margin-left-5px"><div id="lengthValue" class="padding-5px"></div>
+            </div>
         </div>
     </fieldset>
 </template>
