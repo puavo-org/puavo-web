@@ -1454,7 +1454,7 @@ function onClickFillColumn(e)
                 return;
             }
 
-            if (popup.contents.querySelector("header").getAttribute("data-for") == "parse_groups") {
+            if (popup.contents.querySelector("header").dataset.for == "parse_groups") {
                 let groupTable = popup.contents.querySelector("div#parseGroupsTable table tbody"),
                     groupMappings = {};
 
