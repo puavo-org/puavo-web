@@ -1402,7 +1402,7 @@ function onFillColumn(e)
 
     ow.checked = state.SETTINGS.import.overwrite;
     ow.addEventListener("click", e => {
-        SETTINGS.import.overwrite = e.target.checked;
+        state.SETTINGS.import.overwrite = e.target.checked;
         saveSettings(state.SETTINGS);
     });
 
