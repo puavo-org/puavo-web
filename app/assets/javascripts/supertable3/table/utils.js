@@ -1,7 +1,7 @@
 import { pad } from "../../common/utils.js";
 
 // Scaler for converting between JavaScript dates and unixtimes
-const JAVASCRIPT_TIME_GRANULARITY = 1000;
+export const JAVASCRIPT_TIME_GRANULARITY = 1000;
 
 export function convertTimestamp(unixtime, dateOnly = false)
 {

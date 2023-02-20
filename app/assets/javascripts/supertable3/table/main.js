@@ -4,6 +4,7 @@ import { create, destroy, getTemplate, toggleClass } from "../../common/dom.js";
 import { transformRawData, filterData, sortData } from "./data.js";
 import { MassOperationFlags, MassOperation } from "./mass_operations.js";
 import { FilterEditor } from "../filters/editor/fe_main.js";
+import { JAVASCRIPT_TIME_GRANULARITY } from "./utils.js";
 
 import {
     setupGlobalEvents,
@@ -876,12 +877,17 @@ exportTable(format)
 
         let headers = [...columns];
 
+        const timeColumns = new Set();
+
         // Optional export alias names
         for (let i = 0; i < headers.length; i++) {
             const def = this.columns.definitions[headers[i]];
 
             if (def.export_name)
                 headers[i] = def.export_name;
+
+            if (def.type == ColumnType.UNIXTIME)
+                timeColumns.add(headers[i]);
         }
 
         switch (format) {
@@ -893,8 +899,16 @@ exportTable(format)
                 for (const row of source) {
                     let out = [];
 
-                    for (const col of columns)
-                        out.push(col in row ? row[col][INDEX_FILTERABLE] : "");
+                    for (const col of columns) {
+                        if (!(col in row) || row[col][INDEX_FILTERABLE] === null || row[col][INDEX_FILTERABLE] === undefined) {
+                            out.push("");
+                            continue;
+                        }
+
+                        if (timeColumns.has(col))
+                            out.push(new Date(row[col][INDEX_FILTERABLE] * JAVASCRIPT_TIME_GRANULARITY).toISOString());
+                        else out.push(row[col][INDEX_FILTERABLE]);
+                    }
 
                     output.push(out.join(";"));
                 }
@@ -910,9 +924,16 @@ exportTable(format)
                 for (const row of source) {
                     let out = {};
 
-                    for (let i = 0; i < columns.length; i++)
-                        if (columns[i] in row)
-                            out[headers[i]] = row[columns[i]][INDEX_FILTERABLE];
+                    for (let i = 0; i < columns.length; i++) {
+                        const col = columns[i];
+
+                        if (!(col in row) || row[col][INDEX_FILTERABLE] === null || row[col][INDEX_FILTERABLE] === undefined)
+                            continue;
+
+                        if (timeColumns.has(col))
+                            out[col] = new Date(row[col][INDEX_FILTERABLE] * JAVASCRIPT_TIME_GRANULARITY).toISOString();
+                        else out[col] = row[col][INDEX_FILTERABLE];
+                    }
 
                     output.push(out);
                 }
