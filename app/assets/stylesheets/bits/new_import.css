@@ -441,6 +441,11 @@ div.directButtons button {
   margin-bottom: 5px;
 }
 
+div.columnMenu .icon {
+  /* The event handlers need the item ID and the icons don't have it */
+  pointer-events: none;
+}
+
 .columnMenu a {
   padding: 5px;
   display: block;
