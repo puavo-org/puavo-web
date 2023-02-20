@@ -480,6 +480,12 @@ div.columnMenu .icon {
   width: 100%;
 }
 
+#columnDialog table.fixUsernamesPreview th,
+#columnDialog table.fixUsernamesPreview td {
+  padding: 2px 5px;
+  border: 1px solid #000;
+}
+
 #columnDialog div#parseGroupsTable {
   display: flex;
   flex-direction: column;

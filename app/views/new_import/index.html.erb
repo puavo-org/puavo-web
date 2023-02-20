@@ -377,6 +377,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
             <li><a id="fill_selection"><i class="icon icon-pencil margin-right-5px"></i><%= t('new_import.menu.fill_selection') %></a></li>
             <li><a id="set_role"><i class="icon icon-pencil margin-right-5px"></i><%= t('new_import.menu.set_role') %></a></li>
             <li><a id="generate_usernames"><i class="icon icon-pencil margin-right-5px"></i><%= t('new_import.menu.generate_usernames') %></a></li>
+            <li><a id="fix_usernames"><i class="icon icon-exchange margin-right-5px "></i><%= t('new_import.menu.fix_usernames') %></a></li>
             <li><a id="parse_groups"><i class="icon icon-pencil margin-right-5px"></i><%= t('new_import.menu.parse_groups') %></a></li>
             <li><a id="generate_passwords"><i class="icon icon-pencil margin-right-5px"></i><%= t('new_import.menu.generate_passwords') %></a></li>
             <li><a id="add_to_group"><i class="icon icon-pencil margin-right-5px"></i><%= t('new_import.menu.add_to_group') %></a></li>
@@ -430,6 +431,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
     <header data-for="set_role"><%= t('new_import.tools.set_role.title') %></header>
     <header data-for="set_group"><%= t('new_import.tools.set_group.title') %></header>
     <header data-for="generate_usernames"><%= t('new_import.tools.generate_usernames.title') %></header>
+    <header data-for="fix_usernames"><%= t('new_import.tools.fix_usernames.title') %></header>
     <header data-for="parse_groups"><%= t('new_import.tools.parse_groups.title') %></header>
     <header data-for="generate_passwords"><%= t('new_import.tools.generate_passwords.title') %></header>
     <header data-for="fill_column"><%= t('new_import.tools.fill.title_column') %></header>
@@ -459,6 +461,26 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
         <label><input type="radio" name="method" id="drop">ä → a, ö → o, ü → u</label>
         <label><input type="radio" name="method" id="replace">ä → ae, ö → oe, ü → ue</label>
         <label title="<%= t('new_import.tools.generate_usernames.first_first_name_only_help') %>"><input type="checkbox" id="first_first_only"><%= t('new_import.tools.generate_usernames.first_first_name_only') %></label>
+    </div>
+</template>
+
+<template id="template_fixUsernames">
+    <p class="margin-top-0"><%= t('new_import.tools.fix_usernames.help') %></p>
+
+    <p><%= t('new_import.tools.fix_usernames.preview') %></p>
+
+    <div style="overflow: scroll; min-height: 15em; max-height: 15em;">
+        <table class="fixUsernamesPreview width-100p">
+            <thead>
+                <tr>
+                    <th><%= t('new_import.columns.first') %></th>
+                    <th><%= t('new_import.columns.last') %></th>
+                    <th><%= t('new_import.tools.fix_usernames.uid_change') %></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
 </template>
 

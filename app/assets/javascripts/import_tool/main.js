@@ -47,6 +47,7 @@ import { doDetectProblems } from "./problems.js";
 import {
     dropDiacritics,
     shuffleString,
+    buildUsernameFixingTable,
 } from "./fill.js";
 
 // Worker threads for CSV parsing and the actual data import/update process.
@@ -1301,31 +1302,62 @@ function onFillColumn(e)
             break;
 
         case "uid":
-            setTitle("generate_usernames");
-            showButton("generate");
-            width = 350;
+            if (targetID == "fix_usernames") {
+                if (state.importData.countColumnsByType("first") != 1) {
+                    window.alert(_tr("alerts.need_one_first_name"));
+                    return;
+                }
 
-            content = getTemplate("generateUsernames");
+                if (state.importData.countColumnsByType("last") != 1) {
+                    window.alert(_tr("alerts.need_one_last_name"));
+                    return;
+                }
 
-            // Restore settings and setup events for saving them when changed
-            check("drop", state.SETTINGS.import.username.umlauts == 0);
-            check("replace", state.SETTINGS.import.username.umlauts == 1);
-            check("first_first_only", state.SETTINGS.import.username.first_first_only == true);
+                setTitle("fix_usernames");
+                showButton("generate");
+                width = 450;
+                supportsOverwrite = false;      // only touch invalid usernames
 
-            content.querySelector("#drop").addEventListener("click", () => {
-                state.SETTINGS.import.username.umlauts = 0;
-                saveSettings(state.SETTINGS);
-            });
+                content = getTemplate("fixUsernames");
 
-            content.querySelector("#replace").addEventListener("click", () => {
-                state.SETTINGS.import.username.umlauts = 1;
-                saveSettings(state.SETTINGS);
-            });
+                let html = "";
 
-            content.querySelector("#first_first_only").addEventListener("click", (e) => {
-                state.SETTINGS.import.username.first_first_only = e.target.checked;
-                saveSettings(state.SETTINGS);
-            });
+                for (const f of buildUsernameFixingTable(state.importData, state.SETTINGS.import.username.umlauts)) {
+                    html += `<tr>`;
+                    html += `<td>${f.first}</td>`;
+                    html += `<td>${f.last}</td>`;
+                    html += `<td>${f.oldUID} → ${f.newUID}</td>`;
+                    html += `</tr>`;
+                }
+
+                content.querySelector("table.fixUsernamesPreview tbody").innerHTML = html;
+            } else {
+                setTitle("generate_usernames");
+                showButton("generate");
+                width = 350;
+
+                content = getTemplate("generateUsernames");
+
+                // Restore settings and setup events for saving them when changed
+                check("drop", state.SETTINGS.import.username.umlauts == 0);
+                check("replace", state.SETTINGS.import.username.umlauts == 1);
+                check("first_first_only", state.SETTINGS.import.username.first_first_only == true);
+
+                content.querySelector("#drop").addEventListener("click", () => {
+                    state.SETTINGS.import.username.umlauts = 0;
+                    saveSettings(state.SETTINGS);
+                });
+
+                content.querySelector("#replace").addEventListener("click", () => {
+                    state.SETTINGS.import.username.umlauts = 1;
+                    saveSettings(state.SETTINGS);
+                });
+
+                content.querySelector("#first_first_only").addEventListener("click", (e) => {
+                    state.SETTINGS.import.username.first_first_only = e.target.checked;
+                    saveSettings(state.SETTINGS);
+                });
+            }
 
             break;
 
@@ -1442,11 +1474,33 @@ function onClickFillColumn(e)
     // Generate the values
     switch (type) {
         case "uid":
-            // value reused for the umlaut conversion type selection
-            value = popup.contents.querySelector("input#drop").checked;
-            value2 = popup.contents.querySelector("input#first_first_only").checked;
-            console.log(`Generating usernames for column ${state.targetColumn.index}, mode=${value}, first_first_only=${value2} (overwrite=${overwrite})`);
-            generateUsernames(!value, value2, overwrite);
+            if (popup.contents.querySelector("header").dataset.for == "fix_usernames") {
+                const uidCol = state.importData.findColumn("uid");
+
+                let tableRows = state.container.querySelectorAll("div#output table tbody tr");
+
+                for (const f of buildUsernameFixingTable(state.importData, state.SETTINGS.import.username.umlauts)) {
+                    state.importData.rows[f.row].cellValues[uidCol] = f.newUID;
+
+                    // In-place table update
+                    let tableCell = tableRows[f.row].children[state.targetColumn.index + NUM_ROW_HEADERS];
+
+                    tableCell.innerText = f.newUID;
+                    tableCell.classList.remove("empty");
+                }
+
+                detectProblems();
+                updateStatistics();
+
+                return;
+            } else {
+                // value reused for the umlaut conversion type selection
+                value = popup.contents.querySelector("input#drop").checked;
+                value2 = popup.contents.querySelector("input#first_first_only").checked;
+                console.log(`Generating usernames for column ${state.targetColumn.index}, mode=${value}, first_first_only=${value2} (overwrite=${overwrite})`);
+                generateUsernames(!value, value2, overwrite);
+            }
+
             return;
 
         case "password":
@@ -1832,9 +1886,10 @@ function onOpenColumnMenu(e)
             break;
 
         case "uid":
-            keep.push("generate_usernames");
-            actions.push("generate_usernames");
+            keep.push("generate_usernames", "fix_usernames");
+            actions.push("generate_usernames", "fix_usernames");
             enableFill = false;
+            width = 250;
             break;
 
         case "password":
@@ -1877,8 +1932,6 @@ function onOpenColumnMenu(e)
 
     if (enableClear)
         keep.push(selection ? "clear_selection" : "clear_column");
-
-    console.log(keep);
 
     for (const e of tmpl.querySelectorAll("a"))
         if (!keep.includes(e.id))

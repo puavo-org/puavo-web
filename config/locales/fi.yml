@@ -1064,6 +1064,7 @@ fi:
       fill_selection: "Täytä valitut solut..."
       set_role: "Aseta rooli..."
       generate_usernames: "Luo käyttäjänimiä..."
+      fix_usernames: "Korjaa duplikaatit käyttäjänimet..."
       parse_groups: "Tulkitse ryhmät..."
       generate_passwords: "Luo salasanoja..."
       add_to_group: "Lisää ryhmään..."
@@ -1131,6 +1132,12 @@ fi:
         help: "Etu- ja sukunimet muutetaan pieniksi ja yhdistetään pisteellä. Sen jälkeen tarkkeet poistetaan. ß muutetaan aina muotoon \"ss\", mutta voit valita miten kirjaimet Ä, Ö ja Ü muunnetaan:"
         first_first_name_only: "Käytä vain ensimmäistä etunimeä"
         first_first_name_only_help: "Jos käyttäjällä on monta etunimeä (välilyönnein eroteltuna), käytä nimen luonnissa vain niistä ensimmäistä (katkaisu ensimmäisen välilyönnin kohdalta)."
+
+      fix_usernames:
+        title: "Korjaa duplikaatit käyttäjänimet"
+        help: "Tämä työkalu lisää luotuun käyttäjänimeen käyttäjän toisesta etunimestä ensimmäisen kirjaimen jos käyttäjällä on monta etunimeä. Vain duplikaatit nimet käsitellään."
+        preview: "Esikatselu"
+        uid_change: "Käyttäjänimen muutos"
 
       parse_groups:
         title: "Tulkitse ryhmät"

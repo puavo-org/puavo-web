@@ -36,3 +36,53 @@ export function shuffleString(s)
 
     return a.join("");
 }
+
+export function buildUsernameFixingTable(data, alternateUmlauts)
+{
+    const firstCol = data.findColumn("first"),
+          lastCol = data.findColumn("last"),
+          uidCol = data.findColumn("uid");
+
+    let usernames = new Set();
+
+    let out = [];
+
+    for (let rowNum = 0; rowNum < data.rows.length; rowNum++) {
+        const values = data.rows[rowNum].cellValues;
+
+        if (values[firstCol].trim().length == 0 ||
+            values[lastCol].trim().length == 0 ||
+            values[uidCol].trim().length == 0)
+            continue;
+
+        let first = values[firstCol].trim(),
+            last = values[lastCol].trim(),
+            uid = values[uidCol].trim();
+
+        if (!usernames.has(uid)) {
+            usernames.add(uid);
+            continue;
+        }
+
+        // Regenerate duplicate name if the user has multiple first names
+        const parts = first.split(" ").filter(i => i);
+
+        if (parts.length < 2 || parts[1].trim().length == 0)
+            continue;
+
+        const newUID = dropDiacritics(`${parts[0]}.${parts[1][0]}.${last}`.toLowerCase(), alternateUmlauts);
+
+        // Most of this data is for the preview
+        out.push({
+            row: rowNum,
+            first: first,
+            last: last,
+            oldUID: uid,
+            newUID: newUID
+        });
+
+        usernames.add(newUID);
+    }
+
+    return out;
+}
