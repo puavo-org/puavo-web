@@ -44,6 +44,11 @@ import { exportData } from "./export_data.js";
 
 import { doDetectProblems } from "./problems.js";
 
+import {
+    dropDiacritics,
+    shuffleString,
+} from "./fill.js";
+
 // Worker threads for CSV parsing and the actual data import/update process.
 // CSV_PARSER_PATH and IMPORT_WORKER_PATH are defined in the page header;
 // they contain the asset paths to the JS files. We can't set them here, since
@@ -1517,31 +1522,6 @@ function onClickFillColumn(e)
 // Generates usernames
 function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
 {
-    const dropDiacritics = (string, alternateUmlauts) => {
-        let out = string;
-
-        if (alternateUmlauts) {
-            // Convert some umlauts differently. These conversions won't work in Finnish,
-            // but they work in some other languages.
-            out = out.replace(/ä/g, "ae");
-            out = out.replace(/ö/g, "oe");
-            out = out.replace(/ü/g, "ue");
-        }
-
-        // Leaving this out will cause trouble (and the old version did this too)
-        out = out.replace(/ß/g, "ss");
-
-        // Decompose and remove the combining characters (ie. remove everything in the "Combining
-        // Diacritical Marks" Unicode block (U+0300 -> U+036F)). This leaves the base characters
-        // intact.
-        out = out.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-        // Finally remove everything that isn't permitted
-        out = out.replace(/[^a-z0-9.-]/g, "");
-
-        return out;
-    };
-
     // ----------------------------------------------------------------------------------------------
     // First verify that we have first and last name columns
 
@@ -1755,18 +1735,6 @@ function generatePasswords(overwrite)
 
     // ----------------------------------------------------------------------------------------------
     // Generate random passwords
-
-    const shuffleString = (s) => {
-        let a = s.split("");
-
-        // Fisher-Yates shuffle, Durstenfeld version
-        for (let first = a.length - 1; first > 0; first--) {
-            const second = Math.floor(Math.random() * (first + 1));
-            [a[first], a[second]] = [a[second], a[first]];
-        }
-
-        return a.join("");
-    }
 
     let available = "";
 
