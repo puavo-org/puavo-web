@@ -71,7 +71,19 @@ class Device < Host
   def printers
     restrictions = {}
 
-    PrinterQueue.all.each do |pq|
+    all_printerqueues = PrinterQueue.all(:attrs => %w(name))
+
+    schools_with_wireless_queues = School.filter(
+      '(puavoWirelessPrinterQueue=*)',
+      :attrs    => %w(wireless_printer_queue_dns),
+      :multiple => true)
+
+    groups_with_queues = Group.filter(
+      '(puavoPrinterQueue=*)',
+      :attrs    => %w(abbreviation printer_queue_dns),
+      :multiple => true)
+
+    all_printerqueues.each do |pq|
       if school.wireless_printer_queue_dns.include?(pq.dn) then
         restrictions[pq.name] = {
           :allow     => '*',
@@ -80,10 +92,10 @@ class Device < Host
         next
       end
 
-      printer_schools = School.by_attr(:wireless_printer_queue_dns,
-                                       pq.dn,
-                                       :multiple => true)
-      if !printer_schools.empty? then
+      open_in_some_school = schools_with_wireless_queues.any? do |s|
+                              s.wireless_printer_queue_dns.include?(pq.dn)
+                            end
+      if open_in_some_school then
         restrictions[pq.name] = {
           :allow     => '*',
           :rationale => 'OPENINSOMESCHOOL',
@@ -107,7 +119,9 @@ class Device < Host
         next
       end
 
-      groups = Group.by_attr(:printer_queue_dns, pq.dn, :multiple => true)
+      groups = groups_with_queues.select do |g|
+                 g.printer_queue_dns.include?(pq.dn)
+               end
       if !groups.empty? then
         restrictions[pq.name] = {
           :allow     => groups.map { |g| "@#{ g.abbreviation }" }.join(','),
