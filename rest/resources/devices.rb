@@ -1,5 +1,6 @@
 require_relative "./hosts"
 require_relative '../lib/inventory.rb'
+require_relative '../lib/puavomenu.rb'
 
 module PuavoRest
 class Device < Host
@@ -490,6 +491,11 @@ class Device < Host
     end
 
     return @extended_puavoconf
+  end
+
+  computed_attr :puavomenu
+  def puavomenu
+    Puavo::Puavomenu::generate_puavomenu_data(self)
   end
 end
 
