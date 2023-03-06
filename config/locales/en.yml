@@ -1855,6 +1855,8 @@ en:
     # Form field titles
     attributes:
       dn: DN
+      puavoMenuData: "Puavomenu menu data"
+      puavoMenuDataPreview: "Puavomenu menu data (preview)"
       ldap_organisation:
         description: Description
         telephoneNumber: Phone number

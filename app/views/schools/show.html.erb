@@ -98,6 +98,25 @@
     </div>
   </div>
   <% end %>
+
+  <% if @puavomenu_data %>
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.puavoMenuDataPreview') %></div>
+    <div class="value">
+      <ul>
+        <% if @puavomenu_data[:categories] %>
+        <li><strong><%= t('puavomenu_editor.preview.categories_title') %>:</strong> <%= @puavomenu_data[:categories].join(', ') %></li>
+        <% end %>
+        <% if @puavomenu_data[:menus] %>
+        <li><strong><%= t('puavomenu_editor.preview.menus_title') %>:</strong> <%= @puavomenu_data[:menus].join(', ') %></li>
+        <% end %>
+        <% if @puavomenu_data[:programs] %>
+        <li><strong><%= t('puavomenu_editor.preview.programs_title') %>:</strong> <%= @puavomenu_data[:programs].join(', ') %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <% end %>
 <%= end_box %>
 
 <!-- School information -->

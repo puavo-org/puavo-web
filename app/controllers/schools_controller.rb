@@ -109,6 +109,8 @@ class SchoolsController < ApplicationController
     # Known image release names
     @releases = get_releases
 
+    make_puavomenu_preview(@school.puavoMenuData)
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @school }

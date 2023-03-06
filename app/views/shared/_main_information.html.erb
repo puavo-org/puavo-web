@@ -24,6 +24,21 @@
                :locals  => { :object => device.puavoConf } %>
     <% end %>
 
+    <% if @puavomenu_data %>
+    <p class="infoTitle"><%= t('activeldap.attributes.puavoMenuDataPreview') %></p>
+    <ul class="infoValue">
+      <% if @puavomenu_data[:categories] %>
+      <li><strong><%= t('puavomenu_editor.preview.categories_title') %>:</strong> <%= @puavomenu_data[:categories].join(', ') %></li>
+      <% end %>
+      <% if @puavomenu_data[:menus] %>
+      <li><strong><%= t('puavomenu_editor.preview.menus_title') %>:</strong> <%= @puavomenu_data[:menus].join(', ') %></li>
+      <% end %>
+      <% if @puavomenu_data[:programs] %>
+      <li><strong><%= t('puavomenu_editor.preview.programs_title') %>:</strong> <%= @puavomenu_data[:programs].join(', ') %></li>
+      <% end %>
+    </ul>
+    <% end %>
+
     <% unless device.classes.include?('puavoPrinter') ||  device.classes.include?('puavoOtherDevice') %>
     <% unless device.puavoDeviceStatus.nil? %>
     <p class="infoTitle"><%= t('activeldap.attributes.device.puavoDeviceStatus') %></p>

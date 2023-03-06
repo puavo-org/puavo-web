@@ -641,6 +641,8 @@ class DevicesController < ApplicationController
     # operation: fast-reset, reset
     # mode: ask_pin
 
+    make_puavomenu_preview(@device.puavoMenuData)
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @device }

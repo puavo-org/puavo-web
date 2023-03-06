@@ -16,6 +16,8 @@ class OrganisationsController < ApplicationController
       @release = get_releases().fetch(@organisation.puavoDeviceImage, nil)
     end
 
+    make_puavomenu_preview(@organisation.puavoMenuData)
+
     # Dig up the organisation-level timestamps
     timestamps = LdapBase.search_as_utf8(:filter => "(&(objectClass=puavoEduOrg)(cn=#{@organisation.cn}))",
                                          :attributes => ["createTimestamp", "modifyTimestamp"])
