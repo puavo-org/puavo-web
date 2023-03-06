@@ -1,0 +1,591 @@
+<% if @pme_mode == :organisation %>
+<% page_title t('titles.puavomenu_editor') %>
+<% elsif @pme_mode == :school %>
+<% page_title t('titles.schools'), @school.displayName, t('titles.puavomenu_editor') %>
+<% elsif @pme_mode == :device %>
+<% page_title t('titles.schools'), @school.displayName, t('titles.devices'), @device.cn, t('titles.puavomenu_editor') %>
+<% end %>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag 'bundles/modal_popup' %>
+<%= javascript_include_tag 'bundles/puavomenu_editor' %>
+<%= javascript_include_tag 'i18n/puavomenu_editor' %>
+<% end %>
+
+<% if @pme_mode == :organisation %>
+<h1><%= t('puavomenu_editor.page_title.organisation') %></h1>
+<% elsif @pme_mode == :school %>
+<h1><%= t('puavomenu_editor.page_title.school', { name: @school.displayName }) %></h1>
+<% elsif @pme_mode == :device %>
+<h1><%= t('puavomenu_editor.page_title.device', { name: @device.cn }) %></h1>
+<% end %>
+
+<div class="flex-cols gap-10px margin-bottom-10px">
+  <button class="btn" id="main_save"><%= t('link.save') %></button>
+<% if @pme_mode == :device %>
+  <a href="<%= device_path(@school, @device) %>" class="btn"><%= t('link.back') %></a>
+<% end %>
+
+<% if @pme_mode == :organisation %>
+  <%= link_to organisation_puavomenu_clear_path(@school, @device), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger" do %>
+    <%= t('link.destroy') %>
+  <% end %>
+<% elsif @pme_mode == :school %>
+  <%= link_to school_puavomenu_clear_path(@school), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger" do %>
+    <%= t('link.destroy') %>
+  <% end %>
+<% elsif @pme_mode == :device %>
+  <%= link_to device_puavomenu_clear_path(@school, @device), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger" do %>
+    <%= t('link.destroy') %>
+  <% end %>
+<% end %>
+</div>
+<br>
+
+<!-- Main parts of the menu editor -->
+<div id="pme">
+    <div class="flex-cols flex-vcenter gap-10px margin-bottom-10px">
+        <button id="find_unused"><%= t('puavomenu_editor.tools.find_unused') %>...</button>
+        <button id="search"><%= t('puavomenu_editor.tools.search') %>...</button>
+        <button id="open_json_editor"><%= t('puavomenu_editor.tools.json_editor') %>...</button>
+        <label><input type="checkbox" id="confirm_menu_removal"><%= t('puavomenu_editor.tools.confirm_menu_removal') %></label>
+        <label><input type="checkbox" id="confirm_program_removal"><%= t('puavomenu_editor.tools.confirm_program_removal') %></label>
+    </div>
+
+    <div class="flex-columns">
+        <!-- Menu simulator -->
+        <div id="preview">
+            <header class="header"><%= t('puavomenu_editor.preview.title') %></header>
+
+            <div id="tabs"></div>
+            <div id="contents">
+                <section id="menus">
+                    <header><%= t('puavomenu_editor.preview.menus_title') %></header>
+                    <div class="entries"></div>
+                </section>
+
+                <section id="programs">
+                    <header><%= t('puavomenu_editor.preview.programs_title') %> <span></span> <a href="#" id="toplevel" class="margin-left-10px hidden">&lt;&lt; <%= t('puavomenu_editor.preview.exit_menu_title') %></a></header>
+                    <div class="entries"></div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Editor for the selected item -->
+        <div id="editor">
+            <header class="header"><%= t('puavomenu_editor.editor.title') %></header>
+
+            <div class="placeholder" id="select_something"><%= t('puavomenu_editor.editor.select_something') %></div>
+            <div class="placeholder hidden" id="external_menu"><%= t('puavomenu_editor.editor.external_menu') %></div>
+            <div class="placeholder hidden" id="external_program"><%= t('puavomenu_editor.editor.external_program') %></div>
+
+            <div class="hidden" id="wrapper">
+                <!-- Unique category ID -->
+                <details id="sect_catid">
+                    <summary>
+                        <span><%= t('puavomenu_editor.editor.catid.title') %></span>
+                        <a href="#" class="help">(<%= t('puavomenu_editor.editor.help') %>...)</a>
+                    </summary>
+
+                    <div class="contents">
+                        <input type="text" id="cid" readonly>
+                        <button type="button"><%= t('puavomenu_editor.editor.change_id') %>...</button>
+                    </div>
+                </details>
+
+                <!-- Unique menu ID -->
+                <details id="sect_menuid">
+                    <summary>
+                        <span><%= t('puavomenu_editor.editor.menuid.title') %></span>
+                        <a href="#" class="help">(<%= t('puavomenu_editor.editor.help') %>...)</a>
+                    </summary>
+
+                    <div class="contents">
+                        <input type="text" id="mid" readonly>
+                        <button type="button"><%= t('puavomenu_editor.editor.change_id') %>...</button>
+                    </div>
+                </details>
+
+                <!-- Unique program ID or .desktop file name -->
+                <details id="sect_progid">
+                    <summary>
+                        <span id="desktopID"><%= t('puavomenu_editor.editor.progid.title_desktop') %></span>
+                        <span id="otherID"><%= t('puavomenu_editor.editor.progid.title') %></span>
+                        <a href="#" class="help">(<%= t('puavomenu_editor.editor.help') %>...)</a>
+                    </summary>
+
+                    <div class="contents">
+                        <input type="text" id="pid" readonly>
+                        <button type="button"><%= t('puavomenu_editor.editor.change_program_id') %>...</button>
+                    </div>
+                </details>
+
+                <!-- Program type -->
+                <details id="sect_progtype" open>
+                    <summary>
+                        <span><%= t('puavomenu_editor.editor.progtype.title') %></span>
+                        <a href="#" class="help">(<%= t('puavomenu_editor.editor.help') %>...)</a>
+                    </summary>
+
+                    <div class="flex-columns gap-5px margin-top-5px">
+                        <label><input type="radio" name="type" id="desktop"><%= t('puavomenu_editor.editor.progtype.desktop') %></label>
+                        <label><input type="radio" name="type" id="custom"><%= t('puavomenu_editor.editor.progtype.custom') %></label>
+                        <label><input type="radio" name="type" id="web"><%= t('puavomenu_editor.editor.progtype.weblink') %></label>
+                    </div>
+                </details>
+
+                <!-- Name -->
+                <details id="sect_name" open>
+                    <summary>
+                        <span><%= t('puavomenu_editor.editor.name.title') %></span>
+                        <span class="notify"></span>
+                        <a href="#" class="help">(<%= t('puavomenu_editor.editor.help') %>...)</a>
+                    </summary>
+
+                    <div class="contents">
+                        <label><input type="radio" name="name-lang-type" id="name-one"><%= t('puavomenu_editor.editor.name.single') %>:</label>
+                        <input type="text" id="name-one-value" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>" class="margin-left-20px">
+
+                        <label><input type="radio" name="name-lang-type" id="name-multi"><%= t('puavomenu_editor.editor.name.multi') %>:</label>
+                        <table class="languages">
+                            <tr>
+                                <th><label for="name-multi-value-fi"><%= t('puavomenu_editor.editor.lang.fi') %>:</th>
+                                <td><input type="text" id="name-multi-value-fi" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>" class="width-100p"></td>
+                            </tr>
+
+                            <tr>
+                                <th class="minimize-width"><label for="name-multi-value-en"><%= t('puavomenu_editor.editor.lang.en') %>:</th>
+                                <td><input type="text" id="name-multi-value-en" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>" class="width-100p"></td>
+                            </tr>
+
+                            <tr>
+                                <th><label for="name-multi-value-sv"><%= t('puavomenu_editor.editor.lang.sv') %>:</th>
+                                <td><input type="text" id="name-multi-value-sv" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>" class="width-100p"></td>
+                            </tr>
+
+                            <tr>
+                                <th><label for="name-multi-value-de"><%= t('puavomenu_editor.editor.lang.de') %>:</th>
+                                <td><input type="text" id="name-multi-value-de" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>" class="width-100p"></td>
+                            </tr>
+                        </table>
+
+                        <div class="pmeError" data-code="missing_name"><p><%= t('puavomenu_editor.editor.name.required_error') %></p></div>
+                        <div class="pmeWarning" data-code="multiple_names"><p><%= t('puavomenu_editor.editor.name.multiple_warning') %></p></div>
+                    </div>
+                </details>
+
+                <!-- Description -->
+                <details id="sect_description">
+                    <summary>
+                        <span><%= t('puavomenu_editor.editor.description.title') %></span>
+                        <span class="notify"></span>
+                        <a href="#" class="help">(<%= t('puavomenu_editor.editor.help') %>...)</a>
+                    </summary>
+
+                    <div class="contents">
+                        <label><input type="radio" name="description-lang-type" id="description-one"><%= t('puavomenu_editor.editor.description.single') %>:</label>
+                        <input type="text" id="description-one-value" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>" class="margin-left-20px">
+
+                        <label><input type="radio" name="description-lang-type" id="description-multi"><%= t('puavomenu_editor.editor.description.multi') %>:</label>
+                        <table class="languages">
+                            <tr>
+                                <th><label for="description-multi-value-fi"><%= t('puavomenu_editor.editor.lang.fi') %>:</th>
+                                <td><input type="text" id="description-multi-value-fi" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>" class="width-100p"></td>
+                            </tr>
+
+                            <tr>
+                                <th class="minimize-width"><label for="description-multi-value-en"><%= t('puavomenu_editor.editor.lang.en') %>:</th>
+                                <td><input type="text" id="description-multi-value-en" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>" class="width-100p"></td>
+                            </tr>
+
+                            <tr>
+                                <th><label for="description-multi-value-sv"><%= t('puavomenu_editor.editor.lang.sv') %>:</th>
+                                <td><input type="text" id="description-multi-value-sv" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>" class="width-100p"></td>
+                            </tr>
+
+                            <tr>
+                                <th><label for="description-multi-value-de"><%= t('puavomenu_editor.editor.lang.de') %>:</th>
+                                <td><input type="text" id="description-multi-value-de" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>" class="width-100p"></td>
+                            </tr>
+                        </table>
+
+                        <div class="pmeWarning" data-code="multiple_descriptions"><p><%= t('puavomenu_editor.editor.description.multiple_warning') %></p></div>
+                    </div>
+                </details>
+
+                <!-- Category position -->
+                <details id="sect_position" open>
+                    <summary>
+                        <span><%= t('puavomenu_editor.editor.position.title') %></span>
+                        <a href="#" class="help">(<%= t('puavomenu_editor.editor.help') %>...)</a>
+                    </summary>
+
+                    <div class="contents">
+                        <input type="number" id="position">
+                    </div>
+                </details>
+
+                <!-- Menu/program icon -->
+                <details id="sect_icon" open>
+                    <summary>
+                        <span><%= t('puavomenu_editor.editor.icon.title') %></span>
+                        <span class="notify"></span>
+                        <a href="#" class="help">(<%= t('puavomenu_editor.editor.help') %>...)</a>
+                    </summary>
+
+                    <div class="contents">
+                        <input type="text" id="icon" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>">
+                        <div class="pmeError" data-code="missing_icon"><p><%= t('puavomenu_editor.editor.icon.missing_error') %></p></div>
+                        <div class="pmeWarning" data-code="missing_icon"><p><%= t('puavomenu_editor.editor.icon.missing_warning') %></p></div>
+                    </div>
+                </details>
+
+                <!-- Search keywords -->
+                <details id="sect_keywords">
+                    <summary>
+                        <span><%= t('puavomenu_editor.editor.keywords.title') %></span>
+                        <a href="#" class="help">(<%= t('puavomenu_editor.editor.help') %>...)</a>
+                    </summary>
+
+                    <div class="contents">
+                        <input type="text" id="keywords">
+                    </div>
+                </details>
+
+                <!-- Executed command for custom programs -->
+                <details id="sect_command" open>
+                    <summary>
+                        <span><%= t('puavomenu_editor.editor.command.title') %></span>
+                        <span class="notify"></span>
+                    </summary>
+
+                    <div class="contents">
+                        <input type="text" id="command" placeholder="<%= t('puavomenu_editor.editor.placeholder') %>">
+                        <div class="pmeError" data-code="missing_command"><p><%= t('puavomenu_editor.editor.command.missing_error') %></p></div>
+                    </div>
+                </details>
+
+                <!-- URL for web links -->
+                <details id="sect_url" open>
+                    <summary>
+                        <span><%= t('puavomenu_editor.editor.url.title') %></span>
+                        <span class="notify"></span>
+                    </summary>
+
+                    <div class="contents">
+                        <input type="text" id="url">
+                        <div class="pmeError" data-code="missing_url"><p><%= t('puavomenu_editor.editor.url.missing_error') %></p></div>
+                    </div>
+                </details>
+
+                <!-- Visibility/tags -->
+                <details id="sect_visibility" open>
+                    <summary>
+                        <span><%= t('puavomenu_editor.editor.visibility.title') %></span>
+                        <span class="notify"></span>
+                        <a href="#" class="help">(<%= t('puavomenu_editor.editor.help') %>...)</a>
+                    </summary>
+
+                    <div class="contents">
+                        <label for="tags" id="tagsLabel"><%= t('puavomenu_editor.editor.visibility.tags') %>:</label>
+                        <input type="text" id="tags" placeholder="(Käytä oletusta)">
+                        <div class="pmeWarning" data-code="no_tags"><p><%= t('puavomenu_editor.editor.visibility.no_tags_warning') %></p></div>
+
+                        <label for="condition"><%= t('puavomenu_editor.editor.visibility.condition') %>:</label>
+
+                        <select id="condition" class="">
+                            <option value=""><%= t('puavomenu_editor.editor.visibility.no_condition') %></option>
+                            <% @conditions.each do |c| %>
+                            <option value="<%= c %>"><%= c %></option>
+                            <% end %>
+                        </select>
+
+                        <label><input type="checkbox" id="reverse"><%= t('puavomenu_editor.editor.visibility.reverse_condition') %></label>
+                        <label><input type="checkbox" id="hidden_by_default"><%= t('puavomenu_editor.editor.visibility.hidden_by_default') %></label>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Help texts -->
+<template id="template_help" lang="fi">
+    <div id="help_catid" data-width="500">
+        <p class="margin-top-0">Yksilöllinen tunniste jolla tähän kategoriaan viitataan suodattimissa. Esimerkiksi <code>puavo.puavomenu.tags</code> -suodatin sallii kategorian piilottamisen (tai näyttämisen) kun kategoriaan viitataan tällä tunnisteella. Ylensä tunniste muotoa "category-xxx".</p>
+        <p class="margin-bottom-0">Käytäthän tässä vain kirjaimia a-z, A-Z, numeroita 0-9, sekä välimerkkejä . _ -. <strong>Kirjainkoolla on väliä. "foo" ja "Foo" ovat eri kategorioita.</strong></p>
+    </div>
+
+    <div id="help_menuid" data-width="500">
+        <p class="margin-top-0">Yksilöllinen tunniste jolla tähän valikkoon viitataan kategorioissa ja suodattimissa. Esimerkiksi <code>puavo.puavomenu.tags</code> -suodatin sallii valikon piilottamisen (tai näyttämisen) kun valikkoon viitataan tällä tunnisteella.</p>
+        <p class="margin-bottom-0">Käytäthän tässä vain kirjaimia a-z, A-Z, numeroita 0-9, sekä välimerkkejä . _ -. <strong>Kirjainkoolla on väliä.</strong></p>
+    </div>
+
+    <div id="help_progtype" data-width="500">
+        <p class="margin-top-0">Määrittää minkä tyyppinen tämä ohjelma on:</p>
+
+        <ul>
+            <li><strong>Työpöytä</strong>: Normaali työpöytäohjelma jonka tiedot (nimi, kuvake, komento, yms.) tulevat järjestelmän kuvan mukana tulevassa .desktop -tiedostossa.</li>
+            <li><strong>Räätälöity</strong>: Kuten työpöytäohjelma, mutta vastaavaa .desktop -tiedostoa ei etsitä eikä ladata, vaan voit määrittää kaikki itse.</li>
+            <li><strong>Web-linkki</strong>: Avaa määritetyn osoitteen (URL) järjestelmän oletusselaimessa.</li>
+        </ul>
+
+        <p class="margin-bottom-0">Työpöytäohjelmat ovat kaikkein suoraviivaisimpia käyttää, koska ne tarvitsevat vain .desktop -tiedoston tiedostonimen. Voit tarvittaessa täyttää muutkin tarjolla olevat kentät; jos niihin kirjoittaa jotain, ne ylikirjoittavat .desktop -tiedostossa olevan vastaavan arvon. Tästä on hyötyä esimerkiksi silloin jos .desktop -tiedostossa on ohjelmalle annettu huono nimi. Sinun ei tarvitse korjata .desktop -tiedostoa, voit määrittää sille uuden nimen valikkoon.</p>
+    </div>
+
+    <div id="help_progid" data-width="500">
+        <p class="margin-top-0">Tällä kentällä on kaksi käyttötarkoitusta:</p>
+
+        <ol>
+            <li>Työpöytäohjelmien .desktop -tiedoston tiedostonimi (ei koko polkua). Nimeä vastaava .desktop -tiedosto etsitään automaattisesti ennalta määritetyistä hakupoluista. Jos tiedostoa ei löydy, ei ohjelmaa näytetä.</li>
+            <li>Yksilöllinen tunniste jokaiselle ohjelmalle</li>
+        </ol>
+
+        <p>Oli ohjelman tyyppi mikä tahansa, tätä tunnistetta käytetään myös kun ohjelmaan viitataan valikoissa ja kategorioissa. Muista, että voit käyttää samaa ohjelmaa uudelleen eri valikossa ja kategoriassa, sinun ei tarvitse määrittää sitä uudelleen joka kerta.</p>
+
+        <p class="margin-bottom-0">Tunnisteessa voi käyttää mitä tahansa merkkejä mitä Linux normaalisti hyväksyy tiedostonimiin. <strong>Samasta syystä kirjainkoolla on väliä!</strong> Yhteensopivuussyistä johtuen kannattaa kuitenkin pysytellä kirjaimissa a-z, A-Z, numeroissa 0-9 sekä muutamassa välimerkissä (. _ -). Enimmäispituutta ei ole, mutta pitkiä nimiä voi olla hankala käyttää esimerkiksi suodattimissa (ja joidenkin merkkien, kuten +, - ja : käyttö voi tehdä suodattimien kirjoittamisesta mahdotonta).</p>
+    </div>
+
+    <div id="help_name" data-width="500">
+        <p class="margin-top-0">Määrittää nimen. Voit antaa joko yhden nimen jota käytetään kaikilla kielillä, tai kääntää nimen jokaiselle tuetulle kielelle erikseen. Jos joku kieli jätetään kääntämättä, käytetään sen sijalla englanninkielistä nimeä. Jos englanninkielistä nimeä ei ole, käytetään ensimmäistä mikä löytyy. Jos nimeä ei ole lainkaan, ei tätä kohtaa näytetä valikossa lainkaan.</p>
+        <p class="margin-bottom-0">Jos kyseessä on työpöytäohjelma, voit ylikirjoittaa tällä .desktop -tiedostossa olevan nimen.</p>
+    </div>
+
+    <div id="help_description" data-width="500">
+        <p class="margin-0">Määrittää kuvauksen tälle valikon kohdalle. Toimii samalla logiikalla kuin nimi (kts. ylempänä). Kuvaus näytetään hover-tekstinä.</p>
+    </div>
+
+    <div id="help_position" data-width="500">
+        <p class="margin-top-0">Määrittää numeerisesti kategorian sijainnin muihin nähden. Kun valikko käynnistyy, se ottaa jokaisen kategorian sijainnin ja lajittelee ne suuruusjärjestykseen, ja sijoittaa kategoriat sitten vastaavaan järjestykseen. Oletussijainti on 0, ja jos usealla kategorialla on sama järjestys, ne lajitellaan aakkosjärjestykseen sijainnin lisäksi.</p>
+        <p class="margin-bottom-0">Pienemmän numerot siirtävät kategoriaa vasemmalle, isommat oikealle.</p>
+    </div>
+
+    <div id="help_icon" data-width="500">
+        <p class="margin-top-0">Mitä kuvaketta käytetään tälle valikolle tai ohjelmalle. Valikoissa tähän laitetaan koko polku käytettävään kuvatiedostoon, mutta ohjelmissa voit käyttää myös symbolista nimeä.</p>
+        <p class="margin-bottom-0">Symbolista nimeä vastaava oikea tiedosto etsitään ennalta määritetyistä hakemistoista. Kuvakkeen etsinnässä otetaan huomioon nykyinen kuvaketeema, sekä priorisoidaan SVG-tiedostomuotoa, jotta kuvake näyttäisi mahdollisimman hyvältä ruudulla.</p>
+    </div>
+
+    <div id="help_keywords" data-width="500">
+        <p class="margin-top-0">Ylimääräisiä hakusanoja joita käytetään hakutulosten parantamiseen. Erottele hakusanat toisistaan välilyönnillä.</p>
+        <p class="margin-bottom-0">Jos kysessä on työpöytäohjelma jolla on .desktop -tiedosto, nämä hakusanat lisätään tiedostossa mahdollisesti olevien hakusanojen sekaan.</p>
+    </div>
+
+    <div id="help_visibility" data-width="500">
+        <p class="helpTitle">Tagit (vain ohjelmilla)</p>
+        <p class="margin-top-5px">Ohjelmilla tagit tunnistita jolla siihen ohjelmaan viitataan <code>puavo.puavomenu.tags</code> -suodattimissa. Erottele ne toisistaan välilyönneillä. Lähes kaikilla ohjelmilla on vähintään "default" -tagi, sillä kaikki ohjelmat joilla kyseinen tagi on näytetään oletuksena.</p>
+        <p class="helpTitle">Konditionaalit</p>
+        <p class="margin-top-5px"><code>puavo.puavomenu.tags</code> -suodattimet ovat organisaatio-, koulu- ja laitekohtaisia. Mutta konditionaalit ovat käyttäjäkohtaisia. Ne tarkistetaan viimeisenä, ja niillä voit näyttää tai piilottaa mitä tahansa riippuen kirjautuneesta käyttäjästä. Suurimmalla osalla asioista ei ole konditionaalia, mutta jos tarvitset sellaista, valitse listasta sopiva. Voit myös tehdä konditionaalin tarkistuksesta käänteisen ruksaamalla "Käänteinen konditionaali" -laatikon.</p>
+        <p>Jos "Oletuksena piilotettu" -laatikko on ruksattu, tämä kategoria, valikko tai ohjelma piilotetaan oletuksena. Se täytyy erikseen tuoda näkyviin kondotionaalilla, tai <code>puavo.puavomenu.tags</code> -suodattimella.</p>
+        <p class="margin-bottom-0">HUOM: Konditionaaleja ei voi vielä luoda, poistaa tai muokata lennossa. Ainakin toistaiseksi niiden muokkaus vaatii uuden järjestelmäpäivityksen tekoa. Siksi et voi valita kuin jo olemassaolevia konditionaaleja listalta.</p>
+    </div>
+</template>
+
+<template id="template_help" lang="en">
+    <div id="help_catid" data-width="500">
+        <p class="margin-top-0">A unique ID this category is referrd to in filters. For example, the <code>puavo.puavomenu.tags</code> filter allows the category to be hidden (or shown) when the category is referred to using this ID. Usually this is formatted as "category-xxx".</p>
+        <p class="margin-bottom-0">Please use only letters a-z, A-Z, numbers 0-9, and the following punctuation: . _ -. <strong>Letter case does matter. "foo" and "Foo" are different categories.</strong></p>
+    </div>
+
+    <div id="help_menuid" data-width="500">
+        <p class="margin-top-0">A unique ID this menu is referrd to in filters. For example, the <code>puavo.puavomenu.tags</code> filter allows the menu to be hidden (or shown) when the menu is referred to using this ID. Usually this is formatted as "menu-xxx".</p>
+        <p class="margin-bottom-0">Please use only letters a-z, A-Z, numbers 0-9, and the following punctuation: . _ -. <strong>Letter case does matter. "foo" and "Foo" are different menus.</strong></p>
+    </div>
+
+    <div id="help_progtype" data-width="500">
+        <p class="margin-top-0">Specifies the type of this program:</p>
+
+        <ul>
+            <li><strong>Desktop</strong>: A normal desktop program whose details (name, icon, command, etc.) are loaded from an .desktop file that comes with the system image.</li>
+            <li><strong>Custom</strong>: Like a desktop program, but the .desktop file is not loaded. You have to specify all the fields yourself.</li>
+            <li><strong>Web link</strong>: Opens the specified ddress (URL) in the system's default internet browser.</li>
+        </ul>
+
+        <p class="margin-bottom-0">Desktop programs are the most straighforward to use, because they only need the .desktop file name. If needed, you can fill in the other values; their values override the value specified in the .desktop file. This is useful, for example, if a .desktop file has a poor default name for a program. You don't have to fix the .desktop file, you can give it a new name in the menu.</p>
+    </div>
+
+    <div id="help_progid" data-width="500">
+        <p class="margin-top-0">This field has two uses:</p>
+
+        <ol>
+            <li>The .desktop file name (not the full path) for desktop programs. The .desktop file matching the name is automatically searched for in the predefined search paths. If the file cannot be found, the program will not be shown.</li>
+            <li>A unique ID for every program</li>
+        </ol>
+
+        <p>Regardless of the program's type, this ID is also used when referring to the program in menus and categories. Remember that you can reuse a program multiple times in different menus and categories, you don't have to redefine it every time.</p>
+
+        <p class="margin-bottom-0">You can use any character that Linux normally accepts in filenames. <strong>For this reason, letter case does matter!</strong> For compatibility reasons, you should stick to letters a-z, A-Z, numbers 0-9 and a few punctuation characters (. _ -). There is no maximum length, but long names can be hard to use in, for example, filters (and using some characters like +, - or : in the name can make writing filters impossible).</p>
+    </div>
+
+    <div id="help_name" data-width="500">
+        <p class="margin-top-0">Specifies the name. You can set one name that is used for all languages, or specify a translated name for every language. If you omit a translation for a language, the English name is used in its place. If the English name is missing, then the first available name is used. If no name has been specified at all, this item will not be displayed in the menu.</p>
+        <p class="margin-bottom-0">If this is a desktop program, you can override the name specified in the .desktop file with this.</p>
+    </div>
+
+    <div id="help_description" data-width="500">
+        <p class="margin-0">Specifies the description for this item. Uses the same logic that's used for names (see above). Displayed in the hover text.</p>
+    </div>
+
+    <div id="help_position" data-width="500">
+        <p class="margin-top-0">Specifies numerically the position for this category, in relation to others. When the menu is loaded, it makes a list of every category, sorts them by these positions, and them puts the categories in that order. The default position is 0, and if there are multiple categories with the same position, they're sorted alphabetically in addition to the position.</p>
+        <p class="margin-bottom-0">Smaller numbers move the category to the left, and bigger numbers move them to the right.</p>
+    </div>
+
+    <div id="help_icon" data-width="500">
+        <p class="margin-top-0">Specifies the icon for this menu or program. For menus, this is the full path to the image file, but for programs you can use either a full name or a symbolic name.</p>
+        <p class="margin-bottom-0">A file matching the symbolic name is automatically searched for in the predefined search paths. When searching for the icon, the current icon theme name is taken into account. SVG images are prioritised over others, to make the icon look as good on the screen as possible.</p>
+    </div>
+
+    <div id="help_keywords" data-width="500">
+        <p class="margin-top-0">Extra keywords that are used to make the search results better. Separate the words with spaces.</p>
+        <p class="margin-bottom-0">If this is a desktop program with an associated .desktop file, these keywords are merged with the keywords in the file if it has any.</p>
+    </div>
+
+    <div id="help_visibility" data-width="500">
+        <p class="helpTitle">Tags (only for programs)</p>
+        <p class="margin-top-5px">For programs, tags are identifiers that are used to reference the program in <code>puavo.puavomenu.tags</code> filters. Separate them with spaces. Almost all programs have the "default" tag, because everything tagged with it is displayed by default.</p>
+        <p class="helpTitle">Conditions</p>
+        <p class="margin-top-5px">The <code>puavo.puavomenu.tags</code> filters are organisation, school and device specific. But conditions are per-user. They're the last thing to be checked, and they can be used to show or hide anything you want, depending on the logged-in user. Most things have no condition, but if you need them, select one from the list. You can also invert the condition check by selecting the "Reverse condition" checkbox.</p>
+        <p>If the "Hidden by default" checkbox is checked, this category, menu or program will be hidden by default. You have to explicitly make it visible with a condition, or using a <code>puavo.puavomenu.tags</code> filter.</p>
+        <p class="margin-bottom-0">NOTICE: Conditions cannot yet be created, removed or edited on-the-fly. At the moment, editing them requires a new system image update. This is why you can only select existing conditions from the list.</p>
+    </div>
+</template>
+
+<!-- Existing menu or program button -->
+<template id="template_existingEntry">
+    <div class="pmeEntry">
+        <span class="id"></span>
+        <span class="remove" title="<%= t('puavomenu_editor.preview.remove_entry') %>">✕</span>
+    </div>
+</template>
+
+<!-- New entry button -->
+<template id="template_newEntry">
+    <div class="pmeEntry new" title="<%= t('puavomenu_editor.preview.new_entry') %>...">
+        <span>+</span>
+    </div>
+</template>
+
+<!-- New entry popup -->
+<template id="template_newEntryPopup">
+    <div class="pmeNewEntry">
+        <div class="padding-bottom-5px">
+            <header id="hdr_menu" class="flex-grow-2"><%= t('puavomenu_editor.popups.new_entry.menu_title') %></header>
+            <header id="hdr_program" class="flex-grow-2"><%= t('puavomenu_editor.popups.new_entry.program_title') %></header>
+        </div>
+
+        <div class="flex-rows gap-20px">
+            <div class="flex-rows gap-5px">
+                <label for="newName"><%= t('puavomenu_editor.popups.new_entry.add_new') %>:</label>
+                <input type="text" id="newName" maxlength="100" placeholder="<%= t('puavomenu_editor.popups.new_entry.unique_id_placeholder') %>">
+                <label title="<%= t('puavomenu_editor.popups.new_entry.external_help') %>"><input type="checkbox" id="is_external"><%= t('puavomenu_editor.popups.new_entry.external_title') %></label>
+                <div class="pmeError hidden">
+                    <p><%= t('puavomenu_editor.invalid_character') %>: <span></span></p>
+                    <p><%= t('puavomenu_editor.already_used') %></p>
+                </div>
+                <button type="button"><%= t('puavomenu_editor.popups.new_entry.add_new_button') %></button>
+            </div>
+
+            <div class="flex-rows gap-5px">
+                <label for="existingName"><%= t('puavomenu_editor.popups.new_entry.add_existing') %>:</label>
+                <div class="flex-rows gap-5px">
+                    <input type="search" id="existingName" placeholder="<%= t('puavomenu_editor.popups.new_entry.search_placeholder') %>..." maxlength="100" class="padding-2px">
+                    <div id="list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Unused entries popup -->
+<template id="template_unusedEntriesPopup">
+    <div class="flex-rows gap-10px">
+        <p class="margin-0"><%= t('puavomenu_editor.popups.unused.help') %></p>
+
+        <div class="flex-cols gap-10px">
+            <button id="select_all"><%= t('puavomenu_editor.popups.unused.select_all') %></button>
+            <button id="remove_selected"><%= t('puavomenu_editor.popups.unused.remove_selected') %></button>
+        </div>
+
+        <div style="overflow: scroll; max-height: 20em;">
+            <table class="pmeUnused">
+                <thead>
+                    <tr>
+                        <th><%= t('puavomenu_editor.popups.unused.target') %></th>
+                        <th class="minimize-width"><%= t('puavomenu_editor.popups.unused.type') %></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>
+
+<!-- Rename category, menu or program -->
+<template id="template_renameEntry">
+    <div class="flex-rows gap-10px">
+        <label for="newID" data-for="category"><%= t('puavomenu_editor.popups.rename.category') %>:</label>
+        <label for="newID" data-for="menu"><%= t('puavomenu_editor.popups.rename.menu') %>:</label>
+        <label for="newID" data-for="program"><%= t('puavomenu_editor.popups.rename.program') %>:</label>
+        <input type="text" id="newID" maxlength="100">
+
+        <div class="pmeError hidden">
+            <p><%= t('puavomenu_editor.invalid_character') %>: <span></span></p>
+            <p><%= t('puavomenu_editor.already_used') %></p>
+        </div>
+
+        <button type="button"><%= t('puavomenu_editor.popups.rename.rename') %></button>
+    </div>
+</template>
+
+<!-- Search -->
+<template id="template_search">
+    <div class="flex-rows gap-5px">
+        <label for="term"><%= t('puavomenu_editor.popups.search.title') %>:</label>
+        <input type="text" id="term" maxlength="100">
+        <p class="margin-0 margin-top-10px"><%= t('puavomenu_editor.popups.search.results') %>:</p>
+        <div id="no_results" class="pmeSearchResults font-80p">(<%= t('puavomenu_editor.popups.search.no_results') %>)</div>
+        <div id="results" class="pmeSearchResults hidden"></div>
+    </div>
+</template>
+
+<!-- Raw JSON editor popup -->
+<template id="template_JSONEditorPopup">
+    <div class="flex-rows gap-10px">
+        <p class="margin-0 padding-0"><%= t('puavomenu_editor.popups.json.help') %></p>
+        <div class="pmeWarning"><p><%= t('puavomenu_editor.popups.json.save_warning') %></p></div>
+
+        <div class="flex-cols gap-10px">
+            <button id="save"><%= t('link.save') %></button>
+            <div class="pmeError not-visible"><p><%= t('puavomenu_editor.popups.json.invalid_json') %></p></div>
+        </div>
+
+        <textarea class="width-100p" rows="20" id="json"></textarea>
+    </div>
+</template>
+
+<script>
+"use strict";
+
+const SOURCE = <%= raw JSON.pretty_generate(@menudata) %>;
+
+document.addEventListener("DOMContentLoaded", function() {
+    modalPopup.setupGlobalEvents();
+
+    // Note the last parameter is "true". This forces the editor into "restricted" mode.
+    // In restricted mode, categories cannot be edited. Perhaps one day we'll allow
+    // unrestricted editing of menu data. But for now, you can only edit one category.
+    const editor = new PME.PuavomenuEditor(document.querySelector("div#pme"), SOURCE, true);
+
+    document.querySelector("div#content button#main_save").addEventListener("click", (e) => {
+        e.preventDefault();
+<% if @pme_mode == :organisation %>
+        editor.trySave("<%= organisation_puavomenu_save_path %>", e.target);
+<% elsif @pme_mode == :school %>
+        editor.trySave("<%= school_puavomenu_save_path(@school) %>", e.target);
+<% elsif @pme_mode == :device %>
+        editor.trySave("<%= device_puavomenu_save_path(@school, @device) %>", e.target);
+<% end %>
+    });
+});
+</script>

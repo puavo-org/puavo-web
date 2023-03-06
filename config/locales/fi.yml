@@ -1239,6 +1239,141 @@ fi:
       password: Salasana
       group: Ryhmä
 
+  # Interactive Puavomenu editor
+  puavomenu_editor:
+    page_title:
+      organisation: "Organisaatiotason Puavomenu"
+      school: "Kouluntason Puavomenu koululle %{name}"
+      device: "Laitetason Puavomenu laitteelle \"%{name}\""
+
+    tools:
+      find_unused: "Etsi käyttämättömät valikot ja ohjelmat"
+      search: "Etsi kohdetta"
+      json_editor: "JSON-editori"
+      confirm_menu_removal: "Vahvista valikon poisto kategoriasta"
+      confirm_program_removal: "Vahvista ohjelman poisto kategoriasta tai valikosta"
+
+    preview:
+      title: "Esikatselu"
+      categories_title: "Kategoriat"
+      menus_title: "Valikot"
+      programs_title: "Ohjelmat"
+      exit_menu_title: "Takaisin päätasolle"
+      remove_entry: "Poista listasta"
+      new_entry: "Lisää uusi"
+
+    editor:
+      title: "Kohteen muokkaus"
+      select_something: "Valitse jotain muokataksesi sitä."
+      external_menu: "Tämä on ulkoinen valikko. Se (ja sen sisältö) tulee jostain muusta valikkodatan lähteestä kuin nyt auki olevasta, eikä sitä voi siksi muokata tai avata. Voit kuitenkin viitata siihen kategorioissa normaalisti ja muuttaa sen sijaintia."
+      external_program: "Tämä on ulkoinen ohjelma. Se tulee jostain muusta valikkodatan lähteestä kuin nyt auki olevasta, eikä sitä voi siksi muokata. Voit kuitenkin lisätä sen kategorioihin ja valikoihin normaalisti. Voit myös muuttaa sen sijaintia normaalisti."
+      help: "Ohje"
+      placeholder: "(Tyhjä/oletus)"
+
+      change_id: "Vaihda tunnistetta"
+      change_program_id: "Vaihda tunnistetta tai tiedostonimeä"
+
+      lang:
+        fi: "Suomi"
+        en: "Englanti"
+        sv: "Ruotsi"
+        de: "Saksa"
+
+      catid:
+        title: "Kategorian yksilöllinen tunniste"
+
+      menuid:
+        title: "Valikon yksilöllinen tunniste"
+
+      progid:
+        title_desktop: ".desktop -tiedoston nimi"
+        title: "Ohjelman yksilöllinen tunniste"
+
+      progtype:
+        title: "Ohjelman tyyppi"
+        desktop: "Työpöytä"
+        custom: "Räätälöity"
+        weblink: "Web-linkki"
+
+      name:
+        title: "Nimi"
+        single: "Yksi nimi kaikille kielille"
+        multi: "Eri nimi eri kielillä"
+        required_error: "Nimi on pakollinen"
+        multiple_warning: "Monta nimityyppiä, vain valitut tallennetaan"
+
+      description:
+        title: "Kuvaus"
+        single: "Yksi kuvaus kaikille kielille"
+        multi: "Eri kuvaus eri kielillä"
+        multiple_warning: "Monta kuvaustyyppiä, vain valitut tallennetaan"
+
+      position:
+        title: "Kategorian sijainti"
+
+      icon:
+        title: "Kuvake"
+        missing_error: "Kuvake on pakollinen valikoille"
+        missing_warning: "Oletuskuvake on ruma, kuvakkeen nimi kannattaa määrittää"
+
+      keywords:
+        title: "Avainsanat"
+
+      command:
+        title: "Suoritettava komento"
+        missing_error: "Komento vaaditaan"
+
+      url:
+        title: "Avattava URL"
+        missing_error: "URL vaaditaan"
+
+      visibility:
+        title: "Näkyvyys"
+        tags: "Ohjelman tagit"
+        no_tags_warning: "Tagiton ohjelma on aina piilossa, jollei sitä näytetä erikseen jollain tavalla"
+        condition: "Konditionaali"
+        no_condition: "(Ei mitään)"
+        reverse_condition: "Käänteinen konditionaali"
+        hidden_by_default: "Oletuksena piilotettu"
+
+    popups:
+      new_entry:
+        menu_title: "Lisää valikko"
+        program_title: "Lisää ohjelma"
+        add_new: "Lisää uusi"
+        unique_id_placeholder: "Yksilöllinen tunniste"
+        external_title: "Tämä on ulkoinen valikko tai ohjelma"
+        external_help: "Valikon tai ohjelman määritys tulee muualta, ei nykyisestä valikkodatasta"
+        add_new_button: "Lisää"
+        add_existing: "Lisää olemassaoleva"
+        search_placeholder: "Etsi"
+
+      unused:
+        help: "Näihin valikoihin ja ohjelmiin ei viitata missään. Voit poistaa ne pysyvästi ruksaamalla halutut ja painamalla \"Poista valitut\" -nappia."
+        select_all: "Valitse kaikki"
+        remove_selected: "Poista valitut"
+        target: "Kohde"
+        type: "Tyyppi"
+
+      rename:
+        category: "Syötä uusi tunniste tälle kategorialle"
+        menu: "Syötä uusi tunniste tälle valikolle"
+        program: "Syötä uusi tunniste tai tiedostonimi tälle ohjelmalle"
+        rename: "Vaihda"
+
+      search:
+        title: "Jokin tunniste tai osa siitä"
+        results: "Tulokset"
+        no_results: "Ei tuloksia"
+
+      json:
+        help: "Alla nykyinen valikkodata raakana JSONina. Voit muokata sitä suoraan, tai kopioida sen ulkoiseen editoriin muokattavaksi (suositeltu tapa). Paina \"Tallenna\" tallentaaksesi muutokset."
+        save_warning: "VAROITUS: Jos nykyisessä valikossa on virheitä, JSONin tallennus tuhoaa virheelliset kohdat!"
+        invalid_json: "Virheellinen JSON-data, tarkista syntaksi"
+
+    invalid_character: "Virheellinen merkki"
+    already_used: "Tunniste on jo käytössä"
+
   # Groups editing
   groups:
     index:

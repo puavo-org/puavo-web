@@ -1238,6 +1238,141 @@ en:
       password: Password
       group: Group
 
+  # Interactive Puavomenu editor
+  puavomenu_editor:
+    page_title:
+      organisation: "Organisation-level Puavomenu"
+      school: "School-level Puavomenu for school %{name}"
+      device: "Device-level Puavomenu for device \"%{name}\""
+
+    tools:
+      find_unused: "Find unused menus and programs"
+      search: "Search"
+      json_editor: "JSON editor"
+      confirm_menu_removal: "Confirm menu removal from a category"
+      confirm_program_removal: "Confirm program removal from a menu or categry"
+
+    preview:
+      title: "Preview"
+      categories_title: "Categories"
+      menus_title: "Menus"
+      programs_title: "Programs"
+      exit_menu_title: "Back to main level"
+      remove_entry: "Remove from the list"
+      new_entry: "Add a new"
+
+    editor:
+      title: "Item editing"
+      select_something: "Select something to edit it."
+      external_menu: "This is an external menu. It (and its contents) are defined in some other menudata source than this, and this is why you can't edit nor open it. You can use it in categories normally, and change its position."
+      external_program: "This is an external program. It is defined in some other menudata source than this, and this is why you can't edit it. You can still add it to categories and menus normally, and you can change its position."
+      help: "Help"
+      placeholder: "(Empty/default)"
+
+      change_id: "Change the identifier"
+      change_program_id: "Change the identifier or file name"
+
+      lang:
+        fi: "Finnish"
+        en: "English"
+        sv: "Swedish"
+        de: "German"
+
+      catid:
+        title: "Unique identifier for the category"
+
+      menuid:
+        title: "Unique identifier for the menu"
+
+      progid:
+        title_desktop: ".desktop file name"
+        title: "Unique identifier for the program"
+
+      progtype:
+        title: "Program type"
+        desktop: "Desktop"
+        custom: "Custom"
+        weblink: "Web link"
+
+      name:
+        title: "Name"
+        single: "A single name for all languages"
+        multi: "Translated name for different languages"
+        required_error: "The name is required"
+        multiple_warning: "Multiple names specified, only the selected will be saved"
+
+      description:
+        title: "Description"
+        single: "A single description for all languages"
+        multi: "Translated description for different languages"
+        multiple_warning: "Multiple descriptions specified, only the selected will be saved"
+
+      position:
+        title: "Category position"
+
+      icon:
+        title: "Icon"
+        missing_error: "The icon is mandatory for menus"
+        missing_warning: "The default icon is ugly, you should specify something here"
+
+      keywords:
+        title: "Keywords"
+
+      command:
+        title: "Command"
+        missing_error: "The command is required"
+
+      url:
+        title: "The URL to be opened"
+        missing_error: "The URL is required"
+
+      visibility:
+        title: "Visibility"
+        tags: "Program tags"
+        no_tags_warning: "A tagless program is always hidden, unless specifically made visible via some other means"
+        condition: "Condition"
+        no_condition: "(None)"
+        reverse_condition: "Reverse condition"
+        hidden_by_default: "Hidden by default"
+
+    popups:
+      new_entry:
+        menu_title: "Add a menu"
+        program_title: "Add a program"
+        add_new: "Add a new"
+        unique_id_placeholder: "Unique ID"
+        external_title: "This is an external menu or program"
+        external_help: "The data for this menu or program comes elsewhere, not from the current menu data"
+        add_new: "Add"
+        add_existing: "Add an existing"
+        search_placeholder: "Search"
+
+      unused:
+        help: "These menus and programs are not referenced anywhere. You can permanently remove them by checking the ones that aren't needed and by clicking the \"Remove selected\" button."
+        select_all: "Select all"
+        remove_selected: "Remove selected"
+        target: "Target"
+        type: "Type"
+
+      rename:
+        category: "Enter a new ID for this category"
+        menu: "Enter a new ID for this menu"
+        program: "Enter a new ID for file name for this program"
+        rename: "Change"
+
+      search:
+        title: "Some ID or part of it"
+        results: "Results"
+        no_results: "No results"
+
+      json:
+        help: "The current menu data as a plain JSON is listed below. You can edit it directly, or copy it into an external editor (the preferred way). Press the \"Save\" button to save your changes."
+        save_warning: "WARNING: If the current menudata has errors or invalid entries in it, saving the JSON will destroy them!"
+        invalid_json: "Invalid JSON data, please check the syntax"
+
+    invalid_character: "Invalid character"
+    already_used: "This ID is already in use"
+
   # Groups editing
   groups:
     index:

@@ -21,7 +21,8 @@ JS_INPUT = \
 	app/assets/javascripts/modal_popup.js \
 	app/assets/javascripts/supertable3.js \
 	app/assets/javascripts/puavoconf_editor.js \
-	app/assets/javascripts/import_tool.js
+	app/assets/javascripts/import_tool.js \
+	app/assets/javascripts/puavomenu_editor.js
 
 build: config-to-example
 	git rev-parse HEAD > GIT_COMMIT

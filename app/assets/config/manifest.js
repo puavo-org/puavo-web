@@ -13,6 +13,10 @@
 //= link csv_parser.js
 //= link import_worker.js
 
+// Puavomenu Editor
+//= link bundles/puavomenu_editor.js
+//= link i18n/puavomenu_editor.js
+
 // Miscellaneous
 //= link password_validator.js
 //= link bundles/puavoconf_editor.js
