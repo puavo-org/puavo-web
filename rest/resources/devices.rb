@@ -23,6 +23,9 @@ class Device < Host
   ldap_map :puavoSchool,                   :school_dn
   ldap_map :serialNumber,                  :serial_number
 
+  ldap_map :puavoMenuData,                 :puavomenu_data
+  skip_serialize :puavomenu_data
+
   def self.ldap_base
     "ou=Devices,ou=Hosts,#{ organisation["base"] }"
   end

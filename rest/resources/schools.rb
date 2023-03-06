@@ -44,6 +44,9 @@ class School < LdapModel
   ldap_map :telephoneNumber, :phone_number, LdapConverters::SingleValue
   ldap_map :description, :description, LdapConverters::SingleValue
 
+  ldap_map :puavoMenuData, :puavomenu_data
+  skip_serialize :puavomenu_data
+
   # Internal attributes, do not use! These are automatically set when
   # User#school_dns is updated
   ldap_map :member, :member_dns, LdapConverters::ArrayValue
