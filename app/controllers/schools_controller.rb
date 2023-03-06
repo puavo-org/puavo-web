@@ -1,5 +1,6 @@
 class SchoolsController < ApplicationController
   include Puavo::Integrations
+  include Puavo::PuavomenuEditor
 
   # GET /schools
   # GET /schools.xml
@@ -329,6 +330,44 @@ class SchoolsController < ApplicationController
         format.html { render :action => "wlan" }
       end
     end
+  end
+
+  def edit_puavomenu
+    @school = School.find(params[:id])
+
+    unless @pme_enabled
+      flash[:error] = 'Puavomenu Editor has not been enabled in this organisation'
+      return redirect_to(school_path(@school))
+    end
+
+    @pme_mode = :school
+
+    @menudata = load_menudata(@school.puavoMenuData)
+    @conditions = get_conditions
+
+    respond_to do |format|
+      format.html { render 'puavomenu_editor/puavomenu_editor' }
+    end
+  end
+
+  def save_puavomenu
+    save_menudata do |menudata, response|
+      @school = School.find(params[:id])
+
+      @school.puavoMenuData = menudata.to_json
+      @school.save!
+
+      response[:redirect] = school_puavomenu_path(@school)
+    end
+  end
+
+  def clear_puavomenu
+    @school = School.find(params[:id])
+    @school.puavoMenuData = nil
+    @school.save!
+
+    flash[:notice] = t('flash.puavomenu_editor.cleared')
+    redirect_to(school_path(@school))
   end
 
   private

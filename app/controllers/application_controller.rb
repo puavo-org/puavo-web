@@ -4,6 +4,7 @@
 class ApplicationController < ActionController::Base
   include Puavo::AuthenticationHelper
   include Puavo::Helpers
+  include Puavo::PuavomenuEditor    # temporary
   include FastGettext::Translation
 
   attr_reader :school
@@ -44,6 +45,8 @@ class ApplicationController < ActionController::Base
   before_action :find_school
   before_action :set_menu
   before_action :get_organisation
+
+  before_action :is_pme_enabled
 
   after_action :remove_ldap_connection
 
@@ -234,5 +237,9 @@ class ApplicationController < ActionController::Base
     rescue
       {}
     end
+  end
+
+  def is_pme_enabled
+    @pme_enabled = puavomenu_editing_enabled?
   end
 end

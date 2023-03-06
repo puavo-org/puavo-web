@@ -81,6 +81,7 @@ fi:
     all_users_marked_for_deletion: "Organisaation poistetuksi merkityt käyttäjät"
     extended_search: "Laajennettu haku"
     group_members_mass_edit: "Jäsenten massamuokkaus"
+    puavomenu_editor: "Puavomenu-editori"
 
   # Hyperlinks and buttons
   link:
@@ -147,6 +148,7 @@ fi:
       all_images: "Kaikki työpöytäkuvat"
       all_users: "Kaikki käyttäjät"
       all_groups: "Kaikki ryhmät"
+      puavomenu_editor: "Puavomenu-editori"
       wlan: Langattomat verkot
       about: Tietoja
       printers: Tulostimet
@@ -590,6 +592,10 @@ fi:
           part1: "Käyttäjän poisto keskeytettiin; käyttäjää ei voitu poistaa järjestelmästä %{system}, syy: %{reason}."
           part2: "(Poisto onnistui seuraavista järjestelmistä: %{ok_systems}.)"
           part3: "Voit yrittää myöhemmin uudelleen. Jos haluat lisätietoa, ota yhteyttä Opinsysin tukeen ja anna heille tämä koodi: %{code}."
+
+    puavomenu_editor:
+      saved: "Tallennettu"
+      cleared: "Valikkodata poistettu"
 
     password_set_failed: "Salasanan vaihto epäonnistui. Yritä uudelleen."
     session:

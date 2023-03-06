@@ -81,6 +81,7 @@ en:
     all_users_marked_for_deletion: "Users in the organisation who are marked for deletion"
     extended_search: "Extended Search"
     group_members_mass_edit: "Members mass edit"
+    puavomenu_editor: "Puavomenu editor"
 
   # Hyperlinks and buttons
   link:
@@ -147,6 +148,7 @@ en:
       all_images: "All Desktop Images"
       all_users: "All Users"
       all_groups: "All groups"
+      puavomenu_editor: "Puavomenu editor"
       wlan: Wireless networks
       about: About
       printers: Printers
@@ -590,6 +592,10 @@ en:
           part1: "User deletion cancelled; the user could not be deleted from system %{system}, reason: %{reason}."
           part2: "(Removal was successfull in the following systems: %{ok_systems}.)"
           part3: "You can retry again later. If you want more information, please contact Opinsys support and give them this code: %{code}."
+
+    puavomenu_editor:
+      saved: "Saved"
+      cleared: "Menudata has been removed"
 
     password_set_failed: Failed to change password! Try again!
     session:

@@ -1,5 +1,6 @@
 class OrganisationsController < ApplicationController
   include Puavo::Integrations
+  include Puavo::PuavomenuEditor
 
   # GET /organisation
   def show
@@ -439,6 +440,53 @@ class OrganisationsController < ApplicationController
     end
 
     render :json => devices
+  end
+
+  def edit_puavomenu
+    return if redirected_nonowner_user?
+
+    unless @pme_enabled
+      flash[:error] = 'Puavomenu Editor has not been enabled in this organisation'
+      return redirect_to(schools_path)
+    end
+
+    @pme_mode = :organisation
+
+    @menudata = load_menudata(LdapOrganisation.current.puavoMenuData)
+    @conditions = get_conditions
+
+    respond_to do |format|
+      format.html { render 'puavomenu_editor/puavomenu_editor' }
+    end
+  end
+
+  def save_puavomenu
+    save_menudata do |menudata, response|
+      if !current_user || !Array(LdapOrganisation.current.owner).include?(current_user.dn)
+        # Only organisation owners can edit this data
+        logger.error("save_organisation: user #{current_user ? current_user.dn.to_s : '?' } is not an organisation owner")
+
+        response[:success] = false
+        response[:message] = 'Permission denied. You are not an owner.'
+        false
+      else
+        o = LdapOrganisation.current
+        o.puavoMenuData = menudata.to_json
+        o.save!
+
+        response[:redirect] = organisation_puavomenu_path
+        true
+      end
+    end
+  end
+
+  def clear_puavomenu
+    o = LdapOrganisation.current
+    o.puavoMenuData = nil
+    o.save!
+
+    flash[:notice] = t('flash.puavomenu_editor.cleared')
+    redirect_to(organisation_puavomenu_path)
   end
 
   private

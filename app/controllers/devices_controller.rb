@@ -5,6 +5,7 @@ require_relative '../../rest/lib/inventory.rb'
 class DevicesController < ApplicationController
   include Puavo::MassOperations
   include Puavo::Inventory
+  include Puavo::PuavomenuEditor
 
   before_action :find_school
 
@@ -953,6 +954,44 @@ class DevicesController < ApplicationController
     respond_to do |format|
       format.html{ redirect_to(device_path(@school, @device), :notice => t('flash.devices.school_changed') ) }
     end
+  end
+
+  def edit_puavomenu
+    @device = Device.find(params[:id])
+
+    unless @pme_enabled
+      flash[:error] = 'Puavomenu Editor has not been enabled in this organisation'
+      return redirect_to(device_path(@school, @device))
+    end
+
+    @pme_mode = :device
+
+    @menudata = load_menudata(@device.puavoMenuData)
+    @conditions = get_conditions
+
+    respond_to do |format|
+      format.html { render 'puavomenu_editor/puavomenu_editor' }
+    end
+  end
+
+  def save_puavomenu
+    save_menudata do |menudata, response|
+      @device = Device.find(params[:id])
+
+      @device.puavoMenuData = menudata.to_json
+      @device.save!
+
+      response[:redirect] = device_puavomenu_path(@school, @device)
+    end
+  end
+
+  def clear_puavomenu
+    @device = Device.find(params[:id])
+    @device.puavoMenuData = nil
+    @device.save!
+
+    flash[:notice] = t('flash.puavomenu_editor.cleared')
+    redirect_to(device_path(@school, @device))
   end
 
   private

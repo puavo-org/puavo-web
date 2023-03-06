@@ -52,6 +52,10 @@ I18n.locale = "<%= I18n.locale %>";
             <% end %>
             <li class="org-separator"></li>
             <li><%= link_to t('.ldap_services'),  ldap_services_path %></li>
+            <% if @pme_enabled %>
+            <li class="org-separator"></li>
+            <li><%= link_to t('.puavomenu_editor'), organisation_puavomenu_path %></li>
+            <% end %>
           </ul>
         </li>
         <% end %>

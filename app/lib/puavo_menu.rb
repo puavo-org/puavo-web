@@ -28,6 +28,14 @@ class PuavoMenu < MetaMenu
     end
 
     child do
+      title { t('layouts.application.puavomenu_editor') }
+      link { school_puavomenu_path(@school) }
+      active_on_action 'edit_puavomenu'
+      owners_only { false }
+      hide_when { !puavomenu_editing_enabled? }
+    end
+
+    child do
       title { t('schools.menu.wlan') }
       link { wlan_school_path(@school) }
       active_on_action "wlan"

@@ -17,6 +17,11 @@ Rails.application.routes.draw do
   get '/all_groups' => 'organisations#all_groups'
   get '/get_all_groups' => 'organisations#get_all_groups'
 
+  # Organisation-level Puavomenu editor
+  get '/puavomenu' => 'organisations#edit_puavomenu', :as => 'organisation_puavomenu'
+  post '/puavomenu/save' => 'organisations#save_puavomenu', :as => 'organisation_puavomenu_save'
+  delete '/puavomenu/clear' => 'organisations#clear_puavomenu', :as => 'organisation_puavomenu_clear'
+
   # On-the-fly UI language changing
   get '/change_language' => 'sessions#change_language'
 
@@ -54,6 +59,12 @@ Rails.application.routes.draw do
     match 'schools/:id/wlan' => 'schools#wlan', :as => :wlan_school, :via => :get
     match 'schools/:id/wlan_update' => 'schools#wlan_update', :as => :wlan_update_school, :via => :patch
     match 'schools/:id/external_services' => 'external_services#index', :as => :external_services_school, :via => :get
+
+    # School-level Puavomenu editor
+    match 'schools/:id/puavomenu' => 'schools#edit_puavomenu', :as => 'school_puavomenu', :via => :get
+    match 'schools/:id/puavomenu/save' => 'schools#save_puavomenu', :as => 'school_puavomenu_save', :via => :post
+    match 'schools/:id/puavomenu/clear' => 'schools#clear_puavomenu', :as => 'school_puavomenu_clear', :via => :delete
+
     resources :schools
 
     scope :path => ':school_id' do
@@ -206,6 +217,11 @@ Rails.application.routes.draw do
       match 'devices/:id/change_school' => 'devices#change_school', :as => 'change_school_device', :via => :post
       match 'devices/:id/image' => 'devices#image', :as => 'image_device', :via => :get
       match 'devices/:id/raw_hardware_info' => 'devices#raw_hardware_info', :as => 'device_raw_hardware_info', :via => :get
+
+      # Device-level Puavomenu editor
+      match 'devices/:id/puavomenu' => 'devices#edit_puavomenu', :as => 'device_puavomenu', :via => :get
+      match 'devices/:id/puavomenu/save' => 'devices#save_puavomenu', :as => 'device_puavomenu_save', :via => :post
+      match 'devices/:id/puavomenu/clear' => 'devices#clear_puavomenu', :as => 'device_puavomenu_clear', :via => :delete
 
       get 'devices/device_statistics' => 'image_statistics#school_images', :as => 'school_image_statistics'
 
