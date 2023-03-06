@@ -13,7 +13,7 @@ INSTALL_PROGRAM = $(INSTALL)
 ESBUILD = node_modules/.bin/esbuild
 # es2020 has all the features currently used in the system, so target it.
 # --minify is not enabled by default, because source maps are broken (some
-# componen (Sprockets?) insists they're in public/assets, which isn't true,
+# component (Sprockets?) insists they're in public/assets, which isn't true,
 # but I can't find a way to change that).
 ESBUILD_FLAGS = --bundle --charset=utf8 --target=es2020 #--minify #--sourcemap
 JS_OUTPUT = app/assets/javascripts/bundles
