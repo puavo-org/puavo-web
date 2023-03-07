@@ -45,6 +45,8 @@ class User < LdapModel
   ldap_map :puavoDoNotDelete, :do_not_delete
   ldap_map :sambaPwdLastSet, :password_last_set, LdapConverters::Number
 
+  ldap_map :puavoLearnerId, :learner_id
+
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
   ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
@@ -878,27 +880,6 @@ class User < LdapModel
     return mark_set
   end
 
-  # For MPASS integration. See https://wiki.eduuni.fi/display/CSCMPASSID/Data+models
-  # for more info.
-  computed_attr :learner_id
-  def learner_id
-    return nil unless self.external_data
-
-    begin
-      ed = JSON.parse(self.external_data)
-    rescue
-      ed = {}
-    end
-
-    ed.fetch('learner_id', nil)
-  end
-
-  def learner_id=(new_learner_id)
-    ed = JSON.parse(self.external_data) rescue {}
-    ed['learner_id'] = new_learner_id
-    self.external_data = ed.to_json
-  end
-
   private
 
   # Add this user to the given school. Private method. This is used on {#save!}
@@ -1324,6 +1305,7 @@ class Users < PuavoSinatra
     'gid_number'         => 'gidNumber',
     'id'                 => 'puavoId',
     'last_name'          => 'sn',
+    'learner_id'         => 'puavoLearnerId',
     'locale'             => 'puavoLocale',
     'locked'             => 'puavoLocked',
     'modified'           => 'modifyTimestamp',  # LDAP operational attribute
@@ -1356,6 +1338,7 @@ class Users < PuavoSinatra
     'puavoExternalId'               => { name: 'external_id' },
     'puavoExternalData'             => { name: 'external_data', type: :json },
     'puavoId'                       => { name: 'id', type: :integer },
+    'puavoLearnerId'                => { name: 'learner_id' },
     'puavoLocale'                   => { name: 'locale' },
     'puavoLocked'                   => { name: 'locked', type: :boolean },
     'puavoRemovalRequestTime'       => { name: 'removal_mark_time', type: :ldap_timestamp },

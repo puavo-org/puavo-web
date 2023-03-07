@@ -1969,7 +1969,7 @@ en:
         teaching_group: Teaching group
         administrative_groups: Administrative groups
         year_class: Year class
-        learner_id: "Learner ID"
+        puavoLearnerId: "Learner ID"
         mpass_materials_charge: "Learning materials charge (MPASS)"
       group:
         displayName: Group name

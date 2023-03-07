@@ -43,16 +43,14 @@
     <p class="infoTitle"><%= t('activeldap.attributes.user.puavoEduPersonAffiliation') %></p>
     <p class="infoValue"><%= Array(@user.puavoEduPersonAffiliation).map { |value| t('puavoEduPersonAffiliation_' + value) }.join(', ') %></p>
 
+    <p class="infoTitle"><%= t('activeldap.attributes.user.puavoLearnerId') %></p>
+    <p class="infoValue"><%= h @user.puavoLearnerId || t('missing_data') %></p>
+
     <% if @user.puavoEduPersonAffiliation.include?('student') %>
     <p class="infoTitle"><%= t('activeldap.attributes.user.teaching_group') %></p>
     <p class="infoValue"><%= h @user.teaching_group&.displayName || t('missing_data') %></p>
     <p class="infoTitle"><%= t('activeldap.attributes.user.year_class') %></p>
     <p class="infoValue"><%= h @user.year_class&.displayName || t('missing_data') %></p>
-    <% end %>
-
-    <% if @learner_id %>
-    <p class="infoTitle"><%= t('activeldap.attributes.user.learner_id') %></p>
-    <p class="infoValue"><%= h @learner_id %></p>
     <% end %>
 
     <% if @mpass_materials_charge %>

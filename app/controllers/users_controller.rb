@@ -334,14 +334,9 @@ class UsersController < ApplicationController
       elsif column == 'telephone' && user.telephoneNumber
         user.telephoneNumber = nil
         user.save!
-      elsif column == 'learner_id' && user.puavoExternalData
-        ed = JSON.parse(user.puavoExternalData)
-
-        if ed.include?('learner_id') && ed['learner_id']
-          ed.delete('learner_id')
-          user.puavoExternalData = ed.empty? ? nil : ed.to_json
-          user.save!
-        end
+      elsif column == 'learner_id' && user.puavoLearnerId
+        user.puavoLearnerId = nil
+        user.save!
       elsif column == 'pnumber' && user.puavoEduPersonPersonnelNumber
         user.puavoEduPersonPersonnelNumber = nil
         user.save!
@@ -659,13 +654,11 @@ class UsersController < ApplicationController
     end
 
     # External data fields
-    @learner_id = nil
     @mpass_materials_charge = nil
 
     if @user.puavoExternalData
       begin
         ed = JSON.parse(@user.puavoExternalData)
-        @learner_id = ed.fetch('learner_id', nil)
 
         if @user.puavoEduPersonAffiliation.include?('student')
           @mpass_materials_charge = ed.fetch('materials_charge', nil)

@@ -33,6 +33,7 @@ module UsersHelper
       'modifyTimestamp',
       'puavoSchool',
       'puavoEduPersonPrimarySchool',
+      'puavoLearnerId',
     ].freeze
   end
 
@@ -52,6 +53,10 @@ module UsersHelper
     out[:role] = Array(raw['puavoEduPersonAffiliation'])
     out[:role].unshift('schooladmin') if school_admins.include?(dn)
     out[:role].unshift('owner') if organisation_owners.include?(dn)
+
+    if raw['puavoLearnerId']
+      out[:learner_id] = raw['puavoLearnerId']
+    end
 
     if raw['puavoRemovalRequestTime']
       out[:rrt] = Puavo::Helpers::convert_ldap_time(raw['puavoRemovalRequestTime'])
@@ -99,19 +104,6 @@ module UsersHelper
 
     if raw.include?('createTimestamp')
       out[:modified] = Puavo::Helpers::convert_ldap_time(raw['modifyTimestamp'])
-    end
-
-    # Learner ID, if present. I wonder what kind of performance impact this
-    # kind of repeated JSON parsing has?
-    if raw.include?('puavoExternalData')
-      begin
-        ed = JSON.parse(raw['puavoExternalData'][0])
-
-        if ed.include?('learner_id') && ed['learner_id']
-          out[:learner_id] = ed['learner_id']
-        end
-      rescue
-      end
     end
 
     return out
