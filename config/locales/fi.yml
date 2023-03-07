@@ -222,6 +222,7 @@ fi:
 
     schools:
       integrations: "Integraatiot"
+      oid: "OID-koodi"
 
     users:
       first_names: "Etunimet"
@@ -1902,6 +1903,7 @@ fi:
         displayName: Koulun nimi
         puavoNamePrefix: Etuliite
         puavoSchoolCode: Koulukoodi
+        puavoSchoolOID: "OID-koodi"
         puavoSchoolHomePageURL: Koulun kotisivu
         description: Kuvaus
         puavoSchoolNameAbbreviation: "Lyhenne"

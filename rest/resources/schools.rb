@@ -47,6 +47,9 @@ class School < LdapModel
   ldap_map :puavoMenuData, :puavomenu_data
   skip_serialize :puavomenu_data
 
+  ldap_map :puavoSchoolOID, :school_oid, LdapConverters::SingleValue
+  skip_serialize :school_oid
+
   # Internal attributes, do not use! These are automatically set when
   # User#school_dns is updated
   ldap_map :member, :member_dns, LdapConverters::ArrayValue
@@ -301,6 +304,7 @@ class Schools < PuavoSinatra
     'post_box'              => "postOfficeBox",
     'puavoconf'             => "puavoConf",
     'school_code'           => 'puavoSchoolCode',
+    'school_oid'            => 'puavoSchoolOID',
     'state'                 => "st",
     'tags'                  => "puavoTag",
     'telephone'             => "telephoneNumber",
@@ -341,6 +345,7 @@ class Schools < PuavoSinatra
     'puavoNamePrefix'             => { name: 'name_prefix' },
     'puavoPersonalDevice'         => { name: 'personal_device', type: :boolean },
     'puavoSchoolCode'             => { name: 'school_code' },
+    'puavoSchoolOID'              => { name: 'school_oid' },
     'puavoSchoolHomePageURL'      => { name: 'homepage' },
     'puavoTag'                    => { name: 'tags' },
     'puavoWlanChannel'            => { name: 'wlan_channel' },

@@ -68,6 +68,11 @@ const COLUMN_DEFINITIONS = {
         type: ST.ColumnType.STRING,
     },
 
+    school_oid: {
+        key: "school_oid",
+        type: ST.ColumnType.STRING,
+    },
+
     eid: {
         key: "eid",
         type: ST.ColumnType.STRING,
@@ -109,6 +114,7 @@ const COLUMN_TITLES = {
     boot_servers: "<%= t('activeldap.attributes.school.bootservers') %>",
     tags: "<%= t('columns.tags') %>",
     school_code: "<%= t('activeldap.attributes.school.puavoSchoolCode') %>",
+    school_oid: "<%= t('columns.schools.oid') %>",
     eid: "<%= t('activeldap.attributes.school.puavoExternalId') %>",
     num_members: "<%= t('schools.index.members') %>",
     num_groups: "<%= t('schools.index.groups') %>",
@@ -122,6 +128,7 @@ const COLUMN_ORDER = [
     "name",
     "prefix",
     "school_code",
+    "school_oid",
     "eid",
     "integrations",
     "tags",
@@ -217,7 +224,7 @@ function schoolActions(entry)
     return `<a href="/users/schools/${entry.id[ST.INDEX_FILTERABLE]}/edit" class="btn"><%= t('link.edit') %></a>`;
 }
 
-const DEFAULT_COLUMNS = ["name", "prefix", "school_code", "eid", "integrations", "num_members", "num_groups", "num_devices", "boot_servers"];
+const DEFAULT_COLUMNS = ["name", "prefix", "school_code", "school_oid", "eid", "integrations", "num_members", "num_groups", "num_devices", "boot_servers"];
 const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
 
 const RAW_DATA = <%= raw JSON.pretty_generate(@data) %>;
