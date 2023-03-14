@@ -361,7 +361,7 @@ class ServersController < ApplicationController
 
       clear_puavoconf(server)
 
-      strip_img(server)
+      clean_image_name(server)
 
       return server.merge(device)
 

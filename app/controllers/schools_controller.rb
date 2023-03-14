@@ -436,7 +436,7 @@ class SchoolsController < ApplicationController
       s["puavoBillingInfo"].uniq! if s.key?("puavoBillingInfo")
       s["puavoImageSeriesSourceURL"].uniq! if s.key?("puavoImageSeriesSourceURL")
 
-      strip_img(s)
+      clean_image_name(s)
 
       clear_puavoconf(s)
 

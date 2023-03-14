@@ -1113,7 +1113,7 @@ class DevicesController < ApplicationController
     p["puavoDeviceXrandr"].uniq! if p.key?("puavoDeviceXrandr")
     p["puavoImageSeriesSourceURL"].uniq! if p.key?("puavoImageSeriesSourceURL")
 
-    strip_img(p)
+    clean_image_name(p)
 
     clear_puavoconf(p)
 

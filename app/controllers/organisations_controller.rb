@@ -539,7 +539,7 @@ class OrganisationsController < ApplicationController
         :puavoBillingInfo=>[]
       ).to_hash
 
-      strip_img(o)
+      clean_image_name(o)
 
       clear_puavoconf(o)
 
