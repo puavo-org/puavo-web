@@ -1,3 +1,9 @@
+puavo-users (0.32) bookworm; urgency=medium
+
+  * Bump version for Bookworm.
+
+ -- Puavo Org <dev@opinsys.fi>  Tue, 14 Mar 2023 12:24:41 +0200
+
 puavo-users (0.31) bullseye; urgency=low
 
   * Bump version for Bullseye.
