@@ -1189,63 +1189,6 @@ fi:
       page: "sivu"
       end: "Loppu"
 
-  # New mass import/update tool
-  import_tool:
-    import: Tuo (vanha)
-    import_users: Tuo käyttäjiä
-    deprecated: "Tämä työkalu on vanhentunut. Se poistetaan marras-joulukuun 2022 aikana. On aika sanoa sille hyvästit. Koska näet tämän viestin, olet organisaation omistajissa ja voit siten käyttää uutta tuontityökalua. Käytä sitä tämän sijaan. Kiitos."
-    add_column: Lisää sarake
-    change_type: Vaihda tyyppi
-    fill: Täytä
-    fill_values: Täytä arvot
-    known_legacy_roles: "Olemassa olevat legacy -roolit"
-    known_roles: Olemassa olevat tyypit
-    missing_columns: Puuttuvat sarakkeet
-    override_existing_values: Ylikirjoita olemassa olevat arvot
-    remove_column: Poista sarake
-    select: Valitse...
-    some_value: Jokin arvo
-    start_import: Aloita lisääminen
-    start_new_import: Aloita alusta
-    status: Tila
-    unknown_legacy_role_details: "Tuntematon legacy -rooli"
-    unknown_legacy_role: "Tuntematon legacy -rooli"
-    unknown_role: Tuntematon tyyppi
-    created: Käyttäjä luotu
-    user_updated: Olemassa oleva käyttäjä päivitetty
-    create_user: Luo uusi käyttäjä
-    update_school: "Päivitä käyttäjän koulu ja legacy-roolit"
-    update_all: Päivitä käyttäjän kaikki attribuutit
-    reset_passwords: Aseta uudet salasanat
-    reset_existing_users: Aseta myös olemassa oleville käyttäjille
-    generate_username: Luo käyttäjätunnus
-    begin: Aloita
-    select_file: Valitse tiedosto
-    add_names_to_generate_username: Lisää etunimi ja sukunimi ensin
-    user_not_found: Tämä käyttäjätunnus on vapaa
-    user_exists: Tämä tunnus on jo olemassa. Voit kuitenkin päivitysominaisuudella päivittää sen attribuutteja.
-    prevent_unload: Käyttäjiä tuodaan parhaillaan. Haluatko varmasti lopettaa?
-    waiting_user_data: Odotetaan käyttäjätietoja
-    roles:
-      admin: Ylläpitäjä
-      parent: Vanhempi
-      staff: Henkilökunta
-      student: Oppilas
-      teacher: Opettaja
-      testuser: Testikäyttäjä
-      visitor: Vierailija
-    types:
-      update_type: Päivitystapa
-      email: Email
-      first_name: Etunimi
-      last_name: Sukunimi
-      legacy_role: "Legacy -rooli"
-      role: "Rooli (ent. käyttäjätyyppi)"
-      unknown: Tuntematon
-      username: Käyttäjätunnus
-      password: Salasana
-      group: Ryhmä
-
   # Interactive Puavomenu editor
   puavomenu_editor:
     page_title:

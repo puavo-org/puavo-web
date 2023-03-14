@@ -1188,63 +1188,6 @@ en:
       page: "page"
       end: "End"
 
-  # New mass import/update tool
-  import_tool:
-    import: Import (legacy)
-    import_users: Import users
-    deprecated: "This tool has been deprecated. It will be removed in November or December of 2022. It's time to say goodbye to it. Because you can see this message, it means you're an organisation owner and thus you can access the new import tool. Please use it instead. Thank you."
-    add_column: Add column
-    change_type: Change type
-    fill: Fill
-    fill_values: Fill values
-    known_legacy_roles: Known legacy roles are
-    known_roles: Known types are
-    missing_columns: Missing columns
-    override_existing_values: Override existing values
-    remove_column: Remove column
-    select: Select...
-    some_value: Some value
-    start_import: Import data
-    start_new_import: Start a new import
-    status: Status
-    unknown_legacy_role_details: Unknown legacy role
-    unknown_legacy_role: Unknown legacy role
-    unknown_role: Unknown user type
-    created: User created
-    user_updated: Existing users updated
-    create_user: Create new user
-    update_school: Update user school and legacy roles
-    update_all: Update all user attributes
-    reset_passwords: Reset passwords
-    reset_existing_users: Reset existing users too
-    generate_username: Generate username
-    begin: Begin
-    select_file: Select file
-    add_names_to_generate_username: Add first name and last name to the generated username
-    user_not_found: This username has not been used yet
-    user_exists: This user already exists. You may still use the update feature on it.
-    prevent_unload: Import is ongoing. Do really want to abort it?
-    waiting_user_data: Waiting for user data
-    roles:
-      admin: Administrator
-      parent: Parent
-      staff: Staff
-      student: Student
-      teacher: Teacher
-      testuser: Test user
-      visitor: Visitor
-    types:
-      update_type: Update type
-      email: Email
-      first_name: First name
-      last_name: Last name
-      legacy_role: Legacy role
-      role: "Role (was User type)"
-      unknown: Unknown
-      username: Username
-      password: Password
-      group: Group
-
   # Interactive Puavomenu editor
   puavomenu_editor:
     page_title:
