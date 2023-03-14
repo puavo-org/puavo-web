@@ -1221,7 +1221,7 @@ export class FilterEditor {
         if (input.trim() == "") {
             // Do nothing if there's nothing to compile
             console.log("----- Compilation finished -----");
-            return [[], []];
+            return [[], [], []];
         }
 
         let logger = new MessageLogger();
