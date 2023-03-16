@@ -271,7 +271,7 @@ module DevicesHelper
     end
 
     if dev.include?('puavoImageSeriesSourceURL')
-      out[:image_series] = dev['puavoImageSeriesSourceURL'][0]
+      out[:image_series] = dev['puavoImageSeriesSourceURL']
     end
 
     if dev.include?('puavoPrinterDeviceURI')
