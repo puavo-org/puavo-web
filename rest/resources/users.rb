@@ -963,7 +963,7 @@ class Users < PuavoSinatra
 
     # This check is here because I don't know how to remove organisation owners
     # with puavo-rest. And owners usually should be left alone.
-    if user.organisation.owners.collect{ |o| o.dn }.include?(user.dn)
+    if user.organisation.owners.collect { |o| o[:dn] }.include?(user.dn)
       return 403, 'refusing to delete an organisation owner'
     end
 
