@@ -148,6 +148,8 @@ export class FilterEditor {
     // Called from the parent class
     enableOrDisable(isEnabled)
     {
+        this.disabled = !isEnabled;
+
         this.$("button#deleteAll").disabled = this.disabled;
         this.$("button#showJSON").disabled = this.disabled;
         this.$("button#hideJSON").disabled = this.disabled;
@@ -171,7 +173,8 @@ export class FilterEditor {
         this.$("button#deleteAll").disabled = this.disabled;
         this.$("button#saveJSON").disabled = this.disabled;
 
-        // TODO: Disable the filter elements
+        for (const e of this.$all(".filterList input, .filterList button"))
+            e.disabled = this.disabled;
     }
 
     // Switch between traditional and advanced filtering modes
@@ -300,30 +303,28 @@ export class FilterEditor {
     {
         const box = this.container.querySelector("div.filterList");
 
-        if (this.isAdvanced) {
-            box.innerText = "(foo)";
-        } else {
+        if (this.isAdvanced)
+            box.innerText = "";
+        else {
             box.innerText = "";
 
+            // Existing filters
             for (let i = 0; i < this.filters.length; i++) {
                 const filter = this.filters[i];
-
-                //if (filter.isNew)
-                //    continue;
-
                 const entry = this.buildFilterEntry(filter, true);
 
-                entry.querySelector("div.active").addEventListener("click", (e) => this.onActivateFilter(e));
-                entry.querySelector("div.parts").addEventListener("click", (e) => this.onEditFilter(e));
-                entry.querySelector("div.danger").addEventListener("click", (e) => this.onDeleteFilter(e));
+                // Setup events
+                entry.querySelector("div.active").addEventListener("click", e => this.onActivateFilter(e));
+                entry.querySelector("div.parts").addEventListener("click", e => this.onEditFilter(e));
+                entry.querySelector("div.danger").addEventListener("click", e => this.onDeleteFilter(e));
 
                 box.appendChild(entry);
             }
 
-            let newFilter = create("div", { cls: ["filterBox", "newFilter"] });
+            // The "new filter" button
+            let newFilter = create("button", { cls: ["filterBox", "newFilter"], text: _tr("filtering.new_traditional_filter") });
 
-            newFilter.innerText = _tr("filtering.new_traditional_filter");
-            newFilter.addEventListener("click", (e) => this.onNewFilter(e));
+            newFilter.addEventListener("click", e => this.onNewFilter(e));
 
             box.appendChild(newFilter);
 
@@ -663,7 +664,6 @@ export class FilterEditor {
             e.preventDefault();
             return;
         }
-
 
         const index = parseInt(e.target.parentNode.dataset.index, 10);
 
