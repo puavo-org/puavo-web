@@ -230,7 +230,15 @@ export class FilterEditor {
         }
 
         if (this.isAdvanced) {
-            this.preview.innerHTML = `${_tr("filtering.preview_prefix")}: <code>${this.advancedPreview}</code>`;
+            if (this.advancedPreview === null || this.advancedPreview.length == 0)
+                this.preview.classList.add("hidden");
+            else {
+                this.preview.innerHTML = `${_tr("filtering.preview_prefix")}: <code>${this.advancedPreview}</code>`;
+
+                if (!this.isVisible)
+                    this.preview.classList.remove("hidden");
+            }
+
             return;
         }
 
