@@ -1108,8 +1108,6 @@ fi:
       begin_selected: "Tuo valitut rivit"
       stop: "Pysäytä tuonti"
       begin_failed: "Tuo epäonnistuneet rivit uudelleen"
-      get_pdf_without_passwords: "Lataa PDF käyttäjistä"
-      get_pdf_with_passwords: "Lataa PDF käyttäjistä salasanoineen"
       delete_selected_rows: "Poista valitut rivit"
       save: "Tallenna (Enter)"
       cancel: "Peruuta (Esc)"
