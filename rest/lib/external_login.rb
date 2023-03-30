@@ -317,7 +317,9 @@ module PuavoRest
     end
 
     def update_user_info(userinfo, password, params)
-      user_update_status = update_user_attributes(userinfo, params)
+      user = puavo_user_by_external_id(userinfo['external_id'])
+
+      user_update_status = update_user_attributes(user, userinfo, params)
 
       if password then
         pw_update_status = set_puavo_password(userinfo['username'],
@@ -340,6 +342,7 @@ module PuavoRest
         pw_update_status = ExternalLoginStatus::NOCHANGE
       end
 
+      external_groups_by_type = userinfo.delete('external_groups')
       mg_update_status = manage_groups_for_user(user, external_groups_by_type)
 
       return ExternalLoginStatus::UPDATED \
@@ -350,7 +353,7 @@ module PuavoRest
       return ExternalLoginStatus::NOCHANGE
     end
 
-    def update_user_attributes(userinfo, params)
+    def update_user_attributes(user, userinfo, params)
       user_update_status = ExternalLoginStatus::NOCHANGE
 
       return user_update_status unless @manage_puavousers
@@ -377,10 +380,7 @@ module PuavoRest
               "could not determine user role for #{ userinfo['username'] }"
       end
 
-      external_groups_by_type = userinfo.delete('external_groups')
-
       begin
-        user = puavo_user_by_external_id(userinfo['external_id'])
         userinfo = adjust_userinfo(user, userinfo)
 
         if !user then
