@@ -869,29 +869,6 @@ module PuavoRest
       external_id
     end
 
-    # XXX we can throw this out if we lookup all users anyway
-    def user_exists?(external_id)
-      user_filter = Net::LDAP::Filter.eq(@external_id_field, external_id)
-
-      ldap_entries = ext_ldapop('user_exists?/search',
-                                :search,
-                                :filter => user_filter,
-                                :time   => 5)
-      if !ldap_entries then
-        msg = "ldap search for user '#{ username }' failed: " \
-                + @ldap.get_operation_result.message
-        raise ExternalLoginUnavailable, msg
-      end
-
-      return false if ldap_entries.count == 0
-
-      if ldap_entries.count > 1
-        raise ExternalLoginUnavailable, 'ldap search returned too many entries'
-      end
-
-      return true
-    end
-
     def get_userinfo(username)
       raise 'ldap userinfo not set' unless @username && @ldap_userinfo
 
