@@ -132,115 +132,73 @@ const USER_TRANSFORM_FUNCTIONS = {
     },
 };
 
-class MassGroupDeletion extends ST.MassOperation {
+// Mass operation: remove all members from the group
+class MassGroupRemoveMembers extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
-
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_delete`,
-            { id: item.id[ST.INDEX_FILTERABLE] }
-        );
-    }
+    prepareItem(item) { return { state: "ready" }; }
 };
 
-class MassGroupClear extends ST.MassOperation {
-    constructor(parent, container) { super(parent, container); }
-
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_clear`,
-            { id: item.id[ST.INDEX_FILTERABLE] }
-        );
-    }
-};
-
+// Mass operation: lock all members
 class MassGroupLockMembers extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
-
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_lock_members`,
-            { id: item.id[ST.INDEX_FILTERABLE], state: true }
-        );
-    }
+    prepareItem(item) { return { state: "ready" }; }
 };
 
+// Mass operation: unlock all members
 class MassGroupUnlockMembers extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
-
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_lock_members`,
-            { id: item.id[ST.INDEX_FILTERABLE], state: false }
-        );
-    }
+    prepareItem(item) { return { state: "ready" }; }
 };
 
+// Mass operation: mark all members for deletion
 class MassGroupMarkMembersForDeletion extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
-
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_mark_members_for_deletion`,
-            { id: item.id[ST.INDEX_FILTERABLE], state: true }
-        );
-    }
+    prepareItem(item) { return { state: "ready" }; }
 };
 
+// Mass operation: remove member deletion marks
 class MassGroupUnmarkMembersForDeletion extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
+    prepareItem(item) { return { state: "ready" }; }
+};
 
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_mark_members_for_deletion`,
-            { id: item.id[ST.INDEX_FILTERABLE], state: false }
-        );
-    }
+// Mass operation: delete the group
+class MassGroupDeletion extends ST.MassOperation {
+    constructor(parent, container) { super(parent, container); }
+    prepareItem(item) { return { state: "ready" }; }
 };
 
 // JavaScript class fields support is so poor that I can't really
 // define titles, IDs and other things in classes, they must be here
 const MASS_OPERATIONS = [
     {
-        id: "clear",
+        operation: "remove_members",
         title: "<%= t('link.remove_all_members_from_group') %>",
-        flags: 0,
-        cls: MassGroupClear
+        cls: MassGroupRemoveMembers
     },
     {
-        id: "lock_users",
+        operation: "lock_members",
         title: "<%= t('link.lock_all_group_members') %>",
-        flags: 0,
         cls: MassGroupLockMembers
     },
     {
-        id: "unlock_users",
+        operation: "unlock_members",
         title: "<%= t('link.unlock_all_group_members') %>",
-        flags: 0,
         cls: MassGroupUnlockMembers
     },
     {
-        id: "mark_for_deletion",
+        operation: "mark_members",
         title: "<%= t('link.mark_group_members_for_deletion') %>",
-        flags: 0,
         cls: MassGroupMarkMembersForDeletion
     },
     {
-        id: "unmark_deletion",
+        operation: "unmark_members",
         title: "<%= t('link.unmark_group_members_deletion') %>",
-        flags: 0,
         cls: MassGroupUnmarkMembersForDeletion
     },
     {
-        id: "delete",
+        operation: "delete",
         title: "<%= t('link.delete_group') %>",
-        flags: 0,
         cls: MassGroupDeletion
     },
 ];

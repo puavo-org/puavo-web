@@ -11,7 +11,10 @@ Rails.application.routes.draw do
 
   get '/all_devices' => 'organisations#all_devices'
   get '/get_all_devices' => 'organisations#get_all_devices'
+  post '/devices_mass_operations' => 'devices_mass_operations#devices_mass_operation'
+
   get '/all_images' => 'image_statistics#all_images'
+
   get '/all_users' => 'organisations#all_users'
   get '/get_all_users' => 'organisations#get_all_users'
   post '/users_mass_operations' => 'users_mass_operations#users_mass_operation'

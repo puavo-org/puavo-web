@@ -1458,13 +1458,16 @@ fi:
           xserver: "Näytönohjaimen ajuri"
           monitors_xml: "Näyttöasetukset (XML)"
           invalid_json: "Virheellinen JSON-data"
-          validity_warning_json: "Tämän täytyy olla kunnollista JSONia. Sen oikeellisuus tarkistetaan ennen massaoperaation suorittamista."
+          invalid_xml: "Virheellinen XML-data"
           validity_warning_string: "Tähän antamasi arvon oikeellisuutta ei tarkisteta mitenkään! Jos arvo on virheellinen, se saatetaan hylätä palvelinpäässä tallennusvaiheessa."
+          validity_warning_json: "Tämän täytyy olla kunnollista JSONia. Sen oikeellisuus tarkistetaan ennen massaoperaation suorittamista."
+          validity_warning_xml: "Tämän täytyy olla kunnollista XML:ää. Sen oikeellisuus tarkistetaan ennen massaoperaation suorittamista."
+          unknown_user: "Tuntematon käyttäjä \"%{name}\""
         delete:
           title: "Poista"
         purchase_info:
           title: "Hankintatiedot..."
-          validity_warning: "Ruksaa jokainen kenttä jonka arvoa haluat muuttaa tämän operaation aikana. Asetettuja arvoja ei tarkisteta millään tavalla! Jos kentän sisältö on vihreellinen, tietokanta hylkää arvon!"
+          validity_warning: "Ruksaa jokainen kenttä jonka arvoa haluat muuttaa tämän operaation aikana. <strong>Näitä arvoja ei tarkisteta millään tavalla! Jos kentän sisältö on vihreellinen, tietokanta hylkää arvon!</strong> Kentän sisältö voi olla tyhjä, silloin sen sisältö poistetaan tietokannasta."
         reset:
           title: "Aseta/poista nollaustila"
           action: "Toiminto:"

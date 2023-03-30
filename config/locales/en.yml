@@ -1458,13 +1458,16 @@ en:
           xserver: "Graphic adapter drivers"
           monitors_xml: "Display settings (XML)"
           invalid_json: "Invalid JSON data"
-          validity_warning_json: "This must be valid JSON. It will be validated before the mass operation is launched."
+          invalid_xml: "Invalid XML data"
           validity_warning_string: "The value you specify here is not validated in any way. If the value is not valid, the server may reject it when it is being saved."
+          validity_warning_json: "This must be valid JSON. It will be validated before the mass operation is launched."
+          validity_warning_xml: "This must be valid XML. It will be validated before the mass operation is launched."
+          unknown_user: "Unknown user \"%{name}\""
         delete:
           title: "Delete"
         purchase_info:
           title: "Purchase information..."
-          validity_warning: "Check every field you want to change during this operation. Their values are not validated in any way! If a field contents is invalid, the database will reject it!"
+          validity_warning: "Check every field you want to change during this operation. <strong>These values are not validated in any way! If a field contains an invalid value, the database will reject it!</strong> A field can be left empty, in that case the existing value will be removed from the database."
         reset:
           title: "Set/clear reset mode"
           action: "Action:"
