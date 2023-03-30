@@ -46,6 +46,15 @@ extlogin_conf.each do |organisation, org_conf|
 
     org_domain = "#{ organisation }.#{ topdomain }"
 
+    manage_puavousers = org_conf['manage_puavousers']
+    raise 'no manage puavousers configuration value' if manage_puavousers.nil?
+
+    unless manage_puavousers then
+      puts ">> skipping organisation '#{ organisation }', users are not" \
+             + ' managed by external logins'
+      next
+    end
+
     admin_dn = org_conf['admin_dn']
     raise 'no admin dn' unless admin_dn
 
