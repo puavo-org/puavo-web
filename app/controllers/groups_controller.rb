@@ -2,8 +2,8 @@ require 'list'
 require 'csv'
 
 class GroupsController < ApplicationController
-  include Puavo::MassOperations
   include Puavo::Helpers
+  include Puavo::GroupsShared
 
   # GET /:school_id/groups/:id/members
   def members
@@ -82,161 +82,6 @@ class GroupsController < ApplicationController
 
     render :json => groups
   end
-
-  # ------------------------------------------------------------------------------------------------
-  # ------------------------------------------------------------------------------------------------
-
-  # Mass operation: delete group
-  def mass_op_group_delete
-    begin
-      group_id = params[:group][:id]
-    rescue
-      puts "mass_op_group_delete(): missing required params in the request:"
-      puts params.inspect
-      return status_failed_msg('mass_op_group_delete(): missing params')
-    end
-
-    ok = false
-
-    begin
-      group = Group.find(group_id)
-      group.destroy
-      ok = true
-    rescue StandardError => e
-      return status_failed_msg(e)
-    end
-
-    if ok
-      return status_ok()
-    else
-      return status_failed_msg('unknown_error')
-    end
-  end
-
-  # Mass operation: clear group (remove all users from it)
-  def mass_op_group_clear
-    begin
-      group_id = params[:group][:id]
-    rescue
-      puts "mass_op_group_clear(): missing required params in the request:"
-      puts params.inspect
-      return status_failed_msg('mass_op_group_clear(): missing params')
-    end
-
-    ok = false
-
-    begin
-      group = Group.find(group_id)
-      ok = _remove_all_group_members(group)
-    rescue StandardError => e
-      return status_failed_msg(e)
-    end
-
-    if ok
-      return status_ok()
-    else
-      return status_failed_msg('unknown_error')
-    end
-  end
-
-  # Mass operation: lock or unlock all group members
-  def mass_op_group_lock_members
-    begin
-      group_id = params[:group][:id]
-      state = params[:group][:state]
-    rescue
-      puts "mass_op_group_lock_members(): missing required params in the request:"
-      puts params.inspect
-      return status_failed_msg('mass_op_group_lock_members(): missing params')
-    end
-
-    ok = false
-
-    begin
-      group = Group.find(group_id)
-      _lock_members(group, state)
-      ok = true
-    rescue StandardError => e
-      return status_failed_msg(e)
-    end
-
-    if ok
-      return status_ok()
-    else
-      return status_failed_msg('unknown_error')
-    end
-  end
-
-  # Mass operation: mark (or unmark) all group members for deletion
-  def mass_op_group_mark_members_for_deletion
-    begin
-      group_id = params[:group][:id]
-      state = params[:group][:state]
-    rescue
-      puts "mass_op_group_mark_members_for_deletion(): missing required params in the request:"
-      puts params.inspect
-      return status_failed_msg('mass_op_group_mark_members_for_deletion(): missing params')
-    end
-
-    ok = false
-
-    begin
-      group = Group.find(group_id)
-      _mark_members_for_deletion(group, state)
-      ok = true
-    rescue StandardError => e
-      return status_failed_msg(e)
-    end
-
-    if ok
-      return status_ok()
-    else
-      return status_failed_msg('unknown_error')
-    end
-  end
-
-  # Mass operation: modify memberships (see below)
-  def mass_op_change_members
-    begin
-      user_id = params[:group][:id]
-      mode = params[:group][:mode]
-      groups = params[:group][:groups]
-    rescue
-      puts "mass_op_change_members(): missing required params in the request:"
-      puts params.inspect
-      return status_failed_msg('mass_op_change_members(): missing params')
-    end
-
-    ok = false
-
-    begin
-      u = User.find(user_id)
-
-      groups.each do |id|
-        g = Group.find(id)
-
-        # add_user and remove_user handle duplicates and non-existent members gracefully
-        if mode == 'add'
-          g.add_user(u)
-        else
-          g.remove_user(u)
-        end
-      end
-
-      ok = true
-    rescue StandardError => e
-      return status_failed_msg(e)
-    end
-
-    if ok
-      return status_ok()
-    else
-      return status_failed_msg('unknown_error')
-    end
-  end
-
-  # ------------------------------------------------------------------------------------------------
-  # ------------------------------------------------------------------------------------------------
 
   # GET /:school_id/groups/1
   # GET /:school_id/groups/1.xml
@@ -397,7 +242,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    count = _mark_members_for_deletion(@group, true)
+    count = Puavo::GroupsShared::mark_members_for_deletion(@group, true)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_marked', :count => count)
@@ -416,7 +261,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    count = _mark_members_for_deletion(@group, false)
+    count = Puavo::GroupsShared::mark_members_for_deletion(@group, false)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_unmarked', :count => count)
@@ -435,7 +280,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    count = _lock_members(@group, true)
+    count = Puavo::GroupsShared::lock_members(@group, true)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_locked', :count => count)
@@ -454,7 +299,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    count = _lock_members(@group, false)
+    count = Puavo::GroupsShared::lock_members(@group, false)
 
     respond_to do |format|
       flash[:notice] = t('flash.group.members_unlocked', :count => count)
@@ -771,7 +616,7 @@ class GroupsController < ApplicationController
     @group = get_group(params[:id])
     return if @group.nil?
 
-    ok = _remove_all_group_members(@group)
+    ok = Puavo::GroupsShared::remove_all_members(@group)
 
     respond_to do |format|
       flash[:notice] = ok ? t('flash.group.group_emptied_ok') : t('flash.group.group_emptied_failed')
@@ -897,82 +742,5 @@ class GroupsController < ApplicationController
       members.sort!{ |a, b| (a["givenName"] + a["sn"]).downcase <=> (b["givenName"] + b["sn"]).downcase }
 
       return members, num_hidden
-    end
-
-    # Remove all users from a group (don't delete them, just remove them from the group)
-    def _remove_all_group_members(group)
-      members = group.members
-      ok = true
-
-      members.each do |m|
-        begin
-          group.remove_user(m)
-        rescue StandardError => e
-          puts "===> Could not remove member #{m.uid} from group #{group.cn}: #{e}"
-          ok = false
-        end
-      end
-
-      ok
-    end
-
-    # Mark (or unmark) group members for deletion. Returns the number of users updated.
-    def _mark_members_for_deletion(group, mark)
-      now = Time.now.utc
-      count = 0
-
-      group.members.each do |u|
-        begin
-          if mark
-            # Mark for deletion
-            if u.puavoRemovalRequestTime.nil?
-              u.puavoRemovalRequestTime = now
-              u.puavoLocked = true
-              u.save
-              count += 1
-            end
-          else
-            # Remove deletion mark
-            if u.puavoRemovalRequestTime
-              u.puavoRemovalRequestTime = nil
-              u.save
-              count += 1
-            end
-          end
-        rescue StandardError => e
-          puts "====> Could not mark/unmark group member #{u.uid} from group #{group.cn}: #{e}"
-        end
-      end
-
-      return count
-    end
-
-    # Lock or unlock members
-    def _lock_members(group, lock)
-      count = 0
-
-      group.members.each do |u|
-        begin
-          if lock
-            # Lock
-            unless u.puavoLocked
-              u.puavoLocked = true
-              u.save
-              count += 1
-            end
-          else
-            # Unlock
-            if u.puavoLocked
-              u.puavoLocked = nil
-              u.save
-              count += 1
-            end
-          end
-        rescue StandardError => e
-          puts "====> Could not lock/unlock group member #{u.uid} in group #{group.cn}: #{e}"
-        end
-      end
-
-      return count
     end
 end

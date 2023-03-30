@@ -18,6 +18,7 @@ Rails.application.routes.draw do
 
   get '/all_groups' => 'organisations#all_groups'
   get '/get_all_groups' => 'organisations#get_all_groups'
+  post '/groups_mass_operations' => 'groups_mass_operations#groups_mass_operation'
 
   # Organisation-level Puavomenu editor
   get '/puavomenu' => 'organisations#edit_puavomenu', :as => 'organisation_puavomenu'
@@ -85,11 +86,6 @@ Rails.application.routes.draw do
       put 'groups/:id/remove_all_members' => 'groups#remove_all_members', :as => :remove_all_members
 
       get 'get_school_groups_list' => 'groups#get_school_groups_list'
-
-      post 'mass_op_group_delete' => 'groups#mass_op_group_delete'
-      post 'mass_op_group_clear' => 'groups#mass_op_group_clear'
-      post 'mass_op_group_mark_members_for_deletion' => 'groups#mass_op_group_mark_members_for_deletion'
-      post 'mass_op_group_lock_members' => 'groups#mass_op_group_lock_members'
 
       get 'groups/members_mass_edit' => 'groups#members_mass_edit', :as => :group_members_mass_edit
       get 'groups/get_all_groups_members' => 'groups#get_all_groups_members'

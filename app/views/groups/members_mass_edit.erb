@@ -1,6 +1,11 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.groups'), t('titles.group_members_mass_edit') %>
 
 <% content_for :javascript do %>
+<script>
+const SUPERTABLE_WORKER_FILE = "<%= javascript_path 'supertable3_worker' %>";
+let GLOBAL_SUPERTABLE_INSTANCE = null;
+</script>
+
 <%= javascript_include_tag 'bundles/modal_popup' %>
 <%= javascript_include_tag 'bundles/supertable3' %>
 <%= javascript_include_tag 'i18n/supertable3' %>
@@ -196,16 +201,18 @@ class GroupOperationBase extends ST.MassOperation {
         console.log(this.groupIDs);
     }
 
-    processItem(item)
+    getOperationParameters()
     {
-        return ST.doPOST(
-            `/users/${item.school_id}/groups/change_members`,
-            {
-                id: item.id[ST.INDEX_FILTERABLE],
-                mode: this.mode,
-                groups: this.groupIDs,
-            }
-        );
+        return {
+            groups: this.groupIDs,
+        };
+    }
+
+    prepareItem(item)
+    {
+        return {
+            state: "ready"
+        };
     }
 
     buildGroupsList()
@@ -214,8 +221,7 @@ class GroupOperationBase extends ST.MassOperation {
 `<div class="flex-cols gap-5px">
     <div class="flex-rows gap-5px checkboxScrollListOuter">
         <input type="search" spellcheck="false" placeholder="<%= t('groups.index.mass_operations.search_placeholder') %>">
-        <div id="groupList" class="checkboxScrollList" style="width: 30em; height: 20em;">
-        </div>
+        <div id="groupList" class="checkboxScrollList" style="width: 30em; height: 20em;"></div>
     </div>
     <div>
         <button id="reloadGroups"><%= t('groups.index.mass_operations.reload') %></button>
@@ -253,13 +259,13 @@ class GroupOperationBase extends ST.MassOperation {
     {
         const csrf = document.querySelector("meta[name='csrf-token']");
 
-        for (let i of this.container.querySelectorAll("input"))
+        for (const i of this.container.querySelectorAll("input"))
             i.disabled = true;
 
-        for (let i of this.container.querySelectorAll("button"))
+        for (const i of this.container.querySelectorAll("button"))
             i.disabled = true;
 
-        for (let i of this.getGroupItems())
+        for (const i of this.getGroupItems())
             i.classList.add("disabled");
 
         fetch("/users/<%= @school.id %>/groups/update_groups_list", {
@@ -296,13 +302,13 @@ class GroupOperationBase extends ST.MassOperation {
             window.alert("<%= t('groups.index.mass_operations.network_error') %>");
             return;
         }).finally(() => {
-            for (let i of this.container.querySelectorAll("input"))
+            for (const i of this.container.querySelectorAll("input"))
                 i.disabled = false;
 
-            for (let i of this.container.querySelectorAll("button"))
+            for (const i of this.container.querySelectorAll("button"))
                 i.disabled = false;
 
-            for (let i of this.getGroupItems())
+            for (const i of this.getGroupItems())
                 i.classList.remove("disabled");
         });
     }
@@ -315,6 +321,7 @@ class GroupOperationBase extends ST.MassOperation {
         for (const i of this.getGroupItems()) {
             const title = i.dataset.filter;
 
+            // Hide, don't remove. Preserves selections.
             if (search && title.indexOf(search) == -1)
                 i.classList.add("hidden");
             else i.classList.remove("hidden");
@@ -355,7 +362,6 @@ class AddToGroup extends GroupOperationBase {
     buildInterface()
     {
         this._buildInterface("<%= t('groups.index.mass_operations.add.help') %>");
-        this.mode = "add";
     }
 };
 
@@ -363,22 +369,21 @@ class RemoveFromGroup extends GroupOperationBase {
     buildInterface()
     {
         this._buildInterface("<%= t('groups.index.mass_operations.remove.help') %>");
-        this.mode = "remove";
     }
 };
 
 const MASS_OPERATIONS = [
     {
-        id: "add_to_group",
+        operation: "add_to_group",
         title: "<%= t('groups.index.mass_operations.add.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: AddToGroup
     },
 
     {
-        id: "remove_from_group",
+        operation: "remove_from_group",
         title: "<%= t('groups.index.mass_operations.remove.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: RemoveFromGroup
     },
 ];
@@ -399,7 +404,7 @@ function* synthesizeData(raw)
         u2.name = `${u.first} ${u.last}`;
 
         // Rewrite group information in-place. Group information is highly repetitive
-        // and verbose, so it has been stored in a more compact form and we must
+        // and verbose, so it has been stored in a more compact format and we must
         // "expand" it to full rows for the table.
         for (let i = 0; i < u2.groups.length; i++) {
             const gid = u2.groups[i],
@@ -422,7 +427,7 @@ function* synthesizeData(raw)
 document.addEventListener("DOMContentLoaded", function() {
     modalPopup.setupGlobalEvents();
 
-    new ST.SuperTable(
+    GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(
         // Main container DIV
         document.getElementById("tableGroupMembers"),
 
@@ -440,6 +445,7 @@ document.addEventListener("DOMContentLoaded", function() {
             userTransforms: USER_TRANSFORM_FUNCTIONS,
             massSelects: MASS_SELECTS,
             massOperations: MASS_OPERATIONS,
+            massOperationsEndpoint: "<%= groups_mass_operations_path %>",
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
             dynamicData: "/users/<%= @school.id %>/groups/get_all_groups_members",
