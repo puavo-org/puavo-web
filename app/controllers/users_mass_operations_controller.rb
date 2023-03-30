@@ -1,6 +1,7 @@
 # All users-related mass operations: delete, lock, mark for deletion, username lists, etc.
 
 class UsersMassOperationsController < MassOperationsController
+  include Puavo::Integrations
   include Puavo::UsersShared
 
   # POST '/users_mass_operation'
