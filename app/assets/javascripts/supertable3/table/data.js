@@ -76,7 +76,7 @@ function _transformValue(userTransforms, raw, key, coldef, defVal)
 // convert timestamps into user's local time, turn booleans into checkmarks, and so on.
 // The data we generate here is purely presentational, intended for humans; it's never
 // fed back into the database.
-export function transformRawData(columnDefinitions, userTransforms, rawData, preFilterFunction=null)
+export function transformRows(columnDefinitions, userTransforms, rawData, preFilterFunction=null)
 {
     const columnKeys = Object.keys(columnDefinitions);
 
@@ -138,7 +138,7 @@ export function transformRawData(columnDefinitions, userTransforms, rawData, pre
 }
 
 // Applies zero or more filters to the data
-export function filterData(columnDefinitions, data, filters, reverse)
+export function filterRows(columnDefinitions, data, filters, reverse)
 {
     const numComparisons = filters.comparisons.length;
 
@@ -157,7 +157,7 @@ export function filterData(columnDefinitions, data, filters, reverse)
 }
 
 // Sorts the data by the specified column and order
-export function sortData(columnDefinitions, sortBy, collator, data)
+export function sortRows(columnDefinitions, sortBy, collator, data)
 {
     const direction = (sortBy.dir == SortOrder.ASCENDING) ? 1 : -1,
           key = columnDefinitions[sortBy.column].key;

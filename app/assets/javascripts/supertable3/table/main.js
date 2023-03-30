@@ -1,10 +1,6 @@
-import { TableFlag, ColumnFlag, ColumnType, SortOrder, INDEX_EXISTS, INDEX_DISPLAYABLE, INDEX_FILTERABLE, INDEX_SORTABLE } from "./constants.js";
 import { _tr, escapeHTML } from "../../common/utils.js";
+
 import { create, destroy, getTemplate, toggleClass } from "../../common/dom.js";
-import { transformRawData, filterData, sortData } from "./data.js";
-import { MassOperationFlags, MassOperation } from "./mass_operations.js";
-import { FilterEditor } from "../filters/editor/fe_main.js";
-import { JAVASCRIPT_TIME_GRANULARITY } from "./utils.js";
 
 import {
     setupGlobalEvents,
@@ -17,26 +13,44 @@ import {
     getPopupContents,
 } from "../../common/modal_popup.js";
 
-// Pagination counts. Each entry is formatted as [row count, title]. -1 displays all rows.
-const ROWS_PER_PAGE_PRESETS = [
-    [-1, "∞"],
-    [5, "5"],
-    [10, "10"],
-    [20, "20"],
-    [25, "25"],
-    [50, "50"],
-    [100, "100"],
-    [200, "200"],
-    [250, "250"],
-    [500, "500"],
-    [1000, "1000"],
-    [2000, "2000"],
-    [2500, "2500"],
-    [5000, "5000"],
-];
+import {
+    TableFlag,
+    ColumnFlag,
+    ColumnType,
+    SortOrder,
+    INDEX_EXISTS,
+    INDEX_DISPLAYABLE,
+    INDEX_FILTERABLE,
+    INDEX_SORTABLE,
+    ROWS_PER_PAGE_PRESETS,
+    DEFAULT_ROWS_PER_PAGE,
+} from "./constants.js";
 
-// How many rows are displayed by default
-const DEFAULT_ROWS_PER_PAGE = 100;
+import { JAVASCRIPT_TIME_GRANULARITY } from "./utils.js";
+
+import * as Data from "./data";
+
+import * as Export from "./export.js";
+
+import * as ColumnEditor from "./column_editor.js";
+
+import * as HeaderDrag from "./header_reordering.js";
+
+import { FilterEditor } from "../filters/editor/fe_main.js";
+
+import * as Mass from "./mass_operations.js";
+
+import * as Settings from "./settings.js";
+
+// Mass operation batch size (how many items are processed on one request)
+const BATCH_SIZE = 5;
+
+// SUPERTABLE_WORKER_FILE must be defined in the HTML file where the bundle is included in
+const MASS_WORKER = new Worker(SUPERTABLE_WORKER_FILE);
+
+MASS_WORKER.onmessage = e => {
+    GLOBAL_SUPERTABLE_INSTANCE.onWorkerMessage(e);
+};
 
 export class SuperTable {
 
@@ -45,207 +59,79 @@ constructor(container, settings)
     this.id = settings.id;
     this.container = container;
 
-    // ----------------------------------------------------------------------------------------------
-    // Validate the parameters. These will explode loudly and completely prevent the table
-    // from even appearing. That's intentional. These should be caught in development/testing.
-
-    if (this.container === null || this.container === undefined) {
-        console.error("The container DIV element is null or undefined");
-        window.alert("The table container DIV is null or undefined. The table cannot be displayed. " +
-                     "Please contact Opinsys support.");
+    if (!this.validateParameters(settings))
         return;
-    }
-
-    if (settings.columnDefinitions === undefined ||
-        settings.columnDefinitions === null ||
-        typeof(settings.columnDefinitions) != "object" ||
-        Object.keys(settings.columnDefinitions).length == 0) {
-
-        this.container.innerHTML =
-            `<p class="error">The settings.columnDefinitions parameter missing/empty, or it isn't an associative array. ` +
-            `Please contact Opinsys support.</p>`;
-
-        return;
-    }
-
-    if (settings.columnTitles === undefined ||
-        settings.columnTitles === null ||
-        typeof(settings.columnTitles) != "object" ||
-        Object.keys(settings.columnTitles).length == 0) {
-
-        this.container.innerHTML =
-            `<p class="error">The settings.columnTitles parameter missing/empty, or it isn't an associative array. ` +
-            `Please contact Opinsys support.</p>`;
-
-        return;
-    }
-
-    if (settings.defaultColumns === undefined ||
-        settings.defaultColumns === null ||
-        !Array.isArray(settings.defaultColumns) ||
-        settings.defaultColumns.length == 0) {
-
-        this.container.innerHTML =
-            `<p class="error">The settings.defaultColumn parameter missing/empty, or it isn't an array. ` +
-            `Please contact Opinsys support.</p>`;
-
-        return;
-    }
-
-    if (settings.defaultSorting === undefined ||
-        settings.defaultSorting === null ||
-        typeof(settings.defaultSorting) != "object" ||
-        settings.defaultSorting.length == 0) {
-
-        this.container.innerHTML =
-            `<p class="error">The settings.defaultSorting parameter missing/empty, or it isn't an associative array. ` +
-            `Please contact Opinsys support.</p>`;
-
-        return;
-    }
-
-    // Ensure we have at least one data source
-    if ((settings.staticData === undefined || settings.staticData === null) &&
-        (settings.dynamicData === undefined || settings.dynamicData === null)) {
-
-        this.container.innerHTML =
-            `<p class="error">No data source has been defined (missing both <code>staticData</code> and <code>dynamicData</code>). ` +
-            `Please contact Opinsys support.</p>`;
-
-        return;
-    }
-
-    // The default columns parameter MUST be correct at all times
-    for (const c of settings.defaultColumns) {
-        if (!(c in settings.columnDefinitions)) {
-            this.container.innerHTML =
-                `<p class="error">Invalid/unknown default column "${c}". The table cannot be displayed. ` +
-                `Please contact Opinsys support.</p>`;
-
-            return;
-        }
-    }
-
-    // The default sorting column and direction must be valid
-    if (!(settings.defaultSorting.column in settings.columnDefinitions)) {
-        const c = settings.defaultSorting.column;
-
-        this.container.innerHTML =
-            `<p class="error">Invalid/unknown default sorting column "${c}". The table cannot be displayed. ` +
-            `Please contact Opinsys support.</p>`;
-
-        return;
-    }
-
-    if (settings.defaultSorting.dir != SortOrder.ASCENDING && settings.defaultSorting.dir != SortOrder.DESCENDING) {
-        this.container.innerHTML =
-            `<p class="error">Invalid/unknown default sorting direction. The table cannot be displayed. ` +
-            `Please contact Opinsys support.</p>`;
-    }
 
     // ----------------------------------------------------------------------------------------------
-    // Setup
+    // Data
 
-    // Current table/network data
+    // Settings and flags
+    this.settings = {
+        flags: settings.flags || 0,
+        locale: settings.locale || "en-US",
+
+        // Prefix for CSV exporting
+        csvPrefix: settings.csvPrefix || "unknown",
+
+        // Static source for data
+        staticData: settings.staticData || null,
+
+        // URL where to get data dynamically
+        dynamicData: settings.dynamicData,
+
+        // Which expanding tool panes are open (names)
+        show: [],
+    };
+
+    // User-supplied functions and callbacks
+    this.user = {
+        // An optional generator function that generates/filters the data when it is being
+        // transformed.
+        preFilterFunction: typeof(settings.preFilterFunction) == "function" ? settings.preFilterFunction : null,
+
+        // (Optional) User-supplied transform functions (see data.transformed above) that are used if
+        // the built-in transformers aren't enough.
+        transforms: typeof(settings.userTransforms) == "object" ? settings.userTransforms : {},
+
+        // Optional callback functions for populating the rightmost "actions" column and
+        // handling middle mouse clicks.
+        actions: typeof(settings.actions) == "function" ? settings.actions : null,
+        open: typeof(settings.openCallback) == "function" ? settings.openCallback : null,
+
+        // Mass row selections
+        massSelects: Array.isArray(settings.massSelects) ? settings.massSelects : [],
+
+        // Mass operations
+        massOperations: Array.isArray(settings.massOperations) ? settings.massOperations : [],
+
+        // The URL where mass operations are sent to
+        massOperationsEndpoint: typeof(settings.massOperationsEndpoint) == "string" ? settings.massOperationsEndpoint : null,
+    };
+
+    // Current table data
     this.data = {
-        errorCode: null,
-        transformed: null,
-        current: null,
+        // Data that has been transformed from the almost-raw database dump. The transformation
+        // is done only once, when the data is loaded from the server (either static or dynamic).
+        // The transformed data contains multiple copies of every value, each with different
+        // meanings and uses (some data is displayed to the user and it gets "pretty-printed"
+        // and formatted nicely, while other data is used only for sorting and filtering, and so
+        // on). This is an array of objects. Each array element is one row in the table, and
+        // the object members can be in whatever order they happen to be; it does not have to
+        // match the table column order.
+        transformed: [],
+
+        // Same as above, but the array has been filtered using the current filter, and then
+        // sorted according to the current sort column and direction. The object members are
+        // still in whatever order they happen to be, as their order is not important.
+        current: [],
+
+        // Item IDs (puavoIds) for mass tools. The ID ordering does not matter.
         selectedItems: new Set(),
         successItems: new Set(),
         failedItems: new Set(),
     };
 
-    // Direct handles to various user interface elements. Cleaner than using
-    // querySelector() everywhere.
-    this.ui = {
-        controls: null,         // the controls above the header cells
-        headers: null,          // the table header cells
-        body: null,             // the actual table body
-
-        filters: {
-            show: null,         // show/hide checkbox
-            enabled: null,      // enabled checkbox
-            reverse: null,      // reverse checkbox
-        },
-
-        mass: {
-            show: null,         // show/hide checkbox
-            proceed: null,
-            progress: null,
-            counter: null,
-        },
-
-        // The pagination controls section
-        paging: null,
-
-        // The previously clicked table row. Can be null. Used when doing Shift+click
-        // range selections.
-        previousRow: null,
-    };
-
-    this.filterEditor = null;       // a child class that implements the filter editor
-
-    // Current mass operation data
-    this.massOperation = {
-        index: -1,          // index to the settings.massOperations[] array
-        handler: null,      // the user-supplied handler class that actually does the mass operation
-        singleShot: false,  // true if the operation processes all rows at once
-    };
-
-    // Table column header dragging state
-    this.headerDrag = {
-        active: false,              // true if a cell is currently being dragged
-        canSort: false,             // true if the dragged cell (column) is sortable
-        element: null,              // the original TH where the drag originated from
-        startingMousePos: null,     // initial drag mouse position
-        startIndex: null,           // source column
-        endIndex: null,             // destination column
-        cellPositions: null,        // array of [x, y, w, h] table header cell rectangles
-        offset: null,               // delta from 'element' to the mouse position ([dx, dy])
-    };
-
-    // Used when sorting the table contents. The locale defines language-specific
-    // sorting rules.
-    this.collator = new Intl.Collator(
-        settings.locale,
-        {
-            usage: "sort",
-            sensitivity: "accent",
-            ignorePunctuation: true,
-            numeric: true,                  // I really like this one
-        }
-    );
-
-    // State
-    this.updating = false;
-    this.processing = false;
-    this.doneAtLeastOneOperation = false;
-    this.unsavedColumns = false;
-
-    // Header drag callback functions. "bind()" is needed to get around some weird
-    // JS scoping garbage I don't understand.
-    this.onHeaderMouseDown = this.onHeaderMouseDown.bind(this);
-    this.onHeaderMouseUp = this.onHeaderMouseUp.bind(this);
-    this.onHeaderMouseMove = this.onHeaderMouseMove.bind(this);
-
-    // ----------------------------------------------------------------------------------------------
-    // Load settings
-
-    this.settings = {
-        flags: settings.flags || 0,
-        locale: settings.locale || "en-US",
-        csvPrefix: settings.csvPrefix || "unknown",
-        dynamicData: settings.dynamicData,      // URL where to get data dynamically
-        userTransforms: typeof(settings.userTransforms) == "object" ? settings.userTransforms : {},
-        actionsCallback: typeof(settings.actions) == "function" ? settings.actions : null,
-        openCallback: typeof(settings.openCallback) == "function" ? settings.openCallback : null,
-        preFilterFunction: typeof(settings.preFilterFunction) == "function" ? settings.preFilterFunction : null,
-        massOperations: Array.isArray(settings.massOperations) ? settings.massOperations : [],
-        massSelects: Array.isArray(settings.massSelects) ? settings.massSelects : [],
-        show: [],                                       // which expanding tool panes are open (names)
-    };
-
+    // Current table columns
     this.columns = {
         definitions: settings.columnDefinitions,
         titles: settings.columnTitles,
@@ -255,8 +141,10 @@ constructor(container, settings)
         defaultSorting: settings.defaultSorting,
     };
 
+    // Current sorting
     this.sorting = {...settings.defaultSorting};    // overridden if saved settings exist
 
+    // Current filters
     this.filters = {
         enabled: false,
         reverse: false,
@@ -277,12 +165,82 @@ constructor(container, settings)
         lastRowIndex: 0,
     };
 
+    // Direct handles to various user interface elements. Cleaner than using querySelector()
+    // everywhere (but I have my suspicions about memory leaks).
+    this.ui = {
+        controls: null,         // the controls above the header cells
+        headers: null,          // the table header cells
+        body: null,             // the actual table body
+
+        filters: {
+            show: null,         // show/hide filter editor checkbox
+        },
+
+        mass: {
+            show: null,         // show/hide checkbox
+            start: null,
+            stop: null,
+            progress: null,
+            counter: null,
+        },
+
+        // The pagination controls
+        paging: null,
+
+        // The previously clicked table row. Can be null. Used when doing Shift+LMB
+        // range selections.
+        previousRow: null,
+    };
+
+    // A child class that implements the filter editor. Everything it does happens inside its
+    // own container DIV element that is shown or hidden independently of the editor.
+    this.filterEditor = null;
+
+    // Current mass operation data
+    this.massOperation = {
+        // The user-supplied definition for this mass operation
+        definition: null,
+
+        // The user-supplied handler class that actually does the mass operation (the SuperTable
+        // code only sets up everything, its the user code that actually does the operation)
+        handler: null,
+
+        // Used during an on-going mass operation to track the state of each selected table row
+        singleShot: false,
+        parameters: null,
+        rows: [],
+        pos: 0,
+        prevPos: 0,
+    };
+
+    // Table column header dragging state
+    this.headerDrag = {
+        element: null,              // the original TH where the drag originated from
+        canSort: false,             // true if the dragged cell (column) is sortable
+        active: false
+    };
+
+    // State
+    this.updating = false;
+    this.processing = false;
+    this.stopRequested = false;
+    this.doneAtLeastOneOperation = false;
+    this.massRowSelectPopup = null;
+
+    // Header drag callback functions. "bind()" is needed to get around some weird
+    // JS scoping garbage I don't understand.
+    this.onHeaderMouseDown = this.onHeaderMouseDown.bind(this);
+    this.onHeaderMouseUp = this.onHeaderMouseUp.bind(this);
+    this.onHeaderMouseMove = this.onHeaderMouseMove.bind(this);
+
+    // ----------------------------------------------------------------------------------------------
+
     // There's no point in permitting row selection if there are no mass tools
-    if (this.settings.flags & TableFlag.ENABLE_SELECTION && this.settings.massOperations.length == 0)
+    if (this.settings.flags & TableFlag.ENABLE_SELECTION && (this.user.massOperations.length == 0 || this.user.massOperationsEndpoint == null))
         this.settings.flags &= ~TableFlag.ENABLE_SELECTION;
 
-    // Load stored settings (LocalStore or passed in the URL)
-    this.loadSettings();
+    // Load stored settings
+    Settings.load(this);
 
     // Validate the current sorting column and ensure it is in the currently visible columns
     let found = false;
@@ -330,247 +288,114 @@ constructor(container, settings)
     // ----------------------------------------------------------------------------------------------
     // Do the initial data fetch and table update
 
-    this.saveSettings();
-    this.enableUI(false);
-
-    if (settings.staticData) {
-        // Static data, only one load
-        this.beginTableUpdate();
-
-        this.data.transformed = transformRawData(
-            this.columns.definitions,
-            this.settings.userTransforms,
-            settings.staticData,
-            this.settings.preFilterFunction
-        );
-
-        this.updating = false;
-        this.updateTable();
-        this.enableTable(true);
-        this.enableUI(true);
-    } else {
-        // Dynamic data, potentially on-the-fly reloads
-        this.fetchDataAndUpdate();
-    }
+    Settings.save(this);
+    this.fetchDataAndUpdate();
 }
 
-// Loads stored settings from LocalStore, if they exist
-loadSettings()
+// Validates the parameters passed to the class constructor
+validateParameters(settings)
 {
-    let stored = localStorage.getItem(`table-${this.id}-settings`);
+    // If these checks fail, explode loudly and completely prevent the table from even appearing.
+    // That's intentional. These should be caught in development/testing.
 
-    if (stored === null)
-        stored = "{}";
+    if (this.container === null || this.container === undefined) {
+        console.error("The container DIV element is null or undefined");
+        window.alert("The table container DIV is null or undefined. The table cannot be displayed. " +
+                     "Please contact Opinsys support.");
 
-    try {
-        stored = JSON.parse(stored);
-    } catch (e) {
-        console.error("loadInitialSettings(): could not load stored settings:");
-        console.error(e);
         return false;
     }
 
-    this.loadSettingsObject(stored);
-}
+    if (settings.columnDefinitions === undefined ||
+        settings.columnDefinitions === null ||
+        typeof(settings.columnDefinitions) != "object" ||
+        Object.keys(settings.columnDefinitions).length == 0) {
 
-// Saves the current settings to LocalStore
-saveSettings()
-{
-    localStorage.setItem(`table-${this.id}-settings`, JSON.stringify(this.getSettingsObject()));
-}
+        this.container.innerHTML =
+            `<p class="error">The settings.columnDefinitions parameter missing/empty, or it isn't an associative array. ` +
+            `Please contact Opinsys support.</p>`;
 
-// Loads settings from an object that was (hopefully) constructed by deserializing JSON.
-// Some items are processed multiple times for backwards compatibility.
-loadSettingsObject(stored)
-{
-    // Restore open panes
-    if ("show" in stored && typeof(stored.show) == "string")
-        this.settings.show = stored.show.split(",");
-
-    // Restore currently visible columns and their order
-    let columns = null;
-
-    if ("columns" in stored) {
-        if (Array.isArray(stored.columns))
-            columns = stored.columns;
-        else if (typeof(stored.columns) == "string")
-            columns = stored.columns.split(",").map(i => i.trim()).filter((e) => { return e != ""; });
+        return false;
     }
 
-    if (columns !== null) {
-        // Remove invalid and duplicate columns from the array. They could be columns that
-        // once existed but have been deleted since. Or someone edited the saved settings
-        // and put garbage in there. Or something else happened. Weed them out.
-        let valid = [],
-            seen = new Set();
+    if (settings.columnTitles === undefined ||
+        settings.columnTitles === null ||
+        typeof(settings.columnTitles) != "object" ||
+        Object.keys(settings.columnTitles).length == 0) {
 
-        for (const c of columns) {
-            // Remove duplicates while we're at it
-            if (seen.has(c))
-                continue;
+        this.container.innerHTML =
+            `<p class="error">The settings.columnTitles parameter missing/empty, or it isn't an associative array. ` +
+            `Please contact Opinsys support.</p>`;
 
-            seen.add(c);
-
-            if (c in this.columns.definitions)
-                valid.push(c);
-        }
-
-        // There must always be at least one visible column
-        if (valid.length > 0)
-            this.columns.current = valid;
+        return false;
     }
 
-    // Restore sorting and sorting direction
-    if ("sorting" in stored) {
-        // Restore these only if they're valid
-        if (stored.sorting.column in this.columns.definitions)
-            this.sorting.column = stored.sorting.column;
-        else console.warn(`The stored sorting column "${stored.sorting.column}" isn't valid, using default`);
+    if (settings.defaultColumns === undefined ||
+        settings.defaultColumns === null ||
+        !Array.isArray(settings.defaultColumns) ||
+        settings.defaultColumns.length == 0) {
 
-        if (stored.sorting.dir == SortOrder.ASCENDING || stored.sorting.dir == SortOrder.DESCENDING)
-            this.sorting.dir = stored.sorting.dir;
-    } else if ("sort_by" in stored) {
-        // TODO: Support multiple sorting columns. The format supports them,
-        // but we currently use only the first.
-        let sortBy = stored.sort_by.split(";")[0];
+        this.container.innerHTML =
+            `<p class="error">The settings.defaultColumn parameter missing/empty, or it isn't an array. ` +
+            `Please contact Opinsys support.</p>`;
 
-        if (sortBy != "") {
-            const [by, dir] = sortBy.split(",");
+        return false;
+    }
 
-            if (by in this.columns.definitions)
-                this.sorting.column = by;
-            else console.warn(`The stored sorting column "${by}" isn't valid, using default`);
+    if (settings.defaultSorting === undefined ||
+        settings.defaultSorting === null ||
+        typeof(settings.defaultSorting) != "object" ||
+        settings.defaultSorting.length == 0) {
 
-            if (dir == SortOrder.ASCENDING || dir == SortOrder.DESCENDING)
-                this.sorting.dir = dir;
+        this.container.innerHTML =
+            `<p class="error">The settings.defaultSorting parameter missing/empty, or it isn't an associative array. ` +
+            `Please contact Opinsys support.</p>`;
+
+        return false;
+    }
+
+    // Ensure we have at least one data source
+    if ((settings.staticData === undefined || settings.staticData === null) &&
+        (settings.dynamicData === undefined || settings.dynamicData === null)) {
+
+        this.container.innerHTML =
+            `<p class="error">No data source has been defined (missing both <code>staticData</code> and <code>dynamicData</code>). ` +
+            `Please contact Opinsys support.</p>`;
+
+        return false;
+    }
+
+    // The default columns parameter MUST be correct at all times
+    for (const c of settings.defaultColumns) {
+        if (!(c in settings.columnDefinitions)) {
+            this.container.innerHTML =
+                `<p class="error">Invalid/unknown default column "${c}". The table cannot be displayed. ` +
+                `Please contact Opinsys support.</p>`;
+
+            return false;
         }
     }
 
-    // Restore filter settings
-    if ("filtersEnabled" in stored && typeof(stored.filtersEnabled) == "boolean")
-        this.filters.enabled = stored.filtersEnabled;
-    else if ("filter" in stored && typeof(stored.filter) == "boolean")
-        this.filters.enabled = stored.filter;
+    // The default sorting column and direction must be valid
+    if (!(settings.defaultSorting.column in settings.columnDefinitions)) {
+        const c = settings.defaultSorting.column;
 
-    if ("filtersReverse" in stored && typeof(stored.filtersReverse) == "boolean")
-        this.filters.reverse = stored.filtersReverse;
-    else if ("reverse" in stored && typeof(stored.reverse) == "boolean")
-        this.filters.reverse = stored.reverse;
+        this.container.innerHTML =
+            `<p class="error">Invalid/unknown default sorting column "${c}". The table cannot be displayed. ` +
+            `Please contact Opinsys support.</p>`;
 
-    if ("advanced" in stored && typeof(stored.advanced) == "boolean")
-        this.filters.advanced = stored.advanced;
-
-    let tryToLoadOldFilters = false;
-
-    if ("filters" in stored && typeof(stored.filters) == "string") {
-        try {
-            this.filters.filters = JSON.parse(stored.filters);
-        } catch (e) {
-            // Okay
-            this.filters.filters = null;
-            tryToLoadOldFilters = true;
-        }
-    } else tryToLoadOldFilters = true;
-
-    if (tryToLoadOldFilters) {
-        // If there were no new saved filters, but the old format filters are still present,
-        // try to convert them. This is done only once and if it fails, too bad.
-        // This code will be removed later.
-        console.log("Attempting to load old filters, if present");
-
-        let old = localStorage.getItem(`table-${this.id}-filters`);
-
-        if (old !== null && old !== "") {
-            console.log("Old filters present:");
-            console.log(old);
-
-            try {
-                const OPERATOR_CONVERSION = {
-                    "equ": "=",
-                    "neq": "!=",
-                    "lt": "<",
-                    "lte": "<=",
-                    "gt": ">",
-                    "gte": ">="
-                };
-
-                let converted = [];
-
-                for (const f of JSON.parse(old)) {
-                    if ("active" in f && "column" in f && "operator" in f && "value" in f && f.operator in OPERATOR_CONVERSION) {
-                        const v = Array.isArray(f.value) ? f.value[0] : f.value;
-                        converted.push([f.active ? 1 :0, f.column, OPERATOR_CONVERSION[f.operator], v]);
-                    }
-                }
-
-                console.log("Conversion results:");
-                console.log(converted);
-
-                if (converted.length > 0)
-                    this.filters.filters = [...converted];
-
-                // Purge the old filters, they're no longer needed
-                localStorage.removeItem(`table-${this.id}-filters`);
-            } catch (e) {
-                console.error("Failed to convert the old filters:");
-                console.error(e);
-            }
-        }
+        return false;
     }
 
-    if ("filters_string" in stored && typeof(stored.filters_string) == "string")
-        this.filters.string = stored.filters_string;
+    if (settings.defaultSorting.dir != SortOrder.ASCENDING && settings.defaultSorting.dir != SortOrder.DESCENDING) {
+        this.container.innerHTML =
+            `<p class="error">Invalid/unknown default sorting direction. The table cannot be displayed. ` +
+            `Please contact Opinsys support.</p>`;
 
-    // Restore pagination settings
-    if ("rows_per_page" in stored && typeof(stored.rows_per_page) == "number") {
-        let found = false;
-
-        // Validate the stored setting. Only allow predefined values.
-        for (const r of ROWS_PER_PAGE_PRESETS) {
-            if (r[0] == stored.rows_per_page) {
-                this.paging.rowsPerPage = stored.rows_per_page;
-                found = true;
-                break;
-            }
-        }
-
-        if (!found)
-            this.paging.rowsPerPage = DEFAULT_ROWS_PER_PAGE;
+        return false;
     }
 
     return true;
-}
-
-// Constructs an object that contains all the current settings. If 'full' is false, then
-// some "non-essential" items are omitted from it (used in settings JSON import/export).
-getSettingsObject(full=true)
-{
-    let filters = null;
-
-    if (Array.isArray(this.filters.filters))
-        filters = JSON.stringify(this.filters.filters, null, "");
-
-    let show = [];
-
-    if (this.ui.filters.show && this.ui.filters.show.checked)
-        show.push("filters");
-
-    if (this.ui.mass.show && this.ui.mass.show.checked)
-        show.push("mass");
-
-    let settings = {
-        show: show.join(","),
-        columns: this.columns.current.join(","),
-        sort_by: `${this.sorting.column},${this.sorting.dir}`,
-        filter: this.filters.enabled,
-        reverse: this.filters.reverse,
-        advanced: this.filters.advanced,
-        filters: filters,
-        filters_string: typeof(this.filters.string) == "string" ? this.filters.string : "",
-        rows_per_page: this.paging.rowsPerPage,
-    };
-
-    return settings;
 }
 
 // --------------------------------------------------------------------------------------------------
@@ -588,28 +413,30 @@ buildUI()
 
     // Setup event handling for the elements that are visible
     if (!(this.settings.flags & TableFlag.DISABLE_TOOLS))
-        frag.querySelector("thead div#top button#export").addEventListener("click", (e) => this.clickedExport(e.target));
+        frag.querySelector("thead div#top button#export").addEventListener("click", e => Export.openPopup(e.target, this.data, this.columns, this.settings.csvPrefix));
 
     if (this.settings.flags & TableFlag.ENABLE_COLUMN_EDITING)
-        frag.querySelector("thead div#top button#columns").addEventListener("click", (e) => this.clickedColumns(e.target));
+        frag.querySelector("thead div#top button#columns").addEventListener("click", e => ColumnEditor.openEditor(e.target, this));
 
+    // Setup filtering
     if (this.settings.flags & TableFlag.ENABLE_FILTERING) {
+        const enabled  = frag.querySelector(`thead section#filteringControls input#enabled`);
+
+        enabled.checked = this.filters.enabled;
+        enabled.addEventListener("click", (e) => this.toggleFiltersEnabled(e));
+
+        const reverse  = frag.querySelector(`thead section#filteringControls input#reverse`);
+
+        reverse.checked = this.filters.reverse;
+        reverse.addEventListener("click", (e) => this.toggleFiltersReverse(e));
+
         this.ui.filters.show = frag.querySelector("thead section input#editor");
 
-        frag.querySelector("thead div#top input#editor").addEventListener("click", (e) => {
+        frag.querySelector("thead div#top input#editor").addEventListener("click", e => {
             this.filterEditor.setVisibility(e.target.checked);
             this.toggleArrow(e.target);
-            this.saveSettings();
+            Settings.save(this);
         });
-
-        this.ui.filters.enabled = frag.querySelector(`thead section#filteringControls input#enabled`);
-        this.ui.filters.reverse = frag.querySelector(`thead section#filteringControls input#reverse`);
-
-        this.ui.filters.enabled.checked = this.filters.enabled;
-        this.ui.filters.reverse.checked = this.filters.reverse;
-
-        this.ui.filters.enabled.addEventListener("click", () => this.toggleFiltersEnabled());
-        this.ui.filters.reverse.addEventListener("click", () => this.toggleFiltersReverse());
 
         // Construct the filter editor
         this.filterEditor = new FilterEditor(this,
@@ -630,49 +457,30 @@ buildUI()
         this.toggleArrow(this.ui.filters.show);
     }
 
-    if (this.settings.flags & TableFlag.ENABLE_SELECTION) {
-        frag.querySelector("thead div#top input#mass").addEventListener("click", (e) => {
-            toggleClass(this.container.querySelector("tr#controls div#massContainer"), "hidden", !e.target.checked);
-            this.toggleArrow(e.target);
-            this.saveSettings();
-        });
+    // Setup mass tools and row selection
+    const rowsButton = frag.querySelector("thead div#top button#rows");
 
+    if (this.settings.flags & TableFlag.ENABLE_SELECTION) {
         this.ui.mass.show = frag.querySelector("thead section input#mass");
 
-        let mass = frag.querySelector("thead div#massContainer");
+        frag.querySelector("thead div#top input#mass").addEventListener("click", e => {
+            toggleClass(this.container.querySelector("tr#controls div#massContainer"), "hidden", !e.target.checked);
+            this.toggleArrow(e.target);
+            Settings.save(this);
+        });
 
-        mass.querySelector("#all").addEventListener("click", () => this.massSelectAllRows("select_all"));
-        mass.querySelector("#none").addEventListener("click", () => this.massSelectAllRows("deselect_all"));
-        mass.querySelector("#invert").addEventListener("click", () => this.massSelectAllRows("invert_selection"));
-        mass.querySelector("#successfull").addEventListener("click", () => this.massSelectAllRows("deselect_successfull"));
+        rowsButton.addEventListener("click", e => this.openRowsSelection(e.target));
 
-        if (this.settings.massSelects.length > 0) {
-            // Enable mass row selections. List available types in the selector.
-            let selector = mass.querySelector("div#massSelects select#selectType");
+        const mass = frag.querySelector("thead div#massContainer");
 
-            for (const m of this.settings.massSelects) {
-                let o = create("option");
+        // List the available mass operations. The combo already contains a "select" placeholder
+        // item which is selected by default.
+        const selector = mass.querySelector("fieldset div.massControls select.operation");
 
-                o.dataset.id = m[0];
-                o.label = m[1];
-                selector.appendChild(o);
-            }
+        for (const m of this.user.massOperations) {
+            const o = create("option");
 
-            mass.querySelector("div#source").addEventListener("paste", (e) => this.massSelectFilterPaste(e));
-            mass.querySelector("button#massRowSelect").addEventListener("click", () => this.massSelectSpecificRows(true));
-            mass.querySelector("button#massRowDeselect").addEventListener("click", () => this.massSelectSpecificRows(false));
-        } else {
-            // No row mass selections available
-            frag.querySelector("thead div#massContainer fieldset#massSelects")?.remove();
-        }
-
-        // List the available mass operations
-        let selector = mass.querySelector("fieldset div.massControls select.operation");
-
-        for (const m of this.settings.massOperations) {
-            let o = create("option");
-
-            o.dataset.id = m.id;
+            o.value = m.id;
             o.label = m.title;
 
             selector.appendChild(o);
@@ -680,11 +488,13 @@ buildUI()
 
         mass.querySelector("div.massControls > select").addEventListener("change", (e) => this.switchMassOperation(e));
 
-        this.ui.mass.proceed = mass.querySelector("div.massControls > button");
-        this.ui.mass.progress = mass.querySelector("div.massControls > progress");
-        this.ui.mass.counter = mass.querySelector("div.massControls > span.counter");
+        this.ui.mass.start = mass.querySelector("div.massControls button#start");
+        this.ui.mass.stop = mass.querySelector("div.massControls button#stop");
+        this.ui.mass.progress = mass.querySelector("div.massControls progress");
+        this.ui.mass.counter = mass.querySelector("div.massControls span.counter");
 
-        this.ui.mass.proceed.addEventListener("click", () => this.doMassOperation());
+        this.ui.mass.start.addEventListener("click", () => this.startMassOperation());
+        this.ui.mass.stop.addEventListener("click", () => this.stopMassOperation());
 
         // Expand the tool pane immediately
         if (this.settings.show.includes("mass")) {
@@ -694,10 +504,11 @@ buildUI()
 
         this.toggleArrow(this.ui.mass.show);
     } else {
-        // Remove the mass tools checkbox
+        rowsButton.remove();
         frag.querySelector("tr#controls section#massSpan").remove();
     }
 
+    // Setup pagination
     if (this.settings.flags & TableFlag.ENABLE_PAGINATION) {
         // Pagination controls
         this.ui.paging = frag.querySelector("section#paging");
@@ -705,9 +516,9 @@ buildUI()
         const selector = frag.querySelector("select#rowsPerPage");
 
         for (const preset of ROWS_PER_PAGE_PRESETS) {
-            let o = create("option", { label: preset[1] });
+            const o = create("option", { label: preset[1] });
 
-            o.dataset.rows = preset[0];
+            o.value = preset[0];
             o.selected = (preset[0] == this.paging.rowsPerPage);
 
             selector.appendChild(o);
@@ -731,35 +542,65 @@ buildUI()
     this.ui.headers = this.container.querySelector("table.stTable thead tr#headers");
     this.ui.body = this.container.querySelector("table.stTable tbody#data");
 
-    // Display the load animation. This gets overwritten with actual data once
-    // the table is loaded. Assume the table has less than 1000 columns.
-    this.ui.body.innerHTML = `<tr><td colspan="999"><img src="/images/spinner.svg" class="spinner"></td></tr>`;
+    if (this.settings.dynamicData) {
+        // Display the load animation. This gets overwritten with actual data once
+        // the table is loaded. Assume the table has less than 1000 columns.
+        this.ui.body.innerHTML = `<tr><td colspan="999"><img src="/images/spinner.svg" class="spinner"></td></tr>`;
+    }
+}
+
+// Sets and shows the error message
+setError(html)
+{
+    const e = this.container.querySelector("div.stError");
+
+    e.innerHTML = `${html}. ${_tr('see_console_for_details')}`;
+    e.classList.remove("hidden");
+}
+
+resetError()
+{
+    const e = this.container.querySelector("div.stError");
+
+    e.innerText = "";
+    e.classList.add("hidden");
 }
 
 // Updates the "status bar" numbers (total rows, selected rows, etc.) and
 // some selection-dependent button states
-updateUI()
+updateStats()
 {
-    let totalRows = 0,
-        visibleRows = 0;
-
-    try { totalRows = this.data.transformed.length; } catch (e) {}
-    try { visibleRows = this.data.current.length; } catch (e) {}
+    const totalRows = this.data.transformed.length,
+          visibleRows = this.data.current.length;
 
     let parts = [];
 
     parts.push(_tr("status.visible_rows", { visible: visibleRows, total: totalRows }));
     parts.push(_tr("status.filtered_rows", { count: totalRows - visibleRows }));
 
-    if (this.settings.flags & TableFlag.ENABLE_SELECTION) {
+    if (this.settings.flags & TableFlag.ENABLE_SELECTION)
         parts.push(_tr("status.selected_rows", { count: this.data.selectedItems.size }));
 
-        if (this.processing || this.updating || this.massOperation.index == -1)
-            this.ui.mass.proceed.disabled = true;
-        else this.ui.mass.proceed.disabled = (this.data.selectedItems.size == 0);
+    this.container.querySelector("table.stTable thead tr#controls section#stats").innerText = parts.join(", ");
+}
+
+// Rotates the pane open/close toggle arrow
+toggleArrow(element)
+{
+    if (!element) {
+        console.warning("toggleArrow(): element is NULL");
+        return;
     }
 
-    this.setStatus(parts.join(", "));
+    const label = element.parentNode;
+
+    if (!label || label.tagName != "LABEL") {
+        console.warning("toggleArrow(): the element's parent is not a label node");
+        return;
+    }
+
+    // ewww
+    label.nextSibling.nextSibling.innerText = element.checked ? "▼" : "▶";
 }
 
 // Enable/disable UI elements. Called during updates, mass operations, etc. to
@@ -777,297 +618,65 @@ enableUI(isEnabled)
 
     if (this.settings.flags & TableFlag.ENABLE_FILTERING) {
         this.ui.filters.show.disabled = !isEnabled;
-        this.ui.filters.enabled.disabled = !isEnabled;
-        this.ui.filters.reverse.disabled = !isEnabled;
+        this.ui.controls.querySelector("section#filteringControls input#enabled").disabled = !isEnabled;
+        this.ui.controls.querySelector("section#filteringControls input#reverse").disabled = !isEnabled;
         this.filterEditor.enableOrDisable(isEnabled);
     }
 
     if (this.settings.flags & TableFlag.ENABLE_SELECTION) {
+        this.container.querySelector(`button#rows`).disabled = !isEnabled;
         this.ui.mass.show.disabled = !isEnabled;
-
         this.container.querySelector("div.massControls select").disabled = !isEnabled;
-        this.ui.mass.proceed.disabled = !isEnabled;
 
-        for (let b of this.container.querySelectorAll("div#massSelects button"))
+        if (isEnabled)
+            this.updateMassButtons();
+        else {
+            // Explicitly all disabled
+            this.ui.mass.start.disabled = true;
+            this.ui.mass.stop.disabled = true;
+        }
+
+        for (const b of this.container.querySelectorAll("div#massSelects button"))
             b.disabled = !isEnabled;
-
-        this.ui.mass.proceed.disabled = !isEnabled && this.data.selectedItems.size == 0;
     }
 }
 
-// Rotates the toggle arrow
-toggleArrow(element)
+// Enables or disables the table itself, ie. makes everything in it not clickable. This is done
+// when a mass operation starts, to prevent the user from modifying the table in any way, or
+// clicking any buttons in it. You don't want to disturb the table during mass operations...
+enableTable(isEnabled)
 {
-    if (!element) {
-        console.warning("toggleArrow(): element is NULL");
-        return;
-    }
-
-    const label = element.parentNode;
-
-    if (!label || label.tagName != "LABEL") {
-        console.warning("toggleArrow(): the element's parent is not a label node");
-        return;
-    }
-
-    label.nextSibling.nextSibling.innerText = element.checked ? "▼" : "▶";
-}
-
-// Sets and shows the error message
-setError(html)
-{
-    let e = this.container.querySelector("div.stError");
-
-    e.innerHTML = `${html}. ${_tr('see_console_for_details')}`;
-    e.classList.remove("hidden");
-}
-
-resetError()
-{
-    let e = this.container.querySelector("div.stError");
-
-    e.innerText = "";
-    e.classList.add("hidden");
-}
-
-setStatus(text)
-{
-    this.container.querySelector("table.stTable thead tr#controls section#stats").innerText = text;
-}
-
-// Retrieves the actual table rows
-getTableRows()
-{
-    return this.ui.body.querySelectorAll("tr");
-}
-
-// --------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------
-// EXPORT
-
-clickedExport(e)
-{
-    const template = getTemplate("exportPopup");
-
-    template.querySelector(`button#btnCSV`).addEventListener("click", (e) => this.exportTable("csv"));
-    template.querySelector(`button#btnJSON`).addEventListener("click", (e) => this.exportTable("json"));
-
-    if (modalPopup.create()) {
-        modalPopup.getContents().appendChild(template);
-        modalPopup.attach(e);
-        modalPopup.display("bottom");
-    }
-}
-
-// Download table contents. Format must be "csv" or "json".
-exportTable(format)
-{
-    try {
-        const visibleRows = modalPopup.getContents().querySelector("input#only-visible-rows").checked,
-              visibleCols = modalPopup.getContents().querySelector("input#only-visible-cols").checked;
-
-        const source = visibleRows ? this.data.current : this.data.transformed;
-
-        let output = [],
-            mimetype, extension;
-
-        const columns = visibleCols ?
-            this.columns.current :
-            Object.keys(this.columns.definitions);
-
-        let headers = [...columns];
-
-        const timeColumns = new Set();
-
-        // Optional export alias names
-        for (let i = 0; i < headers.length; i++) {
-            const def = this.columns.definitions[headers[i]];
-
-            if (def.export_name)
-                headers[i] = def.export_name;
-
-            if (def.type == ColumnType.UNIXTIME)
-                timeColumns.add(headers[i]);
-        }
-
-        switch (format) {
-            case "csv":
-            default: {
-                // Header first
-                output.push(headers.join(";"));
-
-                for (const row of source) {
-                    let out = [];
-
-                    for (const col of columns) {
-                        if (!(col in row) || row[col][INDEX_FILTERABLE] === null || row[col][INDEX_FILTERABLE] === undefined) {
-                            out.push("");
-                            continue;
-                        }
-
-                        if (timeColumns.has(col))
-                            out.push(new Date(row[col][INDEX_FILTERABLE] * JAVASCRIPT_TIME_GRANULARITY).toISOString());
-                        else out.push(row[col][INDEX_FILTERABLE]);
-                    }
-
-                    output.push(out.join(";"));
-                }
-
-                output = output.join("\n");
-                mimetype = "text/csv";
-                extension = "csv";
-
-                break;
-            }
-
-            case "json": {
-                for (const row of source) {
-                    let out = {};
-
-                    for (let i = 0; i < columns.length; i++) {
-                        const col = columns[i];
-
-                        if (!(col in row) || row[col][INDEX_FILTERABLE] === null || row[col][INDEX_FILTERABLE] === undefined)
-                            continue;
-
-                        if (timeColumns.has(col))
-                            out[col] = new Date(row[col][INDEX_FILTERABLE] * JAVASCRIPT_TIME_GRANULARITY).toISOString();
-                        else out[col] = row[col][INDEX_FILTERABLE];
-                    }
-
-                    output.push(out);
-                }
-
-                output = JSON.stringify(output);
-                mimetype = "application/json";
-                extension = "json";
-
-                break;
-            }
-        }
-
-        // Build a blob object (it must be an array for some reason), then trigger a download.
-        // Download code stolen from StackOverflow.
-        const b = new Blob([output], { type: mimetype });
-        let a = window.document.createElement("a");
-
-        a.href = window.URL.createObjectURL(b);
-        a.download = `${this.settings.csvPrefix}-${I18n.strftime(new Date(), "%Y-%m-%d-%H-%M-%S")}.${extension}`;
-
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    } catch (e) {
-        console.log(e);
-        window.alert(_tr("export_failed", { error: e }));
-    }
-}
-
-// --------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------
-// COLUMN EDITING
-
-// Column reordering by header dragging is located later in this file
-
-// Open the column editor popup
-clickedColumns(e)
-{
-    // Sort the columns alphabetically by their localized names
-    const columnNames =
-        Object.keys(this.columns.definitions)
-        .map((key) => [key, this.columns.titles[key]])
-        .sort((a, b) => { return a[1].localeCompare(b[1]) });
-
-    const current = new Set(this.columns.current);
-
-    let html = "";
-
-    for (const c of columnNames) {
-        const def = this.columns.definitions[c[0]];
-        let cls = ["item"];
-
-        if (current.has(c[0]))
-            cls.push("selected");
-
-        html += `<div data-column="${c[0]}" class="${cls.join(' ')}">`;
-
-        if (current.has(c[0]))
-            html += `<input type="checkbox" checked></input>`;
-        else html += `<input type="checkbox"></input>`;
-
-        html += `${c[1]} (<span class="columnName">${c[0]}</span>)</div>`;
-    }
-
-    const template = getTemplate("columnsPopup");
-
-    template.querySelector("div#columnList").innerHTML = html;
-
-    for (let i of template.querySelectorAll(`div#columnList .item`))
-        i.addEventListener("click", (e) => this.toggleColumn(e.target));
-
-    template.querySelector(`input[type="search"]`).addEventListener("input", (e) => this.filterColumnList(e));
-    template.querySelector("button#save").addEventListener("click", () => this.saveColumns());
-    template.querySelector("button#reset").addEventListener("click", () => this.resetColumns());
-    template.querySelector("button#selectAll").addEventListener("click", () => this.allColumns(true));
-    template.querySelector("button#deselectAll").addEventListener("click", () => this.allColumns(false));
-    template.querySelector("button#resetOrder").addEventListener("click", () => this.resetColumnOrder());
-
-    if (modalPopup.create()) {
-        modalPopup.getContents().appendChild(template);
-        modalPopup.attach(e);
-        modalPopup.display("bottom");
-
-        this.updateColumnEditor();
-        modalPopup.getContents().querySelector(`input[type="search"]`).focus();
-    }
-}
-
-getColumnList(selected)
-{
-    const path = "div#columnList > div";
-
-    return modalPopup.getContents().querySelectorAll(selected ? path + ".selected" : path);
-}
-
-// Check/uncheck the column on the list
-toggleColumn(target)
-{
-    if (target.classList.contains("selected")) {
-        target.classList.remove("selected");
-        target.childNodes[0].checked = false;
+    // TODO: This does not work entirely as it should. The "no-pointer-events" class applied to
+    // the whole table is just a hacky workaround. But I don't know any other quick way to
+    // disable all the clickable links.
+    if (isEnabled) {
+        this.ui.headers.classList.remove("no-text-selection", "no-pointer-events");
+        this.ui.body.classList.remove("no-text-selection", "no-pointer-events");
     } else {
-        target.classList.add("selected");
-        target.childNodes[0].checked = true;
+        this.ui.headers.classList.add("no-text-selection", "no-pointer-events");
+        this.ui.body.classList.add("no-text-selection", "no-pointer-events");
     }
-
-    this.unsavedColumns = true;
-    this.updateColumnEditor();
 }
 
-saveColumns()
+updateMassButtons()
 {
-    // Make a list of new visible columns
-    let newVisible = new Set();
+    if (!this.ui.mass.start || !this.ui.mass.stop)
+        return;
 
-    for (let c of this.getColumnList(true))
-        if (c.classList.contains("selected"))
-            newVisible.add(c.dataset.column);
+    if (this.processing || this.data.selectedItems.size == 0 || this.massOperation.definition === null)
+        this.ui.mass.start.disabled = true
+    else this.ui.mass.start.disabled = false;
 
-    // Keep the existing columns in whatever order they were, but remove
-    // hidden columns
-    let newColumns = [];
+    this.ui.mass.stop.disabled = !this.processing;
+}
 
-    for (const col of this.columns.current) {
-        if (newVisible.has(col)) {
-            newColumns.push(col);
-            newVisible.delete(col);
-        }
-    }
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// DATA PROCESSING AND TABLE BUILDING
 
-    // Then tuck the new columns at the end of the array
-    for (const col of newVisible)
-        newColumns.push(col);
-
+// Called from the column editor
+setVisibleColumns(newColumns)
+{
     this.columns.current = newColumns;
 
     // Is the current sorting column still visible? If not, find another column to sort by.
@@ -1094,1069 +703,15 @@ saveColumns()
         }
     }
 
-    this.unsavedColumns = false;
-    this.updateColumnEditor();
-    this.saveSettings();
+    Settings.save(this);
     this.updateTable();
 }
 
-resetColumns()
+// Retrieves the actual table rows
+getTableRows()
 {
-    const initial = new Set(this.columns.defaults);
-
-    for (let c of this.getColumnList(false)) {
-        if (initial.has(c.dataset.column)) {
-            c.classList.add("selected");
-            c.firstChild.checked = true;
-        } else {
-            c.classList.remove("selected");
-            c.firstChild.checked = false;
-        }
-    }
-
-    this.unsavedColumns = true;
-    this.updateColumnEditor();
+    return this.ui.body.querySelectorAll("tr");
 }
-
-allColumns(select)
-{
-    let changed = false;
-
-    for (let c of this.getColumnList(false)) {
-        if (c.classList.contains("hidden"))
-            continue;
-
-        if (select)
-            c.classList.add("selected");
-        else c.classList.remove("selected");
-
-        if (c.firstChild.checked != select) {
-            c.firstChild.checked = select;
-            changed = true;
-        }
-    }
-
-    if (changed) {
-        this.unsavedColumns = true;
-        this.updateColumnEditor();
-    }
-}
-
-resetColumnOrder()
-{
-    const current = new Set(this.columns.current);
-    let nc = [];
-
-    for (const c of this.columns.order)
-        if (current.has(c))
-            nc.push(c);
-
-    this.columns.current = nc;
-
-    this.saveSettings();
-    this.updateTable();
-}
-
-updateColumnEditor()
-{
-    const numSelected = this.getColumnList(true).length;
-    let saveButton = modalPopup.getContents().querySelector("button#save")
-
-    if (numSelected == 0)
-        saveButton.disabled = true;
-    else saveButton.disabled = !this.unsavedColumns;
-
-    modalPopup.getContents().querySelector("div#columnStats").innerText = _tr("status.column_stats", {
-        selected: numSelected,
-        total: Object.keys(this.columns.definitions).length
-    });
-}
-
-filterColumnList(e)
-{
-    const filter = e.target.value.trim().toLowerCase();
-
-    // The list is not rebuilt when searching, we just change item visibilities.
-    // This way, searching for something else does not undo previous changes
-    // if they weren't saved yet.
-    for (let c of this.getColumnList()) {
-        const title = this.columns.titles[c.dataset.column];
-
-        if (filter && title.toLowerCase().indexOf(filter) == -1)
-            c.classList.add("hidden");
-        else c.classList.remove("hidden");
-    }
-}
-
-// --------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------
-// PAGINATION
-
-// Calculates which page will be displayed on the next table update
-calculatePagination()
-{
-    if (this.data.current === null || this.data.current === undefined || this.data.current.length == 0) {
-        // No data at all
-        this.paging.numPages = 0;
-        this.paging.currentPage = 0;
-
-        return;
-    }
-
-    if (this.paging.rowsPerPage == -1 || this.data.current.length <= this.paging.rowsPerPage) {
-        // Only one page
-        this.paging.numPages = 1;
-        this.paging.currentPage = 0;
-
-        return;
-    }
-
-    this.paging.numPages = (this.paging.rowsPerPage == -1) ? 1 :
-        Math.ceil(this.data.current.length / this.paging.rowsPerPage);
-
-    this.paging.currentPage =
-        Math.min(Math.max(this.paging.currentPage, 0), this.paging.numPages - 1);
-}
-
-updatePageCounter()
-{
-    if (!this.ui.paging)
-        return;
-
-    this.ui.paging.querySelector("button#page").innerText = _tr("status.pagination", {
-        current: (this.paging.numPages == 0) ? 1 : this.paging.currentPage + 1,
-        total: (this.paging.numPages == 0) ? 1 : this.paging.numPages
-    });
-}
-
-onRowsPerPageChanged()
-{
-    const selector = this.ui.paging.querySelector("select#rowsPerPage");
-
-    const numRows = parseInt(selector.options[selector.selectedIndex].dataset.rows, 10);
-
-    console.log(`Rows per page changed to ${numRows}`);
-
-    this.paging.rowsPerPage = numRows;
-    this.saveSettings();
-
-    const old = this.paging.numPages;
-
-    this.calculatePagination();
-    this.updatePageCounter();
-    this.enablePaginationControls(true);
-
-    if (old != this.paging.numPages && this.data.current && this.data.current.length > 0)
-        this.buildTable();
-}
-
-onPageDelta(delta)
-{
-    const old = this.paging.currentPage;
-
-    this.paging.currentPage += delta;
-    this.calculatePagination();
-
-    if (this.paging.currentPage == old)
-        return;
-
-    this.updatePageCounter();
-    this.enablePaginationControls(true);
-
-    if (this.data.current && this.data.current.length > 0)
-        this.buildTable();
-}
-
-onJumpToPage(e)
-{
-    const template = getTemplate("jumpToPagePopup");
-
-    // Too long strings can break the layout
-    const MAX_LENGTH = 30;
-    const ellipsize = (str) => (str.length > MAX_LENGTH) ? str.substring(0, MAX_LENGTH) + "…" : str;
-
-    const col = this.sorting.column;
-
-    // Assume string columns can contain HTML, but numeric columns won't. The values are
-    // HTML-escaped when displayed, but that means HTML tags can slip through and it looks
-    // really ugly.
-    const index = (this.columns.definitions[col].type == ColumnType.STRING) ?
-        INDEX_FILTERABLE : INDEX_DISPLAYABLE;
-
-    let html = "";
-
-    if (this.paging.rowsPerPage == -1) {
-        // Everything on one giant page
-        let first = this.data.current[0],
-            last = this.data.current[this.data.current.length - 1];
-
-        first = ellipsize(first[col][INDEX_EXISTS] ? first[col][index] : "-");
-        last = ellipsize(last[col][INDEX_EXISTS] ? last[col][index] : "-");
-
-        html += `<option selected}>1: ${escapeHTML(first)} → ${escapeHTML(last)}</option>`;
-    } else {
-        for (let page = 0; page < this.paging.numPages; page++) {
-            const start = page * this.paging.rowsPerPage;
-            const end = Math.min((page + 1) * this.paging.rowsPerPage, this.data.current.length);
-
-            let first = this.data.current[start],
-                last = this.data.current[end - 1];
-
-            first = ellipsize(first[col][INDEX_EXISTS] ? first[col][index] : "-");
-            last = ellipsize(last[col][INDEX_EXISTS] ? last[col][index] : "-");
-
-            html += `<option ${page == this.paging.currentPage ? "selected" : ""} ` +
-                    `data-page="${page}">${page + 1}: ${escapeHTML(first)} → ${escapeHTML(last)}</option>`;
-        }
-    }
-
-    template.querySelector("select").innerHTML = html;
-
-    template.querySelector("select").addEventListener("change", (e) => {
-        // Change the page. The popup stays open.
-        const pageNum = parseInt(e.target.options[e.target.selectedIndex].dataset.page, 10);
-
-        if (pageNum != this.paging.currentPage) {
-            this.paging.currentPage = pageNum;
-
-            this.updatePageCounter();
-            this.enablePaginationControls(true);
-
-            if (this.data.current && this.data.current.length > 0)
-                this.buildTable();
-        }
-    });
-
-    if (modalPopup.create()) {
-        modalPopup.getContents().appendChild(template);
-        modalPopup.attach(e);
-        modalPopup.display("bottom");
-        modalPopup.getContents().querySelector("select").focus();
-    }
-}
-
-enablePaginationControls(state)
-{
-    if (!this.ui.paging)
-        return;
-
-    this.ui.paging.querySelector("select#rowsPerPage").disabled = !state;
-    this.ui.paging.querySelector("button#first").disabled = !(state && this.paging.currentPage > 0);
-    this.ui.paging.querySelector("button#prev").disabled = !(state && this.paging.currentPage > 0);
-    this.ui.paging.querySelector("button#next").disabled = !(state && this.paging.currentPage < this.paging.numPages - 1);
-    this.ui.paging.querySelector("button#last").disabled = !(state && this.paging.currentPage < this.paging.numPages - 1);
-    this.ui.paging.querySelector("button#page").disabled = !(state && this.paging.numPages > 1);
-}
-
-// --------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------
-// FILTERS
-
-// Called from the filter editor whenever a change to the filters have been made
-saveFilters()
-{
-    this.filters.filters = this.filterEditor.getTraditionalFilters();
-    this.filters.string = this.filterEditor.getAdvancedFilter();
-    this.filters.advanced = this.filterEditor.isAdvancedMode();
-
-    this.saveSettings();
-    this.filterEditor.updatePreview();
-}
-
-// Called when a filtering settings have changed enough to force the table to be updated
-updateFiltering()
-{
-    this.filters.program = this.filterEditor.getFilterProgram();
-    this.doneAtLeastOneOperation = false;
-
-    if (this.filters.enabled) {
-        this.clearRowSelections();
-        this.updateTable();
-    }
-}
-
-toggleFiltersEnabled()
-{
-    this.filters.enabled = this.ui.filters.enabled.checked;
-    this.doneAtLeastOneOperation = false;
-    this.saveSettings();
-    this.clearRowSelections();
-    this.updateTable();
-}
-
-toggleFiltersReverse()
-{
-    this.filters.reverse = this.ui.filters.reverse.checked;
-    this.saveSettings();
-
-    if (this.filters.enabled) {
-        this.doneAtLeastOneOperation = false;
-        this.clearRowSelections();
-        this.updateTable();
-    }
-}
-
-// --------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------
-// MASS OPERATIONS AND ROW SELECTIONS
-
-// Mass select or deselect table rows
-massSelectAllRows(operation)
-{
-    if (this.updating || this.processing || !this.data.current || this.data.current.length == 0)
-        return;
-
-    if (this.ui.previousRow) {
-        this.ui.previousRow.classList.remove("previousRow");
-        this.ui.previousRow = null;
-    }
-
-    // Update internal state
-    if (operation == "select_all") {
-        this.data.selectedItems.clear();
-
-        for (const i of this.data.current)
-            this.data.selectedItems.add(i.id[INDEX_DISPLAYABLE]);
-
-        this.data.successItems.clear();
-        this.data.failedItems.clear();
-    } else if (operation == "deselect_all") {
-        this.data.selectedItems.clear();
-        this.data.successItems.clear();
-        this.data.failedItems.clear();
-    } else if (operation == "invert_selection") {
-        let newState = new Set();
-
-        for (const i of this.data.current)
-            if (!this.data.selectedItems.has(i.id[INDEX_DISPLAYABLE]))
-                newState.add(i.id[INDEX_DISPLAYABLE]);
-
-        this.data.selectedItems = newState;
-        this.data.successItems.clear();
-        this.data.failedItems.clear();
-    } else if (operation == "deselect_successfull") {
-        for (const id of this.data.successItems)
-            this.data.selectedItems.delete(id);
-
-        this.data.successItems.clear();
-    }
-
-    // Rebuilding the table is too slow, so modify the checkbox cells directly
-    for (let row of this.getTableRows()) {
-        let cb = row.childNodes[0].childNodes[0];
-
-        switch (operation) {
-            case "select_all":
-                cb.classList.add("checked");
-                row.classList.remove("success", "fail");
-                break;
-
-            case "deselect_all":
-                cb.classList.remove("checked");
-                row.classList.remove("success", "fail");
-                break;
-
-            case "invert_selection":
-                if (cb.classList.contains("checked"))
-                    cb.classList.remove("checked");
-                else cb.classList.add("checked");
-
-                row.classList.remove("success", "fail");
-                break;
-
-            case "deselect_successfull":
-                if (row.classList.contains("success")) {
-                    row.classList.remove("success");
-                    cb.classList.remove("checked");
-                }
-
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    this.doneAtLeastOneOperation = false;
-    this.updateUI();
-}
-
-// Strip HTML from the pasted text (plain text only!). The thing is, the "text box" is a
-// contentEdit-enabled DIV, so it accepts HTML. If you paste data from, say, LibreOffice
-// Calc, the spreadsheet font gets embedded in it and it can actually screw up the page's
-// layout completely (I saw that happening)! That's not acceptable, so this little function
-// will hopefully remove all HTML from whatever's being pasted and leave only plain text.
-// See https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent/clipboardData
-massSelectFilterPaste(e)
-{
-    e.preventDefault();
-    e.target.innerText = e.clipboardData.getData("text/plain");
-}
-
-// Perform row mass selection
-massSelectSpecificRows(state)
-{
-    if (this.updating || this.processing)
-        return;
-
-    let container = this.container.querySelector("div#source");
-
-    // Source data type
-    const selector = this.container.querySelector("select#selectType");
-    const type = selector.options[selector.selectedIndex].dataset.id;
-    const numeric = this.columns.definitions[type].type != ColumnType.STRING;
-
-    // Extract plain text content
-    let entries = new Set();
-
-    for (const i of container.innerText.split("\n")) {
-        let s = i.trim();
-
-        if (s.length == 0 || s[0] == "#")
-            continue;
-
-        if (numeric) {
-            s = parseInt(s, 10);
-
-            if (isNaN(s))
-                continue;
-        }
-
-        entries.add(s);
-    }
-
-    // Select/deselect the rows
-    let tableRows = this.getTableRows();
-    let found = new Set();
-
-    for (let i = 0, j = this.data.current.length; i < j; i++) {
-        const item = this.data.current[i];
-
-        if (!item[type][INDEX_EXISTS])
-            continue;
-
-        const field = item[type][INDEX_FILTERABLE];
-
-        if (!entries.has(field))
-            continue;
-
-        found.add(field);
-
-        const id = item.id[INDEX_DISPLAYABLE];
-
-        if (state)
-            this.data.selectedItems.add(id);
-        else {
-            this.data.selectedItems.delete(id);
-            this.data.successItems.delete(id);
-            this.data.failedItems.delete(id);
-        }
-
-        // Directly update visible table rows
-        if (i >= this.paging.firstRowIndex && i < this.paging.lastRowIndex) {
-            let row = tableRows[i - this.paging.firstRowIndex],
-                cb = row.childNodes[0].childNodes[0];
-
-            if (state)
-                cb.classList.add("checked");
-            else cb.classList.remove("checked");
-
-            row.classList.remove("success", "fail");
-        }
-    }
-
-    // Highlight the items that weren't found
-    let html = "";
-
-    for (const e of entries) {
-        if (found.has(e))
-            html += "<div>";
-        else html += `<div class="unmatchedRow">`;
-
-        html += escapeHTML(e);
-        html += "</div>";
-    }
-
-    container.innerHTML = html;
-
-    this.container.querySelector("div#massRowSelectStatus").innerText =
-        _tr('status.mass_row_status', {
-            total: entries.size,
-            match: found.size,
-            unmatched: entries.size - found.size
-        });
-
-    this.updateUI();
-}
-
-// Called when the selected mass operation changes
-switchMassOperation(e)
-{
-    const index = e.target.selectedIndex - 1;
-    const def = this.settings.massOperations[index];
-
-    let fieldset = this.container.querySelector("table.stTable thead div#massContainer fieldset#settings"),
-        container = fieldset.querySelector("div#ui");
-
-    // Instantiate a new class
-    this.massOperation.index = index;
-    this.massOperation.handler = new def.cls(this, container);
-    this.massOperation.singleShot = def.flags & MassOperationFlags.SINGLESHOT;
-
-    // Hide/swap the UI
-    container.innerText = "";
-
-    if (def.flags & MassOperationFlags.HAVE_SETTINGS) {
-        this.massOperation.handler.buildInterface();
-        fieldset.classList.remove("hidden");
-    } else fieldset.classList.add("hidden");
-
-    this.ui.mass.progress.classList.add("hidden");
-    this.ui.mass.counter.classList.add("hidden");
-
-    this.doneAtLeastOneOperation = false;
-    this.updateUI();
-}
-
-// Run the selected mass operation
-doMassOperation()
-{
-    if (this.updating || this.processing)
-        return;
-
-    if (!this.massOperation.handler.canProceed())
-        return;
-
-    if (!window.confirm(_tr('are_you_sure')))
-        return;
-
-    function enableMassUI(ctx, isEnabled)
-    {
-        ctx.enableUI(isEnabled);
-
-        // Disable the mass row select controls
-        // FIXME: The content-editable source DIV cannot be disabled this way
-        for (let b of ctx.container.querySelector("div#massContainer div#massSelects").querySelectorAll("button, input, select"))
-            b.disabled = !isEnabled;
-
-        ctx.ui.mass.proceed.disabled = !isEnabled;
-
-        ctx.enableTable(isEnabled);
-    }
-
-    function beginOperation(ctx, numItems)
-    {
-        enableMassUI(ctx, false);
-
-        ctx.ui.mass.progress.setAttribute("max", numItems);
-        ctx.ui.mass.progress.setAttribute("value", 0);
-        ctx.ui.mass.progress.classList.remove("hidden");
-        ctx.ui.mass.counter.innerHTML = _tr("status.mass_progress", { count: 0, total: numItems, success: 0, fail: 0 });
-        ctx.ui.mass.counter.classList.remove("hidden");
-        ctx.processing = true;
-
-        // This flag controls whether the success/fail counters will be visible after the
-        // operation is done. They will be visible until the UI/selections change.
-        ctx.doneAtLeastOneOperation = true;
-    }
-
-    function endOperation(ctx)
-    {
-        ctx.massOperation.handler.finish();
-
-        enableMassUI(ctx, true);
-        ctx.processing = false;
-
-        // Leave the progress bar and the counter visible. They're only hidden until
-        // the first time a mass operation is executed.
-    }
-
-    function updateProgress(ctx, numItems, currentItem)
-    {
-        ctx.ui.mass.progress.setAttribute("value", currentItem);
-        ctx.ui.mass.counter.innerHTML = _tr("status.mass_progress", {
-            count: currentItem,
-            total: numItems,
-            success: ctx.data.successItems.size,
-            fail: ctx.data.failedItems.size
-        });
-    }
-
-    function updateRow(ctx, row, status)
-    {
-        if (!row[1]) {
-            // This row is not on the current page
-            return;
-        }
-
-        let cell = row[1];
-
-        if (status.success === true) {
-            cell.classList.remove("fail");
-            cell.classList.add("success");
-            cell.title = "";
-        } else {
-            cell.classList.remove("success");
-            cell.classList.add("fail");
-
-            // TODO: These messages need better visibility
-            if (status.message === null)
-                cell.title = "";
-            else cell.title = status.message;
-        }
-    }
-
-    let tableRows = this.getTableRows();
-
-    // Reset previous row states of visible rows
-    for (let row of tableRows)
-        row.classList.remove("success", "fail");
-
-    // Make a list of the selected items, in the order they appear in the table right now.
-    // Store a reference to the table row so it can be easily updated in-place.
-    let itemsToBeProcessed = [];
-
-    for (let i = 0; i < this.data.current.length; i++) {
-        const item = this.data.current[i];
-
-        if (this.data.selectedItems.has(item.id[INDEX_DISPLAYABLE])) {
-            if (i >= this.paging.firstRowIndex && i <= this.paging.lastRowIndex) {
-                // Only rows that are visible on the current page can be live updated
-                itemsToBeProcessed.push([item, tableRows[i - this.paging.firstRowIndex]]);
-            } else itemsToBeProcessed.push([item, null]);
-        }
-    }
-
-    this.data.successItems.clear();
-    this.data.failedItems.clear();
-
-    let us = this;      // JS scoping weirdness workaround
-
-    us.massOperation.handler.start();
-    beginOperation(us, itemsToBeProcessed.length);
-
-    // Chain together Promise objects, one for every selected row. This
-    // loop will exit before the first Promise object is resolved.
-    let sequence = Promise.resolve();
-
-    if (us.massOperation.singleShot) {
-        // Do everything in one call
-        sequence = sequence.then(function() {
-            return us.massOperation.handler.processAllItems(itemsToBeProcessed);
-        }).then(function(result) {
-            // Update all table rows at once and finish the operation
-            for (let i = 0; i < itemsToBeProcessed.length; i++) {
-                const id = itemsToBeProcessed[i][0].id[INDEX_DISPLAYABLE];
-
-                updateRow(us, itemsToBeProcessed[i], result);
-
-                if (result.success === true)
-                    us.data.successItems.add(id);
-                else us.data.failedItems.add(id);
-            }
-
-            updateProgress(us, itemsToBeProcessed.length, itemsToBeProcessed.length);
-            endOperation(us, itemsToBeProcessed.length);
-            us.updateUI();
-        });
-    } else {
-        for (let i = 0; i < itemsToBeProcessed.length; i++) {
-            sequence = sequence.then(function() {
-                // "Schedule" an operation that processes this item
-                return us.massOperation.handler.processItem(itemsToBeProcessed[i][0]);
-            }).then(function(result) {
-                // After the item has been processed, update the status and the table
-                // to reflect the state
-                const id = itemsToBeProcessed[i][0].id[INDEX_DISPLAYABLE];
-
-                updateRow(us, itemsToBeProcessed[i], result);
-
-                if (result.success === true)
-                    us.data.successItems.add(id);
-                else us.data.failedItems.add(id);
-
-                if (i >= itemsToBeProcessed.length - 1) {
-                    // That was the last item, wrap everything up
-                    // TODO: Should this be replaceable with Promise.all()?
-                    updateProgress(us, itemsToBeProcessed.length, i + 1);
-                    endOperation(us, itemsToBeProcessed.length);
-                } else updateProgress(us, itemsToBeProcessed.length, i + 1);
-
-                us.updateUI();
-            });
-        }
-    }
-}
-
-// Check/uncheck a row. If Shift is being held, perform a range check/uncheck.
-onRowCheckboxClick(e)
-{
-    e.preventDefault();
-
-    if (this.updating || this.processing)
-        return;
-
-    let tr = e.target.parentNode,
-        td = e.target,
-        cb = tr.childNodes[0].childNodes[0];
-
-    const index = parseInt(tr.dataset.index, 10),
-          id = this.data.current[index].id[INDEX_DISPLAYABLE];
-
-    if (e.shiftKey && this.ui.previousRow != null && this.ui.previousRow != td) {
-        // Range select/deselect between the previously clicked row and this row
-        let startIndex = this.ui.previousRow.parentNode.dataset.index,
-            endIndex = tr.dataset.index;
-
-        if (startIndex === undefined || endIndex === undefined) {
-            console.error("Cannot determine the start/end indexes for range selection!");
-            return;
-        }
-
-        startIndex = parseInt(startIndex, 10);
-        endIndex = parseInt(endIndex, 10);
-
-        // Select or deselect?
-        const state = this.data.selectedItems.has(this.data.current[startIndex].id[INDEX_DISPLAYABLE]);
-
-        if (startIndex > endIndex)
-            [startIndex, endIndex] = [endIndex, startIndex];
-
-        let tableRows = this.getTableRows();
-
-        for (let i = startIndex; i <= endIndex; i++) {
-            const id = this.data.current[i].id[INDEX_DISPLAYABLE];
-
-            let row = tableRows[i - this.paging.firstRowIndex],
-                cb = row.childNodes[0].childNodes[0];
-
-            row.classList.remove("success", "fail");
-
-            if (state) {
-                cb.classList.add("checked");
-                this.data.selectedItems.add(id);
-            } else {
-                cb.classList.remove("checked");
-                this.data.selectedItems.delete(id);
-            }
-        }
-    } else {
-        // Check/uncheck one row
-        e.target.parentNode.classList.remove("success", "fail");
-
-        if (cb.classList.contains("checked")) {
-            cb.classList.remove("checked");
-            this.data.selectedItems.delete(id);
-        } else {
-            cb.classList.add("checked");
-            this.data.selectedItems.add(id);
-        }
-    }
-
-    // Remember the previously clicked row
-    if (this.ui.previousRow)
-        this.ui.previousRow.classList.remove("previousRow");
-
-    td.classList.add("previousRow");
-    this.ui.previousRow = td;
-
-    this.doneAtLeastOneOperation = false;
-    this.updateUI();
-}
-
-// --------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------
-// SORTING AND COLUMN HEADER REORDERING
-
-// Start tracking a table header cell clicks/drags
-onHeaderMouseDown(e)
-{
-    e.preventDefault();
-
-    if (this.updating || this.processing)
-        return;
-
-    if (e.button != 0) {
-        // "Main" button only, no right clicks (or left clicks, if the buttons are swapped)
-        return;
-    }
-
-    this.headerDrag.active = false;         // we don't know yet if it's a click or drag
-    this.headerDrag.element = e.target;
-    this.headerDrag.canSort = e.target.dataset.sortable == "1";
-    this.headerDrag.startingMousePos = { x: e.clientX, y: e.clientY };
-    this.headerDrag.startIndex = null;
-    this.headerDrag.endIndex = null;
-    this.headerDrag.cellPositions = null;
-
-    document.addEventListener("mouseup", this.onHeaderMouseUp);
-    document.addEventListener("mousemove", this.onHeaderMouseMove);
-}
-
-// Either sort the table, or end cell reordering, depending on how far the mouse was moved
-// since the button went down
-onHeaderMouseUp(e)
-{
-    e.preventDefault();
-
-    document.removeEventListener("mouseup", this.onHeaderMouseUp);
-    document.removeEventListener("mousemove", this.onHeaderMouseMove);
-
-    let table = this.container.querySelector("table.stTable");
-
-    table.classList.remove("no-text-select", "no-pointer-events");
-    document.body.classList.remove("cursor-grabbing");
-
-    this.headerDrag.element = null;     // no memory leaks, please
-
-    this.doneAtLeastOneOperation = false;
-
-    if (!this.headerDrag.active) {
-        // The mouse didn't move enough, sort the table by this column
-        if (!this.headerDrag.canSort)
-            return;
-
-        const index = e.target.dataset.index,
-              key = e.target.dataset.key;
-
-        if (key == this.sorting.column) {
-            if (this.sorting.dir == SortOrder.ASCENDING)
-                this.sorting.dir = SortOrder.DESCENDING;
-            else this.sorting.dir = SortOrder.ASCENDING;
-        } else {
-            this.sorting.column = key;
-
-            if (this.columns.definitions[key].flags & ColumnFlag.DESCENDING_DEFAULT)
-                this.sorting.dir = SortOrder.DESCENDING;
-            else this.sorting.dir = SortOrder.ASCENDING;
-        }
-
-        this.saveSettings();
-        this.clearRowSelections();
-        this.updateTable();
-        this.updateUI();
-
-        return;
-    }
-
-    // Header cell dragging has ended, update the table
-    destroy(document.querySelector("#stDragHeader"));
-    destroy(document.querySelector("#stDropMarker"));
-
-    this.headerDrag.active = false;
-
-    if (this.headerDrag.cellPositions === null ||
-        this.headerDrag.startIndex === null ||
-        this.headerDrag.endIndex === null ||
-        this.headerDrag.startIndex === this.headerDrag.endIndex) {
-        // How and why did we even get here?
-        return;
-    }
-
-    // Reorder the columns array
-    this.columns.current.splice(this.headerDrag.endIndex, 0, this.columns.current.splice(this.headerDrag.startIndex, 1)[0]);
-
-    // Reorder the table row columns. Perform an in-place swap of the two table columns,
-    // it's significantly faster than regenerating the whole table.
-    const t0 = performance.now();
-
-    const skip = (this.settings.flags & TableFlag.ENABLE_SELECTION) ? 1 : 0;
-
-    const from = this.headerDrag.startIndex + skip,     // skip the checkbox column
-          to = this.headerDrag.endIndex + skip;
-
-    let rows = this.container.querySelector("table.stTable").rows,
-        n = rows.length,
-        row, cell;
-
-    if (this.data.current.length == 0) {
-        // The table is empty, so only reorder the header columns. There are two
-        // header rows, but only one of the will be processed.
-        n = 2;
-    }
-
-    while (n--) {
-        if (n == 0)     // don't reorder the topmost row which contains the controls
-            break;
-
-        row = rows[n];
-        cell = row.removeChild(row.cells[from]);
-        row.insertBefore(cell, row.cells[to]);
-    }
-
-    const t1 = performance.now();
-    console.log(`Table column swap: ${t1 - t0} ms`);
-
-    this.saveSettings();
-}
-
-// Track mouse movement. If the mouse moves "enough", initiate a header cell drag.
-onHeaderMouseMove(e)
-{
-    e.preventDefault();
-
-    if (this.headerDrag.active) {
-        this.updateHeaderDrag(e);
-        return;
-    }
-
-    if (!this.headerDrag.active && e.target != this.headerDrag.element) {
-        // The mouse veered away from the tracked element before enough
-        // distance had been accumulated to properly trigger a drag
-        let table = this.container.querySelector("table.stTable");
-
-        document.removeEventListener("mouseup", this.onHeaderMouseUp);
-        document.removeEventListener("mousemove", this.onHeaderMouseMove);
-
-        table.classList.remove("no-text-select", "no-pointer-events");
-        document.body.classList.remove("cursor-grabbing");
-
-        this.headerDrag.element = null;
-        return;
-    }
-
-    // Measure how far the mouse has been moved from the tracking start location.
-    // Assume 10 pixels is "far enough".
-    const dx = this.headerDrag.startingMousePos.x - e.clientX,
-          dy = this.headerDrag.startingMousePos.y - e.clientY;
-
-    if (Math.sqrt(dx * dx + dy * dy) < 10.0)
-        return;
-
-    // Make a list of header cell positions, so we'll know where to draw the drop markers
-    const xOff = window.scrollX,
-          yOff = window.scrollY;
-
-    this.headerDrag.startIndex = null;
-    this.headerDrag.endIndex = null;
-    this.headerDrag.cellPositions = [];
-
-    let headers = e.target.parentNode,
-        start = 0,
-        count = headers.childNodes.length;
-
-    if (this.settings.flags & TableFlag.ENABLE_SELECTION)   // skip the checkbox column
-        start++;
-
-    if (this.settings.actionsCallback !== null)             // skip the "Actions" column
-        count--;
-
-    for (let i = start; i < count; i++) {
-        let n = headers.childNodes[i];
-
-        if (n == e.target) {
-            // This is the cell we're dragging
-            this.headerDrag.startIndex = i - start;
-        }
-
-        const r = n.getBoundingClientRect();
-
-        this.headerDrag.cellPositions.push({
-            x: r.x + xOff,
-            y: r.y + yOff,
-            w: r.width,
-            h: r.height,
-        });
-    }
-
-    if (this.headerDrag.cellPositions.length == 0) {
-        console.error("No table header cells found!");
-        this.headerDrag.cellPositions = null;
-        return;
-    }
-
-    // Construct a floating "drag element" that follows the mouse
-    const location = e.target.getBoundingClientRect(),
-          dragX = Math.round(location.left),
-          dragY = Math.round(location.top);
-
-    this.headerDrag.offset = { x: e.clientX - dragX, y: e.clientY - dragY };
-
-    let drag = create("div", { id: "stDragHeader", cls: "stDragHeader" });
-
-    drag.style.left = `${dragX + window.scrollX}px`;
-    drag.style.top = `${dragY + window.scrollY}px`;
-    drag.style.width = `${location.width}px`;
-    drag.style.height = `${location.height}px`;
-
-    // Copy the title text, without the sorting arrow
-    drag.innerHTML = `<span>${this.headerDrag.canSort ? e.target.firstChild.firstChild.innerText : e.target.innerText}</span>`;
-
-    // Build the drop marker. It shows the position where the header will be placed when
-    // the mouse button is released.
-    let drop = create("div", { id: "stDropMarker", cls: "stDropMarker" });
-
-    drop.style.height = `${location.height + 10}px`;
-
-    document.body.appendChild(drag);
-    document.body.appendChild(drop);
-
-    // Start dragging the header cell
-    let table = this.container.querySelector("table.stTable");
-
-    table.classList.add("no-text-select", "no-pointer-events");
-    document.body.classList.add("cursor-grabbing");
-
-    this.headerDrag.active = true;
-    this.updateHeaderDrag(e);
-}
-
-updateHeaderDrag(e)
-{
-    if (!this.headerDrag.active || this.headerDrag.cellPositions === null)
-        return;
-
-    const mx = e.clientX + window.scrollX,
-          my = e.clientY + window.scrollY,
-          mxOff = mx - this.headerDrag.offset.x;
-
-    // Find the column under the current position
-    this.headerDrag.endIndex = null;
-
-    if (mx < this.headerDrag.cellPositions[0].x)
-        this.headerDrag.endIndex = 0;
-    else {
-        for (let i = 0; i < this.headerDrag.cellPositions.length; i++)
-            if (this.headerDrag.cellPositions[i].x <= mx)
-                this.headerDrag.endIndex = i;
-    }
-
-    if (this.headerDrag.endIndex === null) {
-        console.error(`Failed to find the column under the mouse (mouse X=${mx})`);
-        return;
-    }
-
-    // Position the drop marker
-    const slot = this.headerDrag.cellPositions[this.headerDrag.endIndex];
-
-    let drop = document.querySelector("#stDropMarker");
-
-    if (drop) {
-        drop.style.left = `${slot.x - 2}px`;
-        drop.style.top = `${slot.y - 5}px`;
-    }
-
-    // Position the dragged element. Clamp it against the window edges to prevent
-    // unnecessary scrollbars from appearing.
-    const windowW = document.body.scrollWidth,      // not the best, but nothing else...
-          windowH = document.body.scrollHeight,     // ...works even remotely nicely here
-          elementW = this.headerDrag.cellPositions[this.headerDrag.startIndex].w,
-          elementH = this.headerDrag.cellPositions[this.headerDrag.startIndex].h;
-
-    const dx = Math.max(0, Math.min(mx - this.headerDrag.offset.x, windowW - elementW)),
-          dy = Math.max(0, Math.min(my - this.headerDrag.offset.y, windowH - elementH));
-
-    let drag = document.querySelector("#stDragHeader");
-
-    if (drag) {
-        drag.style.left = `${dx}px`;
-        drag.style.top = `${dy}px`;
-    }
-}
-
-// --------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------
-// DATA PROCESSING AND TABLE BUILDING
 
 clearRowSelections()
 {
@@ -2173,6 +728,14 @@ beginTableUpdate()
     this.enableTable(false);
 }
 
+endTableUpdate()
+{
+    this.updating = false;
+    this.enableUI(true);
+    this.enableTable(true);
+    this.updateStats();
+}
+
 // Retrieve data from the server and process it
 fetchDataAndUpdate()
 {
@@ -2180,7 +743,20 @@ fetchDataAndUpdate()
 
     const startTime = performance.now();
 
+    // Static or dynamic data?
+    if (this.settings.staticData) {
+        console.log("fetchDataAndUpdate(): static data only");
+
+        this.transformRawData(this.settings.staticData);
+        this.updateTable();
+        this.endTableUpdate();
+        return;
+    }
+
+    // Do a network request for the data
     let networkError = null;
+
+    console.log("fetchDataAndUpdate(): sending a network request");
 
     fetch(this.settings.dynamicData)
         .then(response => {
@@ -2197,24 +773,19 @@ fetchDataAndUpdate()
             return response;
         })
         .then(response => response.text())      // parse the JSON elsewhere, for better error handling
-        .then(data => {
-            this.enableTable(true);
+        .then(textData => {
+            console.log(`fetchDataAndUpdate(): network request: ${performance.now() - startTime} ms`);
 
-            if (this.parseServerResponse(data, startTime))
+            if (this.parseServerResponse(textData))
                 this.updateTable();
-        })
-        .catch(error => {
+        }).catch(error => {
             if (networkError === null)
                 this.setError(error);
             else this.setError(_tr('network_error') + networkError);
 
-            this.updating = false;
-
             console.log(error);
 
-            this.enableTable(true);
-            this.enableUI(true);
-            this.updateUI();
+            this.endTableUpdate();
         });
 }
 
@@ -2222,10 +793,9 @@ fetchDataAndUpdate()
 // and transforms it into usable data. Does not rebuild the table.
 parseServerResponse(textData, startTime)
 {
-    const t0 = performance.now();
-
     console.log("parseServerResponse(): begin");
-    console.log(`Network request: ${t0 - startTime} ms`);
+
+    const t0 = performance.now();
 
     let raw = null;
 
@@ -2242,27 +812,34 @@ parseServerResponse(textData, startTime)
         return false;
     }
 
-    this.resetError();
+    console.log(`JSON parsing: ${performance.now() - t0} ms`);
 
-    // Transform the received data. This is done here (and not in updateTable()) because it
-    // only needs to be done once, but sorting and filtering can be done multiple times
-    // on the transformed data.
-    const t1 = performance.now();
+    this.transformRawData(raw);
 
-    this.data.transformed = transformRawData(
-        this.columns.definitions,
-        this.settings.userTransforms,
-        raw,
-        this.settings.preFilterFunction
-    );
-
-    const t2 = performance.now();
-
-    console.log(`JSON parsing: ${t1 - t0} ms`);
-    console.log(`Data transformation: ${t2 - t1} ms`);
     console.log("parseServerResponse(): done");
 
     return true;
+}
+
+// Transform the received data. This is done here (and not in updateTable()) because it
+// only needs to be done once, but sorting and filtering can be done multiple times
+// on the transformed data.
+transformRawData(incomingJSON)
+{
+    const t0 = performance.now();
+
+    this.resetError();
+
+    this.data.transformed = Data.transformRows(
+        this.columns.definitions,
+        this.user.transforms,
+        incomingJSON,
+        this.user.preFilterFunction
+    );
+
+    const t1 = performance.now();
+
+    console.log(`Data transformation: ${t1 - t0} ms`);
 }
 
 // Takes the currently cached transformed data, filters, sorts and displays it
@@ -2279,16 +856,13 @@ updateTable()
     // Filter
     let filtered = [];
 
-    if (this.settings.flags & TableFlag.ENABLE_FILTERING &&
-        this.filters.enabled &&
-        this.filters.program) {
-
-        filtered = filterData(this.columns.definitions,
-                              this.data.transformed,
-                              this.filters.program,
-                              this.filters.reverse);
+    if (this.settings.flags & TableFlag.ENABLE_FILTERING && this.filters.enabled && this.filters.program) {
+        filtered = Data.filterRows(this.columns.definitions,
+                                   this.data.transformed,
+                                   this.filters.program,
+                                   this.filters.reverse);
     } else {
-        // Filtering is not enabled, pass the data through
+        // Filtering is not enabled, pass the data through as-is
         filtered = [...this.data.transformed];
     }
 
@@ -2296,8 +870,19 @@ updateTable()
 
     // Sort
     const t2 = performance.now();
-    this.data.current = sortData(this.columns.definitions, this.sorting,
-                                 this.collator, filtered);
+
+    const collator = new Intl.Collator(
+        this.settings.locale,
+        {
+            usage: "sort",
+            sensitivity: "accent",
+            ignorePunctuation: true,
+            numeric: true,                  // I really like this one
+        }
+    );
+
+    this.data.current = Data.sortRows(this.columns.definitions, this.sorting, collator, filtered);
+
     const t3 = performance.now();
 
     console.log(`Data filtering: ${t1 - t0} ms`);
@@ -2311,61 +896,16 @@ updateTable()
 
     this.updatePageCounter();
     this.enablePaginationControls();
-
-    this.updating = false;
-    this.enableUI(true);
-    this.updateUI();
+    this.endTableUpdate();
 
     console.log("updateTable(): table update complete");
 }
 
-// Enables or disables the table itself, ie. makes everything in it not clickable. This is done
-// when a mass operation starts, to prevent the user from modifying the table in any way, or
-// clicking any buttons in it. You don't want to disturb the table during mass operations...
-enableTable(isEnabled)
-{
-    // TODO: This does not work entirely as it should. The controls are disabled, but
-    // the busy cursor / text selection prevention does not work properly. The "no-pointer-events"
-    // class applied to the whole container is just a hacky workaround.
-    if (isEnabled) {
-        this.ui.headers.classList.remove("no-text-selection", "cursor-wait");
-        this.ui.body.classList.remove("no-text-selection", "cursor-wait");
-        this.container.classList.remove("no-pointer-events");
-    } else {
-        this.ui.headers.classList.add("no-text-selection", "cursor-wait");
-        this.ui.body.classList.add("no-text-selection", "cursor-wait");
-        this.container.classList.add("no-pointer-events");
-    }
-}
-
-onRowOpen(e)
-{
-    if (e.button != 1)    // middle button
-        return;
-
-    if (e.target.tagName != "TD")
-        return;
-
-    if (e.target.classList.contains("checkbox"))
-        return;
-
-    e.preventDefault();
-
-    const index = e.target.parentNode.dataset.index;
-
-    const url = this.settings.openCallback(this.data.current[index]);
-
-    if (url === null || url === undefined)
-        return;
-
-    window.open(url, "_blank");
-}
-
 buildTable(updateMask=["headers", "rows"])
 {
-    const haveActions = !!this.settings.actionsCallback,
+    const haveActions = !!this.user.actions,
+          canOpen = !!this.user.open,
           canSelect = this.settings.flags & TableFlag.ENABLE_SELECTION,
-          canOpen = !!this.settings.openCallback,
           currentColumn = this.sorting.column;
 
     // Unicode arrow characters and empirically determined padding values (their widths
@@ -2404,11 +944,12 @@ buildTable(updateMask=["headers", "rows"])
 
         for (const [index, key] of this.columns.current.entries()) {
             const def = this.columns.definitions[key];
+            const sortable = (def.flags & ColumnFlag.NOT_SORTABLE) ? false : true;
 
             let classes = [],
                 data = [["index", index], ["key", key]];
 
-            if (def.flags & ColumnFlag.NOT_SORTABLE)
+            if (!sortable)
                 classes.push("cursor-default");
             else {
                 classes.push("cursor-pointer");
@@ -2418,7 +959,7 @@ buildTable(updateMask=["headers", "rows"])
             if (key == currentColumn)
                 classes.push("sorted");
 
-            data.push(["sortable", (def.flags & ColumnFlag.NOT_SORTABLE) ? 0 : 1]);
+            data.push(["sortable", sortable ? 1 : 0]);
 
             html += `<th `;
             html += `title="${key}" `;
@@ -2428,8 +969,8 @@ buildTable(updateMask=["headers", "rows"])
             // Figure out the cell contents (title + sort direction arrow)
             const isNumeric = (def.type != ColumnType.STRING);
 
-            if (def.flags & ColumnFlag.NOT_SORTABLE)
-                html += `${this.columns.titles[key]}`;
+            if (!sortable)
+                html += this.columns.titles[key];
             else {
                 let symbol, padding;
 
@@ -2538,7 +1079,7 @@ buildTable(updateMask=["headers", "rows"])
 
                 // The actions column
                 if (haveActions)
-                    html += "<td>" + this.settings.actionsCallback(row) + "</td>";
+                    html += "<td>" + this.user.actions(row) + "</td>";
 
                 html += "</tr>";
             }
@@ -2554,7 +1095,7 @@ buildTable(updateMask=["headers", "rows"])
     // Setup event handling
 
     if (updateMask.includes("headers")) {
-        let headings = headersFragment.querySelectorAll("tr#headers th");
+        const headings = headersFragment.querySelectorAll("tr#headers th");
 
         // Header cell click handlers
         const start = canSelect ? 1 : 0,                                    // skip the checkbox column
@@ -2566,7 +1107,7 @@ buildTable(updateMask=["headers", "rows"])
 
     if (updateMask.includes("rows")) {
         if (this.data.current.length > 0) {
-            for (let row of bodyFragment.querySelectorAll("tbody > tr")) {
+            for (const row of bodyFragment.querySelectorAll("tbody > tr")) {
                 // Full row click open handlers
                 if (canOpen)
                     row.addEventListener("mouseup", event => this.onRowOpen(event));
@@ -2604,6 +1145,897 @@ buildTable(updateMask=["headers", "rows"])
     console.log(`[TABLE] Callback setup: ${t3 - t2} ms`);
     console.log(`[TABLE] DOM replace: ${t4 - t3} ms`);
     console.log(`[TABLE] Total: ${t4 - t0} ms`);
+}
+
+// Called when a table row is middle-clicked. Uses the user-supplied callback function
+// figure out the URL that is to be opened.
+onRowOpen(e)
+{
+    if (e.button != 1)    // middle button
+        return;
+
+    if (e.target.tagName != "TD")
+        return;
+
+    if (e.target.classList.contains("checkbox"))
+        return;
+
+    e.preventDefault();
+
+    const index = e.target.parentNode.dataset.index;
+
+    const url = this.user.open(this.data.current[index]);
+
+    if (url === null || url === undefined)
+        return;
+
+    window.open(url, "_blank");
+}
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// PAGINATION
+
+// Calculates which page will be displayed on the next table update
+calculatePagination()
+{
+    if (this.data.current === null || this.data.current === undefined || this.data.current.length == 0) {
+        // No data at all
+        this.paging.numPages = 0;
+        this.paging.currentPage = 0;
+
+        return;
+    }
+
+    if (this.paging.rowsPerPage == -1 || this.data.current.length <= this.paging.rowsPerPage) {
+        // Only one page
+        this.paging.numPages = 1;
+        this.paging.currentPage = 0;
+
+        return;
+    }
+
+    this.paging.numPages = (this.paging.rowsPerPage == -1) ? 1 :
+        Math.ceil(this.data.current.length / this.paging.rowsPerPage);
+
+    this.paging.currentPage =
+        Math.min(Math.max(this.paging.currentPage, 0), this.paging.numPages - 1);
+}
+
+updatePageCounter()
+{
+    if (!this.ui.paging)
+        return;
+
+    this.ui.paging.querySelector("button#page").innerText = _tr("status.pagination", {
+        current: (this.paging.numPages == 0) ? 1 : this.paging.currentPage + 1,
+        total: (this.paging.numPages == 0) ? 1 : this.paging.numPages
+    });
+}
+
+onRowsPerPageChanged()
+{
+    const selector = this.ui.paging.querySelector("select#rowsPerPage");
+    const numRows = parseInt(selector.value, 10);
+
+    console.log(`Rows per page changed to ${numRows}`);
+
+    this.paging.rowsPerPage = numRows;
+    Settings.save(this);
+
+    const old = this.paging.numPages;
+
+    this.calculatePagination();
+    this.updatePageCounter();
+    this.enablePaginationControls(true);
+
+    if (old != this.paging.numPages && this.data.current && this.data.current.length > 0) {
+        this.clearPreviousRow();
+        this.buildTable();
+    }
+}
+
+onPageDelta(delta)
+{
+    const old = this.paging.currentPage;
+
+    this.paging.currentPage += delta;
+    this.calculatePagination();
+
+    if (this.paging.currentPage == old)
+        return;
+
+    this.updatePageCounter();
+    this.enablePaginationControls(true);
+
+    if (this.data.current && this.data.current.length > 0) {
+        this.clearPreviousRow();
+        this.buildTable();
+    }
+}
+
+onJumpToPage(e)
+{
+    const template = getTemplate("jumpToPagePopup");
+
+    // Too long strings can break the layout
+    const MAX_LENGTH = 30;
+    const ellipsize = (str) => (str.length > MAX_LENGTH) ? str.substring(0, MAX_LENGTH) + "…" : str;
+
+    const col = this.sorting.column;
+
+    // Assume string columns can contain HTML, but numeric columns won't. The values are
+    // HTML-escaped when displayed, but that means HTML tags can slip through and it looks
+    // really ugly.
+    const index = (this.columns.definitions[col].type == ColumnType.STRING) ?
+        INDEX_FILTERABLE : INDEX_DISPLAYABLE;
+
+    let html = "";
+
+    if (this.paging.rowsPerPage == -1) {
+        // Everything on one giant page
+        let first = this.data.current[0],
+            last = this.data.current[this.data.current.length - 1];
+
+        first = ellipsize(first[col][INDEX_EXISTS] ? first[col][index] : "-");
+        last = ellipsize(last[col][INDEX_EXISTS] ? last[col][index] : "-");
+
+        html += `<option value="1" selected}>1: ${escapeHTML(first)} → ${escapeHTML(last)}</option>`;
+    } else {
+        for (let page = 0; page < this.paging.numPages; page++) {
+            const start = page * this.paging.rowsPerPage;
+            const end = Math.min((page + 1) * this.paging.rowsPerPage, this.data.current.length);
+
+            let first = this.data.current[start],
+                last = this.data.current[end - 1];
+
+            first = ellipsize(first[col][INDEX_EXISTS] ? first[col][index] : "-");
+            last = ellipsize(last[col][INDEX_EXISTS] ? last[col][index] : "-");
+
+            html += `<option value="${page}" ${page == this.paging.currentPage ? "selected" : ""} >` +
+                    `${page + 1}: ${escapeHTML(first)} → ${escapeHTML(last)}</option>`;
+        }
+    }
+
+    template.querySelector("select").innerHTML = html;
+
+    template.querySelector("select").addEventListener("change", (e) => {
+        // Change the row count. The popup stays open.
+        const pageNum = parseInt(e.target.value, 10);
+
+        if (pageNum != this.paging.currentPage) {
+            this.paging.currentPage = pageNum;
+
+            this.updatePageCounter();
+            this.enablePaginationControls(true);
+
+            if (this.data.current && this.data.current.length > 0) {
+                this.clearPreviousRow();
+                this.buildTable();
+            }
+        }
+    });
+
+    if (modalPopup.create()) {
+        modalPopup.getContents().appendChild(template);
+        modalPopup.attach(e);
+        modalPopup.display("bottom");
+        modalPopup.getContents().querySelector("select").focus();
+    }
+}
+
+enablePaginationControls(state)
+{
+    if (!this.ui.paging)
+        return;
+
+    this.ui.paging.querySelector("select#rowsPerPage").disabled = !state;
+    this.ui.paging.querySelector("button#first").disabled = !(state && this.paging.currentPage > 0);
+    this.ui.paging.querySelector("button#prev").disabled = !(state && this.paging.currentPage > 0);
+    this.ui.paging.querySelector("button#next").disabled = !(state && this.paging.currentPage < this.paging.numPages - 1);
+    this.ui.paging.querySelector("button#last").disabled = !(state && this.paging.currentPage < this.paging.numPages - 1);
+    this.ui.paging.querySelector("button#page").disabled = !(state && this.paging.numPages > 1);
+}
+
+isTableRowVisible(rowNum)
+{
+    return rowNum >= this.paging.firstRowIndex && rowNum < this.paging.lastRowIndex;
+}
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// FILTERS
+
+// Called from the filter editor whenever a change to the filters have been made
+saveFilters()
+{
+    this.filters.filters = this.filterEditor.getTraditionalFilters();
+    this.filters.string = this.filterEditor.getAdvancedFilter();
+    this.filters.advanced = this.filterEditor.isAdvancedMode();
+
+    Settings.save(this);
+    this.filterEditor.updatePreview();
+}
+
+// Called when a filtering settings have changed enough to force the table to be updated
+updateFiltering()
+{
+    this.filters.program = this.filterEditor.getFilterProgram();
+    this.doneAtLeastOneOperation = false;
+
+    if (this.filters.enabled) {
+        this.clearRowSelections();
+        this.updateTable();
+    }
+}
+
+toggleFiltersEnabled(e)
+{
+    this.filters.enabled = e.target.checked;
+    Settings.save(this);
+
+    this.doneAtLeastOneOperation = false;
+    this.clearRowSelections();
+    this.updateTable();
+}
+
+toggleFiltersReverse(e)
+{
+    this.filters.reverse = e.target.checked;
+    Settings.save(this);
+
+    if (this.filters.enabled) {
+        this.doneAtLeastOneOperation = false;
+        this.clearRowSelections();
+        this.updateTable();
+    }
+}
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// MASS ROW SELECTIONS
+
+openRowsSelection(e)
+{
+    let template = null;
+
+    if (this.massRowSelectPopup) {
+        // Restore previous copy
+        template = this.massRowSelectPopup;
+    } else {
+        template = getTemplate("rowSelection");
+
+        template.querySelector("#all").addEventListener("click", () => this.massSelectAllRows("select_all"));
+        template.querySelector("#none").addEventListener("click", () => this.massSelectAllRows("deselect_all"));
+        template.querySelector("#invert").addEventListener("click", () => this.massSelectAllRows("invert_selection"));
+        template.querySelector("#successfull").addEventListener("click", () => this.massSelectAllRows("deselect_successfull"));
+
+        if (this.user.massSelects.length > 0) {
+            // Enable mass row selections. List available types in the selector.
+            const selector = template.querySelector("select#sourceType");
+
+            for (const m of this.user.massSelects) {
+                const o = create("option");
+
+                o.value = m[0];
+                o.label = m[1];
+
+                selector.appendChild(o);
+            }
+
+            template.querySelector("div#source").addEventListener("paste", e => {
+                // Strip HTML from the pasted text (plain text only!). The thing is, the "text box" is a
+                // contentEdit-enabled DIV, so it accepts HTML. If you paste data from, say, LibreOffice
+                // Calc, the spreadsheet font gets embedded in it and it can actually screw up the page's
+                // layout completely (I saw that happening)! That's not acceptable, so this little function
+                // will hopefully remove all HTML from whatever's being pasted and leave only plain text.
+                // See https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent/clipboardData
+                e.preventDefault();
+                e.target.innerText = e.clipboardData.getData("text/plain");
+            });
+
+            template.querySelector("button#massRowSelect").addEventListener("click", () => this.massSelectSpecificRows(true));
+            template.querySelector("button#massRowDeselect").addEventListener("click", () => this.massSelectSpecificRows(false));
+        } else {
+            // No row mass selections available
+            template.querySelector("fieldset#massSelects").remove();
+        }
+    }
+
+    if (modalPopup.create((_) => {
+        // Detach the template from the popup, so we can retain its contents
+        let n = modalPopup.getContents().querySelector("div.popupRows");
+
+        this.massRowSelectPopup = n.parentElement.removeChild(n);
+    })) {
+        modalPopup.getContents().appendChild(template);
+        modalPopup.attach(e, 800);
+        modalPopup.display("bottom");
+    }
+}
+
+// Mass select or deselect table rows
+massSelectAllRows(operation)
+{
+    this.clearPreviousRow();
+    Mass.selectAllRows(operation, this.data, this.getTableRows());
+    this.doneAtLeastOneOperation = false;
+    this.updateStats();
+    this.updateMassButtons();
+}
+
+// Perform row mass selection
+massSelectSpecificRows(state)
+{
+    if (this.updating || this.processing)
+        return;
+
+    const container = modalPopup.getContents().querySelector("fieldset#massSelects");
+
+    this.clearPreviousRow();
+    Mass.selectSpecificRows(container, state, this.columns, this.data, this.paging, this.getTableRows());
+    this.updateStats();
+    this.updateMassButtons();
+}
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// MASS OPERATIONS
+
+clearPreviousRow()
+{
+    if (this.ui.previousRow) {
+        this.ui.previousRow.classList.remove("previousRow");
+        this.ui.previousRow = null;
+    }
+}
+
+// Check/uncheck a row. If Shift is being held, perform a range checking/unchecking.
+onRowCheckboxClick(e)
+{
+    e.preventDefault();
+
+    if (this.updating || this.processing)
+        return;
+
+    const tr = e.target.parentNode,
+          td = e.target,
+          cb = tr.childNodes[0].childNodes[0];
+
+    const index = parseInt(tr.dataset.index, 10),
+          id = this.data.current[index].id[INDEX_DISPLAYABLE];
+
+    if (e.shiftKey && this.ui.previousRow != null && this.ui.previousRow != td) {
+        // Range select/deselect between the previously clicked row and this row
+        let startIndex = this.ui.previousRow.parentNode.dataset.index,
+            endIndex = tr.dataset.index;
+
+        if (startIndex === undefined || endIndex === undefined) {
+            console.error("Cannot determine the start/end indexes for range selection!");
+            return;
+        }
+
+        startIndex = parseInt(startIndex, 10);
+        endIndex = parseInt(endIndex, 10);
+
+        // Select or deselect?
+        const state = this.data.selectedItems.has(this.data.current[startIndex].id[INDEX_DISPLAYABLE]);
+
+        if (startIndex > endIndex)
+            [startIndex, endIndex] = [endIndex, startIndex];
+
+        const tableRows = this.getTableRows();
+
+        for (let i = startIndex; i <= endIndex; i++) {
+            const id = this.data.current[i].id[INDEX_DISPLAYABLE];
+            const row = tableRows[i - this.paging.firstRowIndex],
+                  cb = row.childNodes[0].childNodes[0];
+
+            row.classList.remove("success", "fail");
+
+            if (state) {
+                cb.classList.add("checked");
+                this.data.selectedItems.add(id);
+            } else {
+                cb.classList.remove("checked");
+                this.data.selectedItems.delete(id);
+            }
+        }
+    } else {
+        // Check/uncheck just one row
+        e.target.parentNode.classList.remove("success", "fail");
+
+        if (cb.classList.contains("checked")) {
+            cb.classList.remove("checked");
+            this.data.selectedItems.delete(id);
+        } else {
+            cb.classList.add("checked");
+            this.data.selectedItems.add(id);
+        }
+    }
+
+    // Remember the previously clicked row
+    if (this.ui.previousRow)
+        this.ui.previousRow.classList.remove("previousRow");
+
+    td.classList.add("previousRow");
+    this.ui.previousRow = td;
+
+    this.doneAtLeastOneOperation = false;
+    this.updateStats();
+    this.updateMassButtons();
+}
+
+// Called when the selected mass operation changes
+switchMassOperation(e)
+{
+    const fieldset = this.container.querySelector("table.stTable thead div#massContainer fieldset#settings"),
+          container = fieldset.querySelector("div#ui");
+
+    const index = e.target.selectedIndex - 1;
+
+    this.massOperation.definition = this.user.massOperations[index];
+    this.massOperation.handler = new this.massOperation.definition.cls(this, container);
+
+    // Hide/swap the UI
+    container.innerText = "";
+
+    if (this.massOperation.definition.haveSettings) {
+        this.massOperation.handler.buildInterface();
+        fieldset.classList.remove("hidden");
+    } else fieldset.classList.add("hidden");
+
+    this.ui.mass.progress.classList.add("hidden");
+    this.ui.mass.counter.classList.add("hidden");
+
+    this.doneAtLeastOneOperation = false;
+    this.updateStats();
+    this.updateMassButtons();
+}
+
+startMassOperation()
+{
+    if (this.updating || this.processing)
+        return;
+
+    if (!this.massOperation.handler.canProceed())
+        return;
+
+    if (!window.confirm(_tr('are_you_sure')))
+        return;
+
+    // Reset previous row states of visible rows
+    for (const row of this.getTableRows()) {
+        row.classList.remove("success", "fail", "processing");
+        row.title = "";
+    }
+
+    this.data.successItems.clear();
+    this.data.failedItems.clear();
+
+    this.massOperation.rows = [];
+    this.massOperation.pos = 0;
+    this.massOperation.prevPos = 0;
+
+    // Make a list of all selected rows
+    for (let rowNum = 0; rowNum < this.data.current.length; rowNum++) {
+        const id = this.data.current[rowNum].id[INDEX_DISPLAYABLE];
+
+        if (this.data.selectedItems.has(id)) {
+            this.massOperation.rows.push({
+                index: rowNum,
+                id: id,
+            });
+        }
+    }
+
+    //console.log(this.data.selectedItems);
+
+    this.massOperation.handler.start();
+    this.massOperation.singleShot = this.massOperation.definition.singleShot || false;
+    this.massOperation.parameters = this.massOperation.handler.getOperationParameters() || {};
+
+    // This flag controls whether the success/fail counters will be visible after the
+    // operation is done. They will be visible until the UI/selections change.
+    this.doneAtLeastOneOperation = true;
+
+    // Initiate the operation
+    this.processing = true;
+    this.stopRequested = false;
+
+    this.enableUI(false);
+    this.enableTable(false);
+    this.updateMassButtons();
+
+    this.ui.mass.progress.setAttribute("max", this.massOperation.rows.length);
+    this.ui.mass.progress.setAttribute("value", 0);
+    this.ui.mass.progress.classList.remove("hidden");
+    this.ui.mass.counter.innerHTML = _tr("status.mass_progress", { count: 0, total: this.massOperation.rows.length, success: 0, fail: 0 });
+    this.ui.mass.counter.classList.remove("hidden");
+
+    if (this.massOperation.definition.singleShot) {
+        // Process all rows at once
+        this.processBatch(this.prepareNextBatch(this.data.selectedItems.size));
+    } else {
+        // Process in smaller batches
+        this.processBatch(this.prepareNextBatch(BATCH_SIZE));
+    }
+}
+
+stopMassOperation()
+{
+    // The operation will stop after the current batch has been processed
+    // (no way to cancel the batch that's currently in-flight)
+    this.stopRequested = true;
+    console.log("Stopping the mass operation after the current batch finishes");
+}
+
+updateMassOperation()
+{
+    this.ui.mass.progress.setAttribute("value", this.massOperation.pos);
+
+    this.ui.mass.counter.innerHTML = _tr("status.mass_progress", {
+        count: this.massOperation.pos,
+        total: this.massOperation.rows.length,
+        success: this.data.successItems.size,
+        fail: this.data.failedItems.size
+    });
+}
+
+endMassOperation()
+{
+    this.massOperation.handler.finish();
+    this.processing = false;
+    this.enableUI(true);
+    this.enableTable(true);
+    this.updateMassButtons();
+
+    // Leave the progress bar and the counter visible. They're only hidden until
+    // the first time a mass operation is executed.
+}
+
+// Prepares the next N rows of the mass operation
+prepareNextBatch(batchSize)
+{
+    if (this.massOperation.pos >= this.massOperation.rows.length) {
+        console.log(`----- All items have been processed -----`);
+        this.endMassOperation();
+        return null;
+    }
+
+    const tableRows = this.getTableRows();
+
+    const end = Math.min(this.massOperation.rows.length, this.massOperation.pos + batchSize);
+
+    this.massOperation.prevPos = this.massOperation.pos;
+
+    let batch = [];
+
+    // Go through the next N rows and prepare them
+    for (; this.massOperation.pos < end; this.massOperation.pos++) {
+        const item = this.massOperation.rows[this.massOperation.pos];
+
+        const tRow = this.isTableRowVisible(item.index) ?
+            tableRows[item.index - this.paging.firstRowIndex] :
+            null;
+
+        //console.log(`Processing item ${this.massOperation.pos + 1}/${this.massOperation.rows.length}: ${item.id} (row ${item.index})`);
+
+        // Returns a { state, data } object
+        const result = this.massOperation.handler.prepareItem(this.data.current[item.index]);
+
+        // Immediately update the table if the results are already known
+        switch (result.state) {
+            case "ready":
+                // This item can be processed
+                if (result.data !== undefined)
+                    this.massOperation.rows[this.massOperation.pos].data = result.data;
+
+                batch.push(this.massOperation.rows[this.massOperation.pos]);
+                tRow?.classList.add("processing");
+                break;
+
+            case "skip":
+                // This item is already in the desired state, it can be skipped
+                tRow?.classList.add("success");
+                this.data.successItems.add(item.id);
+                break;
+
+            case "error":
+                // This item could not be prepared for processing, skip it
+                tRow?.classList.add("fail");
+                this.data.failedItems.add(item.id);
+
+                if (tRow && result.message) {
+                    // Instantly set the error message
+                    tRow.title = result.message;
+                }
+
+                break;
+
+            default:
+                console.error(result);
+                window.alert(`Unknown prepare status: "${result.state}". This is a fatal error, stopping here. See the console for details, then contact support.`);
+                this.endMassOperation();
+                return null;
+        }
+    }
+
+    return batch;
+}
+
+processBatch(batch)
+{
+    if (!Array.isArray(batch))
+        return;
+
+    if (batch.length == 0) {
+        // Nothing to do for this batch. But these functions are not recursive, we have to
+        // "route" the work through the worker thread.
+        MASS_WORKER.postMessage({ message: "skip_batch" });
+        return;
+    }
+
+    // We have at least 1 row to be processed
+    console.log(`Have ${batch.length} rows in this batch`);
+
+    MASS_WORKER.postMessage({
+        message: "process_batch",
+        url: this.user.massOperationsEndpoint,
+        singleShot: this.massOperation.singleShot,
+        operation: this.massOperation.definition.operation,
+        parameters: this.massOperation.parameters,
+        csrf: document.querySelector("meta[name='csrf-token']")?.content,
+        rows: batch,
+    });
+}
+
+onWorkerMessage(e)
+{
+    console.log(`[main] worker sent message:`, e.data.message);
+
+    const tableRows = this.getTableRows();
+
+    switch (e.data.message) {
+        case "batch_processed":
+            // Update table row colors
+            for (const row of e.data.result) {
+                if (row.status)
+                    this.data.successItems.add(row.id);
+                else this.data.failedItems.add(row.id);
+
+                // If this row is visible, update its status
+                if (this.isTableRowVisible(row.index)) {
+                    const tRow = tableRows[row.index - this.paging.firstRowIndex];
+
+                    tRow.classList.remove("processing");
+
+                    if (row.status)
+                        tRow.classList.add("success");
+                    else {
+                        tRow.classList.add("fail");
+
+                        if (row.message)
+                            tRow.title = row.message;
+                    }
+                }
+            }
+
+            break;
+
+        case "batch_skipped":
+            // There was nothing in this batch to process, the table has been updated, move on
+            break;
+
+        case "server_error":
+        case "network_error":
+            // This batch could not be processed. Flag all rows as failed and move on.
+            for (let i = this.massOperation.prevPos; i < this.massOperation.pos; i++) {
+                const item = this.massOperation.rows[i];
+                const index = item.index;
+                const tableRow = this.isTableRowVisible(index) ? tableRows[index - this.paging.firstRowIndex] : null;
+
+                if (tableRow)
+                    tableRow.classList.remove("processing");
+
+                if (this.data.successItems.has(item.id) || this.data.failedItems.has(item.id)) {
+                    // It's possible that some items were skipped in the preparation state,
+                    // and they're not affected by this network/server error. They were
+                    // not sent to the server, but because we mark all previous BATCH_SIZE
+                    // rows as "failed", they must be skipped again here.
+                    continue;
+                }
+
+                this.data.failedItems.add(item.id);
+
+                if (tableRow) {
+                    tableRow.classList.add("fail");
+                    tableRow.title = e.data.error;
+                }
+            }
+
+            break;
+
+        default:
+            // This is a fatal error
+            console.error(`The worker thread sent an unknown message: "${e.data.message}"!`);
+            window.alert("Unhandled worker thread message. Operation halted. See the console for details, then contact support.");
+            this.endMassOperation();
+            return;
+    }
+
+    this.updateMassOperation();
+
+    if (this.stopRequested) {
+        console.log(`----- Stopping per user request -----`);
+        this.endMassOperation();
+        return;
+    }
+
+    this.processBatch(this.prepareNextBatch(BATCH_SIZE));
+}
+
+// --------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
+// TABLE HEADER REORDERING
+
+// Start tracking a table header cell clicks/drags
+onHeaderMouseDown(e)
+{
+    e.preventDefault();
+
+    if (this.updating || this.processing) {
+        return;
+    }
+
+    if (e.button != 0) {
+        // "Main" button only, no right clicks (or left clicks, if the buttons are swapped)
+        return;
+    }
+
+    this.headerDrag.element = e.target;
+    this.headerDrag.canSort = (e.target.dataset.sortable == "1");
+
+    HeaderDrag.initialize(e);
+
+    document.addEventListener("mouseup", this.onHeaderMouseUp);
+    document.addEventListener("mousemove", this.onHeaderMouseMove);
+}
+
+// Either sort the table, or end cell reordering, depending on how far the mouse was moved
+// since the button went down
+onHeaderMouseUp(e)
+{
+    e.preventDefault();
+
+    document.removeEventListener("mouseup", this.onHeaderMouseUp);
+    document.removeEventListener("mousemove", this.onHeaderMouseMove);
+
+    const table = this.container.querySelector("table.stTable");
+
+    table.classList.remove("no-text-select", "no-pointer-events");
+    document.body.classList.remove("cursor-grabbing");
+
+    this.headerDrag.element = null;
+
+    this.doneAtLeastOneOperation = false;
+
+    if (this.headerDrag.active) {
+        // Reorder the columns
+        this.headerDrag.active = false;
+        HeaderDrag.end();
+
+        const [startIndex, endIndex] = HeaderDrag.getIndexes();
+
+        HeaderDrag.reset();
+
+        if (startIndex == endIndex)
+            return;
+
+        // Reorder the columns array
+        this.columns.current.splice(endIndex, 0, this.columns.current.splice(startIndex, 1)[0]);
+
+        // Reorder the table row columns. Perform an in-place swap of the two table columns,
+        // it's significantly faster than regenerating the whole table.
+        const t0 = performance.now();
+
+        // Skip the checkbox column
+        const skip = (this.settings.flags & TableFlag.ENABLE_SELECTION) ? 1 : 0;
+
+        const from = startIndex + skip,
+              to = endIndex + skip;
+
+        let rows = this.container.querySelector("table.stTable").rows,
+            n = rows.length,
+            row, cell;
+
+        if (this.data.current.length == 0) {
+            // The table is empty, so only reorder the header columns. There are two
+            // header rows, but only one of the will be processed.
+            n = 2;
+        }
+
+        while (n--) {
+            if (n == 0)         // don't reorder the table controls row
+                break;
+
+            row = rows[n];
+            cell = row.removeChild(row.cells[from]);
+            row.insertBefore(cell, row.cells[to]);
+        }
+
+        const t1 = performance.now();
+        console.log(`Table column swap: ${t1 - t0} ms`);
+
+        Settings.save(this);
+    } else {
+        // No drag, sort the table by this column
+        HeaderDrag.reset();
+
+        if (!this.headerDrag.canSort)
+            return;
+
+        const index = e.target.dataset.index,
+              key = e.target.dataset.key;
+
+        if (key == this.sorting.column) {
+            // Same column, but invert sort direction
+            if (this.sorting.dir == SortOrder.ASCENDING)
+                this.sorting.dir = SortOrder.DESCENDING;
+            else this.sorting.dir = SortOrder.ASCENDING;
+        } else {
+            // Change the sort column
+            this.sorting.column = key;
+
+            if (this.columns.definitions[key].flags & ColumnFlag.DESCENDING_DEFAULT)
+                this.sorting.dir = SortOrder.DESCENDING;
+            else this.sorting.dir = SortOrder.ASCENDING;
+        }
+
+        Settings.save(this);
+
+        this.clearRowSelections();
+        this.updateTable();
+        this.updateStats();
+    }
+}
+
+// Track mouse movement. If the mouse moves "enough", initiate a header cell drag.
+onHeaderMouseMove(e)
+{
+    e.preventDefault();
+
+    if (this.headerDrag.active) {
+        HeaderDrag.update(e);
+        return;
+    }
+
+    if (!this.headerDrag.active && e.target != this.headerDrag.element) {
+        // The mouse has veered away from the tracked element before enough
+        // distance had been accumulated to properly trigger a drag
+        const table = this.container.querySelector("table.stTable");
+
+        document.removeEventListener("mouseup", this.onHeaderMouseUp);
+        document.removeEventListener("mousemove", this.onHeaderMouseMove);
+
+        table.classList.remove("no-text-select", "no-pointer-events");
+        document.body.classList.remove("cursor-grabbing");
+
+        this.headerDrag.element = null;
+        return;
+    }
+
+    if (!HeaderDrag.begin(e, this.headerDrag.canSort, this.settings.flags & TableFlag.ENABLE_SELECTION, this.user.actions !== null))
+        return;
+
+    // Start dragging the header cell
+    const table = this.container.querySelector("table.stTable");
+
+    table.classList.add("no-text-select", "no-pointer-events");
+    document.body.classList.add("cursor-grabbing");
+
+    this.headerDrag.active = true;
+    HeaderDrag.update(e);
 }
 
 }   // class SuperTable

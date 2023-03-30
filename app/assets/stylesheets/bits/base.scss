@@ -96,7 +96,7 @@
 
     --st-header-bg: #bbb;
     --st-header-fg: #000;
-    --st-sortable-hover-bg: #999;
+    --st-sortable-hover-bg: #{$stTableHeaderHoverBackground};
     --st-sortable-hover-fg: #000;
 
     --st-row-hover-bg: #{$listRowHoverBack};
@@ -104,7 +104,10 @@
     --st-row-sorted-hover-bg: #{$stTableSortedColumnHoverBackground};
 
     --st-row-processed-fg: #000;
-
+    --st-row-processing-bg: #aff;
+    --st-row-processing-hover-bg: #8ff;
+    --st-row-processing-sorted-bg: #80ffff;
+    --st-row-processing-sorted-hover-bg: #6ff;
     --st-row-success-bg: #afa;
     --st-row-success-hover-bg: #8f8;
     --st-row-success-sorted-bg: #80ff80;

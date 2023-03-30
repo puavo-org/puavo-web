@@ -436,6 +436,18 @@ en:
       only_visible_rows_title: "If checked, only the rows that aren't filtered will be exported. Otherwise all rows are exported."
       only_visible_cols_checkbox: "Only visible columns"
       only_visible_cols_title: "If checked, only the currently selected columns will be exported. Otherwise all columns are exported."
+    rows:
+      top_button: "Rows"
+      whole_table_title: "Whole table"
+      select_all: "Select all rows"
+      deselect_all: "Deselect all rows"
+      invert_selection: "Invert selection"
+      deselect_successfull: "Deselect successfully processed rows"
+      specific_rows_title: "Specific rows only"
+      explanation: "Enter one or more name, abbreviation, ID, or some other unique identifier. Then select their type and press \"Select\" or \"Deselect\". Rows that didn't match anything will be <span class=\"unmatchedRow\">colored differently</span>. You can edit them and then do the selection again. Duplicates and empty rows are removed."
+      type: "Type"
+      select: "Select"
+      deselect: "Deselect"
     columns:
       top_button: "Columns"
       explanation: "You can reorder the columns by dragging their headers with the mouse. Click = sort, drag = reorder."
@@ -480,25 +492,15 @@ en:
         contents: "Preset contents"
     mass:
       top_button: "Mass tools"
-      row_select:
-        title: "Row mass selection"
-        whole_table_title: "Whole table"
-        select_all: "Select all rows"
-        deselect_all: "Deselect all rows"
-        invert_selection: "Invert selection"
-        deselect_successfull: "Deselect successfully processed rows"
-        specific_rows_title: "Specific rows only"
-        explanation: "Enter one or more name, abbreviation, ID, or some other unique identifier. Then select their type and press \"Select\" or \"Deselect\". Rows that didn't match anything will be <span class=\"unmatchedRow\">colored differently</span>. You can edit them and then do the selection again. Duplicates and empty rows are removed."
-        type: "Type"
-        select: "Select"
-        deselect: "Deselect"
       operation_title: "Operation"
-      execute_button: "Execute"
+      start_button: "Start"
+      stop_button: "Stop"
       settings_title: "Operation settings"
     paging:
       top_rows_per_page: "How many rows are shown on each page"
       top_first_page: "First page"
       top_previous_page: "Previous page"
+      top_jump_to_page_placeholder: "Page: -/- ▼"
       top_jump_to_page: "Jump to page..."
       top_next_page: "Next page"
       top_last_page: "Last page"
@@ -1083,10 +1085,8 @@ en:
     buttons:
       download_template: "Download a template"
       download_template_file: "Download"
-
       read_data: "Read all data and proceed to the import phase"
       show_infers: "Show infers..."
-
       select_existing_uids: "Select existing users"
       everyone: "Everyone"
       everyone_in_this_school: "Everyone in this school"
@@ -1104,7 +1104,6 @@ en:
       username_list: "Username list"
       analyze: "Analyse"
       compare_attributes: "Compare non-username attributes to server data"
-
       begin: "Import all rows"
       begin_selected: "Import selected rows"
       stop: "Stop import"

@@ -77,3 +77,24 @@ export const
     INDEX_DISPLAYABLE = 1,
     INDEX_FILTERABLE = 2,
     INDEX_SORTABLE = 3;
+
+// Pagination counts. Each entry is formatted as [row count, title]. -1 displays all rows.
+export const ROWS_PER_PAGE_PRESETS = [
+    [-1, "∞"],
+    [5, "5"],
+    [10, "10"],
+    [20, "20"],
+    [25, "25"],
+    [50, "50"],
+    [100, "100"],
+    [200, "200"],
+    [250, "250"],
+    [500, "500"],
+    [1000, "1000"],
+    [2000, "2000"],
+    [2500, "2500"],
+    [5000, "5000"],
+];
+
+// How many rows are displayed by default
+export const DEFAULT_ROWS_PER_PAGE = 100;
