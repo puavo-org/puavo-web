@@ -798,6 +798,11 @@ module PuavoRest
 
     def change_password(actor_username, actor_password, target_user_username,
                         target_user_password)
+      if @external_password_change['api'] == 'do-nothing' then
+        raise ExternalLoginNotConfigured,
+              'password changes are disabled in configuration'
+      end
+
       update_ldapuserinfo(target_user_username)
 
       target_dn = Array(@ldap_userinfo['dn']).first.to_s
@@ -850,7 +855,7 @@ module PuavoRest
             unless res[:exit_status] == 0
         else
           raise ExternalLoginPasswordChangeError,
-                'password change api not configured'
+                'unsupported password change api'
       end
 
       return true
