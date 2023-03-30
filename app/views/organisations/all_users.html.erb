@@ -1,6 +1,11 @@
 <% page_title t('titles.organisation'), t('titles.all_users') %>
 
 <% content_for :javascript do %>
+<script>
+const SUPERTABLE_WORKER_FILE = "<%= javascript_path 'supertable3_worker' %>";
+let GLOBAL_SUPERTABLE_INSTANCE = null;
+</script>
+
 <%= javascript_include_tag 'bundles/modal_popup' %>
 <%= javascript_include_tag 'bundles/supertable3' %>
 <%= javascript_include_tag 'i18n/supertable3' %>
@@ -45,7 +50,7 @@ const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
 document.addEventListener("DOMContentLoaded", function() {
     modalPopup.setupGlobalEvents();
 
-    new ST.SuperTable(
+    GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(
         // Main container DIV
         document.getElementById("tableUsers"),
 
@@ -63,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function() {
             openCallback: openCallback,
             massSelects: MASS_SELECTS,
             massOperations: MASS_OPERATIONS,
+            massOperationsEndpoint: "<%= users_mass_operations_path %>",
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
             filterPresets: FILTER_PRESETS,

@@ -14,6 +14,8 @@ Rails.application.routes.draw do
   get '/all_images' => 'image_statistics#all_images'
   get '/all_users' => 'organisations#all_users'
   get '/get_all_users' => 'organisations#get_all_users'
+  post '/users_mass_operations' => 'users_mass_operations#users_mass_operation'
+
   get '/all_groups' => 'organisations#all_groups'
   get '/get_all_groups' => 'organisations#get_all_groups'
 
@@ -117,13 +119,6 @@ Rails.application.routes.draw do
       match 'users/:id/change_schools/move_to_school/:school' => 'users#move_to_school', :as => :move_to_school, :via => :get
 
       get 'get_school_users_list' => 'users#get_school_users_list'
-
-      post 'mass_op_user_delete' => 'users#mass_op_user_delete'
-      post 'mass_op_user_lock' => 'users#mass_op_user_lock'
-      post 'mass_op_user_mark' => 'users#mass_op_user_mark'
-      post 'mass_op_user_clear_column' => 'users#mass_op_user_clear_column'
-      post 'mass_op_username_list' => 'users#mass_op_username_list'
-      post 'mass_op_user_change_school' => 'users#mass_op_user_change_school'
 
       get 'new_import' => 'new_import#index'
       get 'new_import/reload_groups' => 'new_import#reload_groups'

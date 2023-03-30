@@ -907,12 +907,6 @@ fi:
         clear_column:
           title: "Tyhjennä sarakkeen sisältö..."
           column_title: "Sarake:"
-          columns:
-            eid: "Ulkoinen ID"
-            email: "Email"
-            telephone: "Puhelinnumero"
-            learner_id: "Oppijanumero"
-            pnumber: "Henkilönumero"
         username_list:
           title: "Luo käyttäjätunnuslista"
           description: "Listan nimi tai lyhyt kuvaus (valinnainen)"
