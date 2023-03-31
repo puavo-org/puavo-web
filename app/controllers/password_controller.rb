@@ -495,6 +495,7 @@ class PasswordController < ApplicationController
       case external_login_status['status']
       when PuavoRest::ExternalLoginStatus::BADUSERCREDS,
            PuavoRest::ExternalLoginStatus::CONFIGERROR,
+           PuavoRest::ExternalLoginStatus::PUAVOUSERMISSING,
            PuavoRest::ExternalLoginStatus::UPDATED_BUT_FAIL,
            PuavoRest::ExternalLoginStatus::UPDATEERROR
         return :external_login_failed
@@ -734,8 +735,13 @@ class PasswordController < ApplicationController
           logger.error("[#{request_id}]   external login password was updated, but some other error occurred when changing password")
           raise UserError, I18n.t('flash.password.extlogin_password_changed_but_puavo_failed')
 
+        when PuavoRest::ExternalLoginStatus::PUAVOUSERMISSING
+          logger.error("[#{request_id}]   external login: user not found in puavo")
+          raise UserError, I18n.t('flash.password.invalid_user',
+                                  :uid => params[:user][:uid])
+
         when PuavoRest::ExternalLoginStatus::USERMISSING
-          logger.error("[#{request_id}]   external login: user not found")
+          logger.error("[#{request_id}]   external login: user not found in external service")
           raise UserError, I18n.t('flash.password.invalid_user',
                                   :uid => params[:user][:uid])
       end
