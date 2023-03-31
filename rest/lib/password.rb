@@ -215,9 +215,9 @@ module Puavo
                                     target_user_password)
     rescue ExternalLoginNotConfigured => e
       # If external logins are not configured we should end up here,
-      # and that is normal.
-      full = "not changing upstream password, because external logins are not configured"
-      $rest_log.info("[#{request_id}] #{full}: #{e.message}")
+      # and that is normal.  Do not log this, because in most cases this
+      # is not interesting.
+      full = 'not changing upstream password, because external logins are not configured'
 
       return {
         :exit_status     => 0,
