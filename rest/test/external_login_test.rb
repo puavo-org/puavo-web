@@ -720,7 +720,7 @@ describe PuavoRest::ExternalLogin do
       assert_equal(user.sn, 'Starkiller')
 
       assert old_password != user.userPassword,
-             'user password is set to puavo during external login'
+             'user password should be set to puavo during external login'
     end
 
     it 'authonly test invalidates user password if external login fails' do
@@ -751,33 +751,24 @@ describe PuavoRest::ExternalLogin do
               + ' even though password should have been invalidated'
       assert_password_not(user, 'secret', msg)
 
-      assert_external_status('luke.skywalker',
-                             'secret',
-                             'UPDATED',
-                             'login with correct password did not work (matching uid)')
+      assert_external_status('luke.skywalker', 'secret', 'UPDATED',
+        'login with correct password works (matching uid)')
 
-      assert_password(user, 'secret', 'password "secret" is valid again')
+      assert_password(user, 'secret', 'password "secret" should be valid again')
 
+      # Invalidation should also happen when usernames mismatch (we can
+      # lookup the correct external uid with external id).
+      user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
+      user.uid = 'luke.starkiller'
+      user.save!
 
-      # what if username mismatches, does invalidation still happen?
-      # XXX these should behave properly
-#     user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
-#     user.uid = 'luke.starkiller'
-#     user.save!
+      user.password_change_mode = :no_upstream
+      user.set_password 'oldpassword'
+      user.save!
 
-#     user.password_change_mode = :no_upstream
-#     user.set_password 'oldpassword'
-#     user.save!
-
-#     assert_external_status('luke.skywalker',
-#                            'oldpassword',
-#                            'UPDATED_BUT_FAIL',
-#                            'login password not invalidated (nonmatching uid)')
-
-#     assert_external_status('luke.skywalker',
-#                            'secret',
-#                            'UPDATED',
-#                            'login with correct password did not work (nonmatching uid)')
+      assert_external_status('luke.starkiller', 'oldpassword',
+        'UPDATED_BUT_FAIL',
+        'password is invalidated even when when username mismatches')
     end
 
     it 'in authonly case, disappeared users are not marked as to be removed' do
@@ -797,15 +788,13 @@ describe PuavoRest::ExternalLogin do
       user.uid = 'luke.skywalker2'
       user.save!
 
-      assert_external_status('luke.skywalker2',
-                             'secret',
-                             'BADUSERCREDS',
-                             'can login to user that does not exist externally')
+      assert_external_status('luke.skywalker2', 'secret', 'BADUSERCREDS',
+        'can not login to user that does not exist externally')
 
       # check that user is *not* marked as "to be removed"
       user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker2')
-      assert_nil user.puavoRemovalRequestTime,
-                 'user removal request time is set when it not should be'
+      assert_nil(user.puavoRemovalRequestTime,
+                 'user removal request time is set when it not should be')
     end
   end
 end
