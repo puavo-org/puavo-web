@@ -645,4 +645,167 @@ describe PuavoRest::ExternalLogin do
              'there are year class groups even when there should be none'
     end
   end
+
+  describe 'tests for cases where external login is for authentication only' do
+    before :each do
+      CONFIG['external_login']['external']['manage_puavousers'] = false
+    end
+
+    it 'authonly test fails with bad username' do
+      assert_external_status('badusername', 'badpassword', 'PUAVOUSERMISSING',
+        'expected PUAVOUSERMISSING as external_login status')
+    end
+
+    it 'authonly test does not create user with bad password' do
+      assert_external_status('luke.skywalker', 'badpassword',
+        'PUAVOUSERMISSING',
+        'expected PUAVOUSERMISSING as external_login status')
+      user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
+      assert_nil user,
+                 'user luke.skywalker was created to Puavo, should not be'
+    end
+
+    it 'authonly test does not create user with good password' do
+      assert_external_status('luke.skywalker', 'secret', 'PUAVOUSERMISSING',
+        'expected PUAVOUSERMISSING as external_login status')
+      user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
+      assert_nil user,
+                 'user luke.skywalker was created to Puavo, should not be'
+    end
+
+    it 'authonly test fails with bad password even when user exists' do
+      user = User.create(
+               :givenName                   => 'Luke',
+               :puavoEduPersonAffiliation   => 'testuser',
+               :puavoEduPersonPrimarySchool => @heroes_school.dn,
+               :puavoSchool                 => [ @heroes_school.dn ],
+               :sn                          => 'Starkiller',
+               :uid                         => 'luke.skywalker')
+      user.save!
+
+      # when external id is missing, we should get NOTCONFIGURED
+      assert_external_status('luke.skywalker', 'badpassword', 'NOTCONFIGURED',
+        'expected BADUSERCREDS as external_login status')
+
+      user.puavoExternalId = 'luke.skywalker@HEROES.PUAVO.NET'
+      user.save!
+
+      # with external id, things should behave more normally
+      assert_external_status('luke.skywalker', 'badpassword', 'BADUSERCREDS',
+        'expected BADUSERCREDS as external_login status')
+
+      # user information must not have changed
+      user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
+      assert_equal(user.sn, 'Starkiller')
+    end
+
+    it 'authonly test does not update user info when login ok' do
+      user = User.create(
+        :givenName                   => 'Luke',
+        :puavoEduPersonAffiliation   => 'testuser',
+        :puavoEduPersonPrimarySchool => @heroes_school.dn,
+        :puavoExternalId             => 'luke.skywalker@HEROES.PUAVO.NET',
+        :puavoSchool                 => [ @heroes_school.dn ],
+        :sn                          => 'Starkiller',
+        :uid                         => 'luke.skywalker')
+      user.save!
+      old_password = user.userPassword
+
+      # when good password, login should be successful
+      assert_external_status('luke.skywalker', 'secret', 'UPDATED',
+        'expected UPDATED as external_login status')
+
+      # user information must not have changed
+      user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
+      assert_equal(user.sn, 'Starkiller')
+
+      assert old_password != user.userPassword,
+             'user password is set to puavo during external login'
+    end
+
+    it 'authonly test invalidates user password if external login fails' do
+      user = User.create(
+        :givenName                   => 'Luke',
+        :puavoEduPersonAffiliation   => 'testuser',
+        :puavoEduPersonPrimarySchool => @heroes_school.dn,
+        :puavoExternalId             => 'luke.skywalker@HEROES.PUAVO.NET',
+        :puavoSchool                 => [ @heroes_school.dn ],
+        :sn                          => 'Starkiller',
+        :uid                         => 'luke.skywalker')
+      user.save!
+      user.password_change_mode = :no_upstream
+      user.set_password 'oldpassword'
+      user.save!
+
+      assert_password(user, 'oldpassword', 'password not changed in Puavo')
+
+      assert_external_status('luke.skywalker',
+                             'oldpassword',
+                             'UPDATED_BUT_FAIL',
+                             'login password not invalidated (matching uid)')
+
+      msg = 'password "oldpassword" was valid,' \
+              + ' even though password should have been invalidated'
+      assert_password_not(user, 'oldpassword', msg)
+      msg = 'password "secret" was valid,' \
+              + ' even though password should have been invalidated'
+      assert_password_not(user, 'secret', msg)
+
+      assert_external_status('luke.skywalker',
+                             'secret',
+                             'UPDATED',
+                             'login with correct password did not work (matching uid)')
+
+      assert_password(user, 'secret', 'password "secret" is valid again')
+
+
+      # what if username mismatches, does invalidation still happen?
+      # XXX these should behave properly
+#     user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
+#     user.uid = 'luke.starkiller'
+#     user.save!
+
+#     user.password_change_mode = :no_upstream
+#     user.set_password 'oldpassword'
+#     user.save!
+
+#     assert_external_status('luke.skywalker',
+#                            'oldpassword',
+#                            'UPDATED_BUT_FAIL',
+#                            'login password not invalidated (nonmatching uid)')
+
+#     assert_external_status('luke.skywalker',
+#                            'secret',
+#                            'UPDATED',
+#                            'login with correct password did not work (nonmatching uid)')
+    end
+
+    it 'in authonly case, disappeared users are not marked as to be removed' do
+      user = User.create(
+        :givenName                   => 'Luke',
+        :puavoEduPersonAffiliation   => 'testuser',
+        :puavoEduPersonPrimarySchool => @heroes_school.dn,
+        :puavoExternalId             => 'luke.skywalker@HEROES.PUAVO.NET',
+        :puavoSchool                 => [ @heroes_school.dn ],
+        :sn                          => 'Starkiller',
+        :uid                         => 'luke.skywalker')
+      user.save!
+
+      # disassociate user "luke.skywalker" from external login service
+      old_external_id = user.puavoExternalId
+      user.puavoExternalId = 'NOTANACTUALEXTERNALID'
+      user.uid = 'luke.skywalker2'
+      user.save!
+
+      assert_external_status('luke.skywalker2',
+                             'secret',
+                             'BADUSERCREDS',
+                             'can login to user that does not exist externally')
+
+      # check that user is *not* marked as "to be removed"
+      user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker2')
+      assert_nil user.puavoRemovalRequestTime,
+                 'user removal request time is set when it not should be'
+    end
+  end
 end
