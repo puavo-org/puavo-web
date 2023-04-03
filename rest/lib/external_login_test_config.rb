@@ -51,10 +51,11 @@ module PuavoRest
 
       {
         'external' => {
-          'admin_dn'       => admin_dn,
-          'admin_password' => organisations['external']['owner_pw'],
-          'service'        => 'external_ldap',
-          'external_ldap'  => {
+          'admin_dn'          => admin_dn,
+          'admin_password'    => organisations['external']['owner_pw'],
+          'manage_puavousers' => true,
+          'service'           => 'external_ldap',
+          'external_ldap'     => {
             'authentication_method'   => 'user_credentials',
             'base'                    => 'dc=edu,dc=heroes,dc=net',
             'bind_dn'                 => bind_dn,
