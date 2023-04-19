@@ -31,6 +31,10 @@ class Host < LdapModel
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
   ldap_map :puavoTimezone, :timezone
 
+  ldap_map :serialNumber, :serial_number
+  ldap_map :puavoDeviceManufacturer, :manufacturer
+  ldap_map :puavoDeviceModel, :model
+
   def netboot?
     object_classes.include?("puavoNetbootDevice")
   end
