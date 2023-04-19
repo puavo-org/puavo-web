@@ -1,3 +1,4 @@
+require_relative '../lib/inventory.rb'
 
 module PuavoRest
 class BootServer < Host
@@ -150,6 +151,11 @@ class BootServers < PuavoSinatra
       boot_server.save_hwinfo!(params[:sysinfo])
 
       rlog.info("received sysinfo from boot server '#{params['hostname']}'")
+      if CONFIG['inventory_management']
+        # Notify the external inventory management
+        Puavo::Inventory::send_device_hardware_info(rlog, CONFIG['inventory_management'], boot_server, params[:sysinfo])
+      end
+
       json({ :status => 'successfully' })
     rescue NotFound => e
       status 404
