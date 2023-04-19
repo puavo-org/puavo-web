@@ -1,4 +1,7 @@
+require_relative '../../rest/lib/inventory.rb'
+
 class ServersController < ApplicationController
+  include Puavo::Inventory
 
   # GET /servers
   # GET /servers.xml
@@ -214,6 +217,10 @@ class ServersController < ApplicationController
 
     respond_to do |format|
       if @server.save
+        if Puavo::CONFIG['inventory_management']
+          # Notify the external inventory management
+          Puavo::Inventory::device_created(logger, Puavo::CONFIG['inventory_management'], @server, current_organisation.organisation_key)
+        end
         flash[:notice] = t('flash.server_created')
         format.html { redirect_to(server_path(@server)) }
         format.xml  { render :xml => @server, :status => :created, :location => server_path(@server) }
@@ -250,6 +257,10 @@ class ServersController < ApplicationController
 
     respond_to do |format|
       if @server.save
+        if Puavo::CONFIG['inventory_management']
+          # Notify the external inventory management
+          Puavo::Inventory::device_modified(logger, Puavo::CONFIG['inventory_management'], @server, current_organisation.organisation_key)
+        end
         flash[:notice] = t('flash.server_updated')
         format.html { redirect_to(server_path(@server)) }
         format.xml  { head :ok }
@@ -271,6 +282,11 @@ class ServersController < ApplicationController
     @server.destroy
 
     # FIXME: remove printers of this server!
+
+    if Puavo::CONFIG['inventory_management']
+      # Notify the external inventory management
+      Puavo::Inventory::device_deleted(logger, Puavo::CONFIG['inventory_management'], params[:id].to_i)
+    end
 
     respond_to do |format|
       format.html { redirect_to(servers_url) }
