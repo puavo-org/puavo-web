@@ -1494,6 +1494,7 @@ en:
       operation: "Operation"
     show:
       change_school: Change school...
+      copy_basic_info: "Copy basic information to clipboard"
     select_school:
       title: Device transfer (%{name})
       select_new_school: Select the new school

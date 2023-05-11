@@ -1494,6 +1494,7 @@ fi:
       operation: "Operaatio"
     show:
       change_school: Vaihda koulua...
+      copy_basic_info: "Kopioi perustiedot leikepöydälle"
     select_school:
       title: "Siirrä laite \"%{name}\" toiseen kouluun"
       select_new_school: "Valitse uusi koulu"
