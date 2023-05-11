@@ -27,6 +27,8 @@
     --message-success-border: #7cbc76;
     --password-notice-background: #d1ecf1;
     --password-notice-border: #bee5eb;
+    --automatic-emails-background: #d1ecf1;
+    --automatic-emails-border: #bee5eb;
     --button-background: rgb(252, 253, 253);
     --button-foreground: #000;
     --button-border: rgb(207, 214, 230);
@@ -73,6 +75,8 @@
     --message-success-border: #7cbc76;
     --password-notice-background: #d1ecf1;
     --password-notice-border: #bee5eb;
+    --automatic-emails-background: #d1ecf1;
+    --automatic-emails-border: #bee5eb;
     --button-background: rgb(68, 74, 88);
     --button-foreground: #fff;
     --button-border: rgb(43, 46, 57);
@@ -94,6 +98,25 @@
     --service-border: var(--content-border);
   }
 }
+
+.flex { display: flex; }
+.flex-columns, .flex-cols { display: flex; flex-direction: rows; }
+.flex-rows { display: flex; flex-direction: column; }
+.flex-vcenter { align-items: center; }
+.flex-vbottom { align-items: flex-end; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-no-wrap { flex-wrap: nowrap; }
+.flex-grow-2 { flex-grow: 2; }
+.flex-stretch { align-items: stretch; }
+
+.gap-5px { gap: 5px; }
+.gap-10px { gap: 10px; }
+.gap-15px { gap: 15px; }
+.gap-20px { gap: 20px; }
+.gap-1em { gap: 1em; }
+.gap-2em { gap: 2em; }
+
+.hidden { display: none !important; }
 
 input[type="text"], input[type="password"] {
   padding: 5px;
@@ -154,4 +177,10 @@ button:disabled, input[type="submit"]:disabled, input[type="submit"]:active:disa
 .genericWarning {
   background: var(--message-warning-background);
   border-color: var(--message-warning-border);
+}
+
+footer {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 80%;
 }

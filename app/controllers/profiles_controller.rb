@@ -6,81 +6,156 @@ class ProfilesController < ApplicationController
   # GET /profile/edit
   def edit
     setup_language
-
     @user = current_user
+    @organisation = LdapOrganisation.current.cn
     @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
+
+    @have_something_to_verify = !(Array(@user.mail || []) - Array(@user.puavoVerifiedEmail || [])).empty?
 
     respond_to do |format|
       format.html
     end
   end
 
-  # PUT /profile
-  def update
-    # TODO:: Add delete profile photo button
-    setup_language
+  # GET /profile/image
+  def image
+    @user = current_user
+    send_data @user.jpegPhoto, disposition: 'inline', type: 'image/jpeg'
+  end
 
+  # POST /profile/send_verification_email
+  def send_verification_email
     request_id = generate_synchronous_call_id()
 
+    result = {
+      request_id: request_id,
+      success: false,
+      message: nil
+    }
+
+    begin
+      address = request.body.read.strip
+
+      logger.info("[#{request_id}] User \"#{current_user.uid}\" (#{current_user.dn.to_s}) in organisation " \
+                  "\"#{LdapOrganisation.current.cn}\" has requested a verification email to be sent to \"#{address}\"")
+      logger.info("[#{request_id}] Client IP: #{request.ip}  UserAgent: \"#{request.user_agent}\"")
+
+      if current_user.puavoVerifiedEmail && current_user.puavoVerifiedEmail.include?(address)
+        logger.error("[#{request_id}] This address has already been verified!")
+        raise t('profiles.edit.emails.errors.already_verified')
+      end
+
+      # You need rate limits every time you deal with emails
+      redis_ratelimit = Redis::Namespace.new('puavo:email_verification:tokens', redis: REDIS_CONNECTION)
+
+      if redis_ratelimit.get(current_user.puavoId.to_s)
+        logger.info("[#{request_id}] A rate-limit flag is active for user #{current_user.puavoId}, stopping here")
+        raise t('profiles.edit.emails.errors.verification_rate_limit', code: request_id)
+      end
+
+      # This is where the user data is stored in Redis
+      redis_token = SecureRandom.hex(64)
+      logger.info("[#{request_id}] Redis token: \"#{redis_token}\"")
+
+      verify_url = email_management_host + '/email_verification/send'
+      logger.info("[#{request_id}] Requesting \"#{email_management_host}\" to send the verification email")
+
+      rest_response = HTTP
+        .headers(host: LdapOrganisation.current.puavoDomain)
+        .post(verify_url, json: {
+          request_id: request_id,
+          username: current_user.uid,
+          dn: current_user.dn.to_s,
+          email: address,
+          token: redis_token
+        })
+
+      if rest_response.status == 200
+        logger.info("[#{request_id}] The email was sent, saving verification data in Redis")
+
+        # Store the reset data in Redis
+        data = {
+          dn: current_user.dn.to_s,
+          email: address,
+        }
+
+        redis_tokens = Redis::Namespace.new('puavo:email_verification:tokens', redis: REDIS_CONNECTION)
+        redis_tokens.set(redis_token, data.to_json, nx: true, ex: 60 * 60)
+        redis_ratelimit.set(current_user.puavoId.to_s, true, nx: false, ex: 60)
+        logger.info("[#{request_id}] Redis data created")
+
+        result[:success] = true
+      else
+        logger.info("[#{request_id}] The email was NOT sent, received a #{rest_response.status} response")
+        result[:message] = t('profiles.edit.emails.errors.verification_not_sent', code: request_id)
+      end
+    rescue StandardError => e
+      logger.error("[#{request_id}] ERROR: #{e}")
+
+      result[:success] = false
+      result[:message] = e
+    end
+
+    render json: result
+  end
+
+  # PUT /profile
+  def update
+    setup_language
+    @request_id = generate_synchronous_call_id()
     @user = current_user
 
-    @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
+    @automatic_email_addresses, _ = get_automatic_email_addresses
 
     if @automatic_email_addresses
+      # These addresses are automatic and cannot be changed. They can be verified, however.
       params[:user].delete(:mail)
     end
 
-    pp = profile_params
-    modify_params = []
+    @params = profile_params
+    failed = []
 
-    # ldap_modify_operation() wants these in a weird array format
-    modify_params << { 'mail' => pp['mail'] } unless @automatic_email_addresses
-    modify_params << { 'telephoneNumber' => pp['telephoneNumber'] }
+    unless @automatic_email_addresses
+      current_addresses = Array(@user.mail || []).to_set
+      new_addresses = @params['mail'].split(' ')
 
-    if pp['puavoLocale'] && !pp['puavoLocale'].empty?
-      modify_params << { 'puavoLocale' => pp['puavoLocale'] }
-      modify_params << { 'preferredLanguage' => pp['puavoLocale'].match(/^[a-z]{2}/)[0] }
-    else
-      # Allow reset (ie. set to "default")
-      # (Actually, no. Sorry. See the wall of text below.)
-      modify_params << { 'puavoLocale' => '' }
-      modify_params << { 'preferredLanguage' => '' }
-    end
+      if current_addresses != new_addresses.to_set
+        # There are changes in the addresses, send a save request to the verification server.
+        # Normal user accounts do not have write access to these fields.
+        change_url = email_management_host + '/email_verification/change_addresses'
+        logger.info("[#{@request_id}] Email addresses have changed, requesting \"#{email_management_host}\" to change them")
 
-    if pp['jpegPhoto']
-      begin
-        modify_params << { 'jpegPhoto' => User.resize_image(pp['jpegPhoto'].path) }
-      rescue => e
-        logger.error("[#{request_id}] Could not resize the uploaded profile picture: #{e}")
-        flash[:alert] = t('profiles.show.photo_failed')
+        rest_response = HTTP
+          .headers(host: LdapOrganisation.current.puavoDomain)
+          .post(change_url, json: {
+            request_id: @request_id,
+            username: current_user.uid,
+            dn: current_user.dn.to_s,
+            emails: new_addresses
+          })
+
+        puts rest_response.inspect
+
+        if rest_response.status == 200
+          logger.info("[#{@request_id}] The email addresses were updated")
+        else
+          logger.info("[#{@request_id}] The email addresses were NOT updated:")
+          logger.info("[#{@request_id}] #{rest_response.inspect}")
+          failed << t('profiles.failed.email')
+        end
       end
     end
 
-    # Remove empty elements. I didn't want to do this, but it has to be done. There's something
-    # very strange going on here. If you don't remove empty strings, then ldap_modify_operation()
-    # WILL fail to remove (clear) the values, but only if you're running in production mode!
-    # No errors will happen in development and testing modes, and those values will be cleared out
-    # just fine. This is completely bizarre and I cannot explain it nor figure it out. But it will
-    # fail in production. Which is really strange, because you *can* use ldap_modify_operation()
-    # to remove values. But not here. I hate this, because I want do do the right thing; the form
-    # should be able to clear out existing values, but... I don't know. I really don't know why
-    # it fails in production. So if you're here, trying to find out why you can't clear your email
-    # address or phone number using the public form (this is open source after all, you can see
-    # the code), this is why. If you can figure out why it fails, let me know so I can fix this.
-    modify_params.delete_if { |p| p.values[0].nil? || p.values[0].to_s.strip.empty? }
+    update_phone_number(failed)
+    update_locale(failed)
+    update_photo(failed)
 
     respond_to do |format|
-      begin
-        if @user.ldap_modify_operation(:replace, modify_params)
-          flash[:notice] = t('profiles.show.updated')
-          format.html { redirect_to(profile_path()) }
-        else
-          flash[:alert] = t('profiles.show.save_failed')
-          format.html { redirect_to(profile_path()) }
-        end
-      rescue => e
-        flash[:alert] = t('profiles.show.save_failed_code', :request_id => request_id)
-        logger.error("[#{request_id}] Profile save failed: #{e}")
+      if failed.empty?
+        flash[:notice] = t('profiles.show.updated')
+        format.html { redirect_to(profile_path()) }
+      else
+        flash[:alert] = t('profiles.show.partially_failed_code', request_id: @request_id, failed: failed.join(', '))
         format.html { redirect_to(profile_path()) }
       end
     end
@@ -95,13 +170,75 @@ class ProfilesController < ApplicationController
     end
   end
 
-  # GET /profile/image
-  def image
-    @user = current_user
-    send_data @user.jpegPhoto, :disposition => 'inline', :type => 'image/jpeg'
+  private
+
+  def update_phone_number(failed)
+    return unless @params.include?('telephoneNumber')
+
+    modify = []
+
+    if @params['telephoneNumber'].nil? || @params['telephoneNumber'].strip.empty?
+      modify << { 'telephoneNumber' => [] }
+    else
+      n = @params['telephoneNumber'].strip
+      modify << { 'telephoneNumber' => n } unless n.strip == '-'
+    end
+
+    begin
+      @user.ldap_modify_operation(:replace, modify)
+    rescue StandardError => e
+      logger.error("[#{@request_id}] Could not save the phone number: #{e}")
+      failed << t('profiles.failed.phone')
+      false
+    end
   end
 
-  private
+  def update_locale(failed)
+    return unless @params.include?('puavoLocale')
+
+    modify = []
+
+    if @params['puavoLocale'].nil? || @params['puavoLocale'].empty?
+      modify << { 'puavoLocale' => [] }
+      modify << { 'preferredLanguage' => [] }
+    else
+      modify << { 'puavoLocale' => @params['puavoLocale'] }
+      modify << { 'preferredLanguage' => @params['puavoLocale'].match(/^[a-z]{2}/)[0] }
+    end
+
+    begin
+      @user.ldap_modify_operation(:replace, modify)
+    rescue StandardError => e
+      logger.error("[#{@request_id}] Could not update the locale: #{e}")
+      failed << t('profiles.failed.locale')
+      false
+    end
+  end
+
+  def update_photo(failed)
+    modify = []
+
+    if @params.include?('jpegPhoto')
+      begin
+        modify << { 'jpegPhoto' => User.resize_image(@params['jpegPhoto'].path) }
+      rescue => e
+        logger.error("[#{@request_id}] Could not resize the uploaded profile picture: #{e}")
+        failed << t('profiles.failed.photo_save')
+        return false
+      end
+    end
+
+    if @params.include?('removePhoto')
+      modify << { 'jpegPhoto' => [] }
+    end
+
+    begin
+      @user.ldap_modify_operation(:replace, modify)
+    rescue StandardError => e
+      logger.error("[#{@request_id}] Could not update the profile picture: #{e}")
+      false
+    end
+  end
 
   def profile_params
     params.require(:user).permit(
@@ -109,6 +246,7 @@ class ProfilesController < ApplicationController
       :jpegPhoto,
       :telephoneNumber,
       :mail,
+      :removePhoto
     ).to_h
   end
 

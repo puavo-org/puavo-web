@@ -1,49 +1,357 @@
 <%= form_for(@user, url: profile_path, method: method, multipart: true) do |f| %>
   <input type="hidden" name="lang" id="lang" value="<%= @language %>">
 
-  <div id="upper">
-      <div id="left">
-        <%= image_tag(default_image_or_user_image_path(image_profile_path, @user),
-                      :class => "avatar", skip_pipeline: true) %>
-      </div>
+  <div id="editor">
+    <header>
+      <h1><%= current_user.displayName %> <small>(<%= current_user.uid %>, ID <%= current_user.id %>)</small></h1>
+      <h2><%= current_user.primary_school.displayName %></h2>
+    </header>
 
-      <div id="right">
-        <section class="userInfo">
-          <p class="userName"><%= current_user.displayName %> <small>(ID <%= current_user.id %>)</small></p>
-          <p class="userSchool"><%= current_user.primary_school.displayName %></p>
-        </section>
-
-        <section>
+    <section>
 <% if @automatic_email_addresses %>
-          <%= f.label t('users.edit.automatic_email'), nil %>
-          <div class="automaticEmail"><%= Array(@user.mail).first %></div>
-<% else %>
-          <%= f.label :mail, nil %>
-          <%= f.text_field :mail, :placeholder => t('activeldap.attributes.user.mail') %>
-<% end %>
-        </section>
-
-        <section>
-          <%= f.label :telephoneNumber, nil %>
-          <%= f.text_field :telephoneNumber, :placeholder => t('activeldap.attributes.user.telephoneNumber') %>
-        </section>
-
-        <section>
-          <%= f.label :puavoLocale, nil %>
-          <%= f.select :puavoLocale, locales_for_select %>
-        </section>
-
-        <section>
-          <%= f.label :jpegPhoto, nil %>
-
-          <div>
-            <%= f.file_field(:jpegPhoto, accept: 'image/*') %>
-          </div>
-        </section>
+      <%= f.label t('users.edit.automatic_email'), nil %>
+      <p class="notice"><%= t('profiles.edit.emails.automatic_notice') %></p>
+      <div id="emails">
+        <table class="emails"></table>
       </div>
+<% else %>
+      <%= f.label :mail, nil %>
+      <p><%= t('profiles.edit.emails.help').html_safe %></p>
+      <div id="emails">
+        <%= f.text_field :mail, :placeholder => t('activeldap.attributes.user.mail') %>
+        <table class="emails hidden"></table>
+        <div id="newRow" class="flex-rows flex-stretch hidden">
+          <div class="flex-cols gap-10px">
+            <input type="text" placeholder="<%= t('profiles.edit.emails.new_placeholder') %>" maxlength="64">
+            <button type="button" title="<%= t('profiles.edit.emails.new_title') %>"><%= t('profiles.edit.emails.new_button') %></button>
+          </div>
+          <div id="emailError" class="hidden">Viesti</div>
+        </div>
+      </div>
+<% end %>
+    </section>
+
+    <section>
+      <%= f.label :telephoneNumber, nil %>
+      <%= f.text_field :telephoneNumber, :placeholder => t('activeldap.attributes.user.telephoneNumber') %>
+    </section>
+
+    <section>
+      <%= f.label :puavoLocale, nil %>
+      <%= f.select :puavoLocale, locales_for_select %>
+    </section>
+
+    <section>
+      <%= f.label :jpegPhoto, nil %>
+
+      <div class="flex-cols">
+        <div id="photo">
+          <%= image_tag(default_image_or_user_image_path(image_profile_path, @user),
+                        :class => "avatar", skip_pipeline: true) %>
+        </div>
+
+        <div class="flex-rows gap-5px">
+          <%= f.file_field(:jpegPhoto, accept: 'image/*') %>
+          <% if @user.jpegPhoto %>
+          <label><input type="checkbox" name="user[removePhoto]" id="user_removePhoto"><%= t('profiles.edit.remove_photo_on_save') %></label>
+          <% end %>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <div id="lower">
+  <div id="buttons">
     <%= f.submit submit_text %>
   </div>
+<% end %>
+
+<% content_for(:javascript) do %>
+<script>
+"use strict";
+
+<% unless @automatic_email_addresses %>
+function validateAddress(address)
+{
+    if (address.length == 0) {
+        // Don't flag empty addresses as "invalid", but still return a reason to keep the
+        // add button disabled
+        return [false, "empty"];
+    }
+
+    // The same regexp that's used in puavo-web's user validation model
+    if (address.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) === null)
+        return [false, "malformed"];
+
+    if (emails.includes(address))
+        return [false, "reused"];
+
+    return [true, null];
+}
+<% end %>
+
+const emailsContainer = document.querySelector("div#emails");
+
+let emails = <%= raw Array(@user.mail || []).to_json %>,
+    verified = new Set(<%= raw Array(@user.puavoVerifiedEmail || []).to_json %>),
+    primary = <% if @user.puavoPrimaryEmail.nil? %>null<% else %>"<%= @user.puavoPrimaryEmail %>"<% end %>,
+    newlyAdded = new Set();
+
+<% unless @automatic_email_addresses %>
+function updateMailsValue()
+{
+    let addresses = [];
+
+    for (const row of emailsContainer.querySelectorAll("table.emails tr"))
+        if (!row.classList.contains("removed"))
+            addresses.push(row.dataset.address);
+
+    emailsContainer.querySelector("input#user_mail").value = addresses.join(" ");
+}
+<% end %>
+
+function buildEmailRow(address, isNew=false)
+{
+    let html = "";
+
+    html += `<td class="address">${address}</td>`;
+    html += `<td class="verification">`;
+
+    if (isNew) {
+        // A new address cannot be verified until after the form has been saved
+        html += "";
+    } else if (verified.has(address)) {
+        html += `<span>`;
+        html += `<%= t('profiles.edit.emails.verified_address') %>`;
+
+        if (primary === address)
+            html += `, <strong><%= t('profiles.edit.emails.primary_address') %></strong>`;
+
+        html += `</span>`;
+    } else {
+<% if @have_something_to_verify %>
+        html += `<button type="button" id="verify" title="<%= t('profiles.edit.emails.verify_title') %>">` +
+                `<%= t('profiles.edit.emails.verify_button') %></button>`;
+<% end %>
+    }
+
+    html += `</td>`;
+
+<% unless @automatic_email_addresses %>
+    html += `<td class="deletion">`;
+    html += `<button type="button" id="delete" title="<%= t('profiles.edit.emails.delete_title') %>"><%= t('profiles.edit.emails.delete_button') %></button>`;
+    html += `<button type="button" id="undodeletion" class="hidden" title="<%= t('profiles.edit.emails.undo_deletion_title') %>"><%= t('profiles.edit.emails.undo_deletion_button') %></button>`;
+    html += `</td>`;
+<% end %>
+
+    let row = document.createElement("tr");
+
+    row.innerHTML = html;
+    row.dataset.address = address;
+
+<% if @have_something_to_verify %>
+    row.querySelector("button#verify")?.addEventListener("click", onVerifyAddress);
+<% end %>
+<% unless @automatic_email_addresses %>
+    row.querySelector("button#delete").addEventListener("click", onDeleteAddress);
+    row.querySelector("button#undodeletion").addEventListener("click", onUndoDeleteAddress);
+<% end %>
+
+    return row;
+}
+
+<% unless @automatic_email_addresses %>
+function onChangeNewAddress(e)
+{
+    const message = document.querySelector("div#emailError"),
+          button = document.querySelector("div#newRow button");
+
+    const [state, error] = validateAddress(emailsContainer.querySelector("div#newRow input").value.trim());
+
+    if (state == true) {
+        message.classList.add("hidden");
+        button.disabled = false;
+
+        return;
+    }
+
+    if (error == "empty") {
+        // Disable the button without displaying an error message
+        message.classList.add("hidden");
+        button.disabled = true;
+
+        return;
+    }
+
+    // Show an error message
+    if (error == "malformed")
+        message.innerText = "<%= t('profiles.edit.emails.errors.invalid') %>";
+    else if (error == "reused")
+        message.innerText = "<%= t('profiles.edit.emails.errors.already_in_use') %>";
+    else mssage.innerText = "<%= t('profiles.edit.emails.errors.unknown') %>";
+
+    message.classList.remove("hidden");
+    button.disabled = true;
+}
+<% end %>
+
+<% if @have_something_to_verify %>
+function onVerifyAddress(e)
+{
+    const tr = e.target.closest("tr");
+    const address = tr.dataset.address;
+
+    console.log("Verifying address", address);
+
+    fetch("<%= profile_send_verification_email_path %>", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+            // Use text/plain to prevent RoR from logging the post contents in plaintext
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-CSRF-Token": document.querySelector(`meta[name="csrf-token"]`).content,
+        },
+        body: address
+    }).then(response => {
+        if (!response.ok)
+            throw response;
+
+        return response.text();
+    }).then(data => {
+        const response = JSON.parse(data);
+
+        if (response.success == true) {
+            tr.querySelector("td.verification").innerText = "<%= t('profiles.edit.emails.verification_sent') %>";
+<% unless @automatic_email_addresses %>
+            tr.querySelector("td.deletion").querySelector("button").disabled = true;
+<% end %>
+        } else {
+            // TODO: Need a better way to show errors
+            window.alert(response.message);
+        }
+    }).catch(error => {
+        // TODO: Here too
+        console.error(error);
+    });
+}
+<% end %>
+
+<% unless @automatic_email_addresses %>
+function onDeleteAddress(e)
+{
+    const tr = e.target.closest("tr");
+    const address = tr.dataset.address;
+
+    let msg = "<%= t('profiles.edit.emails.delete.base') %>".replace("{address}", address);
+
+    if (verified.has(address)) {
+        // Verified address
+        if (address === primary)
+            msg += "\n\n<%= t('profiles.edit.emails.delete.verified_primary') %>";
+        else msg += "\n\n<%= t('profiles.edit.emails.delete.verified') %>";
+
+        msg += " <%= t('profiles.edit.emails.delete.breakage') %>";
+    }
+
+    if (!window.confirm(msg))
+        return;
+
+    console.log("Deleting address", address);
+
+    if (newlyAdded.has(address)) {
+        // New addresses that have been added but not yet saved are simply deleted. Their
+        // deletion cannot be undone. That privilege is only given to addresses that existed
+        // when the form was opened.
+        newlyAdded.delete(address);
+        emails = emails.filter(a => a != address);
+
+        tr.remove();
+        updateMailsValue();
+
+        return;
+    }
+
+    // Make the deletion undoable
+    tr.classList.add("removed");
+
+    // Toggle the undo button visibility
+    tr.querySelector("button#delete").classList.add("hidden");
+    tr.querySelector("button#undodeletion").classList.remove("hidden");
+
+    // Disable the verification button, if it's present
+    const verifyButton = tr.querySelector("button#verify");
+
+    if (verifyButton)
+        verifyButton.disabled = true;
+
+    updateMailsValue();
+}
+
+function onUndoDeleteAddress(e)
+{
+    const tr = e.target.closest("tr");
+    const address = tr.dataset.address;
+
+    console.log("Undoing the deletion of address", address);
+
+    tr.classList.remove("removed");
+
+    tr.querySelector("button#delete").classList.remove("hidden");
+    tr.querySelector("button#undodeletion").classList.add("hidden");
+
+    const verifyButton = tr.querySelector("button#verify");
+
+    if (verifyButton)
+        verifyButton.disabled = false;
+
+    updateMailsValue();
+}
+<% end %>
+
+function listExistingEmails(addresses)
+{
+    let table = emailsContainer.querySelector("table.emails");
+
+    table.innerText = "";
+
+    for (let i in addresses)
+        table.appendChild(buildEmailRow(emails[i]));
+}
+
+<% unless @automatic_email_addresses %>
+function onAddNewAddress(e)
+{
+    const newAddressBox = emailsContainer.querySelector("div#newRow input");
+    const address = newAddressBox.value.trim();
+
+    // Append a new row to the table
+    const table = emailsContainer.querySelector("table");
+
+    table.appendChild(buildEmailRow(address, true));
+    table.classList.remove("hidden");
+
+    newlyAdded.add(address);
+    emails.push(address);
+
+    newAddressBox.value = "";
+    onChangeNewAddress();
+    updateMailsValue();
+}
+<% end %>
+
+listExistingEmails(emails);
+
+<% unless @automatic_email_addresses %>
+emailsContainer.querySelector("input#user_mail").classList.add("hidden");
+emailsContainer.querySelector("span.field_error").remove();
+
+if (emails.length > 0)
+    emailsContainer.querySelector("table.emails").classList.remove("hidden");
+
+emailsContainer.querySelector("div#newRow").classList.remove("hidden");
+emailsContainer.querySelector("div#newRow input").addEventListener("input", onChangeNewAddress);
+emailsContainer.querySelector("div#newRow button").addEventListener("click", onAddNewAddress);
+onChangeNewAddress();
+updateMailsValue();
+<% end %>
+</script>
 <% end %>

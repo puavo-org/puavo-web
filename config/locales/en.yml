@@ -2073,11 +2073,47 @@ en:
   # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:
     edit:
-      title: "My profile"
+      title: "Your Profile"
+
+      emails:
+        automatic_notice: "Automatic email addresses are enabled in your organisation. You can't edit the address, but you can verify it if it hasn't been verified yet."
+        help: "You can set up yourself one or more email addresses. After saving the profile, you can return to this form and send a verification message to an address. This message is used to verify that the address is really yours and you can access it. Some services require at least one verified address. The first address you verify is also made your <strong>primary address</strong> that is used when contacting you and in places where only one address can be used."
+        verified_address: "Verified"
+        primary_address: "your primary address"
+        verify_button: "Send verification message"
+        verify_title: "Send a verification message to this address. The message contains a link you have to open."
+        verification_sent: "Verification message sent"
+        delete_button: "Delete"
+        delete_title: "Delete this address when your profile is saved"
+        undo_deletion_button: "Undo deletion"
+        undo_deletion_title: "Don't delete this address"
+        new_placeholder: "Type the new address here"
+        new_button: "Add"
+        new_title: "Add the new address to the table. Remember to save your profile!"
+
+        errors:
+          invalid: "The address is not properly formatted."
+          already_in_use: "You already have this address."
+          unknown: "Unknown error."
+          already_verified: "This address has already been verified."
+          verification_not_sent: "Vahvistusviestiä ei voitu lähettää. Yritä uudelleen.\n\nJos otat yhteyden tekniseen tukeen, anna heille tämä koodi: %{code}."
+          verification_rate_limit: "You must wait one minute between verification message requests."
+
+        delete:
+          base: "Are you sure you want to delete address {address}?"
+          verified_primary: "The address has been verified and it is also your primary address!"
+          verified: "The address has been verified."
+          breakage: "If there are no other verified addresses, some logins could fail until you verify another address!"
+
+      remove_photo_on_save: "Delete image at save"
+
+    failed:
+      email: "email address change"
+      phone: "phone number change"
+      locale: "language change"
+      photo_save: "profile image save"
     show:
-      photo_failed: "The profile image could not be saved. Please check that it is a valid image file and try again."
-      save_failed: "Your profile could not be saved for some reason. Try again and if the problem persists, contact Opinsys support."
-      save_failed_code: "Your profile could not be saved. Try again and if the problem persists, please contact Opinsys support and give them this code: \"%{request_id}\"."
+      partially_failed_code: "Not all of your information could be saved. The following items failed: %{failed}. You can try again. If you contact Opinsys technical support, please give them this code: \"%{request_id}\"."
       updated: "Your profile has been successfully updated"
 
   # Used in script/create_organisation_owner

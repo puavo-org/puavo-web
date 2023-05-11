@@ -2074,10 +2074,46 @@ fi:
   profiles:
     edit:
       title: "Omat tiedot"
+
+      emails:
+        automatic_notice: "Organisaatiossasi on käytössä automaattiset sähköpostiosoitteet. Et voi muokata osoitetta, mutta voit vahvistaa sen jos sitä ei ole vielä vahvistettu."
+        help: "Voit antaa itsellesi yhden tai useamman osoitteen. Kun olet tallentanut osoitteen, voit palata lomakkeeseen ja lähettää siihen vahvistusviestin jolla todistat, että osoite todellakin on käytössäsi. Jotkut palvelut vaativat vähintään yhden vahvistetun osoitteen. Ensimmäisestä vahvistetusta osoitteesta tehdään <strong>pääosoite</strong>, jota käytetään viestinnässä ja paikoissa joihin voidaan välittää vain yksi osoite."
+        verified_address: "Vahvistettu"
+        primary_address: "pääosoitteesi"
+        verify_button: "Lähetä vahvistusviesti"
+        verify_title: "Lähetä vahvistusviesti tähän osoitteeseen. Viesti sisältää linkin joka sinun on avattava."
+        verification_sent: "Vahvistusviesti lähetetty"
+        delete_button: "Poista"
+        delete_title: "Poista tämä osoite kun sivu tallennetaan"
+        undo_deletion_button: "Kumoa poisto"
+        undo_deletion_title: "Älä poistakaan tätä osoitetta"
+        new_placeholder: "Kirjoita uusi osoite tähän"
+        new_button: "Lisää"
+        new_title: "Lisää uusi osoite taulukkoon. Muista tallentaa lomake!"
+
+        errors:
+          invalid: "Osoite ei ole kunnollinen."
+          already_in_use: "Tämä osoite on jo käytössäsi."
+          unknown: "Tuntematon virhe."
+          already_verified: "Tämä osoite on jo vahvistettu."
+          verification_not_sent: "Vahvistusviestiä ei voitu lähettää. Yritä uudelleen.\n\nJos otat yhteyden tekniseen tukeen, anna heille tämä koodi: %{code}."
+          verification_rate_limit: "Sinun on odotettava minuutti vahvistuspyyntöjen lähetyksen välillä."
+
+        delete:
+          base: "Oletko varma että haluat poistaa osoitteen {address}?"
+          verified_primary: "Osoite on vahvistettu, ja se on lisäksi pääosoitteesi!"
+          verified: "Osoite on vahvistettu."
+          breakage: "Jos muita vahvistettuja osoitteita ei ole, jotkin kirjautumiset voivat rikkoontua siihen asti kunnes vahvistat jonkun toisen osoitteen!"
+
+      remove_photo_on_save: "Poista kuva tallennettaessa"
+
+    failed:
+      email: "sähköpostiosoitteiden muutosten tallennus"
+      phone: "puhelinnumeron asetus"
+      locale: "kielen asetus"
+      photo_save: "profiilikuvan tallennus"
     show:
-      photo_failed: "Profiilikuvan tallennus ei onnistunut. Tarkista että valitsit toimivan kuvatiedoston ja yritä uudelleen."
-      save_failed: "Tietojesi tallennus epäonnistui jostain syystä. Yritä uudelleen ja jos ongelma toistuu, ota yhteys Opinsysin tukeen."
-      save_failed_code: "Tietojesi tallennus epäonnistui. Yritä uudelleen ja jos ongelma toistuu, ota yhteys Opinsysin tukeen ja anta heille tämä koodi: \"%{request_id}\"."
+      partially_failed_code: "Kaikkia tietojasi ei voitu tallentaa. Näiden tietojen tallennus epäonnistui: %{failed}. Voit yrittää uudelleen. Jos otat yhteyttä Opinsysin tekniseen tukeen, anna heille tämä koodi: \"%{request_id}\"."
       updated: "Omat tietosi on päivitetty"
 
   # Used by script/create_organisation_owner
