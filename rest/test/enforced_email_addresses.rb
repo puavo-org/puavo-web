@@ -30,7 +30,7 @@ describe LdapModel do
       assert user.save!
 
       user = PuavoRest::User.by_dn!(user.dn)
-      assert_equal user.email, 'test.user1@hogwarts.magic'
+      assert_equal user.email, ['test.user1@hogwarts.magic']
     end
 
     it "email is overridden for those new users who set it" do
@@ -44,7 +44,7 @@ describe LdapModel do
       assert user.save!
 
       user = PuavoRest::User.by_dn!(user.dn)
-      assert_equal user.email, 'test.user2@hogwarts.magic'
+      assert_equal user.email, ['test.user2@hogwarts.magic']
     end
 
     it "multiple emails are ignored" do
@@ -54,12 +54,11 @@ describe LdapModel do
       user.username = 'test.user3'
       user.roles = ['testuser']
       user.school_dns = [@school.dn.to_s]
-      user.email = 'foo@bar.com'
-      user.secondary_emails = ['bar@quux.com', 'aa@bb.com']
+      user.email = ['foo@bar.com', 'another@address.com']
       assert user.save!
 
       user = PuavoRest::User.by_dn!(user.dn)
-      assert_equal user.email, 'test.user3@hogwarts.magic'
+      assert_equal user.email, ['test.user3@hogwarts.magic']
     end
   end
 
@@ -94,7 +93,6 @@ describe LdapModel do
         :roles      => ['testuser'],
         :school_dns => [@school.dn.to_s],
         :email      => 'bar@quux.com',
-        :secondary_emails => ['aa@bb.com', 'cc@dd.org']
       )
       assert @user3.save!
 
@@ -106,47 +104,38 @@ describe LdapModel do
       user = PuavoRest::User.by_dn!(@user1.dn)
       assert user.save!
       user = PuavoRest::User.by_dn!(@user1.dn)
-      assert_equal user.email, 'test.user1@hogwarts.magic'
+      assert_equal user.email, ['test.user1@hogwarts.magic']
 
       user = PuavoRest::User.by_dn!(@user2.dn)
-      assert_equal user.email, 'foo@bar.com'
+      assert_equal user.email, ['foo@bar.com']
       assert user.save!
       user = PuavoRest::User.by_dn!(@user2.dn)
-      assert_equal user.email, 'test.user2@hogwarts.magic'
+      assert_equal user.email, ['test.user2@hogwarts.magic']
 
       user = PuavoRest::User.by_dn!(@user3.dn)
-      assert_equal user.email, 'bar@quux.com'
+      assert_equal user.email, ['bar@quux.com']
       assert user.save!
       user = PuavoRest::User.by_dn!(@user3.dn)
-      assert_equal user.email, 'test.user3@hogwarts.magic'
+      assert_equal user.email, ['test.user3@hogwarts.magic']
     end
 
     it "manual changes to email addresses are ignored" do
       user = PuavoRest::User.by_dn!(@user1.dn)
       user.email = 'foo@foo.foo'
+
       assert user.save!
 
       user = PuavoRest::User.by_dn!(@user1.dn)
-      assert_equal user.email, 'test.user1@hogwarts.magic'
-    end
-
-    it "even multiple email addresses are ignored" do
-      user = PuavoRest::User.by_dn!(@user2.dn)
-      user.secondary_emails = ["bar@quux.com", "foo@foo.foo"]
-      assert user.save!
-
-      user = PuavoRest::User.by_dn!(@user2.dn)
-      assert_equal user.email, 'test.user2@hogwarts.magic'
+      assert_equal user.email, ['test.user1@hogwarts.magic']
     end
 
     it "can't clear email address" do
       user = PuavoRest::User.by_dn!(@user1.dn)
       user.email = nil
-      user.secondary_emails = []
       assert user.save!
 
       user = PuavoRest::User.by_dn!(@user1.dn)
-      assert_equal user.email, 'test.user1@hogwarts.magic'
+      assert_equal user.email, ['test.user1@hogwarts.magic']
     end
 
     it "username changes update the email address" do
@@ -155,7 +144,7 @@ describe LdapModel do
       assert user.save!
 
       user = PuavoRest::User.by_dn!(@user1.dn)
-      assert_equal user.email, 'youre.a.wizard@hogwarts.magic'
+      assert_equal user.email, ['youre.a.wizard@hogwarts.magic']
     end
   end
 end

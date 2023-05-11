@@ -21,8 +21,7 @@ class User < LdapModel
   ldap_map :gidNumber, :gid_number, LdapConverters::Number
   ldap_map :sn, :last_name
   ldap_map :givenName, :first_name
-  ldap_map(:mail, :secondary_emails){ |v| _, *other_emails = Array(v); other_emails }
-  ldap_map :mail, :email
+  ldap_map :mail, :email, LdapConverters::ArrayValue
   ldap_map :puavoSchool, :school_dns, LdapConverters::ArrayValue
   ldap_map :puavoEduPersonPrimarySchool, :primary_school_dn, LdapConverters::SingleValue
   ldap_map :preferredLanguage, :preferred_language
@@ -86,11 +85,7 @@ class User < LdapModel
     if auto_email
       mail = "#{self.username}@#{domain}"
 
-      if self.email != mail || self.secondary_emails != []
-        # Attempting to change self.email or self.secondary_emails here will cause
-        # a "LDAP::ResultError: Type or value exists" error. I'm not sure why.
-        # But this appears to work. It even updates self.email and self.secondary_emails.
-        # I'm not sure how...
+      if self.email != mail
         write_raw(:mail, [mail])
       end
     end
@@ -207,7 +202,6 @@ class User < LdapModel
     end
 
     validate_unique(:email)
-    # XXX validate secondary emails too!!
 
     # Set/validate the primary school DN. If it's unset (for example, when creating a new user)
     # then we can fix it automagically if there's only one school.
@@ -451,17 +445,17 @@ class User < LdapModel
     write_raw(:homeDirectory, Array("/home/#{username}"))
   end
 
-  def email=(_email)
-    secondary_emails = Array(get_raw(:mail))[1..-1] || []
-    write_raw(:mail, _email.nil? ? secondary_emails : [_email] + secondary_emails)
-    @cache[:email] = nil
+  def clean_up_email_array(a)
+    (a.nil? || a.empty?) ? [] : \
+      Array(a)
+      .compact                  # remove nil values
+      .map { |e| e.strip }      # remove trailing and leading whitespace
+      .reject { |e| e.empty? }  # remove completely empty strings
+      .uniq                     # remove duplicates
   end
 
-  def secondary_emails=(emails)
-    primary = Array(get_raw(:mail)).first
-    val = ([primary] + emails).compact
-    write_raw(:mail, val)
-    @cache[:secondary_emails] = nil
+  def email=(_email)
+    write_raw(:mail, clean_up_email_array(_email))
   end
 
   def is_school_admin_in?(school)

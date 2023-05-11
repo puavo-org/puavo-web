@@ -41,7 +41,6 @@ describe PuavoRest::Users do
 
     # XXX weird that these must be here:
     @teacher.administrative_groups = [ @maintenance_group.id ]
-    @teacher.secondary_emails = [ 'bob@foobar.com', 'bob@helloworld.com' ]
     @teacher.teaching_group = @group
     @teacher.save!
 
@@ -257,7 +256,7 @@ describe PuavoRest::Users do
       assert_200
       data = JSON.parse(last_response.body)
 
-      assert_equal "foo.bar@baz.com", data["email"]
+      assert_equal ["foo.bar@baz.com"], data["email"]
     end
   end
 
@@ -282,9 +281,7 @@ describe PuavoRest::Users do
       assert_equal "bob", data["username"]
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
-      assert_equal "bob@example.com", data["email"]
-      assert_equal [ "bob@foobar.com", "bob@helloworld.com" ],
-                   data["secondary_emails"]
+      assert_equal ["bob@example.com"], data["email"]
       assert_equal "teacher", data["user_type"]
       assert_equal "http://example.puavo.net/v3/users/bob/profile.jpg",
                    data["profile_image_link"]
