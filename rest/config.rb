@@ -54,6 +54,17 @@ if ENV['RACK_ENV'] == 'test' then
         }
       }
     },
+    "email_management" => {
+      "ip_whitelist" => ['127.0.0.1'],
+      "smtp" => {
+        "from" => "Puavo Org <no-reply@puavo.net>",
+        "via_options" => {
+          "address" => "localhost",
+          "port" => 25,
+          "enable_starttls_auto" => false
+        }
+      }
+    },
     "redis" => {
       :db => 1
     },

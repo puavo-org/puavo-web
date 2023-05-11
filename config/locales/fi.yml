@@ -2116,6 +2116,16 @@ fi:
       partially_failed_code: "Kaikkia tietojasi ei voitu tallentaa. Näiden tietojen tallennus epäonnistui: %{failed}. Voit yrittää uudelleen. Jos otat yhteyttä Opinsysin tekniseen tukeen, anna heille tämä koodi: \"%{request_id}\"."
       updated: "Omat tietosi on päivitetty"
 
+  # Email address verification
+  email_verifications:
+    title: "Vahvista sähköpostiosoite"
+    expired_token: "Tämä vahvistuslinkki on virheellinen tai vanhentunut. Ole hyvä ja pyydä uutta vahvistusviestiä Profiilin muokkauksen kautta. Jos ottaa yhteyttä tekniseen tukeen, anna heille tämä koodi: %{code}."
+    verification_failed: "Osoitetta ei voitu vahvistaa sisäisen virheen vuoksi. Ole hyvä ja ota yhteys tekniseen tukeen ja anna heille tämä koodi: %{code}."
+    verification_complete: "Osoite on vahvistettu. Voit sulkea tämän ikkunan tai välilehden."
+    verify_message1: "Painamalla alla olevaa nappia vahvistat, että osoite"
+    verify_message2: " on toimiva, sinun ja että pääset käsiksi siihen. Jos et halua vahvistaa osoitetta, sulje ikkuna tai välilehti."
+    verify_button: "Vahvista tämä osoite"
+
   # Used by script/create_organisation_owner
   create_organisation_owner:
     school_name: Hallinto

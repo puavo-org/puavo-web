@@ -1,0 +1,9 @@
+<% if @invalid_token %>
+<p class="message_alert"><%= t('email_verifications.expired_token', code: @request_id) %></p>
+<% else %>
+<%= form_for(@user, url: email_verification_update_path(@token), method: :put, multipart: true) do |f| %>
+  <input type="hidden" name="lang" id="lang" value="<%= @language %>">
+  <p><%= t('email_verifications.verify_message1') %> <span id="verificationAddress"><%= h @data['email'] %></span><%= t('email_verifications.verify_message2') %></p>
+  <%= f.submit t('email_verifications.verify_button') %>
+<% end %>
+<% end %>

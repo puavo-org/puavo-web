@@ -31,3 +31,9 @@ password_management:
   message: "To change your password, please open this link: %1"
   footer: "The link will expire in ten (10) minutes, so open it as soon as possible. If you have not requested your password to be changed, you can ignore this message. If you suspect that someone else is trying to change your password without your knowing, please contact Opinsys support immediately and give them the contents of this message."
   password_has_been_reset_message: "You've successfully changed your Opinsys password."
+email_verification:
+  subject: "Email Address Verification"
+  hello: "Hello"
+  message_head: "You just requested for this email address to be verified."
+  message: "Verify the address by clicking this link: %1"
+  footer: "The link is valid for one hour. If you did not make this request, you can ignore this message. If you suspect that someone else is trying to verify this address without you knowing about it, please contact Opinsys technical support and give them the contents of this message."

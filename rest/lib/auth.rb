@@ -49,6 +49,19 @@ class PuavoSinatra < Sinatra::Base
     end
   end
 
+  # Email address changing/verification using the public profile form
+  def email_mgmt_server_auth
+    if CONFIG['email_management']
+      return {
+        :dn => PUAVO_ETC.ds_email_mgmt_dn,
+        :password => PUAVO_ETC.ds_email_mgmt_password
+      }
+    else
+      rlog.error('cannot use email management auth on cloud or bootserver installation')
+      return
+    end
+  end
+
   # Pick bootserver credentials when Header 'Authorization: Bootserver' is set
   def server_auth
     if not CONFIG["bootserver"]

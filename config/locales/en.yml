@@ -2116,6 +2116,16 @@ en:
       partially_failed_code: "Not all of your information could be saved. The following items failed: %{failed}. You can try again. If you contact Opinsys technical support, please give them this code: \"%{request_id}\"."
       updated: "Your profile has been successfully updated"
 
+  # Email address verification
+  email_verifications:
+    title: "Verify an email address"
+    expired_token: "This verification link is invalid, or it has expired. Please try again by resending the verification mail from the Profile Editor. If you want to contact technical support, please give them this code: %{code}."
+    verification_failed: "The address could not be verified due to an internal system error. Please contact technical support and give them this code: %{code}."
+    verification_complete: "The address has been verified. You can close this window or tab now."
+    verify_message1: "By pressing the button below you confirm that email address"
+    verify_message2: " is working, it is yours, and that you can access it. If you do not wish to confirm this address, then please close this window or tab."
+    verify_button: "Verify this address"
+
   # Used in script/create_organisation_owner
   create_organisation_owner:
     school_name: Administration

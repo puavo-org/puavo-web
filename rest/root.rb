@@ -184,6 +184,7 @@ class Root < PuavoSinatra
   use PuavoRest::ExternalLogins
   use PuavoRest::BootserverDNS
   use PuavoRest::MySchoolUsers
+  use PuavoRest::EmailManagement
 
   if CONFIG["cloud"]
     # You have to choose which one you want
