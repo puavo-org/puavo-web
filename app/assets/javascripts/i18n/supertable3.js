@@ -28,6 +28,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}), {
     filtering: {
         expression_title: "Filter string",
         unsaved: "unsaved",
+        save_json_confirm: "Are you sure?",
 
         error: "Error",
         warning: "Warning",
@@ -134,6 +135,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}), {
     filtering: {
         expression_title: "Suodatinlauseke",
         unsaved: "tallentamaton",
+        save_json_confirm: "Oletko varma?",
 
         error: "Virhe",
         warning: "Varoitus",
