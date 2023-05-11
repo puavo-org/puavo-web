@@ -533,6 +533,17 @@ Feature: Manage users
     Then I should not see "Thomas Anderson (neo) School 1" within "#this_school_admin_users"
     And I should not see "Thomas Anderson (neo) School 1" within "#other_admin_users"
 
+  Scenario: A few verified email address tests
+    Given "pavel" has verified email addresses
+    Then I am on the show user page with "pavel"
+    Then I should see "address1@example.com (verified)"
+    And I should see "address2@example.com (verified, primary address)"
+    And I should not see "address3@example.com (verified)"
+    Then I am on th edit user page with "pavel"
+    And I should see "This user has verified email addresses. They cannot be edited nor removed."
+    # TODO: Test that the fields are read-only
+
+
 # FIXME
 #  @allow-rescue
 #  Scenario: Get user infromation in JSON from wrong school

@@ -78,8 +78,28 @@
 <%= start_box t('.contact_information') %>
 <table id="contactInformation">
   <tr>
-  <th><%= t('activeldap.attributes.user.mail') %></th>
-  <td class="noWrap"><%= h Array(@user.mail).map{ |mail| mail }.join("<br>").html_safe %></td>
+    <th><%= t('activeldap.attributes.user.mail') %></th>
+    <td class="noWrap">
+      <% if @user.mail %>
+      <ul class="no-list-bullets margin-0 padding-0">
+
+      <% Array(@user.mail || []).each do |e| %>
+        <% primary = (e == @user.puavoPrimaryEmail) %>
+        <li>
+        <% if primary %><strong><% end %>
+        <%= h e %>
+        <%
+        attr = []
+        attr << t('.verified_email') if @verified_addresses.include?(e)
+        attr << t('.primary_email') if primary
+        %>
+        <% unless attr.empty? %> (<%= attr.join(', ') %>)<% end %>
+        <% if primary %></strong><% end %>
+        </li>
+      <% end %>
+      </ul>
+      <% end %>
+    </td>
   </tr>
 
   <tr>

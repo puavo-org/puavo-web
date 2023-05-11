@@ -234,6 +234,8 @@ fi:
       role: "Rooli"
       phone: "Puhelin"
       email: "Email"
+      v_email: "Vahvistettu email"
+      p_email: "Pää-email"
       pnumber: "Henkilönumero"
       home_dir: "Kotihakemisto"
       rrt: "Poistomerkintä tehty"
@@ -933,6 +935,8 @@ fi:
       user_is_a_school_admin: "Käyttäjä on koulun \"%{school_name}\" ylläpitäjissä"
       schools: "Koulut"
       primary_school: "(pääkoulu)"
+      verified_email: "vahvistettu"
+      primary_email: "pääosoite"
       user_is_locked: "Käyttäjätunnus on lukittu"
       user_is_marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
       user_deletion_prevented: "Käyttäjän poisto on estetty"
@@ -956,6 +960,7 @@ fi:
     edit:
       title: "Muokkaa käyttäjää"
       automatic_email: "Sähköpostiosoite (automaattinen)"
+      have_verified_addresses: "Tällä käyttäjällä on vahvistettuja osoitteita. Niitä ei voi muokata tai poistaa."
     form:
       add_email: "Lisää sähköpostiosoitteita"
       add_telephone_number: "Lisää puhelinnumeroita"
@@ -1752,6 +1757,8 @@ fi:
         too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
         image_failed: "Kuvaa ei voitu tallentaa"
         email_not_valid: "Sähköpostiosoite ei ole kunnollinen."
+        invalid_verified_email: "Vahvistettua sähköpostiosoitetta ei löydy tavallisten sähköpostiosoitteiden listalta"
+        invalid_primary_email: "Pääsähköpostiosoitetta ei löydy varmennettujen osoitteiden listalta"
         user:
           must_begin_with: "Käyttäjätunnuksen pitää alkaa pienellä kirjaimella"
           invalid_characters: "Käyttäjätunnus sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"

@@ -63,6 +63,18 @@ const COLUMN_DEFINITIONS = {
         flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
     },
 
+    v_email: {
+        key: "v_email",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
+    },
+
+    p_email: {
+        key: "p_email",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.F_NULLABLE,
+    },
+
     pnumber: {
         key: "pnumber",
         type: ST.ColumnType.STRING,
@@ -133,6 +145,8 @@ const COLUMN_TITLES = {
     role: "<%= t('columns.users.role') %>",
     phone: "<%= t('columns.users.phone') %>",
     email: "<%= t('columns.users.email') %>",
+    v_email: "<%= t('columns.users.v_email') %>",
+    p_email: "<%= t('columns.users.p_email') %>",
     pnumber: "<%= t('columns.users.pnumber') %>",
     home: "<%= t('columns.users.home_dir') %>",
     rrt: "<%= t('columns.users.rrt') %>",
@@ -160,6 +174,8 @@ const COLUMN_ORDER = [
     "learner_id",
     "phone",
     "email",
+    "v_email",
+    "p_email",
     "pnumber",
     "home",
     "rrt",

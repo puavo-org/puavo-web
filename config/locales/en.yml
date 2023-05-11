@@ -234,6 +234,8 @@ en:
       role: "Role"
       phone: "Phone"
       email: "Email"
+      v_email: "Verified Email"
+      p_email: "Primary Email"
       pnumber: "Personnel number"
       home_dir: "Home directory"
       rrt: "When marked for deletion"
@@ -933,6 +935,8 @@ en:
       user_is_a_school_admin: "This user is an administrator of the school \"%{school_name}\""
       schools: "Schools"
       primary_school: "(primary school)"
+      verified_email: "verified"
+      primary_email: "primary address"
       user_is_locked: User is locked
       user_is_marked_for_deletion: "This user has been marked for deletion"
       user_deletion_prevented: "This user cannot be deleted"
@@ -956,6 +960,7 @@ en:
     edit:
       title: Edit user
       automatic_email: "Email (automatic)"
+      have_verified_addresses: "This user has verified email addresses. They cannot be edited nor removed."
     form:
       add_email: Add another email
       add_telephone_number: Add another telephone number
@@ -1752,6 +1757,8 @@ en:
         too_short: "%{attribute} is too short (min is %{count} characters)"
         image_failed: "Failed to save the image"
         email_not_valid: "The email address is not valid."
+        invalid_verified_email: "Can't find a verified email address on the normal email addresses list"
+        invalid_primary_email: "Can't find the primary email address on the list of verified email addresses"
         user:
           must_begin_with: Username must begin with a small letter
           invalid_characters: Username contains invalid characters (allowed characters are a-z0-9.-)

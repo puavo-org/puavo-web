@@ -33,6 +33,18 @@ describe LdapModel do
       )
       @user.save!
 
+      @user2 = PuavoRest::User.new(
+        :first_name => 'Email',
+        :last_name  => 'Verification',
+        :username   => 'email',
+        :roles      => [ 'student' ],
+        :school_dns => [ @school.dn.to_s ],
+        :email      => 'v_address1@example.com',
+        :verified_email => 'v_address1@example.com',
+        :primary_email => 'v_address1@example.com',
+      )
+      @user2.save!
+
       @teaching_group = PuavoRest::Group.new(
         :abbreviation => 'gryffindor-5a',
         :name         => '5A',
@@ -132,6 +144,201 @@ describe LdapModel do
 
       user = PuavoRest::User.by_dn!(@user.dn)
       assert_equal user.email, []
+    end
+
+    it "primary email change tests" do
+      # 1
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.primary_email = 'example@example.com'
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert_equal exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array"), false
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), true
+
+      # 2
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.verified_email = 'v_address2@example.com'
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert_equal exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array"), true
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), true
+    end
+
+    it "can remove verified email" do
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.verified_email = nil
+      user.primary_email = nil
+      assert user.save!
+    end
+
+    it "can remove primary email" do
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.primary_email = nil
+      assert user.save!
+    end
+
+    it "can add a verified address" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address@example.com'],
+        verified_email: 'address@example.com',
+      )
+
+      assert user.save!
+    end
+
+    it "can add a verified address and a primary email (single)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address1@example.com', 'address2@example.com'],
+        verified_email: 'address1@example.com',
+        primary_email: 'address1@example.com'
+      )
+
+      assert user.save!
+    end
+
+    it "can add a verified address and a primary email (multiple)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address1@example.com', 'address2@example.com'],
+        verified_email: ['address1@example.com', 'address2@example.com'],
+        primary_email: 'address2@example.com'
+      )
+
+      assert user.save!
+    end
+
+    it "can't add a primary email without normal emails and verified emails" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        primary_email: 'foo@bar.com',
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert_equal exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array"), false
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), true
+    end
+
+    it "can't add a verified address that aren't also normal addresses (empty)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        verified_email: 'foo@bar.com',
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array")
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), false
+    end
+
+    it "can't add a verified address that aren't also normal addresses (single)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: 'address@example.com',
+        verified_email: 'foo@bar.com',
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array")
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), false
+    end
+
+    it "can't add a verified address that aren't also normal addresses (multiple)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address1@example.com', 'address2@example.com'],
+        verified_email: 'foo@bar.com',
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array")
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), false
+    end
+
+    it "can't add a primary email that isn't on the verified emails array" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address1@example.com', 'address2@example.com'],
+        verified_email: ['address1@example.com'],
+        primary_email: 'address2@example.com'
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert_equal exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array"), false
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), true
+    end
+
+    it "can't add a primary email that isn't on the verified emails array (more)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address1@example.com', 'address2@example.com'],
+        verified_email: ['address1@example.com'],
+        primary_email: 'foo@com.com'
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert_equal exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array"), false
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), true
     end
 
     it "can authenticate using the username and password" do

@@ -44,8 +44,13 @@
         <% if Array(@user.mail).empty? %>
           <input name='user[mail][]' type='text' id='user_mail_0'/>
         <% else %>
-          <% Array(@user.mail).each_index do |index| %>
-          <input  id='<%= "user_mail_#{index}" %>' name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' />
+          <% verified = Array(@user.puavoVerifiedEmail || []).to_set %>
+          <% unless verified.empty? %>
+          <p class="genericNotice"><%= t('users.edit.have_verified_addresses') %></p>
+          <% end %>
+          <% Array(@user.mail).each_with_index do |a, index| %>
+          <input  id="<%= "user_mail_#{index}" %>" name="user[mail][]" type="text" value="<%= a %>"
+          <% if verified.include?(a) %> readonly<% end %>/>
           <% end %>
         <% end %>
         </div>

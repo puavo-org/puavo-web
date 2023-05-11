@@ -122,6 +122,8 @@ describe LdapModel do
     it "manual changes to email addresses are ignored" do
       user = PuavoRest::User.by_dn!(@user1.dn)
       user.email = 'foo@foo.foo'
+      user.verified_email = 'foo@foo.foo'
+      user.primary_email = 'foo@foo.foo'
 
       assert user.save!
 
@@ -132,6 +134,8 @@ describe LdapModel do
     it "can't clear email address" do
       user = PuavoRest::User.by_dn!(@user1.dn)
       user.email = nil
+      user.verified_email = nil
+      user.primary_email = nil
       assert user.save!
 
       user = PuavoRest::User.by_dn!(@user1.dn)

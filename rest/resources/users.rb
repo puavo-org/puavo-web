@@ -46,6 +46,9 @@ class User < LdapModel
 
   ldap_map :puavoLearnerId, :learner_id
 
+  ldap_map :puavoVerifiedEmail, :verified_email, LdapConverters::ArrayValue
+  ldap_map :puavoPrimaryEmail, :primary_email
+
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
   ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
@@ -86,6 +89,7 @@ class User < LdapModel
       mail = "#{self.username}@#{domain}"
 
       if self.email != mail
+        # FIXME: This will fail if the email address has been verified and it changes.
         write_raw(:mail, [mail])
       end
     end
@@ -202,6 +206,18 @@ class User < LdapModel
     end
 
     validate_unique(:email)
+
+    # Ensure there are no validated email addresses that don't appear in the emails array
+    unless (Array(self.verified_email) - Array(self.email)).empty?
+      add_validation_error(:verified_email, :invalid_verified_address,
+                           "the verified emails array contains an address that isn't in the normal email addresses array")
+    end
+
+    # Validate the primary email address
+    if self.primary_email && !Array(self.verified_email).include?(self.primary_email)
+      add_validation_error(:primary_email, :invalid_primary_email,
+                           'the primary email address must be in the verified emails array')
+    end
 
     # Set/validate the primary school DN. If it's unset (for example, when creating a new user)
     # then we can fix it automagically if there's only one school.
@@ -456,6 +472,10 @@ class User < LdapModel
 
   def email=(_email)
     write_raw(:mail, clean_up_email_array(_email))
+  end
+
+  def verified_email=(_verified)
+    write_raw(:puavoVerifiedEmail, clean_up_email_array(_verified))
   end
 
   def is_school_admin_in?(school)
@@ -932,7 +952,13 @@ class Users < PuavoSinatra
 
   post "/v3/users" do
     auth :basic_auth, :kerberos
-    user = User.new(json_params)
+
+    # You can't add/edit verified email addresses directly
+    parameters = json_params
+    parameters.delete('verified_email')
+    parameters.delete('primary_email')
+
+    user = User.new(parameters)
     user.save!
     json user
   end
@@ -1124,7 +1150,13 @@ class Users < PuavoSinatra
   post "/v3/users/:username" do
     auth :basic_auth, :kerberos
     user = User.by_username!(params["username"])
-    user.update!(json_params)
+
+    # You can't add/edit verified email addresses directly
+    parameters = json_params
+    parameters.delete('verified_email')
+    parameters.delete('primary_email')
+
+    user.update!(parameters)
     user.save!
     json user
 

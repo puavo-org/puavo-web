@@ -25,6 +25,8 @@ module UsersHelper
       'displayName',
       'homeDirectory',
       'mail',
+      'puavoVerifiedEmail',
+      'puavoPrimaryEmail',
       'puavoEduPersonPersonnelNumber',
       'puavoRemovalRequestTime',
       'puavoDoNotDelete',
@@ -92,6 +94,15 @@ module UsersHelper
       if a.count > 0
         out[:email] = a
       end
+    end
+
+    if raw.include?('puavoVerifiedEmail')
+      a = Array(raw['puavoVerifiedEmail'])
+      out[:v_email] = a if a.count > 0
+    end
+
+    if raw.include?('puavoPrimaryEmail')
+      out[:p_email] = raw['puavoPrimaryEmail'][0]
     end
 
     if raw.include?('puavoEduPersonPersonnelNumber')

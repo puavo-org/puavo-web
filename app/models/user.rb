@@ -297,6 +297,16 @@ class User < LdapBase
       end
     end
 
+    verified = Array(self.puavoVerifiedEmail || [])
+
+    unless (verified - Array(self.mail || [])).empty?
+      errors.add(:mail, I18n.t('activeldap.errors.messages.invalid_verified_email'))
+    end
+
+    if !self.puavoPrimaryEmail.nil? && !verified.include?(self.puavoPrimaryEmail)
+      errors.add(:mail, I18n.t('activeldap.errors.messages.invalid_primary_email'))
+    end
+
     if !self.telephoneNumber.nil? && !self.telephoneNumber.empty?
       Array(self.telephoneNumber).each do |p|
         p.strip!

@@ -298,6 +298,19 @@ class UsersController < ApplicationController
     organisation = Puavo::Organisation.find(LdapOrganisation.current.cn)
     @have_sso_sessions = organisation && !organisation.value_by_key('enable_sso_sessions_in').nil?
 
+    # Look up verified email addresses
+    @verified_addresses = Array(@user.puavoVerifiedEmail || []).to_set.freeze
+    @emails = []
+
+    Array(@user.mail || []).each do |addr|
+      parts = []
+
+      parts << 'verified' if @verified_addresses.include?(addr)
+      parts << 'primary' if @user.puavoPrimaryEmail == addr
+
+      @emails << [addr, parts]
+    end
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }
@@ -506,6 +519,21 @@ class UsersController < ApplicationController
 
         if @automatic_email_addresses
           up['mail'] = ["#{up['uid'].strip}@#{@automatic_email_domain}"]
+        else
+          removed = Array(@user.puavoVerifiedEmail) - up['mail']
+
+          unless removed.empty?
+            # One or more verified addresses are missing. Put them back;
+            # they're not supposed to be removed.
+            up['mail'] += removed
+          end
+
+          # Clean up the address array in the same way puavo-rest does it
+          up['mail'] = up['mail']
+            .compact                  # remove nil values
+            .map { |e| e.strip }      # remove trailing and leading whitespace
+            .reject { |e| e.empty? }  # remove completely empty strings
+            .uniq                     # remove duplicates
         end
 
         unless @user.update_attributes(up)
