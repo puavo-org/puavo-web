@@ -2,8 +2,6 @@
 
 require 'sinatra/r18n'
 
-require "byebug"
-
 module PuavoRest
 
 class EmailManagement < PuavoSinatra
@@ -188,16 +186,13 @@ class EmailManagement < PuavoSinatra
 
       # Verify the email address
       if user.verified_email.nil? || user.verified_email.empty?
-        puts "No existing verified addresses"
         user.verified_email = [address]
       else
-        puts "Adding another verified address"
         user.verified_email = user.verified_email + [address]
       end
 
       unless user.primary_email
         user.primary_email = address
-        puts "No primary address yet, setting it"
       end
 
       user.save!
