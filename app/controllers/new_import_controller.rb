@@ -6,7 +6,7 @@ class NewImportController < ApplicationController
   UNIQUE_ATTRS = ['eid', 'phone', 'email'].freeze
 
   def index
-    if !is_owner? && !can_schooladmin_do_this?(current_user.uid, :import_users)
+    if !is_owner? && !current_user.has_admin_permission(:import_users) then
       flash[:alert] = t('flash.you_must_be_an_owner')
       redirect_to users_path
       return

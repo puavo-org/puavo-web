@@ -580,6 +580,10 @@ class User < LdapBase
     db.del("user:#{self.id}")
   end
 
+  def has_admin_permission(permission)
+    Array(self.puavoAdminPermissions).include?(permission.to_s)
+  end
+
   private
 
   def set_special_ldap_value
@@ -681,8 +685,6 @@ class User < LdapBase
     # Set uid to Domain Users group
     SambaGroup.add_uid_to_memberUid('Domain Users', self.uid)
   end
-
-  private
 
   def delete_all_associations
     # Remove uid from Domain Users group
