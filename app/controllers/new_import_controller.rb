@@ -40,148 +40,46 @@ class NewImportController < ApplicationController
 
   # Get the IDs and usernames of all users in this organisation
   def get_current_users
-    response = {
-      status: 'ok',
-      error: nil,
-      usernames: [],
-    }
-
-    begin
-      rest = get_superuser_proxy
-
-      users = JSON.parse(request.body.read)
-
-      # Find the puavoID for every user on the list
-      users.each do |user|
-        raw_user = JSON.parse(rest.get("/v4/users?no_eltern&fields=id&filter[]=username|is|#{user[0]}").body)
-
-        if raw_user['status'] != 'ok'
-          # Abort the operation here
-          response[:status] = 'rest_status_fail'
-          response[:error] = user[0]
-          return render json: response
-        end
-
-        raw_user = raw_user['data']
-
-        if raw_user.empty?
-          # This user does not exist, use -1 for puavoID
-          user[1] = -1
-        else
-          user[1] = raw_user[0]['id']
-        end
-      end
-
-      # Send the updated data back
-      response[:usernames] = users
-    rescue PuavoRestProxy::BadStatus => e
-      response[:status] = 'puavo_rest_call_failed'
-      response[:error] = e.to_s
-    rescue StandardError => e
-      response[:status] = 'failed'
-      response[:error] = e.to_s
+    users = User.search_as_utf8(
+      filter: '(objectClass=puavoEduPerson)',
+      attributes: ['puavoId', 'uid']
+    ).collect do |_, u|
+      {
+        id: u['puavoId'][0].to_i,
+        uid: u['uid'][0]
+      }
     end
 
-    render json: response
+    render json: users
   end
 
   # Extended version of get_current_users(), used in duplicate username detection.
-  # Returns user information, but also includes schools.
+  # Returns user information, but also includes schools
   def duplicate_detection
-    response = {
-      status: 'ok',
-      error: nil,
-      users: [],
-      schools: {},
-    }
+    extract_dn = /puavoId=(\d+),ou=Groups/
 
-    begin
-      rest = get_superuser_proxy
-
-      users = JSON.parse(rest.get(
-        '/v4/users?no_eltern&fields=id,username,primary_school_id,school_ids,external_id,email,phone').body)
-      raise if users['status'] != 'ok'
-      response[:users] = users['data']
-
-      schools = JSON.parse(rest.get('/v4/schools?fields=id,name').body)
-      raise if schools['status'] != 'ok'
-
-      schools['data'].each do |s|
-        response[:schools][s['id']] = s['name']
-      end
-    rescue PuavoRestProxy::BadStatus => e
-      response[:status] = 'puavo_rest_call_failed'
-      response[:error] = e.to_s
-    rescue StandardError => e
-      puts e.backtrace.join("\n")
-      response[:status] = 'failed'
-      response[:error] = e.to_s
+    users = User.search_as_utf8(
+      filter: '(objectClass=puavoEduPerson)',
+      attributes: ['puavoId', 'uid', 'puavoEduPersonPrimarySchool', 'puavoSchool', 'puavoExternalId', 'mail', 'telephoneNumber']
+    ).collect do |_, u|
+      {
+        id: u['puavoId'][0].to_i,
+        uid: u['uid'][0],
+        school: extract_dn.match(u['puavoEduPersonPrimarySchool'][0])[1].to_i,
+        schools: u['puavoSchool'].collect { |dn| extract_dn.match(dn)[1].to_i },
+        eid: u.fetch('puavoExternalId', [nil])[0],
+        email: Array(u['mail'] || []),
+        phone: Array(u['telephoneNumber'] || [])
+      }
     end
 
-    render json: response
-  end
+    schools = School.search_as_utf8(
+      attributes: ['puavoId', 'displayName']
+    ).collect do |dn, s|
+      [s['puavoId'][0], s['displayName'][0]]
+    end.to_h
 
-  # Given a list of usernames, returns informatin about which schools they already exist in
-  def find_existing_users
-    response = {
-      status: 'ok',
-      error: nil,
-      states: []
-    }
-
-    begin
-      rest = get_superuser_proxy
-
-      # Make a list of schools so we can tell which school the user is in
-      schools = {}
-      raw_schools = JSON.parse(rest.get('/v4/schools?fields=id,name').body)
-      raise if raw_schools['status'] != 'ok'
-
-      raw_schools['data'].each do |s|
-        schools[s['id']] = s['name']
-      end
-
-      # Look up each user on the list and fill in the return state
-      data = JSON.parse(request.body.read)
-      this_school = data['school_id']
-
-      data['usernames'].each do |name|
-        raw_user = JSON.parse(rest.get(
-          "/v4/users?no_eltern&fields=primary_school_id,school_ids&filter[]=username|is|#{name}").body)
-
-        if raw_user['status'] != 'ok'
-          response[:states] << [-1, nil]
-          next
-        end
-
-        user = raw_user['data']
-
-        if user.empty?
-          # This user does not exist on the server
-          response[:states] << [0, nil]
-        elsif user[0]['primary_school_id'] == this_school
-          # This user exists in this school
-          response[:states] << [1, nil]
-        else
-          # The user exists in some other school(s), list their names
-          msg = []
-
-          user[0]['school_ids'].each do |sid|
-            msg << schools.fetch(sid, '???')
-          end
-
-          response[:states] << [2, msg]
-        end
-      end
-    rescue PuavoRestProxy::BadStatus => e
-      response[:status] = 'puavo_rest_call_failed'
-      response[:error] = e.to_s
-    rescue StandardError => e
-      response[:status] = 'failed'
-      response[:error] = e.to_s
-    end
-
-    render json: response
+    render json: { users: users, schools: schools }
   end
 
   def make_username_list
@@ -369,6 +267,8 @@ class NewImportController < ApplicationController
         }
       end
     end
+
+    #puts response.inspect
 
     render json: response
   end
