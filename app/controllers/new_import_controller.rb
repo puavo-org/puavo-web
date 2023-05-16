@@ -82,6 +82,75 @@ class NewImportController < ApplicationController
     render json: { users: users, schools: schools }
   end
 
+  # Given a list of usernames, returns information about which schools they
+  # already exist in
+  def find_existing_users
+    extract_dn = /puavoId=(\d+),ou=Groups/
+
+    response = {
+      status: 'ok',
+      error:  nil,
+      states: [],
+    }
+
+    begin
+      data = JSON.parse(request.body.read)
+      school_id_to_lookup = data['school_id']
+      usernames_to_lookup = data['usernames']
+
+      schoolnames_by_id = Hash[
+        School.search_as_utf8(attributes: ['puavoId', 'displayName']) \
+              .collect { |dn, s| [ s['puavoId'][0].to_i, s['displayName'][0] ] }
+      ]
+
+      # Look up each user on the list and fill in the return state
+      usernames_to_lookup.each do |uid|
+        user_list = User.search_as_utf8(
+          filter: "(&(objectClass=puavoEduPerson)(uid=#{Net::LDAP::Filter.escape(uid)}))",
+          attributes: %w(puavoId puavoEduPersonPrimarySchool puavoSchool),
+        ).collect do |_,u|
+          {
+            school: extract_dn.match(u['puavoEduPersonPrimarySchool'][0])[1].to_i,
+            schools: u['puavoSchool'].collect { |dn| extract_dn.match(dn)[1].to_i },
+          }
+        end
+
+        if user_list.nil? then
+          response[:states] << [-1, nil]
+          next
+        end
+
+        if user_list.empty? then
+          # This user does not exist on the server
+          response[:states] << [0, nil]
+          next
+        end
+
+        user = user_list[0]
+
+        if user['school'] == school_id_to_lookup then
+          # This user exists in this school
+          response[:states] << [1, nil]
+          next
+        end
+
+        # The user exists in some other school(s), list their names
+        ids = [
+          user['schools'].map { |sid| schoolnames_by_id.fetch(sid, '???') }
+        ]
+        response[:states] << [2, ids]
+      end
+
+    rescue StandardError => e
+      response[:status] = 'failed'
+      response[:error] = e.to_s
+      render json: response
+      return
+    end
+
+    render json: response
+  end
+
   def make_username_list
     response = {
       status: 'ok',
