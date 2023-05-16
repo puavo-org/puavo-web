@@ -74,30 +74,38 @@ class NewImportController < ApplicationController
   # Extended version of get_current_users(), used in duplicate username detection.
   # Returns user information, but also includes schools
   def duplicate_detection
-    extract_dn = /puavoId=(\d+),ou=Groups/
+    response = {
+      status:  'ok',
+      error:   nil,
+      users:   [],
+      schools: {},
+    }
 
-    users = User.search_as_utf8(
-      filter: '(objectClass=puavoEduPerson)',
-      attributes: ['puavoId', 'uid', 'puavoEduPersonPrimarySchool', 'puavoSchool', 'puavoExternalId', 'mail', 'telephoneNumber']
-    ).collect do |_, u|
-      {
-        id: u['puavoId'][0].to_i,
-        uid: u['uid'][0],
-        school: extract_dn.match(u['puavoEduPersonPrimarySchool'][0])[1].to_i,
-        schools: u['puavoSchool'].collect { |dn| extract_dn.match(dn)[1].to_i },
-        eid: u.fetch('puavoExternalId', [nil])[0],
-        email: Array(u['mail'] || []),
-        phone: Array(u['telephoneNumber'] || [])
-      }
+    begin
+      extract_dn = /puavoId=(\d+),ou=Groups/
+
+      response[:users] = User.search_as_utf8(
+        filter: '(objectClass=puavoEduPerson)',
+        attributes: %w(puavoId uid puavoExternalId mail telephoneNumber),
+      ).collect do |_, u|
+        {
+          username: u['uid'][0],
+          external_id: u.fetch('puavoExternalId', [nil])[0],
+          email: Array(u['mail'] || []),
+          phone: Array(u['telephoneNumber'] || [])
+        }
+      end
+
+      response[:schools] = Hash[
+        School.search_as_utf8(attributes: %w(puavoId displayName)) \
+              .collect { |dn, s| [ s['puavoId'][0].to_i, s['displayName'][0] ] }
+      ]
+    rescue StandardError => e
+      response[:status] = 'failed'
+      response[:error] = e.to_s
     end
 
-    schools = School.search_as_utf8(
-      attributes: ['puavoId', 'displayName']
-    ).collect do |dn, s|
-      [s['puavoId'][0], s['displayName'][0]]
-    end.to_h
-
-    render json: { users: users, schools: schools }
+    render json: response
   end
 
   # Given a list of usernames, returns information about which schools they
