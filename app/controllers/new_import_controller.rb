@@ -38,19 +38,37 @@ class NewImportController < ApplicationController
     render json: get_school_groups(School.find(params['school_id'].to_i).dn.to_s)
   end
 
-  # Get the IDs and usernames of all users in this organisation
+  # Compare the given usernames to all users in this organisation.
   def get_current_users
-    users = User.search_as_utf8(
-      filter: '(objectClass=puavoEduPerson)',
-      attributes: ['puavoId', 'uid']
-    ).collect do |_, u|
-      {
-        id: u['puavoId'][0].to_i,
-        uid: u['uid'][0]
-      }
+    response = {
+      status:    'ok',
+      error:     nil,
+      usernames: [],
+    }
+
+    begin
+      requested_username_list = JSON.parse(request.body.read)
+
+      puavo_ids_by_username = Hash[
+        User.search_as_utf8(
+          filter: '(objectClass=puavoEduPerson)',
+          attributes: %w(puavoId uid),
+        ).collect do |_, u|
+          [ u['uid'][0], u['puavoId'][0].to_i ]
+        end
+      ]
+
+      response[:usernames] = requested_username_list.map do |username|
+                               [ puavo_ids_by_username[username] || -1,
+                                 username ]
+                             end
+
+    rescue StandardError => e
+      response[:status] = 'failed'
+      response[:error] = e.to_s
     end
 
-    render json: users
+    render json: response
   end
 
   # Extended version of get_current_users(), used in duplicate username detection.
@@ -336,8 +354,6 @@ class NewImportController < ApplicationController
         }
       end
     end
-
-    #puts response.inspect
 
     render json: response
   end
