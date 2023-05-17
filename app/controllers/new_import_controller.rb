@@ -154,15 +154,16 @@ class NewImportController < ApplicationController
 
         user = user_list[0]
 
-        if user['school'] == school_id_to_lookup then
+        if user[:school] == school_id_to_lookup then
           # This user exists in this school
           response[:states] << [1, nil]
           next
         end
 
         # The user exists in some other school(s), list their names
+        warn ">>> user=#{ user.inspect }"
         ids = [
-          user['schools'].map { |sid| schoolnames_by_id.fetch(sid, '???') }
+          user[:schools].map { |sid| schoolnames_by_id.fetch(sid, '???') }
         ]
         response[:states] << [2, ids]
       end
