@@ -2771,8 +2771,8 @@ function beginImport(mode)
         state.process.workerRows = [];
 
         for (let i = 0; i < existingUsers.usernames.length; i++) {
-            const pid = existingUsers.usernames[i][0];
-            const rowNum = usernames[i][1];
+            const pid = existingUsers.usernames[i][1];
+            const rowNum = usernames[i][2];
 
             if (pid == -1) {
                 // New user

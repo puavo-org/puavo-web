@@ -47,7 +47,7 @@ class NewImportController < ApplicationController
     }
 
     begin
-      requested_username_list = JSON.parse(request.body.read)
+      requested_users = JSON.parse(request.body.read)
 
       puavo_ids_by_username = Hash[
         User.search_as_utf8(
@@ -58,11 +58,11 @@ class NewImportController < ApplicationController
         end
       ]
 
-      response[:usernames] = requested_username_list.map do |username|
-                               [ puavo_ids_by_username[username] || -1,
-                                 username ]
-                             end
-
+      response[:usernames] \
+        = requested_users.map do |u|
+            username, _, row_id = *u
+            [ username, (puavo_ids_by_username[username] || -1), row_id ]
+          end
     rescue StandardError => e
       response[:status] = 'failed'
       response[:error] = e.to_s
