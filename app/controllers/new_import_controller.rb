@@ -171,8 +171,6 @@ class NewImportController < ApplicationController
     rescue StandardError => e
       response[:status] = 'failed'
       response[:error] = e.to_s
-      render json: response
-      return
     end
 
     render json: response
