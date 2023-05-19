@@ -1086,7 +1086,7 @@ fi:
       everyone_in_this_school: "Kaikki tässä koulussa"
       everyone_in_other_schools: "Kaikki jossain muussa koulussa"
       select_rows: "Valitse rivit"
-      select_all: "Valise kaikki rivit"
+      select_all: "Valitse kaikki rivit"
       deselect_all: "Epävalitse kaikki rivit"
       invert_selection: "Käänteinen valinta"
       select_unprocessed_rows: "Valitse rivit joita ei käsitelty"
