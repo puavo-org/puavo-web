@@ -126,7 +126,7 @@ module PuavoRest
         return true
       end
 
-      unless extlogin_id(user) then
+      if extlogin_id(user) then
         # User is managed by external logins, if extlogin_id is set to a
         # non-empty value.
         @rlog.info("username '#{ username }' has non-empty extlogin id" \
@@ -502,7 +502,7 @@ module PuavoRest
           # service so we can try to invalidate the password matching
           # the right Puavo username.
           user = User.by_username(username)
-          extlogin_id = (user && extlogin_id(user)) \
+          extlogin_id = (user && external_login.extlogin_id(user)) \
                           || login_service.lookup_extlogin_id(username)
 
           pw_update_status \
