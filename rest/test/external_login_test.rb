@@ -140,6 +140,9 @@ describe PuavoRest::ExternalLogin do
       assert_equal 'luke.skywalker@HEROES.PUAVO.NET',
                    @user.puavoExternalId,
                    'luke.skywalker has incorrect external_id'
+      assert_equal 'Skywalker',
+                   @user.puavoLearnerId,
+                   'luke.skywalker has incorrect learner_id'
     end
 
     it 'user password is synced to Puavo' do
