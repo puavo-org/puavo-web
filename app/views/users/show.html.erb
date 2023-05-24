@@ -20,9 +20,9 @@
     <% end %>
     <% end %>
 
-    <% if @extra_permissions_list && !@extra_permissions_list.empty? %>
-    <p class="infoTitle infoNotice"><%= t('.extra_permissions.title') %></p>
-    <p class="infoValue infoNotice"><%= @extra_permissions_list.map{ |p| t(".extra_permissions.#{p}") }.join(', ') %></p>
+    <% unless @admin_permissions.empty? %>
+    <p class="infoTitle infoNotice"><%= t('.admin_permissions.title') %></p>
+    <p class="infoValue infoNotice"><%= @admin_permissions.collect { |p| t(".admin_permissions.#{p.to_s}") }.join(', ') %></p>
     <% end %>
 
     <% if @user.puavoLocked == true %>

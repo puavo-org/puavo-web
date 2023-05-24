@@ -270,18 +270,15 @@ class UsersController < ApplicationController
       end
     end
 
-    # Extra permissions for admins (non-owners)
-    @extra_permissions_list = []
+    # What actions have been granted for this admin?
+    @admin_permissions = []
 
-    if Array(@user.puavoEduPersonAffiliation || []).include?('admin')
-      unless @user_is_owner
-        [:create_users, :delete_users].each do |action|
-          if can_schooladmin_do_this?(@user.uid, action)
-            @extra_permissions_list << action.to_s
+    unless @user_is_owner
+      if Array(@user.puavoEduPersonAffiliation || []).include?('admin')
+        User::ADMIN_PERMISSIONS.each do |permission|
+          if @user.has_admin_permission?(permission)
+            @admin_permissions << permission
           end
-        end
-        if @user.has_admin_permission(:import_users) then
-          @extra_permissions_list << 'import_users'
         end
       end
     end

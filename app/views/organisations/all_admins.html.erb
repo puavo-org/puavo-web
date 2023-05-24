@@ -4,27 +4,11 @@
 
 <p><%= t('.description') %></p>
 
-<% unless @default_permissions.empty? %>
-<div class="genericNotice">
-<p class="margin-0"><%= t('.default_permissions_title') %></p>
-
-<ul>
-  <% @default_permissions.each do |permission, state| %>
-  <li>
-    <%= t("users.show.extra_permissions.#{permission}") %>: <span class="adminPermissions_<%= state %>"><%= t(".permission_#{state}") %></span>
-  </li>
-  <% end %>
-</ul>
-
-<p class="margin-0"><%= t('.default_permissions_footer') %></p>
-</div>
-<% end %>
-
 <table class="list">
 <tr>
   <th><%= t('.name') %></th>
   <th><%= t('.schools') %></th>
-  <th><%= t('users.show.extra_permissions.title') %></th>
+  <th><%= t('users.show.admin_permissions.title') %></th>
 </tr>
 
 <% @all_admins.each do |a| %>
@@ -40,7 +24,7 @@
     <% a[:schools].each do |s| %>
       <%
       parts = []
-      parts << '<span class="adminOrOwner">' + t(".admin") + '</span>' if a[:admin_in].include?(s.id.to_i)
+      parts << '<span class="adminOrOwner">' + t('.admin') + '</span>' if a[:admin_in].include?(s.id.to_i)
       parts << t('users.show.primary_school') if s.dn == a[:pri_school]
       %>
       <li><%= link_to(s.displayName, school_path(s)) %> <%= parts.join(' ').html_safe %></li>
@@ -51,7 +35,7 @@
     <% unless a[:permissions].empty? %>
     <ul class="no-list-bullets margin-0 padding-0">
     <% a[:permissions].each do |p| %>
-      <li><%= t("users.show.extra_permissions.#{p}") %></li>
+      <li><%= t("users.show.admin_permissions.#{p}") %></li>
     <% end %>
     </ul>
     <% end %>
