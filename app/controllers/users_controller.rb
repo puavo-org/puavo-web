@@ -1053,7 +1053,6 @@ class UsersController < ApplicationController
         g = Group.find(id)
 
         next if !is_owner && !only_these.include?(g.school.dn.to_s)
-        puts "update_user_groups(): removing from group #{id} (#{g.displayName})"
         g.remove_user(user)
       end
 
@@ -1061,7 +1060,6 @@ class UsersController < ApplicationController
         g = Group.find(id)
 
         next if !is_owner && !only_these.include?(g.school.dn.to_s)
-        puts "update_user_groups(): adding to group #{id} (#{g.displayName})"
         g.add_user(user)
       end
     end
