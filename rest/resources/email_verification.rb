@@ -34,49 +34,52 @@ class EmailManagement < PuavoSinatra
     current_addresses = Array(user.email || [])
     new_addresses = Array(data['emails'])
 
-    if new_addresses.empty?
-      $rest_log.info("[#{request_id}] Clearing all email addresses")
-
-      user.email = nil
-      user.verified_email = nil
-      user.primary_email = nil
-    else
-      $rest_log.info("[#{request_id}] New email addresses are: [#{new_addresses.join(', ')}]")
-      user.email = new_addresses
-
-      # Handle verified/primary address removals. We can remove, but we will never set.
-      current_verified = Array(user.verified_email || []).to_set
-      new_verified = []
-
-      new_addresses.each do |a|
-        if current_verified.include?(a)
-          new_verified << a
-        end
-      end
-
-      if new_verified.to_set != current_verified
-        $rest_log.info("[#{request_id}] New verified addresses are: [#{new_verified.join(', ')}]")
-        user.verified_email = new_verified
-      end
-
-      if user.primary_email && !new_verified.include?(user.primary_email)
-        $rest_log.info("[#{request_id}] The current primary email address isn't verified anymore, picking the next available")
-
-        if new_verified.empty?
-          $rest_log.info("[#{request_id}] No other verified addresses left")
-          user.primary_email = nil
-        else
-          $rest_log.info("[#{request_id}] Selecting \"#{new_verified.first}\" as the new primary address")
-          user.primary_email = new_verified.first
-        end
-      end
-    end
-
     begin
-      user.save!
+      if new_addresses.empty?
+        $rest_log.info("[#{request_id}] Clearing all email addresses")
+
+        user.class.ldap_op(:modify, user.dn, [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'mail', [])])
+        user.class.ldap_op(:modify, user.dn, [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoVerifiedEmail', [])])
+        user.class.ldap_op(:modify, user.dn, [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoPrimaryEmail', [])])
+      else
+        $rest_log.info("[#{request_id}] New email addresses are: [#{new_addresses.join(', ')}]")
+        user.class.ldap_op(:modify, user.dn, [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'mail', new_addresses)])
+
+        # Handle verified/primary address removals. We can remove, but we will never set.
+        current_verified = Array(user.verified_email || []).to_set
+        new_verified = []
+
+        new_addresses.each do |a|
+          if current_verified.include?(a)
+            new_verified << a
+          end
+        end
+
+        if new_verified.to_set != current_verified
+          $rest_log.info("[#{request_id}] New verified addresses are: [#{new_verified.join(', ')}]")
+          user.class.ldap_op(:modify, user.dn, [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoVerifiedEmail', new_verified)])
+        else
+          $rest_log.info("[#{request_id}] Verified email addresses did not change")
+        end
+
+        if user.primary_email && !new_verified.include?(user.primary_email)
+          $rest_log.info("[#{request_id}] The current primary email address isn't verified anymore, picking the next available")
+
+          if new_verified.empty?
+            $rest_log.info("[#{request_id}] No other verified addresses left")
+            user.class.ldap_op(:modify, user.dn, [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoPrimaryEmail', [])])
+          else
+            $rest_log.info("[#{request_id}] Selecting \"#{new_verified.first}\" as the new primary address")
+            user.class.ldap_op(:modify, user.dn, [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoPrimaryEmail', [new_verified.first])])
+          end
+        else
+          $rest_log.info("[#{request_id}] Primary email address did not change")
+        end
+      end
     rescue StandardError => e
-      $rest_log.error("[#{request_id}] Could not save the changed user object: #{e}")
+      $rest_log.error("[#{request_id}] Could not update the email addresses: #{e}")
       status 500
+      return
     end
 
     $rest_log.info("[#{request_id}] The addresses have been updated")
@@ -186,16 +189,16 @@ class EmailManagement < PuavoSinatra
 
       # Verify the email address
       if user.verified_email.nil? || user.verified_email.empty?
-        user.verified_email = [address]
+        user.class.ldap_op(:modify, user.dn, [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoVerifiedEmail', [address])])
       else
-        user.verified_email = user.verified_email + [address]
+        user.class.ldap_op(:modify, user.dn, [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoVerifiedEmail', user.verified_email + [address])])
       end
 
       unless user.primary_email
-        user.primary_email = address
+        # Set the initial primary address
+        $rest_log.info("[#{request_id}] Setting \"#{address}\" as the primary address")
+        user.class.ldap_op(:modify, user.dn, [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoPrimaryEmail', [address])])
       end
-
-      user.save!
 
       $rest_log.info("[#{request_id}] The address has been verified")
       status 200
