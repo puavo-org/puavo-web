@@ -49,6 +49,9 @@ class User < LdapBase
      :password_change_mode
   ]
 
+  # Valid and known permissions for school admins. Used in has_admin_permission?(), for example.
+  ADMIN_PERMISSIONS = %i[create_users delete_users import_users].freeze
+
   attr_accessor(*@@extra_attributes)
 
   def self.image_size
@@ -580,8 +583,8 @@ class User < LdapBase
     db.del("user:#{self.id}")
   end
 
-  def has_admin_permission(permission)
-    Array(self.puavoAdminPermissions).include?(permission.to_s)
+  def has_admin_permission?(permission)
+    User::ADMIN_PERMISSIONS.include?(permission) && Array(self.puavoAdminPermissions).include?(permission.to_s)
   end
 
   private
