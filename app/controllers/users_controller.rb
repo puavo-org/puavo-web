@@ -488,6 +488,9 @@ class UsersController < ApplicationController
               end
             end
           end
+
+          # Clear admin permissions
+          @user.puavoAdminPermissions = nil
         end
 
         up = user_params()
