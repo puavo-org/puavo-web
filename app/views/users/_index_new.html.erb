@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <% content_for :tools do %>
 <ul>
-  <% if @permit_single_user_creation %>
+  <% if @permit_user_creation %>
   <li>
     <%= link_to new_user_path, class: 'btn' do %>
       <i class='icon-plus'></i><%= t('link.new_user')%>

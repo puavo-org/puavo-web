@@ -6,7 +6,7 @@ class NewImportController < ApplicationController
   UNIQUE_ATTRS = ['eid', 'phone', 'email'].freeze
 
   def index
-    if !is_owner? && !current_user.has_admin_permission(:import_users) then
+    unless is_owner? || current_user.has_admin_permission?(:import_users)
       flash[:alert] = t('flash.you_must_be_an_owner')
       redirect_to users_path
       return
@@ -22,11 +22,7 @@ class NewImportController < ApplicationController
       .sort { |a, b| a.created_at <=> b.created_at }
       .reverse
 
-    @can_create_users = true
-
-    unless is_owner?
-      @can_create_users = can_schooladmin_do_this?(current_user.uid, :create_users)
-    end
+    @can_create_users = is_owner? || current_user.has_admin_permission?(:create_users)
 
     respond_to do |format|
       format.html
@@ -303,11 +299,8 @@ class NewImportController < ApplicationController
       column_to_index[col] = index
     end
 
-    can_create_users = true
-
-    unless is_owner?
-      can_create_users = can_schooladmin_do_this?(current_user.uid, :create_users)
-    end
+    # Can the current user even do this?
+    can_create_users = is_owner? || current_user.has_admin_permission?(:create_users)
 
     data['rows'].each do |row|
       row_num = row[0]    # the original table row number

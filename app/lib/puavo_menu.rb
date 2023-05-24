@@ -72,7 +72,7 @@ class PuavoMenu < MetaMenu
       link { new_import_path(@school) }
       active_on NewImportController
       owners_only { false }
-      hide_when { !current_user.organisation_owner? && !current_user.has_admin_permission(:import_users) }
+      hide_when { !current_user.organisation_owner? && !current_user.has_admin_permission?(:import_users) }
     end
 
     child do

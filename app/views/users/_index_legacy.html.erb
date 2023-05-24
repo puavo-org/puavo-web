@@ -24,12 +24,14 @@
         <i class='icon-pencil'></i><%= t('link.edit') %>
       <% end %>
 
+      <% if @permit_user_deletion %>
       <% if user["puavoDoNotDelete"].to_s == "" || user["puavoDoNotDelete"] == "FALSE" %>
         <%= link_to user_path(@school, user["puavoId"]),
           data: { confirm: t('destroy_confirm', object_name: user['sn']) },
           method: :delete, class: "btn btn-danger" do%>
           <i class='icon-trash'></i><%= t('link.destroy')%>
         <% end %>
+      <% end %>
       <% end %>
     </td>
   </tr>
@@ -39,10 +41,12 @@
 
 <% content_for :tools do %>
 <ul>
+  <% if @permit_user_creation %>
   <li>
     <%= link_to new_user_path, class: 'btn' do %>
       <i class='icon-plus'></i><%= t('link.new_user')%>
     <% end %>
   </li>
+  <% end %>
 </ul>
 <% end %>

@@ -5,40 +5,6 @@ module Puavo
       LdapOrganisation.current.rest_proxy(*args)
     end
 
-    # Returns true if the specified user (in the current organisation) has any
-    # extra permissions granted for them
-    def can_schooladmin_do_this?(username, action)
-      # Default deny all unknown actions
-      return false unless [:create_users, :delete_users, :import_users].include?(action)
-
-      # The default permissions
-      defaults = {
-        'create_users' => 'allow',
-        'delete_users' => 'allow',
-        'import_users' => 'deny',
-      }
-
-      # Load default overrides
-      permissions = Puavo::Organisation.find(LdapOrganisation.current.cn).
-                      value_by_key('schooladmin_permissions')
-
-      permissions = {} unless permissions
-
-      defaults.merge!(permissions.fetch('defaults', {}))
-
-      # Apply per-user exceptions
-      this_user = permissions.fetch('by_username', {}).fetch(username, {}) || {}
-
-      if this_user.include?('all')
-        return true if this_user['all'] == 'allow'
-        return false if this_user['all'] == 'deny'
-      end
-
-      final = defaults.merge(this_user)
-
-      return final.fetch(action.to_s, 'allow') == 'allow'
-    end
-
     def supertable_sorting_locale
       # It's probably not a good idea to use Finnish collation by default in the long run,
       # but at the time I'm making this commit, "fi-FI" is the default and all others are

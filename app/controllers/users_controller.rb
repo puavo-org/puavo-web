@@ -64,6 +64,11 @@ class UsersController < ApplicationController
       end
     end
 
+    # These have to be set, because there are tests for the admin rights
+    @is_owner = is_owner?
+    @permit_user_creation = @is_owner || current_user.has_admin_permission?(:create_users)
+    @permit_user_deletion = @is_owner || current_user.has_admin_permission?(:delete_users)
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @users }
@@ -74,14 +79,8 @@ class UsersController < ApplicationController
   # New AJAX-based index for non-test environments
   def new_cool_users_index
     @is_owner = is_owner?
-
-    @permit_single_user_deletion = true
-    @permit_single_user_creation = true
-
-    unless @is_owner
-      @permit_single_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
-      @permit_single_user_creation = can_schooladmin_do_this?(current_user.uid, :create_users)
-    end
+    @permit_user_creation = @is_owner || current_user.has_admin_permission?(:create_users)
+    @permit_user_deletion = @is_owner || current_user.has_admin_permission?(:delete_users)
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
@@ -253,18 +252,9 @@ class UsersController < ApplicationController
       data[:groups].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
 
-    @permit_user_deletion = false
-
     @own_page = current_user.id == @user.id
 
-    if @viewer_is_an_owner
-      # Owners can always delete users
-      @permit_user_deletion = true
-    else
-      # This user is not an owner, but they *have* to be a school admin, because only owners
-      # and school admins can log in. See if they've been granted any extra permissions.
-      @permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
-    end
+    @permit_user_deletion = @viewer_is_an_owner || current_user.has_admin_permission?(:delete_users)
 
     # External data fields
     @mpass_materials_charge = nil
@@ -336,12 +326,10 @@ class UsersController < ApplicationController
   # GET /:school_id/users/new
   # GET /:school_id/users/new.xml
   def new
-    unless is_owner?
-      unless can_schooladmin_do_this?(current_user.uid, :create_users)
-        flash[:alert] = t('flash.you_must_be_an_owner')
-        redirect_to users_path
-        return
-      end
+    unless is_owner? || current_user.has_admin_permission?(:create_users)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to users_path
+      return
     end
 
     @user = User.new
@@ -380,6 +368,12 @@ class UsersController < ApplicationController
   # POST /:school_id/users
   # POST /:school_id/users.xml
   def create
+    unless is_owner? || current_user.has_admin_permission?(:create_users)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to users_path
+      return
+    end
+
     @user = User.new(user_params)
     @groups = @school.groups
 
@@ -538,18 +532,7 @@ class UsersController < ApplicationController
   def destroy
     # Can't use redirected_nonowner_user? here because we must allow school admins
     # to get here too if it has been explicitly allowed
-    permit_user_deletion = false
-
-    if is_owner?
-      # Owners can always delete users
-      permit_user_deletion = true
-    else
-      # This user is not an owner, but they *have* to be a school admin, because only owners
-      # and school admins can log in. See if they've been granted any extra permissions.
-      permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
-    end
-
-    unless permit_user_deletion
+    unless is_owner? || current_user.has_admin_permission?(:delete_users)
       flash[:alert] = t('flash.you_must_be_an_owner')
       redirect_to schools_path
       return
