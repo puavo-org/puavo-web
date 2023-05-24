@@ -107,6 +107,8 @@ Rails.application.routes.draw do
       match 'users/:id/mark_user_for_deletion' => 'users#mark_for_deletion', :as => :mark_user_for_deletion, :via => :get
       match 'users/:id/unmark_user_for_deletion' => 'users#unmark_for_deletion', :as => :unmark_user_for_deletion, :via => :get
       match 'users/:id/prevent_deletion' => 'users#prevent_deletion', :as => :prevent_deletion, :via => :get
+      match 'users/:id/edit_admin_permissions' => 'users#edit_admin_permissions', :as => :edit_admin_permissions, :via => :get
+      match 'users/:id/save_admin_permissions' => 'users#save_admin_permissions', :as => :save_admin_permissions, :via => :post
 
       get 'users/:id/reset_sso_session' => 'users#reset_sso_session', :as => :reset_sso_session
 

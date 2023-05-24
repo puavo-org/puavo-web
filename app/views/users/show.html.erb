@@ -222,6 +222,16 @@
       <% end %>
       <% end %>
 
+      <% if current_user.organisation_owner? && Array(@user.puavoEduPersonAffiliation || []).include?('admin') %>
+      <ul>
+        <li class="ownersOnly">
+          <%= link_to edit_admin_permissions_path(@school, @user) do %>
+            <i class='icon-sliders'></i><%= t('.edit_admin_permissions') %>
+          <% end %>
+        </li>
+      </ul>
+      <% end %>
+
       <% if @have_sso_sessions %>
       <ul>
         <li class="ownersOnly">

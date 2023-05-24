@@ -822,6 +822,54 @@ class UsersController < ApplicationController
     redirect_to user_path(params["school_id"], user.id)
   end
 
+  # GET /:school_id/users/:id/edit_admin_permissions
+  def edit_admin_permissions
+    @user = User.find(params[:id])
+
+    unless is_owner?
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to(user_path(@school, @user))
+      return
+    end
+
+    # Prevent direct URL manipulation
+    unless Array(@user.puavoEduPersonAffiliation).include?('admin')
+      flash[:alert] = t('flash.user.not_an_admin')
+      redirect_to(user_path(@school, @user))
+      return
+    end
+
+    @current_permissions = Array(@user.puavoAdminPermissions).to_set.freeze
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # POST /:school_id/users/:id/edit_admin_permissions
+  def save_admin_permissions
+    @user = User.find(params[:id])
+
+    begin
+      unless is_owner?
+        flash[:alert] = t('flash.you_must_be_an_owner')
+      else
+        # Ensure no incorrect permissions can get through
+        permissions = params.fetch('permissions', []).dup
+
+        @user.puavoAdminPermissions = permissions.select { |p| User::ADMIN_PERMISSIONS.include?(p.to_sym) }
+        @user.save!
+
+        flash[:notice] = t('flash.user.admin_permissions_updated')
+      end
+    rescue StandardError => e
+      logger.error("Failed to save the admin permissions: #{e}")
+      flash[:alert] = t('flash.save_failed')
+    end
+
+    redirect_to(user_path(@school, @user))
+  end
+
   def lock
     @user = User.find(params[:id])
 
