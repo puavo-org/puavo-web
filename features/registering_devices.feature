@@ -34,20 +34,20 @@ Feature: Devices registration
     Then I should see the following output from process "puavo-register":
     """
     Device type selection:
-    1. Thinclient
-    2. Fatclient
-    3. Laptop
-    4. Workstation
+    1. Boot server
+    2. Digital signage
+    3. Fatclient
+    4. Laptop
     5. LTSP server
-    6. Boot server
-    7. Netstand
-    8. Digital signage
-    9. Printer
-    10. Wireless access point
-    11. Projector
+    6. Netstand
+    7. Other
+    8. Printer
+    9. Projector
+    10. Switch (network)
+    11. Thinclient
     12. Webcam
-    13. Switch (network)
-    14. Other
+    13. Wireless access point
+    14. Workstation
     """
     When I enter "Thinclient" into process "puavo-register"
     Then I should see the following output from process "puavo-register":

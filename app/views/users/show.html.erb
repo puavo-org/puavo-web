@@ -20,9 +20,9 @@
     <% end %>
     <% end %>
 
-    <% if @extra_permissions_list && !@extra_permissions_list.empty? %>
-    <p class="infoTitle infoNotice"><%= t('.extra_permissions.title') %></p>
-    <p class="infoValue infoNotice"><%= @extra_permissions_list.map{ |p| t(".extra_permissions.#{p}") }.join(', ') %></p>
+    <% unless @admin_permissions.empty? %>
+    <p class="infoTitle infoNotice"><%= t('.admin_permissions.title') %></p>
+    <p class="infoValue infoNotice"><%= @admin_permissions.collect { |p| t(".admin_permissions.#{p.to_s}") }.join(', ') %></p>
     <% end %>
 
     <% if @user.puavoLocked == true %>
@@ -240,6 +240,16 @@
         </li>
       </ul>
       <% end %>
+      <% end %>
+
+      <% if current_user.organisation_owner? && Array(@user.puavoEduPersonAffiliation || []).include?('admin') %>
+      <ul>
+        <li class="ownersOnly">
+          <%= link_to edit_admin_permissions_path(@school, @user) do %>
+            <i class='icon-sliders'></i><%= t('.edit_admin_permissions') %>
+          <% end %>
+        </li>
+      </ul>
       <% end %>
 
       <% if @have_sso_sessions %>

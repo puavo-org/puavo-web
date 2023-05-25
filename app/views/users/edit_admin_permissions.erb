@@ -1,0 +1,16 @@
+<% page_title t('titles.schools'), @user.primary_school.displayName, t('titles.users'), @user.displayName, t('.title') %>
+
+<h1><%= t('.header', name: link_to(@user.displayName, './')).html_safe %></h1>
+
+<%= form_for(@user, url: save_admin_permissions_path, html: { method: :post })  do |f| %>
+  <ul class="no-list-bullets margin-0 padding-0">
+  <% User::ADMIN_PERMISSIONS.each do |permission| %>
+    <li><label><input type="checkbox" name="permissions[]" id="<%= permission.to_s %>" value="<%= permission.to_s %>" <%= @current_permissions.include?(permission.to_s) ? 'checked' : '' %>><%= t(".permissions.#{permission.to_s}") %></label></li>
+  <% end %>
+  </ul>
+
+  <div class="flex-cols gap-10px margin-top-10px">
+    <%= f.submit t('link.update'), class: 'btn' %>
+    <div class="cancel"><%=link_to t('link.cancel'), user_path(@school, @user), class: 'btn' %></div>
+  </div>
+<% end %>

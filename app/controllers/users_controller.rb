@@ -64,6 +64,11 @@ class UsersController < ApplicationController
       end
     end
 
+    # These have to be set, because there are tests for the admin rights
+    @is_owner = is_owner?
+    @permit_user_creation = @is_owner || current_user.has_admin_permission?(:create_users)
+    @permit_user_deletion = @is_owner || current_user.has_admin_permission?(:delete_users)
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @users }
@@ -74,14 +79,8 @@ class UsersController < ApplicationController
   # New AJAX-based index for non-test environments
   def new_cool_users_index
     @is_owner = is_owner?
-
-    @permit_single_user_deletion = true
-    @permit_single_user_creation = true
-
-    unless @is_owner
-      @permit_single_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
-      @permit_single_user_creation = can_schooladmin_do_this?(current_user.uid, :create_users)
-    end
+    @permit_user_creation = @is_owner || current_user.has_admin_permission?(:create_users)
+    @permit_user_deletion = @is_owner || current_user.has_admin_permission?(:delete_users)
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
@@ -253,18 +252,9 @@ class UsersController < ApplicationController
       data[:groups].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
 
-    @permit_user_deletion = false
-
     @own_page = current_user.id == @user.id
 
-    if @viewer_is_an_owner
-      # Owners can always delete users
-      @permit_user_deletion = true
-    else
-      # This user is not an owner, but they *have* to be a school admin, because only owners
-      # and school admins can log in. See if they've been granted any extra permissions.
-      @permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
-    end
+    @permit_user_deletion = @viewer_is_an_owner || current_user.has_admin_permission?(:delete_users)
 
     # External data fields
     @mpass_materials_charge = nil
@@ -280,14 +270,14 @@ class UsersController < ApplicationController
       end
     end
 
-    # Extra permissions for admins (non-owners)
-    @extra_permissions_list = []
+    # What actions have been granted for this admin?
+    @admin_permissions = []
 
-    if Array(@user.puavoEduPersonAffiliation || []).include?('admin')
-      unless @user_is_owner
-        [:create_users, :delete_users, :import_users].each do |action|
-          if can_schooladmin_do_this?(@user.uid, action)
-            @extra_permissions_list << action.to_s
+    unless @user_is_owner
+      if Array(@user.puavoEduPersonAffiliation || []).include?('admin')
+        User::ADMIN_PERMISSIONS.each do |permission|
+          if @user.has_admin_permission?(permission)
+            @admin_permissions << permission
           end
         end
       end
@@ -346,12 +336,10 @@ class UsersController < ApplicationController
   # GET /:school_id/users/new
   # GET /:school_id/users/new.xml
   def new
-    unless is_owner?
-      unless can_schooladmin_do_this?(current_user.uid, :create_users)
-        flash[:alert] = t('flash.you_must_be_an_owner')
-        redirect_to users_path
-        return
-      end
+    unless is_owner? || current_user.has_admin_permission?(:create_users)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to users_path
+      return
     end
 
     @user = User.new
@@ -390,6 +378,12 @@ class UsersController < ApplicationController
   # POST /:school_id/users
   # POST /:school_id/users.xml
   def create
+    unless is_owner? || current_user.has_admin_permission?(:create_users)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to users_path
+      return
+    end
+
     @user = User.new(user_params)
     @groups = @school.groups
 
@@ -507,6 +501,9 @@ class UsersController < ApplicationController
               end
             end
           end
+
+          # Clear admin permissions
+          @user.puavoAdminPermissions = nil
         end
 
         up = user_params()
@@ -563,18 +560,7 @@ class UsersController < ApplicationController
   def destroy
     # Can't use redirected_nonowner_user? here because we must allow school admins
     # to get here too if it has been explicitly allowed
-    permit_user_deletion = false
-
-    if is_owner?
-      # Owners can always delete users
-      permit_user_deletion = true
-    else
-      # This user is not an owner, but they *have* to be a school admin, because only owners
-      # and school admins can log in. See if they've been granted any extra permissions.
-      permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
-    end
-
-    unless permit_user_deletion
+    unless is_owner? || current_user.has_admin_permission?(:delete_users)
       flash[:alert] = t('flash.you_must_be_an_owner')
       redirect_to schools_path
       return
@@ -867,6 +853,54 @@ class UsersController < ApplicationController
     redirect_to user_path(params["school_id"], user.id)
   end
 
+  # GET /:school_id/users/:id/edit_admin_permissions
+  def edit_admin_permissions
+    @user = User.find(params[:id])
+
+    unless is_owner?
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to(user_path(@school, @user))
+      return
+    end
+
+    # Prevent direct URL manipulation
+    unless Array(@user.puavoEduPersonAffiliation).include?('admin')
+      flash[:alert] = t('flash.user.not_an_admin')
+      redirect_to(user_path(@school, @user))
+      return
+    end
+
+    @current_permissions = Array(@user.puavoAdminPermissions).to_set.freeze
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # POST /:school_id/users/:id/edit_admin_permissions
+  def save_admin_permissions
+    @user = User.find(params[:id])
+
+    begin
+      unless is_owner?
+        flash[:alert] = t('flash.you_must_be_an_owner')
+      else
+        # Ensure no incorrect permissions can get through
+        permissions = params.fetch('permissions', []).dup
+
+        @user.puavoAdminPermissions = permissions.select { |p| User::ADMIN_PERMISSIONS.include?(p.to_sym) }
+        @user.save!
+
+        flash[:notice] = t('flash.user.admin_permissions_updated')
+      end
+    rescue StandardError => e
+      logger.error("Failed to save the admin permissions: #{e}")
+      flash[:alert] = t('flash.save_failed')
+    end
+
+    redirect_to(user_path(@school, @user))
+  end
+
   def lock
     @user = User.find(params[:id])
 
@@ -1047,7 +1081,6 @@ class UsersController < ApplicationController
         g = Group.find(id)
 
         next if !is_owner && !only_these.include?(g.school.dn.to_s)
-        puts "update_user_groups(): removing from group #{id} (#{g.displayName})"
         g.remove_user(user)
       end
 
@@ -1055,7 +1088,6 @@ class UsersController < ApplicationController
         g = Group.find(id)
 
         next if !is_owner && !only_these.include?(g.school.dn.to_s)
-        puts "update_user_groups(): adding to group #{id} (#{g.displayName})"
         g.add_user(user)
       end
     end

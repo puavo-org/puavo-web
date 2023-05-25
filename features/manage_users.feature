@@ -40,23 +40,6 @@ Feature: Manage users
     And I should not see "Mark for deletion"
     And I should not see "Delete user"
 
-  Scenario: Create new user by staff
-    Given I follow "Logout"
-    And I am logged in as "pavel" with password "secret"
-    When I am on the new user page
-    Then I should not see "SSH public key"
-    When I fill in the following:
-    | Surname    | Doe      |
-    | Given name | Jane     |
-    | Username   | jane.doe |
-    And I check "Student"
-    And I select group "Class 4"
-    And I press "Create"
-    Then I should see "jane.doe"
-    And I should see "Jane"
-    And I should see "Doe"
-    And I should not see "SSH public key"
-
   Scenario: Create new user
     Given the following groups:
     | displayName | cn      |

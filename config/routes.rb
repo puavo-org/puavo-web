@@ -107,6 +107,8 @@ Rails.application.routes.draw do
       match 'users/:id/mark_user_for_deletion' => 'users#mark_for_deletion', :as => :mark_user_for_deletion, :via => :get
       match 'users/:id/unmark_user_for_deletion' => 'users#unmark_for_deletion', :as => :unmark_user_for_deletion, :via => :get
       match 'users/:id/prevent_deletion' => 'users#prevent_deletion', :as => :prevent_deletion, :via => :get
+      match 'users/:id/edit_admin_permissions' => 'users#edit_admin_permissions', :as => :edit_admin_permissions, :via => :get
+      match 'users/:id/save_admin_permissions' => 'users#save_admin_permissions', :as => :save_admin_permissions, :via => :post
 
       get 'users/:id/reset_sso_session' => 'users#reset_sso_session', :as => :reset_sso_session
 
@@ -120,14 +122,14 @@ Rails.application.routes.draw do
       get 'get_school_users_list' => 'users#get_school_users_list'
 
       get 'new_import' => 'new_import#index'
-      get 'new_import/reload_groups' => 'new_import#reload_groups'
-      post 'new_import/get_current_users' => 'new_import#get_current_users'
-      post 'new_import/find_existing_users' => 'new_import#find_existing_users'
       get 'new_import/duplicate_detection' => 'new_import#duplicate_detection'
       get 'new_import/load_username_list' => 'new_import#load_username_list'
-      post 'new_import/make_username_list' => 'new_import#make_username_list'
+      get 'new_import/reload_groups' => 'new_import#reload_groups'
+      post 'new_import/find_existing_users' => 'new_import#find_existing_users'
       post 'new_import/generate_pdf' => 'new_import#generate_pdf'
+      post 'new_import/get_current_users' => 'new_import#get_current_users'
       post 'new_import/import' => 'new_import#import'
+      post 'new_import/make_username_list' => 'new_import#make_username_list'
     end
 
 

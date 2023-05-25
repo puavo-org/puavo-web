@@ -827,7 +827,7 @@ function userActions(item)
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
     if (!dnd) {
-<% if @is_owner || @permit_single_user_deletion %>
+<% if @permit_user_deletion %>
         let isAdmin = false,
             message = null;
 

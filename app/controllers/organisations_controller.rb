@@ -190,15 +190,15 @@ class OrganisationsController < ApplicationController
     return if redirected_nonowner_user?
 
     # Current organisation owners
-    @current_owners = Array(LdapOrganisation.current.owner) #.each
+    @current_owners = Array(LdapOrganisation.current.owner)
       .select { |dn| dn != 'uid=admin,o=puavo' }
       .collect { |dn| dn.to_s }
       .to_set
 
     # All admins in this organisation
     @all_admins = User.find(:all,
-                            :attribute => 'puavoEduPersonAffiliation',
-                            :value => 'admin')
+                            attribute: 'puavoEduPersonAffiliation',
+                            value: 'admin')
     .sort { |a, b| a.displayName.downcase <=> b.displayName.downcase }
     .collect do |u|
       {
@@ -210,11 +210,7 @@ class OrganisationsController < ApplicationController
       }
     end
 
-    # List default extra permission states
-    @default_permissions = (Puavo::Organisation.find(LdapOrganisation.current.cn).
-                    value_by_key('schooladmin_permissions') || {}).fetch('defaults', {})
-
-    # List schools and extra permissions
+    # List schools and extra permissions. The schools are cached, because School.find() is slow.
     schools = {}
 
     @all_admins.each do |a|
@@ -224,14 +220,14 @@ class OrganisationsController < ApplicationController
         a[:schools].push(schools[dn.to_s])
       end
 
-      # sort the schools alphabetically
+      # Sort the schools alphabetically
       a[:schools].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
 
-      # any extra permissions?
+      # Per-admin permissions
       unless @current_owners.include?(a[:user].dn.to_s)
-        [:create_users, :delete_users, :import_users].each do |p|
-          if can_schooladmin_do_this?(a[:user].uid, p)
-            a[:permissions] << p.to_s
+        User::ADMIN_PERMISSIONS.each do |permission|
+          if a[:user].has_admin_permission?(permission)
+            a[:permissions] << permission.to_s
           end
         end
       end
