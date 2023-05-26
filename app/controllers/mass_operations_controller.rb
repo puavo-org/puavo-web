@@ -49,4 +49,13 @@ class MassOperationsController < ApplicationController
       request_id: @request_id
     }
   end
+
+  # Operation return value builders
+  def success(message: nil, data: nil)
+    [true, message, data]
+  end
+
+  def fail(message: nil, data: nil)
+    [false, message, data]
+  end
 end
