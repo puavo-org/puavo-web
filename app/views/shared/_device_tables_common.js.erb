@@ -716,7 +716,6 @@ const USER_TRANSFORM_FUNCTIONS = {
     },
 
     purchase_date: function(entry) {
-        //const ts = convertTimestampDateOnly(entry.purchase_date);
         const ts = ST.convertTimestamp(entry.purchase_date, true);
 
         return [
@@ -726,7 +725,6 @@ const USER_TRANSFORM_FUNCTIONS = {
     },
 
     purchase_warranty: function(entry) {
-        //const ts = convertTimestampDateOnly(entry.purchase_warranty);
         const ts = ST.convertTimestamp(entry.purchase_warranty, true);
 
         return [
