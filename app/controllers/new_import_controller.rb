@@ -158,9 +158,7 @@ class NewImportController < ApplicationController
 
         # The user exists in some other school(s), list their names
         warn ">>> user=#{ user.inspect }"
-        ids = [
-          user[:schools].map { |sid| schoolnames_by_id.fetch(sid, '???') }
-        ]
+        ids = user[:schools].map { |sid| schoolnames_by_id.fetch(sid, '???') }
         response[:states] << [2, ids]
       end
 
