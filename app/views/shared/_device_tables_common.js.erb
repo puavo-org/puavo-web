@@ -957,7 +957,6 @@ const FILTER_PRESETS = [
     }
 ];
 
-<% unless @is_servers %>
 // Mass operation: set database field value
 class MassDeviceSetFieldValue extends ST.MassOperation {
     constructor(parent, container)
@@ -974,12 +973,15 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
             { title: "<%= t('devices.index.mass_operations.set_field.manufacturer') %>", key: "manufacturer", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.model') %>", key: "model", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.serial') %>", key: "serial", type: "s" },
+<% unless @is_servers %>
             { title: "<%= t('devices.index.mass_operations.set_field.primary_user') %>", key: "primary_user", type: "s" },
+<% end %>
             { title: "<%= t('devices.index.mass_operations.set_field.description') %>", key: "description", type: "ms" },
             { title: "<%= t('devices.index.mass_operations.set_field.status') %>", key: "status", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.location') %>", key: "location", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.latitude') %>", key: "latitude", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.longitude') %>", key: "longitude", type: "s" },
+<% unless @is_servers %>
             { title: "<%= t('devices.index.mass_operations.set_field.allow_guest') %>", key: "allow_guest", type: "tfd" },
             { title: "<%= t('devices.index.mass_operations.set_field.automatic_updates') %>", key: "automatic_updates", type: "tfd" },
             { title: "<%= t('devices.index.mass_operations.set_field.personal_device') %>", key: "personal_device", type: "tfd" },
@@ -987,6 +989,7 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
             { title: "<%= t('devices.index.mass_operations.set_field.automatic_poweroff') %>", key: "automatic_poweroff", type: "autopoweroff" },
             { title: "<%= t('devices.index.mass_operations.set_field.daytime_start') %>", key: "day_start", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.daytime_end') %>", key: "day_end", type: "s" },
+<% end %>
             { title: "<%= t('devices.index.mass_operations.set_field.audio_source') %>", key: "audio_source", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.audio_sink') %>", key: "audio_sink", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.printer_uri') %>", key: "printer_uri", type: "s" },
@@ -1186,6 +1189,7 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
     }
 };
 
+<% unless @is_servers %>
 // Mass operation: edit purchase and warranty information
 class MassDevicePurchaseInfo extends ST.MassOperation {
     constructor(parent, container)
@@ -1371,6 +1375,7 @@ class MassDevicePurchaseInfo extends ST.MassOperation {
         };
     }
 };
+<% end %>
 
 // Mass operation: puavo-conf editing. Not as pretty as the interactive puavo-conf editor, but I can't cram it in this space.
 // Or maybe I can? Who knows...
@@ -1460,6 +1465,7 @@ class MassDevicePuavoconfEditor extends ST.MassOperation {
     }
 };
 
+<% unless @is_servers %>
 // Mass tool: move device to another school
 class MassDeviceChangeSchool extends ST.MassOperation {
     constructor(parent, container)
@@ -1542,7 +1548,6 @@ class MassDeviceChangeSchool extends ST.MassOperation {
     }
 };
 
-<% unless @is_servers %>
 // Mass operation: set or clear the reset mode
 class MassDeviceReset extends ST.MassOperation {
     constructor(parent, container)
@@ -1605,7 +1610,6 @@ class MassDeviceReset extends ST.MassOperation {
         return { state: "ready" };
     }
 };
-<% end %>
 
 // Mass operation: delete device
 class MassDeviceDeletion extends ST.MassOperation {
@@ -1619,6 +1623,7 @@ class MassDeviceDeletion extends ST.MassOperation {
         return { state: "ready" };
     }
 };
+<% end %>
 
 const MASS_OPERATIONS = [
     {
@@ -1627,40 +1632,40 @@ const MASS_OPERATIONS = [
         haveSettings: true,
         cls: MassDeviceSetFieldValue
     },
+<% unless @is_servers %>
     {
         operation: "purchase_info",
         title: "<%= t('devices.index.mass_operations.purchase_info.title') %>",
         haveSettings: true,
         cls: MassDevicePurchaseInfo
     },
+<% end %>
     {
         operation: "puavoconf_edit",
         title: "<%= t('devices.index.mass_operations.puavoconf.title') %>",
         haveSettings: true,
         cls: MassDevicePuavoconfEditor
     },
+<% unless @is_servers %>
     {
         operation: "change_school",
         title: "<%= t('devices.index.mass_operations.change_school.title') %>",
         haveSettings: true,
         cls: MassDeviceChangeSchool
     },
-<% unless @is_servers %>
     {
         operation: "reset",
         title: "<%= t('devices.index.mass_operations.reset.title') %>",
         haveSettings: true,
         cls: MassDeviceReset
     },
-<% end %>
     {
         operation: "delete",
         title: "<%= t('devices.index.mass_operations.delete.title') %>",
         cls: MassDeviceDeletion
     },
-];
-
 <% end %>
+];
 
 function userActions(item)
 {
