@@ -2127,6 +2127,7 @@ fi:
     show:
       partially_failed_code: "Kaikkia tietojasi ei voitu tallentaa. Näiden tietojen tallennus epäonnistui: %{failed}. Voit yrittää uudelleen. Jos otat yhteyttä Opinsysin tekniseen tukeen, anna heille tämä koodi: \"%{request_id}\"."
       updated: "Omat tietosi on päivitetty"
+      go_back: "Takaisin omien tietojen muokkaukseen"
 
   # Email address verification
   email_verifications:

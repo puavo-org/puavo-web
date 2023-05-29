@@ -2085,7 +2085,7 @@ en:
   # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:
     edit:
-      title: "Your Profile"
+      title: "Your Information"
 
       emails:
         automatic_notice: "Automatic email addresses are enabled in your organisation. You can't edit the address, but you can verify it if it hasn't been verified yet."
@@ -2126,7 +2126,8 @@ en:
       photo_save: "profile image save"
     show:
       partially_failed_code: "Not all of your information could be saved. The following items failed: %{failed}. You can try again. If you contact Opinsys technical support, please give them this code: \"%{request_id}\"."
-      updated: "Your profile has been successfully updated"
+      updated: "Your information has been successfully updated"
+      go_back: "Return to your information editing"
 
   # Email address verification
   email_verifications:
