@@ -352,6 +352,20 @@ emailsContainer.querySelector("div#newRow input").addEventListener("input", onCh
 emailsContainer.querySelector("div#newRow button").addEventListener("click", onAddNewAddress);
 onChangeNewAddress();
 updateMailsValue();
+
+document.addEventListener("keydown", e => {
+    if (e.keyCode == 13) {
+        if (document.activeElement == emailsContainer.querySelector("div#newRow input")) {
+            // Insert the new address on the list
+            document.querySelector("div#newRow button").click();
+        }
+
+        // Do not submit the form if Enter is pressed
+        e.preventDefault();
+        return false;
+    }
+});
+
 <% end %>
 </script>
 <% end %>
