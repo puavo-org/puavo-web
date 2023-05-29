@@ -431,6 +431,7 @@ module DevicesHelper
 
       # Windows license info (boolean exists/does not exist)
       out[:windows_license] = info.include?('windows_license') && !info['windows_license'].nil?
+      out[:windows_installed] = info.fetch('windows', {}).fetch('is_installed', false)
 
       out[:lspci] = info['lspci_values']
 

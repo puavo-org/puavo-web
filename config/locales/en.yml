@@ -291,6 +291,7 @@ en:
       df_imageoverlays: "Free /imageoverlays (MiB)"
       have_smart: "SMART infos?"
       has_windows_license: "Has Windows license"
+      windows_installed: "Windows installed?"
       purchase_date: "Purchase date"
       purchase_warranty: "Warranty ends"
       purchase_loc: "Purchase location"

@@ -291,6 +291,7 @@ fi:
       df_imageoverlays: "Vapaana /imageoverlays (MiB)"
       have_smart: "SMART-tiedot?"
       has_windows_license: "Windows-lisenssi"
+      windows_installed: "Windows asennettu?"
       purchase_date: "Hankintapäivä"
       purchase_warranty: "Takuu päättyy"
       purchase_loc: "Hankintapaikka"
