@@ -46,7 +46,7 @@ class ProfilesController < ApplicationController
       end
 
       # You need rate limits every time you deal with emails
-      redis_ratelimit = Redis::Namespace.new('puavo:email_verification:tokens', redis: REDIS_CONNECTION)
+      redis_ratelimit = Redis::Namespace.new('puavo:email_verification:ratelimit', redis: REDIS_CONNECTION)
 
       if redis_ratelimit.get(current_user.puavoId.to_s)
         logger.info("[#{request_id}] A rate-limit flag is active for user #{current_user.puavoId}, stopping here")
