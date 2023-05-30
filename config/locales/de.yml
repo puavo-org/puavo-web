@@ -113,11 +113,58 @@ de:
   profiles:
     edit:
       title: "Eigene Information"
+
+      emails:
+        automatic_notice: "In Ihre Organisation werden automatische E-Mail-Adressen eingesetzt. Sie können die Adresse nicht verändern, aber Sie können die bestätigen, falls dies noch nicht gemacht worden ist."
+        help: "Sie können sich eine oder mehrere Adressen geben. Wenn Sie die Adresse gespeichert haben, können Sie zurück zu diesem Formular zurückkehren und eine Bestätigungs-E-Mail schicken um zu beweisen, dass die Adresse in Ihrem Gebrauch ist. Einige Dienstleistungen erfordern mindestens eine bestätigte E-Mail-Adresse. Die erste bestätigte E-Mail wird die <strong>Hauptadresse</strong>. Diese wird später in der Kommunikation verwendet, sowie in Stellen wo nur eine Adresse geliefert werden kann."
+        verified_address: "Bestätigt"
+        primary_address: "Hauptadresse"
+        verify_button: "Bestätigungs-E-Mail schicken"
+        verify_title: "Bestätigungs-E-Mail an diese Adresse schicken. Die Nachricht enthält einen Link, den Sie öffnen müssen."
+        verification_sent: "Bestätigungs-E-Mail geschickt"
+        delete_button: "Entfernen"
+        delete_title: "Diese Adresse entfernen, wenn diese Seite gespeichert wird."
+        undo_deletion_button: "Entfernung rückgängig machen"
+        undo_deletion_title: "Diese Adresse nicht entfernen"
+        new_placeholder: "Die neue Adresse hier eingeben."
+        new_button: "Hinzufügen"
+        new_title: "Die neue Adresse in die Tabelle eingeben. Bitte speichern Sie das Formular!"
+
+        errors:
+          invalid: "Die Adresse gilt nicht"
+          already_in_use: "Diese Adresse wird schon von Ihnen verwendet."
+          unknown: "Unbekannter Fehler"
+          already_verified: "Diese Adresse ist schon bestätigt worden."
+          verification_not_sent: "Bestätigungs-E-Mail konnte nicht geschickt werden. Bitte neu versuchen.\n\nFalls Sie mit dem Helpdesk kontakt aufnehmen bitte diesen Kode weitergeben.: %{code}."
+          verification_rate_limit: "Bitte eine Minute zwischen den Bestätigungswünschen warten."
+
+        delete:
+          base: "Sind Sie sicher, dass Sie die Adresse {address} entfernen wollen?"
+          verified_primary: "Die Adresse ist bestätigt und ist jetzt die Hauptadresse!"
+          verified: "Die Adresse ist bestätigt."
+          breakage: "Wenn Sie keine andere bestätigte E-Mail-Adressen haben, manche Log-Ins können scheitern bis Sie eine andere Adresse bestätigen!"
+
+      remove_photo_on_save: "Das Bild beim speichern entfernen."
+
+    failed:
+      email: "Speicherung der Veränderungen der E-Mail-Adressen"
+      phone: "Einstellung der Telefonnummer"
+      locale: "Einstellung der Sprache"
+      photo_save: "Speicherung des Profilbildes"
     show:
-      photo_failed: "Das Speichern vom Profilbild ist leider schief gelaufen. Bitte kontrollieren, dass Sie eine funktionierende Bilddatei gewählt haben, und wieder versuchen."
-      save_failed: "Das Speichern von Ihren Informationen ist leider schief gelaufen. Bitte wieder versuchen, und wenn das Problem weiterhin besteht, Opinsys Support kontaktieren."
-      save_failed_code: "Das Speichern von Ihren Informationen ist leider schief gelaufen. Bitte wieder versuchen, und wenn das Problem weiterhin besteht, Opinsys Support kontaktieren und diesen Kode abgeben: \"%{request_id}\"."
+      partially_failed_code: "Alle von Ihnen angegebenen Angaben konnten nicht gespeichert werden. Die Speicherung der folgenden Daten war nicht erfolgreich: %{failed}. Sie können neu versuchen. Falls Sie sich mit dem Helpdesk Kontakt aufnehmen, bitte den folgenden Kode angeben: \"%{request_id}\"."
       updated: "Ihren Informationen sind erfolgreich aktualisiert."
+      go_back: "Zurück zur Veränderung der eigenen Daten"
+
+  # Email address verification
+  email_verifications:
+    title: "E-Mail-Adresse bestätigen"
+    expired_token: "Dieser Link ist fehlaktig oder veraltet. Bitte bitten Sie eine neue Bestätigungsnachricht durch Veränderung des Profils. Wenn Sie sich mit dem Helpdesk Kontakt aufnehmen wollen bitte den folgenden Kode wiedergeben: %{code}."
+    verification_failed: "Die Adresse konnte wegen eines internen Fehlers nicht verifiziert werden. Bitte mit dem Helpdesk Kontakt aufnehmen und diesen Kode wiedergeben:  %{code}."
+    verification_complete: "Die Adresse ist bestätigt. Sie können dieses Fenster oder diesen Tab schließen."
+    verify_message1: "Durch klicken von diesem Knopf bestätigen Sie, dass die Adresse"
+    verify_message2: " funktionierend ist,  und Sie haben dazu einen Zugang. Wenn Sie die Adresse nicht bestätigen wollen, bitte das Fenster oder den Tab schließen. "
+    verify_button: "Diese Adresse bestätigen"
 
   users:
     edit:
