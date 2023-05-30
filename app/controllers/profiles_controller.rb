@@ -67,6 +67,7 @@ class ProfilesController < ApplicationController
         .headers(host: LdapOrganisation.current.puavoDomain)
         .post(verify_url, json: {
           request_id: request_id,
+          first_name: current_user.givenName,
           username: current_user.uid,
           dn: current_user.dn.to_s,
           email: address,

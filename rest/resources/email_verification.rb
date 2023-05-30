@@ -131,7 +131,7 @@ class EmailManagement < PuavoSinatra
     $rest_log.info("[#{request_id}] The full verification URL is \"#{url}\"")
 
     # Format and send the verification email
-    @first_name = user.first_name
+    @first_name = data['first_name']
     @email_verify_url = url
 
     # Bypass the R18n's current language and use the language used in the form. I spent two hours
