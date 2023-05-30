@@ -1,13 +1,33 @@
 class EmailVerificationsController < ApplicationController
   include Puavo::Integrations
 
-  skip_before_action :require_puavo_authorization
+  # I don't know 100% if this works:
+  skip_before_action :find_school, :require_login, :require_puavo_authorization
+
+  # Method stolen from password_controller.rb, then modified a bit
+  def set_ldap_connection(req_host)
+    # Make the password forms work on staging servers
+    if req_host.start_with?('staging-')
+      req_host.remove!('staging-')
+    end
+
+    organisation_key = Puavo::Organisation.key_by_host(req_host)
+
+    unless organisation_key
+      organisation_key = Puavo::Organisation.key_by_host("*")
+    end
+
+    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+    organisation = Puavo::Organisation.find(organisation_key)
+    host = organisation.ldap_host
+    base = organisation.ldap_base
+    dn =  default_ldap_configuration["bind_dn"]
+    password = default_ldap_configuration["password"]
+    LdapBase.ldap_setup_connection(host, base, dn, password)
+  end
 
   # GET /email_verification/:token
   def edit
-    @organisation = LdapOrganisation.current.cn
-    @user = current_user    # needed by the form constructor
-
     @request_id = generate_synchronous_call_id()
     @token = params['token']
     @invalid_token = false
@@ -24,12 +44,10 @@ class EmailVerificationsController < ApplicationController
       begin
         @data = JSON.parse(@data)
 
-        # Verify the logged-in user is still the same whose data we stored earlier
-        if @data['dn'] != @user.dn.to_s
-          logger.error("[#{@request_id}] ERROR: DN mismatch between the stored data in Redis and the current user (the current logged-in user is not the same who created the request?)")
-          logger.error("[#{@request_id}] Raw token data: #{@data.inspect}")
-          logger.error("[#{@request_id}] Current user DN: #{current_user.dn.to_s}")
-          @invalid_token = true
+        if @data
+          # If the token isn't valid, we only display an error message
+          set_ldap_connection(@data['organisation'])
+          @organisation = LdapOrganisation.first
         end
       rescue StandardError => e
         logger.error("[#{@request_id}] ERROR: Cannot parse the stored data: #{e}")

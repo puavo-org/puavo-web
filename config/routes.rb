@@ -203,7 +203,7 @@ Rails.application.routes.draw do
     post 'profile/send_verification_email' => 'profiles#send_verification_email', :as => :profile_send_verification_email
 
     get('email_verification/:token', to: 'email_verifications#edit', as: :email_verification, constraints: { token: /[0-9a-fA-F]{128}/ })
-    put('email_verification/:token', to: 'email_verifications#update', as: :email_verification_update, constraints: { token: /[0-9a-fA-F]{128}/ })
+    post('email_verification/:token', to: 'email_verifications#update', as: :email_verification_update, constraints: { token: /[0-9a-fA-F]{128}/ })
     get 'email_verification/complete' => 'email_verifications#complete', :as => :email_verification_completed
 
   end
