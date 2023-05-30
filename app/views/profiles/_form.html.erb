@@ -94,6 +94,7 @@ const emailsContainer = document.querySelector("div#emails");
 let emails = <%= raw Array(@user.mail || []).to_json %>,
     verified = new Set(<%= raw Array(@user.puavoVerifiedEmail || []).to_json %>),
     primary = <% if @user.puavoPrimaryEmail.nil? %>null<% else %>"<%= @user.puavoPrimaryEmail %>"<% end %>,
+    inProgress = new Set(<%= raw Array(@in_progress || []).to_json %>),
     newlyAdded = new Set();
 
 <% unless @automatic_email_addresses %>
@@ -120,6 +121,7 @@ function buildEmailRow(address, isNew=false)
         // A new address cannot be verified until after the form has been saved
         html += "";
     } else if (verified.has(address)) {
+        // A verified address
         html += `<span>`;
         html += `<%= t('profiles.edit.emails.verified_address') %>`;
 
@@ -127,6 +129,9 @@ function buildEmailRow(address, isNew=false)
             html += `, <strong><%= t('profiles.edit.emails.primary_address') %></strong>`;
 
         html += `</span>`;
+    } else if (inProgress.has(address)) {
+        // The verification message has already been sent
+        html += "<%= t('profiles.edit.emails.verification_sent') %>";
     } else {
 <% if @have_something_to_verify %>
         html += `<button type="button" id="verify" title="<%= t('profiles.edit.emails.verify_title') %>">` +
@@ -138,8 +143,12 @@ function buildEmailRow(address, isNew=false)
 
 <% unless @automatic_email_addresses %>
     html += `<td class="deletion">`;
-    html += `<button type="button" id="delete" title="<%= t('profiles.edit.emails.delete_title') %>"><%= t('profiles.edit.emails.delete_button') %></button>`;
-    html += `<button type="button" id="undodeletion" class="hidden" title="<%= t('profiles.edit.emails.undo_deletion_title') %>"><%= t('profiles.edit.emails.undo_deletion_button') %></button>`;
+
+    if (!inProgress.has(address)) {
+        html += `<button type="button" id="delete" title="<%= t('profiles.edit.emails.delete_title') %>"><%= t('profiles.edit.emails.delete_button') %></button>`;
+        html += `<button type="button" id="undodeletion" class="hidden" title="<%= t('profiles.edit.emails.undo_deletion_title') %>"><%= t('profiles.edit.emails.undo_deletion_button') %></button>`;
+    }
+
     html += `</td>`;
 <% end %>
 
@@ -152,8 +161,8 @@ function buildEmailRow(address, isNew=false)
     row.querySelector("button#verify")?.addEventListener("click", onVerifyAddress);
 <% end %>
 <% unless @automatic_email_addresses %>
-    row.querySelector("button#delete").addEventListener("click", onDeleteAddress);
-    row.querySelector("button#undodeletion").addEventListener("click", onUndoDeleteAddress);
+    row.querySelector("button#delete")?.addEventListener("click", onDeleteAddress);
+    row.querySelector("button#undodeletion")?.addEventListener("click", onUndoDeleteAddress);
 <% end %>
 
     return row;

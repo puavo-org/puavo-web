@@ -112,6 +112,10 @@ class EmailVerificationsController < ApplicationController
         if rest_response.status == 200
           logger.info("[#{request_id}] The address has been verified, removing Redis data")
           redis.del(token)
+
+          in_progress = Redis::Namespace.new('puavo:email_verification:in_progress', redis: REDIS_CONNECTION)
+          in_progress.del("#{data['organisation']}:#{data['uid']}:#{data['email']}").inspect
+
           flash[:notice] = t('email_verifications.verification_complete')
         else
           logger.error("[#{request_id}] ERROR: Received an error status: #{rest_response.inspect}")

@@ -10,6 +10,11 @@ class ProfilesController < ApplicationController
     @organisation = LdapOrganisation.current.cn
     @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
 
+    # Make a list of adresses that are "in progress" of being verified
+    redis_in_progress = Redis::Namespace.new('puavo:email_verification:in_progress', redis: REDIS_CONNECTION)
+    prefix = "#{LdapOrganisation.current.puavoDomain}:#{@user.uid}:"
+    @in_progress = redis_in_progress.keys("#{prefix}*").map { |a| a[prefix.length..-1] }
+
     @have_something_to_verify = !(Array(@user.mail || []) - Array(@user.puavoVerifiedEmail || [])).empty?
 
     respond_to do |format|
@@ -89,7 +94,12 @@ class ProfilesController < ApplicationController
 
         redis_tokens = Redis::Namespace.new('puavo:email_verification:tokens', redis: REDIS_CONNECTION)
         redis_tokens.set(redis_token, data.to_json, nx: true, ex: 60 * 60)
+
+        redis_in_progress = Redis::Namespace.new('puavo:email_verification:in_progress', redis: REDIS_CONNECTION)
+        redis_in_progress.set("#{LdapOrganisation.current.puavoDomain}:#{current_user.uid}:#{address}", '1', nx: true, ex: 60 * 60)
+
         redis_ratelimit.set(current_user.puavoId.to_s, true, nx: false, ex: 60)
+
         logger.info("[#{request_id}] Redis data created")
 
         result[:success] = true
