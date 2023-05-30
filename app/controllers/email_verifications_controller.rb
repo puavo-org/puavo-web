@@ -72,17 +72,17 @@ class EmailVerificationsController < ApplicationController
     # Verify the address
     if data
       begin
-        logger.info("[#{request_id}] Marking address \"#{data['email']}\" as verified for user \"#{data['dn']}\"")
+        logger.info("[#{request_id}] Marking address \"#{data['email']}\" as verified for user \"#{data['dn']}\" (#{data['uid']}) in organisation \"#{data['organisation']}\"")
 
         verify_url = email_management_host + '/email_verification/verify'
         logger.info("[#{request_id}] Sending request to \"#{email_management_host}\"")
 
         rest_response = HTTP
-          .headers(host: LdapOrganisation.current.puavoDomain)
+          .headers(host: data['organisation'])
           .put(verify_url, json: {
             request_id: request_id,
-            username: current_user.uid,
-            dn: current_user.dn.to_s,
+            username: data['uid'],
+            dn: data['dn'],
             email: data['email'],
           })
 

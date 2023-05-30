@@ -75,6 +75,8 @@ class ProfilesController < ApplicationController
 
         # Store the reset data in Redis
         data = {
+          organisation: LdapOrganisation.current.puavoDomain,
+          uid: current_user.uid,
           dn: current_user.dn.to_s,
           email: address,
         }
