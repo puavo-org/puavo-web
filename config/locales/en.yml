@@ -2108,7 +2108,7 @@ en:
           already_in_use: "You already have this address."
           unknown: "Unknown error."
           already_verified: "This address has already been verified."
-          verification_not_sent: "Vahvistusviestiä ei voitu lähettää. Yritä uudelleen.\n\nJos otat yhteyden tekniseen tukeen, anna heille tämä koodi: %{code}."
+          verification_not_sent: "The verification message could not be sent. Please try again.\n\nIf you contact the technical support, please give them this code: %{code}."
           verification_rate_limit: "You must wait one minute between verification message requests."
 
         delete:
@@ -2127,7 +2127,7 @@ en:
     show:
       partially_failed_code: "Not all of your information could be saved. The following items failed: %{failed}. You can try again. If you contact Opinsys technical support, please give them this code: \"%{request_id}\"."
       updated: "Your information has been successfully updated"
-      go_back: "Return to your information editing"
+      go_back: "Back to changing your information"
 
   # Email address verification
   email_verifications:
