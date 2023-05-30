@@ -117,8 +117,55 @@ sv:
   profiles:
     edit:
       title: "Egen information"
+
+      emails:
+        automatic_notice: "Automatic email addresses are enabled in your organisation. You can't edit the address, but you can verify it if it hasn't been verified yet."
+        help: "You can set up yourself one or more email addresses. After saving the profile, you can return to this form and send a verification message to an address. This message is used to verify that the address is really yours and you can access it. Some services require at least one verified address. The first address you verify is also made your <strong>primary address</strong> that is used when contacting you and in places where only one address can be used."
+        verified_address: "Verified"
+        primary_address: "your primary address"
+        verify_button: "Send verification message"
+        verify_title: "Send a verification message to this address. The message contains a link you have to open."
+        verification_sent: "Verification message sent"
+        delete_button: "Delete"
+        delete_title: "Delete this address when your profile is saved"
+        undo_deletion_button: "Undo deletion"
+        undo_deletion_title: "Don't delete this address"
+        new_placeholder: "Type the new address here"
+        new_button: "Add"
+        new_title: "Add the new address to the table. Remember to save your profile!"
+
+        errors:
+          invalid: "The address is not properly formatted."
+          already_in_use: "You already have this address."
+          unknown: "Unknown error."
+          already_verified: "This address has already been verified."
+          verification_not_sent: "The verification message could not be sent. Please try again.\n\nIf you contact the technical support, please give them this code: %{code}."
+          verification_rate_limit: "You must wait one minute between verification message requests."
+
+        delete:
+          base: "Are you sure you want to delete address {address}?"
+          verified_primary: "The address has been verified and it is also your primary address!"
+          verified: "The address has been verified."
+          breakage: "If there are no other verified addresses, some logins could fail until you verify another address!"
+
+      remove_photo_on_save: "Delete image at save"
+
+    failed:
+      email: "email address change"
+      phone: "phone number change"
+      locale: "language change"
+      photo_save: "profile image save"
     show:
-      photo_failed: "Profilbildsparning har mislyckats. Var god och kontrollera, att du har väljat en funktionell bildfil och försök igen."
-      save_failed: "Av någon anledning, sparning av dina informationer har mislyckats. Var god och försök igen senare, och om problemet kvarstår, kontakt Opinsys supporttjänst."
-      save_failed_code: "Sparning av dina informationer har mislyckats. Var god och försök igen senare, och om problemet kvarstår, kontakt Opinsys supporttjänst och ge dem denna kod: \"%{request_id}\"."
+      partially_failed_code: "Not all of your information could be saved. The following items failed: %{failed}. You can try again. If you contact Opinsys technical support, please give them this code: \"%{request_id}\"."
       updated: "Dina informationar har uppdaterats."
+      go_back: "Back to changing your information"
+
+  # Email address verification
+  email_verifications:
+    title: "Verify an email address"
+    expired_token: "This verification link is invalid, or it has expired. Please try again by resending the verification mail from the Profile Editor. If you want to contact technical support, please give them this code: %{code}."
+    verification_failed: "The address could not be verified due to an internal system error. Please contact technical support and give them this code: %{code}."
+    verification_complete: "The address has been verified. You can close this window or tab now."
+    verify_message1: "By pressing the button below you confirm that email address"
+    verify_message2: " is working, it is yours, and that you can access it. If you do not wish to confirm this address, then please close this window or tab."
+    verify_button: "Verify this address"
