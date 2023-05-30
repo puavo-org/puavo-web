@@ -210,7 +210,10 @@ function onVerifyAddress(e)
             "Content-Type": "text/plain; charset=utf-8",
             "X-CSRF-Token": document.querySelector(`meta[name="csrf-token"]`).content,
         },
-        body: address
+        body: JSON.stringify({
+            address: address,
+            language: "<%= @language %>"
+        })
     }).then(response => {
         if (!response.ok)
             throw response;

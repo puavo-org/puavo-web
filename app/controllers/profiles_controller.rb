@@ -34,7 +34,10 @@ class ProfilesController < ApplicationController
     }
 
     begin
-      address = request.body.read.strip
+      data = JSON.parse(request.body.read.strip)
+
+      address = data['address']
+      language = data['language']
 
       logger.info("[#{request_id}] User \"#{current_user.uid}\" (#{current_user.dn.to_s}) in organisation " \
                   "\"#{LdapOrganisation.current.cn}\" has requested a verification email to be sent to \"#{address}\"")
@@ -67,7 +70,8 @@ class ProfilesController < ApplicationController
           username: current_user.uid,
           dn: current_user.dn.to_s,
           email: address,
-          token: redis_token
+          token: redis_token,
+          language: language,
         })
 
       if rest_response.status == 200
@@ -155,10 +159,10 @@ class ProfilesController < ApplicationController
     respond_to do |format|
       if failed.empty?
         flash[:notice] = t('profiles.show.updated')
-        format.html { redirect_to(profile_path()) }
+        format.html { redirect_to(profile_path(lang: @language)) }
       else
         flash[:alert] = t('profiles.show.partially_failed_code', request_id: @request_id, failed: failed.join(', '))
-        format.html { redirect_to(profile_path()) }
+        format.html { redirect_to(profile_path(lang: @language)) }
       end
     end
   end
@@ -254,7 +258,7 @@ class ProfilesController < ApplicationController
 
   def setup_language
     # use organisation default
-    @language = nil
+    @language = I18n.locale
 
     # override
     if params[:lang] && ['en', 'fi', 'sv', 'de'].include?(params[:lang])

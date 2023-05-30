@@ -126,13 +126,17 @@ class EmailManagement < PuavoSinatra
       return
     end
 
-    url = "https://#{user.organisation_domain}/users/email_verification/#{data['token']}"
+    url = "https://#{user.organisation_domain}/users/email_verification/#{data['token']}?lang=#{data['language']}"
 
     $rest_log.info("[#{request_id}] The full verification URL is \"#{url}\"")
 
     # Format and send the verification email
     @first_name = user.first_name
     @email_verify_url = url
+
+    # Bypass the R18n's current language and use the language used in the form. I spent two hours
+    # trying to figure out how to do this, and I'm not sure if it's correctly done.
+    @tr = R18n.set(data['language'])
 
     message = erb(:email_verification, :layout => false)
 

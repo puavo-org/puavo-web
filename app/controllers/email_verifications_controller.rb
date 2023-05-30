@@ -32,6 +32,9 @@ class EmailVerificationsController < ApplicationController
     @token = params['token']
     @invalid_token = false
 
+    @language = params['lang'] || nil
+    I18n.locale = params['lang'] || nil
+
     logger.info("[#{@request_id}] Opening email verification form for token \"#{@token}\"")
     logger.info("[#{@request_id}] Client IP: #{request.ip}  UserAgent: \"#{request.user_agent}\"")
 
@@ -48,6 +51,7 @@ class EmailVerificationsController < ApplicationController
           # If the token isn't valid, we only display an error message
           set_ldap_connection(@data['organisation'])
           @organisation = LdapOrganisation.first
+          I18n.locale = params['lang'] || nil
         end
       rescue StandardError => e
         logger.error("[#{@request_id}] ERROR: Cannot parse the stored data: #{e}")
@@ -65,6 +69,7 @@ class EmailVerificationsController < ApplicationController
   def update
     request_id = generate_synchronous_call_id()
     token = params['token']
+    I18n.locale = params['lang'] || nil
 
     logger.info("[#{request_id}] Confirming email verification, token \"#{token}\"")
     logger.info("[#{request_id}] Client IP: #{request.ip}  UserAgent: \"#{request.user_agent}\"")
