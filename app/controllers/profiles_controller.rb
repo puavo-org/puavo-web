@@ -38,6 +38,7 @@ class ProfilesController < ApplicationController
 
       address = data['address']
       language = data['language']
+      I18n.locale = language
 
       logger.info("[#{request_id}] User \"#{current_user.uid}\" (#{current_user.dn.to_s}) in organisation " \
                   "\"#{LdapOrganisation.current.cn}\" has requested a verification email to be sent to \"#{address}\"")
