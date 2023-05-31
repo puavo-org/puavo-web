@@ -157,8 +157,6 @@ Then(/^the ([^ ]*) attribute should contain "([^\"]*)" of "([^\"]*)"$/) do |attr
     user.puavoSchool.to_s.should == school.dn.to_s
   when "gidNumber"
     user.gidNumber.to_s.should == school.gidNumber.to_s
-  when "homeDirectory"
-    user.homeDirectory.to_s.should == "/home/" + uid
   when "sambaPrimaryGroupSID"
     user.sambaPrimaryGroupSID.to_s.should == "#{SambaDomain.first.sambaSID}-#{school.puavoId}"
   end

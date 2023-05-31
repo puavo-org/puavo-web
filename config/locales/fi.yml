@@ -235,7 +235,6 @@ fi:
       phone: "Puhelin"
       email: "Email"
       pnumber: "Henkilönumero"
-      home_dir: "Kotihakemisto"
       rrt: "Poistomerkintä tehty"
       dnd: "Poisto estetty?"
       is_locked: "Lukittu?"
@@ -1893,7 +1892,6 @@ fi:
         givenName: Etunimi
         uid: "Käyttäjätunnus"
         primary_group: "Ensisijainen ryhmä"
-        homeDirectory: Kotikansio
         uidNumber: Uid-numero
         gidNumber: "Ryhmä"
         password: Salasana

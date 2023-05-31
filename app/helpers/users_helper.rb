@@ -23,7 +23,6 @@ module UsersHelper
       'puavoExternalData',
       'telephoneNumber',
       'displayName',
-      'homeDirectory',
       'mail',
       'puavoEduPersonPersonnelNumber',
       'puavoRemovalRequestTime',
@@ -80,10 +79,6 @@ module UsersHelper
       if a.count > 0
         out[:phone] = a
       end
-    end
-
-    if raw.include?('homeDirectory')
-      out[:home] = raw['homeDirectory'][0]
     end
 
     if raw.include?('mail')

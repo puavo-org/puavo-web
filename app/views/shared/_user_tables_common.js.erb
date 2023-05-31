@@ -68,11 +68,6 @@ const COLUMN_DEFINITIONS = {
         type: ST.ColumnType.STRING,
     },
 
-    home: {
-        key: "home",
-        type: ST.ColumnType.STRING,
-    },
-
     rrt: {
         key: "rrt",
         type: ST.ColumnType.UNIXTIME,
@@ -134,7 +129,6 @@ const COLUMN_TITLES = {
     phone: "<%= t('columns.users.phone') %>",
     email: "<%= t('columns.users.email') %>",
     pnumber: "<%= t('columns.users.pnumber') %>",
-    home: "<%= t('columns.users.home_dir') %>",
     rrt: "<%= t('columns.users.rrt') %>",
     dnd: "<%= t('columns.users.dnd') %>",
     locked: "<%= t('columns.users.is_locked') %>",
@@ -161,7 +155,6 @@ const COLUMN_ORDER = [
     "phone",
     "email",
     "pnumber",
-    "home",
     "rrt",
     "dnd",
     "locked",

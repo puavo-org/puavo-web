@@ -235,7 +235,6 @@ en:
       phone: "Phone"
       email: "Email"
       pnumber: "Personnel number"
-      home_dir: "Home directory"
       rrt: "When marked for deletion"
       dnd: "Do not delete?"
       is_locked: "Locked?"
@@ -1893,7 +1892,6 @@ en:
         givenName: Given name
         uid: Username
         primary_group: Primary group
-        homeDirectory: Home directory
         uidNumber: Uid number
         gidNumber: Group
         password: Password

@@ -167,7 +167,6 @@ Feature: Manage users
     | Username   | ben-edit        |
     | Email      | ben@example.com |
 #   | Uid number                 |           |
-#   | Home directory             |           |
 #   | Telephone number           |           |
 #   | puavoEduPersonEntryYear    |           |
 #   | puavoEduPersonEmailEnabled |           |
@@ -282,7 +281,6 @@ Feature: Manage users
     | sambaSID             | "^S-[-0-9+]"                   |
     | sambaAcctFlags       | "\[U\]"                        |
     | sambaPrimaryGroupSID | "^S-[-0-9+]"                   |
-    | homeDirectory        | "/home/ben"                    |
 
   Scenario: Create new user with invalid username
     Given the following groups:

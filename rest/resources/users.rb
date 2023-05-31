@@ -445,7 +445,7 @@ class User < LdapModel
     write_raw(:uid, Array(_username))
     write_raw(:cn, Array(_username))
 
-    # Initial home directory in the "new" format
+    # The posixAccount class *requires* this, so we have to set it. It's not used for anything.
     write_raw(:homeDirectory, Array("/home/#{username}"))
   end
 

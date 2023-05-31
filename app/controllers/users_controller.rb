@@ -22,7 +22,6 @@ class UsersController < ApplicationController
                   'telephoneNumber',
                   'displayName',
                   'gidNumber',
-                  'homeDirectory',
                   'mail',
                   'sambaSID',
                   'uidNumber',
