@@ -161,7 +161,7 @@ describe PuavoRest::SSO do
       assert_equal "Bob" , @jwt["first_name"]
       assert_equal "Brown" , @jwt["last_name"]
       assert_equal "student" , @jwt["user_type"]
-      assert_equal ["bob@example.com"], @jwt["email"]
+      assert_equal "bob@example.com", @jwt["email"]
       assert_equal "Example Organisation", @jwt["organisation_name"]
       assert_equal "example.puavo.net", @jwt["organisation_domain"]
       assert_equal "/", @jwt["external_service_path_prefix"]

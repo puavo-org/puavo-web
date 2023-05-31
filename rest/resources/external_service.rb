@@ -82,7 +82,7 @@ class ExternalService < LdapModel
       'username' => user.username,
       'first_name' => user.first_name,
       'last_name' => user.last_name,
-      'email' => user.email,
+      'email' => Array(user.email || []).first,
       'primary_school_id' => primary_school_id,
       'year_class' => yc_name,
       'organisation_name' => user.organisation_name,
