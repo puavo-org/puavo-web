@@ -24,7 +24,6 @@ class UsersController < ApplicationController
                   'gidNumber',
                   'homeDirectory',
                   'mail',
-                  'puavoEduPersonReverseDisplayName',
                   'sambaSID',
                   'uidNumber',
                   'loginShell',

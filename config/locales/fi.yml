@@ -1909,7 +1909,6 @@ fi:
         puavoAllowRemoteAccess_true: "Kyllä"
         puavoAllowRemoteAccess_false: Ei
         puavoAllowRemoteAccess_: Ei
-        puavoEduPersonReverseDisplayName: Sukunimi Etunimi
         puavoEduPersonPersonnelNumber: "Henkilönumero"
         image: Kuva
         jpegPhoto: Kuva

@@ -41,7 +41,6 @@ class User < LdapModel
   ldap_map :puavoRemovalRequestTime, :removal_request_time,
            LdapConverters::TimeStamp
   ldap_map :eduPersonPrincipalName, :edu_person_principal_name
-  ldap_map :puavoEduPersonReverseDisplayName, :reverse_name
   ldap_map :puavoDoNotDelete, :do_not_delete
   ldap_map :sambaPwdLastSet, :password_last_set, LdapConverters::Number
   ldap_map :puavoAdminPermissions, :admin_permissions, LdapConverters::ArrayValue
@@ -257,8 +256,6 @@ class User < LdapModel
     end
 
     self.login_shell = '/bin/bash'
-
-    self.reverse_name = "#{ last_name } #{ first_name }"
 
     if locked.nil? then
       self.locked = false

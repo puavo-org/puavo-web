@@ -1909,7 +1909,6 @@ en:
         puavoAllowRemoteAccess_true: "Yes"
         puavoAllowRemoteAccess_false: "No"
         puavoAllowRemoteAccess_: "No"
-        puavoEduPersonReverseDisplayName: Lastname Firstname
         puavoEduPersonPersonnelNumber: Personnel Number
         image: Image
         jpegPhoto: Image
