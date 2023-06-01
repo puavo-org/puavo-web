@@ -66,7 +66,6 @@ I18n.locale = "<%= I18n.locale %>";
             <li><a href="/users"><%= t('.index') %></a></li>
             <% end %>
             <% school_list.each do |school| %>
-            <% next if school.puavoTag.include?("hidden")%>
             <li><span class="schoolTitle"><%= link_to school.displayName, school_path(school) %></span>
               <ul class="schoolLinks">
                 <li><%= link_to t('.users'), users_path(school) %></li>

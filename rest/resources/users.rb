@@ -40,7 +40,6 @@ class User < LdapModel
   ldap_map :puavoRemovalRequestTime, :removal_request_time,
            LdapConverters::TimeStamp
   ldap_map :eduPersonPrincipalName, :edu_person_principal_name
-  ldap_map :puavoEduPersonReverseDisplayName, :reverse_name
   ldap_map :puavoDoNotDelete, :do_not_delete
   ldap_map :sambaPwdLastSet, :password_last_set, LdapConverters::Number
   ldap_map :puavoAdminPermissions, :admin_permissions, LdapConverters::ArrayValue
@@ -268,8 +267,6 @@ class User < LdapModel
 
     self.login_shell = '/bin/bash'
 
-    self.reverse_name = "#{ last_name } #{ first_name }"
-
     if locked.nil? then
       self.locked = false
     end
@@ -458,7 +455,7 @@ class User < LdapModel
     write_raw(:uid, Array(_username))
     write_raw(:cn, Array(_username))
 
-    # Initial home directory in the "new" format
+    # The posixAccount class *requires* this, so we have to set it. It's not used for anything.
     write_raw(:homeDirectory, Array("/home/#{username}"))
   end
 
@@ -477,6 +474,17 @@ class User < LdapModel
 
   def verified_email=(_verified)
     write_raw(:puavoVerifiedEmail, clean_up_email_array(_verified))
+  end
+
+  def learner_id=(lid)
+    if lid.nil? || lid.to_s.strip.empty?
+      # Ensure empty strings stay as nils (or empty arrays, LDAP is weird)
+      value = []
+    else
+      value = [lid.strip]
+    end
+
+    write_raw(:puavoLearnerId, value)
   end
 
   def is_school_admin_in?(school)

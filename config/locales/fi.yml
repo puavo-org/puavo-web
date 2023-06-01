@@ -237,7 +237,6 @@ fi:
       v_email: "Vahvistettu email"
       p_email: "Pää-email"
       pnumber: "Henkilönumero"
-      home_dir: "Kotihakemisto"
       rrt: "Poistomerkintä tehty"
       dnd: "Poisto estetty?"
       is_locked: "Lukittu?"
@@ -1900,7 +1899,6 @@ fi:
         givenName: Etunimi
         uid: "Käyttäjätunnus"
         primary_group: "Ensisijainen ryhmä"
-        homeDirectory: Kotikansio
         uidNumber: Uid-numero
         gidNumber: "Ryhmä"
         password: Salasana
@@ -1916,7 +1914,6 @@ fi:
         puavoAllowRemoteAccess_true: "Kyllä"
         puavoAllowRemoteAccess_false: Ei
         puavoAllowRemoteAccess_: Ei
-        puavoEduPersonReverseDisplayName: Sukunimi Etunimi
         puavoEduPersonPersonnelNumber: "Henkilönumero"
         image: Kuva
         jpegPhoto: Kuva

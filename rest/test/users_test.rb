@@ -87,6 +87,61 @@ describe PuavoRest::Users do
     @user5.save!
   end
 
+  describe 'Learner ID tests' do
+    it 'ensure learner ID can be set, changed and cleared' do
+      # SET
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.learner_id = '1.2.3.4.5'
+      # The class must be live-updated. The same check is done for all of these.
+      assert_equal '1.2.3.4.5', user.learner_id
+      user.save!
+      assert_equal '1.2.3.4.5', user.learner_id
+
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_equal '1.2.3.4.5', user.learner_id
+
+      # CHANGE
+      user.learner_id = '6.7.8.9.0'
+      assert_equal '6.7.8.9.0', user.learner_id
+      user.save!
+      assert_equal '6.7.8.9.0', user.learner_id
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_equal '6.7.8.9.0', user.learner_id
+
+      # CLEAR
+      user.learner_id = nil
+      assert_nil user.learner_id
+      user.save!
+      assert_nil user.learner_id
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_nil user.learner_id
+    end
+
+    it 'ensure whitespaces-only learner ID string is trimmed to nil' do
+      # Whitespace only (trim)
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.learner_id = '   '
+      assert_nil user.learner_id
+      user.save!
+      assert_nil user.learner_id
+
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_nil user.learner_id
+    end
+
+    it 'ensure empty learner ID string is trimmed to nil' do
+      # Empty string
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.learner_id = ''
+      assert_nil user.learner_id
+      user.save!
+      assert_nil user.learner_id
+
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_nil user.learner_id
+    end
+  end
+
   describe "Multiple telephone numbers" do
     it "correctly set when a user is created" do
       assert_equal [ '123', '456' ], @teacher.telephone_number

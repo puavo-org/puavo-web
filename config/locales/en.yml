@@ -237,7 +237,6 @@ en:
       v_email: "Verified Email"
       p_email: "Primary Email"
       pnumber: "Personnel number"
-      home_dir: "Home directory"
       rrt: "When marked for deletion"
       dnd: "Do not delete?"
       is_locked: "Locked?"
@@ -1900,7 +1899,6 @@ en:
         givenName: Given name
         uid: Username
         primary_group: Primary group
-        homeDirectory: Home directory
         uidNumber: Uid number
         gidNumber: Group
         password: Password
@@ -1916,7 +1914,6 @@ en:
         puavoAllowRemoteAccess_true: "Yes"
         puavoAllowRemoteAccess_false: "No"
         puavoAllowRemoteAccess_: "No"
-        puavoEduPersonReverseDisplayName: Lastname Firstname
         puavoEduPersonPersonnelNumber: Personnel Number
         image: Image
         jpegPhoto: Image

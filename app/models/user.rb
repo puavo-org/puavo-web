@@ -95,9 +95,6 @@ class User < LdapBase
         { :original_attribute_name => "mail",
           :new_attribute_name => "email",
           :value_block => lambda{ |value| Array(value).first } },
-        { :original_attribute_name => "puavoEduPersonReverseDisplayName",
-          :new_attribute_name => "reverse_name",
-          :value_block => lambda{ |value| Array(value).first } },
         { :original_attribute_name => "sn",
           :new_attribute_name => "surname",
           :value_block => lambda{ |value| Array(value).first } },
@@ -622,7 +619,6 @@ class User < LdapBase
                                       false
                                     end
     end
-    self.puavoEduPersonReverseDisplayName = self.sn + " " + self.givenName
   end
 
   def set_uid_number
