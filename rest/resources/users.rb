@@ -462,6 +462,17 @@ class User < LdapModel
     @cache[:secondary_emails] = nil
   end
 
+  def learner_id=(lid)
+    if lid.nil? || lid.to_s.strip.empty?
+      # Ensure empty strings stay as nils (or empty arrays, LDAP is weird)
+      value = []
+    else
+      value = [lid.strip]
+    end
+
+    write_raw(:puavoLearnerId, value)
+  end
+
   def is_school_admin_in?(school)
     admin_of_school_dns.include?(school.dn)
   end
