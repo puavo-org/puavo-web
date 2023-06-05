@@ -57,6 +57,15 @@ class SSO < PuavoSinatra
 
     request_id = make_request_id
     had_session = false
+    @is_trusted = request.path == '/v3/verified_sso'
+
+    rlog.info("[#{request_id}] attempting to log into external service \"#{@external_service.name}\" (#{@external_service.dn.to_s})")
+
+    if @external_service.trusted != @is_trusted
+      # No mix-and-matching or service types
+      rlog.error("[#{request_id}] trusted service type mismatch (service trusted=#{@external_service.trusted}, URL verified=#{@is_trusted})")
+      raise Unauthorized, user: "Mismatch between trusted service states. Please check the URL you're using to display the login form. Request ID #{request_id}."
+    end
 
     if session = read_sso_session(request_id)
       # An SSO session cookie was found in the request, see if we can use it
@@ -106,6 +115,18 @@ class SSO < PuavoSinatra
 
     if not (school_allows || organisation_allows)
       return render_form(t.sso.service_not_activated)
+    end
+
+    # Block logins from users who don't have a verified email address, if the service is trusted
+    if @external_service.trusted && @is_trusted
+      rlog.info("[#{request_id}] this trusted service requires a verified address and we're in a verified SSO form")
+
+      if Array(user.verified_email || []).empty?
+        rlog.error("[#{request_id}] the current user does NOT have a verified address!")
+        return render_form(t.sso.verified_address_missing)
+      end
+
+      rlog.info("[#{request_id}] the user has a verified email address")
     end
 
     url, user_hash =
@@ -229,6 +250,10 @@ class SSO < PuavoSinatra
     respond_auth
   end
 
+  get '/v3/verified_sso' do
+    respond_auth
+  end
+
   def render_form(error_message, err=nil)
     if env["REQUEST_METHOD"] == "POST"
       @error_message = error_message
@@ -266,6 +291,8 @@ class SSO < PuavoSinatra
       "username_placeholder" => username_placeholder,
       "username" => params["username"],
       "error_message" => @error_message,
+      "need_verified_address" => @external_service.trusted,
+      "verified_address_notice" => t.sso.verified_address_notice,
       "topdomain" => topdomain,
       "text_password" => t.sso.password,
       "text_login" => t.sso.login,
@@ -402,7 +429,7 @@ class SSO < PuavoSinatra
     end.first
   end
 
-  post '/v3/sso' do
+  def do_sso_post
     username     = params['username']
     password     = params['password']
     organisation = params['organisation']
@@ -449,6 +476,14 @@ class SSO < PuavoSinatra
     end
 
     respond_auth
+  end
+
+  post '/v3/sso' do
+    do_sso_post
+  end
+
+  post '/v3/verified_sso' do
+    do_sso_post
   end
 
   get "/v3/sso/developers" do

@@ -8,6 +8,8 @@ sso:
   no_organisation: No organisation
   organisation_missing: Organisation is missing from the username. Use username@organisation.opinsys.fi format.
   invalid_username: Invalid username
+  verified_address_notice: "This service requires a verified email address."
+  verified_address_missing: "This service requires a verified email address. Please edit your user information and confirm an address, then try loggin in again. If you do not know what any of this means, please contact Opinsys Oy support."
   login: Login
   login_to: Login to service
   error: Error

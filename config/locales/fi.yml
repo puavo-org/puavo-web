@@ -734,6 +734,7 @@ fi:
     path_prefix: "Polun etuliite"
     additional_info: "Lisätietoja..."
     organisation_wide_activation: "Tämä palvelu on aktivoitu organisaatiotasolla kaikkiin kouluihin."
+    requires_verified_email: "Palveluun kirjautuminen vaatii vahvistetun sähköpostiosoitteen."
 
   # Organisation/external files
   external_files:

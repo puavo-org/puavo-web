@@ -44,6 +44,20 @@ describe PuavoRest::SSO do
     @user.save!
     @user.teaching_group = @group   # XXX weird that this must be here
 
+    @user2 = PuavoRest::User.new(
+      :first_name     => 'Verified',
+      :last_name      => 'User',
+      :username       => 'verified',
+      :roles          => [ 'teacher' ],
+      :school_dns     => [ @school.dn.to_s ],
+      :password       => 'trustno1',
+      :email          => ['verified@example.com'],
+      :verified_email => ['verified@example.com'],
+      :primary_email  => 'verified@example.com',
+    )
+
+    @user2.save!
+
     @orig_config = CONFIG.dup
     CONFIG.delete("default_organisation_domain")
     CONFIG["bootserver"] = false
@@ -401,6 +415,104 @@ describe PuavoRest::SSO do
       )
       @jwt = jwt_decode_data[0] # jwt_decode_data is [payload, header]
       assert_equal "/", @jwt["external_service_path_prefix"]
+    end
+  end
+
+  describe 'verified SSO tests' do
+    before(:each) do
+      @verified_service = ExternalService.new
+      @verified_service.classes = ['top', 'puavoJWTService']
+      @verified_service.cn = 'Verified service'
+      @verified_service.puavoServiceDomain = 'verified.example.com'
+      @verified_service.puavoServiceSecret = 'verified'
+      @verified_service.puavoServiceTrusted = true
+      @verified_service.save!
+
+      activate_organisation_services([@external_service.dn.to_s, @verified_service.dn.to_s])
+    end
+
+    it "Can't access the verified SSO form for the normal service" do
+      url = Addressable::URI.parse('/v3/verified_sso')
+      url.query_values = { 'return_to' => 'http://test-client-service.example.com/path' }
+      get url.to_s
+
+      assert_equal 401, last_response.status
+      assert JSON.parse(last_response.body)['error']['message'].include?("Mismatch between trusted service states. Please check the URL you're using to display the login form.")
+    end
+
+    it "Can access the normal SSO form for the normal service" do
+      url = Addressable::URI.parse('/v3/sso')
+      url.query_values = { 'return_to' => 'http://test-client-service.example.com/path' }
+      get url.to_s
+
+      assert_equal 401, last_response.status
+      assert !last_response.body.include?('This service requires a verified email address.')
+    end
+
+    it "Can't access the non-verified SSO form for the verified service" do
+      url = Addressable::URI.parse('/v3/sso')
+      url.query_values = { 'return_to' => 'https://verified.example.com/' }
+      get url.to_s
+
+      assert_equal 401, last_response.status
+      assert JSON.parse(last_response.body)['error']['message'].include?("Mismatch between trusted service states. Please check the URL you're using to display the login form.")
+    end
+
+    it "Can access the verified SSO form for the verified service" do
+      url = Addressable::URI.parse('/v3/verified_sso')
+      url.query_values = { 'return_to' => 'https://verified.example.com/' }
+      get url.to_s
+
+      # The response is always 401 (Unauthorized) even if we just display the form normally and nothing is wrong
+      assert_equal 401, last_response.status
+      assert last_response.body.include?('This service requires a verified email address.')
+    end
+
+    it 'verified SSO login fails without a verified email address' do
+      post '/v3/verified_sso', {
+        'username' => 'bob',
+        'password' => 'secret',
+        'organisation' => 'example.puavo.net',
+        'return_to' => 'https://verified.example.com/'
+      }
+
+      # The login must fail
+      assert_equal 401, last_response.status
+      assert last_response.body.include?('This service requires a verified email address. Please edit your user information and confirm an address, then try loggin in again.')
+    end
+
+    it 'verified SSO login succeeds with a verified email address' do
+      post '/v3/verified_sso', {
+        'username' => 'verified',
+        'password' => 'trustno1',
+        'organisation' => 'example.puavo.net',
+        'return_to' => 'https://verified.example.com/'
+      }
+
+      # The login must succeed
+      assert_equal 302, last_response.status
+
+      # Verify some basic data in the JWT payload
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      jwt = JWT.decode(redirect.query_values['jwt'], @verified_service.puavoServiceSecret)[0]
+      assert jwt['username'] == 'verified' && jwt['email'] == 'verified@example.com'
+    end
+
+    it 'verified user can log into a non-verified SSO' do
+      post '/v3/sso', {
+        'username' => 'verified',
+        'password' => 'trustno1',
+        'organisation' => 'example.puavo.net',
+        'return_to' => 'http://test-client-service.example.com/path'
+      }
+
+      # The login must succeed
+      assert_equal 302, last_response.status
+
+      # Verify some basic data in the JWT payload
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      jwt = JWT.decode(redirect.query_values['jwt'], @external_service.puavoServiceSecret)[0]
+      assert jwt['username'] == 'verified' && jwt['email'] == 'verified@example.com'
     end
   end
 end

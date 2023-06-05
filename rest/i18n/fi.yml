@@ -8,6 +8,8 @@ sso:
   no_organisation: Organisaatiota ei ole asetettu
   organisation_missing: Organisaatio puuttuu käyttäjänimestä. Käytä muotoa käyttäjätunnus@organisaatiosi.opinsys.fi
   invalid_username: Väärän muotoinen käyttäjätunnus
+  verified_address_notice: "Tämä palvelu vaatii vahvennetun sähköpostiosoitteen."
+  verified_address_missing: "Tämä palvelu vaatii vahvennetun sähköpostiosoitteen. Ole hyvä, ja vahvista osoitteesi Omien tietojen muokkauksen kautta, ja yritä sitten kirjautumista uudelleen. Jos et tiedä mitä tämä tarkoittaa, ota yhteys Opinsys Oy:n tukeen."
   login_to: Kirjaudu palveluun
   login: Kirjaudu
   error: Virhe
