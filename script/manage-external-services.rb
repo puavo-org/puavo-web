@@ -174,7 +174,7 @@ def list_services(args)
     created = extra['createTimestamp'] ? Time.at(extra['createTimestamp']).localtime.strftime('%Y-%m-%d %H:%M:%S') : nil
 
     with_padding('Domain(s)', Array(e.puavoServiceDomain).join(', '))
-    with_padding('Trusted', e.puavoServiceTrusted ? 'YES (hidden!)' : 'No')
+    with_padding('Trusted (verified SSO)?', e.puavoServiceTrusted ? 'Yes' : 'No')
     with_padding('Description', e.description, quote: true)
     with_padding('Description URL', e.puavoServiceDescriptionURL, quote: true)
     with_padding('Prefix', e.puavoServicePathPrefix, quote: true)

@@ -103,9 +103,8 @@ class SSO < PuavoSinatra
       include?(@external_service["dn"])
     organisation_allows = Array(organisation["external_services"]).
       include?(@external_service["dn"])
-    trusted = @external_service["trusted"]
 
-    if not (trusted || school_allows || organisation_allows)
+    if not (school_allows || organisation_allows)
       return render_form(t.sso.service_not_activated)
     end
 

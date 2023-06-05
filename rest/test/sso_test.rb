@@ -5,6 +5,17 @@ require "addressable/uri"
 require "jwt"
 
 describe PuavoRest::SSO do
+  def activate_organisation_services(s)
+    PuavoRest::Organisation.all.each do |org|
+      unless ['puavo.net', 'hogwarts.puavo.net', ''].include?(org.domain)
+        org.external_services = s
+        org.save!
+      end
+    end
+
+    PuavoRest::Organisation.refresh
+  end
+
   before(:each) do
     Puavo::Test.clean_up_ldap
     setup_ldap_admin_connection()
@@ -46,8 +57,10 @@ describe PuavoRest::SSO do
     @external_service.puavoServiceSecret = "this is a shared secret"
     @external_service.description = "Description"
     @external_service.mail = "contact@test-client-service.example.com"
-    @external_service.puavoServiceTrusted = true
+    @external_service.puavoServiceTrusted = false
     @external_service.save!
+
+    activate_organisation_services([@external_service.dn.to_s])
   end
 
   after do
@@ -182,8 +195,7 @@ describe PuavoRest::SSO do
 
   describe "external service activation" do
     before(:each) do
-      @external_service.puavoServiceTrusted = false
-      @external_service.save!
+      activate_organisation_services([])
     end
 
     it "responds 401 for untrusted and inactive services" do
@@ -195,6 +207,7 @@ describe PuavoRest::SSO do
     end
 
     it "responds 302 when service is activated on user's school" do
+      # Activate a school-level service
       @school.puavoActiveService = [@external_service.dn]
       @school.save!
 
@@ -338,9 +351,11 @@ describe PuavoRest::SSO do
       @sub_service.puavoServiceSecret = "other shared secret"
       @sub_service.description = "Description"
       @sub_service.mail = "contact@test-client-service.example.com"
-      @sub_service.puavoServiceTrusted = true
       @sub_service.puavoServicePathPrefix = "/prefix"
+      @sub_service.puavoServiceTrusted = false
       @sub_service.save!
+
+      activate_organisation_services([@external_service.dn.to_s, @sub_service.dn.to_s])
     end
 
     it "does not interfere with the main service" do
