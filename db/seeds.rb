@@ -197,39 +197,6 @@ end
 end
 
 
-[
-  {
-    :cn => "Puavo Ticket",
-    :puavoServiceDomain => fqdn,
-    :puavoServiceSecret => "secret",
-    :description  => "Services for localhost",
-    :mail  => "dev@example.com",
-    :puavoServiceTrusted => true
-  },
-  {
-    :cn => "Localhost Service",
-    :puavoServiceDomain => "localhost",
-    :puavoServiceSecret => "secret",
-    :description  => "Services for localhost",
-    :mail  => "dev@example.com",
-    :puavoServiceTrusted => true
-  },
-  {
-    :cn => "Client Service",
-    :puavoServiceDomain => "example.com",
-    :puavoServiceSecret => "secret",
-    :description  => "Client service",
-    :mail  => "dev@example.com",
-    :puavoServiceTrusted => false
-  }
-].each do |attrs|
-  app = ExternalService.new
-  app.classes = ["top", "puavoJWTService"]
-  app.attributes = attrs
-  app.save!
-end
-
-
 ################################
 # Seeds for anotherorg.puavo.net
 # Use only in tests
