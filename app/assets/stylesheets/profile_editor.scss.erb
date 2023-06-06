@@ -59,7 +59,7 @@ header {
   border: 1px solid var(--service-border);
   padding: 0.5em;
   text-align: center;
-  box-shadow: 5px 5px 5px #aaa;
+  box-shadow: 5px 5px 5px var(--header-shadow);
 }
 
 header h1, header h2 {
@@ -134,7 +134,11 @@ div#emails {
 }
 
 .emails tr:first-of-type { border-top: none; }
-.emails tr:hover { background: #eee; }
+
+.emails tr:hover {
+    background: var(--emails-hover-background);
+    color: var(--emails-hover-foreground);
+}
 
 .emails tr.removed { text-decoration: line-through; }
 
@@ -145,24 +149,44 @@ div#emails {
 }
 
 .emails td.verification { width: 250px; }
-.emails td.verification span { color: #080; }
-.emails td.verification button { background: #cfc; border: 1px solid #ada; }
-.emails td.verification button:hover { background: #afa; }
-.emails td.verification button:active { background: #8f8; }
+.emails td.verification span { color: var(--emails-verified); }
 
+.emails td.verification button {
+    background: var(--emails-verify-button-background);
+    color: var(--emails-verify-button-foreground);
+    border: 1px solid var(--emails-verify-button-border);
+}
+
+.emails td.verification button:hover { background: var(--emails-verify-button-background-hover); }
+.emails td.verification button:active { background: var(--emails-verify-button-background-active); }
+
+.emails td.verification button:disabled,
 .emails td.verification button:disabled:hover,
 .emails td.verification button:disabled:active {
-  background: #cfc;
+    background: var(--emails-verify-button-background);
+    color: var(--emails-verify-button-foreground);
+    border: 1px solid var(--emails-verify-button-border);
+    opacity: var(--emails-disabled-opacity);
 }
 
 .emails td.deletion { width: 130px; text-align: right; }
-.emails td.deletion button { background: #fcc; border: 1px solid #daa; }
-.emails td.deletion button:hover { background: #faa; }
-.emails td.deletion button:active { background: #f88; }
 
+.emails td.deletion button {
+    background: var(--emails-delete-button-background);
+    color: var(--emails-delete-button-foreground);
+    border: 1px solid var(--emails-delete-button-border);
+}
+
+.emails td.deletion button:hover { background: var(--emails-delete-button-background-hover); }
+.emails td.deletion button:active { background: var(--emails-delete-button-background-hover); }
+
+.emails td.deletion button:disabled,
 .emails td.deletion button:disabled:hover,
 .emails td.deletion button:disabled:active {
-  background: #fcc;
+    background: var(--emails-delete-button-background);
+    color: var(--emails-delete-button-foreground);
+    border: 1px solid var(--emails-delete-button-border);
+    opacity: var(--emails-disabled-opacity);
 }
 
 div#newRow { }

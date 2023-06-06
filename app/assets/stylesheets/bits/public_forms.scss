@@ -6,6 +6,7 @@
   :root {
     --page-background: rgb(245, 246, 247);
     --page-foreground: #000;
+    --header-shadow: var(--generic-border);
     --tab-border: #5294e2;
     --active-tab-background: #5294e2;
     --active-tab-foreground: #fff;
@@ -48,6 +49,21 @@
     --service-border: var(--content-border);
     --error-background: rgb(252, 65, 56);
     --error-foreground: #fff;
+
+    --emails-hover-background: #eee;
+    --emails-hover-foreground: #000;
+    --emails-verified: #080;
+    --emails-verify-button-background: #cfc;
+    --emails-verify-button-foreground: #000;
+    --emails-verify-button-border: #ada;
+    --emails-verify-button-background-hover: #afa;
+    --emails-verify-button-background-active: #8f8;
+    --emails-delete-button-background: #fcc;
+    --emails-delete-button-foreground: #000;
+    --emails-delete-button-border: #daa;
+    --emails-delete-button-background-hover: #faa;
+    --emails-delete-button-background-active: #f88;
+    --emails-disabled-opacity: 0.5;
   }
 }
 
@@ -55,6 +71,7 @@
   :root {
     --page-background: rgb(56, 60, 74);
     --page-foreground: #fff;
+    --header-shadow: var(--generic-border);
     --tab-border: #5294e2;
     --active-tab-background: #5294e2;
     --active-tab-foreground: var(--page-foreground);
@@ -96,6 +113,21 @@
     --service-background: rgb(64, 69, 82);
     --service-foreground: #fff;
     --service-border: var(--content-border);
+
+    --emails-hover-background: rgb(64, 69, 82);
+    --emails-hover-foreground: #fff;
+    --emails-verified: #afa;
+    --emails-verify-button-background: #afa;
+    --emails-verify-button-foreground: #000;
+    --emails-verify-button-border: #8d8;
+    --emails-verify-button-background-hover: #7f7;
+    --emails-verify-button-background-active: #7f7;
+    --emails-delete-button-background: #fcc;
+    --emails-delete-button-foreground: #000;
+    --emails-delete-button-border: #daa;
+    --emails-delete-button-background-hover: #faa;
+    --emails-delete-button-background-active: #f88;
+    --emails-disabled-opacity: 0.25;
   }
 }
 
