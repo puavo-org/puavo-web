@@ -478,7 +478,8 @@ describe PuavoRest::SSO do
 
       # The login must fail
       assert_equal 401, last_response.status
-      assert last_response.body.include?('This service requires a verified email address. Please edit your user information and confirm an address, then try loggin in again.')
+      assert last_response.body.include?('This service requires a verified email address.')
+      assert last_response.body.include?('Please edit your user information and confirm an address</a>, then try loggin in again.')
     end
 
     it 'verified SSO login succeeds with a verified email address' do
