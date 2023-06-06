@@ -129,6 +129,7 @@ fi:
     change_school: "Vaihda koulua..."
     new_import: "Tuo ja päivitä käyttäjiä"
     group_members_mass_edit: "Jäsenten massamuokkaus"
+    copy_to_clipboard: "Kopioi leikepöydälle"
 
   # Main application layout
   layouts:

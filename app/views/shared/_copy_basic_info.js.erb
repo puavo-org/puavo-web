@@ -58,6 +58,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         copyTextToClipboard(full);
     });
+
+<% if device.puavoConf %>
+    document.querySelector("button#copyPuavoconf")?.addEventListener("click", () => {
+        copyTextToClipboard(<%= raw JSON.pretty_generate(device.puavoConf) %>);
+    });
+<% end %>
 });
 
 </script>

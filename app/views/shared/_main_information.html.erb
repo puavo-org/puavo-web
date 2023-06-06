@@ -19,7 +19,10 @@
     <% end %>
 
     <% unless device.puavoConf.nil? || device.puavoConf.empty? %>
-    <p class="infoTitle"><%= t('activeldap.attributes.device.puavoConf') %></p>
+    <div class="flex-cols flex-vcenter gap-10px">
+      <p class="infoTitle"><%= t('activeldap.attributes.device.puavoConf') %></p>
+      <button id="copyPuavoconf"><%= t('link.copy_to_clipboard') %></button>
+    </div>
     <%= render :partial => 'shared/puavoconf',
                :locals  => { :object => device.puavoConf } %>
     <% end %>
