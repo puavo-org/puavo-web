@@ -182,6 +182,10 @@ body {
   font-size: 90%;
 }
 
+#error a {
+  color: #ff0;
+}
+
 form {
   margin: 1em auto;
   padding: 0;
