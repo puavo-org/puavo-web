@@ -152,8 +152,6 @@ class ProfilesController < ApplicationController
             emails: new_addresses
           })
 
-        puts rest_response.inspect
-
         if rest_response.status == 200
           logger.info("[#{@request_id}] The email addresses were updated")
         else
