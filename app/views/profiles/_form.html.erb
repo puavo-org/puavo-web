@@ -7,15 +7,15 @@
       <h2><%= current_user.primary_school.displayName %></h2>
     </header>
 
-    <section>
+    <section id="email">
 <% if @automatic_email_addresses %>
-      <%= f.label t('users.edit.automatic_email'), nil %>
+      <%= f.label t('users.edit.automatic_email'), nil, class: "label" %>
       <p class="notice"><%= t('profiles.edit.emails.automatic_notice') %></p>
       <div id="emails">
         <table class="emails"></table>
       </div>
 <% else %>
-      <%= f.label :mail, nil %>
+      <%= f.label :mail, nil, class: "label" %>
       <p><%= t('profiles.edit.emails.help').html_safe %></p>
       <div id="emails">
         <%= f.text_field :mail, :placeholder => t('activeldap.attributes.user.mail') %>
@@ -31,18 +31,18 @@
 <% end %>
     </section>
 
-    <section>
-      <%= f.label :telephoneNumber, nil %>
+    <section id="phone">
+      <%= f.label :telephoneNumber, nil, class: "label" %>
       <%= f.text_field :telephoneNumber, :placeholder => t('activeldap.attributes.user.telephoneNumber') %>
     </section>
 
-    <section>
-      <%= f.label :puavoLocale, nil %>
+    <section id="locale">
+      <%= f.label :puavoLocale, nil, class: "label" %>
       <%= f.select :puavoLocale, locales_for_select %>
     </section>
 
-    <section>
-      <%= f.label :jpegPhoto, nil %>
+    <section id="photo">
+      <%= f.label :jpegPhoto, nil, class: "label" %>
 
       <div class="flex-cols">
         <div id="photo">
@@ -62,6 +62,7 @@
 
   <div id="buttons">
     <%= f.submit submit_text %>
+    <footer>&copy; Opinsys Oy 2023</footer>
   </div>
 <% end %>
 

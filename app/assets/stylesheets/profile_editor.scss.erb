@@ -31,9 +31,6 @@ a:focus {
 }
 
 form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
   font-size: 90%;
 }
 
@@ -41,10 +38,17 @@ form {
   display: flex;
   flex-direction: column;
   gap: 30px;
+  margin-bottom: 70px;
 }
 
 #buttons {
+  background: var(--page-background);
   text-align: center;
+  position: fixed;
+  bottom: 0;
+  margin: 0 auto;
+  padding: 20px 0 10px 0;
+  width: 750px;
 }
 
 section {
@@ -67,7 +71,7 @@ header h1, header h2 {
   padding: 0;
 }
 
-section > label {
+label.label {
   display: block;
   font-weight: bold;
 }
@@ -108,6 +112,17 @@ input[type="text"] {
   padding: 0.5em;
 }
 
+*:disabled {
+  cursor: not-allowed;
+}
+
+
+/*
+-----------------------------------------------------------------------------------------------------
+EMAIL ADDRESSES
+-----------------------------------------------------------------------------------------------------
+*/
+
 /* Wrapper DIV for all email addresses */
 div#emails {
   display: flex;
@@ -126,21 +141,27 @@ div#emails {
   border: 1px solid var(--generic-border);
 }
 
-.emails button { padding: 5px 10px; }
+.emails button {
+  padding: 5px 10px;
+}
+
+.emails button:disabled {
+  opacity: var(--emails-disabled-opacity);
+}
 
 .emails tr {
   border: 1px solid var(--generic-border);
   height: 3em;
 }
 
-.emails tr:first-of-type { border-top: none; }
-
 .emails tr:hover {
-    background: var(--emails-hover-background);
-    color: var(--emails-hover-foreground);
+  background: var(--emails-hover-background);
+  color: var(--emails-hover-foreground);
 }
 
-.emails tr.removed { text-decoration: line-through; }
+.emails tr.removed {
+  text-decoration: line-through;
+}
 
 .emails td {
   padding: 5px;
@@ -148,45 +169,51 @@ div#emails {
   text-align: left;
 }
 
-.emails td.verification { width: 250px; }
-.emails td.verification span { color: var(--emails-verified); }
-
-.emails td.verification button {
-    background: var(--emails-verify-button-background);
-    color: var(--emails-verify-button-foreground);
-    border: 1px solid var(--emails-verify-button-border);
+.emails td.verification {
+  width: 250px;
 }
 
-.emails td.verification button:hover { background: var(--emails-verify-button-background-hover); }
-.emails td.verification button:active { background: var(--emails-verify-button-background-active); }
+.emails td.verification span {
+  color: var(--emails-verified);
+}
 
+.emails td.verification button,
 .emails td.verification button:disabled,
 .emails td.verification button:disabled:hover,
 .emails td.verification button:disabled:active {
-    background: var(--emails-verify-button-background);
-    color: var(--emails-verify-button-foreground);
-    border: 1px solid var(--emails-verify-button-border);
-    opacity: var(--emails-disabled-opacity);
+  background: var(--emails-verify-button-background);
+  color: var(--emails-verify-button-foreground);
+  border: 1px solid var(--emails-verify-button-border);
 }
 
-.emails td.deletion { width: 130px; text-align: right; }
-
-.emails td.deletion button {
-    background: var(--emails-delete-button-background);
-    color: var(--emails-delete-button-foreground);
-    border: 1px solid var(--emails-delete-button-border);
+.emails td.verification button:hover {
+  background: var(--emails-verify-button-background-hover);
 }
 
-.emails td.deletion button:hover { background: var(--emails-delete-button-background-hover); }
-.emails td.deletion button:active { background: var(--emails-delete-button-background-hover); }
+.emails td.verification button:active {
+  background: var(--emails-verify-button-background-active);
+}
 
+.emails td.deletion {
+  width: 130px;
+  text-align: right;
+}
+
+.emails td.deletion button,
 .emails td.deletion button:disabled,
 .emails td.deletion button:disabled:hover,
 .emails td.deletion button:disabled:active {
-    background: var(--emails-delete-button-background);
-    color: var(--emails-delete-button-foreground);
-    border: 1px solid var(--emails-delete-button-border);
-    opacity: var(--emails-disabled-opacity);
+  background: var(--emails-delete-button-background);
+  color: var(--emails-delete-button-foreground);
+  border: 1px solid var(--emails-delete-button-border);
+}
+
+.emails td.deletion button:hover {
+  background: var(--emails-delete-button-background-hover);
+}
+
+.emails td.deletion button:active {
+  background: var(--emails-delete-button-background-active);
 }
 
 div#newRow { }
@@ -209,6 +236,12 @@ div#emailError {
   margin-top: 5px;
 }
 
+/*
+-----------------------------------------------------------------------------------------------------
+PROFILE IMAGE
+-----------------------------------------------------------------------------------------------------
+*/
+
 div#photo {
   width: 140px;
   min-width: 140px;
@@ -219,10 +252,16 @@ div#photo {
   text-align: center;
 }
 
-img {
+div#photo img {
   max-width: 120px;
   max-height: 120px;
 }
+
+/*
+-----------------------------------------------------------------------------------------------------
+MISCELLANEOUS
+-----------------------------------------------------------------------------------------------------
+*/
 
 .notice {
   background: var(--automatic-emails-background);
@@ -238,10 +277,6 @@ img {
 
 ::placeholder, ::-webkit-input-placeholder {
   font-style: italic;
-}
-
-span#verificationAddress {
-  font-weight: bold;
 }
 
 /* The messages on the notification page displayed after the profile is saved */
