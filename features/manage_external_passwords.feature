@@ -33,7 +33,7 @@ Feature: Manage external passwords
   Scenario: External user fails to change own password with bad credentials
     Given I am on the own password change page
     When I fill in "Username" with "sarah.connor"
-    And I fill in "Old password" with "wrong"
+    And I fill in "Current password" with "wrong"
     And I fill in "user[new_password]" with "newsecret"
     And I fill in "Confirm new password" with "newsecret"
     And I press "Change password"
@@ -43,7 +43,7 @@ Feature: Manage external passwords
   Scenario: External user changes their own password
     Given I am on the own password change page
     When I fill in "Username" with "sarah.connor"
-    And I fill in "Old password" with "secret"
+    And I fill in "Current password" with "secret"
     And I fill in "user[new_password]" with "newsecret"
     And I fill in "Confirm new password" with "newsecret"
     And I wait 11 seconds

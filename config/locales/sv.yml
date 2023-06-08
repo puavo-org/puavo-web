@@ -94,7 +94,7 @@ sv:
       domain_or: " eller "
     own:
       title: "Ändra ditt eget lösenord"
-      password: "Gammalt lösenord"
+      password: "Nuvarande lösenord"
       link_other_password: "Ändra en annan användares lösenordet"
     forgot:
       title: "Glömt lösenord"

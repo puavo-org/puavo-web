@@ -85,8 +85,8 @@ de:
     attempts_are_logged_other: "Dieses Formulär ist nur für Lehrer:innen und Administrator:innen geeignet. Die Passwortänderungen und Passwortänderungsversuche werden mit Benutzerkontos, IP-Adressen und Zeitstempeln protokolliert."
     invalid: "Das neue Passwort erfüllt nicht die Anforderungen"
     edit:
-      title: "Das Password eines Anderen änderen"
-      head: "Um das Password eines Anderen zu ändern, tragen Sie Ihren Benutzernamen und Ihr Passwort ein, dann den Benuzternamen und das neue Passwort des Benutzers, dessen Passwort neu gesetzt werden soll. Sie benötigen genügend Rechte um das Passwort eines anderen Benutzers zu ändern."
+      title: "Das Passwort eines Anderen änderen"
+      head: "Um das Passwort eines Anderen zu ändern, tragen Sie Ihren Benutzernamen und Ihr Passwort ein, dann den Benuzternamen und das neue Passwort des Benutzers, dessen Passwort neu gesetzt werden soll. Sie benötigen genügend Rechte um das Passwort eines anderen Benutzers zu ändern."
       changing_user: "Ändernder Benutzer"
       changed_user: "Zu ändernden Benutzer"
       password: "Passwort"
@@ -94,7 +94,7 @@ de:
       domain_or: " oder "
     own:
       title: "Das eigene Passwort ändern"
-      password: "Altes Passwort"
+      password: "Aktuelles Passwort"
       link_other_password: "Passwort eines Anderen ändern"
     forgot:
       title: Reset your password

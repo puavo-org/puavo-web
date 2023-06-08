@@ -2066,7 +2066,7 @@ fi:
       domain_or: " tai "
     own:
       title: Vaihda oma salasanasi
-      password: Vanha salasana
+      password: Nykyinen salasana
       link_other_password: "Vaihda toisen käyttäjän salasana"
     forgot:
       title: "Unohdin salasanani"

@@ -2066,7 +2066,7 @@ en:
       domain_or: " or "
     own:
       title: Change your own password
-      password: Old password
+      password: Current password
       link_other_password: Change someone else's password
     forgot:
       title: "I forgot my password"
