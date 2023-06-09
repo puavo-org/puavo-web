@@ -465,7 +465,7 @@ describe PuavoRest::SSO do
 
       # The response is always 401 (Unauthorized) even if we just display the form normally and nothing is wrong
       assert_equal 401, last_response.status
-      assert last_response.body.include?('This service requires a verified email address.')
+      assert last_response.body.include?('Login to service <span>Verified service</span>')
     end
 
     it 'verified SSO login fails without a verified email address' do

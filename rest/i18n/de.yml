@@ -8,7 +8,6 @@ sso:
   no_organisation: Organisation ist nicht angelegt worden
   organisation_missing: "Oranisation fehlt im Benutzernamen. Geben Sie bitte den Benutzernamen in folgender Form ein: benutzername@organisation.opinsys.fi"
   invalid_username: Falscher Benutzername
-  verified_address_notice: "Dieser Dienst anfordert eine bestätigte E-Mail-Adresse."
   verified_address_missing: "Dieser Dienst anfordert eine bestätigte E-Mail-Adresse. <a href=\"%1\">Bitte bestätigten Sie Ihre Adresse durch Veränderung der eigenen Daten</a> und melden sich erneut. Wenn Sie nicht verstehen, was das bedeutet, bitte mit Opinsys Helpdesk Kontakt aufnehmen."
   login_to: Einloggen in den Service
   login: Einloggen

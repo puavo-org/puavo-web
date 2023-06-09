@@ -23,10 +23,6 @@
         <% end %>
     </p>
 
-    <% if @login_content['need_verified_address'] %>
-    <p id="verified_notice"><%= @login_content['verified_address_notice'] %></p>
-    <% end %>
-
     <% if @login_content['error_message'] %>
     <p id="error"><%= @login_content['error_message'] %></p>
     <% end %>
