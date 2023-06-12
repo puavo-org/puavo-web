@@ -125,7 +125,7 @@ class SSO < PuavoSinatra
         rlog.error("[#{request_id}] the current user does NOT have a verified address!")
         params["organisation"] = organisation.domain unless params["organisation"]
         org = organisation.domain.split(".")[0]
-        return render_form(t.sso.verified_address_missing("https://#{org}.opinsys.fi/users/profile/edit"))
+        return render_form(t.sso.verified_address_missing("https://#{org}.opinsys.fi/users/profile/edit"), nil, true)
       end
 
       rlog.info("[#{request_id}] the user has a verified email address")
@@ -256,8 +256,8 @@ class SSO < PuavoSinatra
     respond_auth
   end
 
-  def render_form(error_message, err=nil)
-    if env["REQUEST_METHOD"] == "POST"
+  def render_form(error_message, err=nil, force_error_message=false)
+    if env["REQUEST_METHOD"] == "POST" || force_error_message
       @error_message = error_message
 
       if err
