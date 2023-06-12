@@ -123,6 +123,7 @@ class SSO < PuavoSinatra
 
       if Array(user.verified_email || []).empty?
         rlog.error("[#{request_id}] the current user does NOT have a verified address!")
+        params["organisation"] = organisation.domain unless params["organisation"]
         org = organisation.domain.split(".")[0]
         return render_form(t.sso.verified_address_missing("https://#{org}.opinsys.fi/users/profile/edit"))
       end
