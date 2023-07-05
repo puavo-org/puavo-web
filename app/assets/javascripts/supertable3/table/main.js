@@ -95,10 +95,6 @@ constructor(container, settings)
         // transformed.
         preFilterFunction: typeof(settings.preFilterFunction) == "function" ? settings.preFilterFunction : null,
 
-        // (Optional) User-supplied transform functions (see data.transformed above) that are used if
-        // the built-in transformers aren't enough.
-        transforms: typeof(settings.userTransforms) == "object" ? settings.userTransforms : {},
-
         // Optional callback functions for populating the rightmost "actions" column and
         // handling middle mouse clicks.
         actions: typeof(settings.actions) == "function" ? settings.actions : null,
@@ -855,7 +851,6 @@ transformRawData(incomingJSON)
 
     this.data.transformed = Data.transformRows(
         this.columns.definitions,
-        this.user.transforms,
         incomingJSON,
         this.user.preFilterFunction
     );

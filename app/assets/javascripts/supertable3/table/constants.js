@@ -8,9 +8,6 @@ export const ColumnFlag = {
     // Only works with strings!
     ARRAY: 0x02,
 
-    // Call a user-defined callback function to get the actual displayable value
-    USER_TRANSFORM: 0x04,
-
     // Add a custom CSS class name to the column TD (specify it with "cssClass" value)
     CUSTOM_CSS: 0x08,
 

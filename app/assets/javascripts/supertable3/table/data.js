@@ -15,19 +15,12 @@ const DEFAULT_VALUES = {
     [ColumnType.STRING]: ""
 };
 
-function _transformValue(userTransforms, raw, key, coldef, defVal)
+function _transformValue(raw, key, coldef, defVal)
 {
-    if (coldef.flags & ColumnFlag.USER_TRANSFORM) {
+    if (typeof(coldef.transform) == "function") {
         // Apply a user-defined transformation. We assume the user function can deal
         // with null and undefined values.
-        if (key in userTransforms)
-            return userTransforms[key](raw);
-        else {
-            return [
-                `<span class="data-error">User transform function "${key}" is missing!</span>`,
-                defVal
-            ];
-        }
+        return coldef.transform(raw);
     }
 
     if (raw[key] === null) {
@@ -76,7 +69,7 @@ function _transformValue(userTransforms, raw, key, coldef, defVal)
 // convert timestamps into user's local time, turn booleans into checkmarks, and so on.
 // The data we generate here is purely presentational, intended for humans; it's never
 // fed back into the database.
-export function transformRows(columnDefinitions, userTransforms, rawData, preFilterFunction=null)
+export function transformRows(columnDefinitions, rawData, preFilterFunction=null)
 {
     const columnKeys = Object.keys(columnDefinitions);
 
@@ -103,7 +96,7 @@ export function transformRows(columnDefinitions, userTransforms, rawData, preFil
             if (key in raw) {
                 // The transformation function can return two or three values; the third is
                 // an optional filterable value. If it's omitted, we use the plain raw value.
-                const [d, s, f] = _transformValue(userTransforms, raw, key, coldef, defVal);
+                const [d, s, f] = _transformValue(raw, key, coldef, defVal);
 
                 clean[INDEX_EXISTS] = true;
                 clean[INDEX_DISPLAYABLE] = d;
