@@ -42,13 +42,62 @@ const COLUMN_DEFINITIONS = {
     name: {
         key: "name",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => [`<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`, entry.name],
     },
 
     integrations: {
         key: "integrations",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.USER_TRANSFORM,
+        flags: ST.ColumnFlag.ARRAY,
+        transform: entry => {
+            let display = [],
+                sortable = [];
+
+            const available = Object.keys(entry.integrations);
+
+            for (const integration of INTEGRATION_TYPES) {
+                const type = integration[0],
+                      title = integration[1];
+
+                if (available.includes(type)) {
+                    switch (type) {
+                        case "in":
+                            for (const system of entry.integrations[type])
+                                display.push(`<li class="${type}" title="${title}">${system}<span class="dirIn"></span>Puavo</li>`);
+
+                            break;
+
+                        case "out":
+                            for (const system of entry.integrations[type])
+                                display.push(`<li class="${type}" title="${title}">Puavo<span class="dirOut"></span>${system}</li>`);
+
+                            break;
+
+                        case "inout":
+                            for (const system of entry.integrations[type])
+                                display.push(`<li class="${type}" title="${title}">Puavo<span class="dirInOut"></span>${system}</li>`);
+
+                            break;
+
+                        default:
+                            for (const system of entry.integrations[type])
+                                display.push(`<li class="${type}" title="${title}">${system}</li>`);
+
+                            break;
+                    }
+
+                    sortable.push(entry.integrations[type]);
+                }
+            }
+
+            sortable = sortable.flat();
+
+            return [
+                `<ul class="integrations inlineIntegrations">${display.join("<br>")}</ul>`,
+                sortable,
+                sortable
+            ];
+        }
     },
 
     prefix: {
@@ -59,7 +108,15 @@ const COLUMN_DEFINITIONS = {
     boot_servers: {
         key: "boot_servers",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            const plain = entry.boot_servers.map(s => s[0]).join(", "); // used for filtering and sorting
+
+            return [
+                entry.boot_servers.map(s => `<a href="${s[1]}">${s[0]}</a>`).join("<br>"),
+                plain,
+                plain
+            ];
+        }
     },
 
     tags: {
@@ -155,75 +212,6 @@ const INTEGRATION_TYPES = [
     ["other", "<%= t('schools.integrations.other') %>"]
 ];
 
-const USER_TRANSFORM_FUNCTIONS = {
-    name: function(entry) {
-        return [
-            `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`,
-            entry.name
-        ];
-    },
-
-    integrations: function(entry) {
-        let display = [],
-            sortable = [];
-
-        const available = Object.keys(entry.integrations);
-
-        for (const integration of INTEGRATION_TYPES) {
-            const type = integration[0],
-                  title = integration[1];
-
-            if (available.includes(type)) {
-                switch (type) {
-                    case "in":
-                        for (const system of entry.integrations[type])
-                            display.push(`<li class="${type}" title="${title}">${system}<span class="dirIn"></span>Puavo</li>`);
-
-                        break;
-
-                    case "out":
-                        for (const system of entry.integrations[type])
-                            display.push(`<li class="${type}" title="${title}">Puavo<span class="dirOut"></span>${system}</li>`);
-
-                        break;
-
-                    case "inout":
-                        for (const system of entry.integrations[type])
-                            display.push(`<li class="${type}" title="${title}">Puavo<span class="dirInOut"></span>${system}</li>`);
-
-                        break;
-
-                    default:
-                        for (const system of entry.integrations[type])
-                            display.push(`<li class="${type}" title="${title}">${system}</li>`);
-
-                        break;
-                }
-
-                sortable.push(entry.integrations[type]);
-            }
-        }
-
-        sortable = sortable.flat();
-
-        return [
-            `<ul class="integrations inlineIntegrations">${display.join("<br>")}</ul>`,
-            sortable,
-            sortable
-        ];
-    },
-
-    boot_servers: function(entry) {
-        const plain = entry.boot_servers.map(s => s[0]).join(", "); // used for filtering and sorting
-
-        return [
-            entry.boot_servers.map(s => `<a href="${s[1]}">${s[0]}</a>`).join("<br>"),
-            plain,
-            plain
-        ];
-    }
-};
-
 function schoolActions(entry)
 {
     return `<a href="/users/schools/${entry.id[ST.INDEX_FILTERABLE]}/edit" class="btn"><%= t('link.edit') %></a>`;
@@ -270,7 +258,6 @@ document.addEventListener("DOMContentLoaded", function() {
             columnDefinitions: COLUMN_DEFINITIONS,
             columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,
-            userTransforms: USER_TRANSFORM_FUNCTIONS,
             actions: schoolActions,
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,

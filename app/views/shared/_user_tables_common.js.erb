@@ -1,3 +1,13 @@
+// A list of schools. Some columns and mass operations need access to a list of schools.
+const SCHOOLS = {
+<% @schools_list.each do |s| %>
+    "<%= s[:id] %>": {
+        dn: "<%= s[:dn] %>",
+        name: "<%= s[:name] %>",
+    },
+<% end %>
+};
+
 // All available columns, their names and types and other parameters
 const COLUMN_DEFINITIONS = {
     id: {
@@ -21,7 +31,25 @@ const COLUMN_DEFINITIONS = {
     name: {
         key: "name",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let s = "";
+
+            if (entry.rrt)
+                s += `<span class="stUserMarkedForDeletion">`;
+
+            s += `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`;
+
+            if (entry.locked)
+                s += `<i class="icon-lock"></i>`;
+
+            if (entry.rrt)
+                s += `</span>`;
+
+            return [
+                s,
+                entry.name
+            ];
+        }
     },
 
     uid: {
@@ -47,7 +75,25 @@ const COLUMN_DEFINITIONS = {
     role: {
         key: "role",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let values = [];
+
+            // Translate user roles
+            for (let i = 0; i < entry.role.length; i++) {
+                const r = entry.role[i];
+
+                if (r in USER_ROLES) {
+                    if (r == "owner" || r == "schooladmin")
+                        values.push(`<span class="adminOrOwner">${USER_ROLES[r]}</span>`);
+                    else values.push(USER_ROLES[r]);
+                } else values.push(USER_ROLES['unknown']);
+            }
+
+            return [
+                values.join("<br>"),
+                entry.role.join()
+            ];
+        },
     },
 
     phone: {
@@ -83,8 +129,19 @@ const COLUMN_DEFINITIONS = {
     rrt: {
         key: "rrt",
         type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.F_NULLABLE,
-        alias: ["removal_request_time"]
+        flags: ST.ColumnFlag.F_NULLABLE,
+        transform: entry => {
+            if (entry.rrt === undefined || entry.rrt === null || entry.rrt === 0)
+                return ["", 0];
+
+            const [valid, t] = ST.convertTimestamp(entry.rrt);
+
+            if (!valid)
+                return ["?", 0];
+
+            return [t, entry.rrt];
+        },
+        alias: ["removal_request_time"],
     },
 
     dnd: {
@@ -116,14 +173,26 @@ const COLUMN_DEFINITIONS = {
     school: {
         key: "school",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            // Makes filtering by school name work as expected, but the exported CSV
+            // will contain display names. Can't have everything.
+            return [entry.school[1], entry.school[1]];
+        },
     },
 <% end %>
 
     schools: {
         key: "schools",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let out = [];
+
+            if (Array.isArray(entry.schools))
+                for (const id of entry.schools)
+                    out.push((id in SCHOOLS) ? SCHOOLS[id].name : "?");
+
+            return [out.join("<br>"), out.join(","), out.join(",")];
+        }
     },
 };
 
@@ -190,97 +259,6 @@ const USER_ROLES = {
     parent: "<%= t('puavoEduPersonAffiliation_parent') %>",
     visitor: "<%= t('puavoEduPersonAffiliation_visitor') %>",
     unknown: "<%= t('unknown_role') %>",
-};
-
-// A list of schools. Some columns and mass operations need access to a list of schools.
-const SCHOOLS = {
-<% @schools_list.each do |s| %>
-    "<%= s[:id] %>": {
-        dn: "<%= s[:dn] %>",
-        name: "<%= s[:name] %>",
-    },
-<% end %>
-};
-
-/*
-Each transformation function must return an array of two values:
-    1. The displayable value for this table cell. Assumed to be valid HTML.
-    2. A plain entry that can be used to compare this to other cells during sorting.
-
-Never return NULLs! If there is no value, return the default value for that
-cell, be it an empty string, the number zero, or something else. Never NULL.
-*/
-const USER_TRANSFORM_FUNCTIONS = {
-    name: function(entry) {
-        let s = "";
-
-        if (entry.rrt)
-            s += `<span class="stUserMarkedForDeletion">`;
-
-        s += `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`;
-
-        if (entry.locked)
-            s += `<i class="icon-lock"></i>`;
-
-        if (entry.rrt)
-            s += `</span>`;
-
-        return [
-            s,
-            entry.name
-        ];
-    },
-
-    rrt: function(entry) {
-        if (entry.rrt === undefined || entry.rrt === null || entry.rrt === 0)
-            return ["", 0];
-
-        const [valid, t] = ST.convertTimestamp(entry.rrt);
-
-        if (!valid)
-            return ["?", 0];
-
-        return [t, entry.rrt];
-    },
-
-    role: function(entry) {
-        let values = [];
-
-        // Translate user roles
-        for (let i = 0; i < entry.role.length; i++) {
-            const r = entry.role[i];
-
-            if (r in USER_ROLES) {
-                if (r == "owner" || r == "schooladmin")
-                    values.push(`<span class="adminOrOwner">${USER_ROLES[r]}</span>`);
-                else values.push(USER_ROLES[r]);
-            } else values.push(USER_ROLES['unknown']);
-        }
-
-        return [
-            values.join("<br>"),
-            entry.role.join()
-        ];
-    },
-
-    school: function(entry) {
-        // Makes filtering by school name work as expected, but the exported CSV
-        // will contain display names. Can't have everything.
-        return [
-            entry.school[1],
-            entry.school[1]
-        ];
-    },
-
-    schools: function(entry) {
-        let out = [];
-
-        if (Array.isArray(entry.schools))
-            for (const id of entry.schools)
-                out.push((id in SCHOOLS) ? SCHOOLS[id].name : "?");
-
-        return [out.join("<br>"), out.join(","), out.join(",")];
-    },
 };
 
 <% if @is_owner %>

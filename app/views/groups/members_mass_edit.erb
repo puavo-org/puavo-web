@@ -34,6 +34,16 @@ const USER_ROLES = {
     unknown: "<%= t('unknown_role') %>",
 };
 
+// Localized group types
+const GROUP_TYPES = {
+    "teaching group": "<%= t('group_type.teaching group') %>",
+    "course group": "<%= t('group_type.course group') %>",
+    "year class": "<%= t('group_type.year class') %>",
+    "administrative group": "<%= t('group_type.administrative group') %>",
+    "archive users": "<%= t('group_type.archive users') %>",
+    "other groups": "<%= t('group_type.other groups') %>",
+};
+
 const DEFAULT_COLUMNS = ["name", "uid", "role", "locked", "marked", "groups"];
 const DEFAULT_SORTING = { column: "uid", dir: ST.SortOrder.ASCENDING };
 
@@ -70,7 +80,12 @@ const COLUMN_DEFINITIONS = {
     name: {
         key: "name",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            return [
+                `<a href="/users/${entry.school_id}/users/${entry.id}">${ST.escapeHTML(entry.name)}</a>`,
+                entry.name
+            ];
+        }
     },
 
     uid: {
@@ -81,7 +96,21 @@ const COLUMN_DEFINITIONS = {
     role: {
         key: "role",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let values = [];
+
+            // Translate user roles
+            for (let i = 0; i < entry.role.length; i++) {
+                const r = entry.role[i];
+
+                values.push((r in USER_ROLES) ? USER_ROLES[r] : USER_ROLES['unknown']);
+            }
+
+            return [
+                values.join("<br>"),
+                entry.role.join()
+            ];
+        }
     },
 
     locked: {
@@ -97,7 +126,21 @@ const COLUMN_DEFINITIONS = {
     groups: {
         key: "groups",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let values = [],
+                plain = [];
+
+            for (const g of entry.groups) {
+                values.push(`<a href="${g.link}">${g.title}</a> <small>[${g.school}]</small>`);
+                plain.push(g.title);
+            }
+
+            return [
+                values.join("<br>"),
+                plain.join(","),
+                plain.join(","),
+            ];
+        }
     },
 };
 
@@ -113,57 +156,6 @@ const COLUMN_TITLES = {
     locked: "<%= t('columns.users.is_locked') %>",
     marked: "<%= t('columns.users.rrt') %>",
     groups: "<%= t('columns.groups.member_groups') %>",
-};
-
-// Localized group types
-const GROUP_TYPES = {
-    "teaching group": "<%= t('group_type.teaching group') %>",
-    "course group": "<%= t('group_type.course group') %>",
-    "year class": "<%= t('group_type.year class') %>",
-    "administrative group": "<%= t('group_type.administrative group') %>",
-    "archive users": "<%= t('group_type.archive users') %>",
-    "other groups": "<%= t('group_type.other groups') %>",
-};
-
-const USER_TRANSFORM_FUNCTIONS = {
-    name: function(entry) {
-        return [
-            `<a href="/users/${entry.school_id}/users/${entry.id}">${ST.escapeHTML(entry.name)}</a>`,
-            entry.name
-        ];
-    },
-
-    role: function(entry) {
-        let values = [];
-
-        // Translate user roles
-        for (let i = 0; i < entry.role.length; i++) {
-            const r = entry.role[i];
-
-            values.push((r in USER_ROLES) ? USER_ROLES[r] : USER_ROLES['unknown']);
-        }
-
-        return [
-            values.join("<br>"),
-            entry.role.join()
-        ];
-    },
-
-    groups: function(entry) {
-        let values = [],
-            plain = [];
-
-        for (const g of entry.groups) {
-            values.push(`<a href="${g.link}">${g.title}</a> <small>[${g.school}]</small>`);
-            plain.push(g.title);
-        }
-
-        return [
-            values.join("<br>"),
-            plain.join(","),
-            plain.join(","),
-        ];
-    },
 };
 
 // Common base class for group operations
@@ -440,7 +432,6 @@ document.addEventListener("DOMContentLoaded", function() {
             columnDefinitions: COLUMN_DEFINITIONS,
             columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,
-            userTransforms: USER_TRANSFORM_FUNCTIONS,
             massSelects: MASS_SELECTS,
             massOperations: MASS_OPERATIONS,
             massOperationsEndpoint: "<%= groups_mass_operations_path %>",

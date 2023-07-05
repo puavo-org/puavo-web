@@ -1,3 +1,13 @@
+// Localized group types
+const GROUP_TYPES = {
+    "teaching group": "<%= t('group_type.teaching group') %>",
+    "course group": "<%= t('group_type.course group') %>",
+    "year class": "<%= t('group_type.year class') %>",
+    "administrative group": "<%= t('group_type.administrative group') %>",
+    "archive users": "<%= t('group_type.archive users') %>",
+    "other groups": "<%= t('group_type.other groups') %>",
+};
+
 // Table column definitions
 const COLUMN_DEFINITIONS = {
     abbr: {
@@ -35,21 +45,46 @@ const COLUMN_DEFINITIONS = {
     name: {
         key: "name",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            return [
+                `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`,
+                entry.name
+            ];
+        }
     },
 
 <% if @is_organisation %>
     school: {
         key: "school",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            // Makes filtering by school name work as expected, but the exported CSV
+            // will contain display names. Can't have everything.
+            return [
+                entry.school[1],
+                entry.school[1]
+            ];
+        },
     },
 <% end %>
 
     type: {
         key: "type",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let type = null;
+
+            if (entry.type in GROUP_TYPES) {
+                type = GROUP_TYPES[entry.type];
+
+                if (entry.type == 'course group')
+                    type = `<span class="stCourseGroup">${type}</span>`;
+            } else {
+                type = `<span class="missingData"><%= t('missing_data') %></span>`;
+            }
+
+            return [type, entry.type];
+        },
         missing: {
             display: `<span class="missingData"><%= t('missing_data') %></span>`,
             sort: "",
@@ -74,16 +109,6 @@ const COLUMN_TITLES = {
     type: "<%= t('columns.groups.type') %>",
 };
 
-// Localized group types
-const GROUP_TYPES = {
-    "teaching group": "<%= t('group_type.teaching group') %>",
-    "course group": "<%= t('group_type.course group') %>",
-    "year class": "<%= t('group_type.year class') %>",
-    "administrative group": "<%= t('group_type.administrative group') %>",
-    "archive users": "<%= t('group_type.archive users') %>",
-    "other groups": "<%= t('group_type.other groups') %>",
-};
-
 // The default order for columns. "DEFAULT_COLUMNS" above does not have to be in this order.
 const COLUMN_ORDER = [
 <% if @is_organisation %>
@@ -98,39 +123,6 @@ const COLUMN_ORDER = [
     "created",
     "modified",
 ];
-
-const USER_TRANSFORM_FUNCTIONS = {
-    name: function(entry) {
-        return [
-            `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`,
-            entry.name
-        ];
-    },
-
-    type: function(entry) {
-        let type = null;
-
-        if (entry.type in GROUP_TYPES) {
-            type = GROUP_TYPES[entry.type];
-
-            if (entry.type == 'course group')
-                type = `<span class="stCourseGroup">${type}</span>`;
-        } else {
-            type = `<span class="missingData"><%= t('missing_data') %></span>`;
-        }
-
-        return [type, entry.type];
-    },
-
-    school: function(entry) {
-        // Makes filtering by school name work as expected, but the exported CSV
-        // will contain display names. Can't have everything.
-        return [
-            entry.school[1],
-            entry.school[1]
-        ];
-    },
-};
 
 // Mass operation: remove all members from the group
 class MassGroupRemoveMembers extends ST.MassOperation {

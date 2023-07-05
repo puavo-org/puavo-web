@@ -1,9 +1,42 @@
+function doStorage(value)
+{
+    return [(value / 1048576).toFixed(0), value];
+}
+
+function doImage(image)
+{
+    let display = "",
+        value = image.file,
+        filter = "";
+
+    if (image.release) {
+        // Display the release name nicely
+        display = `${image.file} <span class="releaseName">(${image.release})</span>`;
+        filter = `${image.file} (${image.release})`;
+    } else {
+        display = image.file;
+        filter = image.file;
+    }
+
+    return [display, value, filter];
+}
+
+function doTimestamp(value)
+{
+    const ts = ST.convertTimestamp(value, true);
+
+    return [
+        ts[0] === true ? ts[1] : "?",
+        value
+    ];
+}
+
 // Table column definitions
 const COLUMN_DEFINITIONS = {
     abitti_version: {
         key: "abitti_version",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => [entry.abitti_version, entry.abitti_version, entry.abitti_version],
     },
 
     allow_guest: {
@@ -47,7 +80,25 @@ const COLUMN_DEFINITIONS = {
     available_images: {
         key: "available_images",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let display = [],
+                value = [],
+                filter = [];
+
+            for (const i of entry.available_images) {
+                if (i.release) {
+                    display.push(`${i.file} <span class="releaseName">(${i.release})</span>`);
+                    filter.push(`${i.file} ${i.release}`);
+                } else {
+                    display.push(i.file);
+                    filter.push(i.file);
+                }
+
+                value.push(i.file);
+            }
+
+            return [display.join('<br>'), value.join(','), filter.join(',')];
+        },
     },
 <% end %>
 
@@ -116,7 +167,7 @@ const COLUMN_DEFINITIONS = {
     current_image: {
         key: "current_image",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => doImage(entry.current_image),
     },
 
     default_printer: {
@@ -127,44 +178,50 @@ const COLUMN_DEFINITIONS = {
     desc: {
         key: "desc",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => [ST.escapeHTML(entry.desc), entry.desc],
         alias: ["description"],
     },
 
     df_home: {
         key: "df_home",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.df_home),
     },
 
     df_images: {
         key: "df_images",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.df_images),
     },
 
     df_state: {
         key: "df_state",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.df_state),
     },
 
     df_tmp: {
         key: "df_tmp",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.df_tmp),
     },
 
     df_imageoverlays: {
         key: "df_imageoverlays",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.df_imageoverlays),
     },
 
     hd: {
         key: "hd",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.hd),
         alias: ["hard_drive"],
     },
 
@@ -176,7 +233,19 @@ const COLUMN_DEFINITIONS = {
     hn: {
         key: "hn",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let extra = "";
+
+<% unless @is_servers %>
+            if (entry.reset_from)
+                extra = ` <i class="icon-attention iconError" title="<%= t('devices.index.pending_reset') %>"></i>`;
+<% end %>
+
+            return [
+                `<a href="${entry.link}">${ST.escapeHTML(entry.hn)}</a>${extra}`,
+                entry.hn
+            ];
+        },
         alias: ["hostname"],
         export_name: "hostname",
     },
@@ -200,7 +269,7 @@ const COLUMN_DEFINITIONS = {
     image: {
         key: "image",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => doImage(entry.image),
     },
 
     image_series: {
@@ -289,14 +358,24 @@ const COLUMN_DEFINITIONS = {
     monitors_xml: {
         key: "monitors_xml",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            // It's actually XML, but HTML escaping can handle it
+            return ["<pre>" + ST.escapeHTML(entry.monitors_xml[0]) + "</pre>", entry.monitors_xml];
+        },
     },
 
 <% if @is_organisation %>
     school: {
         key: "school",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            // Makes filtering by school name work as expected, but the exported CSV
+            // will contain display names. Can't have everything.
+            return [
+                entry.school[1],
+                entry.school[1]
+            ];
+        }
     },
 <% end %>
 
@@ -304,14 +383,43 @@ const COLUMN_DEFINITIONS = {
     schools: {
         key: "schools",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let display = [],
+                value = [];
+
+            for (const sch of entry.schools) {
+                if (sch.valid) {
+                    display.push(`<a href="${sch.link}">${sch.title}</a>`);
+                    value.push(sch.title);
+                } else {
+                    display.push(`<span class="missingData">${sch.dn}</span>`);
+                    value.push('?');
+                }
+            }
+
+            return [display.join("<br>"), value.join(','), value.join(',')];
+        },
     },
 <% end %>
 
     user: {
         key: "user",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            if (entry.user.valid) {
+                return [
+                    `<a href="${entry.user.link}">${entry.user.title}</a>`,
+                    entry.user.title,
+                    entry.user.title
+                ]
+            } else {
+                return [
+                    `<span class="missingData">${entry.user.dn}</span>`,
+                    entry.user.dn,
+                    entry.user.dn
+                ]
+            }
+        },
     },
 
     personal_admin: {
@@ -333,7 +441,7 @@ const COLUMN_DEFINITIONS = {
     purchase_date: {
         key: "purchase_date",
         type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => doTimestamp(entry.purchase_date),
     },
 
     purchase_loc: {
@@ -355,14 +463,15 @@ const COLUMN_DEFINITIONS = {
     purchase_warranty: {
         key: "purchase_warranty",
         type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => doTimestamp(entry.purchase_warranty),
         export_name: "warranty_ends",
     },
 
     ram: {
         key: "ram",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.ram),
     },
 
 <% unless @is_servers %>
@@ -613,182 +722,6 @@ const COLUMN_ORDER = [
     "ll_uid",
     "ll_time",
 ];
-
-function doStorage(value)
-{
-    return [(value / 1048576).toFixed(0), value];
-}
-
-function doImage(image)
-{
-    let display = "",
-        value = image.file,
-        filter = "";
-
-    if (image.release) {
-        // Display the release name nicely
-        display = `${image.file} <span class="releaseName">(${image.release})</span>`;
-        filter = `${image.file} (${image.release})`;
-    } else {
-        display = image.file;
-        filter = image.file;
-    }
-
-    return [display, value, filter];
-}
-
-const USER_TRANSFORM_FUNCTIONS = {
-    abitti_version: function(entry) {
-        const v = entry.abitti_version;
-        return [v, v, v];
-    },
-
-<% if @is_servers %>
-    available_images: function(entry) {
-        let display = [],
-            value = [],
-            filter = [];
-
-        for (const i of entry.available_images) {
-            if (i.release) {
-                display.push(`${i.file} <span class="releaseName">(${i.release})</span>`);
-                filter.push(`${i.file} ${i.release}`);
-            } else {
-                display.push(i.file);
-                filter.push(i.file);
-            }
-
-            value.push(i.file);
-        }
-
-        return [display.join('<br>'), value.join(','), filter.join(',')];
-    },
-<% end %>
-
-    ram: function(entry) {
-        return doStorage(entry.ram);
-    },
-
-    hd: function(entry) {
-        return doStorage(entry.hd);
-    },
-
-    df_home: function(entry) {
-        return doStorage(entry.df_home);
-    },
-
-    df_state: function(entry) {
-        return doStorage(entry.df_state);
-    },
-
-    df_images: function(entry) {
-        return doStorage(entry.df_images);
-    },
-
-    df_tmp: function(entry) {
-        return doStorage(entry.df_tmp);
-    },
-
-    df_imageoverlays: function(entry) {
-        return doStorage(entry.df_imageoverlays);
-    },
-
-    current_image: function(entry) {
-        return doImage(entry.current_image);
-    },
-
-    desc: function(entry) {
-        return [
-            ST.escapeHTML(entry.desc),
-            entry.desc,
-        ]
-    },
-
-    hn: function(entry) {
-        let extra = "";
-
-<% unless @is_servers %>
-        if (entry.reset_from)
-            extra = ` <i class="icon-attention iconError" title="<%= t('devices.index.pending_reset') %>"></i>`;
-<% end %>
-
-        return [
-            `<a href="${entry.link}">${ST.escapeHTML(entry.hn)}</a>${extra}`,
-            entry.hn
-        ];
-    },
-
-    image: function(entry) {
-        return doImage(entry.image);
-    },
-
-    purchase_date: function(entry) {
-        const ts = ST.convertTimestamp(entry.purchase_date, true);
-
-        return [
-            ts[0] === true ? ts[1] : "?",
-            entry.purchase_date
-        ];
-    },
-
-    purchase_warranty: function(entry) {
-        const ts = ST.convertTimestamp(entry.purchase_warranty, true);
-
-        return [
-            ts[0] === true ? ts[1] : "?",
-            entry.purchase_warranty
-        ];
-    },
-
-    school: function(entry) {
-        // Makes filtering by school name work as expected, but the exported CSV
-        // will contain display names. Can't have everything.
-        return [
-            entry.school[1],
-            entry.school[1]
-        ];
-    },
-
-<% if @is_servers %>
-    schools: function(entry) {
-        let display = [],
-            value = [];
-
-        for (const sch of entry.schools) {
-            if (sch.valid) {
-                display.push(`<a href="${sch.link}">${sch.title}</a>`);
-                value.push(sch.title);
-            } else {
-                display.push(`<span class="missingData">${sch.dn}</span>`);
-                value.push('?');
-            }
-        }
-
-        return [display.join("<br>"), value.join(','), value.join(',')];
-    },
-<% end %>
-
-    user: function(entry) {
-        if (entry.user.valid) {
-            return [
-                `<a href="${entry.user.link}">${entry.user.title}</a>`,
-                entry.user.title,
-                entry.user.title
-            ]
-        } else {
-            return [
-                `<span class="missingData">${entry.user.dn}</span>`,
-                entry.user.dn,
-                entry.user.dn
-            ]
-        }
-    },
-
-    monitors_xml: function(entry) {
-        // It's actually XML, but HTML escaping can handle it
-        return ["<pre>" + ST.escapeHTML(entry.monitors_xml[0]) + "</pre>", entry.monitors_xml];
-    },
-};
 
 const FILTER_PRESETS = [
     // Traditional
