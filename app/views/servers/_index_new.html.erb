@@ -36,9 +36,8 @@ document.addEventListener("DOMContentLoaded", function() {
         // Settings
         {
             id: "servers",
-            csvPrefix: `<%= LdapOrganisation.current.o %>-servers`,
-            flags: ST.TableFlag.ENABLE_COLUMN_EDITING | ST.TableFlag.ENABLE_FILTERING | ST.TableFlag.ENABLE_SELECTION | ST.TableFlag.ENABLE_PAGINATION,
             locale: "<%= supertable_sorting_locale %>",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-servers`,
             columnDefinitions: COLUMN_DEFINITIONS,
             columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,

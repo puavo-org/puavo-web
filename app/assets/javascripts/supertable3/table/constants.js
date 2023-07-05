@@ -1,27 +1,3 @@
-// Main table flags
-export const TableFlag = {
-    // Allow user to change and reorder the visible columns
-    ENABLE_COLUMN_EDITING: 0x01,
-
-    // Allow user to filter the table contents
-    ENABLE_FILTERING: 0x02,
-
-    // Allow user to select one or more table rows and apply mass operations to them
-    ENABLE_SELECTION: 0x04,
-
-    // Enable pagination (if disabled, all rows are always displayed)
-    ENABLE_PAGINATION: 0x08,
-
-    // Disables CSV export (enabled by default)
-    DISABLE_EXPORT: 0x10,
-
-    // Disables JSON/URL view saving (enabled by default)
-    DISABLE_VIEW_SAVING: 0x20,
-
-    // Completely hide the "Tools" tab
-    DISABLE_TOOLS: 0x40,
-};
-
 // Column flags
 export const ColumnFlag = {
     // This column can NOT be sorted. All columns are sortable by default, but you can use this

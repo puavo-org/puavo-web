@@ -2,12 +2,11 @@
 
 /*
 SuperTable 3: The best thing since sliced bread
-Version 3.1
+Version 3.1.1
 */
 
 // Export unminified names for public use
 import {
-    TableFlag,
     ColumnType,
     ColumnFlag,
     SortOrder,
@@ -23,7 +22,6 @@ import { convertTimestamp } from "./supertable3/table/utils.js";
 import { SuperTable } from "./supertable3/table/main.js";
 
 globalThis.ST = {
-    TableFlag: TableFlag,
     ColumnType: ColumnType,
     ColumnFlag: ColumnFlag,
     SortOrder: SortOrder,

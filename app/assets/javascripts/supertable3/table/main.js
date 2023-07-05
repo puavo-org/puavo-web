@@ -14,7 +14,6 @@ import {
 } from "../../common/modal_popup.js";
 
 import {
-    TableFlag,
     ColumnFlag,
     ColumnType,
     SortOrder,
@@ -65,16 +64,23 @@ constructor(container, settings)
     // ----------------------------------------------------------------------------------------------
     // Data
 
-    // Settings and flags
+    // Main settings
     this.settings = {
-        flags: settings.flags || 0,
-        locale: settings.locale || "en-US",
+        // Sorting locale
+        locale: settings.locale ?? "en-US",
 
         // Prefix for CSV exporting
-        csvPrefix: settings.csvPrefix || "unknown",
+        csvPrefix: settings.csvPrefix ?? "unknown",
+
+        // Load settings, apply defaults if omitted
+        enableExport: settings.enableExport ?? true,
+        enableColumnEditing: settings.enableColumnEditing ?? true,
+        enableSelection: settings.enableSelection ?? true,
+        enableFiltering: settings.enableFiltering ?? true,
+        enablePagination: settings.enablePagination ?? true,
 
         // Static source for data
-        staticData: settings.staticData || null,
+        staticData: settings.staticData ?? null,
 
         // URL where to get data dynamically
         dynamicData: settings.dynamicData,
@@ -236,8 +242,8 @@ constructor(container, settings)
     // ----------------------------------------------------------------------------------------------
 
     // There's no point in permitting row selection if there are no mass tools
-    if (this.settings.flags & TableFlag.ENABLE_SELECTION && (this.user.massOperations.length == 0 || this.user.massOperationsEndpoint == null))
-        this.settings.flags &= ~TableFlag.ENABLE_SELECTION;
+    if (this.settings.enableSelection && (this.user.massOperations.length == 0 || this.user.massOperationsEndpoint == null))
+        this.settings.enableSelection = false;
 
     // Load stored settings
     Settings.load(this);
@@ -269,7 +275,7 @@ constructor(container, settings)
     // Setup filtering. Can't do this earlier, because the filter editor object won't
     // exist before buildUI() is finished.
 
-    if (this.settings.flags & TableFlag.ENABLE_FILTERING) {
+    if (this.settings.enableFiltering) {
         let advanced = this.filters.string;
 
         if (typeof(advanced) != "string" || advanced == "")
@@ -410,16 +416,23 @@ buildUI()
     this.container.appendChild(create("div", { cls: ["stError", "hidden"]}));
 
     const frag = getTemplate("tableControls");
+    let elem;
 
     // Setup event handling for the elements that are visible
-    if (!(this.settings.flags & TableFlag.DISABLE_TOOLS))
-        frag.querySelector("thead div#top button#export").addEventListener("click", e => Export.openPopup(e.target, this.data, this.columns, this.settings.csvPrefix));
+    elem = frag.querySelector("thead div#top button#export");
 
-    if (this.settings.flags & TableFlag.ENABLE_COLUMN_EDITING)
-        frag.querySelector("thead div#top button#columns").addEventListener("click", e => ColumnEditor.openEditor(e.target, this));
+    if (this.settings.enableExport)
+        elem.addEventListener("click", e => Export.openPopup(e.target, this.data, this.columns, this.settings.csvPrefix));
+    else elem.remove();
+
+    const colButton = frag.querySelector("thead div#top button#columns");
+
+    if (this.settings.enableColumnEditing)
+        colButton.addEventListener("click", e => ColumnEditor.openEditor(e.target, this));
+    else colButton.remove();
 
     // Setup filtering
-    if (this.settings.flags & TableFlag.ENABLE_FILTERING) {
+    if (this.settings.enableFiltering) {
         const enabled  = frag.querySelector(`thead section#filteringControls input#enabled`);
 
         enabled.checked = this.filters.enabled;
@@ -455,12 +468,16 @@ buildUI()
         }
 
         this.toggleArrow(this.ui.filters.show);
+    } else {
+        // Remove all filtering stuff from the view
+        frag.querySelector("thead section#filteringControls").remove();
+        frag.querySelector("div#filteringPreview").remove();
     }
 
     // Setup mass tools and row selection
     const rowsButton = frag.querySelector("thead div#top button#rows");
 
-    if (this.settings.flags & TableFlag.ENABLE_SELECTION) {
+    if (this.settings.enableSelection) {
         this.ui.mass.show = frag.querySelector("thead section input#mass");
 
         frag.querySelector("thead div#top input#mass").addEventListener("click", e => {
@@ -509,7 +526,7 @@ buildUI()
     }
 
     // Setup pagination
-    if (this.settings.flags & TableFlag.ENABLE_PAGINATION) {
+    if (this.settings.enablePagination) {
         // Pagination controls
         this.ui.paging = frag.querySelector("section#paging");
 
@@ -534,6 +551,10 @@ buildUI()
         // Remove pagination controls
         frag.querySelector("section#paging")?.remove();
     }
+
+    // If the tools section is completely empty, remove it
+    if (!this.settings.enableExport && !this.settings.enableColumnEditing && !this.settings.enableSelection)
+        frag.querySelector("thead section#tools").remove();
 
     // Insert the empty table template on the page
     this.container.appendChild(frag);
@@ -576,9 +597,11 @@ updateStats()
     let parts = [];
 
     parts.push(_tr("status.visible_rows", { visible: visibleRows, total: totalRows }));
-    parts.push(_tr("status.filtered_rows", { count: totalRows - visibleRows }));
 
-    if (this.settings.flags & TableFlag.ENABLE_SELECTION)
+    if (this.settings.enableFiltering)
+        parts.push(_tr("status.filtered_rows", { count: totalRows - visibleRows }));
+
+    if (this.settings.enableSelection)
         parts.push(_tr("status.selected_rows", { count: this.data.selectedItems.size }));
 
     this.container.querySelector("table.stTable thead tr#controls section#stats").innerText = parts.join(", ");
@@ -607,23 +630,23 @@ toggleArrow(element)
 // prevent the user from initiating multiple overlapping/interfering actions.
 enableUI(isEnabled)
 {
-    if (!(this.settings.flags & TableFlag.DISABLE_EXPORT))
+    if (this.settings.enableExport)
         this.container.querySelector(`button#export`).disabled = !isEnabled;
 
-    if (this.settings.flags & TableFlag.ENABLE_COLUMN_EDITING)
+    if (this.settings.enableColumnEditing)
         this.container.querySelector(`button#columns`).disabled = !isEnabled;
 
-    if (this.settings.flags & TableFlag.ENABLE_PAGINATION)
+    if (this.settings.enablePagination)
         this.enablePaginationControls(isEnabled);
 
-    if (this.settings.flags & TableFlag.ENABLE_FILTERING) {
+    if (this.settings.enableFiltering) {
         this.ui.filters.show.disabled = !isEnabled;
         this.ui.controls.querySelector("section#filteringControls input#enabled").disabled = !isEnabled;
         this.ui.controls.querySelector("section#filteringControls input#reverse").disabled = !isEnabled;
         this.filterEditor.enableOrDisable(isEnabled);
     }
 
-    if (this.settings.flags & TableFlag.ENABLE_SELECTION) {
+    if (this.settings.enableSelection) {
         this.container.querySelector(`button#rows`).disabled = !isEnabled;
         this.ui.mass.show.disabled = !isEnabled;
         this.container.querySelector("div.massControls select").disabled = !isEnabled;
@@ -856,7 +879,7 @@ updateTable()
     // Filter
     let filtered = [];
 
-    if (this.settings.flags & TableFlag.ENABLE_FILTERING && this.filters.enabled && this.filters.program) {
+    if (this.settings.enableFiltering && this.filters.enabled && this.filters.program) {
         filtered = Data.filterRows(this.columns.definitions,
                                    this.data.transformed,
                                    this.filters.program,
@@ -905,7 +928,6 @@ buildTable(updateMask=["headers", "rows"])
 {
     const haveActions = !!this.user.actions,
           canOpen = !!this.user.open,
-          canSelect = this.settings.flags & TableFlag.ENABLE_SELECTION,
           currentColumn = this.sorting.column;
 
     // Unicode arrow characters and empirically determined padding values (their widths
@@ -922,7 +944,7 @@ buildTable(updateMask=["headers", "rows"])
     // columns, if present.
     let numColumns = this.columns.current.length;
 
-    if (canSelect)
+    if (this.settings.enableSelection)
         numColumns++;
 
     if (haveActions)
@@ -939,7 +961,7 @@ buildTable(updateMask=["headers", "rows"])
     if (updateMask.includes("headers")) {
         let html = "";
 
-        if (canSelect)
+        if (this.settings.enableSelection)
             html += `<th class="width-0"><span class="headerCheckbox"></span></th>`;
 
         for (const [index, key] of this.columns.current.entries()) {
@@ -1017,7 +1039,7 @@ buildTable(updateMask=["headers", "rows"])
             // Calculate start and end indexes for the current page
             let start, end;
 
-            if (this.settings.flags & TableFlag.ENABLE_PAGINATION) {
+            if (this.settings.enablePagination) {
                 if (this.paging.rowsPerPage == -1) {
                     start = 0;
                     end = this.data.current.length;
@@ -1051,7 +1073,7 @@ buildTable(updateMask=["headers", "rows"])
                 html += `<tr data-index="${index}" class=${rowClasses.join(" ")}>`;
 
                 // The checkbox
-                if (canSelect) {
+                if (this.settings.enableSelection) {
                     html += `<td class="minimize-width cursor-pointer checkbox">`;
                     html += this.data.selectedItems.has(row.id[INDEX_DISPLAYABLE]) ? `<span class="checked">` : `<span>`;
                     html += `</span></td>`;
@@ -1098,7 +1120,7 @@ buildTable(updateMask=["headers", "rows"])
         const headings = headersFragment.querySelectorAll("tr#headers th");
 
         // Header cell click handlers
-        const start = canSelect ? 1 : 0,                                    // skip the checkbox column
+        const start = this.settings.enableSelection ? 1 : 0,                // skip the checkbox column
               count = haveActions ? headings.length - 1 : headings.length;  // skip the actions column
 
         for (let i = start; i < count; i++)
@@ -1113,7 +1135,7 @@ buildTable(updateMask=["headers", "rows"])
                     row.addEventListener("mouseup", event => this.onRowOpen(event));
 
                 // Row checkbox handlers
-                if (canSelect)
+                if (this.settings.enableSelection)
                     row.childNodes[0].addEventListener("mousedown", event => this.onRowCheckboxClick(event));
             }
         }
@@ -1940,7 +1962,7 @@ onHeaderMouseUp(e)
         const t0 = performance.now();
 
         // Skip the checkbox column
-        const skip = (this.settings.flags & TableFlag.ENABLE_SELECTION) ? 1 : 0;
+        const skip = this.settings.enableSelection ? 1 : 0;
 
         const from = startIndex + skip,
               to = endIndex + skip;
@@ -2025,7 +2047,7 @@ onHeaderMouseMove(e)
         return;
     }
 
-    if (!HeaderDrag.begin(e, this.headerDrag.canSort, this.settings.flags & TableFlag.ENABLE_SELECTION, this.user.actions !== null))
+    if (!HeaderDrag.begin(e, this.headerDrag.canSort, this.settings.enableSelection, this.user.actions !== null))
         return;
 
     // Start dragging the header cell

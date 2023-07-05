@@ -263,9 +263,10 @@ document.addEventListener("DOMContentLoaded", function() {
         // Settings
         {
             id: "schools",
-            csvPrefix: `<%= LdapOrganisation.current.o %>-schools`,
-            flags: ST.TableFlag.ENABLE_COLUMN_EDITING | ST.TableFlag.ENABLE_FILTERING | ST.TableFlag.DISABLE_VIEW_SAVING,
             locale: "<%= supertable_sorting_locale %>",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-schools`,
+            enableSelection: false,
+            enablePagination: false,
             columnDefinitions: COLUMN_DEFINITIONS,
             columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,

@@ -34,9 +34,8 @@ document.addEventListener("DOMContentLoaded", function() {
         // Settings
         {
             id: "devices",
-            csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-devices`,
-            flags: ST.TableFlag.ENABLE_COLUMN_EDITING | ST.TableFlag.ENABLE_FILTERING | ST.TableFlag.ENABLE_SELECTION | ST.TableFlag.ENABLE_PAGINATION,
             locale: "<%= supertable_sorting_locale %>",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-devices`,
             columnDefinitions: COLUMN_DEFINITIONS,
             columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,

@@ -37,9 +37,8 @@ document.addEventListener("DOMContentLoaded", function() {
         // Settings
         {
             id: "groups",
-            csvPrefix: `<%= LdapOrganisation.current.o %>-groups`,
-            flags: ST.TableFlag.ENABLE_COLUMN_EDITING | ST.TableFlag.ENABLE_FILTERING | ST.TableFlag.ENABLE_SELECTION | ST.TableFlag.ENABLE_PAGINATION,
             locale: "<%= supertable_sorting_locale %>",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-groups`,
             columnDefinitions: COLUMN_DEFINITIONS,
             columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,
