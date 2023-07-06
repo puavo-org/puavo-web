@@ -35,18 +35,21 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 const COLUMN_DEFINITIONS = {
     id: {
         key: "id",
+        title: "<%= t('columns.puavoid') %>",
         type: ST.ColumnType.NUMERIC,
         alias: ["puavoid"],
     },
 
     name: {
         key: "name",
+        title: "<%= t('activeldap.attributes.school.displayName') %>",
         type: ST.ColumnType.STRING,
         transform: entry => [`<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`, entry.name],
     },
 
     integrations: {
         key: "integrations",
+        title: "<%= t('columns.schools.integrations') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
         transform: entry => {
@@ -102,11 +105,13 @@ const COLUMN_DEFINITIONS = {
 
     prefix: {
         key: "prefix",
+        title: "<%= t('activeldap.attributes.school.puavoSchoolNameAbbreviation') %>",
         type: ST.ColumnType.STRING,
     },
 
     boot_servers: {
         key: "boot_servers",
+        title: "<%= t('activeldap.attributes.school.bootservers') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
             const plain = entry.boot_servers.map(s => s[0]).join(", "); // used for filtering and sorting
@@ -121,22 +126,26 @@ const COLUMN_DEFINITIONS = {
 
     tags: {
         key: "tags",
+        title: "<%= t('columns.tags') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 
     school_code: {
         key: "school_code",
+        title: "<%= t('activeldap.attributes.school.puavoSchoolCode') %>",
         type: ST.ColumnType.STRING,
     },
 
     school_oid: {
         key: "school_oid",
+        title: "<%= t('columns.schools.oid') %>",
         type: ST.ColumnType.STRING,
     },
 
     eid: {
         key: "eid",
+        title: "<%= t('activeldap.attributes.school.puavoExternalId') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.F_NULLABLE,
         alias: ["external_id"]
@@ -144,44 +153,30 @@ const COLUMN_DEFINITIONS = {
 
     num_members: {
         key: "num_members",
+        title: "<%= t('schools.index.members') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     num_groups: {
         key: "num_groups",
+        title: "<%= t('schools.index.groups') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     num_devices: {
         key: "num_devices",
+        title: "<%= t('schools.index.devices') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     conf: {
         key: "conf",
+        title: "<%= t('columns.puavoconf') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
         alias: ["puavoconf", "puavo_conf"],
         export_name: "puavoconf",
     },
-};
-
-// Localized column titles. The keys must be same as in the keys in the column
-// definitions object above.
-const COLUMN_TITLES = {
-    id: "<%= t('columns.puavoid') %>",
-    name: "<%= t('activeldap.attributes.school.displayName') %>",
-    integrations: "<%= t('columns.schools.integrations') %>",
-    prefix: "<%= t('activeldap.attributes.school.puavoSchoolNameAbbreviation') %>",
-    boot_servers: "<%= t('activeldap.attributes.school.bootservers') %>",
-    tags: "<%= t('columns.tags') %>",
-    school_code: "<%= t('activeldap.attributes.school.puavoSchoolCode') %>",
-    school_oid: "<%= t('columns.schools.oid') %>",
-    eid: "<%= t('activeldap.attributes.school.puavoExternalId') %>",
-    num_members: "<%= t('schools.index.members') %>",
-    num_groups: "<%= t('schools.index.groups') %>",
-    num_devices: "<%= t('schools.index.devices') %>",
-    conf: "<%= t('columns.puavoconf') %>",
 };
 
 // The default order for columns
@@ -256,7 +251,6 @@ document.addEventListener("DOMContentLoaded", function() {
             enableSelection: false,
             enablePagination: false,
             columnDefinitions: COLUMN_DEFINITIONS,
-            columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,
             actions: schoolActions,
             defaultColumns: DEFAULT_COLUMNS,

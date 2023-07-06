@@ -12,24 +12,28 @@ const SCHOOLS = {
 const COLUMN_DEFINITIONS = {
     id: {
         key: "id",
+        title: "<%= t('columns.puavoid') %>",
         type: ST.ColumnType.NUMERIC,
         alias: ["puavoid"],
     },
 
     first: {
         key: "first",
+        title: "<%= t('columns.users.first_names') %>",
         type: ST.ColumnType.STRING,
         alias: ["first_name", "fn"],
     },
 
     last: {
         key: "last",
+        title: "<%= t('columns.users.last_name') %>",
         type: ST.ColumnType.STRING,
         alias: ["last_name", "ln"],
     },
 
     name: {
         key: "name",
+        title: "<%= t('columns.users.full_name') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
             let s = "";
@@ -54,12 +58,14 @@ const COLUMN_DEFINITIONS = {
 
     uid: {
         key: "uid",
+        title: "<%= t('columns.users.uid') %>",
         type: ST.ColumnType.STRING,
         alias: ["username"],
     },
 
     eid: {
         key: "eid",
+        title: "<%= t('columns.users.eid') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.F_NULLABLE,
         alias: ["external_id"]
@@ -67,6 +73,7 @@ const COLUMN_DEFINITIONS = {
 
     learner_id: {
         key: "learner_id",
+        title: "<%= t('columns.users.learner_id') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.F_NULLABLE,
         alias: ["lid"],
@@ -74,6 +81,7 @@ const COLUMN_DEFINITIONS = {
 
     role: {
         key: "role",
+        title: "<%= t('columns.users.role') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
             let values = [];
@@ -98,6 +106,7 @@ const COLUMN_DEFINITIONS = {
 
     phone: {
         key: "phone",
+        title: "<%= t('columns.users.phone') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
         alias: ["phone_number"],
@@ -105,29 +114,34 @@ const COLUMN_DEFINITIONS = {
 
     email: {
         key: "email",
+        title: "<%= t('columns.users.email') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
     },
 
     v_email: {
         key: "v_email",
+        title: "<%= t('columns.users.v_email') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
     },
 
     p_email: {
         key: "p_email",
+        title: "<%= t('columns.users.p_email') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.F_NULLABLE,
     },
 
     pnumber: {
         key: "pnumber",
+        title: "<%= t('columns.users.pnumber') %>",
         type: ST.ColumnType.STRING,
     },
 
     rrt: {
         key: "rrt",
+        title: "<%= t('columns.users.rrt') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.F_NULLABLE,
         transform: entry => {
@@ -146,6 +160,7 @@ const COLUMN_DEFINITIONS = {
 
     dnd: {
         key: "dnd",
+        title: "<%= t('columns.users.dnd') %>",
         type: ST.ColumnType.BOOL,
         flags: ST.ColumnFlag.F_NULLABLE,
         alias: ["do_not_delete"]
@@ -153,18 +168,21 @@ const COLUMN_DEFINITIONS = {
 
     locked: {
         key: "locked",
+        title: "<%= t('columns.users.is_locked') %>",
         type: ST.ColumnType.BOOL,
         flags: ST.ColumnFlag.F_NULLABLE,
     },
 
     created: {
         key: "created",
+        title: "<%= t('columns.created') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     modified: {
         key: "modified",
+        title: "<%= t('columns.modified') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
@@ -172,6 +190,7 @@ const COLUMN_DEFINITIONS = {
 <% if @is_organisation %>
     school: {
         key: "school",
+        title: "<%= t('columns.primary_school') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
             // Makes filtering by school name work as expected, but the exported CSV
@@ -183,6 +202,7 @@ const COLUMN_DEFINITIONS = {
 
     schools: {
         key: "schools",
+        title: "<%= t('columns.users.other_schools') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
             let out = [];
@@ -194,31 +214,6 @@ const COLUMN_DEFINITIONS = {
             return [out.join("<br>"), out.join(","), out.join(",")];
         }
     },
-};
-
-// Localized column titles. The keys must be same as in the keys in the column
-// definitions object above.
-const COLUMN_TITLES = {
-    id: "<%= t('columns.puavoid') %>",
-    first: "<%= t('columns.users.first_names') %>",
-    last: "<%= t('columns.users.last_name') %>",
-    name: "<%= t('columns.users.full_name') %>",
-    uid: "<%= t('columns.users.uid') %>",
-    eid: "<%= t('columns.users.eid') %>",
-    learner_id: "<%= t('columns.users.learner_id') %>",
-    role: "<%= t('columns.users.role') %>",
-    phone: "<%= t('columns.users.phone') %>",
-    email: "<%= t('columns.users.email') %>",
-    v_email: "<%= t('columns.users.v_email') %>",
-    p_email: "<%= t('columns.users.p_email') %>",
-    pnumber: "<%= t('columns.users.pnumber') %>",
-    rrt: "<%= t('columns.users.rrt') %>",
-    dnd: "<%= t('columns.users.dnd') %>",
-    locked: "<%= t('columns.users.is_locked') %>",
-    created: "<%= t('columns.created') %>",
-    modified: "<%= t('columns.modified') %>",
-    school: "<%= t('columns.primary_school') %>",
-    schools: "<%= t('columns.users.other_schools') %>",
 };
 
 // The default order for columns

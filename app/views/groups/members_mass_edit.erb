@@ -62,23 +62,27 @@ const COLUMN_ORDER = [
 const COLUMN_DEFINITIONS = {
     id: {
         key: "id",
+        title: "<%= t('columns.puavoid') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     first: {
         key: "first",
+        title: "<%= t('columns.users.first_names') %>",
         type: ST.ColumnType.STRING,
         alias: ["first_name", "fn"],
     },
 
     last: {
         key: "last",
+        title: "<%= t('columns.users.last_name') %>",
         type: ST.ColumnType.STRING,
         alias: ["last_name", "ln"],
     },
 
     name: {
         key: "name",
+        title: "<%= t('columns.users.full_name') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
             return [
@@ -90,11 +94,13 @@ const COLUMN_DEFINITIONS = {
 
     uid: {
         key: "uid",
+        title: "<%= t('columns.users.uid') %>",
         type: ST.ColumnType.STRING,
     },
 
     role: {
         key: "role",
+        title: "<%= t('columns.users.role') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
             let values = [];
@@ -115,16 +121,19 @@ const COLUMN_DEFINITIONS = {
 
     locked: {
         key: "locked",
+        title: "<%= t('columns.users.is_locked') %>",
         type: ST.ColumnType.BOOL,
     },
 
     marked: {
         key: "marked",
+        title: "<%= t('columns.users.rrt') %>",
         type: ST.ColumnType.UNIXTIME,
     },
 
     groups: {
         key: "groups",
+        title: "<%= t('columns.groups.member_groups') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
             let values = [],
@@ -142,20 +151,6 @@ const COLUMN_DEFINITIONS = {
             ];
         }
     },
-};
-
-// Localized column titles. The keys must be same as in the keys in the column
-// definitions object above.
-const COLUMN_TITLES = {
-    id: "<%= t('columns.puavoid') %>",
-    first: "<%= t('columns.users.first_names') %>",
-    last: "<%= t('columns.users.last_name') %>",
-    name: "<%= t('columns.users.full_name') %>",
-    uid: "<%= t('columns.users.uid') %>",
-    role: "<%= t('columns.users.role') %>",
-    locked: "<%= t('columns.users.is_locked') %>",
-    marked: "<%= t('columns.users.rrt') %>",
-    groups: "<%= t('columns.groups.member_groups') %>",
 };
 
 // Common base class for group operations
@@ -430,7 +425,6 @@ document.addEventListener("DOMContentLoaded", function() {
             csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-members`,
             enableExport: false,
             columnDefinitions: COLUMN_DEFINITIONS,
-            columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,
             massSelects: MASS_SELECTS,
             massOperations: MASS_OPERATIONS,

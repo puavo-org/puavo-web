@@ -12,38 +12,45 @@ const GROUP_TYPES = {
 const COLUMN_DEFINITIONS = {
     abbr: {
         key: "abbr",
+        title: "<%= t('columns.groups.abbreviation') %>",
         type: ST.ColumnType.STRING,
     },
 
     created: {
         key: "created",
+        title: "<%= t('columns.created') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     eid: {
         key: "eid",
+        title: "<%= t('columns.groups.eid') %>",
         type: ST.ColumnType.STRING,
     },
 
     id: {
         key: "id",
+        title: "<%= t('columns.puavoid') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     modified: {
         key: "modified",
+        title: "<%= t('columns.modified') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     members_count: {
         key: "members_count",
+        title: "<%= t('columns.groups.members_count') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     name: {
         key: "name",
+        title: "<%= t('columns.groups.name') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
             return [
@@ -56,6 +63,7 @@ const COLUMN_DEFINITIONS = {
 <% if @is_organisation %>
     school: {
         key: "school",
+        title: "<%= t('columns.school') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
             // Makes filtering by school name work as expected, but the exported CSV
@@ -70,6 +78,7 @@ const COLUMN_DEFINITIONS = {
 
     type: {
         key: "type",
+        title: "<%= t('columns.groups.type') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
             let type = null;
@@ -91,22 +100,6 @@ const COLUMN_DEFINITIONS = {
             filter: "",
         }
     },
-};
-
-// Localized column titles. The keys must be same as in the keys in the column
-// definitions object above.
-const COLUMN_TITLES = {
-    abbr: "<%= t('columns.groups.abbreviation') %>",
-    created: "<%= t('columns.created') %>",
-    eid: "<%= t('columns.groups.eid') %>",
-    id: "<%= t('columns.puavoid') %>",
-    modified: "<%= t('columns.modified') %>",
-    members_count: "<%= t('columns.groups.members_count') %>",
-    name: "<%= t('columns.groups.name') %>",
-<% if @is_organisation %>
-    school: "<%= t('columns.school') %>",
-<% end %>
-    type: "<%= t('columns.groups.type') %>",
 };
 
 // The default order for columns. "DEFAULT_COLUMNS" above does not have to be in this order.
