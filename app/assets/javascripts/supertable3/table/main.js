@@ -1010,8 +1010,11 @@ buildTable(updateMask=["headers", "rows"])
 
             html += "</th>";
 
-            if (def.flags & ColumnFlag.CUSTOM_CSS)
-                customCSSColumns.set(key, def.cssClass);
+            if (def.customCSS !== undefined) {
+                if (Array.isArray(def.customCSS))
+                    customCSSColumns.set(key, def.customCSS)
+                else customCSSColumns.set(key, [def.customCSS]);
+            }
         }
 
         // The actions column is always the last. It can't be sorted nor dragged.
@@ -1082,7 +1085,7 @@ buildTable(updateMask=["headers", "rows"])
                         classes.push("sorted");
 
                     if (customCSSColumns.has(column))
-                        classes.push(customCSSColumns.get(column));
+                        classes = classes.concat(customCSSColumns.get(column));
 
                     if (classes.length > 0)
                         html += `<td class=\"${classes.join(' ')}\">`;

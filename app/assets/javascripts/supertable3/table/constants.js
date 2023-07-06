@@ -8,9 +8,6 @@ export const ColumnFlag = {
     // Only works with strings!
     ARRAY: 0x02,
 
-    // Add a custom CSS class name to the column TD (specify it with "cssClass" value)
-    CUSTOM_CSS: 0x08,
-
     // Normally, when a column header is clicked, it is sorted in ascending order. By setting
     // this flag, you make the descending order the default for that column. Some columns
     // contain values (like RAM size) that make more sense when sorted that way by default.
