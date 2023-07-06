@@ -1217,7 +1217,7 @@ export class FilterEditor {
 
     // Compiles a filter expression and returns the compiled comparisons and RPN code in an array.
     // This does not actually USE the filter for anything, it only compiles the given string.
-    compileFilterString(input, verboseDebug = true)
+    compileFilterString(input, verboseDebug = false)
     {
         console.log(`----- Compiling filter string (verboseDebug=${verboseDebug}) -----`);
         console.log("Input:", input);
