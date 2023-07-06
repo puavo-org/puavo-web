@@ -2,7 +2,7 @@
 
 /*
 SuperTable 3: The best thing since sliced bread
-Version 3.1.1
+Version 3.1.2
 */
 
 // Export unminified names for public use
