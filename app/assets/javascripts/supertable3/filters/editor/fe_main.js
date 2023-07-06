@@ -1060,7 +1060,7 @@ export class FilterEditor {
         const filters = this.getTraditionalFilters();
 
         if (filters === null || filters === undefined || filters.length == 0) {
-            window.alert(_tr('traditional_filter_is_empty'));
+            window.alert(_tr('filtering.traditional_filter_is_empty'));
             return;
         }
 
