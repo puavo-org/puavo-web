@@ -10,7 +10,6 @@ tokens are stored in a new array that is then fed to the Shunting Yard algorithm
 export class Parser {
     constructor()
     {
-        this.columnDefinitions = null;
         this.logger = null;
 
         this.tokens = [];
@@ -67,9 +66,8 @@ export class Parser {
         return this.comparisons.length - 1;
     }
 
-    parse(logger, columns, tokens, lastRow, lastCol)
+    parse(logger, tokens, lastRow, lastCol)
     {
-        this.columnDefinitions = columns;
         this.logger = logger;
 
         this.tokens = [...tokens];

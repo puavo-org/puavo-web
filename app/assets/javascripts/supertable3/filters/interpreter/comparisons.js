@@ -143,9 +143,11 @@ export function parseAbsoluteOrRelativeDate(str)
 }
 
 export class ComparisonCompiler {
-    constructor()
+    constructor(logger, columnDefinitions, columnNames)
     {
-        this.logger = null;
+        this.logger = logger;
+        this.columnDefinitions = columnDefinitions;
+        this.columnNames = columnNames;
     }
 
     // Parses and expands a value with unit, like "10M" or "10G" to a full number. Optionally
@@ -240,7 +242,7 @@ export class ComparisonCompiler {
 
     __compileNumeric(columnToken, operatorToken, valueToken)
     {
-        const colDef = this.columnDefs.get(this.columnDefs.expandAlias(columnToken.str));
+        const colDef = this.columnDefinitions[this.columnNames.get(columnToken.str)];
         let value = undefined;
 
         if (colDef.flags & ColumnFlag.F_STORAGE) {
@@ -326,13 +328,10 @@ export class ComparisonCompiler {
     // Takes a raw comparison (made of three tokens) and "compiles" it (ie. verifies the data
     // types, the comparison operator and the value, and converts the stringly-typed value into
     // "native" JavaScript type). Returns null if it failed.
-    compile(logger, columns, columnToken, operatorToken, valueToken)
+    compile(columnToken, operatorToken, valueToken)
     {
-        this.logger = logger;
-        this.columnDefs = columns;
-
         // Validate the column and the operator
-        if (!this.columnDefs.isColumn(columnToken.str)) {
+        if (!this.columnNames.has(columnToken.str)) {
             console.error(`ComparisonCompiler::compile(): unknown column "${columnToken.str}"`);
             this.logger.errorToken("unknown_column", columnToken);
             return null;
@@ -344,7 +343,7 @@ export class ComparisonCompiler {
             return null;
         }
 
-        const colDef = this.columnDefs.get(this.columnDefs.expandAlias(columnToken.str));
+        const colDef = this.columnDefinitions[this.columnNames.get(columnToken.str)];
 
         if (!ALLOWED_OPERATORS[colDef.type].has(operatorToken.str)) {
             console.error(`ComparisonCompiler::compile(): operator "${operatorToken.str}" cannot be used with column type "${colDef.type}"`);

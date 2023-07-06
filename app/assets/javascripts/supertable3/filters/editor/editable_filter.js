@@ -62,7 +62,7 @@ export class EditableFilter {
 
     // Parses a "raw" filter stored as [active?, column, operator, value1, value2, ... valueN].
     // Returns true if OK.
-    load(raw, columnDefinitions)
+    load(raw, columnDefinitions, columnNames)
     {
         if (!Array.isArray(raw) || raw.length < 4) {
             console.error(`EditableFilter::fromRaw(): invalid/incomplete raw filter:`);
@@ -71,7 +71,7 @@ export class EditableFilter {
         }
 
         // The column must be valid. We can tolerate/fix almost everything else, but not this.
-        if (!(raw[1] in columnDefinitions)) {
+        if (!columnNames.has(raw[1])) {
             console.warn(`EditableFilter::fromRaw(): column "${raw[1]}" is not valid`);
             return false;
         }
@@ -90,7 +90,7 @@ export class EditableFilter {
 
         // Is the operator usable with this column type?
         const opDef = OPERATORS[this.operator],
-              colDef = columnDefinitions[this.column];
+              colDef = columnDefinitions[columnNames.get(this.column)];
 
         if (!opDef.allowed.has(colDef.type)) {
             console.warn(`EditableFilter::fromRaw(): operator "${this.operator}" cannot be used with ` +

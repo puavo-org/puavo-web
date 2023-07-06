@@ -25,7 +25,7 @@ export const TokenFlags = {
 export class Tokenizer {
     constructor()
     {
-        this.columnDefinitions = null;
+        this.columnNames = null;
         this.logger = null;
 
         this.source = null;
@@ -200,8 +200,8 @@ export class Tokenizer {
 
         // Quoted strings are hardcoded to always be values, but unquoted
         // strings are either values or column names
-        if (!quoted && this.columnDefinitions.isColumn(token))
-            this.addToken(TokenType.COLUMN, this.columnDefinitions.expandAlias(token), flags);
+        if (!quoted && this.columnNames.has(token))
+            this.addToken(TokenType.COLUMN, this.columnNames.get(token), flags);
         else this.addToken(TokenType.VALUE, token, flags);
 
         return true;
@@ -291,9 +291,9 @@ export class Tokenizer {
         }
     }
 
-    tokenize(logger, columns, source)
+    tokenize(logger, columnNames, source)
     {
-        this.columnDefinitions = columns;
+        this.columnNames = columnNames;
         this.logger = logger;
 
         this.pos = 0;
