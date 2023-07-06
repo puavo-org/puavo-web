@@ -31,6 +31,17 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 <script>
 "use strict;"
 
+// Possible integrations, in order they're listed and with tooltips
+const INTEGRATION_TYPES = [
+    ["in", "<%= t('schools.integrations.in') %>" ],
+    ["out", "<%= t('schools.integrations.out') %>"],
+    ["inout", "<%= t('schools.integrations.inout') %>"],
+    ["login", "<%= t('schools.integrations.login') %>"],
+    ["password", "<%= t('schools.integrations.password') %>"],
+    ["email", "<%= t('schools.integrations.email') %>"],
+    ["other", "<%= t('schools.integrations.other') %>"]
+];
+
 // All available columns, their names and types and other parameters
 const COLUMN_DEFINITIONS = {
     id: {
@@ -194,17 +205,6 @@ const COLUMN_ORDER = [
     "num_devices",
     "boot_servers",
     "conf",
-];
-
-// Possible integrations, in order they're listed and with tooltips
-const INTEGRATION_TYPES = [
-    ["in", "<%= t('schools.integrations.in') %>" ],
-    ["out", "<%= t('schools.integrations.out') %>"],
-    ["inout", "<%= t('schools.integrations.inout') %>"],
-    ["login", "<%= t('schools.integrations.login') %>"],
-    ["password", "<%= t('schools.integrations.password') %>"],
-    ["email", "<%= t('schools.integrations.email') %>"],
-    ["other", "<%= t('schools.integrations.other') %>"]
 ];
 
 function schoolActions(entry)

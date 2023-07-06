@@ -8,6 +8,20 @@ const SCHOOLS = {
 <% end %>
 };
 
+// Localized user role names
+const USER_ROLES = {
+    owner: "<%= t('organisation_owner_role') %>",
+    schooladmin: "<%= t('school_admin_role') %>",
+    admin: "<%= t('puavoEduPersonAffiliation_admin') %>",
+    teacher: "<%= t('puavoEduPersonAffiliation_teacher') %>",
+    student: "<%= t('puavoEduPersonAffiliation_student') %>",
+    staff: "<%= t('puavoEduPersonAffiliation_staff') %>",
+    testuser: "<%= t('puavoEduPersonAffiliation_testuser') %>",
+    parent: "<%= t('puavoEduPersonAffiliation_parent') %>",
+    visitor: "<%= t('puavoEduPersonAffiliation_visitor') %>",
+    unknown: "<%= t('unknown_role') %>",
+};
+
 // All available columns, their names and types and other parameters
 const COLUMN_DEFINITIONS = {
     id: {
@@ -241,20 +255,6 @@ const COLUMN_ORDER = [
     "created",
     "modified",
 ];
-
-// Localized user role names
-const USER_ROLES = {
-    owner: "<%= t('organisation_owner_role') %>",
-    schooladmin: "<%= t('school_admin_role') %>",
-    admin: "<%= t('puavoEduPersonAffiliation_admin') %>",
-    teacher: "<%= t('puavoEduPersonAffiliation_teacher') %>",
-    student: "<%= t('puavoEduPersonAffiliation_student') %>",
-    staff: "<%= t('puavoEduPersonAffiliation_staff') %>",
-    testuser: "<%= t('puavoEduPersonAffiliation_testuser') %>",
-    parent: "<%= t('puavoEduPersonAffiliation_parent') %>",
-    visitor: "<%= t('puavoEduPersonAffiliation_visitor') %>",
-    unknown: "<%= t('unknown_role') %>",
-};
 
 <% if @is_owner %>
 // Mass operation: delete users
