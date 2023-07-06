@@ -42,7 +42,7 @@ function filterList(e)
     // Only change item visibilities based on the search string, so we don't lose
     // unsaved changes
     for (const c of getColumnList())
-        toggleClass(c, "hidden", str && ceParentClass.columns.titles[c.dataset.column].toLowerCase().indexOf(str) == -1);
+        toggleClass(c, "hidden", str && ceParentClass.columns.definitions[c.dataset.column].title.toLowerCase().indexOf(str) == -1);
 }
 
 function toggleColumn(elem)
@@ -149,7 +149,7 @@ export function openEditor(e, parentClass)
     // Sort the columns alphabetically by their localized names
     const columnNames =
         Object.keys(ceParentClass.columns.definitions)
-        .map((key) => [key, ceParentClass.columns.titles[key]])
+        .map((key) => [key, ceParentClass.columns.definitions[key].title])
         .sort((a, b) => { return a[1].localeCompare(b[1]) });
 
     const current = new Set(ceParentClass.columns.current);

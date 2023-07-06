@@ -63,7 +63,7 @@ function getDefaultValue(definition)
 }
 
 export class FilterEditor {
-    constructor(parentClass, container, preview, columnDefinitions, columnTitles, filterPresets, filterDefaults, isAdvanced, isVisible)
+    constructor(parentClass, container, preview, columnDefinitions, filterPresets, filterDefaults, isAdvanced, isVisible)
     {
         // This container is our playground. Everything we put on the screen, it's
         // inside this HTML element, which in turn lives inside the SuperTable header
@@ -80,7 +80,6 @@ export class FilterEditor {
         // Column definitions
         this.plainColumnDefinitions = columnDefinitions;
         this.columnDefinitions = new ColumnDefinitions(columnDefinitions);
-        this.columnTitles = columnTitles;
 
         this.isAdvanced = isAdvanced;
         this.isVisible = isVisible;
@@ -468,7 +467,7 @@ export class FilterEditor {
 
         let html = "";
 
-        html += `<span class="column">${this.columnTitles[filter.column]}</span>`;
+        html += `<span class="column">${colDef.title}</span>`;
         html += `<span class="operator">${humanOperatorName(filter.operator)}</span>`;
         html += `<span class="values">`
 
@@ -600,8 +599,8 @@ export class FilterEditor {
         let select = editor.querySelector("div#upper select#column"),
             columns = [];
 
-        for (const column of Object.keys(this.plainColumnDefinitions))
-            columns.push([column, this.columnTitles[column]]);
+        for (const column of Object.values(this.plainColumnDefinitions))
+            columns.push([column.key, column.title]);
 
         columns.sort((a, b) => { return a[1].localeCompare(b[1]) });
 

@@ -136,7 +136,6 @@ constructor(container, settings)
     // Current table columns
     this.columns = {
         definitions: settings.columnDefinitions,
-        titles: settings.columnTitles,
         order: settings.columnOrder || [],
         defaults: [...settings.defaultColumns],
         current: [...settings.defaultColumns],      // overridden if saved settings exist
@@ -320,18 +319,6 @@ validateParameters(settings)
         return false;
     }
 
-    if (settings.columnTitles === undefined ||
-        settings.columnTitles === null ||
-        typeof(settings.columnTitles) != "object" ||
-        Object.keys(settings.columnTitles).length == 0) {
-
-        this.container.innerHTML =
-            `<p class="error">The settings.columnTitles parameter missing/empty, or it isn't an associative array. ` +
-            `Please contact Opinsys support.</p>`;
-
-        return false;
-    }
-
     if (settings.defaultColumns === undefined ||
         settings.defaultColumns === null ||
         !Array.isArray(settings.defaultColumns) ||
@@ -452,7 +439,6 @@ buildUI()
                                              frag.querySelector("thead div#filteringContainer"),
                                              frag.querySelector("thead div#filteringPreview"),
                                              this.columns.definitions,
-                                             this.columns.titles,
                                              this.filters.presets,
                                              this.filters.defaults,
                                              this.filters.advanced);
@@ -987,7 +973,7 @@ buildTable(updateMask=["headers", "rows"])
             const isNumeric = (def.type != ColumnType.STRING);
 
             if (!sortable)
-                html += this.columns.titles[key];
+                html += def.title;
             else {
                 let symbol, padding;
 
@@ -1004,7 +990,7 @@ buildTable(updateMask=["headers", "rows"])
                 }
 
                 // Do not put newlines in this HTML! Header drag cell construction will fail otherwise!
-                html += `<div><span>${this.columns.titles[key]}</span>` +
+                html += `<div><span>${def.title}</span>` +
                         `<span class="arrow" style="padding-left: ${padding}px">${symbol}</span></div>`;
             }
 
