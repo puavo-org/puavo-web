@@ -23,55 +23,55 @@
 <p>When a user is authenticated he/she will be redirected to the URL specified in the <code>return_to</code> query string key. The URL is augmented with a <code>jwt</code> query string key which will contain a <a href="https://tools.ietf.org/html/draft-jones-json-web-token-10">JSON Web Token</a>. The external service is expected to decode this token, validate it with the given shared secret and make sure that it is not issued too long a ago or in the future. The token will contain following claims:</p>
 
 <ul>
-    <li><code>iat</code> Identifies the time at which the JWT was issued as Unix timestamp</li>
-    <li><code>jti</code> A unique identifier for the JWT</li>
-    <li><code>id</code> Unique identifier for the user</li>
-    <li><code>username</code></li>
-    <li><code>first_name</code></li>
-    <li><code>last_name</code></li>
+    <li><code>iat</code> Identifies the time at which the JWT was issued as Unix timestamp <span class="datatype">integer</span></li>
+    <li><code>jti</code> A unique identifier for the JWT <span class="datatype">string</span></li>
+    <li><code>id</code> Unique identifier for the user <span class="datatype">integer</span></li>
+    <li><code>username</code> <span class="datatype">string</span></li>
+    <li><code>first_name</code> <span class="datatype">string</span></li>
+    <li><code>last_name</code> <span class="datatype">string</span></li>
 
-    <li><code>email</code> User email<ul>
+    <li><code>email</code> User email <span class="datatype">string</span><ul>
         <li>Not always available!</li>
     </ul></li>
 
-    <li><code>primary_school_id</code><ul>
+    <li><code>primary_school_id</code> <span class="datatype">string</span><ul>
         <li>The school id user primarily attends to</li>
     </ul></li>
 
-    <li><code>schools</code> List of schools the user belongs to<ul>
-        <li><code>id</code> Unique identifier for the school</li>
-        <li><code>name</code> Human-readable school name</li>
-        <li><code>abbreviation</code> Valid POSIX name for the school</li>
-        <li><code>school_code</code> The Finnish school code. Can be <code>null</code> if it hasn't been specified. Not all schools have this set.</li>
+    <li><code>schools</code> List of schools the user belongs to <span class="datatype">array</span><ul>
+        <li><code>id</code> Unique identifier for the school <span class="datatype">string</span></li>
+        <li><code>name</code> Human-readable school name <span class="datatype">string</span></li>
+        <li><code>abbreviation</code> Valid POSIX name for the school <span class="datatype">string</span></li>
+        <li><code>school_code</code> The Finnish school code. Can be <code>null</code> if it hasn't been specified. Not all schools have this set. <span class="datatype">string</span></li>
 
-        <li><code>roles</code> One or more (there should always be at least one) roles the user has in this school. An array of strings, possible values are:<ul>
-            <li><code>teacher</code>, <code>staff</code>, <code>student</code>, <code>visitor</code>, <code>parent</code>, <code>admin</code>, <code>schooladmin</code> and <code>testuser</code></li>
+        <li><code>roles</code> One or more (there should always be at least one) roles the user has in this school. An <span class="datatype">array</span> of <span class="datatype">strings</span><ul>
+            <li>Possible values are: <code>teacher</code>, <code>staff</code>, <code>student</code>, <code>visitor</code>, <code>parent</code>, <code>admin</code>, <code>schooladmin</code> and <code>testuser</code></li>
         </ul></li>
 
-        <li><code>groups</code> List of groups the user has in the school:<ul>
-            <li><code>id</code> Unique identifier for the group</li>
-            <li><code>name</code> Human-readable group name</li>
-            <li><code>abbreviation</code> Valid POSIX name for the group</li>
-            <li><code>type</code> Type of the group. Either <code>null</code> (if the type is unspecified) or one of these:<ul>
-                <li><code>teaching group</code>, <code>year class</code>, <code>administrative group</code>, <code>course</code>, <code>archive users</code> or <code>other groups</code></li>
+        <li><code>groups</code> List of groups the user has in the school: <span class="datatype">array</span><ul>
+            <li><code>id</code> Unique identifier for the group <span class="datatype">string</span></li>
+            <li><code>name</code> Human-readable group name <span class="datatype">string</span></li>
+            <li><code>abbreviation</code> Valid POSIX name for the group <span class="datatype">string</span></li>
+            <li><code>type</code> Type of the group. <span class="datatype">string</span><ul>
+                <li>Either <code>null</code> (if the type is unspecified) or one of these:<code>teaching group</code>, <code>year class</code>, <code>administrative group</code>, <code>course</code>, <code>archive users</code> or <code>other groups</code></li>
             </ul></li>
         </ul></li>
 
-      <li><code>learning_materials_charge</code><ul>
+      <li><code>learning_materials_charge</code><span class="datatype">string</span><ul>
           <li>The value of the MPASS' <code>learningMaterialsCharge</code> attribute for this user in this school. Omitted if the value is not known for this school ("best effort"). When specified, it is formatted as <code>X;YYYYY</code> where X is either 0 or 1, and YYYYY is the school code. <a href="https://wiki.eduuni.fi/pages/viewpage.action?pageId=266420002">More information here</a> (in Finnish).</li>
       </ul></li>
 
     </ul></li>
 
-    <li><code>organisation_name</code><ul>
+    <li><code>organisation_name</code> <span class="datatype">string</span><ul>
         <li>Human-readable organisation name.</li>
     </ul></li>
 
-    <li><code>organisation_domain</code><ul>
+    <li><code>organisation_domain</code> <span class="datatype">string</span><ul>
         <li>For example <code>jyvaskyla.opinsys.fi</code>.</li>
     </ul></li>
 
-    <li><code>learner_id</code><ul>
+    <li><code>learner_id</code> <span class="datatype">string</span><ul>
         <li>The 11-digit Finnish national learner ID, prefixed with the OID "1.2.246.562.24.". <a href="https://wiki.eduuni.fi/display/CSCMPASSID/Data+models">Read this for more information</a>. Can be <code>null</code> if the ID has not been set.</li>
     </ul></li>
 </ul>
@@ -79,23 +79,23 @@
 <p>In addition to those above, there are some "extra" fields that can be used, but you should NOT rely on their presence (they might not always exist). They are:</p>
 
 <ul>
-    <li><code>puavo_id</code><ul>
+    <li><code>puavo_id</code> <span class="datatype">integer</span><ul>
         <li>This is the actual internal unique ID for this user. It is the same as <code>id</code>, but this field gives it an explicit name.</li>
     </ul></li>
 
-    <li><code>external_id</code><ul>
+    <li><code>external_id</code> <span class="datatype">string</span><ul>
         <li>External IDs (social security number hash for Primus users) for users who attend a school that has Primus integration enabled. Will be <code>null</code> for others.</li>
     </ul></li>
 
-    <li><code>preferred_language</code><ul>
+    <li><code>preferred_language</code> <span class="datatype">string</span><ul>
         <li>Two-letter language code (<code>en</code>, <code>fi</code>, <code>sv</code>, <code>de</code> and so on) identifying the language this user primarily speaks. Can be used to localize the environment.</li>
     </ul></li>
 
-    <li><code>year_class</code><ul>
+    <li><code>year_class</code> <span class="datatype">string</span><ul>
         <li>A string containing the year class name for students who attend a school that has Primus integration enabled. Will be always <code>null</code> for non-students and students who are not in a Primus-enabled school.</li>
     </ul></li>
 
-    <li><code>user_type</code><ul>
+    <li><code>user_type</code> <span class="datatype">string</span><ul>
         <li>Please ignore this. It is an obsolete field containing the "first" role the user has. This field exists only for backwards compatibility; using it for anything is almost certainly a mistake. If you need the user's roles, look them up in the <code>schools</code> array as described above.</li>
     </ul></li>
 </ul>

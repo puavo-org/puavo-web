@@ -113,6 +113,12 @@ a:hover {
     background: var(--link-background-hover);
 }
 
+span.datatype {
+  padding: 0.5rem;
+  font-size: small;
+  font-style: italic;
+}
+
 footer {
     border-top: 1px solid var(--generic-border);
     text-align: center;
