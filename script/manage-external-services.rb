@@ -31,6 +31,11 @@ Commands:
       Deactivate the service in the specified organisation or school.
       Accepts the sam arguments as "activate".
 
+    set-domain
+      Change the activated domains of an existing service. Wants --service
+      argument that identifies the target service. Will prompt for the
+      new domains.
+
     set-secret
       Change the shared secret of an existing service. Wants --service
       argument that identifies the target service. Will prompt for the
@@ -187,7 +192,7 @@ def list_services(args)
   puts 'Done'
 end
 
-def set_service_secret(args)
+def set_service_property(args, property)
   unless args.include?(:service)
     error_exit('Use --service to specify which external service (identified by its DN) you want to edit')
   end
@@ -209,24 +214,25 @@ def set_service_secret(args)
 
   puts "Editing service \"#{service.cn}\""
 
-  new_secret = nil
+  new_property = nil
 
   loop do
-    new_secret = read_string('Enter a new secret (Ctrl+C to cancel): ')
+    new_property = read_string("Enter a new #{property} (Ctrl+C to cancel): ")
 
-    if new_secret.nil?
+    if new_property.nil?
       puts "\n[Canceled]\n"
       return
     end
 
-    if new_secret.length < 25
+    if property==:secret && new_property.length < 25
       puts 'The shared secret must be at least 25 characters long, try again'
     else
       break
     end
   end
 
-  service.puavoServiceSecret = new_secret
+  service.puavoServiceSecret = new_property if property==:secret
+  service.puavoServiceDomain = new_property if property==:domain
 
   begin
     service.save!
@@ -416,8 +422,11 @@ case action
   when 'deactivate'
     deactivate_service(args)
 
+  when 'set-domain'
+    set_service_property(args, :domain)
+
   when 'set-secret'
-    set_service_secret(args)
+    set_service_property(args, :secret)
 
   else
     error_exit("Unknown action \"#{action}\"")
