@@ -140,6 +140,9 @@ describe PuavoRest::ExternalLogin do
       assert_equal 'luke.skywalker@HEROES.PUAVO.NET',
                    @user.puavoExternalId,
                    'luke.skywalker has incorrect external_id'
+      assert_equal 'Skywalker',
+                   @user.puavoLearnerId,
+                   'luke.skywalker has incorrect learner_id'
     end
 
     it 'user password is synced to Puavo' do
@@ -795,6 +798,63 @@ describe PuavoRest::ExternalLogin do
       user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker2')
       assert_nil(user.puavoRemovalRequestTime,
                  'user removal request time is set when it not should be')
+    end
+  end
+
+  describe 'some tests with learner_id as extlogin id' do
+    before :each do
+      CONFIG['external_login']['external']['external_ldap'] \
+            ['extlogin_id_field'] = 'sn'
+      CONFIG['external_login']['external']['puavo_extlogin_id_field'] \
+        = 'learner_id'
+      assert_external_status('luke.skywalker',
+                             'secret',
+                             'UPDATED',
+                             'expected UPDATED as external_login status')
+      @user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
+      assert !@user.nil?, 'user luke.skywalker could not be found in Puavo'
+    end
+
+    it 'user information is correct after successful login (learner_id)' do
+      assert_equal 'luke.skywalker',
+                   @user.uid,
+                   'luke.skywalker has incorrect uid'
+      assert_equal 'Luke',
+                   @user.given_name,
+                   'luke.skywalker has incorrect given name'
+      assert_equal 'Skywalker',
+                   @user.surname,
+                   'luke.skywalker has incorrect surname'
+      # We use surname to simulate the learner id, because we know it
+      # and in our database it is unique for each user.
+      assert_equal 'Skywalker',
+                   @user.puavoLearnerId,
+                   'luke.skywalker has incorrect learner_id'
+    end
+
+    it 'user password is synced to Puavo (using learner_id)' do
+      assert !@user.nil?, 'user luke.skywalker could not be found in Puavo'
+      assert_password @user, 'secret', 'password was not valid'
+    end
+
+    it 'subsequent login with bad password fails (learner_id)' do
+      assert_external_status('luke.skywalker',
+                             'badpassword',
+                             'BADUSERCREDS',
+                             'expected BADUSERCREDS as external_login status')
+
+      user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
+      assert !user.nil?, 'user luke.skywalker could not be found in Puavo'
+    end
+
+    it 'subsequent successful login returns NOCHANGE (learner_id)' do
+      assert_external_status('luke.skywalker',
+                             'secret',
+                             'NOCHANGE',
+                             'expected NOCHANGE as external_login status')
+
+      user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
+      assert !user.nil?, 'user luke.skywalker could not be found in Puavo'
     end
   end
 end

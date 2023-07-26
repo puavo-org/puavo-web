@@ -51,16 +51,17 @@ module PuavoRest
 
       {
         'external' => {
-          'admin_dn'          => admin_dn,
-          'admin_password'    => organisations['external']['owner_pw'],
-          'manage_puavousers' => true,
-          'service'           => 'external_ldap',
+          'admin_dn'                => admin_dn,
+          'admin_password'          => organisations['external']['owner_pw'],
+          'manage_puavousers'       => true,
+          'puavo_extlogin_id_field' => 'external_id',
+          'service'                 => 'external_ldap',
           'external_ldap'     => {
-            'authentication_method'   => 'user_credentials',
-            'base'                    => 'dc=edu,dc=heroes,dc=net',
-            'bind_dn'                 => bind_dn,
-            'bind_password'           => organisations['heroes']['owner_pw'],
-            'encryption_method'       => 'start_tls',
+            'authentication_method' => 'user_credentials',
+            'base'                  => 'dc=edu,dc=heroes,dc=net',
+            'bind_dn'               => bind_dn,
+            'bind_password'         => organisations['heroes']['owner_pw'],
+            'encryption_method'     => 'start_tls',
             'user_mappings' => {
               'defaults' => {
                 'classnumber_regex'    => '(\\d)$',    # typically: '^(\\d+)'
@@ -87,10 +88,11 @@ module PuavoRest
                 { thomas_dn  => [ resistance_administrative_group('admin'  ) ]},
               ],
             },
-            'external_id_field'       => 'eduPersonPrincipalName',
-            'external_username_field' => 'mail',
-            'password_change' => { 'api' => 'openldap', },
-            'server' => 'localhost',
+            'external_learner_id_field' => 'sn',
+            'external_username_field'   => 'mail',
+            'extlogin_id_field'         => 'eduPersonPrincipalName',
+            'password_change'           => { 'api' => 'openldap', },
+            'server'                    => 'localhost',
             'subtrees' => [ 'ou=People,dc=edu,dc=heroes,dc=net' ],
           },
         }
