@@ -34,7 +34,7 @@ module Puavo
          'hostname' => (device.respond_to?(:hostname) ? device.hostname : device.puavoHostname),
          'domain' => organisation || device.organisation.domain,
          'type' => (device.respond_to?(:type) ? device.type : device.puavoDeviceType),
-         'school_id' => (device.school.id.to_i if device.respond_to?(:school)),
+         'school_id' => (device.respond_to?(:school) ? device.school.id.to_i : device.school_id.to_i),
          'school_dn' => (device.school.dn if device.respond_to?(:school)),
          'school_name' => (device.school.name if device.respond_to?(:school)),
          'serial' => (device.respond_to?(:serial) ? device.serial : device.serial_number),
