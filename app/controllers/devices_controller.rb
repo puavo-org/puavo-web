@@ -451,6 +451,11 @@ class DevicesController < ApplicationController
     @device.puavoSchool = @school.dn.to_s
     @device.save!
 
+    if Puavo::CONFIG['inventory_management']
+      # Notify the external inventory management
+      Puavo::Inventory::device_modified(logger, Puavo::CONFIG['inventory_management'], @device, current_organisation.organisation_key)
+    end
+
     respond_to do |format|
       format.html{ redirect_to(device_path(@school, @device), :notice => t('flash.devices.school_changed') ) }
     end
