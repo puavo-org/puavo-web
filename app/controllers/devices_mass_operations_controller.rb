@@ -91,6 +91,10 @@ class DevicesMassOperationsController < MassOperationsController
     if device.puavoSchool.to_s != @parameters['school_dn']
       device.puavoSchool = @parameters['school_dn']
       device.save!
+      if Puavo::CONFIG['inventory_management']
+        # Notify the external inventory management
+        Puavo::Inventory::device_modified(logger, Puavo::CONFIG['inventory_management'], device, current_organisation.organisation_key)
+      end
     end
 
     return [true, nil]
