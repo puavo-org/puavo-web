@@ -7,18 +7,18 @@ module Puavo
   module Inventory
     def self.send_device_hardware_info(logger, config, device, hw_info)
       self.send_device_change(logger, config, 'device_hwinfo_update',
-         ( inventory_notification_from_device(device)
+         ( inventory_notification_from_device(logger, device)
            .merge( { 'hw_info' => hw_info.to_s } ) ) )
     end
 
     def self.device_created(logger, config, device, organisation)
       self.send_device_change(logger, config, 'device_created',
-           inventory_notification_from_device(device, organisation) )
+           inventory_notification_from_device(logger, device, organisation) )
     end
 
     def self.device_modified(logger, config, device, organisation)
       self.send_device_change(logger, config, 'device_modified',
-           inventory_notification_from_device(device, organisation) )
+           inventory_notification_from_device(logger, device, organisation) )
     end
 
     def self.device_deleted(logger, config, id)
@@ -28,17 +28,22 @@ module Puavo
 
     private
 
-     def self.inventory_notification_from_device device, organisation=nil
-       { # some requests come from rest and some from web, so we'll try to handle both formats
-         'id' => device.puavo_id.to_i,
-         'hostname' => (device.respond_to?(:hostname) ? device.hostname : device.puavoHostname),
-         'domain' => organisation || device.organisation.domain,
-         'type' => (device.respond_to?(:type) ? device.type : device.puavoDeviceType),
-         'school_id' => (device.respond_to?(:school) ? device.school.id.to_i : device.school_id.to_i),
-         'school_dn' => (device.school.dn if device.respond_to?(:school)),
-         'school_name' => (device.school.name if device.respond_to?(:school)),
-         'serial' => (device.respond_to?(:serial) ? device.serial : device.serial_number),
-       }
+     def self.inventory_notification_from_device logger, device, organisation=nil
+       begin
+         { # some requests come from rest and some from web, so we'll try to handle both formats
+           'id' => device.puavo_id.to_i,
+           'hostname' => (device.respond_to?(:hostname) ? device.hostname : device.puavoHostname),
+           'domain' => organisation || device.organisation.domain,
+           'type' => (device.respond_to?(:type) ? device.type : device.puavoDeviceType),
+           'school_id' => (device.respond_to?(:school) ? device.school.id.to_i : device.school_id.to_i),
+           'school_dn' => (device.school.dn if device.respond_to?(:school)),
+           'school_name' => (device.school.name if device.respond_to?(:school)),
+           'serial' => (device.respond_to?(:serial) ? device.serial : device.serial_number),
+         }
+       rescue => e
+         logger.error("Puavo::Inventory::self.inventory_notification_from_device(): data gathering failed: #{e}")
+         nil
+       end
      end
 
     def self.send_device_change(logger, config, command, params)
