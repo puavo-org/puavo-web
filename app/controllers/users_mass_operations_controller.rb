@@ -11,7 +11,7 @@ class UsersMassOperationsController < MassOperationsController
     list_uids = []
 
     result = process_rows do |id, data|
-      puts "[#{@request_id}] Processing item #{id}, item data=#{data.inspect}"
+      logger.info "[#{@request_id}] Processing item #{id}, item data=#{data.inspect}"
 
       case @operation
         when 'delete'
@@ -211,43 +211,30 @@ class UsersMassOperationsController < MassOperationsController
       when 'move'
         unless user.puavoEduPersonPrimarySchool == @parameters['school_dn']
           school = School.find(@parameters['school_id'])
-          puts '-' * 50
-          puts "Moving user #{user.uid} to school #{@parameters['school_dn']}"
 
           previous_dn = user.puavoEduPersonPrimarySchool
           previous_school = School.find(previous_dn)
 
-          if @parameters['keep']
-            puts "Keeping the previous school (#{previous_dn})"
-          end
-
           if Array(user.puavoSchool).include?(@parameters['school_dn'])
-            puts 'The user is already in the target school, changing the primary school DN'
             user.puavoEduPersonPrimarySchool = @parameters['school_dn']
 
             unless @parameters['keep']
-              puts 'Removing the previous primary school'
               schools = Array(user.puavoSchool).dup
               schools.delete(previous_dn)
               user.puavoSchool = (schools.count == 1) ? schools[0] : schools
             end
           else
-            puts 'Inserting the new school on the schools array'
             schools = Array(user.puavoSchool).dup
             schools << @parameters['school_dn']
 
             unless @parameters['keep']
-              puts 'Removing the previous primary school'
               schools.delete(previous_dn)
             end
 
             user.puavoSchool = (schools.count == 1) ? schools[0] : schools
-
-            puts 'Changing the primary school'
             user.puavoEduPersonPrimarySchool = @parameters['school_dn']
           end
 
-          puts 'Saving the user object'
           user.save!
 
           unless @parameters['keep']
@@ -262,8 +249,6 @@ class UsersMassOperationsController < MassOperationsController
             rescue ActiveLdap::LdapError::NoSuchAttribute
             end
           end
-
-          puts '-' * 50
         end
 
         if @parameters['remove_prev']
@@ -283,13 +268,8 @@ class UsersMassOperationsController < MassOperationsController
         unless Array(user.puavoSchool).include?(@parameters['school_dn'])
           school = School.find(@parameters['school_id'])
 
-          puts '-' * 50
-          puts "Adding user #{user.uid} to school #{@parameters['school_dn']}"
-
           user.puavoSchool = Array(user.puavoSchool) + [@parameters['school_dn']]
           user.save!
-
-          puts '-' * 50
         end
 
       # ---------------------------------------------------------------------------------------------
@@ -303,12 +283,7 @@ class UsersMassOperationsController < MassOperationsController
             return [false, t('users.index.mass_operations.change_school.cant_remove_primary_school')]
           else
             school = School.find(@parameters['school_id'])
-
-            puts '-' * 50
-            puts "Removing user #{user.uid} from school #{@parameters['school_dn']}"
-            #_remove_user_from_school(user, school)
             Puavo::UsersShared::remove_user_from_school(user, school)
-            puts '-' * 50
           end
         end
     end

@@ -10,7 +10,7 @@ class GroupsMassOperationsController < MassOperationsController
     group_cache = {}
 
     result = process_rows do |id, data|
-      puts "[#{@request_id}] Processing item #{id}, item data=#{data.inspect}"
+      logger.info "[#{@request_id}] Processing item #{id}, item data=#{data.inspect}"
 
       case @operation
         when 'remove_members'
