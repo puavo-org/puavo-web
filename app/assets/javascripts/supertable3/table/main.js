@@ -119,12 +119,13 @@ constructor(container, settings)
         // and formatted nicely, while other data is used only for sorting and filtering, and so
         // on). This is an array of objects. Each array element is one row in the table, and
         // the object members can be in whatever order they happen to be; it does not have to
-        // match the table column order.
+        // match the table column order. Always access this array through "current" array below!
         transformed: [],
 
-        // Same as above, but the array has been filtered using the current filter, and then
-        // sorted according to the current sort column and direction. The object members are
-        // still in whatever order they happen to be, as their order is not important.
+        // A lookup table to "transformed". Stores the indexes of the currently visible table
+        // rows (pagination is ignored), in the order they are (based on the current sorting
+        // column and order). So always write "this.data.transformed[this.data.current[N]]"
+        // when you need to access row data.
         current: [],
 
         // Item IDs (puavoIds) for mass tools. The ID ordering does not matter.
@@ -866,8 +867,8 @@ updateTable()
                                    this.filters.program,
                                    this.filters.reverse);
     } else {
-        // Filtering is not enabled, pass the data through as-is
-        filtered = [...this.data.transformed];
+        // Filtering is not enabled, build an array that contains all rows
+        filtered = Array.from(Array(this.data.transformed.length).keys());
     }
 
     const t1 = performance.now();
@@ -885,7 +886,7 @@ updateTable()
         }
     );
 
-    this.data.current = Data.sortRows(this.columns.definitions, this.sorting, collator, filtered);
+    this.data.current = Data.sortRows(this.columns.definitions, this.sorting, collator, this.data.transformed, filtered);
 
     const t3 = performance.now();
 
@@ -1044,7 +1045,7 @@ buildTable(updateMask=["headers", "rows"])
             this.paging.lastRowIndex = end;
 
             for (let index = start; index < end; index++) {
-                const row = this.data.current[index];
+                const row = this.data.transformed[this.data.current[index]];
                 const rowID = row.id[INDEX_DISPLAYABLE];
                 let rowClasses = [];
 
@@ -1170,7 +1171,7 @@ onRowOpen(e)
 
     const index = e.target.parentNode.dataset.index;
 
-    const url = this.user.open(this.data.current[index]);
+    const url = this.user.open(this.data.transformed[this.data.current[index]]);
 
     if (url === null || url === undefined)
         return;
@@ -1280,8 +1281,8 @@ onJumpToPage(e)
 
     if (this.paging.rowsPerPage == -1) {
         // Everything on one giant page
-        let first = this.data.current[0],
-            last = this.data.current[this.data.current.length - 1];
+        let first = this.data.transformed[this.data.current[0]],
+            last = this.data.transformed[this.data.current[this.data.current.length - 1]];
 
         first = ellipsize(first[col][INDEX_EXISTS] ? first[col][index] : "-");
         last = ellipsize(last[col][INDEX_EXISTS] ? last[col][index] : "-");
@@ -1292,8 +1293,8 @@ onJumpToPage(e)
             const start = page * this.paging.rowsPerPage;
             const end = Math.min((page + 1) * this.paging.rowsPerPage, this.data.current.length);
 
-            let first = this.data.current[start],
-                last = this.data.current[end - 1];
+            let first = this.data.transformed[this.data.current[start]],
+                last = this.data.transformed[this.data.current[end - 1]];
 
             first = ellipsize(first[col][INDEX_EXISTS] ? first[col][index] : "-");
             last = ellipsize(last[col][INDEX_EXISTS] ? last[col][index] : "-");
@@ -1509,7 +1510,7 @@ onRowCheckboxClick(e)
           cb = tr.childNodes[0].childNodes[0];
 
     const index = parseInt(tr.dataset.index, 10),
-          id = this.data.current[index].id[INDEX_DISPLAYABLE];
+          id = this.data.transformed[this.data.current[index]].id[INDEX_DISPLAYABLE];
 
     if (e.shiftKey && this.ui.previousRow != null && this.ui.previousRow != td) {
         // Range select/deselect between the previously clicked row and this row
@@ -1525,7 +1526,7 @@ onRowCheckboxClick(e)
         endIndex = parseInt(endIndex, 10);
 
         // Select or deselect?
-        const state = this.data.selectedItems.has(this.data.current[startIndex].id[INDEX_DISPLAYABLE]);
+        const state = this.data.selectedItems.has(this.data.transformed[this.data.current[startIndex]].id[INDEX_DISPLAYABLE]);
 
         if (startIndex > endIndex)
             [startIndex, endIndex] = [endIndex, startIndex];
@@ -1533,7 +1534,7 @@ onRowCheckboxClick(e)
         const tableRows = this.getTableRows();
 
         for (let i = startIndex; i <= endIndex; i++) {
-            const id = this.data.current[i].id[INDEX_DISPLAYABLE];
+            const id = this.data.transformed[this.data.current[i]].id[INDEX_DISPLAYABLE];
             const row = tableRows[i - this.paging.firstRowIndex],
                   cb = row.childNodes[0].childNodes[0];
 
@@ -1625,7 +1626,7 @@ startMassOperation()
 
     // Make a list of all selected rows
     for (let rowNum = 0; rowNum < this.data.current.length; rowNum++) {
-        const id = this.data.current[rowNum].id[INDEX_DISPLAYABLE];
+        const id = this.data.transformed[this.data.current[rowNum]].id[INDEX_DISPLAYABLE];
 
         if (this.data.selectedItems.has(id)) {
             this.massOperation.rows.push({
@@ -1728,7 +1729,7 @@ prepareNextBatch(batchSize)
         //console.log(`Processing item ${this.massOperation.pos + 1}/${this.massOperation.rows.length}: ${item.id} (row ${item.index})`);
 
         // Returns a { state, data } object
-        const result = this.massOperation.handler.prepareItem(this.data.current[item.index]);
+        const result = this.massOperation.handler.prepareItem(this.data.transformed[this.data.current[item.index]]);
 
         // Immediately update the table if the results are already known
         switch (result.state) {

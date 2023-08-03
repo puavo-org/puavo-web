@@ -130,58 +130,67 @@ export function transformRows(columnDefinitions, rawData, preFilterFunction=null
     return out;
 }
 
-// Applies zero or more filters to the data
+// Applies zero or more filters to the data. Returns the indexes of rows that are visible.
 export function filterRows(columnDefinitions, data, filters, reverse)
 {
     const numComparisons = filters.comparisons.length;
 
-    let filtered = data.filter(function(row) {
+    let filtered = [];
+
+    for (let index = 0; index < data.length; index++) {
+        const row = data[index];
+
         // Evaluate comparisons for this row
         let results = [];
 
         for (const cmp of filters.comparisons)
             results.push(compareRowValue(row[cmp.column][INDEX_FILTERABLE], cmp));
 
-        // Then run the RPN filter program
-        return evaluateFilter(filters.program, results) != reverse;
-    });
+        // Then run the RPN filter program. If the row is visible, store its index in the array.
+        if (evaluateFilter(filters.program, results) != reverse)
+            filtered.push(index);
+    }
 
     return filtered;
 }
 
 // Sorts the data by the specified column and order
-export function sortRows(columnDefinitions, sortBy, collator, data)
+export function sortRows(columnDefinitions, sortBy, collator, data, indexes)
 {
     const direction = (sortBy.dir == SortOrder.ASCENDING) ? 1 : -1,
           key = columnDefinitions[sortBy.column].key;
-
-    let out = [...data];
 
     switch (columnDefinitions[sortBy.column].type) {
         case ColumnType.BOOL:               // not the best choice
         case ColumnType.NUMERIC:
         case ColumnType.UNIXTIME:
-            out.sort((a, b) => {
-                const n1 = a[key][INDEX_SORTABLE],
-                      n2 = b[key][INDEX_SORTABLE];
+            indexes.sort((indexA, indexB) => {
+                const data1 = data[indexA],
+                      data2 = data[indexB];
+
+                const n1 = data1[key][INDEX_SORTABLE],
+                      n2 = data2[key][INDEX_SORTABLE];
 
                 if (n1 < n2)
                     return -1 * direction;
                 else if (n1 > n2)
                     return 1 * direction;
 
-                return a.id - b.id;         // stabilize the sort
+                return data1.id[1] - data2.id[1];       // stabilize the sort
             });
 
             break;
 
         case ColumnType.STRING:
         default:
-            out.sort((a, b) => {
-                const r = collator.compare(a[key][INDEX_SORTABLE], b[key][INDEX_SORTABLE]) * direction;
+            indexes.sort((indexA, indexB) => {
+                const data1 = data[indexA],
+                      data2 = data[indexB];
+
+                const r = collator.compare(data1[key][INDEX_SORTABLE], data2[key][INDEX_SORTABLE]) * direction;
 
                 if (r === 0)
-                    return a.id - b.id;     // stabilize the sort
+                    return data1.id[1] - data2.id[1];   // stabilize the sort
 
                 return r;
             });
@@ -189,5 +198,5 @@ export function sortRows(columnDefinitions, sortBy, collator, data)
             break;
     }
 
-    return out;
+    return indexes;
 }

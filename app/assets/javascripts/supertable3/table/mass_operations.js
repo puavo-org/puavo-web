@@ -80,8 +80,8 @@ export function selectAllRows(operation, data, tableRows)
         case "select_all":
             data.selectedItems.clear();
 
-            for (const i of data.current)
-                data.selectedItems.add(i.id[INDEX_DISPLAYABLE]);
+            for (const index of data.current)
+                data.selectedItems.add(data.transformed[index].id[INDEX_DISPLAYABLE]);
 
             data.successItems.clear();
             data.failedItems.clear();
@@ -96,9 +96,12 @@ export function selectAllRows(operation, data, tableRows)
         case "invert_selection":
             let newState = new Set();
 
-            for (const i of data.current)
-                if (!data.selectedItems.has(i.id[INDEX_DISPLAYABLE]))
-                    newState.add(i.id[INDEX_DISPLAYABLE]);
+            for (const index of data.current) {
+                const id = data.transformed[index].id[INDEX_DISPLAYABLE];
+
+                if (!data.selectedItems.has(id))
+                    newState.add(id);
+            }
 
             data.selectedItems = newState;
             data.successItems.clear();
@@ -185,7 +188,7 @@ export function selectSpecificRows(container, selectionState, columns, data, pag
     let found = new Set();
 
     for (let i = 0, j = data.current.length; i < j; i++) {
-        const item = data.current[i];
+        const item = data.transformed[data.current[i]];
 
         if (!item[type][INDEX_EXISTS])
             continue;

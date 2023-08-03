@@ -12,7 +12,14 @@ function _doExport(format, data, allColumns, prefix)
         const visibleRows = modalPopup.getContents().querySelector("input#only-visible-rows").checked,
               visibleCols = modalPopup.getContents().querySelector("input#only-visible-cols").checked;
 
-        const source = visibleRows ? data.current : data.transformed;
+        let source = null;
+
+        if (visibleRows)
+            source = data.current;
+        else {
+            // 0, 1, 2, 3, ... N
+            source = Array.from(Array(data.transformed.length).keys());
+        }
 
         let output = [],
             mimetype, extension;
@@ -42,7 +49,8 @@ function _doExport(format, data, allColumns, prefix)
                 // Header first
                 output.push(headers.join(";"));
 
-                for (const row of source) {
+                for (const rowIndex of source) {
+                    const row = data.transformed[rowIndex];
                     let out = [];
 
                     for (const col of columns) {
@@ -67,7 +75,8 @@ function _doExport(format, data, allColumns, prefix)
             }
 
             case "json": {
-                for (const row of source) {
+                for (const rowIndex of source) {
+                    const row = data.transformed[rowIndex];
                     let out = {};
 
                     for (let i = 0; i < columns.length; i++) {
