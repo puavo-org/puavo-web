@@ -56,7 +56,7 @@ module UsersHelper
     out[:role].unshift('owner') if organisation_owners.include?(dn)
 
     if raw['puavoLearnerId']
-      out[:learner_id] = raw['puavoLearnerId']
+      out[:learner_id] = raw['puavoLearnerId'][0]
     end
 
     if raw['puavoRemovalRequestTime']
