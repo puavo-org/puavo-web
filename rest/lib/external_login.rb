@@ -73,7 +73,7 @@ module PuavoRest
       @puavo_extlogin_id_field = @config['puavo_extlogin_id_field']
       raise ExternalLoginConfigError,
             'puavo_extlogin_id_field is missing or has an unsupported value' \
-        unless %w(external_id learner_id).include?(@puavo_extlogin_id_field)
+        unless %w(external_id id learner_id).include?(@puavo_extlogin_id_field)
 
       # More login classes could be added here in the future,
       # for other types of external logins.
@@ -398,17 +398,29 @@ module PuavoRest
         userinfo = adjust_userinfo(user, userinfo)
 
         if !user then
+          if userinfo['id'] then
+            # We should not be creating users with a specific puavoId,
+            # this should never happen and something is configured in an
+            # unsupported way.
+            raise ExternalLoginError,
+                  'puavoId set for new user in external_login'
+          end
+
+          # All is good, we are missing a user and should create one.
           user = User.new(userinfo)
           user.save!
           @rlog.info("created a new user '#{ userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::UPDATED
+
         elsif user.check_if_changed_attributes(userinfo) then
+          userinfo.delete('id')
           user.update!(userinfo)
           user.locked = false
           user.removal_request_time = nil
           user.save!
           @rlog.info("updated user info for '#{ userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::UPDATED
+
         else
           if user.locked || user.removal_request_time then
             user.locked = false

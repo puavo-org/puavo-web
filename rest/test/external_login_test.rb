@@ -857,4 +857,58 @@ describe PuavoRest::ExternalLogin do
       assert !user.nil?, 'user luke.skywalker could not be found in Puavo'
     end
   end
+
+  describe 'some tests with puavo_id as extlogin id' do
+    it 'user information is correct after successful login (puavo_id)' do
+      # Use puavoId as external link attribute.
+      CONFIG['external_login']['external']['external_ldap'] \
+            ['extlogin_id_field'] = 'puavoId'
+      CONFIG['external_login']['external']['puavo_extlogin_id_field'] = 'id'
+
+      # Then check that when using puavoId as external id, using creation
+      # does not work.
+      assert_external_status('lara.croft',
+                             'secret',
+                             'UPDATEERROR',
+                             'expected UPDATEERROR as external_login status')
+
+      # Check the puavoId of "lara.croft" (in external ldap).
+      external_lara = PuavoRest::ExternalLoginTestConfig.get_entry_from_cn(
+                        'dc=edu,dc=heroes,dc=net', 'lara.croft')
+      external_lara_puavo_id = external_lara[:puavoId]
+
+      # Create Lara but with slightly mismatching info.
+      lara = User.create(
+               :givenName                   => 'Lara',
+               :puavoId                     => external_lara_puavo_id,
+               :puavoEduPersonAffiliation   => 'testuser',
+               :puavoEduPersonPrimarySchool => @heroes_school.dn,
+               :puavoSchool                 => [ @heroes_school.dn ],
+               :sn                          => 'Starkiller',
+               :uid                         => 'lara.skywalker')
+      lara.save!
+
+      # Login as "lara.croft".
+      assert_external_status('lara.croft',
+                             'secret',
+                             'UPDATED',
+                             'expected UPDATE as external_login status')
+
+      # Check that Lara has changed info.
+      lara = User.find(:first, :attribute => 'uid', :value => 'lara.croft')
+
+      assert_equal 'lara.croft',
+                   lara.uid,
+                   'lara.croft has incorrect uid'
+      assert_equal 'Lara',
+                   lara.given_name,
+                   'lara.croft has incorrect given name'
+      assert_equal 'Croft',
+                   lara.surname,
+                   'lara.croft has incorrect surname'
+      assert_equal Integer(Array(external_lara_puavo_id).first),
+                   lara.puavoId,
+                   'lara.croft has incorrect puavoId'
+    end
+  end
 end

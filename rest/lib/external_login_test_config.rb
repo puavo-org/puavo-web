@@ -5,7 +5,7 @@ require 'yaml'
 
 module PuavoRest
   module ExternalLoginTestConfig
-    def self.get_dn_from_cn(ldap_base, cn)
+    def self.get_entry_from_cn(ldap_base, cn)
       ldap = Net::LDAP.new :base => ldap_base,
                            :host => 'localhost',
                            :auth => {
@@ -24,7 +24,11 @@ module PuavoRest
       raise "could not find entry #{ cn } from #{ ldap_base }" \
         unless entries && entries.count == 1
 
-      entries.first.dn.to_s
+      entries.first
+    end
+
+    def self.get_dn_from_cn(ldap_base, cn)
+      get_entry_from_cn(ldap_base, cn).dn.to_s
     end
 
     def self.resistance_administrative_group(role)
