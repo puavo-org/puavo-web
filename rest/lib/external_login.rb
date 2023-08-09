@@ -338,8 +338,8 @@ module PuavoRest
       if password then
         pw_update_status \
           = set_puavo_password(userinfo['username'],
-                                        userinfo[@puavo_extlogin_id_field],
-                                        password)
+                               userinfo[@puavo_extlogin_id_field],
+                               password)
         if pw_update_status == ExternalLoginStatus::UPDATED \
           && userinfo['password_last_set'] then
             # must update the password_last_set to match what external ldap has
