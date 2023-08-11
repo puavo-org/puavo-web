@@ -34,6 +34,7 @@ fi:
       service_link_name_puavo: "Puavo - käyttäjien ja laitteiden hallinta"
       service_link_name_infotv: "Info-TV"
       service_link_name_change_password: "Vaihda salasanaasi"
+      service_link_name_forgot_password: "Unohdin salasanani"
 
   # Login screen
   sessions:

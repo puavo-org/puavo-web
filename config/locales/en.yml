@@ -34,6 +34,7 @@ en:
       service_link_name_puavo: "Puavo - users and devices management"
       service_link_name_infotv: "Info-TV"
       service_link_name_change_password: "Change your password"
+      service_link_name_forgot_password: "I forgot my password"
 
   # Login screen
   sessions:
