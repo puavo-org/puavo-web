@@ -702,7 +702,7 @@ en:
     new:
       title: New LDAP service
     edit:
-      title: Edit an LDAP service
+      title: Edit LDAP service "%{service}"
 
   # Boot servers
   servers:

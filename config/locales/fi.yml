@@ -702,7 +702,7 @@ fi:
     new:
       title: Uuden LDAP-palvelun tiedot
     edit:
-      title: LDAP-palvelun tietojen muokkaus
+      title: LDAP-palvelun "%{service}" tietojen muokkaus
 
   # Boot servers
   servers:
