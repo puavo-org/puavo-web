@@ -122,7 +122,7 @@ class SortableTable {
                 // column.
                 for (var j = 0; j < row.children.length; j++) {
                     if (!(j in this.columnDefs))
-                        throw "Table column " + colN + " not defined in column definitions!";
+                        throw "Table column " + j + " not defined in column definitions!";
 
                     if (this.columnDefs[j]["flags"] & COLUMN_FLAG_DONT_SORT) {
                         // this column is not sortable
