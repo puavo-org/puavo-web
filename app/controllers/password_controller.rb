@@ -221,8 +221,8 @@ class PasswordController < ApplicationController
 
           key = Digest::SHA384.hexdigest(response_data['jwt'])
 
-          db.set(user.puavoId, true, :ex => 3600, :nx => true)
-          db.set(key, cache_data.to_json, :ex => 3600, :nx => true)
+          db.set(user.puavoId, true, :ex => 600, :nx => true)
+          db.set(key, cache_data.to_json, :ex => 600, :nx => true)
 
           logger.info("[#{request_id}] Redis entries saved")
         end

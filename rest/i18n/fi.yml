@@ -30,7 +30,7 @@ password_management:
   hello: "Hei"
   message_head: "Pyysit juuri, että salasanasi vaihdettaisiin."
   message: "Vaihda salasanasi klikkaamalla tätä linkkiä: %1"
-  footer: "Linkki on voimassa tasan yhden tunnin. Jos et ole tehnyt tätä salasanvaihtopyyntöä, voit jättää tämän viestin huomioimatta. Jos epäilet, että joku muu yrittää vaihtaa salasanaasi tietämättäsi, ota heti yhteys Opinsysin tukeen ja välitä tämän viestin sisältö heille."
+  footer: "Linkki on voimassa kymmenen (10) minuutin ajan. Jos et ole tehnyt tätä salasanvaihtopyyntöä, voit jättää tämän viestin huomioimatta. Jos epäilet, että joku muu yrittää vaihtaa salasanaasi tietämättäsi, ota heti yhteys Opinsysin tukeen ja välitä tämän viestin sisältö heille."
   password_has_been_reset_message: "Sinun Opinsys-salasanasi on vaihdettu."
 email_verification:
   subject: "Sähköpostiosoitteen vahvistus"
