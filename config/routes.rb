@@ -112,6 +112,7 @@ Rails.application.routes.draw do
       match 'users/:id/edit_admin_permissions' => 'users#edit_admin_permissions', :as => :edit_admin_permissions, :via => :get
       match 'users/:id/save_admin_permissions' => 'users#save_admin_permissions', :as => :save_admin_permissions, :via => :post
 
+      get 'users/:id/request_password_reset' => 'users#request_password_reset', :as => :request_password_reset
       get 'users/:id/reset_sso_session' => 'users#reset_sso_session', :as => :reset_sso_session
 
       match 'users/:id/change_schools' => 'users#change_schools', :as => :change_schools, :via => :get

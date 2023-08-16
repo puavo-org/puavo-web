@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   include Puavo::Integrations
   include Puavo::UsersShared
+  include Puavo::Password
 
   # GET /:school_id/users
   # GET /:school_id/users.xml
@@ -624,6 +625,54 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(users_url) }
       format.xml  { head :ok }
+    end
+  end
+
+  def request_password_reset
+    return if redirected_nonowner_user?
+
+    @user = get_user(params[:id])
+    return if @user.nil?
+
+    request_id = generate_synchronous_call_id()
+
+    if @user.mail.nil? || @user.mail.empty?
+      flash[:alert] = t('flash.user.reset_failed_no_emails', request_id: request_id)
+    else
+      if @user.puavoPrimaryEmail
+        address = @user.puavoPrimaryEmail
+      else
+        address = Array(@user.mail).first
+      end
+
+      begin
+        logger.info("[#{request_id}] Sending a password reset email for user \"#{@user.uid}\" (#{@user.dn.to_s}) to address \"#{address}\"")
+        ret = Puavo::Password::send_password_reset_mail(logger, LdapOrganisation.first.puavoDomain, password_management_host, locale, request_id, address)
+
+        case ret
+          when :ok
+            flash[:notice] = t('flash.user.reset_email_sent')
+
+          when :user_not_found
+            flash[:alert] = t('flash.user.reset_failed_user_not_found', request_id: request_id)
+
+          when :link_already_sent
+            flash[:alert] = t('flash.user.reset_failed_link_already_sent', request_id: request_id)
+
+          when :link_sending_failed
+            flash[:alert] = t('flash.user.reset_failed_link_sending_failed', request_id: request_id)
+
+          when :puavo_rest_call_failed
+            flash[:alert] = t('flash.user.reset_failed_puavo_rest_call_failed', request_id: request_id)
+        end
+      rescue => e
+        logger.error("[#{request_id}] Password reset failed: #{e}")
+        flash[:alert] = t('flash.user.reset_failed_generic', request_id: request_id)
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to(user_path(@school, @user)) }
     end
   end
 
