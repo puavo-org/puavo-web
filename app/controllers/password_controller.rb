@@ -155,80 +155,11 @@ class PasswordController < ApplicationController
       logger.info("[#{request_id}] A password reset for user \"#{params[:forgot][:email]}\" has been requested")
       log_request_env(request, request_id)
 
-      user = User.find(:first, :attribute => "mail", :value => params[:forgot][:email].strip)
+      ret = Puavo::Password::send_password_reset_mail(logger, LdapOrganisation.first.puavoDomain, password_management_host, locale, request_id, params[:forgot][:email])
 
-      unless user
-        logger.error("[#{request_id}] No user found by that email address")
-        raise "No user found by email \"#{params[:forgot][:email]}\""
-      end
-
-      logger.info("[#{request_id}] Found user \"#{user.givenName} #{user.sn}\" (\"#{user.uid}\"), " \
-                  "ID=#{user.puavoId}, organisation=\"#{current_organisation_domain}\"")
-
-      db = redis_connect
-
-      if db.get(user.puavoId)
-        logger.error("[#{request_id}] This user has already received a password reset link, request rejected")
-        raise "A reset link has already been sent for the specified user"
-      end
-
-      send_token_url = password_management_host + "/password/send_token"
-
-      tried = false
-
-      begin
-        logger.info("[#{request_id}] Generating the reset email, see the password reset host logs at " \
-                    "#{password_management_host} for details")
-
-        rest_response = HTTP.headers(host: current_organisation_domain, 'Accept-Language': locale)
-                            .post(send_token_url, params: {
-                              # Most of these are just for logging purposes. Abuse cases must
-                              # be traceable afterwards.
-                              request_id: request_id,
-                              id: user.puavoId.to_i,
-                              username: user.uid,
-                              email: params[:forgot][:email],
-                            })
-      rescue => e
-        logger.error("[#{request_id}] request failed: #{e}")
-
-        if e.to_s.include?('Connection reset by peer') && !tried
-          logger.info("[#{request_id}] Retrying the request once in 1 second...")
-          tried = true
-          sleep 1
-          retry
-        end
-      end
-
-      if rest_response.status == 200
-        unless ENV['RAILS_ENV'] == 'test'
-          # The server sends the JWT back as a string
-          response_data = JSON.parse(rest_response.body.to_s)
-
-          # Store full user data in Redis. The key is SHA384 of the JWT string. We can't
-          # store anything in the public reset link or the JWT itself, because it cannot
-          # be decoded on puavo-web without the secret key that only the reset server has.
-          # So the "public" JWT only contains some user-identifying data (most of which
-          # are public already), but the Redis contains the full information. If the URL
-          # is edited, the JWT hash no longer matches and the data cannot be retrieved.
-          # This protects effectively against attacks.
-          cache_data = {
-            id: user.puavoId.to_i,
-            uid: user.uid,
-            school: user.puavoEduPersonPrimarySchool.to_s.match(/^puavoId=(?<id>\d+),ou=Groups,dc=edu,dc=/)[:id].to_i,
-            domain: current_organisation_domain,
-          }
-
-          key = Digest::SHA384.hexdigest(response_data['jwt'])
-
-          db.set(user.puavoId, true, :ex => 600, :nx => true)
-          db.set(key, cache_data.to_json, :ex => 600, :nx => true)
-
-          logger.info("[#{request_id}] Redis entries saved")
-        end
-      else
-        logger.error("[#{request_id}] puavo-rest call failed, response code was #{rest_response.status}")
-      end
+      if ret != :ok
+        logger.error("[#{request_id}] Password reset failed, return code is \"#{ret.to_s}\"")
+       end
     rescue => e
       logger.error("[#{request_id}] Password reset failed: #{e}")
     end
