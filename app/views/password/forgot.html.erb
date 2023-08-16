@@ -10,7 +10,7 @@
   <table class="editForm">
     <tr>
       <th><%= label :forgot, :email, t('activeldap.attributes.user.mail') %></th>
-      <td><%= text_field :forgot, :email, :required => 'required' %></td>
+      <td><%= text_field :forgot, :email, :required => 'required', autofocus: true %></td>
     </tr>
 
     <tr class="buttonRow">
