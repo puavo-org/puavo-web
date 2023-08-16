@@ -243,7 +243,7 @@
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
     <div class="dropdown dropRight">
       <ul>
-        <li>
+        <li class="ownersOnly">
           <%= link_to new_rename_groups_path(@school) do %>
             <i class='icon-exchange'></i><%= t('link.rename_groups') %>
           <% end %>
