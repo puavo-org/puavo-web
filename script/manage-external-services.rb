@@ -66,9 +66,14 @@ def with_padding(title, value, quote: false, width: 20, indent: 4)
   str << ' ' * indent if indent > 0
   str << title.ljust(width, '.')
   str << ': '
-  str << '"' if quote
-  str << value unless value.nil?
-  str << '"' if quote
+
+  if value.nil?
+    str << '(nil)'
+  else
+    str << '"' if quote
+    str << value
+    str << '"' if quote
+  end
 
   puts str
 end
@@ -88,13 +93,14 @@ def read_string(prompt)
   end
 end
 
-def ask_for_password(prompt)
+def read_password(prompt)
   print "#{prompt}: "
-  system('stty','-echo');
+  system('stty', '-echo');
   password = STDIN.gets.chomp
-  system('stty','echo')
+  system('stty', 'echo')
+  puts ''
 
-  return password
+  password
 end
 
 # --------------------------------------------------------------------------------------------------
@@ -103,7 +109,7 @@ end
 def connect_to_ldap(organisation, args)
   puts 'Connecting to the database...'
 
-  password = ask_for_password('Enter the LDAP password (will not echo, Ctrl+C to cancel)')
+  password = read_password('Enter the LDAP password (will not echo, Ctrl+C to cancel)')
 
   credentials = {
     organisation_key: organisation.include?('.') ? organisation.split('.')[0] : organisation,
@@ -154,7 +160,7 @@ end
 def list_services(args)
   puts 'Connecting to the database...'
 
-  password = ask_for_password('Enter the LDAP master password (will not echo, Ctrl+C to cancel)')
+  password = read_password('Enter the LDAP master password (will not echo, Ctrl+C to cancel)')
 
   ExternalService.ldap_setup_connection(
     args.fetch(:ldap_master, DEFAULT_LDAP_MASTER),
@@ -197,7 +203,7 @@ def set_service_property(args, property)
     error_exit('Use --service to specify which external service (identified by its DN) you want to edit')
   end
 
-  password = ask_for_password('Enter the LDAP master password (will not echo, Ctrl+C to cancel)')
+  password = read_password('Enter the LDAP master password (will not echo, Ctrl+C to cancel)')
 
   ExternalService.ldap_setup_connection(
     args.fetch(:ldap_master, DEFAULT_LDAP_MASTER),
@@ -224,15 +230,15 @@ def set_service_property(args, property)
       return
     end
 
-    if property==:secret && new_property.length < 25
+    if property == :secret && new_property.length < 25
       puts 'The shared secret must be at least 25 characters long, try again'
     else
       break
     end
   end
 
-  service.puavoServiceSecret = new_property if property==:secret
-  service.puavoServiceDomain = new_property if property==:domain
+  service.puavoServiceSecret = new_property if property == :secret
+  service.puavoServiceDomain = new_property if property == :domain
 
   begin
     service.save!
@@ -410,7 +416,11 @@ end
 action = ARGV[0]
 ARGV.shift
 
-parser.parse! unless ARGV.empty?
+begin
+  parser.parse! unless ARGV.empty?
+rescue StandardError => e
+  error_exit(e)
+end
 
 case action
   when 'list'
