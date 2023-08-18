@@ -1655,6 +1655,8 @@ en:
     logins:
       title: "Logins to the device"
       last_login: "Last user to log in: %{username}, %{at}."
+    uptime:
+      title: "Uptime"
 
   # Username lists for mass password resets (created by mass imports)
   lists:

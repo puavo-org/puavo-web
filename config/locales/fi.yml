@@ -1655,6 +1655,8 @@ fi:
     logins:
       title: "Laitteelle kirjautumiset"
       last_login: "Viimeisin kirjautuja: %{username}, %{at}."
+    uptime:
+      title: "Uptime"
 
   # Username lists for mass password resets (created by mass imports)
   lists:

@@ -447,6 +447,10 @@ module DevicesHelper
         rescue
         end
       end
+
+      if info['uptime']
+        out[:uptime] = info['uptime']
+      end
     rescue => e
       # oh dear
       puts e
