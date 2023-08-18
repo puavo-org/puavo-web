@@ -333,6 +333,7 @@ en:
       title_user: Users
       title_group: Groups
       title_device: Devices
+      title_server: "Bootservers"
     no_matches: "(No matches)"
     failed: "(Search failed!)"
 

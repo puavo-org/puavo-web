@@ -6,7 +6,9 @@
     <% attributes.each do |attribute| %>
     <th><%= t("activeldap.attributes.#{model}.#{attribute}") %></th>
     <% end %>
+    <% if schools %>
     <th><%= t('activeldap.attributes.school.displayName') %></th>
+    <% end %>
   </tr>
 
   <% objects.each do |o| %>
@@ -23,9 +25,11 @@
       <%=h o[attribute].first %>
     </td>
     <% end %>
+    <% if schools %>
     <td data-title="<%= t('activeldap.attributes.school.displayName') %>">
       <%=h @schools[o["school_id"]] %>
     </td>
+    <% end %>
   </tr>
   <% end %>
 </table>

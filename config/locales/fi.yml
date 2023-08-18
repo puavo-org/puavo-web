@@ -333,6 +333,7 @@ fi:
       title_user: "Käyttäjät"
       title_group: "Ryhmät"
       title_device: Laitteet
+      title_server: "Boot-palvelimet"
     no_matches: "(Ei osumia)"
     failed: "(Haku epäonnistui!)"
 

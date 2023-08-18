@@ -34,6 +34,15 @@ class QuickSearchController < ApplicationController
 
       @devices.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
 
+      # Bootservers search
+      @servers = Server.words_search_and_sort_by_name(
+        ['puavoHostname'],
+        'puavoHostname',
+        lambda { |w| "(cn=*#{w}*)" },
+        words )
+
+      @servers.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
+
       @schools = Hash.new
       School.search_as_utf8( :scope => :one,
                      :attributes => ["puavoId", "displayName"] ).map do |dn, v|
@@ -46,7 +55,7 @@ class QuickSearchController < ApplicationController
       @groups.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
 
       respond_to do |format|
-        if @users.length == 0 && @groups.length == 0 && @devices.length == 0
+        if @users.length == 0 && @groups.length == 0 && @devices.length == 0 && @servers.length == 0
           format.html { render :inline => "<p>#{t('search.no_matches')}</p>" }
         else
           format.html # index.html.erb
