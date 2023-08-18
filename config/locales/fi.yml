@@ -366,6 +366,7 @@ fi:
         laptop: "Kannettava"
         fatclient: "Verkkopääte"
         printer: "Tulostin"
+        bootserver: "Bootserver"
         other: "(Kaikki muut)"
 
     term_names:

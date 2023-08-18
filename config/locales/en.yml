@@ -366,6 +366,7 @@ en:
         laptop: "Laptop"
         fatclient: "Fatclient"
         printer: "Printer"
+        bootserver: "Bootserver"
         other: "(Everything else)"
 
     term_names:

@@ -20,7 +20,7 @@ class SearchSettings
 
     @users_type = :all
     @users_locked = :ignore
-    @devices_types = [:laptop, :fatclient, :printer, :others]
+    @devices_types = [:laptop, :fatclient, :printer, :bootserver, :others]
   end
 end
 
@@ -89,6 +89,7 @@ class ExtendedSearchController < ApplicationController
       settings.devices_types << :laptop if devices.fetch(:laptop, true)
       settings.devices_types << :fatclient if devices.fetch(:fatclient, true)
       settings.devices_types << :printer if devices.fetch(:printer, true)
+      settings.devices_types << :bootserver if devices.fetch(:bootserver, true)
       settings.devices_types << :other if devices.fetch(:other, true)
 
       users = pt.fetch(:users, {})
@@ -597,7 +598,9 @@ class ExtendedSearchController < ApplicationController
       'puavoDeviceXrandr',
     ]
 
-    Device.search_as_utf8(:filter => school_filter, :attributes => attributes)
+    # devices and bootservers are so similar that this works
+    Device.search_as_utf8(:filter => school_filter, :attributes => attributes) +
+      Server.search_as_utf8(:attributes => attributes)
   end
 
   def convert_device(d)
@@ -619,6 +622,9 @@ class ExtendedSearchController < ApplicationController
 
       when 'printer'
         type = :printer
+
+      when 'bootserver'
+        type = :bootserver
 
       else
         type = :other
