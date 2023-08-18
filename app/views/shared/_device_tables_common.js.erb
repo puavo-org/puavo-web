@@ -31,6 +31,41 @@ function doTimestamp(value)
     ];
 }
 
+function formatUptime(seconds)
+{
+    let parts = [];
+
+    // Days
+    if (seconds >= 86400) {
+        const d = Math.floor(seconds / 86400);
+
+        parts.push(`${d}d`);
+        seconds -= d * 86400;
+    }
+
+    // Hours
+    if (seconds >= 3600) {
+        const h = Math.floor(seconds / 3600);
+
+        parts.push(`${h}h`);
+        seconds -= h * 3600;
+    }
+
+    // Minutes
+    if (seconds >= 60) {
+        const m = Math.floor(seconds / 60);
+
+        parts.push(`${m}m`);
+        seconds -= m * 60;
+    }
+
+    // Seconds (avoid adding "0s" to the end, unless there are no other parts)
+    if (seconds > 0 || parts.length == 0)
+        parts.push(`${seconds}s`);
+
+    return parts.join(', ');
+}
+
 // Table column definitions
 const COLUMN_DEFINITIONS = {
     abitti_version: {
@@ -587,6 +622,15 @@ const COLUMN_DEFINITIONS = {
         type: ST.ColumnType.STRING,
     },
 
+    uptime: {
+        key: "uptime",
+        title: "<%= t('columns.devices.uptime') %>",
+        type: ST.ColumnType.NUMERIC,
+        transform: entry => {
+            return [`${entry.uptime} (${formatUptime(entry.uptime)})`, entry.uptime, entry.uptime];
+        },
+    },
+
     wifi: {
         key: "wifi",
         title: "<%= t('columns.devices.wifi') %>",
@@ -711,6 +755,7 @@ const COLUMN_ORDER = [
 <% end %>
     "ll_uid",
     "ll_time",
+    "uptime",
 ];
 
 const FILTER_PRESETS = [

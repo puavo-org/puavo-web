@@ -321,6 +321,7 @@ fi:
       reset_operation: "Nollausoperaatio"
       reset_pin: "Nollaus-PIN"
       reset_time: "Nollauspyyntö tehty"
+      uptime: "Uptime"
 
     servers:
       available_images: "Tarjolla olevat kuvatiedostot"

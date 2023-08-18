@@ -321,6 +321,7 @@ en:
       reset_operation: "Reset operation"
       reset_pin: "Reset PIN"
       reset_time: "Reset mode requested at"
+      uptime: "Uptime"
 
     servers:
       available_images: "Available images"
