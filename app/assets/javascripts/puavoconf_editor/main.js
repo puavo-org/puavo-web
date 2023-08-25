@@ -878,6 +878,11 @@ export class PuavoConfEditor {
         switch (event.code) {
             // Accept the selected item
             case "Tab":
+                if (this.newInput.value.length == 0)
+                    return;
+
+                // fallthrough
+
             case "Enter":
             {
                 event.preventDefault();
