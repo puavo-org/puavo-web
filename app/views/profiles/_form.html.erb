@@ -12,9 +12,10 @@
         <% licenses=JSON.parse(current_user.puavoLicenses) %>
         <section id="licenses">
           <label class="label"><%= t('profiles.edit.licenses') %>:</label>
+          <i><%= t('profiles.edit.clipboard_hint') %></i>
           <ul>
             <% licenses.keys.each do |l| %>
-              <li><%= l %>: <%= licenses[l] %></li>
+              <li style="cursor: pointer;" onclick="navigator.clipboard.writeText(<%= licenses[l] %>)"><%= l %>: <%= licenses[l] %></li>
             <% end %>
           </ul>
         </section>
