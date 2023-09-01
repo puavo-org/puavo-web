@@ -2100,6 +2100,7 @@ fi:
   profiles:
     edit:
       title: "Omat tiedot"
+      licenses: "Käyttäjätunnuksen lisenssikoodit"
 
       emails:
         automatic_notice: "Organisaatiossasi on käytössä automaattiset sähköpostiosoitteet. Et voi muokata osoitetta, mutta voit vahvistaa sen jos sitä ei ole vielä vahvistettu."

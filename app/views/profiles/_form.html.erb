@@ -7,6 +7,20 @@
       <h2><%= current_user.primary_school.displayName %></h2>
     </header>
 
+    <% if current_user.puavoLicenses %>
+      <% begin %>
+        <% licenses=JSON.parse(current_user.puavoLicenses) %>
+        <section id="licenses">
+          <label class="label"><%= t('profiles.edit.licenses') %>:</label>
+          <ul>
+            <% licenses.keys.each do |l| %>
+              <li><%= l %>: <%= licenses[l] %></li>
+            <% end %>
+          </ul>
+        </section>
+      <% rescue %>
+      <% end %>
+    <% end %>
     <section id="email">
 <% if @automatic_email_addresses %>
       <%= f.label t('users.edit.automatic_email'), nil, class: "label" %>
