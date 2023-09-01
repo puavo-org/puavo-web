@@ -2100,6 +2100,7 @@ en:
   profiles:
     edit:
       title: "Your Information"
+      licenses: "User account's license codes"
 
       emails:
         automatic_notice: "Automatic email addresses are enabled in your organisation. You can't edit the address, but you can verify it if it hasn't been verified yet."
