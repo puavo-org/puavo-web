@@ -438,7 +438,8 @@ en:
   supertable:
     export:
       top_button: "Export"
-      title: "Export the table contents in a file:"
+      title: "Export the table contents to a file"
+      settings: "Settings"
       only_visible_rows_checkbox: "Only visible rows"
       only_visible_rows_title: "If checked, only the rows that aren't filtered will be exported. Otherwise all rows are exported."
       only_visible_cols_checkbox: "Only visible columns"

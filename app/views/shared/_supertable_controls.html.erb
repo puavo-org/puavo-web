@@ -116,11 +116,17 @@
 <template id="template_exportPopup">
     <div id="popupTable" class="padding-5px">
         <div class="flex-rows gap-10px">
-            <p class="margin-0 padding-0"><%= t("supertable.export.title") %></p>
+            <p class="margin-0 padding-0"><%= t("supertable.export.title") %>:</p>
 
             <div class="flex-vcenter flex-columns gap-10px">
                 <button id="btnCSV">CSV</button>
+                <button id="btnTSV">TSV</button>
                 <button id="btnJSON">JSON</button>
+            </div>
+
+            <p class="margin-0 padding-0"><%= t("supertable.export.settings") %>:</p>
+
+            <div class="flex-rows">
                 <label title="<%= t("supertable.export.only_visible_rows_title") %>"><input type="checkbox" id="only-visible-rows" checked><%= t("supertable.export.only_visible_rows_checkbox") %></label>
                 <label title="<%= t("supertable.export.only_visible_cols_title") %>"><input type="checkbox" id="only-visible-cols" checked><%= t("supertable.export.only_visible_cols_checkbox") %></label>
             </div>

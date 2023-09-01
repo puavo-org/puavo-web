@@ -6,6 +6,28 @@ import { getPopupContents } from "../../common/modal_popup.js";
 import { ColumnType, INDEX_FILTERABLE } from "./constants.js";
 import { JAVASCRIPT_TIME_GRANULARITY } from "./utils.js";
 
+// Exports the data in columns, delimited by a single character
+function storeAsColumns(data, source, columns, timeColumns, separator, output)
+{
+    for (const rowIndex of source) {
+        const row = data.transformed[rowIndex];
+        let out = [];
+
+        for (const col of columns) {
+            if (!(col in row) || row[col][INDEX_FILTERABLE] === null || row[col][INDEX_FILTERABLE] === undefined) {
+                out.push("");
+                continue;
+            }
+
+            if (timeColumns.has(col))
+                out.push(new Date(row[col][INDEX_FILTERABLE] * JAVASCRIPT_TIME_GRANULARITY).toISOString());
+            else out.push(row[col][INDEX_FILTERABLE]);
+        }
+
+        output.push(out.join(separator));
+    }
+}
+
 function _doExport(format, data, allColumns, prefix)
 {
     try {
@@ -45,34 +67,23 @@ function _doExport(format, data, allColumns, prefix)
 
         switch (format) {
             case "csv":
-            default: {
-                // Header first
+            default:
                 output.push(headers.join(";"));
-
-                for (const rowIndex of source) {
-                    const row = data.transformed[rowIndex];
-                    let out = [];
-
-                    for (const col of columns) {
-                        if (!(col in row) || row[col][INDEX_FILTERABLE] === null || row[col][INDEX_FILTERABLE] === undefined) {
-                            out.push("");
-                            continue;
-                        }
-
-                        if (timeColumns.has(col))
-                            out.push(new Date(row[col][INDEX_FILTERABLE] * JAVASCRIPT_TIME_GRANULARITY).toISOString());
-                        else out.push(row[col][INDEX_FILTERABLE]);
-                    }
-
-                    output.push(out.join(";"));
-                }
+                storeAsColumns(data, source, columns, timeColumns, ";", output);
 
                 output = output.join("\n");
                 mimetype = "text/csv";
                 extension = "csv";
-
                 break;
-            }
+
+            case "tsv":
+                output.push(headers.join("\t"));
+                storeAsColumns(data, source, columns, timeColumns, "\t", output);
+
+                output = output.join("\n");
+                mimetype = "text/tab-separated-values";
+                extension = "tsv";
+                break;
 
             case "json": {
                 for (const rowIndex of source) {
@@ -123,6 +134,7 @@ export function openPopup(event, data, columns, prefix)
     const template = getTemplate("exportPopup");
 
     template.querySelector(`button#btnCSV`).addEventListener("click", () => _doExport("csv", data, columns, prefix));
+    template.querySelector(`button#btnTSV`).addEventListener("click", () => _doExport("tsv", data, columns, prefix));
     template.querySelector(`button#btnJSON`).addEventListener("click", () => _doExport("json", data, columns, prefix));
 
     if (modalPopup.create()) {
