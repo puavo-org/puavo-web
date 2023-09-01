@@ -1088,6 +1088,7 @@ en:
       eid: "External ID"
       group: "Group"
       rawgroup: "Raw group"
+      licenses: "Licenses"
       phone: "Phone number"
       email: "Email address"
       pnumber: "Personnel number"

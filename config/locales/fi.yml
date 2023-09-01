@@ -1088,6 +1088,7 @@ fi:
       eid: "Ulkoinen ID"
       group: "Ryhmä"
       rawgroup: "Käsittelemätön ryhmä"
+      licenses: "Lisenssit"
       phone: "Puhelinnumero"
       email: "Email-osoite"
       pnumber: "Henkilönumero"
