@@ -573,6 +573,10 @@ class NewImportController < ApplicationController
         user.puavoEduPersonPersonnelNumber = attributes['pnumber']
       end
 
+      if attributes.include?('licenses')
+        user.puavoLicenses = attributes['licenses']
+      end
+
       if attributes.include?('password')
         user.new_password = attributes['password']
       end
@@ -723,6 +727,13 @@ class NewImportController < ApplicationController
             if !value.nil? && user.puavoEduPersonPersonnelNumber != value
               puts "  -> Personnel number changed from |#{user.puavoEduPersonPersonnelNumber}| to |#{value}|"
               user.puavoEduPersonPersonnelNumber = value
+              something_changed = true
+            end
+
+          when 'licenses'
+            if !value.nil? && user.puavoLicenses != value
+              puts "  -> User licenses changed from |#{user.puavoLicenses}| to |#{value}|"
+              user.puavoLicenses = value
               something_changed = true
             end
         end
