@@ -213,6 +213,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 
                 <div class="flex-rows">
                     <label><input type="checkbox" id="rawgroup"><%= t('new_import.columns.rawgroup') %></label>
+                    <label><input type="checkbox" id="licenses"><%= t('new_import.columns.licenses') %></label>
                     <label><input type="checkbox" id="group" checked><%= t('new_import.columns.group') %></label>
                     <label><input type="checkbox" id="phone"><%= t('new_import.columns.phone') %></label>
                     <label><input type="checkbox" id="email"><%= t('new_import.columns.email') %></label>
@@ -352,6 +353,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
                 <option value="eid"><%= t('new_import.columns.eid') %></option>
                 <option value="group"><%= t('new_import.columns.group') %></option>
                 <option value="rawgroup"><%= t('new_import.columns.rawgroup') %></option>
+                <option value="licenses"><%= t('new_import.columns.licenses') %></option>
                 <option value="phone"><%= t('new_import.columns.phone') %></option>
                 <option value="email"><%= t('new_import.columns.email') %></option>
                 <option value="pnumber"><%= t('new_import.columns.pnumber') %></option>
@@ -548,6 +550,7 @@ const LOCALIZED_COLUMN_TITLES = {
     eid: "<%= t('new_import.columns.eid') %>",
     group: "<%= t('new_import.columns.group') %>",
     rawgroup: "<%= t('new_import.columns.rawgroup') %>",
+    licenses: "<%= t('new_import.columns.licenses') %>",
     phone: "<%= t('new_import.columns.phone') %>",
     email: "<%= t('new_import.columns.email') %>",
     pnumber: "<%= t('new_import.columns.pnumber') %>",
