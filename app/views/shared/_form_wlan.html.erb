@@ -110,6 +110,18 @@
       </td>
     </tr>
 
+    <tr class="wlan_priority_<%= index %>">
+      <th><%= label_tag "wlan_priority[#{ index }]", t('.wlan_priority') %></th>
+      <td>
+        <%= select_tag( "wlan_priority[#{ index }]",
+                        options_for_select([ [t('.default'),    nil],
+                                             [t('.select_value_strongprefer'),  "100"],
+                                             [t('.select_value_weakprefer'),     "10"],
+                                             [t('.select_value_weakavoid'),     "-10"],
+                                             [t('.select_value_strongavoid'),  "-100"] ], :selected => f.object.wlan_priority ? f.object.wlan_priority[index] : "" ) )%>
+      </td>
+    </tr>
+
     <tr class="wlan_ap_<%= index %>">
       <th><%= label_tag "wlan_ap[#{ index }]", t('.wlan_ap') %></th>
       <td>

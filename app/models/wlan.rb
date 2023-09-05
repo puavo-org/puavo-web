@@ -82,9 +82,10 @@ module Wlan
       new_wlan_type = new_attrs[:wlan_type][index_s]
 
       wlaninfo = {
-        :ssid    => new_attrs[:wlan_name][index_s],
-        :type    => new_attrs[:wlan_type][index_s],
-        :wlan_ap => %w(open psk).include?(new_wlan_type) \
+        :ssid     => new_attrs[:wlan_name][index_s],
+        :type     => new_attrs[:wlan_type][index_s],
+        :priority => new_attrs[:wlan_priority][index_s],
+        :wlan_ap  => %w(open psk).include?(new_wlan_type) \
                       && (new_wlan_ap[index_s] == 'enabled'),
       }
 
@@ -143,6 +144,7 @@ module Wlan
   def wlan_name;        wlan_attrs('ssid');        end
   def wlan_password;    wlan_attrs('password');    end
   def wlan_phase2_auth; wlan_attrs('phase2_auth'); end
+  def wlan_priority;    wlan_attrs('priority');    end
   def wlan_type;        wlan_attrs('type');        end
 
   def wlan_ca_cert;             wlan_attrs('certs', 'ca_cert'            ); end

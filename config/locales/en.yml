@@ -1723,6 +1723,7 @@ en:
       file_size: Size
       wlan_name: Name
       wlan_type: Type
+      wlan_priority: Priority
       wlan_password: Password
       wlan_identity: Identity
       wlan_ca_cert: CA certificate
@@ -1736,6 +1737,10 @@ en:
       select_value_eaptls: EAP-TLS
       select_value_eapttls: EAP-TTLS
       select_value_eappeap: EAP-PEAP
+      select_value_strongprefer: Strongly prefer
+      select_value_weakprefer: Slightly prefer
+      select_value_strongavoid: Strongly avoid
+      select_value_weakavoid: Slightly avoid
       default: Default
     mountpoint:
       title: Local and network mount points
