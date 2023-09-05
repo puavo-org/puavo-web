@@ -83,7 +83,7 @@
     </tr>
 
     <tr class="wlan_certs_<%= index %>">
-      <th><%= label_tag "wlan_client_key[#{ index }]", t('.wlan_client_key') %></td>
+      <th><%= label_tag "wlan_client_key[#{ index }]", t('.wlan_client_key') %></th>
       <td>
         <%= file_field_tag "wlan_client_key[#{ index }]" %>
         <% if f.object.wlan_client_key && f.object.wlan_client_key[index] %>
