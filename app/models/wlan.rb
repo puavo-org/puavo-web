@@ -84,10 +84,11 @@ module Wlan
       wlaninfo = {
         :ssid     => new_attrs[:wlan_name][index_s],
         :type     => new_attrs[:wlan_type][index_s],
-        :priority => new_attrs[:wlan_priority][index_s],
         :wlan_ap  => %w(open psk).include?(new_wlan_type) \
                       && (new_wlan_ap[index_s] == 'enabled'),
       }
+
+      wlaninfo[:priority] = new_attrs[:wlan_priority][index_s] unless (new_attrs[:wlan_priority][index_s] || "").empty?
 
       case new_attrs[:wlan_type][index_s]
         when 'eap-peap', 'eap-tls', 'eap-ttls'
