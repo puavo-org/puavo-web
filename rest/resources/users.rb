@@ -53,6 +53,8 @@ class User < LdapModel
   # puavoEduPersonAffiliation will used as the roles from now on
   ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
 
+  ldap_map :puavoUuid, :uuid, LdapConverters::SingleValue
+
   skip_serialize :external_data
 
   # List of school DNs where the user is school admin
@@ -133,6 +135,8 @@ class User < LdapModel
     self.admin_of_school_dns = new_admin
 
     # Then we hope that remove_from_school below will remove the other associations...
+
+    self.uuid = SecureRandom.uuid if self.uuid.nil?
 
     reset_sso_session
   end
@@ -270,6 +274,8 @@ class User < LdapModel
     if locked.nil? then
       self.locked = false
     end
+
+    self.uuid = SecureRandom.uuid
 
     validate_unique(:uid_number)
     validate_unique(:id)

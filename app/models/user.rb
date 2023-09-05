@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+require 'securerandom'
+
 class User < LdapBase
   include Puavo::Integrations
 
@@ -25,6 +28,8 @@ class User < LdapBase
   before_validation :set_special_ldap_value
 
   before_save :is_uid_changed, :set_preferred_language
+
+  before_save :ensure_has_uuid
 
   before_update :change_password
 
@@ -626,6 +631,10 @@ class User < LdapBase
 
   def set_uid_number
     self.uidNumber = IdPool.next_uid_number
+  end
+
+  def ensure_has_uuid
+    self.puavoUuid = SecureRandom.uuid unless self.puavoUuid
   end
 
   def is_uid_changed
