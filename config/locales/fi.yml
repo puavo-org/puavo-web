@@ -1723,6 +1723,7 @@ fi:
       file_size: Koko
       wlan_name: Nimi
       wlan_type: Tyyppi
+      wlan_priority: Tämän yhteyden käyttö
       wlan_password: Salasana
       wlan_identity: Identiteetti
       wlan_ca_cert: CA-sertifikaatti
@@ -1736,6 +1737,10 @@ fi:
       select_value_eaptls: EAP-TLS
       select_value_eapttls: EAP-TTLS
       select_value_eappeap: EAP-PEAP
+      select_value_strongprefer: Suosi vahvasti
+      select_value_weakprefer: Suosi hieman
+      select_value_strongavoid: Vältä vahvasti
+      select_value_weakavoid: Vältä hieman
       default: Oletus
     mountpoint:
       title: Levyliitokset (paikallinen/verkko)
