@@ -1949,6 +1949,7 @@ fi:
         administrative_groups: Hallinnolliset ryhmät
         year_class: Vuosiluokka
         puavoLearnerId: "Oppijanumero"
+        puavoLicenses: "Käyttäjän lisenssit"
         mpass_materials_charge: "Oppimateriaalien maksullisuus (MPASS)"
       group:
         displayName: "Ryhmän nimi"

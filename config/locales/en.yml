@@ -1949,6 +1949,7 @@ en:
         administrative_groups: Administrative groups
         year_class: Year class
         puavoLearnerId: "Learner ID"
+        puavoLicenses: "Licenses"
         mpass_materials_charge: "Learning materials charge (MPASS)"
       group:
         displayName: Group name

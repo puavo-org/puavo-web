@@ -46,6 +46,11 @@
     <p class="infoTitle"><%= t('activeldap.attributes.user.puavoLearnerId') %></p>
     <p class="infoValue"><%= h @user.puavoLearnerId || t('missing_data') %></p>
 
+    <% if @user.puavoLicenses %>
+    <p class="infoTitle"><%= t('activeldap.attributes.user.puavoLicenses') %></p>
+    <p class="infoValue"><%= h @user.puavoLicenses %></p>
+    <% end %>
+
     <% if @user.puavoEduPersonAffiliation.include?('student') %>
     <p class="infoTitle"><%= t('activeldap.attributes.user.teaching_group') %></p>
     <p class="infoValue"><%= h @user.teaching_group&.displayName || t('missing_data') %></p>
