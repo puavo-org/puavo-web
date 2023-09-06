@@ -16,7 +16,7 @@ Feature: Manage wlan networks
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-          { "ssid": "Open_test_network", "type": "open", "wlan_ap": true }
+          { "ssid": "Open_test_network", "type": "open", "priority": "", "wlan_ap": true }
         ]
       """
 
@@ -35,6 +35,7 @@ Feature: Manage wlan networks
           {
             "ssid": "WPA_PSK_test_network",
             "type": "psk",
+            "priority": "",
             "wlan_ap": true,
             "password": "HessuHoponHauskutukset"
           }
@@ -55,10 +56,11 @@ Feature: Manage wlan networks
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-          { "ssid": "OpenNetworkNoAP", "type": "open", "wlan_ap": false },
+          { "ssid": "OpenNetworkNoAP", "type": "open", "priority": "", "wlan_ap": false },
           {
             "ssid": "WPANetworkYesAP",
             "type": "psk",
+            "priority": "",
             "wlan_ap": true,
             "password": "TipiLinnunTaikatemput"
           }
@@ -78,6 +80,7 @@ Feature: Manage wlan networks
           {
             "ssid": "MyOwnNetwork",
             "type": "open",
+            "priority": "",
             "wlan_ap": false
           }
         ]
@@ -97,6 +100,7 @@ Feature: Manage wlan networks
             "ssid": "MyOwnNetwork",
             "password": "AllYouNeedIsLove",
             "type": "psk",
+            "priority": "",
             "wlan_ap": true
           }
         ]
@@ -117,6 +121,7 @@ Feature: Manage wlan networks
             "ssid": "MyOwnNetwork",
             "password": "SkiesAreBlue",
             "type": "psk",
+            "priority": "",
             "wlan_ap": false
           }
         ]
@@ -132,6 +137,7 @@ Feature: Manage wlan networks
           {
             "ssid": "MyOwnNetwork",
             "type": "open",
+            "priority": "",
             "wlan_ap": false
           }
         ]
@@ -155,6 +161,7 @@ Feature: Manage wlan networks
           {
             "ssid": "EAP-TLS_test_network",
             "type": "eap-tls",
+            "priority": "",
             "wlan_ap": false,
             "identity": "Puavo",
             "certs": {
@@ -183,6 +190,7 @@ Feature: Manage wlan networks
           {
             "ssid": "EAP-TLS_test_network",
             "type": "eap-tls",
+            "priority": "",
             "wlan_ap": false,
             "identity": "Mulperi",
             "password": "playblackholesun"
@@ -206,6 +214,7 @@ Feature: Manage wlan networks
           {
             "ssid": "EAP-TTLS_test_network",
             "type": "eap-ttls",
+            "priority": "",
             "wlan_ap": false,
             "identity": "Hillhouse",
             "password": "justgetveracrypt",
@@ -240,16 +249,18 @@ Feature: Manage wlan networks
     And I should see the following JSON on the "School" object with "Example school 1" on attribute "wlan_networks":
       """
         [
-          { "ssid": "OpenNetworkYesAP", "type": "open", "wlan_ap": true },
+          { "ssid": "OpenNetworkYesAP", "type": "open", "priority": "", "wlan_ap": true },
           {
             "ssid": "WPANetworkNoAP",
             "type": "psk",
+            "priority": "",
             "wlan_ap": false,
             "password": "SpoonmanComeTogetherWithYourHands"
           },
           {
             "ssid": "EAPTLSNetwork",
             "type": "eap-tls",
+            "priority": "",
             "wlan_ap": false,
             "identity": "EAPTLSNetworkIdentity",
             "certs": {
