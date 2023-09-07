@@ -137,6 +137,8 @@ class ServersController < ApplicationController
 
     @releases = get_releases
 
+    @fqdn = "#{@server.puavoHostname}.#{LdapOrganisation.current.puavoDomain}"
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @server }

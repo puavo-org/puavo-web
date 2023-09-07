@@ -6,7 +6,7 @@
   </div>
 
   <div class="basicInfoDetails">
-    <h1><%= h device.puavoHostname %></h1>
+    <h1><%= h device.puavoHostname %> <span class="fqdn">(<%= h @fqdn %> <button id="copyFQDN">Kopioi</button>)</span></h1>
 
     <% if controller_name == "devices" %>
     <p class="infoTitle"><%= t('activeldap.attributes.device.puavoDeviceType') %></p>

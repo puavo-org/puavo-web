@@ -14,6 +14,11 @@
     </tr>
 
     <tr>
+      <th>FQDN</th>
+      <td><%= h @fqdn %></td>
+    </tr>
+
+    <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceManufacturer") %></th>
       <td><%= h device.puavoDeviceManufacturer %></td>
     </tr>

@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let parts = [];
 
         parts.push("<%= t('activeldap.attributes.device.puavoHostname') %>: <%= device.puavoHostname %>");
+        parts.push("FQDN: <%= @fqdn %>");
         parts.push("URL: <%= request.original_url %>");
         parts.push("<%= t('activeldap.attributes.device.puavoDeviceModel') %>: <%= device.puavoDeviceModel %>");
         parts.push("<%= t('activeldap.attributes.device.puavoDeviceManufacturer') %>: <%= device.puavoDeviceManufacturer %>");
@@ -62,6 +63,12 @@ document.addEventListener("DOMContentLoaded", () => {
 <% if device.puavoConf %>
     document.querySelector("button#copyPuavoconf")?.addEventListener("click", () => {
         copyTextToClipboard(<%= raw JSON.pretty_generate(device.puavoConf) %>);
+    });
+<% end %>
+
+<% if @fqdn %>
+    document.querySelector("button#copyFQDN")?.addEventListener("click", () => {
+        copyTextToClipboard("<%= @fqdn %>");
     });
 <% end %>
 });

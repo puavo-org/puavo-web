@@ -141,6 +141,8 @@ class DevicesController < ApplicationController
 
     make_puavomenu_preview(@device.puavoMenuData)
 
+    @fqdn = "#{@device.puavoHostname}.#{LdapOrganisation.current.puavoDomain}"
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @device }
