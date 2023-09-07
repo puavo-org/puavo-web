@@ -85,8 +85,6 @@
     <div class="value"><%= @school.puavoDeviceOffHour %></div>
   </div>
 
-  <% if current_user.organisation_owner? %>
-  <%# Only organisation owners can access the server page. So hide it from others. %>
   <div class="multilineItem">
     <div class="title"><%= t('activeldap.attributes.school.bootservers') %></div>
     <div class="value">
@@ -97,7 +95,6 @@
       </ul>
     </div>
   </div>
-  <% end %>
 
   <% if @puavomenu_data %>
   <div class="multilineItem">
