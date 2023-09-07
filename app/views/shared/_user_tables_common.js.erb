@@ -228,6 +228,13 @@ const COLUMN_DEFINITIONS = {
             return [out.join("<br>"), out.join(","), out.join(",")];
         }
     },
+
+    licenses: {
+        key: "licenses",
+        title: "<%= t('columns.users.licenses') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
+    },
 };
 
 // The default order for columns
@@ -254,6 +261,7 @@ const COLUMN_ORDER = [
     "locked",
     "created",
     "modified",
+    "licenses",
 ];
 
 <% if @is_owner %>

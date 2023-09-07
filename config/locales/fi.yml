@@ -243,6 +243,7 @@ fi:
       dnd: "Poisto estetty?"
       is_locked: "Lukittu?"
       other_schools: "Muut koulut"
+      licenses: "Lisenssit"
 
     groups:
       name: "Nimi"
@@ -957,6 +958,7 @@ fi:
       user_is_marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
       user_deletion_prevented: "Käyttäjän poisto on estetty"
       user_devices: Käyttäjän laitteet
+      user_licenses: "Lisenssit"
       lock: "Lukitse tunnus"
       unlock: "Avaa tunnuksen lukitus"
       mark_for_removal: Merkitse poistettavaksi

@@ -35,6 +35,7 @@ module UsersHelper
       'puavoSchool',
       'puavoEduPersonPrimarySchool',
       'puavoLearnerId',
+      'puavoLicenses',
     ].freeze
   end
 
@@ -110,6 +111,10 @@ module UsersHelper
 
     if raw.include?('createTimestamp')
       out[:modified] = Puavo::Helpers::convert_ldap_time(raw['modifyTimestamp'])
+    end
+
+    if raw.include?('puavoLicenses')
+      out[:licenses] = JSON.parse(raw['puavoLicenses'][0]).keys.sort
     end
 
     return out

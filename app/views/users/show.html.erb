@@ -183,6 +183,20 @@
   </tr>
 
   <tr>
+    <th><%= t('.user_licenses') %></th>
+    <td>
+      <% if @user.puavoLicenses %>
+      <% licenses = JSON.parse(@user.puavoLicenses) %>
+      <ul>
+        <% licenses.keys.sort.each do |l| %>
+        <li><%= l %>: <%= licenses[l] %></li>
+        <% end %>
+      </ul>
+      <% end %>
+    </td>
+  </tr>
+
+  <tr>
     <th><%= t('ldap_create_time') %></th>
     <td class="noWrap"><%= h @user['createTimestamp'] %></td>
   </tr>

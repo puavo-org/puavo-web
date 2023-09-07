@@ -243,6 +243,7 @@ en:
       dnd: "Do not delete?"
       is_locked: "Locked?"
       other_schools: "Other schools"
+      licenses: "Licenses"
 
     groups:
       name: "Name"
@@ -957,6 +958,7 @@ en:
       user_is_marked_for_deletion: "This user has been marked for deletion"
       user_deletion_prevented: "This user cannot be deleted"
       user_devices: User devices
+      user_licenses: "Licenses"
       lock: "Lock user"
       unlock: "Unlock user"
       mark_for_removal: Mark for deletion
