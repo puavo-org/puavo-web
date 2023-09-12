@@ -89,8 +89,14 @@
     <div class="title"><%= t('activeldap.attributes.school.bootservers') %></div>
     <div class="value">
       <ul>
+        <% if current_user.organisation_owner? %>
         <% @school.boot_servers.each do |bs| %>
         <li><%= link_to bs.puavoHostname, server_path(bs) %></li>
+        <% end %>
+        <% else %>
+        <% @school.boot_servers.each do |bs| %>
+        <li><%= h bs.puavoHostname %></li>
+        <% end %>
         <% end %>
       </ul>
     </div>
