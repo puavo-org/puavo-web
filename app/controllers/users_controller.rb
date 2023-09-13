@@ -300,6 +300,17 @@ class UsersController < ApplicationController
       @emails << [addr, parts]
     end
 
+    # Highlight invalid license data
+    @licenses_ok = true
+    @licenses = nil
+
+    begin
+      @licenses = JSON.parse(@user.puavoLicenses) if @user.puavoLicenses
+    rescue StandardError => e
+      @licenses_ok = false
+      @licenses = @user.puavoLicenses.to_s
+    end
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }

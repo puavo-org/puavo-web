@@ -1798,6 +1798,7 @@ en:
         user:
           must_begin_with: Username must begin with a small letter
           invalid_characters: Username contains invalid characters (allowed characters are a-z0-9.-)
+          invalid_license_data: "Invalid license data"
         group:
           invalid_characters: Abbreviation contains invalid characters (allowed characters are a-z0-9-)
         school:

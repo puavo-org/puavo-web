@@ -114,7 +114,11 @@ module UsersHelper
     end
 
     if raw.include?('puavoLicenses')
-      out[:licenses] = JSON.parse(raw['puavoLicenses'][0]).keys.sort
+      begin
+        licenses = JSON.parse(raw['puavoLicenses'][0])
+        out[:licenses] = licenses.keys.sort
+      rescue StandardError => e
+      end
     end
 
     return out

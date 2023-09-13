@@ -185,13 +185,16 @@
   <tr>
     <th><%= t('.user_licenses') %></th>
     <td>
-      <% if @user.puavoLicenses %>
-      <% licenses = JSON.parse(@user.puavoLicenses) %>
+      <% if @licenses %>
+      <% if @licenses_ok %>
       <ul>
-        <% licenses.keys.sort.each do |l| %>
-        <li><%= l %>: <%= licenses[l] %></li>
+        <% @licenses.keys.sort.each do |l| %>
+        <li><%= l %>: <%= @licenses[l] %></li>
         <% end %>
       </ul>
+      <% else %>
+        <p class="missingData"><%= t('activeldap.errors.messages.user.invalid_license_data') %>: <code><%= h @licenses %></code></p>
+      <% end %>
       <% end %>
     </td>
   </tr>
