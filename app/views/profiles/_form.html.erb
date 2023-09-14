@@ -14,7 +14,7 @@
           <label class="label"><%= t('profiles.edit.licenses') %>:</label>
           <ul>
             <% licenses.keys.each do |l| %>
-              <li style="cursor: pointer;" onclick="navigator.clipboard.writeText('<%= licenses[l] %>')"><%= l %>: <%= licenses[l] %>&#128203;</li>
+              <li style="cursor: pointer;" onclick="navigator.clipboard.writeText('<%= j licenses[l] %>')"><%= l %>: <%= licenses[l] %>&#128203;</li>
             <% end %>
           </ul>
         </section>
