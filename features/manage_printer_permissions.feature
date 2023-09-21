@@ -10,7 +10,7 @@ Feature: Manage printer permissions
     | Test School 1 | testschool1 |
     And the following users:
       | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | staff                     |
+      | Pavel     | Taylor | pavel | secret   | true         | admin                     |
     And the following devices:
       | puavoHostname | macAddress        | puavoDeviceType |
       | athin         | 33:2d:2b:13:ce:a0 | thinclient      |

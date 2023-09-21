@@ -8,9 +8,9 @@ Feature: Manage users
     Given a new school and group with names "School 1", "Class 4" on the "example" organisation
     And the following users:
       | givenName | sn     | uid        | password | school_admin | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel      | secret   | true         | staff                     |
-      | Admin     | User   | admin      | secret   | true         | staff                     |
-      | Admin     | Super  | superadmin | secret   | true         | staff                     |
+      | Pavel     | Taylor | pavel      | secret   | true         | admin                     |
+      | Admin     | User   | admin      | secret   | true         | admin                     |
+      | Admin     | Super  | superadmin | secret   | true         | admin                     |
     And I am logged in as "cucumber" with password "cucumber"
 
   Scenario: Non-owners should not see user deletion buttons on user show pages

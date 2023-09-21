@@ -7,7 +7,7 @@ Feature: Manage groups
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And the following users:
       | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | staff                     |
+      | Pavel     | Taylor | pavel | secret   | true         | admin                     |
     And I am logged in as "pavel" with password "secret"
 
   Scenario: Add new group to school
