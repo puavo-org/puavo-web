@@ -36,6 +36,7 @@ module UsersHelper
       'puavoEduPersonPrimarySchool',
       'puavoLearnerId',
       'puavoLicenses',
+      'puavoUuid',
     ].freeze
   end
 
@@ -43,6 +44,8 @@ module UsersHelper
     out = {}
 
     out[:id] = raw['puavoId'][0].to_i
+
+    out[:uuid] = raw.fetch('puavoUuid', [nil])[0]
 
     out[:uid] = raw['uid'][0]
 

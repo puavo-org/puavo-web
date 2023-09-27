@@ -235,6 +235,13 @@ const COLUMN_DEFINITIONS = {
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
+
+    uuid: {
+        key: "uuid",
+        title: "UUID",
+        type: ST.ColumnType.STRING,
+        customCSS: ["font-monospace"],      // this makes these easier to read
+    },
 };
 
 // The default order for columns
@@ -244,6 +251,7 @@ const COLUMN_ORDER = [
 <% end %>
     "schools",
     "id",
+    "uuid",
     "name",
     "first",
     "last",
