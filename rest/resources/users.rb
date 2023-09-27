@@ -1350,6 +1350,7 @@ class Users < PuavoSinatra
     'id'                 => 'puavoId',
     'last_name'          => 'sn',
     'learner_id'         => 'puavoLearnerId',
+    'licenses'           => 'puavoLicenses',
     'locale'             => 'puavoLocale',
     'locked'             => 'puavoLocked',
     'modified'           => 'modifyTimestamp',  # LDAP operational attribute
@@ -1383,6 +1384,7 @@ class Users < PuavoSinatra
     'puavoExternalData'             => { name: 'external_data', type: :json },
     'puavoId'                       => { name: 'id', type: :integer },
     'puavoLearnerId'                => { name: 'learner_id' },
+    'puavoLicenses'                 => { name: 'licenses', type: :json },
     'puavoLocale'                   => { name: 'locale' },
     'puavoLocked'                   => { name: 'locked', type: :boolean },
     'puavoRemovalRequestTime'       => { name: 'removal_mark_time', type: :ldap_timestamp },
