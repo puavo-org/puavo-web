@@ -1169,8 +1169,12 @@ class Users < PuavoSinatra
     auth :basic_auth, :kerberos
     user = User.by_username!(params["username"])
 
-    # You can't add/edit verified email addresses directly
     parameters = json_params
+
+    # This cannot be edited. It should be immutable.
+    parameters.delete('uuid')
+
+    # You can't add/edit verified email addresses directly
     parameters.delete('verified_email')
     parameters.delete('primary_email')
 
