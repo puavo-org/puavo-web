@@ -1364,6 +1364,7 @@ class Users < PuavoSinatra
     'ssh_public_key'     => 'puavoSshPublicKey',
     'uid_number'         => 'uidNumber',
     'username'           => 'uid',
+    'uuid'               => 'puavoUuid',
   }
 
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
@@ -1390,6 +1391,7 @@ class Users < PuavoSinatra
     'puavoRemovalRequestTime'       => { name: 'removal_mark_time', type: :ldap_timestamp },
     'puavoSchool'                   => { name: 'school_ids', type: :id_from_dn },
     'puavoSshPublicKey'             => { name: 'ssh_public_key' },
+    'puavoUuid'                     => { name: 'uuid' },
     'sn'                            => { name: 'last_name' },
     'telephoneNumber'               => { name: 'phone' },
     'uid'                           => { name: 'username' },
