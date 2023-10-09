@@ -51,7 +51,7 @@ fi:
       help: "Apua"
       technical_support: "Tekninen tuki"
       mfa:
-        help: "Tunnuksellasi on monivaiheinen kirjautuminen päällä. Syötä allaolevaan kenttään kertakäyttöinen kirjautumiskoodi tai palautuskoodi, ja paina Enter tai klikkaa \"Jatka\"."
+        help: "Tunnuksellasi on kaksivaiheinen kirjautuminen päällä. Syötä allaolevaan kenttään kertakäyttöinen kirjautumiskoodi tai palautuskoodi, ja paina Enter tai klikkaa \"Jatka\"."
         help2: "Koodi on syötettävä viiden minuutin sisällä, muutoin kirjautumisyritys vanhenee.<br>Viisi virheellistä koodia myös pysäyttää kirjautumisen."
         incorrect_code: "Virheellinen koodi"
         continue: "Jatka"
@@ -961,7 +961,7 @@ fi:
       groups_by_schools: "Ryhmät kouluittain"
       change_school: Vaihda kouluja...
       primus_school_change_warning: "Tässä koulussa on käytössä Primus-integraatio. Käyttäjän siirto toiseen kouluun saattaa sotkea integraation toimintaa.\n\nHaluatko varmasti jatkaa?"
-      mfa_enabled: "Käyttäjällä on monivaiheinen kirjautuminen päällä."
+      mfa_enabled: "Käyttäjällä on kaksivaiheinen kirjautuminen päällä."
       user_is_an_organisation_owner: "Käyttäjä on organisaation omistajissa"
       user_is_a_school_admin: "Käyttäjä on koulun \"%{school_name}\" ylläpitäjissä"
       schools: "Koulut"
