@@ -1360,6 +1360,7 @@ class Users < PuavoSinatra
     'licenses'           => 'puavoLicenses',
     'locale'             => 'puavoLocale',
     'locked'             => 'puavoLocked',
+    'mfa_enabled'        => 'puavoMFAEnabled',
     'modified'           => 'modifyTimestamp',  # LDAP operational attribute
     'personnel_number'   => 'puavoEduPersonPersonnelNumber',
     'phone'              => 'telephoneNumber',
@@ -1395,6 +1396,7 @@ class Users < PuavoSinatra
     'puavoLicenses'                 => { name: 'licenses', type: :json },
     'puavoLocale'                   => { name: 'locale' },
     'puavoLocked'                   => { name: 'locked', type: :boolean },
+    'puavoMFAEnabled'               => { name: 'mfa_enabled', type: :boolean },
     'puavoRemovalRequestTime'       => { name: 'removal_mark_time', type: :ldap_timestamp },
     'puavoSchool'                   => { name: 'school_ids', type: :id_from_dn },
     'puavoSshPublicKey'             => { name: 'ssh_public_key' },

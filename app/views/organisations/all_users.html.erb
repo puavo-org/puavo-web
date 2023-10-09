@@ -44,7 +44,7 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 
 <%= render :partial => 'shared/user_tables_common.js' %>
 
-const DEFAULT_COLUMNS = ["school", "uid", "name", "role", "eid", "locked", "dnd", "rrt"];
+const DEFAULT_COLUMNS = ["school", "uid", "name", "role", "eid", "locked", "dnd", "rrt", "mfa"];
 const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
 
 document.addEventListener("DOMContentLoaded", function() {

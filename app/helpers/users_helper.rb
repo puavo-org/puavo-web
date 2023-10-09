@@ -37,6 +37,7 @@ module UsersHelper
       'puavoLearnerId',
       'puavoLicenses',
       'puavoUuid',
+      'puavoMFAEnabled',
     ].freeze
   end
 
@@ -123,6 +124,8 @@ module UsersHelper
       rescue StandardError => e
       end
     end
+
+    out[:mfa] = raw.include?('puavoMFAEnabled') && raw['puavoMFAEnabled'][0] == 'TRUE'
 
     return out
   end
