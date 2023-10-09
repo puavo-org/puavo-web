@@ -208,6 +208,12 @@ fieldset > .row {
   align-items: center;
 }
 
+fieldset > .mfa_row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .col-username {
   flex-grow: 2;   /* shrink the domain name to minimum possible width */
 }
@@ -326,6 +332,36 @@ button:disabled, input[type="submit"]:disabled, input[type="submit"]:active:disa
 #help details p {
   margin-top: 0.5em;
   margin-left: 2em;
+}
+
+p#mfa_help {
+  margin-top: 0;
+  text-align: center;
+}
+
+p#mfa_help2 {
+  margin-top: 0;
+  margin-bottom: 2em;
+  text-align: center;
+  font-size: 80%;
+}
+
+input#mfa_code {
+  margin: 0 auto;
+  font-family: monospace;
+  font-size: 120%;
+  text-align: center;
+}
+
+div#mfa_invalid_code {
+  background: #fdd;
+  border-radius: 5px;
+  color: #f00;
+  width: 75%;
+  margin: 0 auto;
+  padding: 0.75em;
+  text-align: center;
+  font-size: 90%;
 }
 
 /* Specials */

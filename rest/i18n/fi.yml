@@ -39,3 +39,13 @@ email_verification:
   message_head: "Pyysit juuri, että tämä sähköpostiosoite vahvistettaisiin."
   message: "Vahvista osoite klikkaamalla tätä linkkiä: %1"
   footer: "Linkki on voimassa yhden tunnin. Jos et ole tehnyt tätä pyyntöä, voit jättää tämän viestin huomioimatta. Jos epäilet, että joku muu yrittää vahvistaa osoitetta puolestasi, ota heti yhteys Opinsysin tukeen ja välitä tämän viestin sisältö heille."
+mfa:
+  help: "Tunnuksellasi on kaksivaiheinen kirjautuminen päällä. Syötä allaolevaan kenttään kertakäyttöinen kirjautumiskoodi tai palautuskoodi, ja paina Enter tai klikkaa \"Jatka\"."
+  help2: "Koodi on syötettävä viiden minuutin sisällä, muutoin kirjautumisyritys vanhenee.<br>Viisi virheellistä koodia myös pysäyttää kirjautumisen."
+  continue: "Jatka"
+  cancel: "Keskeytä"
+  token_expired: "Kirjautumisyrityksesi on vanhentunut. Mene alkuperäiseen kirjautumislomakkeeseen ja yritä kirjautumista uudelleen."
+  too_many_attempts: "Liian monta kaksivaiheista kirjautumisyritystä. Kirjautuminen on keskeytetty. Mene alkuperäiseen kirjautumislomakkeeseen ja yritä kirjautumista uudelleen."
+  incorrect_code: "Virheellinen koodi"
+  validation_server_error: "Kirjautumispalvelinvirhe. Yritä kirjautumista uudelleen. Jos ongelma toistuu, ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi: %1."
+  system_error: "Vakava järjestelmävirhe, kirjautuminen on keskeytetty. Ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi: %1."

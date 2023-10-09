@@ -1,0 +1,55 @@
+<div id="container">
+    <form action="<%= @login_content['mfa_post_uri'] %>" method="post" accept-charset="utf-8" style="margin: 0 auto;">
+        <%= token_tag form_authenticity_token %>
+        <input type="hidden" name="token" value="<%= @token %>">
+
+        <fieldset>
+            <p id="mfa_help"><%= raw @login_content['mfa_help'] %></p>
+            <p id="mfa_help2"><%= raw @login_content['mfa_help2'] %></p>
+
+            <div class="mfa_row">
+                <input type="text" id="mfa_code" name="mfa_code" maxlength="50" size="60" autocomplete="off" autofocus>
+                <% if @mfa_error %>
+                <div id="mfa_invalid_code"><%= @mfa_error %></div>
+                <% end %>
+            </div>
+
+            <div class="row" style="margin: 1em auto 0 auto;">
+                <input type="submit" id="submit" name="submit" value="<%= @login_content['mfa_continue'] %>" class="submit" style="margin-right: 10px;" disabled>
+                <input type="submit" id="cancel" name="cancel" value="<%= @login_content['mfa_cancel'] %>" class="submit">
+            </div>
+        </fieldset>
+    </form>
+
+    <br>
+
+    <div id="lowerLogos" class="logoRow">
+        <a href="https://opinsys.fi" target="_blank" title="Opinsys Oy"><img src="<%= File.join(@login_content['prefix'], "opinsys_logo.svg") %>" alt="Opinsys Oy logo" width="150" height="34"></a>
+    </div>
+
+    <div style="display: block; text-align: center; font-size: 75%;">&copy; Opinsys Oy 2023</div>
+</div>
+
+<script>
+"use strict";
+
+const code = document.querySelector("input#mfa_code"),
+      submit = document.querySelector("input#submit"),
+      cancel = document.querySelector("input#cancel");
+
+function enableSubmit()
+{
+    // The shortest MFA code we accept is 6 digits long
+    submit.disabled = code.value.trim().length < 6;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    code.addEventListener("input", e => enableSubmit());
+    enableSubmit();
+
+    // FIXME: There is a potential double-submission hazard here. I can't disable
+    // the controls, because then they won't be part of the submitted form data.
+    // Of course they aren't, that's web development for you.
+});
+
+</script>
