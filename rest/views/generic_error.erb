@@ -1,6 +1,7 @@
 <div id="container">
     <p id="error"><%= @login_content['error_message'] %></p>
 
+    <% unless @login_content.fetch('suppress_footer', false) %>
     <br>
 
     <div id="lowerLogos" class="logoRow">
@@ -8,4 +9,7 @@
     </div>
 
     <div style="display: block; text-align: center; font-size: 75%;">&copy; Opinsys Oy 2023</div>
+    <% end %>
+
+    <div style="display: block; text-align: center; font-size: 75%;"><%= @login_content['technical_support'] %>: tuki@opinsys.fi</div>
 </div>

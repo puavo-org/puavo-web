@@ -49,6 +49,7 @@ fi:
       username_placeholder: "Käyttäjätunnus"
       login: "Kirjaudu"
       help: "Apua"
+      technical_support: "Tekninen tuki"
 
   # Page title breadcrumbs
   titles:

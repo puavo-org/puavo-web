@@ -49,6 +49,7 @@ en:
       username_placeholder: Username
       login: Login
       help: Help
+      technical_support: "Technical support"
 
   # Page title breadcrumbs
   titles:

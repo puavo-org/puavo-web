@@ -9,6 +9,31 @@ module PuavoRest
 class SSO < PuavoSinatra
   register Sinatra::R18n
 
+  get '/v3/sso' do
+    respond_auth
+  end
+
+  post '/v3/sso' do
+    do_sso_post
+  end
+
+  get '/v3/verified_sso' do
+    respond_auth
+  end
+
+  post '/v3/verified_sso' do
+    do_sso_post
+  end
+
+  get '/v3/sso/logout' do
+    session_try_logout
+  end
+
+  get '/v3/sso/developers' do
+    @body = File.read('doc/SSO_DEVELOPERS.html')
+    erb :developers, :layout => :layout
+  end
+
   def return_to
     # Support "return_to" and "return"
     if params.include?('return_to')
@@ -43,6 +68,16 @@ class SSO < PuavoSinatra
     'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
   end
 
+  def generic_error(message)
+    @login_content = {
+      'error_message' => message,
+      'technical_support' => t.sso.technical_support,
+      'prefix' => '/v3/login',      # make the built-in CSS work
+    }
+
+    halt 401, { 'Content-Type' => 'text/html' }, erb(:generic_error, :layout => :layout)
+  end
+
   def respond_auth
     if return_to.nil?
       raise BadInput, :user => "return_to missing"
@@ -56,7 +91,6 @@ class SSO < PuavoSinatra
     end
 
     request_id = make_request_id
-    had_session = false
     @is_trusted = request.path == '/v3/verified_sso'
 
     rlog.info("[#{request_id}] attempting to log into external service \"#{@external_service.name}\" (#{@external_service.dn.to_s})")
@@ -67,26 +101,9 @@ class SSO < PuavoSinatra
       raise Unauthorized, user: "Mismatch between trusted service states. Please check the URL you're using to display the login form. Request ID #{request_id}."
     end
 
-    if session = read_sso_session(request_id)
-      # An SSO session cookie was found in the request, see if we can use it
-      rlog.info("[#{request_id}] verifying the SSO cookie")
-
-      organisation = session['organisation']
-
-      if are_sessions_enabled(organisation, @external_service.domain, request_id)
-        # The session cookie is usable
-        url, _ = @external_service.generate_login_url(session['user'], return_to)
-
-        rlog.info("[#{request_id}] SSO cookie login OK")
-        rlog.info("[#{request_id}] redirecting SSO auth #{session['user']['username']} (#{session['dn']}) to #{url}")
-
-        return redirect url
-      else
-        rlog.error("[#{request_id}] SSO cookie login rejected, the target external service domain (" + \
-                   @external_service.domain.inspect + ") is not on the list of allowed services")
-        had_session = true
-      end
-    end
+    # SSO session login?
+    had_session, redirect_url = session_try_login(request_id, @external_service)
+    return redirect(redirect_url) if redirect_url
 
     # Normal/non-session SSO login
     begin
@@ -135,124 +152,27 @@ class SSO < PuavoSinatra
 
     rlog.info("[#{request_id}] SSO login ok")
 
-    # If SSO session cookies are enabled for this service in this organisation,
-    # the create a new session
-    domain = @external_service.domain
-    org_key = user.organisation.organisation_key
+    begin
+      session_create(
+        request_id,
+        user.organisation.organisation_key,
+        @external_service.domain,
+        @external_service.dn.to_s,
+        user.dn.to_s,
+        user_hash,
+        had_session
+      )
 
-    if !had_session && are_sessions_enabled(org_key, domain, request_id)
-      rlog.info("[#{request_id}] SSO sessions are enabled for domain \"#{domain}\" in organisation \"#{org_key}\"")
-
-      expires = Time.now.utc + PUAVO_SSO_SESSION_LENGTH
-
-      response.set_cookie(PUAVO_SSO_SESSION_KEY,
-                          value: generate_sso_session(request_id, user_hash, user, @external_service),
-                          expires: expires)
-
-      rlog.info("[#{request_id}] the SSO session will expire at #{Time.at(expires)}")
-    else
-      rlog.info("[#{request_id}] domain \"#{domain}\" is not eligible for SSO sessions in organisation \"#{org_key}\"")
+      do_service_redirect(request_id, user_hash, url)
+    rescue StandardError => e
+      rlog.error("[#{request_id}] generic login error: #{e}")
+      generic_error("Login system error. Please try again, and if the problem persists, please contact support and give them this code: #{request_id}.")
     end
+  end
 
-    rlog.info("[#{request_id}] redirecting SSO auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
+  def do_service_redirect(request_id, user_hash, url)
+    rlog.info("[#{request_id}] redirecting SSO auth for \"#{ user_hash['username'] }\" to #{ url }")
     redirect url
-  end
-
-  # Remove the SSO session if it exists. Redirects the browser to the specifiec redirect URL
-  # afterwards. This is intended to be used in browsers, to implement a "real" logout. If there
-  # is no session, only does the redirect. The redirect URLs must be allowed in advance.
-  get '/v3/sso/logout' do
-    request_id = make_request_id
-
-    rlog.info("[#{request_id}] new SSO logout request")
-
-    # The redirect URL is always required. No way around it, as it's the only security
-    # measure against malicious logout URLs.
-    redirect_to = params.fetch('redirect_to', nil)
-
-    if redirect_to.nil? || redirect_to.strip.empty?
-      rlog.warn("[#{request_id}] no redirect_to parameter in the request")
-      logout_error("Missing the redirect URL. Logout cannot be processed. Request ID: #{request_id}.")
-    end
-
-    rlog.info("[#{request_id}] the redirect URL is \"#{redirect_to}\"")
-
-    redis = Redis::Namespace.new('sso_session', redis: REDIS_CONNECTION)
-
-    # Extract session data
-    if request.cookies.include?(PUAVO_SSO_SESSION_KEY)
-      session_data = logout_get_session_data(request, redis, request_id)
-    else
-      rlog.warn("[#{request_id}] no session cookie in the request")
-    end
-
-    # Which redirect URLs are allowed? If there is a session, use the URLs allowed for the organisation.
-    # Otherwise allow all the URLs in all organisations.
-    if session_data
-      organisation = session_data['organisation']
-      rlog.info("[#{request_id}] organisation is \"#{organisation}\"")
-
-      allowed_redirects = ORGANISATIONS.fetch(organisation, {}).fetch('accepted_sso_logout_urls', [])
-    else
-      allowed_redirects = ORGANISATIONS.collect do |_, org|
-        org.fetch('accepted_sso_logout_urls', [])
-      end.flatten
-    end
-
-    allowed_redirects = allowed_redirects.to_set
-    rlog.info("[#{request_id}] have #{allowed_redirects.count} allowed redirect URLs")
-
-    match = allowed_redirects.find { |test| Regexp.new(test).match?(redirect_to) }
-
-    unless match
-      rlog.error("[#{request_id}] the redirect URL is not permitted")
-      logout_error("The supplied redirect URL is not permitted. Logout cannot be processed for " \
-                   "security reasons. Request ID: #{request_id}.")
-    end
-
-    rlog.info("[#{request_id}] the redirect URL is allowed")
-
-    if session_data
-      # TODO: Check if the service that originated the logout request is the same that created it?
-      # This can potentially make logout procedures very complicated, but it would increase security.
-
-      # Purge the session and redirect
-      rlog.info("[#{request_id}] proceeding with the logout")
-
-      key = request.cookies[PUAVO_SSO_SESSION_KEY]
-      user_id = session_data['user']['id']
-
-      if redis.get("data:#{key}")
-        redis.del("data:#{key}")
-      end
-
-      if redis.get("user:#{user_id}")
-        redis.del("user:#{user_id}")
-      end
-
-      rlog.info("[#{request_id}] logout complete, redirecting the browser")
-    else
-      rlog.info("[#{request_id}] logout not done, redirecting the browser")
-    end
-
-    return redirect(redirect_to)
-  end
-
-  def logout_error(message)
-    @login_content = {
-      'error_message' => message,
-      'prefix' => '/v3/login',      # make the built-in CSS work
-    }
-
-    halt 401, { 'Content-Type' => 'text/html' }, erb(:logout_error, :layout => :layout)
-  end
-
-  get "/v3/sso" do
-    respond_auth
-  end
-
-  get '/v3/verified_sso' do
-    respond_auth
   end
 
   def render_form(error_message, err=nil, force_error_message=false)
@@ -479,19 +399,6 @@ class SSO < PuavoSinatra
     respond_auth
   end
 
-  post '/v3/sso' do
-    do_sso_post
-  end
-
-  post '/v3/verified_sso' do
-    do_sso_post
-  end
-
-  get "/v3/sso/developers" do
-    @body = File.read("doc/SSO_DEVELOPERS.html")
-    erb :developers, :layout => :layout
-  end
-
   helpers do
     def raw(string)
       return string
@@ -508,9 +415,16 @@ class SSO < PuavoSinatra
 
   private
 
-  def are_sessions_enabled(organisation_key, domains, request_id)
+  # ------------------------------------------------------------------------------------------------
+  # SSO SESSIONS
+
+  def _session_redis
+    Redis::Namespace.new('sso_session', redis: REDIS_CONNECTION)
+  end
+
+  def session_enabled?(request_id, organisation, domains)
     begin
-      ORGANISATIONS.fetch(organisation_key, {}).fetch('enable_sso_sessions_in', []).each do |test|
+      ORGANISATIONS.fetch(organisation, {}).fetch('enable_sso_sessions_in', []).each do |test|
         next if test.nil? || test.empty?
 
         if test[0] == '^'
@@ -529,75 +443,201 @@ class SSO < PuavoSinatra
     return false
   end
 
-  def generate_sso_session(request_id, user_hash, user, service)
-    key = SecureRandom.hex(64)
+  def session_create(
+    request_id,
+    organisation,
+    service_domain,
+    service_dn,
+    user_dn,
+    user_hash,
+    had_session     # does a session cookie exist already?
+  )
+    return if had_session
 
-    rlog.info("[#{request_id}] creating a new SSO session cookie #{key}")
+    unless session_enabled?(request_id, organisation, service_domain)
+      rlog.info("[#{request_id}] domain \"#{service_domain}\" in organisation \"#{organisation}\" is not eligible for SSO sessions")
+      return
+    end
 
-    data = {
-      dn: user.dn.to_s,   # not included in the JWT, but we need it for logging purposes
-      organisation: user.organisation.organisation_key,   # needed when the session is restored
-      original_service: service.dn.to_s,      # which external service the user is logging in to
-      user: user_hash,
-    }
+    rlog.info("[#{request_id}] SSO sessions are enabled for domain \"#{service_domain}\" in organisation \"#{organisation}\"")
 
-    # The data is not obfuscated or encrypted. Anyone who can access the production
-    # Redis database can also generate the full user information anyway.
-    session_data = data.to_json.to_s
+    # This key is stored in a cookie in the user's browser. No other data is stored
+    # in the cookie, to avoid leaking anything.
+    session_key = SecureRandom.hex(64)
+    rlog.info("[#{request_id}] creating a new SSO session cookie #{session_key}")
 
-    redis = Redis::Namespace.new('sso_session', redis: REDIS_CONNECTION)
+    # The data in Redis is not obfuscated or encrypted. Anyone who can access the production
+    # Redis database (a very, very small group of people in the world) can already generate
+    # the full user information anyway.
+    session_data = {
+      organisation: organisation,
+      dn: user_dn,
+      original_service: service_dn,
+      user_hash: user_hash,
+    }.to_json.to_s
 
-    redis.set("data:#{key}", session_data, nx: true, ex: PUAVO_SSO_SESSION_LENGTH)
+    redis = _session_redis
+    redis.set("data:#{session_key}", session_data, nx: true, ex: PUAVO_SSO_SESSION_LENGTH)
 
     # This is used to locate and invalidate the session if the user is edited/removed
-    redis.set("user:#{user.puavo_id}", key, nx: true, ex: PUAVO_SSO_SESSION_LENGTH)
+    redis.set("user:#{user_hash['puavo_id']}", session_key, nx: true, ex: PUAVO_SSO_SESSION_LENGTH)
 
-    key
+    expires = Time.now.utc + PUAVO_SSO_SESSION_LENGTH
+    rlog.info("[#{request_id}] the SSO session will expire at #{Time.at(expires)} (in #{PUAVO_SSO_SESSION_LENGTH} seconds)")
+
+    response.set_cookie(PUAVO_SSO_SESSION_KEY, value: session_key, expires: expires)
+  rescue StandardError => e
+    # TODO: Should this be displayed to the user?
+    rlog.error("[#{request_id}] could not create an SSO session: #{e}")
   end
 
-  def read_sso_session(request_id)
-    return nil unless request.cookies.include?(PUAVO_SSO_SESSION_KEY)
+  def session_try_login(request_id, external_service)
+    # ----------------------------------------------------------------------------------------------
+    # If the session cookie exists, load its contents from Redis
+
+    unless request.cookies.include?(PUAVO_SSO_SESSION_KEY)
+      return [false, nil]
+    end
 
     key = request.cookies[PUAVO_SSO_SESSION_KEY]
-
     rlog.info("[#{request_id}] have SSO session cookie #{key} in the request")
 
-    redis = Redis::Namespace.new('sso_session', redis: REDIS_CONNECTION)
+    redis = _session_redis
     data = redis.get("data:#{key}")
 
     unless data
-      rlog.error("[#{request_id}] no session data found by key #{key}; it has expired or it's invalid")
-      return nil
+      rlog.error("[#{request_id}] no session data found by key #{key}; it has expired or it is invalid")
+      return [false, nil]
     end
 
-    rlog.info("[#{request_id}] session lifetime left: #{redis.ttl("data:#{key}")} seconds")
+    ttl = redis.ttl("data:#{key}")
+    rlog.info("[#{request_id}] the SSO session will expire at #{Time.now.utc + ttl} (in #{ttl} seconds)")
 
-    begin
-      data = JSON.parse(data)
-    rescue => e
-      rlog.error("[#{request_id}] have SSO session data, but it cannot be loaded: #{e}")
-      return nil
+    session = JSON.parse(data)
+
+    # ----------------------------------------------------------------------------------------------
+    # Process the session data
+
+    rlog.info("[#{request_id}] verifying the SSO cookie")
+    organisation = session['organisation']
+
+    unless session_enabled?(request_id, organisation, external_service.domain)
+      rlog.error("[#{request_id}] SSO cookie login rejected, the target external service domain (" + \
+                 @external_service.domain.inspect + ") is not on the list of allowed services")
+
+      # Return true here to avoid creating another session (ie. "a session already exists,
+      # but we won't use it this time")
+      return [true, nil]
     end
 
-    data
+    redirect_url, _ = @external_service.generate_login_url(session['user_hash'], return_to)
+    rlog.info("[#{request_id}] SSO cookie login OK")
+    rlog.info("[#{request_id}] redirecting SSO auth for \"#{session['user_hash']['username']}\" to #{redirect_url}")
+
+    return [false, redirect_url]
+  rescue StandardError => e
+    rlog.error("[#{request_id}] SSO session login attempt failed: #{e}")
+    return [false, nil]
   end
 
-  def logout_get_session_data(request, redis, request_id)
-    key = request.cookies[PUAVO_SSO_SESSION_KEY]
-    rlog.info("[#{request_id}] session key is \"#{key}\"")
+  # Remove the SSO session if it exists. Redirects the browser to the specifiec redirect URL
+  # afterwards. This is intended to be used in browsers, to implement a "real" logout. If there
+  # is no session, only does the redirect. The redirect URLs must be allowed in advance.
+  def session_try_logout
+    request_id = make_request_id
 
-    data = redis.get("data:#{key}")
+    begin
+      rlog.info("[#{request_id}] new SSO logout request")
 
-    unless data
-      rlog.error("[#{request_id}] no session data found in Redis")
-      return nil
+      # The redirect URL is always required. No way around it, as it's the only security
+      # measure against malicious logout URLs.
+      redirect_to = params.fetch('redirect_to', nil)
+
+      if redirect_to.nil? || redirect_to.strip.empty?
+        rlog.warn("[#{request_id}] no redirect_to parameter in the request")
+        generic_error("Missing the redirect URL. Logout cannot be processed. Request ID: #{request_id}.")
+      end
+
+      rlog.info("[#{request_id}] the redirect URL is \"#{redirect_to}\"")
+
+      redis = _session_redis
+
+      # Extract session data
+      if request.cookies.include?(PUAVO_SSO_SESSION_KEY)
+        begin
+          key = request.cookies[PUAVO_SSO_SESSION_KEY]
+          rlog.info("[#{request_id}] session key is \"#{key}\"")
+
+          data = redis.get("data:#{key}")
+
+          unless data
+            rlog.error("[#{request_id}] no session data found in Redis")
+          else
+            session_data = JSON.parse(data)
+          end
+        rescue StandardError => e
+          rlog.error("[#{request_id}] cannot load session data:")
+          rlog.error("[#{request_id}] #{e.backtrace.join("\n")}")
+          session_data = nil
+        end
+      else
+        rlog.warn("[#{request_id}] no session cookie in the request")
+      end
+
+      # Which redirect URLs are allowed? If there is a session, use the URLs allowed for the organisation.
+      # Otherwise allow all the URLs in all organisations.
+      if session_data
+        organisation = session_data['organisation']
+        rlog.info("[#{request_id}] organisation is \"#{organisation}\"")
+
+        allowed_redirects = ORGANISATIONS.fetch(organisation, {}).fetch('accepted_sso_logout_urls', [])
+      else
+        allowed_redirects = ORGANISATIONS.collect do |_, org|
+          org.fetch('accepted_sso_logout_urls', [])
+        end.flatten
+      end
+
+      allowed_redirects = allowed_redirects.to_set
+      rlog.info("[#{request_id}] have #{allowed_redirects.count} allowed redirect URLs")
+
+      match = allowed_redirects.find { |test| Regexp.new(test).match?(redirect_to) }
+
+      unless match
+        rlog.error("[#{request_id}] the redirect URL is not permitted")
+        generic_error("The supplied redirect URL is not permitted. Logout cannot be processed for " \
+                      "security reasons. Request ID: #{request_id}.")
+      end
+
+      rlog.info("[#{request_id}] the redirect URL is allowed")
+
+      if session_data
+        # TODO: Check if the service that originated the logout request is the same that created it?
+        # This can potentially make logout procedures very complicated, but it would increase security.
+
+        # Purge the session and redirect
+        rlog.info("[#{request_id}] proceeding with the logout")
+
+        key = request.cookies[PUAVO_SSO_SESSION_KEY]
+        user_id = session_data['user_hash']['id']
+
+        if redis.get("data:#{key}")
+          redis.del("data:#{key}")
+        end
+
+        if redis.get("user:#{user_id}")
+          redis.del("user:#{user_id}")
+        end
+
+        rlog.info("[#{request_id}] logout complete, redirecting the browser")
+      else
+        rlog.info("[#{request_id}] logout not done, redirecting the browser")
+      end
+
+      return redirect(redirect_to)
+    rescue StandardError => e
+      rlog.error("[#{request_id}] session logout failed: #{e}")
+      generic_error("System error. Sorry, but the logout cannot be processed. Request ID: #{request_id}.")
     end
-
-    JSON.parse(data)
-  rescue StandardError => e
-    rlog.error("[#{request_id}] cannot load session data:")
-    rlog.error("[#{request_id}] #{e.backtrace.join("\n")}")
-    nil
   end
 end
 end

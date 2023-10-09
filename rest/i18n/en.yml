@@ -12,6 +12,7 @@ sso:
   login: Login
   login_to: Login to service
   error: Error
+  technical_support: "Technical support"
   help: Help
   developers: Developers
   developers_info: "Read <a href=/v3/sso/developers target=_blank>this</a> document if you are interested in implementing Opinsys authentication."

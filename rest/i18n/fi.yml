@@ -13,6 +13,7 @@ sso:
   login: Kirjaudu
   error: Virhe
   help: Apua
+  technical_support: "Tekninen tuki"
   developers: Kehittäjät
   developers_info: "Lue <a href=/v3/sso/developers target=_blank>tämä</a> dokumentti, jos olet kiinnostunut Opinsys-tunnistautumisen toteuttamisesta."
   username_help: Käytä samaa käyttäjätunnusta kuin Opinsys-tietokoneille kirjautuessasi.
