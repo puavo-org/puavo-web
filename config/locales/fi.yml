@@ -961,6 +961,7 @@ fi:
       groups_by_schools: "Ryhmät kouluittain"
       change_school: Vaihda kouluja...
       primus_school_change_warning: "Tässä koulussa on käytössä Primus-integraatio. Käyttäjän siirto toiseen kouluun saattaa sotkea integraation toimintaa.\n\nHaluatko varmasti jatkaa?"
+      mfa_enabled: "Käyttäjällä on monivaiheinen kirjautuminen päällä."
       user_is_an_organisation_owner: "Käyttäjä on organisaation omistajissa"
       user_is_a_school_admin: "Käyttäjä on koulun \"%{school_name}\" ylläpitäjissä"
       schools: "Koulut"

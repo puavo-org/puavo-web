@@ -961,6 +961,7 @@ en:
       groups_by_schools: "Groups by schools"
       change_school: Change schools...
       primus_school_change_warning: "Primus integration has been enabled in this school. Moving a user to another school can interfere with the integration.\n\nAre you sure you want to continue?"
+      mfa_enabled: "This user has multifactor authentication enabled."
       user_is_an_organisation_owner: "The user is an owner of this organisation"
       user_is_a_school_admin: "This user is an administrator of the school \"%{school_name}\""
       schools: "Schools"
