@@ -62,6 +62,19 @@ class PuavoSinatra < Sinatra::Base
     end
   end
 
+  # MFA activation state changing
+  def mfa_mgmt_server_auth
+    if CONFIG['mfa_management']
+      return {
+        :dn => CONFIG['mfa_management']['server']['username'],
+        :password => CONFIG['mfa_management']['server']['password']
+      }
+    else
+      rlog.error('cannot use MFA management auth on cloud or bootserver installation')
+      return
+    end
+  end
+
   # Pick bootserver credentials when Header 'Authorization: Bootserver' is set
   def server_auth
     if not CONFIG["bootserver"]
