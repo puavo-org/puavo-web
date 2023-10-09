@@ -50,6 +50,18 @@ fi:
       login: "Kirjaudu"
       help: "Apua"
       technical_support: "Tekninen tuki"
+      mfa:
+        help: "Tunnuksellasi on monivaiheinen kirjautuminen päällä. Syötä allaolevaan kenttään kertakäyttöinen kirjautumiskoodi tai palautuskoodi, ja paina Enter tai klikkaa \"Jatka\"."
+        help2: "Koodi on syötettävä viiden minuutin sisällä, muutoin kirjautumisyritys vanhenee.<br>Viisi virheellistä koodia myös pysäyttää kirjautumisen."
+        incorrect_code: "Virheellinen koodi"
+        continue: "Jatka"
+        cancel: "Keskeytä"
+        errors:
+          no_session: "Virheelliset istuntotiedot. Et voi avata tätä sivua suoraan selaimellasi. Sen sijaan mene alkuperäiseen kirjautumislomakkeeseen ja yritä kirjautua uudelleen."
+          expired: "Kirjautumisyrityksesi on vanhentunut. Mene alkuperäiseen kirjautumislomakkeeseen ja yritä kirjautumista uudelleen."
+          too_many_attempts: "Liian monta kaksivaiheista kirjautumisyritystä. Kirjautuminen on keskeytetty. Mene alkuperäiseen kirjautumislomakkeeseen ja yritä kirjautumista uudelleen."
+          mfa_server_error: "Kirjautumispalvelinvirhe. Yritä kirjautumista uudelleen. Jos ongelma toistuu, ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi: %{request_id}."
+          fatal_error: "Vakava järjestelmävirhe, kirjautuminen on keskeytetty. Ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi: %{request_id}."
 
   # Page title breadcrumbs
   titles:

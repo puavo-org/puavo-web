@@ -50,6 +50,18 @@ en:
       login: Login
       help: Help
       technical_support: "Technical support"
+      mfa:
+        help: "Two-factor authentication has been activated on your account. Please enter the single-use authentication code or one of the recovery codes, then press Enter or click \"Continue\"."
+        help2: "You have to enter the code within five minutes, otherwise the login expires.<br>Five incorrect attempts will also halt the login process."
+        incorrect_code: "Incorrect code"
+        continue: "Continue"
+        cancel: "Cancel"
+        errors:
+          no_session: "Invalid session data. You cannot access this page directly with your browser. Instead, go to the original login form and try logging in again."
+          expired: "Your login attempt has expired. Go to the original login form and try logging in again."
+          too_many_attempts: "Too many failed multi-factor login attempts. Login halted. Go to the original login form and try logging in again."
+          mfa_server_error: "Authentication server error. Try logging in again. If the problem persists, please contact support and give them this code: %{request_id}."
+          fatal_error: "Fatal error, login halted. Please contact support and give them this code: %{request_id}."
 
   # Page title breadcrumbs
   titles:

@@ -127,6 +127,40 @@ module Puavo
         return false
       end
 
+      unless @authentication.user?
+        # Non-interactive logins cannot have MFA (technically, they could but it would be
+        # hideously complicated)
+        session[:mfa] = 'skip'
+      end
+
+      unless ['skip', 'ask', 'pass', 'fail'].include?(session[:mfa])
+        # We're not in a known MFA state (this is normal immediately after the initial login),
+        # so figure out what to do.
+
+        if current_user.puavoMFAEnabled
+          # We need to ask for the MFA code
+          session[:mfa] = 'ask'
+
+          # We won't have access to the UUID again for some time, so grab it while we can
+          # (this is needed for the MFA server)
+          session[:uuid] = current_user.puavoUuid
+
+          # Since MFA is enabled, stash MFA tracking stuff in Redis for five minutes.
+          # That's how long the user has time to enter the code.
+          redis = Redis::Namespace.new('puavo:mfa:login', redis: REDIS_CONNECTION)
+          redis.set(session[:uuid], '0', nx: true, ex: 60 * 5)
+        else
+          # MFA is not active, just continue normally
+          session[:mfa] = 'skip'
+        end
+      end
+
+      if ['ask', 'fail'].include?(session[:mfa])
+        # We either have not asked for the MFA code yet, or it was incorrect.
+        # Go to the MFA form.
+        return redirect_to mfa_ask_code_path
+      end
+
       if session[:login_flash]
         flash[:notice] = session[:login_flash]
         session.delete :login_flash

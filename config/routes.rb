@@ -25,6 +25,9 @@ Rails.application.routes.draw do
   get '/get_all_groups' => 'organisations#get_all_groups'
   post '/groups_mass_operations' => 'groups_mass_operations#groups_mass_operation'
 
+  get '/mfa_form' => 'sessions#mfa_ask', :as => :mfa_ask_code
+  post '/mfa_form' => 'sessions#mfa_post', :as => :mfa_post_code
+
   # Organisation-level Puavomenu editor
   get '/puavomenu' => 'organisations#edit_puavomenu', :as => 'organisation_puavomenu'
   post '/puavomenu/save' => 'organisations#save_puavomenu', :as => 'organisation_puavomenu_save'
