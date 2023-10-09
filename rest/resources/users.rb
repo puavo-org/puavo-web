@@ -54,7 +54,7 @@ class User < LdapModel
   ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
 
   ldap_map :puavoUuid, :uuid, LdapConverters::SingleValue
-  ldap_map :puavoMFAEnabled, :mfa_enabled
+  ldap_map :puavoMFAEnabled, :mfa_enabled, LdapConverters::StringBoolean
 
   ldap_map :puavoLicenses, :licenses
 
