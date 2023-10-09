@@ -2176,6 +2176,73 @@ en:
     verify_message2: " is working, it is yours, and that you can access it. If you do not wish to confirm this address, then please close this window or tab."
     verify_button: "Verify this address"
 
+  # The MFA editor
+  mfas:
+    show:
+      logged_as: "You're logged in as <strong>%{first_name} %{last_name}</strong> (<strong>%{username}</strong>) in organisation <strong>%{organisation}</strong>"
+
+      new:
+        title: "Add a new two-factor authentication"
+        explanation: "You can add multiple two-factor authentication methods (the TOTP method can be used multiple times). For example, you can create a primary key and then add a seconday key, in case the device you use to access the primary key (a smartphone, a tablet, a password managing program, etc.) is lost or it breaks."
+        step1:
+          title: "Step 1"
+          type: "Key type"
+          description_title: "Key description"
+          description_help: "The description is not mandatory, but if you add more than one authentication method, it helps to distinguish between different keys. Examples of good descriptions are \"Primary key\" and \"Backup key\". This cannot be changed afterwards, and it is not the title displayed in the authenticator app (that only has the organisation name)."
+        step2_totp:
+          title: "Step 2/3"
+          qrhelp: "Scan the QR image below using your authenticator app. If you cannot scan it, enter or copy the code below the image manually into your authenticator app (and if you do it this way, set the hashing algorithm to SHA1, the number of digits to 6 and the interval to 30 seconds.)"
+          qrhelp2: "After you've added the code to your app, click \"Next\" or press Enter."
+        step2_yubikey:
+          title: "Step 2/2"
+          help: "Ensure your Yubikey is attached and working, then touch the button on it to input a code in the field below (it has been automatically focused). If the code is valid, the key is activated immediately. You need to click the \"Verify\" button <em>only</em> if your Yubikey does not simulate pressing Enter after the code has been entered."
+        step3_totp:
+          title: "Step 3/3"
+          verify_help: "The new TOTP method must be verified before it can be used. Please enter the six-digit code displayed in the authenticator app into the box below and click \"Verify\" (or press Enter). If the code is valid, the new method will be activated."
+      existing:
+        title: "Active two-factor authentication methods"
+        no_mfas: "You have not activated any two-factor authentication method."
+        table:
+          created: "created"
+          verified: "verified"
+          last_used: "last used"
+          never_used: "this key has never been used"
+      recovery:
+        title: "Recovery keys"
+        no_keys: "You don't have any recovery keys. It's highly recommended that you create a new set of them."
+        have_keys: "You have recovery keys."
+        list_disclaimer: "Each of these codes is a single-use only, and intended to be used only if all of your other authentication mehods are unusable. Please store them in a secure location (remember: if you cannot access your account, you cannot access this list either)."
+        confirm_new: "Are you sure? Creating new keys will invalidate all the existing keys!"
+      buttons:
+        add_new: "Add new"
+        verify: "Verify"
+        cancel: "Cancel"
+        previous: "Previous"
+        next: "Next"
+        remove: "Remove"
+        list_keys: "List current keys"
+        create_keys: "Create new set of recovery keys"
+        delete_keys: "Delete all recovery keys"
+      errors:
+        # These are generated on the client
+        generic: "Cannot contact the server. Try again in a moment. If the problem occurs again, please contact support."
+        totp_code_incorrect: "The code was not correct."
+        code_partially_verified: "The code was correct, but the list of existing two-factor authentication methods could not be updated. Please reload the page manually."
+        yubikey_input_incorrect: "The Yubikey input was not correct."
+        key_deleted_but_not_updated: "The key was removed, but the list of existing two-factor authentication methods could not be updated. Please reload the page manually."
+    server:
+      errors:
+        # These are generated on the server
+        missing_required_data: "Your account is missing information required for multi-factor authentication to work. Please contact support and give them this code: %{request_id}."
+        mfa_server_not_responding: "Cannot contact the verification server. Please try again in a moment. If the problem persists, please contact support and give them this code: %{request_id}."
+        unknown_server_error: "Unknown server error. Please try again in a moment. If the problem persists, please contact support and give them this code: %{request_id}."
+        unknown_key_type: "Unknown key type. Please contact the support and give them this code: %{request_id}."
+        qr_code_generation_failed: "QR code generation failed. Please try again in a moment. If the problem persists, please contact support and give them this code: %{request_id}."
+        invalid_key: "The key ID is incorrect. Please reload the page and try adding the method again. If the problem persists, please contact support and give them this code: %{request_id}."
+        yubikey_already_in_use: "This Yubikey is already in use. You cannot add it again. If you want to add multiple Yubikey authentications, you need to use multiple physical keys."
+        mfa_activation_error: "The new authentication method was added, but the two-factor authentication could not be activated. Please contact support and give them this code: %{request_id}."
+        mfa_deactivation_error: "The last authentication method was removed, but the two-factor authentication could not be deactivated. Please contact support and give them this code: %{request_id}."
+
   # Used in script/create_organisation_owner
   create_organisation_owner:
     school_name: Administration

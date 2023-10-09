@@ -26,4 +26,5 @@
 //= link application.css
 //= link password_forms.css
 //= link profile_editor.css
+//= link mfa.css
 //= link font/fontello-puavo/css/puavo-icons.css

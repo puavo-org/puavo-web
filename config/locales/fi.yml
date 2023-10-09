@@ -2176,6 +2176,74 @@ fi:
     verify_message2: " on toimiva, sinun ja että pääset käsiksi siihen. Jos et halua vahvistaa osoitetta, sulje ikkuna tai välilehti."
     verify_button: "Vahvista tämä osoite"
 
+  # The MFA editor
+  mfas:
+    show:
+      logged_as: "Olet kirjautuneena nimellä <strong>%{first_name} %{last_name}</strong> (<strong>%{username}</strong>) organisaatiossa <strong>%{organisation}</strong>"
+
+      new:
+        title: "Lisää uusi kaksivaiheinen tunnistautuminen"
+        explanation: "Voit lisätä tunnukseesi useita kaksivaiheisia tunnistusmenetelmiä (TOTP-menetelmää voi käyttää useita kertoja). Voit esimerkiksi luoda pääavaimen ja sitten vara-avaimen siltä varalta, että pääavaimen luontiin käytetty laite (puhelin, tabletti, salasanojen hallintaohjelma, yms.) katoaa tai rikkoontuu."
+        step1:
+          title: "Vaihe 1"
+          type: "Avaimen tyyppi"
+          description_title: "Avaimen kuvaus"
+          description_help: "Kuvaus ei ole pakollinen, mutta jos lisäät useita tunnistusmenetelmiä, helpottaa se menetelmän erottamista muista. Hyviä kuvauksia ovat esimerkiksi \"Pääavain\" ja \"Vara-avain\". Tätä ei voi muuttaa jälkeenpäin, eikä se ole sama kuin TOTP-menetelmässä oleva otsikko (siinä lukee vain organisaation nimi)."
+        step2_totp:
+          title: "Vaihe 2/3"
+          qrhelp: "Skannaa alla oleva QR-koodi autentikaattorisovellukseen. Jos skannaus ei onnistu, syötä kuvan alla oleva kirjain- ja merkkisarja autentikaattorisovellukseen käsin (tällöin valitse algoritmiksi SHA1, numeroiden määräksi 6 ja aikaväliksi 30 sekuntia)."
+          qrhelp2: "Kun olet lisännyt koodin sovellukseen, klikkaa \"Seuraava\" tai paina Enter."
+        step2_yubikey:
+          title: "Vaihe 2/2"
+          help: "Syötä Yubikeyn tuottama avain alla olevaan tekstikenttään (kenttä on jo fokusoitu automaattisesti). Klikkaa sitten \"Vahvista\" tai paina Enter. Jos syöte on oikein, aktivoituu tunnistautuminen heti."
+          help: "Kiinnitä Yubikeysi koneeseen ja varmista että se toimii. Paina sitten avaimen päällä olevaa nappia syöttääksesi Yubikeyn tuottama koodi alla olevaan kenttään (kenttä on fokusoitu automaattisesti). Jos syöte on oikein, aktivoituu tunnistautuminen heti. Sinun ei tarvitse painaa \"Vahvista\" -nappia muuta kuin <em>jos</em> Yubikeysi ei simuloi Enterin painallusta koodin lopussa."
+        step3_totp:
+          title: "Vaihe 3/3"
+          verify_help: "Uusi TOTP-tunnistautuminen on vielä vahvistettava ennenkuin se tulee käyttöön. Syötä alla olevaan laatikkoon autentikaattorisovelluksen näyttämä kuusinumeroinen koodi ja paina \"Vahvista\" (tai paina Enter). Jos koodi on oikein, otetaan tunnistautuminen käyttöön."
+      existing:
+        title: "Aktivoidut kaksivaiheiset tunnistautumismenetelmät"
+        no_mfas: "Sinulla ei ole yhtään monivaiheista tunnistautumismenetelmää käytössäsi."
+        table:
+          created: "luotu"
+          verified: "vahvistettu"
+          last_used: "viimeksi käytetty"
+          never_used: "avainta ei ole käytetty koskaan"
+      recovery:
+        title: "Palautusavaimet"
+        no_keys: "Sinulla ei ole palautusavaimia. On suositeltavaa, että luot ne."
+        have_keys: "Sinulla on palautusavaimia."
+        list_disclaimer: "Nämä koodit ovat kertakäyttöisiä, ja tarkoitettu käytettäväksi vain jos muita autentikointimenetelmiä ei voi käyttää. Säilö ne johonkin turvalliseen paikkaan (muista: jos et pääse käsiksi tunnukseesi, et myöskään pääse käsiksi tähän listaan)."
+        confirm_new: "Oletko varma? Uusien palautusavaimen luonti tuhoaa vanhat avaimet!"
+      buttons:
+        add_new: "Lisää uusi"
+        verify: "Vahvista"
+        cancel: "Keskeytä"
+        previous: "Edellinen"
+        next: "Seuraava"
+        remove: "Poista"
+        list_keys: "Näytä nykyiset avaimet"
+        create_keys: "Luo uudet palautusavaimet"
+        delete_keys: "Poista kaikki palaustusavaimet"
+      errors:
+        # These are generated on the client
+        generic: "Palvelimeen ei saada yhteyttä. Yritä hetken kuluttua uudelleen. Jos ongelma toistuu, ota yhteys tukeen."
+        totp_code_incorrect: "Koodi ei ollut oikein."
+        code_partially_verified: "Koodi oli oikein, mutta listaa käytössä olevista autentikointimenetelmistä ei voitu päivittää. Ole hyvä ja lataa sivu uudelleen käsin."
+        yubikey_input_incorrect: "Yubikey-syöte ei ollut kunnollinen."
+        key_deleted_but_not_updated: "Avain poistettiin, mutta listaa käytössä olevista autentikointimenetelmistä ei voitu päivittää. Ole hyvä ja lataa sivu uudelleen käsin."
+    server:
+      errors:
+        # These are generated on the server
+        missing_required_data: "Tunnuksestasi puuttuu tieto jota monivaiheinen kirjautuminen tarvitsee toimiakseen. Ole hyvä, ja ota yhteys tukeen ja anna heille tämä koodi: %{request_id}."
+        mfa_server_not_responding: "Vahvistuspalvelimeen ei saatu yhteyttä. Yritä hetken kuluttua uudelleen. Jos ongelma toistuu, ota yhteys tukeen ja anna heille tämä koodi: %{request_id}."
+        unknown_server_error: "Tuntematon palvelinvirhe. Yritä hetken kuluttua uudelleen. Jos ongelma toistuu, ota yhteys tukeen ja anna heille tämä koodi: %{request_id}."
+        unknown_key_type: "Tuntematon avaintyyppi. Ota yhteys tukeen ja anna heille tämä koodi: %{request_id}."
+        qr_code_generation_failed: "QR-koodin luonti epäonnistui. Yritä uudelleen hetken kuluttua. Jos ongelma toistuu, ota yhteys tukeen ja anna heille tämä koodi: %{request_id}."
+        invalid_key: "Avaimen ID on virheellinen. Yritä uudelleen. Jos ongelma toistuu, ota yhteys tukeen ja anna heille tämä koodi: %{request_id}."
+        yubikey_already_in_use: "Tämä Yubikey on jo käytössä. Et voi lisätä sitä uudelleen. Jos haluat monta Yubikey-autentikointia, joudut käyttämään montaa fyysistä avainta."
+        mfa_activation_error: "Tunnistautumismenetelmä lisättiin, mutta kaksivaiheisen kirjautumisen aktivointi ei onnistunut. Ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi: %{request_id}."
+        mfa_deactivation_error: "Viimeinen tunnistautumismenetelmä poistettiin, mutta kaksivaiheisen kirjautumisen deaktivointi ei onnistunut. Ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi: %{request_id}."
+
   # Used by script/create_organisation_owner
   create_organisation_owner:
     school_name: Hallinto
