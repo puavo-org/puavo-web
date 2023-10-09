@@ -1178,6 +1178,9 @@ class Users < PuavoSinatra
     parameters.delete('verified_email')
     parameters.delete('primary_email')
 
+    # You're unlikely to have write access to this attribute anyway
+    parameters.delete('mfa_enabled')
+
     user.update!(parameters)
     user.save!
     json user
