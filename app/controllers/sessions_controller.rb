@@ -48,6 +48,7 @@ class SessionsController < ApplicationController
   def create
     session[:uid] = params[:username]
     session[:password_plaintext] = params[:password]
+
     redirect_back_or_default  rack_mount_point
   end
 
@@ -64,14 +65,17 @@ class SessionsController < ApplicationController
     end
   end
 
-  def destroy
+  def purge_session
     # Remove dn and plaintext password values from session
     session.delete :password_plaintext
     session.delete :uid
 
     # Forget language changes
     session.delete :user_locale
+  end
 
+  def destroy
+    purge_session
     redirect_to login_path
   end
 
