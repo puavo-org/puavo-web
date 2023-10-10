@@ -57,7 +57,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  puavo-client,
  ruby,
  ruby-bundler,
- ruby-ldap
+ ruby-ldap,
+ qrencode
 Description: Puavo Rails application core
  The actual code for the application
  .
