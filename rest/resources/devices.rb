@@ -345,7 +345,6 @@ class Device < Host
     extend_puavoconf('puavo.autopoweroff.daytime_end_hour',
                      daytime_end_hour)
     extend_puavoconf('puavo.guestlogin.enabled', allow_guest)
-    extend_puavoconf('puavo.l10n.locale', locale)
     extend_puavoconf('puavo.mounts.extramounts',
                      mountpoints,
                      lambda { |v| v.to_json })

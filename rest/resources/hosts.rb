@@ -30,6 +30,7 @@ class Host < LdapModel
   ldap_map :puavoKeyboardVariant, :keyboard_variant
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
   ldap_map :puavoTimezone, :timezone
+  ldap_map :puavoLocale, :locale
 
   ldap_map :serialNumber, :serial_number
   ldap_map :puavoDeviceManufacturer, :manufacturer
@@ -148,6 +149,7 @@ class Host < LdapModel
                      lambda { |v| v.to_json })
     extend_puavoconf('puavo.kernel.arguments', kernel_arguments)
     extend_puavoconf('puavo.kernel.version',   kernel_version)
+    extend_puavoconf('puavo.l10n.locale',      locale)
     extend_puavoconf('puavo.time.timezone',    timezone)
 
     return @extended_puavoconf

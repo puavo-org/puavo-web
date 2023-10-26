@@ -60,6 +60,14 @@ class BootServer < Host
       .merge(get_own(:puavoconf) || {})
   end
 
+  def locale
+    get_own(:locale) || organisation.locale
+  end
+
+  def timezone
+    get_own(:timezone) || organisation.timezone
+  end
+
   def schools
     self["school_dns"].map do |school_dn|
       School.by_dn(school_dn)
