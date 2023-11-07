@@ -79,3 +79,7 @@
   </li>
 </ul>
 <% end %>
+
+<% content_for :javascript do %>
+<%= render partial: 'shared/copy_basic_info.js', locals: { device: @device} %>
+<% end %>

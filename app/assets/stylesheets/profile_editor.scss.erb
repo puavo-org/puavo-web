@@ -30,125 +30,54 @@ a:focus {
   color: var(--content-foreground);
 }
 
-/*
-@media (max-width: 1400px) {
-  #outerWrapper {
-    width: 80%;
-    max-width: none;
-    min-width: 640px;
-  }
-}
-
-@media (max-width: 1300px) {
-  #outerWrapper {
-    width: 85%;
-    max-width: none;
-    min-width: 640px;
-  }
-}
-
-@media (max-width: 1200px) {
-  #outerWrapper {
-    width: 90%;
-    max-width: none;
-    min-width: 640px;
-  }
-}
-
-@media (max-width: 1000px) {
-  #outerWrapper {
-    width: 95%;
-    max-width: none;
-    min-width: 640px;
-    box-shadow: none;
-  }
-}
-*/
-
-/*
-Outline schematic:
-
- +-form------------------------------------------------------------------+
- | +-#upper------------------------------------------------------------+ |
- | | +-#left------------+-#right-------------------------------------+ | |
- | | |                  |                                            | | |
- | | |    User avatar   |          Profile editor                    | | |
- | | |                  |                                            | | |
- | | +------------------+--------------------------------------------+ | |
- | +-------------------------------------------------------------------+ |
- | +-#lower------------------------------------------------------------+ |
- | |                                 Button(s)                         | |
- | +-------------------------------------------------------------------+ |
- +-----------------------------------------------------------------------+
-
-- the form element and #upperWrapper are flexbox containers
-- #upper, #lower, #left and #right are flexbox items
-
-*/
-
 form {
+  font-size: 90%;
+}
+
+#editor {
   display: flex;
   flex-direction: column;
+  gap: 30px;
+  margin-bottom: 70px;
 }
 
-#upper {
-  display: flex;
-  flex-direction: rows;
-  gap: 10px;
-}
-
-#lower {
+#buttons {
+  background: var(--page-background);
   text-align: center;
+  position: fixed;
+  bottom: 0;
+  margin: 0 auto;
+  padding: 20px 0 10px 0;
+  width: 750px;
 }
 
-#left {
-  width: 220px;
-  min-width: 220px;
-  max-width: 220px;
-  text-align: center;
-}
-
-#left img {
-  min-width: 128px;
-  max-width: 200px;
-}
-
-#right {
-  flex-grow: 2;
+section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 5px;
 }
 
-#right p {
-  display: block;
-  margin: 0;
-  padding: 0;
-}
-
-.userInfo {
+header {
   color: var(--service-foreground);
   background: var(--service-background);
   border: 1px solid var(--service-border);
   padding: 0.5em;
   text-align: center;
+  box-shadow: 5px 5px 5px var(--header-shadow);
 }
 
-.userName {
-  font-size: 150%;
-  font-weight: bold;
+header h1, header h2 {
+  margin: 0;
+  padding: 0;
 }
 
-.userSchool {
-  font-size: 120%;
-  font-weight: bold;
-  font-style: italic;
-}
-
-label {
+label.label {
   display: block;
   font-weight: bold;
-  margin-bottom: 0.5em;
+}
+
+p {
+  margin: 0.5em 0;
 }
 
 input[type="text"] {
@@ -161,7 +90,7 @@ select {
   border: none;
   border: 1px solid var(--input-border);
   margin: 0;
-  padding: 0.35em;
+  padding: 0.5em;
   border-radius: 3px;
   flex-grow: 2;
   font-size: 90%;
@@ -172,24 +101,172 @@ select:focus {
   border-color: var(--input-border-active);
 }
 
-input, select, .automaticEmail {
-  margin-left: 2em;
-  width: calc(100% - 2em);
+input[type="text"],
+input[type="submit"],
+select,
+.automaticEmail {
+  width: 100%;
 }
 
-input {
+input[type="text"] {
   padding: 0.5em;
 }
 
-.automaticEmail {
-  font-size: 90%;
+*:disabled {
+  cursor: not-allowed;
 }
 
+
+/*
+-----------------------------------------------------------------------------------------------------
+EMAIL ADDRESSES
+-----------------------------------------------------------------------------------------------------
+*/
+
+/* Wrapper DIV for all email addresses */
+div#emails {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.automaticEmail {
+  margin-left: 1em;
+}
+
+/* The current email addresses table */
+.emails {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid var(--generic-border);
+}
+
+.emails button {
+  padding: 5px 10px;
+}
+
+.emails button:disabled {
+  opacity: var(--emails-disabled-opacity);
+}
+
+.emails tr {
+  border: 1px solid var(--generic-border);
+  height: 3em;
+}
+
+.emails tr:hover {
+  background: var(--emails-hover-background);
+  color: var(--emails-hover-foreground);
+}
+
+.emails tr.removed {
+  text-decoration: line-through;
+}
+
+.emails td {
+  padding: 5px;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.emails td.verification {
+  width: 250px;
+}
+
+.emails td.verification span {
+  color: var(--emails-verified);
+}
+
+.emails td.verification button,
+.emails td.verification button:disabled,
+.emails td.verification button:disabled:hover,
+.emails td.verification button:disabled:active {
+  background: var(--emails-verify-button-background);
+  color: var(--emails-verify-button-foreground);
+  border: 1px solid var(--emails-verify-button-border);
+}
+
+.emails td.verification button:hover {
+  background: var(--emails-verify-button-background-hover);
+}
+
+.emails td.verification button:active {
+  background: var(--emails-verify-button-background-active);
+}
+
+.emails td.deletion {
+  width: 130px;
+  text-align: right;
+}
+
+.emails td.deletion button,
+.emails td.deletion button:disabled,
+.emails td.deletion button:disabled:hover,
+.emails td.deletion button:disabled:active {
+  background: var(--emails-delete-button-background);
+  color: var(--emails-delete-button-foreground);
+  border: 1px solid var(--emails-delete-button-border);
+}
+
+.emails td.deletion button:hover {
+  background: var(--emails-delete-button-background-hover);
+}
+
+.emails td.deletion button:active {
+  background: var(--emails-delete-button-background-active);
+}
+
+div#newRow { }
+
+div#newRow input {
+  width: 75%;
+}
+
+div#newRow button {
+  display: inline-block;
+  width: 25%;
+  padding: 0;
+}
+
+/* The error message below the new email address input row */
+div#emailError {
+  background: var(--message-alert-background);
+  border: 1px solid var(--message-alert-border);
+  padding: 5px;
+  margin-top: 5px;
+}
+
+/*
+-----------------------------------------------------------------------------------------------------
+PROFILE IMAGE
+-----------------------------------------------------------------------------------------------------
+*/
+
+div#photo {
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
+  height: 140px;
+  min-height: 140px;
+  max-height: 140px;
+  text-align: center;
+}
+
+div#photo img {
+  max-width: 120px;
+  max-height: 120px;
+}
+
+/*
+-----------------------------------------------------------------------------------------------------
+MISCELLANEOUS
+-----------------------------------------------------------------------------------------------------
+*/
+
 .notice {
-  margin-left: 2em;
-  padding-top: 5px;
-  font-size: 80%;
-  color: #f0f;
+  background: var(--automatic-emails-background);
+  border: 1px solid var(--automatic-emails-border);
+  padding: 5px;
 }
 
 #lower input, #lower button {

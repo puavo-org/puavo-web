@@ -1,101 +1,205 @@
+function doStorage(value)
+{
+    return [(value / 1048576).toFixed(0), value];
+}
+
+function doImage(image)
+{
+    let display = "",
+        value = image.file,
+        filter = "";
+
+    if (image.release) {
+        // Display the release name nicely
+        display = `${image.file} <span class="releaseName">(${image.release})</span>`;
+        filter = `${image.file} (${image.release})`;
+    } else {
+        display = image.file;
+        filter = image.file;
+    }
+
+    return [display, value, filter];
+}
+
+function doTimestamp(value)
+{
+    const ts = ST.convertTimestamp(value, true);
+
+    return [
+        ts[0] === true ? ts[1] : "?",
+        value
+    ];
+}
+
+function formatUptime(seconds)
+{
+    let parts = [];
+
+    // Days
+    if (seconds >= 86400) {
+        const d = Math.floor(seconds / 86400);
+
+        parts.push(`${d}d`);
+        seconds -= d * 86400;
+    }
+
+    // Hours
+    if (seconds >= 3600) {
+        const h = Math.floor(seconds / 3600);
+
+        parts.push(`${h}h`);
+        seconds -= h * 3600;
+    }
+
+    // Minutes
+    if (seconds >= 60) {
+        const m = Math.floor(seconds / 60);
+
+        parts.push(`${m}m`);
+        seconds -= m * 60;
+    }
+
+    // Seconds (avoid adding "0s" to the end, unless there are no other parts)
+    if (seconds > 0 || parts.length == 0)
+        parts.push(`${seconds}s`);
+
+    return parts.join(', ');
+}
+
 // Table column definitions
 const COLUMN_DEFINITIONS = {
     abitti_version: {
         key: "abitti_version",
+        title: "<%= t('columns.devices.abitti_version') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => [entry.abitti_version, entry.abitti_version, entry.abitti_version],
     },
 
     allow_guest: {
         key: "allow_guest",
+        title: "<%= t('columns.devices.allow_guest') %>",
         type: ST.ColumnType.BOOL,
     },
 
     audio_sink: {
         key: "audio_sink",
+        title: "<%= t('columns.devices.audio_sink') %>",
         type: ST.ColumnType.STRING,
         export_name: "audio_out",
     },
 
     audio_src: {
         key: "audio_src",
+        title: "<%= t('columns.devices.audio_src') %>",
         type: ST.ColumnType.STRING,
         export_name: "audio_in",
     },
 
     auto_updates: {
         key: "auto_updates",
+        title: "<%= t('columns.devices.auto_updates') %>",
         type: ST.ColumnType.BOOL,
     },
 
     autopower_mode: {
         key: "autopower_mode",
+        title: "<%= t('columns.devices.autopower_mode') %>",
         type: ST.ColumnType.STRING,
     },
 
     autopower_on: {
         key: "autopower_on",
+        title: "<%= t('columns.devices.autopower_on') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     autopower_off: {
         key: "autopower_off",
+        title: "<%= t('columns.devices.autopower_off') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
 <% if @is_servers %>
     available_images: {
         key: "available_images",
+        title: "<%= t('columns.servers.available_images') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let display = [],
+                value = [],
+                filter = [];
+
+            for (const i of entry.available_images) {
+                if (i.release) {
+                    display.push(`${i.file} <span class="releaseName">(${i.release})</span>`);
+                    filter.push(`${i.file} ${i.release}`);
+                } else {
+                    display.push(i.file);
+                    filter.push(i.file);
+                }
+
+                value.push(i.file);
+            }
+
+            return [display.join('<br>'), value.join(','), filter.join(',')];
+        },
     },
 <% end %>
 
     bat_cap: {
         key: "bat_cap",
+        title: "<%= t('columns.devices.bat_cap') %>",
         type: ST.ColumnType.NUMERIC,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     bat_pcnt: {
         key: "bat_pcnt",
+        title: "<%= t('columns.devices.bat_pcnt') %>",
         type: ST.ColumnType.NUMERIC,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     bat_volts: {
         key: "bat_volts",
+        title: "<%= t('columns.devices.bat_volts') %>",
         type: ST.ColumnType.NUMERIC,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     bat_serial: {
         key: "bat_serial",
+        title: "<%= t('columns.devices.bat_serial') %>",
         type: ST.ColumnType.STRING,
     },
 
     bat_vendor: {
         key: "bat_vendor",
+        title: "<%= t('columns.devices.bat_vendor') %>",
         type: ST.ColumnType.STRING,
     },
 
     bios_date: {
         key: "bios_date",
+        title: "<%= t('columns.devices.bios_date') %>",
         type: ST.ColumnType.STRING,
     },
 
     bios_vendor: {
         key: "bios_vendor",
+        title: "<%= t('columns.devices.bios_vendor') %>",
         type: ST.ColumnType.STRING,
     },
 
     bios_version: {
         key: "bios_version",
+        title: "<%= t('columns.devices.bios_version') %>",
         type: ST.ColumnType.STRING,
     },
 
     conf: {
         key: "conf",
+        title: "<%= t('columns.puavoconf') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
         alias: ["puavo_conf", "puavoconf"],
@@ -104,112 +208,150 @@ const COLUMN_DEFINITIONS = {
 
     cpu: {
         key: "cpu",
+        title: "<%= t('columns.devices.cpu') %>",
         type: ST.ColumnType.STRING,
     },
 
     created: {
         key: "created",
+        title: "<%= t('columns.created') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     current_image: {
         key: "current_image",
+        title: "<%= t('columns.devices.current_image') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => doImage(entry.current_image),
     },
 
     default_printer: {
         key: "default_printer",
+        title: "<%= t('columns.devices.default_printer') %>",
         type: ST.ColumnType.STRING,
     },
 
     desc: {
         key: "desc",
+        title: "<%= t('columns.devices.description') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => [ST.escapeHTML(entry.desc), entry.desc],
         alias: ["description"],
     },
 
     df_home: {
         key: "df_home",
+        title: "<%= t('columns.devices.df_home') %>",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.df_home),
     },
 
     df_images: {
         key: "df_images",
+        title: "<%= t('columns.devices.df_images') %>",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.df_images),
     },
 
     df_state: {
         key: "df_state",
+        title: "<%= t('columns.devices.df_state') %>",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.df_state),
     },
 
     df_tmp: {
         key: "df_tmp",
+        title: "<%= t('columns.devices.df_tmp') %>",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.df_tmp),
     },
 
     df_imageoverlays: {
         key: "df_imageoverlays",
+        title: "<%= t('columns.devices.df_imageoverlays') %>",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.df_imageoverlays),
     },
 
     hd: {
         key: "hd",
+        title: "<%= t('columns.devices.hwinfo_hd_size') %>",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.hd),
         alias: ["hard_drive"],
     },
 
     hd_ssd: {
         key: "hd_ssd",
+        title: "<%= t('columns.devices.hwinfo_is_ssd') %>",
         type: ST.ColumnType.BOOL,
     },
 
     hn: {
         key: "hn",
+        title: "<%= t('columns.devices.hostname') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let extra = "";
+
+<% unless @is_servers %>
+            if (entry.reset_from)
+                extra = ` <i class="icon-attention iconError" title="<%= t('devices.index.pending_reset') %>"></i>`;
+<% end %>
+
+            return [
+                `<a href="${entry.link}">${ST.escapeHTML(entry.hn)}</a>${extra}`,
+                entry.hn
+            ];
+        },
         alias: ["hostname"],
         export_name: "hostname",
     },
 
     hw_time: {
         key: "hw_time",
+        title: "<%= t('columns.devices.hwinfo_time') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     have_smart: {
         key: "have_smart",
+        title: "<%= t('columns.devices.have_smart') %>",
         type: ST.ColumnType.BOOL,
     },
 
     id: {
         key: "id",
+        title: "<%= t('columns.puavoid') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     image: {
         key: "image",
+        title: "<%= t('columns.devices.image') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => doImage(entry.image),
     },
 
     image_series: {
         key: "image_series",
+        title: "<%= t('columns.devices.image_series') %>",
         type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
     },
 
     krn_args: {
         key: "krn_args",
+        title: "<%= t('columns.devices.kernel_args') %>",
         type: ST.ColumnType.STRING,
         alias: ["kernel_args"],
         export_name: "kernel_args",
@@ -217,6 +359,7 @@ const COLUMN_DEFINITIONS = {
 
     krn_ver: {
         key: "krn_ver",
+        title: "<%= t('columns.devices.kernel_version') %>",
         type: ST.ColumnType.STRING,
         alias: ["kernel_version"],
         export_name: "kernel_version",
@@ -224,51 +367,60 @@ const COLUMN_DEFINITIONS = {
 
     ll_uid: {
         key: "ll_uid",
+        title: "<%= t('columns.devices.last_login_uid') %>",
         type: ST.ColumnType.STRING,
     },
 
     ll_time: {
         key: "ll_time",
+        title: "<%= t('columns.devices.last_login_time') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     location: {
         key: "location",
+        title: "<%= t('columns.devices.location') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 
     loc_lat: {
         key: "loc_lat",
+        title: "<%= t('columns.devices.loc_lat') %>",
         type: ST.ColumnType.STRING,
     },
 
     loc_lon: {
         key: "loc_lon",
+        title: "<%= t('columns.devices.loc_lon') %>",
         type: ST.ColumnType.STRING,
     },
 
     lspci: {
         key: "lspci",
+        title: "<%= t('columns.devices.lspci') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 
     lsusb: {
         key: "lsusb",
+        title: "<%= t('columns.devices.lsusb') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 
     mac: {
         key: "mac",
+        title: "<%= t('columns.devices.mac') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 
     mfer: {
         key: "mfer",
+        title: "<%= t('columns.devices.manufacturer') %>",
         type: ST.ColumnType.STRING,
         alias: ["manufacturer"],
         export_name: "manufacturer",
@@ -276,241 +428,239 @@ const COLUMN_DEFINITIONS = {
 
     model: {
         key: "model",
+        title: "<%= t('columns.devices.model') %>",
         type: ST.ColumnType.STRING,
     },
 
     modified: {
         key: "modified",
+        title: "<%= t('columns.modified') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     monitors_xml: {
         key: "monitors_xml",
+        title: "<%= t('columns.devices.monitors_xml') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            // It's actually XML, but HTML escaping can handle it
+            return ["<pre>" + ST.escapeHTML(entry.monitors_xml[0]) + "</pre>", entry.monitors_xml];
+        },
     },
 
 <% if @is_organisation %>
     school: {
         key: "school",
+        title: "<%= t('columns.school') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            // Makes filtering by school name work as expected, but the exported CSV
+            // will contain display names. Can't have everything.
+            return [
+                entry.school[1],
+                entry.school[1]
+            ];
+        }
     },
 <% end %>
 
 <% if @is_servers %>
     schools: {
         key: "schools",
+        title: "<%= t('columns.servers.schools') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let display = [],
+                value = [];
+
+            for (const sch of entry.schools) {
+                if (sch.valid) {
+                    display.push(`<a href="${sch.link}">${sch.title}</a>`);
+                    value.push(sch.title);
+                } else {
+                    display.push(`<span class="missingData">${sch.dn}</span>`);
+                    value.push('?');
+                }
+            }
+
+            return [display.join("<br>"), value.join(','), value.join(',')];
+        },
     },
 <% end %>
 
     user: {
         key: "user",
+        title: "<%= t('columns.devices.primary_user') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            if (entry.user.valid) {
+                return [
+                    `<a href="${entry.user.link}">${entry.user.title}</a>`,
+                    entry.user.title,
+                    entry.user.title
+                ]
+            } else {
+                return [
+                    `<span class="missingData">${entry.user.dn}</span>`,
+                    entry.user.dn,
+                    entry.user.dn
+                ]
+            }
+        },
     },
 
     personal_admin: {
         key: "personal_admin",
+        title: "<%= t('columns.devices.personal_admin') %>",
         type: ST.ColumnType.BOOL,
         export_name: "personally_administered",
     },
 
     personal_device: {
         key: "personal_device",
+        title: "<%= t('columns.devices.personal_device') %>",
         type: ST.ColumnType.BOOL,
     },
 
     printer_uri: {
         key: "printer_uri",
+        title: "<%= t('columns.devices.printer_uri') %>",
         type: ST.ColumnType.STRING,
     },
 
     purchase_date: {
         key: "purchase_date",
+        title: "<%= t('columns.devices.purchase_date') %>",
         type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => doTimestamp(entry.purchase_date),
     },
 
     purchase_loc: {
         key: "purchase_loc",
+        title: "<%= t('columns.devices.purchase_loc') %>",
         type: ST.ColumnType.STRING,
     },
 
     purchase_support: {
         key: "purchase_support",
+        title: "<%= t('columns.devices.purchase_support') %>",
         type: ST.ColumnType.STRING,
         export_name: "support_contract",
     },
 
     purchase_url: {
         key: "purchase_url",
+        title: "<%= t('columns.devices.purchase_url') %>",
         type: ST.ColumnType.STRING,
     },
 
     purchase_warranty: {
         key: "purchase_warranty",
+        title: "<%= t('columns.devices.purchase_warranty') %>",
         type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => doTimestamp(entry.purchase_warranty),
         export_name: "warranty_ends",
     },
 
     ram: {
         key: "ram",
+        title: "<%= t('columns.devices.hwinfo_ram_size') %>",
         type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        transform: entry => doStorage(entry.ram),
     },
 
 <% unless @is_servers %>
     reset_from: {
         key: "reset_from",
+        title: "<%= t('columns.devices.reset_from') %>",
         type: ST.ColumnType.STRING,
     },
 
     reset_operation: {
         key: "reset_operation",
+        title: "<%= t('columns.devices.reset_operation') %>",
         type: ST.ColumnType.STRING,
     },
 
     reset_pin: {
         key: "reset_pin",
+        title: "<%= t('columns.devices.reset_pin') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     reset_time: {
         key: "reset_time",
+        title: "<%= t('columns.devices.reset_time') %>",
         type: ST.ColumnType.UNIXTIME,
     },
 <% end %>
 
     serial: {
         key: "serial",
+        title: "<%= t('columns.devices.serial') %>",
         type: ST.ColumnType.STRING,
     },
 
     status: {
         key: "status",
+        title: "<%= t('columns.devices.status') %>",
         type: ST.ColumnType.STRING,
     },
 
     tags: {
         key: "tags",
+        title: "<%= t('columns.devices.tags') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 
     type: {
         key: "type",
+        title: "<%= t('columns.devices.type') %>",
         type: ST.ColumnType.STRING,
+    },
+
+    uptime: {
+        key: "uptime",
+        title: "<%= t('columns.devices.uptime') %>",
+        type: ST.ColumnType.NUMERIC,
+        transform: entry => {
+            return [`${entry.uptime} (${formatUptime(entry.uptime)})`, entry.uptime, entry.uptime];
+        },
     },
 
     wifi: {
         key: "wifi",
+        title: "<%= t('columns.devices.wifi') %>",
         type: ST.ColumnType.STRING,
     },
 
     windows_license: {
         key: "windows_license",
+        title: "<%= t('columns.devices.has_windows_license') %>",
+        type: ST.ColumnType.BOOL,
+    },
+
+    windows_installed: {
+        key: "windows_installed",
+        title: "<%= t('columns.devices.windows_installed') %>",
         type: ST.ColumnType.BOOL,
     },
 
     xrandr: {
         key: "xrandr",
+        title: "<%= t('columns.devices.xrandr') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 
     xserver: {
         key: "xserver",
+        title: "<%= t('columns.devices.xserver') %>",
         type: ST.ColumnType.STRING,
     },
-};
-
-// Localized column titles
-const COLUMN_TITLES = {
-    abitti_version: "<%= t('columns.devices.abitti_version') %>",
-    allow_guest: "<%= t('columns.devices.allow_guest') %>",
-    audio_sink: "<%= t('columns.devices.audio_sink') %>",
-    audio_src: "<%= t('columns.devices.audio_src') %>",
-    auto_updates: "<%= t('columns.devices.auto_updates') %>",
-    autopower_mode: "<%= t('columns.devices.autopower_mode') %>",
-    autopower_on: "<%= t('columns.devices.autopower_on') %>",
-    autopower_off: "<%= t('columns.devices.autopower_off') %>",
-    available_images: "<%= t('columns.servers.available_images') %>",
-    bat_cap: "<%= t('columns.devices.bat_cap') %>",
-    bat_pcnt: "<%= t('columns.devices.bat_pcnt') %>",
-    bat_volts: "<%= t('columns.devices.bat_volts') %>",
-    bat_serial: "<%= t('columns.devices.bat_serial') %>",
-    bat_vendor: "<%= t('columns.devices.bat_vendor') %>",
-    bios_date: "<%= t('columns.devices.bios_date') %>",
-    bios_vendor: "<%= t('columns.devices.bios_vendor') %>",
-    bios_version: "<%= t('columns.devices.bios_version') %>",
-    conf: "<%= t('columns.puavoconf') %>",
-    cpu: "<%= t('columns.devices.cpu') %>",
-    created: "<%= t('columns.created') %>",
-    current_image: "<%= t('columns.devices.current_image') %>",
-    default_printer: "<%= t('columns.devices.default_printer') %>",
-    desc: "<%= t('columns.devices.description') %>",
-    df_home: "<%= t('columns.devices.df_home') %>",
-    df_images: "<%= t('columns.devices.df_images') %>",
-    df_state: "<%= t('columns.devices.df_state') %>",
-    df_tmp: "<%= t('columns.devices.df_tmp') %>",
-    df_imageoverlays: "<%= t('columns.devices.df_imageoverlays') %>",
-    have_smart: "<%= t('columns.devices.have_smart') %>",
-    hd: "<%= t('columns.devices.hwinfo_hd_size') %>",
-    hd_ssd: "<%= t('columns.devices.hwinfo_is_ssd') %>",
-    hn: "<%= t('columns.devices.hostname') %>",
-    hw_time: "<%= t('columns.devices.hwinfo_time') %>",
-    id: "<%= t('columns.puavoid') %>",
-    image: "<%= t('columns.devices.image') %>",
-    image_series: "<%= t('columns.devices.image_series') %>",
-    krn_args: "<%= t('columns.devices.kernel_args') %>",
-    krn_ver: "<%= t('columns.devices.kernel_version') %>",
-    ll_uid: "<%= t('columns.devices.last_login_uid') %>",
-    ll_time: "<%= t('columns.devices.last_login_time') %>",
-    location: "<%= t('columns.devices.location') %>",
-    loc_lat: "<%= t('columns.devices.loc_lat') %>",
-    loc_lon: "<%= t('columns.devices.loc_lon') %>",
-    lspci: "<%= t('columns.devices.lspci') %>",
-    lsusb: "<%= t('columns.devices.lsusb') %>",
-    mac: "<%= t('columns.devices.mac') %>",
-    mfer: "<%= t('columns.devices.manufacturer') %>",
-    model: "<%= t('columns.devices.model') %>",
-    modified: "<%= t('columns.modified') %>",
-    monitors_xml: "<%= t('columns.devices.monitors_xml') %>",
-<% if @is_organisation %>
-    school: "<%= t('columns.school') %>",
-<% end %>
-<% if @is_servers %>
-    schools: "<%= t('columns.servers.schools') %>",
-<% end %>
-    status: "<%= t('columns.devices.status') %>",
-    user: "<%= t('columns.devices.primary_user') %>",
-    personal_admin: "<%= t('columns.devices.personal_admin') %>",
-    personal_device: "<%= t('columns.devices.personal_device') %>",
-    printer_uri: "<%= t('columns.devices.printer_uri') %>",
-    purchase_date: "<%= t('columns.devices.purchase_date') %>",
-    purchase_loc: "<%= t('columns.devices.purchase_loc') %>",
-    purchase_support: "<%= t('columns.devices.purchase_support') %>",
-    purchase_url: "<%= t('columns.devices.purchase_url') %>",
-    purchase_warranty: "<%= t('columns.devices.purchase_warranty') %>",
-    ram: "<%= t('columns.devices.hwinfo_ram_size') %>",
-<% unless @is_servers %>
-    reset_from: "<%= t('columns.devices.reset_from') %>",
-    reset_operation: "<%= t('columns.devices.reset_operation') %>",
-    reset_pin: "<%= t('columns.devices.reset_pin') %>",
-    reset_time: "<%= t('columns.devices.reset_time') %>",
-<% end %>
-    serial: "<%= t('columns.devices.serial') %>",
-    tags: "<%= t('columns.devices.tags') %>",
-    type: "<%= t('columns.devices.type') %>",
-    wifi: "<%= t('columns.devices.wifi') %>",
-    windows_license: "<%= t('columns.devices.has_windows_license') %>",
-    xrandr: "<%= t('columns.devices.xrandr') %>",
-    xserver: "<%= t('columns.devices.xserver') %>",
 };
 
 // The default order for columns
@@ -575,6 +725,7 @@ const COLUMN_ORDER = [
     "lsusb",
     "abitti_version",
     "windows_license",
+    "windows_installed",
     "purchase_date",
     "purchase_warranty",
     "purchase_loc",
@@ -604,185 +755,8 @@ const COLUMN_ORDER = [
 <% end %>
     "ll_uid",
     "ll_time",
+    "uptime",
 ];
-
-function doStorage(value)
-{
-    return [(value / 1048576).toFixed(0), value];
-}
-
-function doImage(image)
-{
-    let display = "",
-        value = image.file,
-        filter = "";
-
-    if (image.release) {
-        // Display the release name nicely
-        display = `${image.file} <span class="releaseName">(${image.release})</span>`;
-        filter = `${image.file} (${image.release})`;
-    } else {
-        display = image.file;
-        filter = image.file;
-    }
-
-    return [display, value, filter];
-}
-
-const USER_TRANSFORM_FUNCTIONS = {
-    abitti_version: function(entry) {
-        const v = entry.abitti_version;
-        return [v, v, v];
-    },
-
-<% if @is_servers %>
-    available_images: function(entry) {
-        let display = [],
-            value = [],
-            filter = [];
-
-        for (const i of entry.available_images) {
-            if (i.release) {
-                display.push(`${i.file} <span class="releaseName">(${i.release})</span>`);
-                filter.push(`${i.file} ${i.release}`);
-            } else {
-                display.push(i.file);
-                filter.push(i.file);
-            }
-
-            value.push(i.file);
-        }
-
-        return [display.join('<br>'), value.join(','), filter.join(',')];
-    },
-<% end %>
-
-    ram: function(entry) {
-        return doStorage(entry.ram);
-    },
-
-    hd: function(entry) {
-        return doStorage(entry.hd);
-    },
-
-    df_home: function(entry) {
-        return doStorage(entry.df_home);
-    },
-
-    df_state: function(entry) {
-        return doStorage(entry.df_state);
-    },
-
-    df_images: function(entry) {
-        return doStorage(entry.df_images);
-    },
-
-    df_tmp: function(entry) {
-        return doStorage(entry.df_tmp);
-    },
-
-    df_imageoverlays: function(entry) {
-        return doStorage(entry.df_imageoverlays);
-    },
-
-    current_image: function(entry) {
-        return doImage(entry.current_image);
-    },
-
-    desc: function(entry) {
-        return [
-            ST.escapeHTML(entry.desc),
-            entry.desc,
-        ]
-    },
-
-    hn: function(entry) {
-        let extra = "";
-
-<% unless @is_servers %>
-        if (entry.reset_from)
-            extra = ` <i class="icon-attention iconError" title="<%= t('devices.index.pending_reset') %>"></i>`;
-<% end %>
-
-        return [
-            `<a href="${entry.link}">${ST.escapeHTML(entry.hn)}</a>${extra}`,
-            entry.hn
-        ];
-    },
-
-    image: function(entry) {
-        return doImage(entry.image);
-    },
-
-    purchase_date: function(entry) {
-        //const ts = convertTimestampDateOnly(entry.purchase_date);
-        const ts = ST.convertTimestamp(entry.purchase_date, true);
-
-        return [
-            ts[0] === true ? ts[1] : "?",
-            entry.purchase_date
-        ];
-    },
-
-    purchase_warranty: function(entry) {
-        //const ts = convertTimestampDateOnly(entry.purchase_warranty);
-        const ts = ST.convertTimestamp(entry.purchase_warranty, true);
-
-        return [
-            ts[0] === true ? ts[1] : "?",
-            entry.purchase_warranty
-        ];
-    },
-
-    school: function(entry) {
-        // Makes filtering by school name work as expected, but the exported CSV
-        // will contain display names. Can't have everything.
-        return [
-            entry.school[1],
-            entry.school[1]
-        ];
-    },
-
-<% if @is_servers %>
-    schools: function(entry) {
-        let display = [],
-            value = [];
-
-        for (const sch of entry.schools) {
-            if (sch.valid) {
-                display.push(`<a href="${sch.link}">${sch.title}</a>`);
-                value.push(sch.title);
-            } else {
-                display.push(`<span class="missingData">${sch.dn}</span>`);
-                value.push('?');
-            }
-        }
-
-        return [display.join("<br>"), value.join(','), value.join(',')];
-    },
-<% end %>
-
-    user: function(entry) {
-        if (entry.user.valid) {
-            return [
-                `<a href="${entry.user.link}">${entry.user.title}</a>`,
-                entry.user.title,
-                entry.user.title
-            ]
-        } else {
-            return [
-                `<span class="missingData">${entry.user.dn}</span>`,
-                entry.user.dn,
-                entry.user.dn
-            ]
-        }
-    },
-
-    monitors_xml: function(entry) {
-        // It's actually XML, but HTML escaping can handle it
-        return ["<pre>" + ST.escapeHTML(entry.monitors_xml[0]) + "</pre>", entry.monitors_xml];
-    },
-};
 
 const FILTER_PRESETS = [
     // Traditional
@@ -958,12 +932,13 @@ const FILTER_PRESETS = [
     }
 ];
 
-<% unless @is_servers %>
+// Mass operation: set database field value
 class MassDeviceSetFieldValue extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
 
+        // NOTE: These entries are not listed in this order in the combo. They're sorted alphabetically by title.
         this.items = [
             { title: "<%= t('devices.index.mass_operations.set_field.desktop_image') %>", key: "image", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.kernel_args') %>", key: "kernelargs", type: "s" },
@@ -973,12 +948,15 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
             { title: "<%= t('devices.index.mass_operations.set_field.manufacturer') %>", key: "manufacturer", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.model') %>", key: "model", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.serial') %>", key: "serial", type: "s" },
+<% unless @is_servers %>
             { title: "<%= t('devices.index.mass_operations.set_field.primary_user') %>", key: "primary_user", type: "s" },
+<% end %>
             { title: "<%= t('devices.index.mass_operations.set_field.description') %>", key: "description", type: "ms" },
             { title: "<%= t('devices.index.mass_operations.set_field.status') %>", key: "status", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.location') %>", key: "location", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.latitude') %>", key: "latitude", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.longitude') %>", key: "longitude", type: "s" },
+<% unless @is_servers %>
             { title: "<%= t('devices.index.mass_operations.set_field.allow_guest') %>", key: "allow_guest", type: "tfd" },
             { title: "<%= t('devices.index.mass_operations.set_field.automatic_updates') %>", key: "automatic_updates", type: "tfd" },
             { title: "<%= t('devices.index.mass_operations.set_field.personal_device') %>", key: "personal_device", type: "tfd" },
@@ -986,14 +964,17 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
             { title: "<%= t('devices.index.mass_operations.set_field.automatic_poweroff') %>", key: "automatic_poweroff", type: "autopoweroff" },
             { title: "<%= t('devices.index.mass_operations.set_field.daytime_start') %>", key: "day_start", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.daytime_end') %>", key: "day_end", type: "s" },
+<% end %>
             { title: "<%= t('devices.index.mass_operations.set_field.audio_source') %>", key: "audio_source", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.audio_sink') %>", key: "audio_sink", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.printer_uri') %>", key: "printer_uri", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.default_printer') %>", key: "default_printer", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.image_source_url') %>", key: "image_source_url", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.xserver') %>", key: "xserver", type: "s" },
-            { title: "<%= t('devices.index.mass_operations.set_field.monitors_xml') %>", key: "monitors_xml", type: "ms" },
+            { title: "<%= t('devices.index.mass_operations.set_field.monitors_xml') %>", key: "monitors_xml", type: "xml" },
         ];
+
+        this.currentUI = -1;
     }
 
     buildInterface()
@@ -1002,35 +983,40 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
 
         html +=
 `<table class="settingsChild"><tr>
-<th><label for="mass_device_set_field_name"><%= t('devices.index.mass_operations.set_field.field') %></label></th>
-<td><select id="mass_device_set_field_name">`;
+<th><label for="field_name"><%= t('devices.index.mass_operations.set_field.field') %></label></th>
+<td><select id="field_name">`;
 
         // List the possible fields in alphabetical order
         let sorted = [];
 
         for (let i = 0; i < this.items.length; i++)
-            sorted.push([this.items[i].title, i]);
+            sorted.push([this.items[i].title.toLowerCase(), i]);
 
-        sorted.sort((a, b) => { return a[0].localeCompare(b[0]) });
+        sorted.sort((a, b) => a[0].localeCompare(b[0]));
 
         for (const s of sorted) {
             const item = this.items[s[1]];
+
             html += `<option value="${s[1]}">${item.title}</option>`;
         }
 
         html +=
 `</select></td></tr>
 <tr>
-<th><label for="mass_device_set_field_value"><%= t('devices.index.mass_operations.set_field.value') %></label></th>
+<th><label for="field_value"><%= t('devices.index.mass_operations.set_field.value') %></label></th>
 <td><div id="uiChild"></div></td></tr></table>`;
 
         this.container.innerHTML = html;
 
-        this.container.querySelector("select#mass_device_set_field_name").addEventListener("change",
-            (e) => this.buildChildUI(e.target.selectedOptions[0].value));
+        // Initial selection and UI
+        this.currentUI = sorted[0][1];
+        this.container.querySelector("select#field_name").value = this.currentUI;
+        this.buildChildUI(this.currentUI);
 
-        this.currentUI = -1;
-        this.buildChildUI(sorted[0][1]);
+        this.container.querySelector("select#field_name").addEventListener("change", e => {
+            this.currentUI = parseInt(e.target.value, 10);
+            this.buildChildUI(this.currentUI);
+        });
     }
 
     canProceed()
@@ -1054,6 +1040,26 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
                 window.alert("<%= t('devices.index.mass_operations.set_field.invalid_json') %>");
                 return false;
             }
+        } else if (this.items[this.currentUI].type == "xml") {
+            // Validate the monitors XML configuration
+            const value = this.getValue();
+
+            if (value == "") {
+                // Permit the configuration to be cleared
+                return true;
+            }
+
+            try {
+                const result = new DOMParser().parseFromString(value, "application/xml");
+
+                // Of course this isn't straightforward...
+                if (result.getElementsByTagName("parsererror").length != 0)
+                    throw new Error("invalid XML");
+            } catch (e) {
+                console.log(e);
+                window.alert("<%= t('devices.index.mass_operations.set_field.invalid_xml') %>");
+                return false;
+            }
         }
 
         return true;
@@ -1061,8 +1067,9 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
 
     buildChildUI(index)
     {
-        const stringWarning = `<p class="validityWarning"><%= t('devices.index.mass_operations.set_field.validity_warning_string') %></p>`,
-              jsonWarning = `<p class="validityWarning"><%= t('devices.index.mass_operations.set_field.validity_warning_json') %></p>`;
+        const stringWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_string') %></p>`,
+              jsonWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_json') %></p>`,
+              xmlWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_xml') %></p>`;
 
         const item = this.items[index];
 
@@ -1071,15 +1078,19 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
         switch (item.type) {
             case "s":           // String
             default:
-                ui = `<input type="text" id="mass_device_set_field_value" size="40">${stringWarning}`;
+                ui = `<input type="text" id="field_value" size="40">${stringWarning}`;
                 break;
 
             case "ms":          // Multiline string
-                ui = `<textarea id="mass_device_set_field_value" rows="5" cols="80"></textarea>${stringWarning}`;
+                ui = `<textarea id="field_value" rows="5" cols="80"></textarea>${stringWarning}`;
                 break;
 
             case "json":        // Same as multiline string, but displays a note about the JSON
-                ui = `<textarea id="mass_device_set_field_value" rows="5" cols="80"></textarea>${jsonWarning}`;
+                ui = `<textarea id="field_value" rows="5" cols="80"></textarea>${jsonWarning}`;
+                break;
+
+            case "xml":         // Same as multiline string, but the contents are validated as XML
+                ui = `<textarea id="field_value" rows="5" cols="80"></textarea>${xmlWarning}`;
                 break;
 
             case "tfd":         // Tri-state true/false/default "boolean"
@@ -1102,19 +1113,19 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
         }
 
         this.container.querySelector("div#uiChild").innerHTML = ui;
-        this.currentUI = index;
     }
 
-    processItem(item)
+    getOperationParameters()
     {
-        return ST.doPOST(
-            `/devices/${item.school_id}/mass_op_device_set_field`,
-            {
-                id: item.id[ST.INDEX_FILTERABLE],
-                field: this.items[this.currentUI].key,
-                value: this.getValue()
-            }
-        );
+        return {
+            field: this.items[this.currentUI].key,
+            value: this.getValue()
+        };
+    }
+
+    prepareItem(item)
+    {
+        return { state: "ready" };
     }
 
     getValue()
@@ -1130,6 +1141,7 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
 
             case "ms":
             case "json":
+            case "xml":
                 return ui.querySelector("textarea").value;
 
             case "tfd":
@@ -1152,6 +1164,8 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
     }
 };
 
+<% unless @is_servers %>
+// Mass operation: edit purchase and warranty information
 class MassDevicePurchaseInfo extends ST.MassOperation {
     constructor(parent, container)
     {
@@ -1160,106 +1174,99 @@ class MassDevicePurchaseInfo extends ST.MassOperation {
 
     buildInterface()
     {
-        this.container.innerHTML = `
-<p style="margin: 0; padding: 10px; font-weight: bold;"><%= t('devices.index.mass_operations.purchase_info.validity_warning') %></p>
+        this.container.innerHTML =
+`<p class="margin-0 padding-10px"><%= t('devices.index.mass_operations.purchase_info.validity_warning').html_safe %></p>
 <table class="settingsChild">
-<tr>
-    <th><label><input type="checkbox" id="mass_device_purchase_info_purchase_date"><%= t('activeldap.attributes.device.puavoPurchaseDate') %>:</label></th>
-    <td><input type="date" id="mass_device_purchase_info_purchase_date_value" min="2000-01-01" max="2050-12-31"></td>
-</tr>
-<tr>
-    <th><label><input type="checkbox" id="mass_device_purchase_info_warranty_end_date"><%= t('activeldap.attributes.device.puavoWarrantyEndDate') %>:</label></th>
-    <td><input type="date" id="mass_device_purchase_info_warranty_end_date_value" min="2000-01-01" max="2050-12-31"></td>
-</tr>
-<tr>
-    <th><label><input type="checkbox" id="mass_device_purchase_info_purchase_location"><%= t('activeldap.attributes.device.puavoPurchaseLocation') %>:</label></th>
-    <td><input type="text" id="mass_device_purchase_info_purchase_location_value"></td>
-</tr>
-<tr>
-    <th><label><input type="checkbox" id="mass_device_purchase_info_purchase_url"><%= t('activeldap.attributes.device.puavoPurchaseURL') %>:</label></th>
-    <td><input type="text" id="mass_device_purchase_info_purchase_url_value"></td>
-</tr>
-<tr>
-    <th><label><input type="checkbox" id="mass_device_purchase_info_contact"><%= t('activeldap.attributes.device.puavoSupportContract') %>:</label></th>
-    <td><input type="text" id="mass_device_purchase_info_contact_value"></td>
-</tr>
+    <tr>
+        <th><label><input type="checkbox" id="purchase_date"><%= t('activeldap.attributes.device.puavoPurchaseDate') %>:</label></th>
+        <td><input type="date" id="purchase_date_value" min="2000-01-01" max="2050-12-31"></td>
+    </tr>
+    <tr>
+        <th><label><input type="checkbox" id="warranty_end_date"><%= t('activeldap.attributes.device.puavoWarrantyEndDate') %>:</label></th>
+        <td><input type="date" id="warranty_end_date_value" min="2000-01-01" max="2050-12-31"></td>
+    </tr>
+    <tr>
+        <th><label><input type="checkbox" id="purchase_location"><%= t('activeldap.attributes.device.puavoPurchaseLocation') %>:</label></th>
+        <td><input type="text" id="purchase_location_value"></td>
+    </tr>
+    <tr>
+        <th><label><input type="checkbox" id="purchase_url"><%= t('activeldap.attributes.device.puavoPurchaseURL') %>:</label></th>
+        <td><input type="text" id="purchase_url_value"></td>
+    </tr>
+    <tr>
+        <th><label><input type="checkbox" id="support_contract"><%= t('activeldap.attributes.device.puavoSupportContract') %>:</label></th>
+        <td><input type="text" id="support_contract_value"></td>
+    </tr>
 </table>`;
 
-        // current form data
+        // Current form data. If "checked" is true, then the related checkbox is checked. "value" contains the current
+        // value (which can be NULL).
         this.data = {
-            "purchaseDate": {
+            purchase_date: {
                 checked: false,
                 value: null
             },
-            "purchaseWarranty": {
-                "checked": false,
-                "value": null
+
+            warranty_end_date: {
+                checked: false,
+                value: null
             },
-            "purchaseLocation": {
-                "checked": false,
-                "value": null
+
+            purchase_location: {
+                checked: false,
+                value: null
             },
-            "purchaseUrl": {
-                "checked": false,
-                "value": null
+
+            purchase_url: {
+                checked: false,
+                value: null
             },
-            "purchaseSupport": {
-                "checked": false,
-                "value": null
+
+            support_contract: {
+                checked: false,
+                value: null
             }
         };
 
-        // setup event handling
-        this.container.querySelector("#mass_device_purchase_info_purchase_date")
-            .addEventListener("click", event => this.checkboxClicked(event, "purchaseDate"));
-
-        this.container.querySelector("#mass_device_purchase_info_warranty_end_date")
-            .addEventListener("click", event => this.checkboxClicked(event, "purchaseWarranty"));
-
-        this.container.querySelector("#mass_device_purchase_info_purchase_location")
-            .addEventListener("click", event => this.checkboxClicked(event, "purchaseLocation"));
-
-        this.container.querySelector("#mass_device_purchase_info_purchase_url")
-            .addEventListener("click", event => this.checkboxClicked(event, "purchaseUrl"));
-
-        this.container.querySelector("#mass_device_purchase_info_contact")
-            .addEventListener("click", event => this.checkboxClicked(event, "purchaseSupport"));
-
-        this.container.querySelector("#mass_device_purchase_info_purchase_date_value")
-            .addEventListener("input", event => this.dateChanged(event, "purchaseDate"));
-
-        this.container.querySelector("#mass_device_purchase_info_warranty_end_date_value")
-            .addEventListener("input", event => this.dateChanged(event, "purchaseWarranty"));
-
-        this.container.querySelector("#mass_device_purchase_info_purchase_location_value")
-            .addEventListener("input", event => this.textChanged(event, "purchaseLocation"));
-
-        this.container.querySelector("#mass_device_purchase_info_purchase_url_value")
-            .addEventListener("input", event => this.textChanged(event, "purchaseUrl"));
-
-        this.container.querySelector("#mass_device_purchase_info_contact_value")
-            .addEventListener("input", event => this.textChanged(event, "purchaseSupport"));
+        // Setup event handling
+        this.container.querySelector("#purchase_date").addEventListener("click", e => this.checkboxClicked(e));
+        this.container.querySelector("#warranty_end_date").addEventListener("click", e => this.checkboxClicked(e));
+        this.container.querySelector("#purchase_location").addEventListener("click", e => this.checkboxClicked(e));
+        this.container.querySelector("#purchase_url").addEventListener("click", e => this.checkboxClicked(e));
+        this.container.querySelector("#support_contract").addEventListener("click", e => this.checkboxClicked(e));
+        this.container.querySelector("#purchase_date_value").addEventListener("input", e => this.dateChanged(e));
+        this.container.querySelector("#warranty_end_date_value").addEventListener("input", e => this.dateChanged(e));
+        this.container.querySelector("#purchase_location_value").addEventListener("input", e => this.textChanged(e));
+        this.container.querySelector("#purchase_url_value").addEventListener("input", e => this.textChanged(e));
+        this.container.querySelector("#support_contract_value").addEventListener("input", e => this.textChanged(e));
     }
 
-    checkboxClicked(event, name)
+    // A checkbox has been clicked
+    checkboxClicked(e)
     {
-        this.data[name].checked = event.target.checked;
+        this.data[e.target.id].checked = e.target.checked;
     }
 
-    textChanged(event, name)
+    // A text field has been edited
+    textChanged(e)
     {
-        this.data[name].value = event.target.value.trim();
+        const key = e.target.id.replace(/_value$/, '');
 
-        if (this.data[name].value.length == 0)
-            this.data[name].value = null;
+        this.data[key].value = e.target.value.trim();
+
+        if (this.data[key].value.length == 0)
+            this.data[key].value = null;
     }
 
-    dateChanged(event, name)
+    // A date value has changed
+    dateChanged(e)
     {
-        this.data[name].value = event.target.value;
+        const key = e.target.id.replace(/_value$/, '');
 
-        if (this.data[name].value.length == 0)
-            this.data[name].value = null;
+        this.data[key].value = e.target.value;
+
+        if (this.data[key].value.length == 0)
+            this.data[key].value = null;
     }
 
     // I'm not sure if this function is really needed, but
@@ -1280,72 +1287,83 @@ class MassDevicePurchaseInfo extends ST.MassOperation {
         return a2 !== b2;
     }
 
-    processItem(item)
+    start()
     {
-        // gather up changed values
-        let mustSendRequest = false;
-        let params = {};
+        for (const i of this.container.querySelectorAll("input"))
+            i.disabled = true;
+    }
 
-        if (this.data["purchaseDate"].checked) {
-            const date = item.purchase_date ? ST.convertTimestamp(item.purchase_date, true) : null;
+    finish()
+    {
+        for (const i of this.container.querySelectorAll("input"))
+            i.disabled = false;
+    }
 
-            if (this.hasChanged(date, this.data["purchaseDate"].value)) {
-                mustSendRequest = true;
-                params.purchase_date = this.data["purchaseDate"].value;
-            }
+    getOperationParameters()
+    {
+        let values = {};
+
+        // Only send the checked values
+        for (const key of Object.keys(this.data))
+            if (this.data[key].checked)
+                values[key] = this.data[key].value;
+
+        return values;
+    }
+
+    prepareItem(item)
+    {
+        // Find all changed values
+        let changes = [];
+
+        if (this.data["purchase_date"].checked) {
+            const date = item.purchase_date[ST.INDEX_EXISTS] ? item.purchase_date[ST.INDEX_DISPLAYABLE] : null;
+
+            if (this.hasChanged(date, this.data["purchase_date"].value))
+                changes.push("purchase_date");
         }
 
-        if (this.data["purchaseWarranty"].checked) {
-            const date = item.purchase_warranty ? ST.convertTimestamp(item.purchase_warranty, true) : null;
+        if (this.data["warranty_end_date"].checked) {
+            const date = item.purchase_warranty[ST.INDEX_EXISTS] ? item.purchase_warranty[ST.INDEX_DISPLAYABLE] : null;
 
-            if (this.hasChanged(date, this.data["purchaseWarranty"].value)) {
-                mustSendRequest = true;
-                params.purchase_warranty = this.data["purchaseWarranty"].value;
-            }
+            if (this.hasChanged(date, this.data["warranty_end_date"].value))
+                changes.push("warranty_end_date");
         }
 
-        if (this.data["purchaseLocation"].checked &&
-            this.hasChanged(item.purchase_loc, this.data["purchaseLocation"].value)) {
-            mustSendRequest = true;
-            params.purchase_loc = this.data["purchaseLocation"].value;
+        if (this.data["purchase_location"].checked && this.hasChanged(item.purchase_loc[ST.INDEX_DISPLAYABLE], this.data["purchase_location"].value))
+            changes.push("purchase_location");
+
+        if (this.data["purchase_url"].checked && this.hasChanged(item.purchase_url[ST.INDEX_DISPLAYABLE], this.data["purchase_url"].value))
+            changes.push("purchase_url");
+
+        if (this.data["support_contract"].checked && this.hasChanged(item.purchase_support[ST.INDEX_DISPLAYABLE], this.data["support_contract"].value))
+            changes.push("support_contract");
+
+        if (changes.length == 0) {
+            // No changes to this item
+            return { state: "skip" };
         }
 
-        if (this.data["purchaseUrl"].checked &&
-            this.hasChanged(item.purchase_url, this.data["purchaseUrl"].value)) {
-            mustSendRequest = true;
-            params.purchase_url = this.data["purchaseUrl"].value;
-        }
-
-        if (this.data["purchaseSupport"].checked &&
-            this.hasChanged(item.purchase_support, this.data["purchaseSupport"].value)) {
-            mustSendRequest = true;
-            params.purchase_support = this.data["purchaseSupport"].value;
-        }
-
-        if (!mustSendRequest) {
-            // nothing actually changed (or nothing was checked?)
-            return ST.itemProcessedStatus(true);
-        }
-
-        return ST.doPOST(
-            `/devices/${item.school_id}/mass_op_device_purchase_info`,
-            {
-                id: item.id[ST.INDEX_FILTERABLE],
-                purchase_params: params
-            }
-        );
+        return {
+            state: "ready",
+            data: changes
+        };
     }
 };
+<% end %>
 
+// Mass operation: puavo-conf editing. Not as pretty as the interactive puavo-conf editor, but I can't cram it in this space.
+// Or maybe I can? Who knows...
 class MassDevicePuavoconfEditor extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
 
-        this.key = null;
+        // Same settings as below
+        this.key = "";
         this.value = null;
-        this.action = 0;
         this.type = "string";
+        this.action = "add";
     }
 
     buildInterface()
@@ -1354,23 +1372,23 @@ class MassDevicePuavoconfEditor extends ST.MassOperation {
 `<p class="margin-0 padding-0"><%= t('devices.index.mass_operations.puavoconf.json_warning').html_safe %></p>
 <table class="settingsChild">
 <tr>
-    <th><label for="mass_device_pc_key"><%= t('devices.index.mass_operations.puavoconf.key') %></label></th>
-    <td><input type="text" id="mass_device_pc_key" size="50"></td>
+    <th><label for="pc_key"><%= t('devices.index.mass_operations.puavoconf.key') %></label></th>
+    <td><input type="text" id="pc_key" size="50"></td>
 </tr>
 <tr>
-    <th><label for="mass_device_pc_value"><%= t('devices.index.mass_operations.puavoconf.value') %></label></th>
+    <th><label for="pc_value"><%= t('devices.index.mass_operations.puavoconf.value') %></label></th>
     <td>
+        <input type="text" id="pc_value" size="50">
         <p class="validityWarning margin-0 padding-0"><%= t('devices.index.mass_operations.puavoconf.validity_warning') %></p>
-        <input type="text" id="mass_device_pc_value" size="50">
     </td>
 </tr>
 <tr>
     <th><%= t('devices.index.mass_operations.puavoconf.type') %></th>
     <td>
-        <div class="flex-columns">
-            <label><input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_string" checked><%= t('devices.index.mass_operations.puavoconf.type_string') %></label>
-            <label><input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_int"><%= t('devices.index.mass_operations.puavoconf.type_int') %></label>
-            <label><input type="radio" name="mass_device_pc_type" id="mass_device_pc_type_bool"><%= t('devices.index.mass_operations.puavoconf.type_bool') %></label>
+        <div class="flex-columns gap-10px">
+            <label><input type="radio" name="pc_type" id="type_string" checked><%= t('devices.index.mass_operations.puavoconf.type_string') %></label>
+            <label><input type="radio" name="pc_type" id="type_int"><%= t('devices.index.mass_operations.puavoconf.type_int') %></label>
+            <label><input type="radio" name="pc_type" id="type_bool"><%= t('devices.index.mass_operations.puavoconf.type_bool') %></label>
         </div>
     </td>
 </tr>
@@ -1378,28 +1396,27 @@ class MassDevicePuavoconfEditor extends ST.MassOperation {
     <th><%= t('devices.index.mass_operations.puavoconf.action') %></th>
     <td>
         <div class="flex-rows">
-            <label><input type="radio" name="mass_device_pc_action" id="mass_device_pc_action_add" checked><%= t('devices.index.mass_operations.puavoconf.add') %></label>
-            <label><input type="radio" name="mass_device_pc_action" id="mass_device_pc_action_remove"><%= t('devices.index.mass_operations.puavoconf.remove') %></label>
+            <label><input type="radio" name="pc_action" id="action_add" checked><%= t('devices.index.mass_operations.puavoconf.add') %></label>
+            <label><input type="radio" name="pc_action" id="action_remove"><%= t('devices.index.mass_operations.puavoconf.remove') %></label>
         </div>
     </td>
 </tr>
 </table>`;
 
-        this.key = this.container.querySelector("#mass_device_pc_key");
-        this.value = this.container.querySelector("#mass_device_pc_value");
-        this.action = 0;
-        this.type = "string";
-
-        this.container.querySelector("#mass_device_pc_action_add").addEventListener("click", () => this.action = 0);
-        this.container.querySelector("#mass_device_pc_action_remove").addEventListener("click", () => this.action = 1);
-        this.container.querySelector("#mass_device_pc_type_string").addEventListener("click", () => this.type = "string");
-        this.container.querySelector("#mass_device_pc_type_int").addEventListener("click", () => this.type = "int");
-        this.container.querySelector("#mass_device_pc_type_bool").addEventListener("click", () => this.type = "bool");
+        // Setup event handling
+        this.container.querySelector("#pc_key").addEventListener("input", e => this.key = e.target.value.trim());
+        this.container.querySelector("#pc_value").addEventListener("input", e => this.value = e.target.value.trim());
+        this.container.querySelector("#type_string").addEventListener("click", () => this.type = "string");
+        this.container.querySelector("#type_int").addEventListener("click", () => this.type = "int");
+        this.container.querySelector("#type_bool").addEventListener("click", () => this.type = "bool");
+        this.container.querySelector("#action_add").addEventListener("click", () => this.action = "add");
+        this.container.querySelector("#action_remove").addEventListener("click", () => this.action = "remove");
     }
 
     canProceed()
     {
-        if (this.key.value.length == 0 || this.key.value.trim().length == 0) {
+        // We only care about the key's length. The value can be empty.
+        if (this.key.length == 0) {
             window.alert("<%= t('devices.index.mass_operations.puavoconf.empty_key') %>");
             return false;
         }
@@ -1407,35 +1424,39 @@ class MassDevicePuavoconfEditor extends ST.MassOperation {
         return true;
     }
 
-    processItem(item)
+    getOperationParameters()
     {
-        return ST.doPOST(
-            `/devices/${item.school_id}/mass_op_device_edit_puavoconf`,
-            {
-                id: item.id[ST.INDEX_FILTERABLE],
-                key: this.key.value,
-                value: this.value.value,
-                type: this.type,
-                action: this.action
-            }
-        );
+        return {
+            key: this.key,
+            value: this.value,
+            type: this.type,
+            action: this.action
+        };
+    }
+
+    prepareItem(item)
+    {
+        return { state: "ready" };
     }
 };
 
+<% unless @is_servers %>
+// Mass tool: move device to another school
 class MassDeviceChangeSchool extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
         this.newSchoolDN = null;
+        this.newSchoolID = -1;
     }
 
     buildInterface()
     {
-        let html =
+        const html =
 <% if @school_list.empty? %>
         `<p class="genericWarning"><%= t('devices.index.mass_operations.change_school.no_other_schools') %></p>`;
 <% else %>
-        `<label><%= t('devices.index.mass_operations.change_school.school_title') %><select id="mass_device_change_school" class="margin-left-5px">
+        `<label><%= t('devices.index.mass_operations.change_school.school_title') %><select id="new_school" class="margin-left-5px">
 <% @school_list.each do |s| %>
             <option value="<%= s[0] %>"><%= s[1] %> (<%= s[2] %>)</option>
 <% end%>
@@ -1443,6 +1464,16 @@ class MassDeviceChangeSchool extends ST.MassOperation {
 <% end %>
 
         this.container.innerHTML = html;
+
+<% unless @school_list.empty? %>
+        this.newSchoolDN = "<%= @school_list.first[0] %>";
+        this.newSchoolID = this.idFromDN(this.newSchoolDN);
+<% end %>
+
+        this.container.querySelector("#new_school")?.addEventListener("change", e => {
+            this.newSchoolDN = e.target.value
+            this.newSchoolID = this.idFromDN(this.newSchoolDN);
+        });
     }
 
     canProceed()
@@ -1457,37 +1488,42 @@ class MassDeviceChangeSchool extends ST.MassOperation {
 
     start()
     {
-        this.newSchoolDN = this.container.querySelector("#mass_device_change_school").value;
+        this.container.querySelector("#new_school").disabled = true;
     }
 
-    processItem(item)
+    finish()
     {
-        return ST.doPOST(
-            `/devices/${item.school_id}/mass_op_device_change_school`,
-            {
-                id: item.id[ST.INDEX_FILTERABLE],
-                school_dn: this.newSchoolDN
-            }
-        );
+        this.container.querySelector("#new_school").disabled = false;
+    }
+
+    getOperationParameters()
+    {
+        return {
+            school_dn: this.newSchoolDN
+        };
+    }
+
+    prepareItem(item)
+    {
+        if (item.school_id == this.newSchoolID) {
+            // The device is already in the target school. This can only happen in the
+            // organisation-level "all devices" table, because ordinary school device
+            // tables won't list devices that are not in the current school.
+            return { state: "skip" };
+        }
+
+        return { state: "ready" };
+    }
+
+    idFromDN(dn)
+    {
+        const match = dn.match(/^puavoId=(\d+),ou=/);
+
+        return (match === null) ? -1 : parseInt(match[1], 10);
     }
 };
 
-class MassDeviceDeletion extends ST.MassOperation {
-    constructor(parent, container)
-    {
-        super(parent, container);
-    }
-
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/devices/${item.school_id}/mass_op_device_delete`,
-            { id: item.id[ST.INDEX_FILTERABLE] }
-        );
-    }
-};
-
-<% unless @is_servers %>
+// Mass operation: set or clear the reset mode
 class MassDeviceReset extends ST.MassOperation {
     constructor(parent, container)
     {
@@ -1503,99 +1539,108 @@ class MassDeviceReset extends ST.MassOperation {
     <th><%= t('devices.index.mass_operations.reset.action') %></th>
     <td>
         <div class="flex-rows">
-            <label><input type="radio" name="reset_action_type" id="reset_set" checked><%= t('devices.index.mass_operations.reset.reset') %></label>
-            <label><input type="radio" name="reset_action_type" id="reset_clear"><%= t('devices.index.mass_operations.reset.clear') %></label>
+            <label><input type="radio" name="action" id="set" checked><%= t('devices.index.mass_operations.reset.reset') %></label>
+            <label><input type="radio" name="action" id="clear"><%= t('devices.index.mass_operations.reset.clear') %></label>
         </div>
     </td>
 </tr>
 </table>`;
+
+        this.container.querySelector("#set").addEventListener("click", () => this.reset = true);
+        this.container.querySelector("#clear").addEventListener("click", () => this.reset = false);
     }
 
     start()
     {
-        if (this.container.querySelector("#reset_set").checked)
-            this.reset = true;
-        else this.reset = false;
-
-        for (let i of this.container.querySelectorAll("input, select"))
+        for (const i of this.container.querySelectorAll("input"))
             i.disabled = true;
     }
 
     finish()
     {
-        for (let i of this.container.querySelectorAll("input, select"))
+        for (const i of this.container.querySelectorAll("input"))
             i.disabled = false;
     }
 
-    processItem(item)
+    getOperationParameters()
+    {
+        return {
+            reset: this.reset,
+        };
+    }
+
+    prepareItem(item)
     {
         if (item.type[ST.INDEX_FILTERABLE] !== "laptop") {
             // Only laptops can be mass reset
-            return ST.itemProcessedStatus(false, "<%= t('devices.index.mass_operations.reset.not_a_laptop') %>");
+            return { state: "error", message: "<%= t('devices.index.mass_operations.reset.not_a_laptop') %>" };
         }
-
-        //console.log(`${item.id[ST.INDEX_FILTERABLE]}: ${item.reset_from[ST.INDEX_EXISTS]}, ${this.reset}`);
 
         // All "reset" members will be omitted if the device is not in reset mode
         if (item.reset_from[ST.INDEX_EXISTS] === this.reset) {
             console.log(`Device ${item.id[ST.INDEX_FILTERABLE]} is already in the desired reset state, skipping`);
-            return ST.itemProcessedStatus(true);
+            return { state: "skip" };
         }
 
-        return ST.doPOST(
-            `/devices/${item.school_id}/mass_op_device_reset`,
-            { id: item.id[1], reset: this.reset }
-        );
+        return { state: "ready" };
+    }
+};
+
+// Mass operation: delete device
+class MassDeviceDeletion extends ST.MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+    }
+
+    prepareItem(item)
+    {
+        return { state: "ready" };
     }
 };
 <% end %>
 
 const MASS_OPERATIONS = [
     {
-        id: "set_field",
+        operation: "set_field",
         title: "<%= t('devices.index.mass_operations.set_field.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: MassDeviceSetFieldValue
     },
-
+<% unless @is_servers %>
     {
-        id: "purchase_info",
+        operation: "purchase_info",
         title: "<%= t('devices.index.mass_operations.purchase_info.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: MassDevicePurchaseInfo
     },
-
+<% end %>
     {
-        id: "puavoconf_edit",
+        operation: "puavoconf_edit",
         title: "<%= t('devices.index.mass_operations.puavoconf.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: MassDevicePuavoconfEditor
     },
-
+<% unless @is_servers %>
     {
-        id: "change_school",
+        operation: "change_school",
         title: "<%= t('devices.index.mass_operations.change_school.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: MassDeviceChangeSchool
     },
-
     {
-        id: "delete",
+        operation: "reset",
+        title: "<%= t('devices.index.mass_operations.reset.title') %>",
+        haveSettings: true,
+        cls: MassDeviceReset
+    },
+    {
+        operation: "delete",
         title: "<%= t('devices.index.mass_operations.delete.title') %>",
         cls: MassDeviceDeletion
     },
-
-<% unless @is_servers %>
-    {
-        id: "reset",
-        title: "<%= t('devices.index.mass_operations.reset.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
-        cls: MassDeviceReset
-    },
 <% end %>
 ];
-
-<% end %>
 
 function userActions(item)
 {

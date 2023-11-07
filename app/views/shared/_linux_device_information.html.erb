@@ -1,9 +1,21 @@
 <!-- shared/_linux_device_information starts -->
-<%= start_box title(device) %>
+<div class="contentBox">
+  <header>
+    <div class="flex-cols">
+      <%= title(device) %>
+      <button type="button" id="copyBasicInfo" style="margin-left: auto;"><%= t('devices.show.copy_basic_info') %></button>
+    </div>
+  </header>
+  <div class="contents">
   <table>
     <tr>
       <th><%= t("activeldap.attributes.device.dn") %></th>
       <td><%= h (device.dn.to_s.split(',').join(',<wbr>')).html_safe %></td>
+    </tr>
+
+    <tr>
+      <th>FQDN</th>
+      <td><%= h @fqdn %></td>
     </tr>
 
     <tr>

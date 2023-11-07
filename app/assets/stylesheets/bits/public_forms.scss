@@ -6,6 +6,7 @@
   :root {
     --page-background: rgb(245, 246, 247);
     --page-foreground: #000;
+    --header-shadow: var(--generic-border);
     --tab-border: #5294e2;
     --active-tab-background: #5294e2;
     --active-tab-foreground: #fff;
@@ -27,6 +28,8 @@
     --message-success-border: #7cbc76;
     --password-notice-background: #d1ecf1;
     --password-notice-border: #bee5eb;
+    --automatic-emails-background: #d1ecf1;
+    --automatic-emails-border: #bee5eb;
     --button-background: rgb(252, 253, 253);
     --button-foreground: #000;
     --button-border: rgb(207, 214, 230);
@@ -46,6 +49,21 @@
     --service-border: var(--content-border);
     --error-background: rgb(252, 65, 56);
     --error-foreground: #fff;
+
+    --emails-hover-background: #eee;
+    --emails-hover-foreground: #000;
+    --emails-verified: #080;
+    --emails-verify-button-background: #cfc;
+    --emails-verify-button-foreground: #000;
+    --emails-verify-button-border: #ada;
+    --emails-verify-button-background-hover: #afa;
+    --emails-verify-button-background-active: #8f8;
+    --emails-delete-button-background: #fcc;
+    --emails-delete-button-foreground: #000;
+    --emails-delete-button-border: #daa;
+    --emails-delete-button-background-hover: #faa;
+    --emails-delete-button-background-active: #f88;
+    --emails-disabled-opacity: 0.5;
   }
 }
 
@@ -53,6 +71,7 @@
   :root {
     --page-background: rgb(56, 60, 74);
     --page-foreground: #fff;
+    --header-shadow: var(--generic-border);
     --tab-border: #5294e2;
     --active-tab-background: #5294e2;
     --active-tab-foreground: var(--page-foreground);
@@ -73,6 +92,8 @@
     --message-success-border: #7cbc76;
     --password-notice-background: #d1ecf1;
     --password-notice-border: #bee5eb;
+    --automatic-emails-background: #d1ecf1;
+    --automatic-emails-border: #bee5eb;
     --button-background: rgb(68, 74, 88);
     --button-foreground: #fff;
     --button-border: rgb(43, 46, 57);
@@ -92,8 +113,42 @@
     --service-background: rgb(64, 69, 82);
     --service-foreground: #fff;
     --service-border: var(--content-border);
+
+    --emails-hover-background: rgb(64, 69, 82);
+    --emails-hover-foreground: #fff;
+    --emails-verified: #afa;
+    --emails-verify-button-background: #afa;
+    --emails-verify-button-foreground: #000;
+    --emails-verify-button-border: #8d8;
+    --emails-verify-button-background-hover: #7f7;
+    --emails-verify-button-background-active: #3f3;
+    --emails-delete-button-background: #fcc;
+    --emails-delete-button-foreground: #000;
+    --emails-delete-button-border: #daa;
+    --emails-delete-button-background-hover: #faa;
+    --emails-delete-button-background-active: #f88;
+    --emails-disabled-opacity: 0.25;
   }
 }
+
+.flex { display: flex; }
+.flex-columns, .flex-cols { display: flex; flex-direction: rows; }
+.flex-rows { display: flex; flex-direction: column; }
+.flex-vcenter { align-items: center; }
+.flex-vbottom { align-items: flex-end; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-no-wrap { flex-wrap: nowrap; }
+.flex-grow-2 { flex-grow: 2; }
+.flex-stretch { align-items: stretch; }
+
+.gap-5px { gap: 5px; }
+.gap-10px { gap: 10px; }
+.gap-15px { gap: 15px; }
+.gap-20px { gap: 20px; }
+.gap-1em { gap: 1em; }
+.gap-2em { gap: 2em; }
+
+.hidden { display: none !important; }
 
 input[type="text"], input[type="password"] {
   padding: 5px;
@@ -154,4 +209,10 @@ button:disabled, input[type="submit"]:disabled, input[type="submit"]:active:disa
 .genericWarning {
   background: var(--message-warning-background);
   border-color: var(--message-warning-border);
+}
+
+footer {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 80%;
 }

@@ -6,7 +6,7 @@
   </div>
 
   <div class="basicInfoDetails">
-    <h1><%= h device.puavoHostname %></h1>
+    <h1><%= h device.puavoHostname %> <span class="fqdn">(<%= h @fqdn %> <button id="copyFQDN">Kopioi</button>)</span></h1>
 
     <% if controller_name == "devices" %>
     <p class="infoTitle"><%= t('activeldap.attributes.device.puavoDeviceType') %></p>
@@ -19,7 +19,10 @@
     <% end %>
 
     <% unless device.puavoConf.nil? || device.puavoConf.empty? %>
-    <p class="infoTitle"><%= t('activeldap.attributes.device.puavoConf') %></p>
+    <div class="flex-cols flex-vcenter gap-10px">
+      <p class="infoTitle"><%= t('activeldap.attributes.device.puavoConf') %></p>
+      <button id="copyPuavoconf"><%= t('link.copy_to_clipboard') %></button>
+    </div>
     <%= render :partial => 'shared/puavoconf',
                :locals  => { :object => device.puavoConf } %>
     <% end %>

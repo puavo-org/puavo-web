@@ -7,7 +7,7 @@ Feature: Manage groups
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And the following users:
       | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | staff                     |
+      | Pavel     | Taylor | pavel | secret   | true         | admin                     |
     And I am logged in as "pavel" with password "secret"
 
   Scenario: Add new group to school
@@ -139,7 +139,7 @@ Feature: Manage groups
     | Joe       | Bloggs | joe  | secret   | student                   | class4 |
     | Jane      | Doe    | jane | secret   | student                   | class4 |
     When I get on the members group JSON page with "Class 4"
-    Then I should see JSON '[{"user_type":"student", "name":"Joe Bloggs", "uid":"joe", "given_name":"Joe", "surname":"Bloggs", "reverse_name":"Bloggs Joe"},{"name":"Jane Doe", "user_type":"student", "uid":"jane", "surname":"Doe", "reverse_name":"Doe Jane", "given_name":"Jane"}]'
+    Then I should see JSON '[{"user_type":"student", "name":"Joe Bloggs", "uid":"joe", "given_name":"Joe", "surname":"Bloggs"},{"name":"Jane Doe", "user_type":"student", "uid":"jane", "surname":"Doe", "given_name":"Jane"}]'
 
   Scenario: Move group to another school (admin)
     Given I am on the new group page

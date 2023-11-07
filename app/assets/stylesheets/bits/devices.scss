@@ -188,3 +188,8 @@ span.release-bookworm { color: $deviceStatsReleaseBookworm; }
   color: $deviceStatsReleaseName;
   font-weight: bold;
 }
+
+h1 span.fqdn {
+  font-size: 50%;
+  font-weight: normal;
+}

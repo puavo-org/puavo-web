@@ -5,7 +5,6 @@ import { _tr, escapeHTML, pad } from "../../../common/utils.js";
 import { convertTimestamp } from "../../table/utils.js";
 import { create, getTemplate } from "../../../common/dom.js";
 
-import { ColumnDefinitions } from "../interpreter/columns.js";
 import { MessageLogger } from "../interpreter/logger.js";
 import { Tokenizer } from "../interpreter/tokenizer.js";
 import { Parser } from "../interpreter/parser.js";
@@ -62,8 +61,56 @@ function getDefaultValue(definition)
     }
 }
 
+/*
+Builds a column name lookup table which contains plain column names plus their aliases.
+If you have these column definitions:
+
+    {
+        foo: {
+            ...
+            alias: ["bar", "baz"]
+        },
+        quux: {
+            ...
+        }
+    }
+
+Then this function returns a map that looks like this:
+
+    {
+        "foo" -> "foo",
+        "bar" -> "foo",
+        "baz" -> "foo",
+        "quux" -> "quux"
+    }
+
+
+Now you can use both the original column name and any of its aliases to look up column definitions
+(ie. columnDefinitions[aliasMap[x]]).
+*/
+function mapAliases(columnDefinitions)
+{
+    const mapping = new Map();
+
+    for (const [id, def] of Object.entries(columnDefinitions)) {
+        mapping.set(id, id);
+
+        if (!Array.isArray(def.alias))
+            continue;
+
+        for (const a of def.alias) {
+            if (mapping.has(a))
+                throw new Error(`alias "${a}" for column "${id}" already points to column "${mapping.get(a)}"`);
+
+            mapping.set(a, id);
+        }
+    }
+
+    return mapping;
+}
+
 export class FilterEditor {
-    constructor(parentClass, container, preview, columnDefinitions, columnTitles, filterPresets, filterDefaults, isAdvanced, isVisible)
+    constructor(parentClass, container, preview, columnDefinitions, filterPresets, filterDefaults, isAdvanced, isVisible)
     {
         // This container is our playground. Everything we put on the screen, it's
         // inside this HTML element, which in turn lives inside the SuperTable header
@@ -78,9 +125,8 @@ export class FilterEditor {
         this.parentClass = parentClass;
 
         // Column definitions
-        this.plainColumnDefinitions = columnDefinitions;
-        this.columnDefinitions = new ColumnDefinitions(columnDefinitions);
-        this.columnTitles = columnTitles;
+        this.columnDefinitions = columnDefinitions;
+        this.columnAliases = mapAliases(columnDefinitions);
 
         this.isAdvanced = isAdvanced;
         this.isVisible = isVisible;
@@ -148,6 +194,8 @@ export class FilterEditor {
     // Called from the parent class
     enableOrDisable(isEnabled)
     {
+        this.disabled = !isEnabled;
+
         this.$("button#deleteAll").disabled = this.disabled;
         this.$("button#showJSON").disabled = this.disabled;
         this.$("button#hideJSON").disabled = this.disabled;
@@ -171,7 +219,8 @@ export class FilterEditor {
         this.$("button#deleteAll").disabled = this.disabled;
         this.$("button#saveJSON").disabled = this.disabled;
 
-        // TODO: Disable the filter elements
+        for (const e of this.$all(".filterList input, .filterList button"))
+            e.disabled = this.disabled;
     }
 
     // Switch between traditional and advanced filtering modes
@@ -227,7 +276,15 @@ export class FilterEditor {
         }
 
         if (this.isAdvanced) {
-            this.preview.innerHTML = `${_tr("filtering.preview_prefix")}: <code>${this.advancedPreview}</code>`;
+            if (this.advancedPreview === null || this.advancedPreview.length == 0)
+                this.preview.classList.add("hidden");
+            else {
+                this.preview.innerHTML = `${_tr("filtering.preview_prefix")}: <code>${this.advancedPreview}</code>`;
+
+                if (!this.isVisible)
+                    this.preview.classList.remove("hidden");
+            }
+
             return;
         }
 
@@ -276,7 +333,7 @@ export class FilterEditor {
         for (const raw of (Array.isArray(array) ? array : [])) {
             let e = new EditableFilter();
 
-            if (e.load(raw, this.plainColumnDefinitions))
+            if (e.load(raw, this.columnDefinitions, this.columnAliases))
                 this.filters.push(e);
         }
 
@@ -300,30 +357,28 @@ export class FilterEditor {
     {
         const box = this.container.querySelector("div.filterList");
 
-        if (this.isAdvanced) {
-            box.innerText = "(foo)";
-        } else {
+        if (this.isAdvanced)
+            box.innerText = "";
+        else {
             box.innerText = "";
 
+            // Existing filters
             for (let i = 0; i < this.filters.length; i++) {
                 const filter = this.filters[i];
-
-                //if (filter.isNew)
-                //    continue;
-
                 const entry = this.buildFilterEntry(filter, true);
 
-                entry.querySelector("div.active").addEventListener("click", (e) => this.onActivateFilter(e));
-                entry.querySelector("div.parts").addEventListener("click", (e) => this.onEditFilter(e));
-                entry.querySelector("div.danger").addEventListener("click", (e) => this.onDeleteFilter(e));
+                // Setup events
+                entry.querySelector("div.active").addEventListener("click", e => this.onActivateFilter(e));
+                entry.querySelector("div.parts").addEventListener("click", e => this.onEditFilter(e));
+                entry.querySelector("div.danger").addEventListener("click", e => this.onDeleteFilter(e));
 
                 box.appendChild(entry);
             }
 
-            let newFilter = create("div", { cls: ["filterBox", "newFilter"] });
+            // The "new filter" button
+            let newFilter = create("button", { cls: ["filterBox", "newFilter"], text: _tr("filtering.new_traditional_filter") });
 
-            newFilter.innerText = _tr("filtering.new_traditional_filter");
-            newFilter.addEventListener("click", (e) => this.onNewFilter(e));
+            newFilter.addEventListener("click", e => this.onNewFilter(e));
 
             box.appendChild(newFilter);
 
@@ -411,7 +466,7 @@ export class FilterEditor {
     // that wrap the filter elements in color-coded blocks)
     prettyPrintTraditionalFilter(filter)
     {
-        const colDef = this.plainColumnDefinitions[filter.column],
+        const colDef = this.columnDefinitions[this.columnAliases.get(filter.column)],
               operator = OPERATORS[filter.operator];
 
         function formatValue(v)
@@ -459,7 +514,7 @@ export class FilterEditor {
 
         let html = "";
 
-        html += `<span class="column">${this.columnTitles[filter.column]}</span>`;
+        html += `<span class="column">${colDef.title}</span>`;
         html += `<span class="operator">${humanOperatorName(filter.operator)}</span>`;
         html += `<span class="values">`
 
@@ -532,12 +587,12 @@ export class FilterEditor {
 
         if (this.defaultFilter === undefined || this.defaultFilter === null || this.defaultFilter.length < 4) {
             // Use the first available column. Probably not the best, but at least the filter will be valid.
-            initial = [0, Object.keys(this.plainColumnDefinitions)[0], "=", ""];
+            initial = [0, Object.keys(this.columnDefinitions)[0], "=", ""];
         } else initial = [...this.defaultFilter];
 
-        initial[3] = getDefaultValue(this.plainColumnDefinitions[initial[1]]);
+        initial[3] = getDefaultValue(this.columnDefinitions[initial[1]]);
 
-        if (!f.load(initial, this.plainColumnDefinitions)) {
+        if (!f.load(initial, this.columnDefinitions, this.columnAliases)) {
             window.alert("Filter creation failed. See the console for details.");
             return;
         }
@@ -591,8 +646,8 @@ export class FilterEditor {
         let select = editor.querySelector("div#upper select#column"),
             columns = [];
 
-        for (const column of Object.keys(this.plainColumnDefinitions))
-            columns.push([column, this.columnTitles[column]]);
+        for (const column of Object.values(this.columnDefinitions))
+            columns.push([column.key, column.title]);
 
         columns.sort((a, b) => { return a[1].localeCompare(b[1]) });
 
@@ -606,7 +661,7 @@ export class FilterEditor {
             select.appendChild(o);
         }
 
-        const colDef = this.plainColumnDefinitions[filter.editColumn];
+        const colDef = this.columnDefinitions[filter.editColumn];
 
         this.fillOperatorSelector(editor.querySelector("div#upper select#operator"),
                                   colDef.type, filter.editOperator);
@@ -663,7 +718,6 @@ export class FilterEditor {
             e.preventDefault();
             return;
         }
-
 
         const index = parseInt(e.target.parentNode.dataset.index, 10);
 
@@ -730,7 +784,7 @@ export class FilterEditor {
 
         // Then ensure there are enough values
         if (filter.editValues.length == 0)
-            filter.editValues.push(getDefaultValue(this.plainColumnDefinitions[filter.editColumn]));
+            filter.editValues.push(getDefaultValue(this.columnDefinitions[filter.editColumn]));
 
         if ((filter.editOperator == "[]" || filter.editOperator == "![]") && filter.editValues.length < 2)
             filter.editValues.push(filter.editValues[0]);
@@ -746,7 +800,7 @@ export class FilterEditor {
 
         // Is the previous operator still valid for this type? If not, reset it to "=",
         // it's the default (and the safest) operator.
-        const newDef = this.plainColumnDefinitions[filter.editColumn];
+        const newDef = this.columnDefinitions[filter.editColumn];
 
         if (!OPERATORS[filter.editOperator].allowed.has(newDef.type))
             filter.editOperator = "=";
@@ -798,7 +852,12 @@ export class FilterEditor {
                 op = f[2],
                 val = [];
 
-            const colDef = this.plainColumnDefinitions[col];
+            if (!this.columnAliases.has(col)) {
+                console.warning(`convertTraditionalFilter(): column "${col}" is not valid, ignoring filter`);
+                continue;
+            }
+
+            const colDef = this.columnDefinitions[this.columnAliases.get(col)];
 
             // Convert the value
             for (let v of f.slice(3)) {
@@ -904,7 +963,7 @@ export class FilterEditor {
             for (let i = 0; i < filters.length; i++) {
                 let e = new EditableFilter();
 
-                if (!e.load(presets[key].filters[i], this.plainColumnDefinitions))
+                if (!e.load(presets[key].filters[i], this.columnDefinitions, this.columnAliases))
                     continue;
 
                 html += `<div class="filterBox filter padding-2px"><div class="parts">`;
@@ -1052,7 +1111,7 @@ export class FilterEditor {
         const filters = this.getTraditionalFilters();
 
         if (filters === null || filters === undefined || filters.length == 0) {
-            window.alert(_tr('traditional_filter_is_empty'));
+            window.alert(_tr('filtering.traditional_filter_is_empty'));
             return;
         }
 
@@ -1209,7 +1268,7 @@ export class FilterEditor {
 
     // Compiles a filter expression and returns the compiled comparisons and RPN code in an array.
     // This does not actually USE the filter for anything, it only compiles the given string.
-    compileFilterString(input, verboseDebug = true)
+    compileFilterString(input, verboseDebug = false)
     {
         console.log(`----- Compiling filter string (verboseDebug=${verboseDebug}) -----`);
         console.log("Input:", input);
@@ -1234,7 +1293,7 @@ export class FilterEditor {
         if (verboseDebug)
             console.log("----- Tokenization -----");
 
-        t.tokenize(logger, this.columnDefinitions, input);
+        t.tokenize(logger, this.columnAliases, input);
 
         if (!logger.empty()) {
             for (const m of logger.messages) {
@@ -1264,7 +1323,7 @@ export class FilterEditor {
 
         // TODO: Should we abort the compilation if this fails? Now we just cram ahead at full speed
         // and hope for the best.
-        p.parse(logger, this.columnDefinitions, t.tokens, t.lastRow, t.lastCol);
+        p.parse(logger, t.tokens, t.lastRow, t.lastCol);
 
         if (verboseDebug) {
             console.log("Raw comparisons:");
@@ -1288,10 +1347,10 @@ export class FilterEditor {
         if (verboseDebug)
             console.log("----- Compiling the comparisons -----");
 
-        let cc = new ComparisonCompiler();
+        let cc = new ComparisonCompiler(logger, this.columnDefinitions, this.columnAliases);
 
         for (const raw of p.comparisons) {
-            const c = cc.compile(logger, this.columnDefinitions, raw.column, raw.operator, raw.value);
+            const c = cc.compile(raw.column, raw.operator, raw.value);
 
             if (c === null) {
                 // null == the comparison was so invalid it could not even be parsed
@@ -1399,7 +1458,7 @@ export class FilterEditor {
                 if (c.operator == "!!")
                     tag("val-b", c.value);
                 else {
-                    switch (this.columnDefinitions.get(this.columnDefinitions.expandAlias(c.column)).type) {
+                    switch (this.columnDefinitions[this.columnAliases.get(c.column)].type) {
                         case ColumnType.BOOL:
                             tag("val-b", c.value);
                             break;

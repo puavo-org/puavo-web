@@ -345,7 +345,6 @@ class Device < Host
     extend_puavoconf('puavo.autopoweroff.daytime_end_hour',
                      daytime_end_hour)
     extend_puavoconf('puavo.guestlogin.enabled', allow_guest)
-    extend_puavoconf('puavo.l10n.locale', locale)
     extend_puavoconf('puavo.mounts.extramounts',
                      mountpoints,
                      lambda { |v| v.to_json })
@@ -665,7 +664,8 @@ class Devices < PuavoSinatra
     )
 
     # Do further filtering. Our LDAP schema does not make "puavoConf"
-    # substring-searchable.
+    # substring-searchable. (The only reason I don't use a V4 search
+    # for ERS devices is this.)
     exam_servers = []
 
     school_cache = {}
@@ -674,24 +674,16 @@ class Devices < PuavoSinatra
       begin
         conf = dev['puavoConf'][0]
 
-        # quick-and-dirty rejection, without having to parse JSON
-        unless conf.include?('"puavo.profiles.list"')
-          next
-        end
+        # To avoid parsing JSON for every potential device, do a quick-and-dirty rejection check
+        next unless conf.include?('"puavo.profile')
 
         conf = JSON.parse(conf)
 
-        unless conf.include?('puavo.profiles.list')
-          # the quick-and-dirty filtering failed for this device
-          next
-        end
+        next unless conf.fetch('puavo.profile.ers', '') == 'true' ||
+                    conf.fetch('puavo.profiles.list', '').split(',').include?('ers')
 
-        # if the profile list contains "ers", then this is an
-        # Abitti exam server
-        unless conf['puavo.profiles.list'].split(',').include?('ers')
-          next
-        end
-
+        # Include school information directly in the response,
+        # so we don't have to make multiple searches
         school_dn = dev['puavoSchool'][0]
 
         unless school_cache.include?(school_dn)

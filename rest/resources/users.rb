@@ -21,8 +21,7 @@ class User < LdapModel
   ldap_map :gidNumber, :gid_number, LdapConverters::Number
   ldap_map :sn, :last_name
   ldap_map :givenName, :first_name
-  ldap_map(:mail, :secondary_emails){ |v| _, *other_emails = Array(v); other_emails }
-  ldap_map :mail, :email
+  ldap_map :mail, :email, LdapConverters::ArrayValue
   ldap_map :puavoSchool, :school_dns, LdapConverters::ArrayValue
   ldap_map :puavoEduPersonPrimarySchool, :primary_school_dn, LdapConverters::SingleValue
   ldap_map :preferredLanguage, :preferred_language
@@ -41,15 +40,23 @@ class User < LdapModel
   ldap_map :puavoRemovalRequestTime, :removal_request_time,
            LdapConverters::TimeStamp
   ldap_map :eduPersonPrincipalName, :edu_person_principal_name
-  ldap_map :puavoEduPersonReverseDisplayName, :reverse_name
   ldap_map :puavoDoNotDelete, :do_not_delete
   ldap_map :sambaPwdLastSet, :password_last_set, LdapConverters::Number
+  ldap_map :puavoAdminPermissions, :admin_permissions, LdapConverters::ArrayValue
 
   ldap_map :puavoLearnerId, :learner_id
+
+  ldap_map :puavoVerifiedEmail, :verified_email, LdapConverters::ArrayValue
+  ldap_map :puavoPrimaryEmail, :primary_email
 
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
   ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
+
+  ldap_map :puavoUuid, :uuid, LdapConverters::SingleValue
+  ldap_map :puavoMFAEnabled, :mfa_enabled
+
+  ldap_map :puavoLicenses, :licenses
 
   skip_serialize :external_data
 
@@ -86,11 +93,8 @@ class User < LdapModel
     if auto_email
       mail = "#{self.username}@#{domain}"
 
-      if self.email != mail || self.secondary_emails != []
-        # Attempting to change self.email or self.secondary_emails here will cause
-        # a "LDAP::ResultError: Type or value exists" error. I'm not sure why.
-        # But this appears to work. It even updates self.email and self.secondary_emails.
-        # I'm not sure how...
+      if self.email != mail
+        # FIXME: This will fail if the email address has been verified and it changes.
         write_raw(:mail, [mail])
       end
     end
@@ -134,6 +138,8 @@ class User < LdapModel
     self.admin_of_school_dns = new_admin
 
     # Then we hope that remove_from_school below will remove the other associations...
+
+    self.uuid = SecureRandom.uuid if self.uuid.nil?
 
     reset_sso_session
   end
@@ -207,7 +213,18 @@ class User < LdapModel
     end
 
     validate_unique(:email)
-    # XXX validate secondary emails too!!
+
+    # Ensure there are no validated email addresses that don't appear in the emails array
+    unless (Array(self.verified_email) - Array(self.email)).empty?
+      add_validation_error(:verified_email, :invalid_verified_address,
+                           "the verified emails array contains an address that isn't in the normal email addresses array")
+    end
+
+    # Validate the primary email address
+    if self.primary_email && !Array(self.verified_email).include?(self.primary_email)
+      add_validation_error(:primary_email, :invalid_primary_email,
+                           'the primary email address must be in the verified emails array')
+    end
 
     # Set/validate the primary school DN. If it's unset (for example, when creating a new user)
     # then we can fix it automagically if there's only one school.
@@ -257,11 +274,11 @@ class User < LdapModel
 
     self.login_shell = '/bin/bash'
 
-    self.reverse_name = "#{ last_name } #{ first_name }"
-
     if locked.nil? then
       self.locked = false
     end
+
+    self.uuid = SecureRandom.uuid
 
     validate_unique(:uid_number)
     validate_unique(:id)
@@ -447,21 +464,36 @@ class User < LdapModel
     write_raw(:uid, Array(_username))
     write_raw(:cn, Array(_username))
 
-    # Initial home directory in the "new" format
+    # The posixAccount class *requires* this, so we have to set it. It's not used for anything.
     write_raw(:homeDirectory, Array("/home/#{username}"))
   end
 
-  def email=(_email)
-    secondary_emails = Array(get_raw(:mail))[1..-1] || []
-    write_raw(:mail, _email.nil? ? secondary_emails : [_email] + secondary_emails)
-    @cache[:email] = nil
+  def clean_up_email_array(a)
+    (a.nil? || a.empty?) ? [] : \
+      Array(a)
+      .compact                  # remove nil values
+      .map { |e| e.strip }      # remove trailing and leading whitespace
+      .reject { |e| e.empty? }  # remove completely empty strings
+      .uniq                     # remove duplicates
   end
 
-  def secondary_emails=(emails)
-    primary = Array(get_raw(:mail)).first
-    val = ([primary] + emails).compact
-    write_raw(:mail, val)
-    @cache[:secondary_emails] = nil
+  def email=(_email)
+    write_raw(:mail, clean_up_email_array(_email))
+  end
+
+  def verified_email=(_verified)
+    write_raw(:puavoVerifiedEmail, clean_up_email_array(_verified))
+  end
+
+  def learner_id=(lid)
+    if lid.nil? || lid.to_s.strip.empty?
+      # Ensure empty strings stay as nils (or empty arrays, LDAP is weird)
+      value = []
+    else
+      value = [lid.strip]
+    end
+
+    write_raw(:puavoLearnerId, value)
   end
 
   def is_school_admin_in?(school)
@@ -938,7 +970,13 @@ class Users < PuavoSinatra
 
   post "/v3/users" do
     auth :basic_auth, :kerberos
-    user = User.new(json_params)
+
+    # You can't add/edit verified email addresses directly
+    parameters = json_params
+    parameters.delete('verified_email')
+    parameters.delete('primary_email')
+
+    user = User.new(parameters)
     user.save!
     json user
   end
@@ -963,7 +1001,7 @@ class Users < PuavoSinatra
 
     # This check is here because I don't know how to remove organisation owners
     # with puavo-rest. And owners usually should be left alone.
-    if user.organisation.owners.collect{ |o| o.dn }.include?(user.dn)
+    if user.organisation.owners.collect { |o| o[:dn] }.include?(user.dn)
       return 403, 'refusing to delete an organisation owner'
     end
 
@@ -1130,7 +1168,17 @@ class Users < PuavoSinatra
   post "/v3/users/:username" do
     auth :basic_auth, :kerberos
     user = User.by_username!(params["username"])
-    user.update!(json_params)
+
+    parameters = json_params
+
+    # This cannot be edited. It should be immutable.
+    parameters.delete('uuid')
+
+    # You can't add/edit verified email addresses directly
+    parameters.delete('verified_email')
+    parameters.delete('primary_email')
+
+    user.update!(parameters)
     user.save!
     json user
 
@@ -1306,6 +1354,7 @@ class Users < PuavoSinatra
     'id'                 => 'puavoId',
     'last_name'          => 'sn',
     'learner_id'         => 'puavoLearnerId',
+    'licenses'           => 'puavoLicenses',
     'locale'             => 'puavoLocale',
     'locked'             => 'puavoLocked',
     'modified'           => 'modifyTimestamp',  # LDAP operational attribute
@@ -1319,6 +1368,7 @@ class Users < PuavoSinatra
     'ssh_public_key'     => 'puavoSshPublicKey',
     'uid_number'         => 'uidNumber',
     'username'           => 'uid',
+    'uuid'               => 'puavoUuid',
   }
 
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
@@ -1339,11 +1389,13 @@ class Users < PuavoSinatra
     'puavoExternalData'             => { name: 'external_data', type: :json },
     'puavoId'                       => { name: 'id', type: :integer },
     'puavoLearnerId'                => { name: 'learner_id' },
+    'puavoLicenses'                 => { name: 'licenses', type: :json },
     'puavoLocale'                   => { name: 'locale' },
     'puavoLocked'                   => { name: 'locked', type: :boolean },
     'puavoRemovalRequestTime'       => { name: 'removal_mark_time', type: :ldap_timestamp },
     'puavoSchool'                   => { name: 'school_ids', type: :id_from_dn },
     'puavoSshPublicKey'             => { name: 'ssh_public_key' },
+    'puavoUuid'                     => { name: 'uuid' },
     'sn'                            => { name: 'last_name' },
     'telephoneNumber'               => { name: 'phone' },
     'uid'                           => { name: 'username' },

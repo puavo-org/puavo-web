@@ -2,7 +2,7 @@
 
 <div class="formContainer">
 
-<h1><%= t('.title') %></h1>
+<h1><%= t('.title', service: @ldap_service.uid) %></h1>
 
 <%= render :partial => 'form',
  :locals => {

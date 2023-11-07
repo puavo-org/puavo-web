@@ -8,10 +8,12 @@ sso:
   no_organisation: Organisaatiota ei ole asetettu
   organisation_missing: Organisaatio puuttuu käyttäjänimestä. Käytä muotoa käyttäjätunnus@organisaatiosi.opinsys.fi
   invalid_username: Väärän muotoinen käyttäjätunnus
+  verified_address_missing: "Tämä palvelu vaatii vahvennetun sähköpostiosoitteen. <a href=\"%1\">Ole hyvä, ja vahvista osoitteesi Omien tietojen muokkauksen kautta</a>, ja yritä sitten kirjautumista uudelleen. Jos et tiedä mitä tämä tarkoittaa, ota yhteys Opinsys Oy:n tukeen."
   login_to: Kirjaudu palveluun
   login: Kirjaudu
   error: Virhe
   help: Apua
+  technical_support: "Tekninen tuki"
   developers: Kehittäjät
   developers_info: "Lue <a href=/v3/sso/developers target=_blank>tämä</a> dokumentti, jos olet kiinnostunut Opinsys-tunnistautumisen toteuttamisesta."
   username_help: Käytä samaa käyttäjätunnusta kuin Opinsys-tietokoneille kirjautuessasi.
@@ -29,5 +31,11 @@ password_management:
   hello: "Hei"
   message_head: "Pyysit juuri, että salasanasi vaihdettaisiin."
   message: "Vaihda salasanasi klikkaamalla tätä linkkiä: %1"
-  footer: "Linkki on voimassa kymmenen (10) minuutin ajan. Jos et ole tehnyt tätä salasanvaihtopyyntöä, voit jättää tämän viestin huomioimatta. Jos epäilet, että joku muu yrittää vaihtaa salasanaasi tietämättäsi, ota heti yhteys Opinsysin tukeen ja välitä tämän viestin sisältö heille."
+  footer: "Linkki on voimassa tasan yhden tunnin. Jos et ole tehnyt tätä salasanvaihtopyyntöä, voit jättää tämän viestin huomioimatta. Jos epäilet, että joku muu yrittää vaihtaa salasanaasi tietämättäsi, ota heti yhteys Opinsysin tukeen ja välitä tämän viestin sisältö heille."
   password_has_been_reset_message: "Sinun Opinsys-salasanasi on vaihdettu."
+email_verification:
+  subject: "Sähköpostiosoitteen vahvistus"
+  hello: "Hei"
+  message_head: "Pyysit juuri, että tämä sähköpostiosoite vahvistettaisiin."
+  message: "Vahvista osoite klikkaamalla tätä linkkiä: %1"
+  footer: "Linkki on voimassa yhden tunnin. Jos et ole tehnyt tätä pyyntöä, voit jättää tämän viestin huomioimatta. Jos epäilet, että joku muu yrittää vahvistaa osoitetta puolestasi, ota heti yhteys Opinsysin tukeen ja välitä tämän viestin sisältö heille."

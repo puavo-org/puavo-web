@@ -1,6 +1,29 @@
+/*
+These characters have no equivalent in the plain a-z ASCII, so they have to be converted manually,
+before the other diacritics are removed. I've seen some of these in production, and without this
+table, certain usernames will not be generated correctly.
+
+We only consider lowercase letters because the username has been lowercased by the time we start
+removing diacritics from it. "ß" is an exception, because JavaScript's toLowerCase() does not
+touch it.
+*/
+const UNTRANSLATABLE = [
+    ['æ', 'ae'],
+    ['œ', 'oe'],
+    ['ß', 'ss'],
+    ['ø', 'o'],
+    ['đ', 'd'],
+    ['ŀ', 'l'],
+    ['ł', 'l'],
+];
+
 export function dropDiacritics(string, alternateUmlauts)
 {
     let out = string;
+
+    // Convert the "untranslatable" characters first
+    for (const [from, to] of UNTRANSLATABLE)
+        out = out.replaceAll(from, to)
 
     if (alternateUmlauts) {
         // Convert some umlauts differently. These conversions won't work in Finnish,
@@ -9,9 +32,6 @@ export function dropDiacritics(string, alternateUmlauts)
         out = out.replace(/ö/g, "oe");
         out = out.replace(/ü/g, "ue");
     }
-
-    // Leaving this out will cause trouble (and the old version did this too)
-    out = out.replace(/ß/g, "ss");
 
     // Decompose and remove the combining characters (ie. remove everything in the "Combining
     // Diacritical Marks" Unicode block (U+0300 -> U+036F)). This leaves the base characters

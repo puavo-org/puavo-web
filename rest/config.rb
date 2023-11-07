@@ -43,7 +43,18 @@ if ENV['RACK_ENV'] == 'test' then
     "cloud" => true,
     "password_management" => {
       "secret" => "foobar",
-      "lifetime" => 600,
+      "lifetime" => 3600,
+      "ip_whitelist" => ['127.0.0.1'],
+      "smtp" => {
+        "from" => "Puavo Org <no-reply@puavo.net>",
+        "via_options" => {
+          "address" => "localhost",
+          "port" => 25,
+          "enable_starttls_auto" => false
+        }
+      }
+    },
+    "email_management" => {
       "ip_whitelist" => ['127.0.0.1'],
       "smtp" => {
         "from" => "Puavo Org <no-reply@puavo.net>",
@@ -90,6 +101,17 @@ else
     CONFIG.merge!({
       'external_login' =>
         PuavoRest::ExternalLoginTestConfig::get_configuration(),
+    })
+
+    # Make profile editor tests work. This minimal configuration is enough for now, because we
+    # don't actually send any verification messages yet. We only need to make the email management
+    # authentication work, and give the email management controller a minimal whitelist to pass
+    # the sender check. If we one day start testing verification email sending, then this part
+    # needs to be expanded.
+    CONFIG.merge!({
+      'email_management' => {
+        'ip_whitelist' => ['127.0.0.1'],
+      }
     })
   end
 end

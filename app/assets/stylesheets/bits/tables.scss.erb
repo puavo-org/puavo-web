@@ -191,6 +191,20 @@ SUPERTABLES
   padding: 5px;
 }
 
+.stFieldset {
+  border-top: 1px solid #ccc;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  padding: 5px 0 0 0;
+  margin: 0;
+}
+
+.stFieldset > legend {
+  margin-left: 10px;
+  padding: 0 5px;
+}
+
 /*
 ----------------------------------------------------------------------------------------------------
 TABLE HEADER ROWS
@@ -221,7 +235,7 @@ TABLE HEADER ROWS
 }
 
 .stTable thead tr#controls section {
-  padding-right: 15px;
+  padding-right: 5px;
   border-right: 1px solid #888;
   display: flex;
   flex-direction: row;
@@ -365,6 +379,28 @@ div.checkboxScrollList .item input {
   color: var(--st-summary-hover-fg);
 }
 
+/* Row mass select popup */
+div.popupRows { margin: 5px; }
+
+div.popupRows fieldset legend {
+  font-size: 100%;
+}
+
+div.popupRows div#source {
+  border: 1px solid var(--st-border);
+  padding: 5px;
+  font-size: 100%;
+  outline: none;
+  font-family: monospace;
+  width: 30em;
+  overflow: scroll;
+  resize: vertical;
+}
+
+div.popupRows span.unmatchedRow { background: #faa; }
+
+div.popupRows div#massRowSelectStatus { font-size: 80%; }
+
 /* Column editing popup */
 div#popupColumns {
   width: 40em;
@@ -373,45 +409,8 @@ div#popupColumns {
 
 div#popupColumns #columnContainer {
   border: 1px solid var(--st-common-border);
-  width: 90%;
+  width: 66%;
 }
-
-/*
-div#popupColumns input[type="search"] {
-  background: url("/images/magnifier.png") no-repeat scroll 5px center #fff;
-  text-indent: 2em;
-  border: none;
-  border-bottom: 1px solid var(--st-common-border);
-  padding: 5px;
-  width: 100%;
-}
-
-div#popupColumns #columnList {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  resize: vertical;
-  width: 100%;
-  height: 20em;
-  max-height: 40em;
-  min-height: 10em;
-  font-size: 100%;
-}
-
-div#popupColumns #columnList .item {
-  display: flex;
-  align-items: center;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-div#popupColumns #columnList .item { color: var(--st-tab-container-fg); }
-div#popupColumns #columnList .item:hover { background: var(--st-scroll-list-hover-bg); }
-
-div#popupColumns #columnList .item input {
-  pointer-events: none;
-  margin-right: 10px;
-}
-*/
 
 div#popupColumns #columnList .columnName {
   font-style: italic;
@@ -424,21 +423,6 @@ div#popupColumns #columnStats {
 }
 
 /* Mass tools */
-.stTable thead div.toolContainer #source {
-  border: 1px solid var(--st-border);
-  padding: 5px;
-  font-size: 120%;
-  outline: none;
-  font-family: monospace;
-  width: 30em;
-  overflow: scroll;
-  resize: both;
-}
-
-.stTable thead div.toolContainer .unmatchedRow {
-  background: #faa;
-}
-
 .stTable thead div.toolContainer .massControls {
   display: flex;
   flex-direction: row;
@@ -467,18 +451,10 @@ div#popupColumns #columnStats {
   color: var(--st-status-fail-fg);
 }
 
-.stTable thead fieldset {
-  border-top: 1px solid #ccc;
-  border-left: none;
-  border-right: none;
-  border-bottom: none;
-  padding: 5px 0 0 0;
+.stTable thead fieldset#settings div#ui {
+  /* Container for the mass tool settings interface */
   margin: 0;
-}
-
-.stTable thead fieldset legend {
-  margin-left: 10px;
-  padding: 0 5px;
+  padding: 0;
 }
 
 .stTable thead table {
@@ -487,12 +463,6 @@ div#popupColumns #columnStats {
 
 .stTable thead table tr:hover {
   background: none;
-}
-
-.stTable thead fieldset#settings div#ui {
-  /* Container for the mass tool settings interface */
-  margin: 0;
-  padding: 0;
 }
 
 /* Hack to make mass tool settings UIs a bit more nicer. This also means that if you actually
@@ -529,8 +499,10 @@ div.filterList .filter {
 
 .stTable thead .newFilter {
   border: 1px dashed #888;
+  background: none;
   padding: 5px 10px;
   cursor: pointer;
+  font-family: "Arial", sans-serif;
   font-size: 110%;
   align-items: center;
 }
@@ -674,6 +646,11 @@ TABLE BODY ROWS
 .stTable tbody tr:hover { background: var(--st-row-hover-bg); }
 .stTable tbody tr:hover .sorted { background: var(--st-row-sorted-hover-bg); }
 
+.stTable tbody tr.processing { background: var(--st-row-processing-bg); color: var(--st-row-processing-fg) !important; }
+.stTable tbody tr.processing:hover { background: var(--st-row-processing-hover-bg) !important; }
+.stTable tbody tr.processing .sorted { background: var(--st-row-processing-sorted-bg); }
+.stTable tbody tr.processing:hover .sorted { background: var(--st-row-processing-sorted-hover-bg) !important; }
+
 .stTable tbody tr.success {
   background: var(--st-row-success-bg);
   color: var(--st-row-processed-fg) !important;
@@ -730,7 +707,7 @@ TABLE BODY ROWS
 .stDragHeader {
   background: var(--st-sortable-hover-bg);
   color: var(--st-sortable-hover-fg);
-  border: 1px solid var(--st-border);
+  border: 1px solid $stTableBorder;
   position: absolute;
   display: flex;
   align-items: center;
@@ -739,7 +716,7 @@ TABLE BODY ROWS
   font-weight: bold;
   z-index: 10;
   cursor: grabbing;
-  opacity: 0.85;
+  opacity: 0.7;
   user-select: none;
 }
 

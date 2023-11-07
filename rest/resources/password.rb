@@ -45,6 +45,7 @@ class Password < PuavoSinatra
     jwt_data = {
       uuid: SecureRandom.uuid,    # try to avoid generating two identical JWT's
       iat: Time.now.to_i,
+      id: user.id.to_i,
       uid: user.username,
       domain: user.organisation_domain
     }

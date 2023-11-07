@@ -46,7 +46,6 @@ describe PuavoRest::Devices do
 
     # XXX weird that these must be here
     @user.administrative_groups = [ maintenance_group.id ]
-    @user.secondary_emails = [ 'bob@foobar.com', 'bob@helloworld.com' ]
     @user.teaching_group = @group
 
     @laptop = create_device(

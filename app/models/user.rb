@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+require 'securerandom'
+
 class User < LdapBase
   include Puavo::Integrations
 
@@ -26,6 +29,8 @@ class User < LdapBase
 
   before_save :is_uid_changed, :set_preferred_language
 
+  before_save :ensure_has_uuid
+
   before_update :change_password
 
   after_save :add_member_uid_to_models, :reset_sso_session
@@ -48,6 +53,9 @@ class User < LdapBase
      :new_password_confirmation,
      :password_change_mode
   ]
+
+  # Valid and known permissions for school admins. Used in has_admin_permission?(), for example.
+  ADMIN_PERMISSIONS = %i[create_users delete_users import_users].freeze
 
   attr_accessor(*@@extra_attributes)
 
@@ -86,14 +94,14 @@ class User < LdapBase
         { :original_attribute_name => "homeDirectory",
           :new_attribute_name => "home_directory",
           :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "puavoLicenses",
+          :new_attribute_name => "licenses",
+          :value_block => lambda{ |value| Array(value).first } },
         { :original_attribute_name => "puavoEduPersonAffiliation",
           :new_attribute_name => "user_type",
           :value_block => lambda{ |value| Array(value).first } },
         { :original_attribute_name => "mail",
           :new_attribute_name => "email",
-          :value_block => lambda{ |value| Array(value).first } },
-        { :original_attribute_name => "puavoEduPersonReverseDisplayName",
-          :new_attribute_name => "reverse_name",
           :value_block => lambda{ |value| Array(value).first } },
         { :original_attribute_name => "sn",
           :new_attribute_name => "surname",
@@ -295,6 +303,16 @@ class User < LdapBase
           )
         )
       end
+    end
+
+    verified = Array(self.puavoVerifiedEmail || [])
+
+    unless (verified - Array(self.mail || [])).empty?
+      errors.add(:mail, I18n.t('activeldap.errors.messages.invalid_verified_email'))
+    end
+
+    if !self.puavoPrimaryEmail.nil? && !verified.include?(self.puavoPrimaryEmail)
+      errors.add(:mail, I18n.t('activeldap.errors.messages.invalid_primary_email'))
     end
 
     if !self.telephoneNumber.nil? && !self.telephoneNumber.empty?
@@ -580,6 +598,10 @@ class User < LdapBase
     db.del("user:#{self.id}")
   end
 
+  def has_admin_permission?(permission)
+    User::ADMIN_PERMISSIONS.include?(permission) && Array(self.puavoAdminPermissions).include?(permission.to_s)
+  end
+
   private
 
   def set_special_ldap_value
@@ -605,11 +627,14 @@ class User < LdapBase
                                       false
                                     end
     end
-    self.puavoEduPersonReverseDisplayName = self.sn + " " + self.givenName
   end
 
   def set_uid_number
     self.uidNumber = IdPool.next_uid_number
+  end
+
+  def ensure_has_uuid
+    self.puavoUuid = SecureRandom.uuid unless self.puavoUuid
   end
 
   def is_uid_changed
@@ -681,8 +706,6 @@ class User < LdapBase
     # Set uid to Domain Users group
     SambaGroup.add_uid_to_memberUid('Domain Users', self.uid)
   end
-
-  private
 
   def delete_all_associations
     # Remove uid from Domain Users group

@@ -1,173 +1,12 @@
-// All available columns, their names and types and other parameters
-const COLUMN_DEFINITIONS = {
-    id: {
-        key: "id",
-        type: ST.ColumnType.NUMERIC,
-        alias: ["puavoid"],
-    },
-
-    first: {
-        key: "first",
-        type: ST.ColumnType.STRING,
-        alias: ["first_name", "fn"],
-    },
-
-    last: {
-        key: "last",
-        type: ST.ColumnType.STRING,
-        alias: ["last_name", "ln"],
-    },
-
-    name: {
-        key: "name",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
-    },
-
-    uid: {
-        key: "uid",
-        type: ST.ColumnType.STRING,
-        alias: ["username"],
-    },
-
-    eid: {
-        key: "eid",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.F_NULLABLE,
-        alias: ["external_id"]
-    },
-
-    learner_id: {
-        key: "learner_id",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.F_NULLABLE,
-        alias: ["lid"],
-    },
-
-    role: {
-        key: "role",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
-    },
-
-    phone: {
-        key: "phone",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
-        alias: ["phone_number"],
-    },
-
-    email: {
-        key: "email",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
-    },
-
-    pnumber: {
-        key: "pnumber",
-        type: ST.ColumnType.STRING,
-    },
-
-    home: {
-        key: "home",
-        type: ST.ColumnType.STRING,
-    },
-
-    rrt: {
-        key: "rrt",
-        type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.USER_TRANSFORM | ST.ColumnFlag.F_NULLABLE,
-        alias: ["removal_request_time"]
-    },
-
-    dnd: {
-        key: "dnd",
-        type: ST.ColumnType.BOOL,
-        flags: ST.ColumnFlag.F_NULLABLE,
-        alias: ["do_not_delete"]
-    },
-
-    locked: {
-        key: "locked",
-        type: ST.ColumnType.BOOL,
-        flags: ST.ColumnFlag.F_NULLABLE,
-    },
-
-    created: {
-        key: "created",
-        type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
-    },
-
-    modified: {
-        key: "modified",
-        type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
-    },
-
-<% if @is_organisation %>
-    school: {
-        key: "school",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+// A list of schools. Some columns and mass operations need access to a list of schools.
+const SCHOOLS = {
+<% @schools_list.each do |s| %>
+    "<%= s[:id] %>": {
+        dn: "<%= s[:dn] %>",
+        name: "<%= s[:name] %>",
     },
 <% end %>
-
-    schools: {
-        key: "schools",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
-    },
 };
-
-// Localized column titles. The keys must be same as in the keys in the column
-// definitions object above.
-const COLUMN_TITLES = {
-    id: "<%= t('columns.puavoid') %>",
-    first: "<%= t('columns.users.first_names') %>",
-    last: "<%= t('columns.users.last_name') %>",
-    name: "<%= t('columns.users.full_name') %>",
-    uid: "<%= t('columns.users.uid') %>",
-    eid: "<%= t('columns.users.eid') %>",
-    learner_id: "<%= t('columns.users.learner_id') %>",
-    role: "<%= t('columns.users.role') %>",
-    phone: "<%= t('columns.users.phone') %>",
-    email: "<%= t('columns.users.email') %>",
-    pnumber: "<%= t('columns.users.pnumber') %>",
-    home: "<%= t('columns.users.home_dir') %>",
-    rrt: "<%= t('columns.users.rrt') %>",
-    dnd: "<%= t('columns.users.dnd') %>",
-    locked: "<%= t('columns.users.is_locked') %>",
-    created: "<%= t('columns.created') %>",
-    modified: "<%= t('columns.modified') %>",
-    school: "<%= t('columns.primary_school') %>",
-    schools: "<%= t('columns.users.other_schools') %>",
-};
-
-// The default order for columns
-const COLUMN_ORDER = [
-<% if @is_organisation %>
-    "school",
-<% end %>
-    "schools",
-    "id",
-    "name",
-    "first",
-    "last",
-    "uid",
-    "role",
-    "eid",
-    "learner_id",
-    "phone",
-    "email",
-    "pnumber",
-    "home",
-    "rrt",
-    "dnd",
-    "locked",
-    "created",
-    "modified",
-];
 
 // Localized user role names
 const USER_ROLES = {
@@ -183,97 +22,258 @@ const USER_ROLES = {
     unknown: "<%= t('unknown_role') %>",
 };
 
-const SCHOOLS = {
-<% @schools_list.each do |s| %>
-    "<%= s[:id] %>": {
-        dn: "<%= s[:dn] %>",
-        name: "<%= s[:name] %>",
+// All available columns, their names and types and other parameters
+const COLUMN_DEFINITIONS = {
+    id: {
+        key: "id",
+        title: "<%= t('columns.puavoid') %>",
+        type: ST.ColumnType.NUMERIC,
+        alias: ["puavoid"],
+    },
+
+    first: {
+        key: "first",
+        title: "<%= t('columns.users.first_names') %>",
+        type: ST.ColumnType.STRING,
+        alias: ["first_name", "fn"],
+    },
+
+    last: {
+        key: "last",
+        title: "<%= t('columns.users.last_name') %>",
+        type: ST.ColumnType.STRING,
+        alias: ["last_name", "ln"],
+    },
+
+    name: {
+        key: "name",
+        title: "<%= t('columns.users.full_name') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => {
+            let s = "";
+
+            if (entry.rrt)
+                s += `<span class="stUserMarkedForDeletion">`;
+
+            s += `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`;
+
+            if (entry.locked)
+                s += `<i class="icon-lock"></i>`;
+
+            if (entry.rrt)
+                s += `</span>`;
+
+            return [
+                s,
+                entry.name
+            ];
+        }
+    },
+
+    uid: {
+        key: "uid",
+        title: "<%= t('columns.users.uid') %>",
+        type: ST.ColumnType.STRING,
+        alias: ["username"],
+    },
+
+    eid: {
+        key: "eid",
+        title: "<%= t('columns.users.eid') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.F_NULLABLE,
+        alias: ["external_id"]
+    },
+
+    learner_id: {
+        key: "learner_id",
+        title: "<%= t('columns.users.learner_id') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.F_NULLABLE,
+        alias: ["lid"],
+    },
+
+    role: {
+        key: "role",
+        title: "<%= t('columns.users.role') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => {
+            let values = [];
+
+            // Translate user roles
+            for (let i = 0; i < entry.role.length; i++) {
+                const r = entry.role[i];
+
+                if (r in USER_ROLES) {
+                    if (r == "owner" || r == "schooladmin")
+                        values.push(`<span class="adminOrOwner">${USER_ROLES[r]}</span>`);
+                    else values.push(USER_ROLES[r]);
+                } else values.push(USER_ROLES['unknown']);
+            }
+
+            return [
+                values.join("<br>"),
+                entry.role.join()
+            ];
+        },
+    },
+
+    phone: {
+        key: "phone",
+        title: "<%= t('columns.users.phone') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
+        alias: ["phone_number"],
+    },
+
+    email: {
+        key: "email",
+        title: "<%= t('columns.users.email') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
+    },
+
+    v_email: {
+        key: "v_email",
+        title: "<%= t('columns.users.v_email') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
+    },
+
+    p_email: {
+        key: "p_email",
+        title: "<%= t('columns.users.p_email') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.F_NULLABLE,
+    },
+
+    pnumber: {
+        key: "pnumber",
+        title: "<%= t('columns.users.pnumber') %>",
+        type: ST.ColumnType.STRING,
+    },
+
+    rrt: {
+        key: "rrt",
+        title: "<%= t('columns.users.rrt') %>",
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.F_NULLABLE,
+        transform: entry => {
+            if (entry.rrt === undefined || entry.rrt === null || entry.rrt === 0)
+                return ["", 0];
+
+            const [valid, t] = ST.convertTimestamp(entry.rrt);
+
+            if (!valid)
+                return ["?", 0];
+
+            return [t, entry.rrt];
+        },
+        alias: ["removal_request_time"],
+    },
+
+    dnd: {
+        key: "dnd",
+        title: "<%= t('columns.users.dnd') %>",
+        type: ST.ColumnType.BOOL,
+        flags: ST.ColumnFlag.F_NULLABLE,
+        alias: ["do_not_delete"]
+    },
+
+    locked: {
+        key: "locked",
+        title: "<%= t('columns.users.is_locked') %>",
+        type: ST.ColumnType.BOOL,
+        flags: ST.ColumnFlag.F_NULLABLE,
+    },
+
+    created: {
+        key: "created",
+        title: "<%= t('columns.created') %>",
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+    },
+
+    modified: {
+        key: "modified",
+        title: "<%= t('columns.modified') %>",
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+    },
+
+<% if @is_organisation %>
+    school: {
+        key: "school",
+        title: "<%= t('columns.primary_school') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => {
+            // Makes filtering by school name work as expected, but the exported CSV
+            // will contain display names. Can't have everything.
+            return [entry.school[1], entry.school[1]];
+        },
     },
 <% end %>
-};
 
-/*
-Each transformation function must return an array of two values:
-    1. The displayable value for this table cell. Assumed to be valid HTML.
-    2. A plain entry that can be used to compare this to other cells during sorting.
+    schools: {
+        key: "schools",
+        title: "<%= t('columns.users.other_schools') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => {
+            let out = [];
 
-Never return NULLs! If there is no value, return the default value for that
-cell, be it an empty string, the number zero, or something else. Never NULL.
-*/
-const USER_TRANSFORM_FUNCTIONS = {
-    name: function(entry) {
-        let s = "";
+            if (Array.isArray(entry.schools))
+                for (const id of entry.schools)
+                    out.push((id in SCHOOLS) ? SCHOOLS[id].name : "?");
 
-        if (entry.rrt)
-            s += `<span class="stUserMarkedForDeletion">`;
-
-        s += `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`;
-
-        if (entry.locked)
-            s += `<i class="icon-lock"></i>`;
-
-        if (entry.rrt)
-            s += `</span>`;
-
-        return [
-            s,
-            entry.name
-        ];
-    },
-
-    rrt: function(entry) {
-        if (entry.rrt === undefined || entry.rrt === null || entry.rrt === 0)
-            return ["", 0];
-
-        const [valid, t] = ST.convertTimestamp(entry.rrt);
-
-        if (!valid)
-            return ["?", 0];
-
-        return [t, entry.rrt];
-    },
-
-    role: function(entry) {
-        let values = [];
-
-        // Translate user roles
-        for (let i = 0; i < entry.role.length; i++) {
-            const r = entry.role[i];
-
-            if (r in USER_ROLES) {
-                if (r == "owner" || r == "schooladmin")
-                    values.push(`<span class="adminOrOwner">${USER_ROLES[r]}</span>`);
-                else values.push(USER_ROLES[r]);
-            } else values.push(USER_ROLES['unknown']);
+            return [out.join("<br>"), out.join(","), out.join(",")];
         }
-
-        return [
-            values.join("<br>"),
-            entry.role.join()
-        ];
     },
 
-    school: function(entry) {
-        // Makes filtering by school name work as expected, but the exported CSV
-        // will contain display names. Can't have everything.
-        return [
-            entry.school[1],
-            entry.school[1]
-        ];
+    licenses: {
+        key: "licenses",
+        title: "<%= t('columns.users.licenses') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
     },
 
-    schools: function(entry) {
-        let out = [];
-
-        if (Array.isArray(entry.schools))
-            for (const id of entry.schools)
-                out.push((id in SCHOOLS) ? SCHOOLS[id].name : "?");
-
-        return [out.join("<br>"), out.join(","), out.join(",")];
+    uuid: {
+        key: "uuid",
+        title: "UUID",
+        type: ST.ColumnType.STRING,
+        customCSS: ["font-monospace"],      // this makes these easier to read
     },
 };
+
+// The default order for columns
+const COLUMN_ORDER = [
+<% if @is_organisation %>
+    "school",
+<% end %>
+    "schools",
+    "id",
+    "uuid",
+    "name",
+    "first",
+    "last",
+    "uid",
+    "role",
+    "eid",
+    "learner_id",
+    "phone",
+    "email",
+    "v_email",
+    "p_email",
+    "pnumber",
+    "rrt",
+    "dnd",
+    "locked",
+    "created",
+    "modified",
+    "licenses",
+];
 
 <% if @is_owner %>
+// Mass operation: delete users
 class MassUserDeletion extends ST.MassOperation {
     constructor(parent, container)
     {
@@ -289,36 +289,34 @@ class MassUserDeletion extends ST.MassOperation {
         return window.confirm(`<%= t('destroy_generic_sync_warning') %>`);
     }
 
-    processItem(item)
+    prepareItem(item)
     {
-        // Do some pre-filtering here, to prevent useless network traffic.
-        // All of these tests are also done on the server end in case the
-        // user tries to cheat by, for example, adjusting their system time.
+        // Filter do-not-delete users, and those who have not been marked for deletion for
+        // at least one week. These same checks are also done on the server, the purpose
+        // of these is to reduce network traffic (no need to send a network request, when
+        // nothing will be done to these users).
         const dnd = item.dnd[ST.INDEX_EXISTS] === true && item.dnd[ST.INDEX_FILTERABLE] !== undefined,
               marked = item.rrt[ST.INDEX_EXISTS] === true && item.rrt[ST.INDEX_FILTERABLE] !== undefined,
               locked = item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === true;
 
         if (dnd)
-            return ST.itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
+            return { state: "error", message: "<%= t('users.index.mass_operations.delete.deletion_prevented') %>" };
 
         if (!marked)
-            return ST.itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>");
+            return { state: "error", message: "<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>" };
 
         const now = Math.floor(Date.now() / 1000);
         const next = item.rrt[ST.INDEX_FILTERABLE] + (60 * 60 * 24 * 7);   // 7 days in seconds
 
         if (next > now)
-            return ST.itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.marked_too_recently') %>");
+            return { state: "error", message: "<%= t('users.index.mass_operations.delete.marked_too_recently') %>" };
 
-        // Good to go
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_user_delete`,
-            { id: item.id[ST.INDEX_FILTERABLE] }
-        );
+        return { state: "ready" };
     }
 };
 <% end %>
 
+// Mass operation: lock/unlock users
 class MassUserLocking extends ST.MassOperation {
     constructor(parent, container)
     {
@@ -334,50 +332,53 @@ class MassUserLocking extends ST.MassOperation {
     <th><%= t('users.index.mass_operations.lock.action') %></th>
     <td>
         <div class="flex-rows">
-            <label><input type="radio" name="mul_action_type" id="mul_action_lock" checked><%= t('users.index.mass_operations.lock.lock') %></label>
-            <label><input type="radio" name="mul_action_type" id="mul_action_unlock"><%= t('users.index.mass_operations.lock.unlock') %></label>
+            <label><input type="radio" name="action" id="lock" checked><%= t('users.index.mass_operations.lock.lock') %></label>
+            <label><input type="radio" name="action" id="unlock"><%= t('users.index.mass_operations.lock.unlock') %></label>
         </div>
     </td>
 </tr>
 </table>`;
-    }
 
+        this.container.querySelector("input#lock").addEventListener("click", e => this.lock = true);
+        this.container.querySelector("input#unlock").addEventListener("click", e => this.lock = false);
+    }
     start()
     {
-        if (this.container.querySelector("#mul_action_lock").checked)
-            this.lock = true;
-        else this.lock = false;
-
-        for (let i of this.container.querySelectorAll("input"))
+        for (const i of this.container.querySelectorAll("input"))
             i.disabled = true;
     }
 
     finish()
     {
-        for (let i of this.container.querySelectorAll("input"))
+        for (const i of this.container.querySelectorAll("input"))
             i.disabled = false;
     }
 
-    processItem(item)
+    getOperationParameters()
+    {
+        return {
+            lock: this.lock,
+        };
+    }
+
+    prepareItem(item)
     {
         // Do nothing if the user is already in the desired locking state
         if (item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === this.lock)
-            return ST.itemProcessedStatus(true);
+            return { state: "skip" };
 
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_user_lock`,
-            { id: item.id[1], lock: this.lock }
-        );
+        return { state: "ready" };
     }
 };
 
+// Mass operation: mark users for deletion (or remove the marking)
 class MassUserMarkForDeletion extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
 
         // The default operation (mark for deletion if not marked yet)
-        this.operation = 0;
+        this.action = "mark";
     }
 
     buildInterface()
@@ -388,32 +389,37 @@ class MassUserMarkForDeletion extends ST.MassOperation {
     <th><%= t('users.index.mass_operations.mark.action') %></th>
     <td>
         <div class="flex-rows">
-            <label><input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark" checked><%= t('users.index.mass_operations.mark.mark') %></label>
-            <label><input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark_force"><%= t('users.index.mass_operations.mark.mark_force') %></label>
-            <label><input type="radio" name="mass_user_mark_action" id="mass_user_mark_unmark"><%= t('users.index.mass_operations.mark.unmark') %></label>
+            <label><input type="radio" name="action" id="mark" checked><%= t('users.index.mass_operations.mark.mark') %></label>
+            <label><input type="radio" name="action" id="mark_force"><%= t('users.index.mass_operations.mark.mark_force') %></label>
+            <label><input type="radio" name="action" id="unmark"><%= t('users.index.mass_operations.mark.unmark') %></label>
         </div>
     </td>
 </tr>
 </table>`;
 
-        this.container.querySelector("#mass_user_mark_mark").addEventListener("click", () => this.operation = 0);
-        this.container.querySelector("#mass_user_mark_mark_force").addEventListener("click", () => this.operation = 1);
-        this.container.querySelector("#mass_user_mark_unmark").addEventListener("click", () => this.operation = 2);
+        this.container.querySelector("input#mark").addEventListener("click", e => this.action = "mark");
+        this.container.querySelector("input#mark_force").addEventListener("click", e => this.action = "mark_force");
+        this.container.querySelector("input#unmark").addEventListener("click", e => this.action = "unmark");
     }
 
     start()
     {
-        for (let i of this.container.querySelectorAll("input"))
+        for (const i of this.container.querySelectorAll("input"))
             i.disabled = true;
     }
 
     finish()
     {
-        for (let i of this.container.querySelectorAll("input"))
+        for (const i of this.container.querySelectorAll("input"))
             i.disabled = false;
     }
 
-    processItem(item)
+    getOperationParameters()
+    {
+        return this.action;
+    }
+
+    prepareItem(item)
     {
         // Pre-filter users, avoid useless network requests. All of these checks
         // are also done on the server end.
@@ -421,33 +427,30 @@ class MassUserMarkForDeletion extends ST.MassOperation {
               marked = item.rrt[ST.INDEX_EXISTS] === true && item.rrt[ST.INDEX_FILTERABLE] !== undefined;
 
         if (dnd) {
-            // deletion prevented
-            return ST.itemProcessedStatus(false, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
+            // Deletion prevented, can't mark for deletion
+            return { state: "error", message: "<%= t('users.index.mass_operations.delete.deletion_prevented') %>" };
         }
 
-        if (marked && this.operation == 0) {
-            // Already marked for deletion and not in force mode
-            return ST.itemProcessedStatus(true);
+        if (marked && this.action == "mark") {
+            // Already marked for deletion and not in forced mode
+            return { state: "skip" };
         }
 
-        if (!marked && this.operation == 2) {
-            // Not marked for deletion
-            return ST.itemProcessedStatus(true);
+        if (!marked && this.action == "unmark") {
+            // Not marked for deletion, can't unmark
+            return { state: "skip" };
         }
 
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_user_mark`,
-            { id: item.id[ST.INDEX_FILTERABLE], operation: this.operation }
-        );
+        return { state: "ready" };
     }
 };
 
+// Mass operation: clear column (ie. set a specific database attribute to null for all selected users)
 class MassUserClearColumn extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
-
-        this.column = "eid";
+        this.column = "email";
     }
 
     buildInterface()
@@ -458,44 +461,46 @@ class MassUserClearColumn extends ST.MassOperation {
     <th><%= t('users.index.mass_operations.clear_column.column_title') %></th>
     <td>
         <div class="flex-rows">
-            <label><input type="radio" name="mass_user_clear_column" value="eid" checked><%= t('users.index.mass_operations.clear_column.columns.eid') %></label>
 <% unless @automatic_email_addresses %>
-            <label><input type="radio" name="mass_user_clear_column" value="email"><%= t('users.index.mass_operations.clear_column.columns.email') %></label>
+            <label><input type="radio" name="clear_column" value="email" checked><%= t('columns.users.email') %></label>
 <% end %>
-            <label><input type="radio" name="mass_user_clear_column" value="telephone"><%= t('users.index.mass_operations.clear_column.columns.telephone') %></label>
-            <label><input type="radio" name="mass_user_clear_column" value="learner_id"><%= t('users.index.mass_operations.clear_column.columns.learner_id') %></label>
-            <label><input type="radio" name="mass_user_clear_column" value="pnumber"><%= t('users.index.mass_operations.clear_column.columns.pnumber') %></label>
+            <label><input type="radio" name="clear_column" value="telephone"><%= t('columns.users.phone') %></label>
+            <label><input type="radio" name="clear_column" value="eid"><%= t('columns.users.eid') %></label>
+            <label><input type="radio" name="clear_column" value="pnumber"><%= t('columns.users.pnumber') %></label>
         </div>
     </td>
 </tr>
 </table>`;
 
-        for (let i of this.container.querySelectorAll("input"))
-            i.addEventListener("click", (e) => this.column = e.target.value);
+        for (const i of this.container.querySelectorAll("input"))
+            i.addEventListener("click", e => this.column = e.target.value);
     }
 
     start()
     {
-        for (let i of this.container.querySelectorAll("input"))
+        for (const i of this.container.querySelectorAll("input"))
             i.disabled = true;
     }
 
     finish()
     {
-        for (let i of this.container.querySelectorAll("input"))
+        for (const i of this.container.querySelectorAll("input"))
             i.disabled = false;
     }
 
-    processItem(item)
+    getOperationParameters()
     {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_user_clear_column`,
-            { id: item.id[ST.INDEX_FILTERABLE], column: this.column }
-        );
+        return this.column;
+    }
+
+    prepareItem(item)
+    {
+        return { state: "ready" };
     }
 };
 
 <% unless @is_organisation %>
+// Create a new username list from selection
 class MassUsernameList extends ST.MassOperation {
     constructor(parent, container)
     {
@@ -509,36 +514,32 @@ class MassUsernameList extends ST.MassOperation {
 `<label for="description"><%= t('users.index.mass_operations.username_list.description') %>:</label>
 <input type="text" maxlength="100" size="50" id="description">`;
 
-        this.container.querySelector("input#description").addEventListener("change", (e) => this.description = e.target.value.trim());
+        this.container.querySelector("input#description").addEventListener("change", e => this.description = e.target.value.trim());
     }
 
-    processAllItems(items)
+    getOperationParameters()
     {
-        // PuavoIDs are enough for the server
-        let id = [];
+        return {
+            creator: "<%= current_user.givenName %> <%= current_user.sn %> (<%= current_user.uid %>)",
+            description: this.description,
+        };
+    }
 
-        for (const i of items)
-            id.push(i[0].id[ST.INDEX_FILTERABLE]);
-
-        return ST.doPOST(
-            "/users/<%= @school.id %>/mass_op_username_list",
-            {
-                creator: "<%= current_user.givenName %> <%= current_user.sn %> (<%= current_user.uid %>)",
-                description: this.description,
-                user_ids: id,
-            }
-        );
+    prepareItem(item)
+    {
+        return { state: "ready" };
     }
 };
 <% end %>
 
+// Mass operation: change school
 class MassUserChangeSchool extends ST.MassOperation {
     constructor(parent, container)
     {
         super(parent, container);
 
         // Same defaults as on the form below
-        this.operation = 0;
+        this.action = "move";
         this.keep = false;
         this.removePrev = true;
         this.schoolID = null;
@@ -546,25 +547,25 @@ class MassUserChangeSchool extends ST.MassOperation {
 
     buildInterface()
     {
-        let html = `
-<p class="genericWarning"><%= t('users.index.mass_operations.change_school.automation_warning') %></p>
+        let html =
+`<p class="genericWarning"><%= t('users.index.mass_operations.change_school.automation_warning') %></p>
 <table class="settingsChild">
 <tr>
     <th><%= t('users.index.mass_operations.change_school.operation') %></label></th>
     <td>
         <div class="flex-rows gap-5px">
             <label><input type="radio" name="operation" id="move" value="move" checked><%= t('users.index.mass_operations.change_school.operation_move') %></label>
-            <label class="margin-left-20px"><input type="checkbox" name="keep" id="keep"><%= t('users.index.mass_operations.change_school.operation_move_keep') %></label>
-            <label class="margin-left-20px margin-bottom-5px"><input type="checkbox" name="remove_prev" id="remove_prev" checked><%= t('users.index.mass_operations.change_school.operation_remove_prev_groups') %></label>
+            <label class="margin-left-20px">                  <input type="checkbox" id="keep"><%= t('users.index.mass_operations.change_school.operation_move_keep') %></label>
+            <label class="margin-left-20px margin-bottom-5px"><input type="checkbox" id="remove_prev" checked><%= t('users.index.mass_operations.change_school.operation_remove_prev_groups') %></label>
             <label><input type="radio" name="operation" id="add" value="add"><%= t('users.index.mass_operations.change_school.operation_add') %></label>
             <label><input type="radio" name="operation" id="remove" value="remove"><%= t('users.index.mass_operations.change_school.operation_remove') %></label>
         </div>
     </td>
 </tr>
 <tr>
-    <th><label for="mass_user_change_school"><%= t('users.index.mass_operations.change_school.target_school') %></label></th>
+    <th><label for="destination_school"><%= t('users.index.mass_operations.change_school.target_school') %></label></th>
     <td>
-        <select id="mass_user_change_school">
+        <select id="destination_school">
 
         <% @schools_list.sort { |a, b| a[:name].downcase <=> b[:name].downcase }.each do |s| %>
             <% next if !@allowed_schools.nil? && !@allowed_schools.include?(s[:dn]) %>
@@ -575,11 +576,24 @@ class MassUserChangeSchool extends ST.MassOperation {
         </select></td></tr></table>`;
 
         this.container.innerHTML = html;
+
+        this.container.querySelector("input#move").addEventListener("click", e => this.action = "move");
+        this.container.querySelector("input#add").addEventListener("click", e => this.action = "add");
+        this.container.querySelector("input#remove").addEventListener("click", e => this.action = "remove");
+        this.container.querySelector("input#keep").addEventListener("click", e => this.keep = e.target.checked);
+        this.container.querySelector("input#remove_prev").addEventListener("click", e => this.removePrev = e.target.checked);
+
+        this.container.querySelector("select#destination_school").addEventListener("change", e => {
+            console.log(e.target.value);
+            this.schoolID = e.target.value
+        });
+
+        this.schoolID = this.container.querySelector("select#destination_school").value;
     }
 
     canProceed()
     {
-        if (this.container.querySelector("select#mass_user_change_school").selectedIndex == -1) {
+        if (this.container.querySelector("select#destination_school").selectedIndex == -1) {
             window.alert("<%= t('users.index.mass_operations.change_school.no_available_schools').html_safe %>");
             return false;
         }
@@ -589,91 +603,79 @@ class MassUserChangeSchool extends ST.MassOperation {
 
     start()
     {
-        // Store the settings for the run
-        if (this.container.querySelector("input#move").checked)
-            this.operation = 0;
-        else if (this.container.querySelector("input#add").checked)
-            this.operation = 1;
-        else this.operation = 2;
-
-        this.keep = this.container.querySelector("input#keep").checked;
-        this.removePrev = this.container.querySelector("input#remove_prev").checked;
-        this.schoolID = this.container.querySelector("select#mass_user_change_school").value;
-
-        for (let i of this.container.querySelectorAll("input, select"))
+        for (const i of this.container.querySelectorAll("input, select"))
             i.disabled = true;
     }
 
     finish()
     {
-        for (let i of this.container.querySelectorAll("input, select"))
+        for (const i of this.container.querySelectorAll("input, select"))
             i.disabled = false;
     }
 
-    processItem(item)
+    getOperationParameters()
     {
-        //console.log(`operation=${this.operation}, schoolID=${this.schoolID}, schoolDN=${SCHOOLS[this.schoolID].dn}, schools=${item.schools}`);
+        return {
+            action: this.action,
+            keep: this.keep,
+            remove_prev: this.removePrev,
+            school_id: this.schoolID,
+            school_dn: SCHOOLS[this.schoolID].dn,
+        };
+    }
 
-        // Unfortunately there's nothing to optimize yet, we must issue a network request
-        // for every selected user
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_user_change_school`,
-            {
-                id: item.id[ST.INDEX_FILTERABLE],
-                operation: this.operation,
-                keep: this.keep,
-                remove_prev: this.removePrev,
-                school_id: this.schoolID,
-                school_dn: SCHOOLS[this.schoolID].dn,
-            }
-        );
+    prepareItem(item)
+    {
+        // Unfortunately there's nothing to optimize yet. The school list does not show
+        // the current school, so every school change can be assumed to be real.
+        return { state: "ready" };
     }
 };
 
 const MASS_OPERATIONS = [
 <% if @is_owner %>
     {
-        id: "delete",
+        operation: "delete",
         title: "<%= t('users.index.mass_operations.delete.title') %>",
-        //flags: ST.MassOperationFlags.HAVE_SETTINGS,
         cls: MassUserDeletion,
     },
 <% end %>
 
     {
-        id: "lock",
+        operation: "lock",
         title: "<%= t('users.index.mass_operations.lock.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: MassUserLocking
     },
 
     {
-        id: "mark_for_deletion",
+        operation: "mark_for_deletion",
         title: "<%= t('users.index.mass_operations.mark.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: MassUserMarkForDeletion
     },
 
     {
-        id: "clear_columm",
+        operation: "clear_column",
         title: "<%= t('users.index.mass_operations.clear_column.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: MassUserClearColumn
     },
 
 <% unless @is_organisation %>
     {
-        id: "create_username_list",
+        operation: "create_username_list",
         title: "<%= t('users.index.mass_operations.username_list.title') %>",
-        flags: ST.MassOperationFlags.SINGLESHOT | ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
+        singleShot: true,
         cls: MassUsernameList
     },
 <% end %>
 
     {
-        id: "change_school",
+        operation: "change_school",
         title: "<%= t('users.index.mass_operations.change_school.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: MassUserChangeSchool
     },
 ];
@@ -807,7 +809,7 @@ function userActions(item)
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
     if (!dnd) {
-<% if @is_owner || @permit_single_user_deletion %>
+<% if @permit_user_deletion %>
         let isAdmin = false,
             message = null;
 

@@ -9,7 +9,7 @@ Feature: Test enforced email addresses in an organisation
       | givenName | sn     | uid      | password | school_admin | mail        | puavoEduPersonAffiliation |
       | Example   | User 1 | example1 |          | false        | foo@bar.com | testuser                  |
       | Example   | User 2 | example2 |          | false        |             | testuser                  |
-      | Admin     | Admin  | admin    | secret   | true         |             | staff                     |
+      | Admin     | Admin  | admin    | secret   | true         |             | admin                     |
     And I am logged in as "cucumber" with password "cucumber"
 
   @automatic_email

@@ -5,6 +5,11 @@
 <% end %>
 
 <% content_for :javascript do %>
+<script>
+const SUPERTABLE_WORKER_FILE = "<%= javascript_path 'supertable3_worker' %>";
+let GLOBAL_SUPERTABLE_INSTANCE = null;
+</script>
+
 <%= javascript_include_tag 'bundles/modal_popup' %>
 <%= javascript_include_tag 'bundles/supertable3' %>
 <%= javascript_include_tag 'i18n/supertable3' %>
@@ -28,24 +33,22 @@ const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
 document.addEventListener("DOMContentLoaded", function() {
     modalPopup.setupGlobalEvents();
 
-    new ST.SuperTable(
+    GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(
         // Main container DIV
         document.getElementById("tableUsers"),
 
         // Settings
         {
             id: "users",
-            csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-users`,
-            flags: ST.TableFlag.ENABLE_COLUMN_EDITING | ST.TableFlag.ENABLE_FILTERING | ST.TableFlag.ENABLE_SELECTION | ST.TableFlag.ENABLE_PAGINATION,
             locale: "<%= supertable_sorting_locale %>",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-users`,
             columnDefinitions: COLUMN_DEFINITIONS,
-            columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,
-            userTransforms: USER_TRANSFORM_FUNCTIONS,
             actions: userActions,
             openCallback: openCallback,
             massSelects: MASS_SELECTS,
             massOperations: MASS_OPERATIONS,
+            massOperationsEndpoint: "<%= users_mass_operations_path %>",
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
             filterPresets: FILTER_PRESETS,
@@ -58,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <% content_for :tools do %>
 <ul>
-  <% if @permit_single_user_creation %>
+  <% if @permit_user_creation %>
   <li>
     <%= link_to new_user_path, class: 'btn' do %>
       <i class='icon-plus'></i><%= t('link.new_user')%>

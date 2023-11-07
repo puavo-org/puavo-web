@@ -26,6 +26,10 @@
 <p class="genericNotice"><%= t('external_services.organisation_wide_activation') %></p>
 <% end %>
 
+<% if es[:trusted] %>
+<p class="genericWarning"><%= t('external_services.requires_verified_email') %></p>
+<% end %>
+
 <% if es[:description] %>
 <p><%= es[:description] %></p>
 <% end %>

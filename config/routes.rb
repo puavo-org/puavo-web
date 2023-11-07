@@ -11,11 +11,19 @@ Rails.application.routes.draw do
 
   get '/all_devices' => 'organisations#all_devices'
   get '/get_all_devices' => 'organisations#get_all_devices'
+  post '/devices_mass_operations' => 'devices_mass_operations#devices_mass_operation'
+
+  post '/servers_mass_operations' => 'servers_mass_operations#servers_mass_operation'
+
   get '/all_images' => 'image_statistics#all_images'
+
   get '/all_users' => 'organisations#all_users'
   get '/get_all_users' => 'organisations#get_all_users'
+  post '/users_mass_operations' => 'users_mass_operations#users_mass_operation'
+
   get '/all_groups' => 'organisations#all_groups'
   get '/get_all_groups' => 'organisations#get_all_groups'
+  post '/groups_mass_operations' => 'groups_mass_operations#groups_mass_operation'
 
   # Organisation-level Puavomenu editor
   get '/puavomenu' => 'organisations#edit_puavomenu', :as => 'organisation_puavomenu'
@@ -84,11 +92,6 @@ Rails.application.routes.draw do
 
       get 'get_school_groups_list' => 'groups#get_school_groups_list'
 
-      post 'mass_op_group_delete' => 'groups#mass_op_group_delete'
-      post 'mass_op_group_clear' => 'groups#mass_op_group_clear'
-      post 'mass_op_group_mark_members_for_deletion' => 'groups#mass_op_group_mark_members_for_deletion'
-      post 'mass_op_group_lock_members' => 'groups#mass_op_group_lock_members'
-
       get 'groups/members_mass_edit' => 'groups#members_mass_edit', :as => :group_members_mass_edit
       get 'groups/get_all_groups_members' => 'groups#get_all_groups_members'
       get 'groups/update_groups_list' => 'groups#update_groups_list'
@@ -106,7 +109,10 @@ Rails.application.routes.draw do
       match 'users/:id/mark_user_for_deletion' => 'users#mark_for_deletion', :as => :mark_user_for_deletion, :via => :get
       match 'users/:id/unmark_user_for_deletion' => 'users#unmark_for_deletion', :as => :unmark_user_for_deletion, :via => :get
       match 'users/:id/prevent_deletion' => 'users#prevent_deletion', :as => :prevent_deletion, :via => :get
+      match 'users/:id/edit_admin_permissions' => 'users#edit_admin_permissions', :as => :edit_admin_permissions, :via => :get
+      match 'users/:id/save_admin_permissions' => 'users#save_admin_permissions', :as => :save_admin_permissions, :via => :post
 
+      get 'users/:id/request_password_reset' => 'users#request_password_reset', :as => :request_password_reset
       get 'users/:id/reset_sso_session' => 'users#reset_sso_session', :as => :reset_sso_session
 
       match 'users/:id/change_schools' => 'users#change_schools', :as => :change_schools, :via => :get
@@ -118,22 +124,15 @@ Rails.application.routes.draw do
 
       get 'get_school_users_list' => 'users#get_school_users_list'
 
-      post 'mass_op_user_delete' => 'users#mass_op_user_delete'
-      post 'mass_op_user_lock' => 'users#mass_op_user_lock'
-      post 'mass_op_user_mark' => 'users#mass_op_user_mark'
-      post 'mass_op_user_clear_column' => 'users#mass_op_user_clear_column'
-      post 'mass_op_username_list' => 'users#mass_op_username_list'
-      post 'mass_op_user_change_school' => 'users#mass_op_user_change_school'
-
       get 'new_import' => 'new_import#index'
-      get 'new_import/reload_groups' => 'new_import#reload_groups'
-      post 'new_import/get_current_users' => 'new_import#get_current_users'
-      post 'new_import/find_existing_users' => 'new_import#find_existing_users'
       get 'new_import/duplicate_detection' => 'new_import#duplicate_detection'
       get 'new_import/load_username_list' => 'new_import#load_username_list'
-      post 'new_import/make_username_list' => 'new_import#make_username_list'
+      get 'new_import/reload_groups' => 'new_import#reload_groups'
+      post 'new_import/find_existing_users' => 'new_import#find_existing_users'
       post 'new_import/generate_pdf' => 'new_import#generate_pdf'
+      post 'new_import/get_current_users' => 'new_import#get_current_users'
       post 'new_import/import' => 'new_import#import'
+      post 'new_import/make_username_list' => 'new_import#make_username_list'
     end
 
 
@@ -202,6 +201,12 @@ Rails.application.routes.draw do
     resource :organisation, :only => [:show, :edit, :update]
     resource :profile, :only => [:edit, :update, :show]
     get "profile/image" => "profiles#image", :as => :image_profile
+    post 'profile/send_verification_email' => 'profiles#send_verification_email', :as => :profile_send_verification_email
+
+    get('email_verification/:token', to: 'email_verifications#edit', as: :email_verification, constraints: { token: /[0-9a-fA-F]{128}/ })
+    post('email_verification/:token', to: 'email_verifications#update', as: :email_verification_update, constraints: { token: /[0-9a-fA-F]{128}/ })
+    get 'email_verification/complete' => 'email_verifications#complete', :as => :email_verification_completed
+
   end
 
   scope :path => "devices" do

@@ -2,9 +2,7 @@ class ExternalServicesBase < ApplicationController
   # Make a list of all available external services. You have to filter the list
   # in the derived controller.
   before_action do
-    @external_services = ExternalService.all.select do |s|
-      !s.puavoServiceTrusted
-    end.collect do |e|
+    @external_services = ExternalService.all.collect do |e|
       created = ExternalService.find(e.dn, :attributes => ['createTimestamp'])
 
       {
@@ -17,6 +15,7 @@ class ExternalServicesBase < ApplicationController
         email: e.mail,
         prefix: e.puavoServicePathPrefix,
         created: created['createTimestamp'] ? Time.at(created['createTimestamp']).localtime.strftime('%Y-%m-%d %H:%M:%S') : nil,
+        trusted: e.puavoServiceTrusted,
       }
     end
   end

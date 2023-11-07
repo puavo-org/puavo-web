@@ -23,8 +23,9 @@ module UsersHelper
       'puavoExternalData',
       'telephoneNumber',
       'displayName',
-      'homeDirectory',
       'mail',
+      'puavoVerifiedEmail',
+      'puavoPrimaryEmail',
       'puavoEduPersonPersonnelNumber',
       'puavoRemovalRequestTime',
       'puavoDoNotDelete',
@@ -34,6 +35,8 @@ module UsersHelper
       'puavoSchool',
       'puavoEduPersonPrimarySchool',
       'puavoLearnerId',
+      'puavoLicenses',
+      'puavoUuid',
     ].freeze
   end
 
@@ -41,6 +44,8 @@ module UsersHelper
     out = {}
 
     out[:id] = raw['puavoId'][0].to_i
+
+    out[:uuid] = raw.fetch('puavoUuid', [nil])[0]
 
     out[:uid] = raw['uid'][0]
 
@@ -55,7 +60,7 @@ module UsersHelper
     out[:role].unshift('owner') if organisation_owners.include?(dn)
 
     if raw['puavoLearnerId']
-      out[:learner_id] = raw['puavoLearnerId']
+      out[:learner_id] = raw['puavoLearnerId'][0]
     end
 
     if raw['puavoRemovalRequestTime']
@@ -82,16 +87,21 @@ module UsersHelper
       end
     end
 
-    if raw.include?('homeDirectory')
-      out[:home] = raw['homeDirectory'][0]
-    end
-
     if raw.include?('mail')
       a = Array(raw['mail'])
 
       if a.count > 0
         out[:email] = a
       end
+    end
+
+    if raw.include?('puavoVerifiedEmail')
+      a = Array(raw['puavoVerifiedEmail'])
+      out[:v_email] = a if a.count > 0
+    end
+
+    if raw.include?('puavoPrimaryEmail')
+      out[:p_email] = raw['puavoPrimaryEmail'][0]
     end
 
     if raw.include?('puavoEduPersonPersonnelNumber')
@@ -104,6 +114,14 @@ module UsersHelper
 
     if raw.include?('createTimestamp')
       out[:modified] = Puavo::Helpers::convert_ldap_time(raw['modifyTimestamp'])
+    end
+
+    if raw.include?('puavoLicenses')
+      begin
+        licenses = JSON.parse(raw['puavoLicenses'][0])
+        out[:licenses] = licenses.keys.sort
+      rescue StandardError => e
+      end
     end
 
     return out

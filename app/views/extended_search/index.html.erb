@@ -112,6 +112,9 @@
               <input type="checkbox" name="deviceTypePrinter" id="deviceTypePrinter" checked>
               <label for="deviceTypePrinter"><%= t('extended_search.per_term_settings.device_type.printer') %></label><br>
 
+              <input type="checkbox" name="deviceTypeServer" id="deviceTypeBootserver" checked>
+              <label for="deviceTypeBootserver"><%= t('extended_search.per_term_settings.device_type.bootserver') %></label><br>
+
               <input type="checkbox" name="deviceTypeOther" id="deviceTypeOther" checked>
               <label for="deviceTypeOther"><%= t('extended_search.per_term_settings.device_type.other') %></label><br>
             </fieldset>
@@ -247,6 +250,7 @@ function doSearch()
                       "laptop": $("#deviceTypeLaptop").prop("checked"),
                       "fatclient": $("#deviceTypeFatclient").prop("checked"),
                       "printer": $("#deviceTypePrinter").prop("checked"),
+                      "bootserver": $("#deviceTypeBootserver").prop("checked"),
                       "other": $("#deviceTypeOther").prop("checked"),
                   },
 

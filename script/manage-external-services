@@ -1,4 +1,4 @@
 #!/bin/sh
-#cd /var/app/puavo-web
+cd /var/app/puavo-web
 export RAILS_ENV=production
 bundle exec rails r script/manage-external-services.rb "$@"

@@ -23,6 +23,7 @@ window.jQuery(document).ready(function($) {
     e.preventDefault();
     var clone_element = $(this).prev().find('input:first').clone();
     clone_element.val('');
+    clone_element.attr('readonly', false);
     $(this).prev().append( clone_element );
   });
 

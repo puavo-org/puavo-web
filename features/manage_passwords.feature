@@ -101,7 +101,7 @@ Feature: Manage passwords
   Scenario: User to change their own password
     Given I am on the own password change page
     When I fill in "Username" with "pavel"
-    And I fill in "Old password" with "pavelsecret"
+    And I fill in "Current password" with "pavelsecret"
     And I fill in "user[new_password]" with "newpavelsecret"
     And I fill in "Confirm new password" with "newpavelsecret"
     And I press "Change password"
@@ -112,7 +112,7 @@ Feature: Manage passwords
   Scenario: User to change their own password with an incorrect password
     Given I am on the own password change page
     When I fill in "Username" with "pavel"
-    And I fill in "Old password" with "wrong"
+    And I fill in "Current password" with "wrong"
     And I fill in "user[new_password]" with "newpavelsecret"
     And I fill in "Confirm new password" with "newpavelsecret"
     And I wait 11 seconds
@@ -123,7 +123,7 @@ Feature: Manage passwords
   Scenario: User to change their own password with an incorrect password confirmation
     Given I am on the own password change page
     When I fill in "Username" with "pavel"
-    And I fill in "Old password" with "pavelsecret"
+    And I fill in "Current password" with "pavelsecret"
     And I fill in "user[new_password]" with "newpavelsecret"
     And I fill in "Confirm new password" with "confirmation test"
     And I wait 11 seconds

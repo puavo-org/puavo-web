@@ -31,6 +31,11 @@ Commands:
       Deactivate the service in the specified organisation or school.
       Accepts the sam arguments as "activate".
 
+    set-domain
+      Change the activated domain(s) of an existing service. Wants --service
+      argument that identifies the target service. Unless --domain is used,
+      will prompt for a comma-separated list of one or more domains.
+
     set-secret
       Change the shared secret of an existing service. Wants --service
       argument that identifies the target service. Will prompt for the
@@ -41,6 +46,8 @@ Arguments:
     --organisation domain       Domain of the target organisation (not name)
     --school a[,b[,c...]        One or more school abbreviations
     --service DN                Name of the target service
+    --domain a[,b[,c...N]       Comma-separated list of service domains (see set-domain);
+                                the list cannot contain any whitespace.
 
 You can use --ldap-master and -ldap-user to change the default LDAP server
 settings. The LDAP password is *always* prompted for, it cannot be specified
@@ -61,9 +68,14 @@ def with_padding(title, value, quote: false, width: 20, indent: 4)
   str << ' ' * indent if indent > 0
   str << title.ljust(width, '.')
   str << ': '
-  str << '"' if quote
-  str << value unless value.nil?
-  str << '"' if quote
+
+  if value.nil?
+    str << '(nil)'
+  else
+    str << '"' if quote
+    str << value
+    str << '"' if quote
+  end
 
   puts str
 end
@@ -83,13 +95,14 @@ def read_string(prompt)
   end
 end
 
-def ask_for_password(prompt)
+def read_password(prompt)
   print "#{prompt}: "
-  system('stty','-echo');
+  system('stty', '-echo');
   password = STDIN.gets.chomp
-  system('stty','echo')
+  system('stty', 'echo')
+  puts ''
 
-  return password
+  password
 end
 
 # --------------------------------------------------------------------------------------------------
@@ -98,7 +111,7 @@ end
 def connect_to_ldap(organisation, args)
   puts 'Connecting to the database...'
 
-  password = ask_for_password('Enter the LDAP password (will not echo, Ctrl+C to cancel)')
+  password = read_password('Enter the LDAP password (will not echo, Ctrl+C to cancel)')
 
   credentials = {
     organisation_key: organisation.include?('.') ? organisation.split('.')[0] : organisation,
@@ -149,7 +162,7 @@ end
 def list_services(args)
   puts 'Connecting to the database...'
 
-  password = ask_for_password('Enter the LDAP master password (will not echo, Ctrl+C to cancel)')
+  password = read_password('Enter the LDAP master password (will not echo, Ctrl+C to cancel)')
 
   ExternalService.ldap_setup_connection(
     args.fetch(:ldap_master, DEFAULT_LDAP_MASTER),
@@ -173,8 +186,8 @@ def list_services(args)
     extra = ExternalService.find(e.dn, attributes: ['createTimestamp'])
     created = extra['createTimestamp'] ? Time.at(extra['createTimestamp']).localtime.strftime('%Y-%m-%d %H:%M:%S') : nil
 
-    with_padding('Domain(s)', Array(e.puavoServiceDomain).join(', '))
-    with_padding('Trusted', e.puavoServiceTrusted ? 'YES (hidden!)' : 'No')
+    with_padding('Domain(s)', Array(e.puavoServiceDomain).join(','))
+    with_padding('Trusted (verified SSO)?', e.puavoServiceTrusted ? 'Yes' : 'No')
     with_padding('Description', e.description, quote: true)
     with_padding('Description URL', e.puavoServiceDescriptionURL, quote: true)
     with_padding('Prefix', e.puavoServicePathPrefix, quote: true)
@@ -187,12 +200,12 @@ def list_services(args)
   puts 'Done'
 end
 
-def set_service_secret(args)
+def set_service_property(args, property)
   unless args.include?(:service)
     error_exit('Use --service to specify which external service (identified by its DN) you want to edit')
   end
 
-  password = ask_for_password('Enter the LDAP master password (will not echo, Ctrl+C to cancel)')
+  password = read_password('Enter the LDAP master password (will not echo, Ctrl+C to cancel)')
 
   ExternalService.ldap_setup_connection(
     args.fetch(:ldap_master, DEFAULT_LDAP_MASTER),
@@ -207,26 +220,63 @@ def set_service_secret(args)
     error_exit("DN \"#{args[:service]}\" does not identify a known external service, nothing done")
   end
 
-  puts "Editing service \"#{service.cn}\""
+  if property == :domain && args.include?(:domain)
+    # Set the domains directly
+    puts "Setting the domain list of the service \"#{service.cn}\" to #{args[:domain]}"
 
-  new_secret = nil
+    service.puavoServiceDomain = args[:domain].split(',')
 
-  loop do
-    new_secret = read_string('Enter a new secret (Ctrl+C to cancel): ')
-
-    if new_secret.nil?
-      puts "\n[Canceled]\n"
-      return
+    begin
+      service.save!
+    rescue StandardError => e
+      error_exit("Could not save the service: #{e}")
     end
 
-    if new_secret.length < 25
-      puts 'The shared secret must be at least 25 characters long, try again'
-    else
-      break
-    end
+    return
   end
 
-  service.puavoServiceSecret = new_secret
+  puts "Editing service \"#{service.cn}\". Press Ctrl+C to cancel."
+
+  case property
+    when :secret
+      loop do
+        new_secret = read_string("Enter a new shared secret (at least 25 characters long): ")
+
+        if new_secret.nil?
+          puts "\n[Canceled]\n"
+          return
+        end
+
+        if new_secret.length < 25
+          puts 'The shared secret must be at least 25 characters long, try again'
+        else
+          service.puavoServiceSecret = new_secret
+          break
+        end
+      end
+
+    when :domain
+      puts "The current domains for this service are: #{service.puavoServiceDomain.join(',')}"
+
+      loop do
+        new_domain = read_string("Enter a list of one or more domains, separated by comma: ")
+
+        if new_domain.nil?
+          puts "\n[Canceled]\n"
+          return
+        end
+
+        if new_domain.include?(' ') || new_domain.include?("\t")
+          puts 'No whitespace allowed, try again'
+        else
+          service.puavoServiceDomain = new_domain.split(',')
+          break
+        end
+      end
+
+    else
+      error_exit("Unknown property \"#{property}\"")
+  end
 
   begin
     service.save!
@@ -396,6 +446,14 @@ parser.on('', '--service dn', '') do |dn|
   args[:service] = dn
 end
 
+parser.on('', '--domain domain', '') do |domain|
+  if domain.include?(' ') || domain.include?("\t")
+    error_exit('The domain list cannot contain whitespace')
+  end
+
+  args[:domain] = domain
+end
+
 if ARGV.length < 1
   help
   exit(1)
@@ -404,7 +462,11 @@ end
 action = ARGV[0]
 ARGV.shift
 
-parser.parse! unless ARGV.empty?
+begin
+  parser.parse! unless ARGV.empty?
+rescue StandardError => e
+  error_exit(e)
+end
 
 case action
   when 'list'
@@ -416,8 +478,11 @@ case action
   when 'deactivate'
     deactivate_service(args)
 
+  when 'set-domain'
+    set_service_property(args, :domain)
+
   when 'set-secret'
-    set_service_secret(args)
+    set_service_property(args, :secret)
 
   else
     error_exit("Unknown action \"#{action}\"")

@@ -41,7 +41,6 @@ describe PuavoRest::Users do
 
     # XXX weird that these must be here:
     @teacher.administrative_groups = [ @maintenance_group.id ]
-    @teacher.secondary_emails = [ 'bob@foobar.com', 'bob@helloworld.com' ]
     @teacher.teaching_group = @group
     @teacher.save!
 
@@ -86,6 +85,61 @@ describe PuavoRest::Users do
       :username      => 'poistettava.kayttaja',
     )
     @user5.save!
+  end
+
+  describe 'Learner ID tests' do
+    it 'ensure learner ID can be set, changed and cleared' do
+      # SET
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.learner_id = '1.2.3.4.5'
+      # The class must be live-updated. The same check is done for all of these.
+      assert_equal '1.2.3.4.5', user.learner_id
+      user.save!
+      assert_equal '1.2.3.4.5', user.learner_id
+
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_equal '1.2.3.4.5', user.learner_id
+
+      # CHANGE
+      user.learner_id = '6.7.8.9.0'
+      assert_equal '6.7.8.9.0', user.learner_id
+      user.save!
+      assert_equal '6.7.8.9.0', user.learner_id
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_equal '6.7.8.9.0', user.learner_id
+
+      # CLEAR
+      user.learner_id = nil
+      assert_nil user.learner_id
+      user.save!
+      assert_nil user.learner_id
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_nil user.learner_id
+    end
+
+    it 'ensure whitespaces-only learner ID string is trimmed to nil' do
+      # Whitespace only (trim)
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.learner_id = '   '
+      assert_nil user.learner_id
+      user.save!
+      assert_nil user.learner_id
+
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_nil user.learner_id
+    end
+
+    it 'ensure empty learner ID string is trimmed to nil' do
+      # Empty string
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.learner_id = ''
+      assert_nil user.learner_id
+      user.save!
+      assert_nil user.learner_id
+
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_nil user.learner_id
+    end
   end
 
   describe "Multiple telephone numbers" do
@@ -257,7 +311,7 @@ describe PuavoRest::Users do
       assert_200
       data = JSON.parse(last_response.body)
 
-      assert_equal "foo.bar@baz.com", data["email"]
+      assert_equal ["foo.bar@baz.com"], data["email"]
     end
   end
 
@@ -282,9 +336,7 @@ describe PuavoRest::Users do
       assert_equal "bob", data["username"]
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
-      assert_equal "bob@example.com", data["email"]
-      assert_equal [ "bob@foobar.com", "bob@helloworld.com" ],
-                   data["secondary_emails"]
+      assert_equal ["bob@example.com"], data["email"]
       assert_equal "teacher", data["user_type"]
       assert_equal "http://example.puavo.net/v3/users/bob/profile.jpg",
                    data["profile_image_link"]

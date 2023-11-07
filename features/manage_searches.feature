@@ -7,7 +7,7 @@ Feature: Search users
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And the following users:
       | givenName | sn       | uid      | password | school_admin | puavoEduPersonAffiliation |
-      | Pavel     | Taylor   | pavel    | secret   | true         | staff                     |
+      | Pavel     | Taylor   | pavel    | secret   | true         | admin                     |
       | Johnny    | Harris   | johnny   | secret   | false        | student                   |
       | Harry     | Johnson  | harry    | secret   | false        | student                   |
       | Jack      | Walker   | jack     | secret   | false        | student                   |

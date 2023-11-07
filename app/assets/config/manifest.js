@@ -5,6 +5,7 @@
 
 // Supertable
 //= link bundles/supertable3.js
+//= link supertable3_worker.js
 //= link i18n/supertable3.js
 
 // User mass import/update

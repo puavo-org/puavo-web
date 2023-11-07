@@ -1,4 +1,9 @@
 <% content_for :javascript do %>
+<script>
+const SUPERTABLE_WORKER_FILE = "<%= javascript_path 'supertable3_worker' %>";
+let GLOBAL_SUPERTABLE_INSTANCE = null;
+</script>
+
 <%= javascript_include_tag 'bundles/modal_popup' %>
 <%= javascript_include_tag 'bundles/supertable3' %>
 <%= javascript_include_tag 'i18n/supertable3' %>
@@ -24,23 +29,22 @@ const DEFAULT_SORTING = { column: "hn", dir: ST.SortOrder.ASCENDING };
 document.addEventListener("DOMContentLoaded", function() {
     modalPopup.setupGlobalEvents();
 
-    new ST.SuperTable(
+    GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(
         // Main container DIV
         document.getElementById("tableServers"),
 
         // Settings
         {
             id: "servers",
-            csvPrefix: `<%= LdapOrganisation.current.o %>-servers`,
-            flags: ST.TableFlag.ENABLE_COLUMN_EDITING | ST.TableFlag.ENABLE_FILTERING,
             locale: "<%= supertable_sorting_locale %>",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-servers`,
             columnDefinitions: COLUMN_DEFINITIONS,
-            columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,
-            userTransforms: USER_TRANSFORM_FUNCTIONS,
             actions: userActions,
             openCallback: openCallbackServers,
-            massOperations: null,
+            massSelects: MASS_SELECTS,
+            massOperations: MASS_OPERATIONS,
+            massOperationsEndpoint: "<%= servers_mass_operations_path %>",
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
             filterPresets: null,

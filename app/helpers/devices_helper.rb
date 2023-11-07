@@ -271,7 +271,7 @@ module DevicesHelper
     end
 
     if dev.include?('puavoImageSeriesSourceURL')
-      out[:image_series] = dev['puavoImageSeriesSourceURL'][0]
+      out[:image_series] = dev['puavoImageSeriesSourceURL']
     end
 
     if dev.include?('puavoPrinterDeviceURI')
@@ -431,6 +431,7 @@ module DevicesHelper
 
       # Windows license info (boolean exists/does not exist)
       out[:windows_license] = info.include?('windows_license') && !info['windows_license'].nil?
+      out[:windows_installed] = info.fetch('windows', {}).fetch('is_installed', false)
 
       out[:lspci] = info['lspci_values']
 
@@ -445,6 +446,10 @@ module DevicesHelper
           out[:ll_time] = Time.parse(last['timestamp']).to_i if last['timestamp']
         rescue
         end
+      end
+
+      if info['uptime']
+        out[:uptime] = info['uptime']
       end
     rescue => e
       # oh dear

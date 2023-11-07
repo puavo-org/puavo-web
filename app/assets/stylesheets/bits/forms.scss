@@ -81,6 +81,17 @@ legend {
     width: 100%;
     padding: 10px;
     margin: 5px 0;
+
+    background: #fff;
+    border: 1px solid #90919f;
+    color: #000;
+  }
+
+  /* Used in user edit forms when listing verified addresses. */
+  input[type="text"]:read-only {
+    background: #f4f4f4;
+    border: 1px solid #bdbec5;
+    color: #888;
   }
 
   input[type="checkbox"], input[type="radio"] {

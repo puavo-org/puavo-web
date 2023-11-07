@@ -6,7 +6,7 @@ class NewImportController < ApplicationController
   UNIQUE_ATTRS = ['eid', 'phone', 'email'].freeze
 
   def index
-    if !is_owner? && !can_schooladmin_do_this?(current_user.uid, :import_users)
+    unless is_owner? || current_user.has_admin_permission?(:import_users)
       flash[:alert] = t('flash.you_must_be_an_owner')
       redirect_to users_path
       return
@@ -22,11 +22,7 @@ class NewImportController < ApplicationController
       .sort { |a, b| a.created_at <=> b.created_at }
       .reverse
 
-    @can_create_users = true
-
-    unless is_owner?
-      @can_create_users = can_schooladmin_do_this?(current_user.uid, :create_users)
-    end
+    @can_create_users = is_owner? || current_user.has_admin_permission?(:create_users)
 
     respond_to do |format|
       format.html
@@ -38,45 +34,31 @@ class NewImportController < ApplicationController
     render json: get_school_groups(School.find(params['school_id'].to_i).dn.to_s)
   end
 
-  # Get the IDs and usernames of all users in this organisation
+  # Compare the given usernames to all users in this organisation.
   def get_current_users
     response = {
-      status: 'ok',
-      error: nil,
+      status:    'ok',
+      error:     nil,
       usernames: [],
     }
 
     begin
-      rest = get_superuser_proxy
+      requested_users = JSON.parse(request.body.read)
 
-      users = JSON.parse(request.body.read)
-
-      # Find the puavoID for every user on the list
-      users.each do |user|
-        raw_user = JSON.parse(rest.get("/v4/users?no_eltern&fields=id&filter[]=username|is|#{user[0]}").body)
-
-        if raw_user['status'] != 'ok'
-          # Abort the operation here
-          response[:status] = 'rest_status_fail'
-          response[:error] = user[0]
-          return render json: response
+      puavo_ids_by_username = Hash[
+        User.search_as_utf8(
+          filter: '(objectClass=puavoEduPerson)',
+          attributes: %w(puavoId uid),
+        ).collect do |_, u|
+          [ u['uid'][0], u['puavoId'][0].to_i ]
         end
+      ]
 
-        raw_user = raw_user['data']
-
-        if raw_user.empty?
-          # This user does not exist, use -1 for puavoID
-          user[1] = -1
-        else
-          user[1] = raw_user[0]['id']
-        end
-      end
-
-      # Send the updated data back
-      response[:usernames] = users
-    rescue PuavoRestProxy::BadStatus => e
-      response[:status] = 'puavo_rest_call_failed'
-      response[:error] = e.to_s
+      response[:usernames] \
+        = requested_users.map do |u|
+            username, _, row_id = *u
+            [ username, (puavo_ids_by_username[username] || -1), row_id ]
+          end
     rescue StandardError => e
       response[:status] = 'failed'
       response[:error] = e.to_s
@@ -86,34 +68,35 @@ class NewImportController < ApplicationController
   end
 
   # Extended version of get_current_users(), used in duplicate username detection.
-  # Returns user information, but also includes schools.
+  # Returns user information, but also includes schools
   def duplicate_detection
     response = {
-      status: 'ok',
-      error: nil,
-      users: [],
+      status:  'ok',
+      error:   nil,
+      users:   [],
       schools: {},
     }
 
     begin
-      rest = get_superuser_proxy
+      extract_dn = /puavoId=(\d+),ou=Groups/
 
-      users = JSON.parse(rest.get(
-        '/v4/users?no_eltern&fields=id,username,primary_school_id,school_ids,external_id,email,phone').body)
-      raise if users['status'] != 'ok'
-      response[:users] = users['data']
-
-      schools = JSON.parse(rest.get('/v4/schools?fields=id,name').body)
-      raise if schools['status'] != 'ok'
-
-      schools['data'].each do |s|
-        response[:schools][s['id']] = s['name']
+      response[:users] = User.search_as_utf8(
+        filter: '(objectClass=puavoEduPerson)',
+        attributes: %w(puavoId uid puavoExternalId mail telephoneNumber),
+      ).collect do |_, u|
+        {
+          username: u['uid'][0],
+          external_id: u.fetch('puavoExternalId', [nil])[0],
+          email: Array(u['mail'] || []),
+          phone: Array(u['telephoneNumber'] || [])
+        }
       end
-    rescue PuavoRestProxy::BadStatus => e
-      response[:status] = 'puavo_rest_call_failed'
-      response[:error] = e.to_s
+
+      response[:schools] = Hash[
+        School.search_as_utf8(attributes: %w(puavoId displayName)) \
+              .collect { |dn, s| [ s['puavoId'][0].to_i, s['displayName'][0] ] }
+      ]
     rescue StandardError => e
-      puts e.backtrace.join("\n")
       response[:status] = 'failed'
       response[:error] = e.to_s
     end
@@ -121,61 +104,64 @@ class NewImportController < ApplicationController
     render json: response
   end
 
-  # Given a list of usernames, returns informatin about which schools they already exist in
+  # Given a list of usernames, returns information about which schools they
+  # already exist in
   def find_existing_users
+    extract_dn = /puavoId=(\d+),ou=Groups/
+
     response = {
       status: 'ok',
-      error: nil,
-      states: []
+      error:  nil,
+      states: [],
     }
 
     begin
-      rest = get_superuser_proxy
+      data = JSON.parse(request.body.read)
+      school_id_to_lookup = data['school_id']
+      usernames_to_lookup = data['usernames']
 
-      # Make a list of schools so we can tell which school the user is in
-      schools = {}
-      raw_schools = JSON.parse(rest.get('/v4/schools?fields=id,name').body)
-      raise if raw_schools['status'] != 'ok'
-
-      raw_schools['data'].each do |s|
-        schools[s['id']] = s['name']
-      end
+      schoolnames_by_id = Hash[
+        School.search_as_utf8(attributes: ['puavoId', 'displayName']) \
+              .collect { |dn, s| [ s['puavoId'][0].to_i, s['displayName'][0] ] }
+      ]
 
       # Look up each user on the list and fill in the return state
-      data = JSON.parse(request.body.read)
-      this_school = data['school_id']
+      usernames_to_lookup.each do |uid|
+        user_list = User.search_as_utf8(
+          filter: "(&(objectClass=puavoEduPerson)(uid=#{Net::LDAP::Filter.escape(uid)}))",
+          attributes: %w(puavoId puavoEduPersonPrimarySchool puavoSchool),
+        ).collect do |_,u|
+          {
+            school: extract_dn.match(u['puavoEduPersonPrimarySchool'][0])[1].to_i,
+            schools: u['puavoSchool'].collect { |dn| extract_dn.match(dn)[1].to_i },
+          }
+        end
 
-      data['usernames'].each do |name|
-        raw_user = JSON.parse(rest.get(
-          "/v4/users?no_eltern&fields=primary_school_id,school_ids&filter[]=username|is|#{name}").body)
-
-        if raw_user['status'] != 'ok'
+        if user_list.nil? then
           response[:states] << [-1, nil]
           next
         end
 
-        user = raw_user['data']
-
-        if user.empty?
+        if user_list.empty? then
           # This user does not exist on the server
           response[:states] << [0, nil]
-        elsif user[0]['primary_school_id'] == this_school
+          next
+        end
+
+        user = user_list[0]
+
+        if user[:school] == school_id_to_lookup then
           # This user exists in this school
           response[:states] << [1, nil]
-        else
-          # The user exists in some other school(s), list their names
-          msg = []
-
-          user[0]['school_ids'].each do |sid|
-            msg << schools.fetch(sid, '???')
-          end
-
-          response[:states] << [2, msg]
+          next
         end
+
+        # The user exists in some other school(s), list their names
+        warn ">>> user=#{ user.inspect }"
+        ids = user[:schools].map { |sid| schoolnames_by_id.fetch(sid, '???') }
+        response[:states] << [2, ids]
       end
-    rescue PuavoRestProxy::BadStatus => e
-      response[:status] = 'puavo_rest_call_failed'
-      response[:error] = e.to_s
+
     rescue StandardError => e
       response[:status] = 'failed'
       response[:error] = e.to_s
@@ -311,11 +297,8 @@ class NewImportController < ApplicationController
       column_to_index[col] = index
     end
 
-    can_create_users = true
-
-    unless is_owner?
-      can_create_users = can_schooladmin_do_this?(current_user.uid, :create_users)
-    end
+    # Can the current user even do this?
+    can_create_users = is_owner? || current_user.has_admin_permission?(:create_users)
 
     data['rows'].each do |row|
       row_num = row[0]    # the original table row number
@@ -556,21 +539,6 @@ class NewImportController < ApplicationController
 
   private
 
-  # Returns a puavo-rest proxy that is authenticated using some super-user account. In order for
-  # non-owner users to be able to access the import tool, we need something that can access ALL
-  # users in the organisation, for duplicate checks, etc. and normal admin users cannot do that.
-  def get_superuser_proxy
-    # The default password will work fine for development puavo-standalone, but in production,
-    # you need something else. Put something like this in /etc/puavo-web/puavo_web.yml:
-    # import_tool:
-    #   superuser_name: "uid=admin,o=puavo"
-    #   superuser_password: "the real password here"
-    credentials = Puavo::CONFIG.fetch('import_tool', {})
-
-    rest_proxy(credentials.fetch('superuser_name', 'uid=admin,o=puavo'),
-               credentials.fetch('superuser_password', 'password'))
-  end
-
   def get_school_groups(school_dn)
     Group.search_as_utf8(
       filter: "(&(objectClass=puavoEduGroup)(puavoSchool=#{school_dn}))",
@@ -603,6 +571,10 @@ class NewImportController < ApplicationController
       # Optional attributes that don't have to be unique
       if attributes.include?('pnumber')
         user.puavoEduPersonPersonnelNumber = attributes['pnumber']
+      end
+
+      if attributes.include?('licenses')
+        user.puavoLicenses = attributes['licenses']
       end
 
       if attributes.include?('password')
@@ -755,6 +727,13 @@ class NewImportController < ApplicationController
             if !value.nil? && user.puavoEduPersonPersonnelNumber != value
               puts "  -> Personnel number changed from |#{user.puavoEduPersonPersonnelNumber}| to |#{value}|"
               user.puavoEduPersonPersonnelNumber = value
+              something_changed = true
+            end
+
+          when 'licenses'
+            if !value.nil? && user.puavoLicenses != value
+              puts "  -> User licenses changed from |#{user.puavoLicenses}| to |#{value}|"
+              user.puavoLicenses = value
               something_changed = true
             end
         end

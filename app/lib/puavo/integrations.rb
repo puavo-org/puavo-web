@@ -606,5 +606,78 @@ module Puavo
       raise "WE SHOULD NOT GET HERE. THIS IS A FATAL ERROR. " \
             "Please contact Opinsys support and give them this request ID: #{request_id}."
     end
+
+    # Delete the user from external systems. Returns [status, message] tuples;
+    # if 'status' is false, you can display 'message' to the user.
+    # See app/lib/puavo/integrations.rb for details
+    def delete_user_from_external_systems(user, plaintext_message: false)
+      # Have actions for user deletion? Currently we only check the primary school
+      # (this decision will cause trouble later on).
+      organisation = LdapOrganisation.current.cn
+      school = user.primary_school
+
+      unless school_has_sync_actions_for?(organisation, school.id, :delete_user)
+        return true, nil
+      end
+
+      actions = get_school_sync_actions(organisation, school.id, :delete_user)
+
+      logger.info("School (#{school.cn}) in organisation \"#{organisation}\" " \
+                  "has #{actions.length} synchronous action(s) defined for user " \
+                  "deletion: #{actions.keys.join(', ')}")
+
+      integration_names = get_school_integration_names(organisation, school.id)
+      ok_systems = []
+
+      # Process each system in sequence, bail out on the first error. 'params' are
+      # the parameters defined for the action in organisations.yml.
+      actions.each do |system, params|
+        request_id = generate_synchronous_call_id()
+
+        logger.info("Synchronously deleting user \"#{user.uid}\" (#{user.id}) from external " \
+                    "system \"#{system}\", request ID is \"#{request_id}\"")
+
+        status, code = do_synchronous_action(
+          :delete_user, system, request_id, params,
+          # -----
+          organisation: organisation,
+          user: user,
+          school: school
+        )
+
+        if status
+          ok_systems << integration_names[system]
+          next
+        end
+
+        # The operation failed, format an error message
+        msg = t('flash.user.synchronous_actions.deletion.part1',
+                :system => integration_names[system],
+                :reason => t('flash.integrations.' + code)) + '<br>'
+
+        unless ok_systems.empty?
+          msg += '<small>' +
+                 t('flash.user.synchronous_actions.deletion.part2',
+                   :ok_systems => ok_systems.join(', ')) +
+                 '</small><br>'
+        end
+
+        msg += '<small>' +
+               t('flash.user.synchronous_actions.deletion.part3',
+                 :code => request_id) +
+               '</small>'
+
+        if plaintext_message
+          # strip out HTML and convert newlines, to make the message "plain text"
+          msg = msg.gsub!('<br>', "\n\n")
+          msg = ActionView::Base.full_sanitizer.sanitize(msg)
+        end
+
+        return false, msg
+      end
+
+      logger.info('Synchronous action(s) completed without errors, proceeding with user deletion')
+      return true, nil
+    end
   end
 end

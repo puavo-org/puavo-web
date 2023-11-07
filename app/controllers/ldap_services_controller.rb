@@ -5,6 +5,7 @@ class LdapServicesController < ApplicationController
     return if redirected_nonowner_user?
 
     @ldap_services = LdapService.all.sort{|a, b| a.uid.downcase <=> b.uid.downcase }
+    @system_groups = SystemGroup.all
 
     respond_to do |format|
       format.html # index.html.erb

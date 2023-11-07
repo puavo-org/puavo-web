@@ -83,7 +83,7 @@
     </tr>
 
     <tr class="wlan_certs_<%= index %>">
-      <th><%= label_tag "wlan_client_key[#{ index }]", t('.wlan_client_key') %></td>
+      <th><%= label_tag "wlan_client_key[#{ index }]", t('.wlan_client_key') %></th>
       <td>
         <%= file_field_tag "wlan_client_key[#{ index }]" %>
         <% if f.object.wlan_client_key && f.object.wlan_client_key[index] %>
@@ -107,6 +107,18 @@
       <th><%= label_tag "wlan_phase2_auth[#{ index }]", t('.wlan_phase2_auth_mschapv2') %></th>
       <td>
         <%= check_box_tag "wlan_phase2_auth[#{ index }]", "enabled", f.object.wlan_phase2_auth ? f.object.wlan_phase2_auth[index] : false %>
+      </td>
+    </tr>
+
+    <tr class="wlan_priority_<%= index %>">
+      <th><%= label_tag "wlan_priority[#{ index }]", t('.wlan_priority') %></th>
+      <td>
+        <%= select_tag( "wlan_priority[#{ index }]",
+                        options_for_select([ [t('.default'),    nil],
+                                             [t('.select_value_strongprefer'),  "100"],
+                                             [t('.select_value_weakprefer'),     "10"],
+                                             [t('.select_value_weakavoid'),     "-10"],
+                                             [t('.select_value_strongavoid'),  "-100"] ], :selected => f.object.wlan_priority ? f.object.wlan_priority[index] : "" ) )%>
       </td>
     </tr>
 

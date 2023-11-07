@@ -1,27 +1,3 @@
-// Main table flags
-export const TableFlag = {
-    // Allow user to change and reorder the visible columns
-    ENABLE_COLUMN_EDITING: 0x01,
-
-    // Allow user to filter the table contents
-    ENABLE_FILTERING: 0x02,
-
-    // Allow user to select one or more table rows and apply mass operations to them
-    ENABLE_SELECTION: 0x04,
-
-    // Enable pagination (if disabled, all rows are always displayed)
-    ENABLE_PAGINATION: 0x08,
-
-    // Disables CSV export (enabled by default)
-    DISABLE_EXPORT: 0x10,
-
-    // Disables JSON/URL view saving (enabled by default)
-    DISABLE_VIEW_SAVING: 0x20,
-
-    // Completely hide the "Tools" tab
-    DISABLE_TOOLS: 0x40,
-};
-
 // Column flags
 export const ColumnFlag = {
     // This column can NOT be sorted. All columns are sortable by default, but you can use this
@@ -31,12 +7,6 @@ export const ColumnFlag = {
     // The column values are actually arrays of zero or more values instead of just one
     // Only works with strings!
     ARRAY: 0x02,
-
-    // Call a user-defined callback function to get the actual displayable value
-    USER_TRANSFORM: 0x04,
-
-    // Add a custom CSS class name to the column TD (specify it with "cssClass" value)
-    CUSTOM_CSS: 0x08,
 
     // Normally, when a column header is clicked, it is sorted in ascending order. By setting
     // this flag, you make the descending order the default for that column. Some columns
@@ -77,3 +47,24 @@ export const
     INDEX_DISPLAYABLE = 1,
     INDEX_FILTERABLE = 2,
     INDEX_SORTABLE = 3;
+
+// Pagination counts. Each entry is formatted as [row count, title]. -1 displays all rows.
+export const ROWS_PER_PAGE_PRESETS = [
+    [-1, "∞"],
+    [5, "5"],
+    [10, "10"],
+    [20, "20"],
+    [25, "25"],
+    [50, "50"],
+    [100, "100"],
+    [200, "200"],
+    [250, "250"],
+    [500, "500"],
+    [1000, "1000"],
+    [2000, "2000"],
+    [2500, "2500"],
+    [5000, "5000"],
+];
+
+// How many rows are displayed by default
+export const DEFAULT_ROWS_PER_PAGE = 100;

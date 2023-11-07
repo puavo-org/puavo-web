@@ -5,7 +5,7 @@ require 'yaml'
 
 module PuavoRest
   module ExternalLoginTestConfig
-    def self.get_dn_from_cn(ldap_base, cn)
+    def self.get_entry_from_cn(ldap_base, cn)
       ldap = Net::LDAP.new :base => ldap_base,
                            :host => 'localhost',
                            :auth => {
@@ -24,7 +24,11 @@ module PuavoRest
       raise "could not find entry #{ cn } from #{ ldap_base }" \
         unless entries && entries.count == 1
 
-      entries.first.dn.to_s
+      entries.first
+    end
+
+    def self.get_dn_from_cn(ldap_base, cn)
+      get_entry_from_cn(ldap_base, cn).dn.to_s
     end
 
     def self.resistance_administrative_group(role)
@@ -51,15 +55,17 @@ module PuavoRest
 
       {
         'external' => {
-          'admin_dn'       => admin_dn,
-          'admin_password' => organisations['external']['owner_pw'],
-          'service'        => 'external_ldap',
-          'external_ldap'  => {
-            'authentication_method'   => 'user_credentials',
-            'base'                    => 'dc=edu,dc=heroes,dc=net',
-            'bind_dn'                 => bind_dn,
-            'bind_password'           => organisations['heroes']['owner_pw'],
-            'encryption_method'       => 'start_tls',
+          'admin_dn'                => admin_dn,
+          'admin_password'          => organisations['external']['owner_pw'],
+          'manage_puavousers'       => true,
+          'puavo_extlogin_id_field' => 'external_id',
+          'service'                 => 'external_ldap',
+          'external_ldap'     => {
+            'authentication_method' => 'user_credentials',
+            'base'                  => 'dc=edu,dc=heroes,dc=net',
+            'bind_dn'               => bind_dn,
+            'bind_password'         => organisations['heroes']['owner_pw'],
+            'encryption_method'     => 'start_tls',
             'user_mappings' => {
               'defaults' => {
                 'classnumber_regex'    => '(\\d)$',    # typically: '^(\\d+)'
@@ -86,10 +92,11 @@ module PuavoRest
                 { thomas_dn  => [ resistance_administrative_group('admin'  ) ]},
               ],
             },
-            'external_id_field'       => 'eduPersonPrincipalName',
-            'external_username_field' => 'mail',
-            'password_change' => { 'api' => 'openldap', },
-            'server' => 'localhost',
+            'external_learner_id_field' => 'sn',
+            'external_username_field'   => 'mail',
+            'extlogin_id_field'         => 'eduPersonPrincipalName',
+            'password_change'           => { 'api' => 'openldap', },
+            'server'                    => 'localhost',
             'subtrees' => [ 'ou=People,dc=edu,dc=heroes,dc=net' ],
           },
         }

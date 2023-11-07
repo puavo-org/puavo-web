@@ -37,7 +37,7 @@ group :test do
   gem "capybara"
   gem "colorize"
   gem "cucumber"
-  gem "cucumber-rails"
+  gem "cucumber-rails", "2.6.1"     # don't install some ancient version from 2013
   gem "greenletters"
   gem "rspec"
   gem "rspec-rails"

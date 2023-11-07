@@ -1,6 +1,11 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.groups'), t('titles.group_members_mass_edit') %>
 
 <% content_for :javascript do %>
+<script>
+const SUPERTABLE_WORKER_FILE = "<%= javascript_path 'supertable3_worker' %>";
+let GLOBAL_SUPERTABLE_INSTANCE = null;
+</script>
+
 <%= javascript_include_tag 'bundles/modal_popup' %>
 <%= javascript_include_tag 'bundles/supertable3' %>
 <%= javascript_include_tag 'i18n/supertable3' %>
@@ -29,6 +34,16 @@ const USER_ROLES = {
     unknown: "<%= t('unknown_role') %>",
 };
 
+// Localized group types
+const GROUP_TYPES = {
+    "teaching group": "<%= t('group_type.teaching group') %>",
+    "course group": "<%= t('group_type.course group') %>",
+    "year class": "<%= t('group_type.year class') %>",
+    "administrative group": "<%= t('group_type.administrative group') %>",
+    "archive users": "<%= t('group_type.archive users') %>",
+    "other groups": "<%= t('group_type.other groups') %>",
+};
+
 const DEFAULT_COLUMNS = ["name", "uid", "role", "locked", "marked", "groups"];
 const DEFAULT_SORTING = { column: "uid", dir: ST.SortOrder.ASCENDING };
 
@@ -47,117 +62,94 @@ const COLUMN_ORDER = [
 const COLUMN_DEFINITIONS = {
     id: {
         key: "id",
+        title: "<%= t('columns.puavoid') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     first: {
         key: "first",
+        title: "<%= t('columns.users.first_names') %>",
         type: ST.ColumnType.STRING,
         alias: ["first_name", "fn"],
     },
 
     last: {
         key: "last",
+        title: "<%= t('columns.users.last_name') %>",
         type: ST.ColumnType.STRING,
         alias: ["last_name", "ln"],
     },
 
     name: {
         key: "name",
+        title: "<%= t('columns.users.full_name') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            return [
+                `<a href="/users/${entry.school_id}/users/${entry.id}">${ST.escapeHTML(entry.name)}</a>`,
+                entry.name
+            ];
+        }
     },
 
     uid: {
         key: "uid",
+        title: "<%= t('columns.users.uid') %>",
         type: ST.ColumnType.STRING,
     },
 
     role: {
         key: "role",
+        title: "<%= t('columns.users.role') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
+        transform: entry => {
+            let values = [];
+
+            // Translate user roles
+            for (let i = 0; i < entry.role.length; i++) {
+                const r = entry.role[i];
+
+                values.push((r in USER_ROLES) ? USER_ROLES[r] : USER_ROLES['unknown']);
+            }
+
+            return [
+                values.join("<br>"),
+                entry.role.join()
+            ];
+        }
     },
 
     locked: {
         key: "locked",
+        title: "<%= t('columns.users.is_locked') %>",
         type: ST.ColumnType.BOOL,
     },
 
     marked: {
         key: "marked",
+        title: "<%= t('columns.users.rrt') %>",
         type: ST.ColumnType.UNIXTIME,
     },
 
     groups: {
         key: "groups",
+        title: "<%= t('columns.groups.member_groups') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
-    },
-};
+        transform: entry => {
+            let values = [],
+                plain = [];
 
-// Localized column titles. The keys must be same as in the keys in the column
-// definitions object above.
-const COLUMN_TITLES = {
-    id: "<%= t('columns.puavoid') %>",
-    first: "<%= t('columns.users.first_names') %>",
-    last: "<%= t('columns.users.last_name') %>",
-    name: "<%= t('columns.users.full_name') %>",
-    uid: "<%= t('columns.users.uid') %>",
-    role: "<%= t('columns.users.role') %>",
-    locked: "<%= t('columns.users.is_locked') %>",
-    marked: "<%= t('columns.users.rrt') %>",
-    groups: "<%= t('columns.groups.member_groups') %>",
-};
+            for (const g of entry.groups) {
+                values.push(`<a href="${g.link}">${g.title}</a> <small>[${g.school}]</small>`);
+                plain.push(g.title);
+            }
 
-// Localized group types
-const GROUP_TYPES = {
-    "teaching group": "<%= t('group_type.teaching group') %>",
-    "course group": "<%= t('group_type.course group') %>",
-    "year class": "<%= t('group_type.year class') %>",
-    "administrative group": "<%= t('group_type.administrative group') %>",
-    "archive users": "<%= t('group_type.archive users') %>",
-    "other groups": "<%= t('group_type.other groups') %>",
-};
-
-const USER_TRANSFORM_FUNCTIONS = {
-    name: function(entry) {
-        return [
-            `<a href="/users/${entry.school_id}/users/${entry.id}">${ST.escapeHTML(entry.name)}</a>`,
-            entry.name
-        ];
-    },
-
-    role: function(entry) {
-        let values = [];
-
-        // Translate user roles
-        for (let i = 0; i < entry.role.length; i++) {
-            const r = entry.role[i];
-
-            values.push((r in USER_ROLES) ? USER_ROLES[r] : USER_ROLES['unknown']);
+            return [
+                values.join("<br>"),
+                plain.join(","),
+                plain.join(","),
+            ];
         }
-
-        return [
-            values.join("<br>"),
-            entry.role.join()
-        ];
-    },
-
-    groups: function(entry) {
-        let values = [],
-            plain = [];
-
-        for (const g of entry.groups) {
-            values.push(`<a href="${g.link}">${g.title}</a> <small>[${g.school}]</small>`);
-            plain.push(g.title);
-        }
-
-        return [
-            values.join("<br>"),
-            plain.join(","),
-            plain.join(","),
-        ];
     },
 };
 
@@ -196,16 +188,18 @@ class GroupOperationBase extends ST.MassOperation {
         console.log(this.groupIDs);
     }
 
-    processItem(item)
+    getOperationParameters()
     {
-        return ST.doPOST(
-            `/users/${item.school_id}/groups/change_members`,
-            {
-                id: item.id[ST.INDEX_FILTERABLE],
-                mode: this.mode,
-                groups: this.groupIDs,
-            }
-        );
+        return {
+            groups: this.groupIDs,
+        };
+    }
+
+    prepareItem(item)
+    {
+        return {
+            state: "ready"
+        };
     }
 
     buildGroupsList()
@@ -214,8 +208,7 @@ class GroupOperationBase extends ST.MassOperation {
 `<div class="flex-cols gap-5px">
     <div class="flex-rows gap-5px checkboxScrollListOuter">
         <input type="search" spellcheck="false" placeholder="<%= t('groups.index.mass_operations.search_placeholder') %>">
-        <div id="groupList" class="checkboxScrollList" style="width: 30em; height: 20em;">
-        </div>
+        <div id="groupList" class="checkboxScrollList" style="width: 30em; height: 20em;"></div>
     </div>
     <div>
         <button id="reloadGroups"><%= t('groups.index.mass_operations.reload') %></button>
@@ -253,13 +246,13 @@ class GroupOperationBase extends ST.MassOperation {
     {
         const csrf = document.querySelector("meta[name='csrf-token']");
 
-        for (let i of this.container.querySelectorAll("input"))
+        for (const i of this.container.querySelectorAll("input"))
             i.disabled = true;
 
-        for (let i of this.container.querySelectorAll("button"))
+        for (const i of this.container.querySelectorAll("button"))
             i.disabled = true;
 
-        for (let i of this.getGroupItems())
+        for (const i of this.getGroupItems())
             i.classList.add("disabled");
 
         fetch("/users/<%= @school.id %>/groups/update_groups_list", {
@@ -296,13 +289,13 @@ class GroupOperationBase extends ST.MassOperation {
             window.alert("<%= t('groups.index.mass_operations.network_error') %>");
             return;
         }).finally(() => {
-            for (let i of this.container.querySelectorAll("input"))
+            for (const i of this.container.querySelectorAll("input"))
                 i.disabled = false;
 
-            for (let i of this.container.querySelectorAll("button"))
+            for (const i of this.container.querySelectorAll("button"))
                 i.disabled = false;
 
-            for (let i of this.getGroupItems())
+            for (const i of this.getGroupItems())
                 i.classList.remove("disabled");
         });
     }
@@ -315,6 +308,7 @@ class GroupOperationBase extends ST.MassOperation {
         for (const i of this.getGroupItems()) {
             const title = i.dataset.filter;
 
+            // Hide, don't remove. Preserves selections.
             if (search && title.indexOf(search) == -1)
                 i.classList.add("hidden");
             else i.classList.remove("hidden");
@@ -355,7 +349,6 @@ class AddToGroup extends GroupOperationBase {
     buildInterface()
     {
         this._buildInterface("<%= t('groups.index.mass_operations.add.help') %>");
-        this.mode = "add";
     }
 };
 
@@ -363,22 +356,21 @@ class RemoveFromGroup extends GroupOperationBase {
     buildInterface()
     {
         this._buildInterface("<%= t('groups.index.mass_operations.remove.help') %>");
-        this.mode = "remove";
     }
 };
 
 const MASS_OPERATIONS = [
     {
-        id: "add_to_group",
+        operation: "add_to_group",
         title: "<%= t('groups.index.mass_operations.add.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: AddToGroup
     },
 
     {
-        id: "remove_from_group",
+        operation: "remove_from_group",
         title: "<%= t('groups.index.mass_operations.remove.title') %>",
-        flags: ST.MassOperationFlags.HAVE_SETTINGS,
+        haveSettings: true,
         cls: RemoveFromGroup
     },
 ];
@@ -399,7 +391,7 @@ function* synthesizeData(raw)
         u2.name = `${u.first} ${u.last}`;
 
         // Rewrite group information in-place. Group information is highly repetitive
-        // and verbose, so it has been stored in a more compact form and we must
+        // and verbose, so it has been stored in a more compact format and we must
         // "expand" it to full rows for the table.
         for (let i = 0; i < u2.groups.length; i++) {
             const gid = u2.groups[i],
@@ -422,24 +414,21 @@ function* synthesizeData(raw)
 document.addEventListener("DOMContentLoaded", function() {
     modalPopup.setupGlobalEvents();
 
-    new ST.SuperTable(
+    GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(
         // Main container DIV
         document.getElementById("tableGroupMembers"),
 
         // Settings
         {
             id: "groupMembersTable",
-            csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-members`,
-            flags: ST.TableFlag.DISABLE_EXPORT | ST.TableFlag.DISABLE_VIEW_SAVING | ST.TableFlag.ENABLE_COLUMN_EDITING |
-                   ST.TableFlag.ENABLE_FILTERING | ST.TableFlag.ENABLE_SELECTION |
-                   ST.TableFlag.ENABLE_PAGINATION,
             locale: "<%= supertable_sorting_locale %>",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-members`,
+            enableExport: false,
             columnDefinitions: COLUMN_DEFINITIONS,
-            columnTitles: COLUMN_TITLES,
             columnOrder: COLUMN_ORDER,
-            userTransforms: USER_TRANSFORM_FUNCTIONS,
             massSelects: MASS_SELECTS,
             massOperations: MASS_OPERATIONS,
+            massOperationsEndpoint: "<%= groups_mass_operations_path %>",
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
             dynamicData: "/users/<%= @school.id %>/groups/get_all_groups_members",

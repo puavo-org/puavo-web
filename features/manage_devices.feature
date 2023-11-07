@@ -4,7 +4,7 @@ Feature: Manage devices
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And the following users:
       | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | staff                     |
+      | Pavel     | Taylor | pavel | secret   | true         | admin                     |
       | Huey      | Duck   | huey  | password | false        | student                   |
     And I am logged in as "pavel" with password "secret"
     And the following devices:

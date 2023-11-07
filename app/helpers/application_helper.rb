@@ -326,4 +326,38 @@ module ApplicationHelper
 
     return html.html_safe
   end
+
+  def format_uptime(seconds)
+    return '?' unless seconds.is_a?(Integer)
+
+    parts = []
+
+    # Days
+    if seconds >= 86400
+      d = (seconds / 86400).to_i
+      parts << "#{d}d"
+      seconds -= d * 86400
+    end
+
+    # Hours
+    if seconds >= 3600
+      h = (seconds / 3600).to_i
+      parts << "#{h}h"
+      seconds -= h * 3600
+    end
+
+    # Minutes
+    if seconds >= 60
+      m = (seconds / 60).to_i
+      parts << "#{m}m"
+      seconds -= m * 60
+    end
+
+    # Seconds (avoid adding "0s" to the end, unless there are no other parts)
+    if seconds > 0 || parts.empty?
+      parts << "#{seconds}s"
+    end
+
+    parts.join(' ')
+  end
 end

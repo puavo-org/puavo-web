@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   include Puavo::Integrations
-  include Puavo::MassOperations
+  include Puavo::UsersShared
+  include Puavo::Password
 
   # GET /:school_id/users
   # GET /:school_id/users.xml
@@ -22,9 +23,7 @@ class UsersController < ApplicationController
                   'telephoneNumber',
                   'displayName',
                   'gidNumber',
-                  'homeDirectory',
                   'mail',
-                  'puavoEduPersonReverseDisplayName',
                   'sambaSID',
                   'uidNumber',
                   'loginShell',
@@ -64,6 +63,11 @@ class UsersController < ApplicationController
       end
     end
 
+    # These have to be set, because there are tests for the admin rights
+    @is_owner = is_owner?
+    @permit_user_creation = @is_owner || current_user.has_admin_permission?(:create_users)
+    @permit_user_deletion = @is_owner || current_user.has_admin_permission?(:delete_users)
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @users }
@@ -74,14 +78,8 @@ class UsersController < ApplicationController
   # New AJAX-based index for non-test environments
   def new_cool_users_index
     @is_owner = is_owner?
-
-    @permit_single_user_deletion = true
-    @permit_single_user_creation = true
-
-    unless @is_owner
-      @permit_single_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
-      @permit_single_user_creation = can_schooladmin_do_this?(current_user.uid, :create_users)
-    end
+    @permit_user_creation = @is_owner || current_user.has_admin_permission?(:create_users)
+    @permit_user_deletion = @is_owner || current_user.has_admin_permission?(:delete_users)
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
@@ -159,393 +157,6 @@ class UsersController < ApplicationController
 
     render :json => users
   end
-
-  # ------------------------------------------------------------------------------------------------
-  # ------------------------------------------------------------------------------------------------
-
-  # Mass operation: delete user
-  def mass_op_user_delete
-    begin
-      user_id = params[:user][:id]
-    rescue
-      puts "mass_op_user_delete(): missing required params in the request:"
-      puts params.inspect
-      return status_failed_msg('mass_op_user_delete(): missing params')
-    end
-
-    ok = false
-
-    begin
-      user = User.find(user_id)
-
-      if user.puavoDoNotDelete
-        return status_failed_trans('users.index.mass_operations.delete.deletion_prevented')
-      end
-
-      unless user.puavoRemovalRequestTime
-        return status_failed_trans('users.index.mass_operations.delete.not_marked_for_deletion')
-      end
-
-      if user.puavoRemovalRequestTime + 7.days > Time.now.utc
-        return status_failed_trans('users.index.mass_operations.delete.marked_too_recently')
-      end
-
-      # Remove the user from external systems first, stop if this fails
-      status, message = delete_user_from_external_systems(user, plaintext_message: true)
-
-      unless status
-        return status_failed_msg(message)
-      end
-
-      user.destroy
-      ok = true
-    rescue StandardError => e
-      return status_failed_msg(e)
-    end
-
-    if ok
-      return status_ok()
-    else
-      return status_failed_msg('unknown_error')
-    end
-  end
-
-  # Mass operation: lock/unlock user
-  def mass_op_user_lock
-    begin
-      user_id = params[:user][:id]
-      lock = params[:user][:lock]
-    rescue
-      puts "mass_op_user_lock(): missing required params in the request:"
-      puts params.inspect
-      return status_failed_msg('mass_op_user_lock(): missing params')
-    end
-
-    ok = false
-
-    begin
-      user = User.find(user_id)
-
-      if user.puavoLocked && !lock
-        user.puavoLocked = false
-        user.save!
-      elsif !user.puavoLocked && lock
-        user.puavoLocked = true
-        user.save!
-      end
-
-      ok = true
-    rescue StandardError => e
-      return status_failed_msg(e)
-    end
-
-    if ok
-      return status_ok()
-    else
-      return status_failed_msg('unknown_error')
-    end
-  end
-
-  # Mass operation: mark/unmark for later deletion
-  def mass_op_user_mark
-    begin
-      user_id = params[:user][:id]
-      operation = params[:user][:operation]
-    rescue
-      puts "mass_op_user_mark(): missing required params in the request:"
-      puts params.inspect
-      return status_failed_msg('mass_op_user_mark(): missing params')
-    end
-
-    ok = false
-
-    begin
-      user = User.find(user_id)
-
-      if operation == 0
-        # Lock
-        if user.puavoDoNotDelete
-          return status_failed_trans('users.mass_operations.delete.deletion_prevented')
-        end
-
-        if user.puavoRemovalRequestTime
-          # already marked for deletion, do nothing
-          ok = true
-        else
-          user.puavoRemovalRequestTime = Time.now.utc
-          user.puavoLocked = true
-          user.save!
-          ok = true
-        end
-      elsif operation == 1
-        # Force lock (resets locking timestamp)
-        if user.puavoDoNotDelete
-          return status_failed_trans('users.mass_operations.delete.deletion_prevented')
-        end
-
-        # always overwrite the existing timestamp
-        user.puavoRemovalRequestTime = Time.now.utc
-        user.puavoLocked = true
-        user.save!
-        ok = true
-      else
-        # Unlock
-        if user.puavoRemovalRequestTime
-          user.puavoRemovalRequestTime = nil
-          user.save!
-        end
-
-        ok = true
-      end
-    rescue StandardError => e
-      return status_failed_msg(e)
-    end
-
-    if ok
-      return status_ok()
-    else
-      return status_failed_msg('unknown_error')
-    end
-  end
-
-  # Mass operation: clear column (their values must be unique, so setting them
-  # to anything except empty is pointless)
-  def mass_op_user_clear_column
-    begin
-      user_id = params[:user][:id]
-      column = params[:user][:column]
-    rescue
-      puts "mass_op_user_clear_column(): missing required params in the request:"
-      puts params.inspect
-      return status_failed_msg('mass_op_user_clear_column(): missing params')
-    end
-
-    ok = false
-
-    begin
-      user = User.find(user_id)
-
-      if column == 'eid' && user.puavoExternalID
-        user.puavoExternalID = nil
-        user.save!
-      elsif column == 'email' && user.mail
-        user.mail = nil
-        user.save!
-      elsif column == 'telephone' && user.telephoneNumber
-        user.telephoneNumber = nil
-        user.save!
-      elsif column == 'learner_id' && user.puavoLearnerId
-        user.puavoLearnerId = nil
-        user.save!
-      elsif column == 'pnumber' && user.puavoEduPersonPersonnelNumber
-        user.puavoEduPersonPersonnelNumber = nil
-        user.save!
-      end
-
-      ok = true
-    rescue StandardError => e
-      return status_failed_msg(e)
-    end
-
-    if ok
-      return status_ok()
-    else
-      return status_failed_msg('unknown_error')
-    end
-  end
-
-
-  # Mass operation: create a new username list from the selected users.
-  # This is a "single shot" operation, it processes all selected users
-  # in one call.
-  def mass_op_username_list
-    begin
-      user_ids = params[:user][:user_ids]
-    rescue
-      puts "mass_op_username_list(): missing required params in the request:"
-      puts params.inspect
-      return status_failed_msg('mass_op_username_list(): missing params')
-    end
-
-    ok = false
-
-    begin
-      # Find the users. They must all exist.
-      user_ids.each do |id|
-        begin
-          User.find(id)
-        rescue StandardError => e
-          return status_failed_msg("User ID #{id} not found: #{e}")
-        end
-      end
-
-      if params[:user].include?(:creator)
-        creator = params[:user][:creator]
-      else
-        creator = nil
-      end
-
-      if params[:user].include?(:description)
-        description = params[:user][:description]
-      else
-        description = nil
-      end
-
-      # Okay, they exist. Create the list.
-      new_list = List.new(user_ids, creator, description)
-      new_list.save
-
-      ok = true
-    rescue StandardError => e
-      return status_failed_msg(e)
-    end
-
-    if ok
-      return status_ok()
-    else
-      return status_failed_msg('unknown_error')
-    end
-  end
-
-  # Mass operation: change school(s)
-  def mass_op_user_change_school
-    begin
-      user_id = params[:user][:id]
-      operation = params[:user][:operation]
-      keep_previous = params[:user][:keep]
-      remove_prev = params[:user][:remove_prev]
-      school_id = params[:user][:school_id]
-      school_dn = params[:user][:school_dn]
-    rescue
-      puts "mass_op_user_change_school(): missing required params in the request:"
-      puts params.inspect
-      return status_failed_msg('mass_op_user_change_school(): missing params')
-    end
-
-    ok = false
-
-    begin
-      user = User.find(user_id)
-
-      # Needed when removing the user from the old groups (see later)
-      remove_groups_from = user.puavoEduPersonPrimarySchool.to_s
-
-      if operation == 0
-        # Move (change primary school)
-        unless user.puavoEduPersonPrimarySchool == school_dn
-          school = School.find(school_id)
-          puts "-" * 50
-          puts "Moving user #{user.uid} to school #{school_dn}"
-
-          previous_dn = user.puavoEduPersonPrimarySchool
-          previous_school = School.find(previous_dn)
-
-          if keep_previous
-            puts "Keeping the previous school (#{previous_dn})"
-          end
-
-          if Array(user.puavoSchool).include?(school_dn)
-            puts "The user is already in the target school, changing the primary school DN"
-            user.puavoEduPersonPrimarySchool = school_dn
-
-            unless keep_previous
-              puts "Removing the previous primary school"
-              schools = Array(user.puavoSchool).dup
-              schools.delete(previous_dn)
-              user.puavoSchool = (schools.count == 1) ? schools[0] : schools
-            end
-          else
-            puts "Inserting the new school on the schools array"
-            schools = Array(user.puavoSchool).dup
-            schools << school_dn
-
-            unless keep_previous
-              puts "Removing the previous primary school"
-              schools.delete(previous_dn)
-            end
-
-            user.puavoSchool = (schools.count == 1) ? schools[0] : schools
-
-            puts "Changing the primary school"
-            user.puavoEduPersonPrimarySchool = school_dn
-          end
-
-          puts "Saving the user object"
-          user.save!
-
-          unless keep_previous
-            # Remove the user from the previous primary school
-            begin
-              LdapBase.ldap_modify_operation(previous_dn, :delete, [{ "member" => [user.dn.to_s] }])
-            rescue ActiveLdap::LdapError::NoSuchAttribute
-            end
-
-            begin
-              LdapBase.ldap_modify_operation(previous_dn, :delete, [{ "memberUid" => [user.uid.to_s] }])
-            rescue ActiveLdap::LdapError::NoSuchAttribute
-            end
-          end
-
-          puts "-" * 50
-        end
-
-        if remove_prev
-          # Remove the user from the previous school's groups
-          user = User.find(user_id)
-
-          user.groups.each do |group|
-            group.remove_user(user) if group.puavoSchool == remove_groups_from
-          end
-        end
-
-        ok = true
-      elsif operation == 1
-        # Add
-        unless Array(user.puavoSchool).include?(school_dn)
-          school = School.find(school_id)
-
-          puts "-" * 50
-          puts "Adding user #{user.uid} to school #{school_dn}"
-          puts "-" * 50
-
-          user.puavoSchool = Array(user.puavoSchool) + [school_dn]
-          user.save!
-        end
-
-        ok = true
-      elsif operation == 2
-        # Remove
-        if Array(user.puavoSchool).include?(school_dn)
-          if user.puavoEduPersonPrimarySchool == school_dn
-            # Users cannot be removed from their primary school. You have to move them
-            # to another school first, then remove the old primary school.
-            return status_failed_trans('users.index.mass_operations.change_school.cant_remove_primary_school')
-          else
-            school = School.find(school_id)
-
-            puts "-" * 50
-            puts "Removing user #{user.uid} from school #{school_dn}"
-            _remove_user_from_school(user, school)
-            puts "-" * 50
-          end
-        end
-
-        ok = true
-      end
-    rescue StandardError => e
-      return status_failed_msg(e)
-    end
-
-    if ok
-      return status_ok()
-    else
-      return status_failed_msg('unknown_error')
-    end
-  end
-
-
-  # ------------------------------------------------------------------------------------------------
-  # ------------------------------------------------------------------------------------------------
 
   # GET /:school_id/users/1/image
   def image
@@ -640,18 +251,9 @@ class UsersController < ApplicationController
       data[:groups].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
 
-    @permit_user_deletion = false
-
     @own_page = current_user.id == @user.id
 
-    if @viewer_is_an_owner
-      # Owners can always delete users
-      @permit_user_deletion = true
-    else
-      # This user is not an owner, but they *have* to be a school admin, because only owners
-      # and school admins can log in. See if they've been granted any extra permissions.
-      @permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
-    end
+    @permit_user_deletion = @viewer_is_an_owner || current_user.has_admin_permission?(:delete_users)
 
     # External data fields
     @mpass_materials_charge = nil
@@ -667,14 +269,14 @@ class UsersController < ApplicationController
       end
     end
 
-    # Extra permissions for admins (non-owners)
-    @extra_permissions_list = []
+    # What actions have been granted for this admin?
+    @admin_permissions = []
 
-    if Array(@user.puavoEduPersonAffiliation || []).include?('admin')
-      unless @user_is_owner
-        [:create_users, :delete_users, :import_users].each do |action|
-          if can_schooladmin_do_this?(@user.uid, action)
-            @extra_permissions_list << action.to_s
+    unless @user_is_owner
+      if Array(@user.puavoEduPersonAffiliation || []).include?('admin')
+        User::ADMIN_PERMISSIONS.each do |permission|
+          if @user.has_admin_permission?(permission)
+            @admin_permissions << permission
           end
         end
       end
@@ -684,6 +286,30 @@ class UsersController < ApplicationController
     # they're enabled for, as long as there's at least one.
     organisation = Puavo::Organisation.find(LdapOrganisation.current.cn)
     @have_sso_sessions = organisation && !organisation.value_by_key('enable_sso_sessions_in').nil?
+
+    # Look up verified email addresses
+    @verified_addresses = Array(@user.puavoVerifiedEmail || []).to_set.freeze
+    @emails = []
+
+    Array(@user.mail || []).each do |addr|
+      parts = []
+
+      parts << 'verified' if @verified_addresses.include?(addr)
+      parts << 'primary' if @user.puavoPrimaryEmail == addr
+
+      @emails << [addr, parts]
+    end
+
+    # Highlight invalid license data
+    @licenses_ok = true
+    @licenses = nil
+
+    begin
+      @licenses = JSON.parse(@user.puavoLicenses) if @user.puavoLicenses
+    rescue StandardError => e
+      @licenses_ok = false
+      @licenses = @user.puavoLicenses.to_s
+    end
 
     respond_to do |format|
       format.html # show.html.erb
@@ -720,12 +346,10 @@ class UsersController < ApplicationController
   # GET /:school_id/users/new
   # GET /:school_id/users/new.xml
   def new
-    unless is_owner?
-      unless can_schooladmin_do_this?(current_user.uid, :create_users)
-        flash[:alert] = t('flash.you_must_be_an_owner')
-        redirect_to users_path
-        return
-      end
+    unless is_owner? || current_user.has_admin_permission?(:create_users)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to users_path
+      return
     end
 
     @user = User.new
@@ -764,6 +388,12 @@ class UsersController < ApplicationController
   # POST /:school_id/users
   # POST /:school_id/users.xml
   def create
+    unless is_owner? || current_user.has_admin_permission?(:create_users)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to users_path
+      return
+    end
+
     @user = User.new(user_params)
     @groups = @school.groups
 
@@ -881,6 +511,9 @@ class UsersController < ApplicationController
               end
             end
           end
+
+          # Clear admin permissions
+          @user.puavoAdminPermissions = nil
         end
 
         up = user_params()
@@ -893,6 +526,21 @@ class UsersController < ApplicationController
 
         if @automatic_email_addresses
           up['mail'] = ["#{up['uid'].strip}@#{@automatic_email_domain}"]
+        else
+          removed = Array(@user.puavoVerifiedEmail) - up['mail']
+
+          unless removed.empty?
+            # One or more verified addresses are missing. Put them back;
+            # they're not supposed to be removed.
+            up['mail'] += removed
+          end
+
+          # Clean up the address array in the same way puavo-rest does it
+          up['mail'] = up['mail']
+            .compact                  # remove nil values
+            .map { |e| e.strip }      # remove trailing and leading whitespace
+            .reject { |e| e.empty? }  # remove completely empty strings
+            .uniq                     # remove duplicates
         end
 
         unless @user.update_attributes(up)
@@ -922,18 +570,7 @@ class UsersController < ApplicationController
   def destroy
     # Can't use redirected_nonowner_user? here because we must allow school admins
     # to get here too if it has been explicitly allowed
-    permit_user_deletion = false
-
-    if is_owner?
-      # Owners can always delete users
-      permit_user_deletion = true
-    else
-      # This user is not an owner, but they *have* to be a school admin, because only owners
-      # and school admins can log in. See if they've been granted any extra permissions.
-      permit_user_deletion = can_schooladmin_do_this?(current_user.uid, :delete_users)
-    end
-
-    unless permit_user_deletion
+    unless is_owner? || current_user.has_admin_permission?(:delete_users)
       flash[:alert] = t('flash.you_must_be_an_owner')
       redirect_to schools_path
       return
@@ -999,6 +636,54 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(users_url) }
       format.xml  { head :ok }
+    end
+  end
+
+  def request_password_reset
+    return if redirected_nonowner_user?
+
+    @user = get_user(params[:id])
+    return if @user.nil?
+
+    request_id = generate_synchronous_call_id()
+
+    if @user.mail.nil? || @user.mail.empty?
+      flash[:alert] = t('flash.user.reset_failed_no_emails', request_id: request_id)
+    else
+      if @user.puavoPrimaryEmail
+        address = @user.puavoPrimaryEmail
+      else
+        address = Array(@user.mail).first
+      end
+
+      begin
+        logger.info("[#{request_id}] Sending a password reset email for user \"#{@user.uid}\" (#{@user.dn.to_s}) to address \"#{address}\"")
+        ret = Puavo::Password::send_password_reset_mail(logger, LdapOrganisation.first.puavoDomain, password_management_host, locale, request_id, address)
+
+        case ret
+          when :ok
+            flash[:notice] = t('flash.user.reset_email_sent')
+
+          when :user_not_found
+            flash[:alert] = t('flash.user.reset_failed_user_not_found', request_id: request_id)
+
+          when :link_already_sent
+            flash[:alert] = t('flash.user.reset_failed_link_already_sent', request_id: request_id)
+
+          when :link_sending_failed
+            flash[:alert] = t('flash.user.reset_failed_link_sending_failed', request_id: request_id)
+
+          when :puavo_rest_call_failed
+            flash[:alert] = t('flash.user.reset_failed_puavo_rest_call_failed', request_id: request_id)
+        end
+      rescue => e
+        logger.error("[#{request_id}] Password reset failed: #{e}")
+        flash[:alert] = t('flash.user.reset_failed_generic', request_id: request_id)
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to(user_path(@school, @user)) }
     end
   end
 
@@ -1089,7 +774,7 @@ class UsersController < ApplicationController
         return
       end
 
-      _remove_user_from_school(@user, @target)
+      Puavo::UsersShared::remove_user_from_school(@user, @target)
 
       flash[:notice] = t('flash.user.removed_from_school', :name => @target.displayName)
     rescue StandardError => e
@@ -1224,6 +909,54 @@ class UsersController < ApplicationController
       return render :plain => "Unknown user #{ ActionController::Base.helpers.sanitize(params["username"]) }", :status => 400
     end
     redirect_to user_path(params["school_id"], user.id)
+  end
+
+  # GET /:school_id/users/:id/edit_admin_permissions
+  def edit_admin_permissions
+    @user = User.find(params[:id])
+
+    unless is_owner?
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to(user_path(@school, @user))
+      return
+    end
+
+    # Prevent direct URL manipulation
+    unless Array(@user.puavoEduPersonAffiliation).include?('admin')
+      flash[:alert] = t('flash.user.not_an_admin')
+      redirect_to(user_path(@school, @user))
+      return
+    end
+
+    @current_permissions = Array(@user.puavoAdminPermissions).to_set.freeze
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # POST /:school_id/users/:id/edit_admin_permissions
+  def save_admin_permissions
+    @user = User.find(params[:id])
+
+    begin
+      unless is_owner?
+        flash[:alert] = t('flash.you_must_be_an_owner')
+      else
+        # Ensure no incorrect permissions can get through
+        permissions = params.fetch('permissions', []).dup
+
+        @user.puavoAdminPermissions = permissions.select { |p| User::ADMIN_PERMISSIONS.include?(p.to_sym) }
+        @user.save!
+
+        flash[:notice] = t('flash.user.admin_permissions_updated')
+      end
+    rescue StandardError => e
+      logger.error("Failed to save the admin permissions: #{e}")
+      flash[:alert] = t('flash.save_failed')
+    end
+
+    redirect_to(user_path(@school, @user))
   end
 
   def lock
@@ -1406,7 +1139,6 @@ class UsersController < ApplicationController
         g = Group.find(id)
 
         next if !is_owner && !only_these.include?(g.school.dn.to_s)
-        puts "update_user_groups(): removing from group #{id} (#{g.displayName})"
         g.remove_user(user)
       end
 
@@ -1414,7 +1146,6 @@ class UsersController < ApplicationController
         g = Group.find(id)
 
         next if !is_owner && !only_these.include?(g.school.dn.to_s)
-        puts "update_user_groups(): adding to group #{id} (#{g.displayName})"
         g.add_user(user)
       end
     end
@@ -1451,112 +1182,6 @@ class UsersController < ApplicationController
         flash[:alert] = t('flash.invalid_user_id', :id => id)
         redirect_to users_path(@school)
         return nil
-      end
-    end
-
-    # Delete the user from external systems. Returns [status, message] tuples;
-    # if 'status' is false, you can display 'message' to the user.
-    # See app/lib/puavo/integrations.rb for details
-    def delete_user_from_external_systems(user, plaintext_message: false)
-      # Have actions for user deletion? Currently we only check the primary school
-      # (this decision will cause trouble later on).
-      organisation = LdapOrganisation.current.cn
-      school = user.primary_school
-
-      unless school_has_sync_actions_for?(organisation, school.id, :delete_user)
-        return true, nil
-      end
-
-      actions = get_school_sync_actions(organisation, school.id, :delete_user)
-
-      logger.info("School (#{school.cn}) in organisation \"#{organisation}\" " \
-                  "has #{actions.length} synchronous action(s) defined for user " \
-                  "deletion: #{actions.keys.join(', ')}")
-
-      integration_names = get_school_integration_names(organisation, school.id)
-      ok_systems = []
-
-      # Process each system in sequence, bail out on the first error. 'params' are
-      # the parameters defined for the action in organisations.yml.
-      actions.each do |system, params|
-        request_id = generate_synchronous_call_id()
-
-        logger.info("Synchronously deleting user \"#{user.uid}\" (#{user.id}) from external " \
-                    "system \"#{system}\", request ID is \"#{request_id}\"")
-
-        status, code = do_synchronous_action(
-          :delete_user, system, request_id, params,
-          # -----
-          organisation: organisation,
-          user: user,
-          school: school
-        )
-
-        if status
-          ok_systems << integration_names[system]
-          next
-        end
-
-        # The operation failed, format an error message
-        msg = t('flash.user.synchronous_actions.deletion.part1',
-                :system => integration_names[system],
-                :reason => t('flash.integrations.' + code)) + '<br>'
-
-        unless ok_systems.empty?
-          msg += '<small>' +
-                 t('flash.user.synchronous_actions.deletion.part2',
-                   :ok_systems => ok_systems.join(', ')) +
-                 '</small><br>'
-        end
-
-        msg += '<small>' +
-               t('flash.user.synchronous_actions.deletion.part3',
-                 :code => request_id) +
-               '</small>'
-
-        if plaintext_message
-          # strip out HTML and convert newlines, to make the message "plain text"
-          msg = msg.gsub!('<br>', "\n\n")
-          msg = ActionView::Base.full_sanitizer.sanitize(msg)
-        end
-
-        return false, msg
-      end
-
-      logger.info('Synchronous action(s) completed without errors, proceeding with user deletion')
-      return true, nil
-    end
-
-    # Removes the user from the target school. Assumes you've done the prerequisite verifications
-    # (the user is in the school and it's not the user's primary school).
-    def _remove_user_from_school(user, school)
-      schools = Array(user.puavoSchool.dup)
-      schools.reject!{ |s| s.to_s == school.dn.to_s }
-      user.puavoSchool = (schools.count == 1) ? schools[0] : schools
-
-      # Remove school admin associations if needed
-      Array(user.puavoAdminOfSchool).each do |dn|
-        if dn.to_s == school.dn.to_s
-          user.puavoAdminOfSchool = Array(user.puavoAdminOfSchool).reject { |dn| dn.to_s == school.dn.to_s }
-          school.puavoSchoolAdmin = Array(school.puavoSchoolAdmin).reject { |dn| dn.to_s == user.dn.to_s }
-          school.save!
-          break
-        end
-      end
-
-      # This must be done first, otherwise ldap_modify_operation() below will fail
-      user.save!
-
-      # The system appears to automatically add the user's UID and DN to the relevant arrays,
-      # but it won't *remove* them
-      begin
-        LdapBase.ldap_modify_operation(school.dn, :delete, [{ "member" => [user.dn.to_s] }])
-      rescue ActiveLdap::LdapError::NoSuchAttribute
-      end
-
-      begin
-        LdapBase.ldap_modify_operation(school.dn, :delete, [{ "memberUid" => [user.uid.to_s] }])
-      rescue ActiveLdap::LdapError::NoSuchAttribute
       end
     end
 end

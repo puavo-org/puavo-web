@@ -35,7 +35,7 @@ Feature: Manage profile
     # And I fill in "mouse?" with ""
 
     When I press "Update"
-    Then I should see "Your profile has been successfully updated"
+    Then I should see "Your information has been successfully updated"
     And I should see the following special ldap attributes on the "User" object with "ken.jones":
     | puavoLocale       | "de_CH.UTF-8" |
     | preferredLanguage | "de"          |
@@ -50,7 +50,7 @@ Feature: Manage profile
     When I fill in "Telephone number" with "+35814987654321"
     And I attach the file at "features/support/test.jpg" to "Image"
     When I press "Update"
-    Then I should see "Your profile has been successfully updated"
+    Then I should see "Your information has been successfully updated"
 
   Scenario: Student edit email address
     When I am on the edit profile page
@@ -61,4 +61,4 @@ Feature: Manage profile
     Then I should see "Jane Doe"
     When I fill in "Email" with "jane.doe@puavo.net"
     When I press "Update"
-    Then I should see "Your profile has been successfully updated"
+    Then I should see "Your information has been successfully updated"

@@ -7,7 +7,7 @@ Feature: Manage sessions
     Given a new school and group with names "School 1", "Class 4" on the "example" organisation
     And the following users:
       | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | staff                     |
+      | Pavel     | Taylor | pavel | secret   | true         | admin                     |
 
   Scenario: Login
     Given I am on the login page

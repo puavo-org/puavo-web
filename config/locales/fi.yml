@@ -33,7 +33,8 @@ fi:
     index:
       service_link_name_puavo: "Puavo - käyttäjien ja laitteiden hallinta"
       service_link_name_infotv: "Info-TV"
-      service_link_name_change_password: "Vaihda salasanaasi"
+      service_link_name_change_password: "Vaihda salasanaa"
+      service_link_name_forgot_password: "Unohdin salasanani"
 
   # Login screen
   sessions:
@@ -48,6 +49,7 @@ fi:
       username_placeholder: "Käyttäjätunnus"
       login: "Kirjaudu"
       help: "Apua"
+      technical_support: "Tekninen tuki"
 
   # Page title breadcrumbs
   titles:
@@ -129,6 +131,7 @@ fi:
     change_school: "Vaihda koulua..."
     new_import: "Tuo ja päivitä käyttäjiä"
     group_members_mass_edit: "Jäsenten massamuokkaus"
+    copy_to_clipboard: "Kopioi leikepöydälle"
 
   # Main application layout
   layouts:
@@ -234,12 +237,14 @@ fi:
       role: "Rooli"
       phone: "Puhelin"
       email: "Email"
+      v_email: "Vahvistettu email"
+      p_email: "Pää-email"
       pnumber: "Henkilönumero"
-      home_dir: "Kotihakemisto"
       rrt: "Poistomerkintä tehty"
       dnd: "Poisto estetty?"
       is_locked: "Lukittu?"
       other_schools: "Muut koulut"
+      licenses: "Lisenssit"
 
     groups:
       name: "Nimi"
@@ -289,6 +294,7 @@ fi:
       df_imageoverlays: "Vapaana /imageoverlays (MiB)"
       have_smart: "SMART-tiedot?"
       has_windows_license: "Windows-lisenssi"
+      windows_installed: "Windows asennettu?"
       purchase_date: "Hankintapäivä"
       purchase_warranty: "Takuu päättyy"
       purchase_loc: "Hankintapaikka"
@@ -317,6 +323,7 @@ fi:
       reset_operation: "Nollausoperaatio"
       reset_pin: "Nollaus-PIN"
       reset_time: "Nollauspyyntö tehty"
+      uptime: "Uptime"
 
     servers:
       available_images: "Tarjolla olevat kuvatiedostot"
@@ -328,6 +335,7 @@ fi:
       title_user: "Käyttäjät"
       title_group: "Ryhmät"
       title_device: Laitteet
+      title_server: "Boot-palvelimet"
     no_matches: "(Ei osumia)"
     failed: "(Haku epäonnistui!)"
 
@@ -361,6 +369,7 @@ fi:
         laptop: "Kannettava"
         fatclient: "Verkkopääte"
         printer: "Tulostin"
+        bootserver: "Bootserver"
         other: "(Kaikki muut)"
 
     term_names:
@@ -431,19 +440,32 @@ fi:
   supertable:
     export:
       top_button: "Lataa"
-      title: "Lataa taulukon sisältö tiedostona:"
+      title: "Lataa taulukon sisältö tiedostona"
+      settings: "Asetukset"
       only_visible_rows_checkbox: "Vain näkyvät rivit"
       only_visible_rows_title: "Jos ruksattu, vain rivit joita ei suodateta pois tallennetaan. Muutoin kaikki rivit tallennetaan."
       only_visible_cols_checkbox: "Vain näkyvät sarakkeet"
       only_visible_cols_title: "Jos ruksattu, vain valitut sarakkeet tallennetaan. Muutoin kaikki sarakkeet tallennetaan."
+    rows:
+      top_button: "Rivit"
+      whole_table_title: "Koko taulukko"
+      select_all: "Valitse kaikki rivit"
+      deselect_all: "Epävalitse kaikki rivit"
+      invert_selection: "Käänteinen valinta"
+      deselect_successfull: "Epävalitse onnistuneesti käsitellyt rivit"
+      specific_rows_title: "Vain tietyt rivit"
+      explanation: "Syötä yksi tai useampi nimi, lyhenne, ID, tai jokin muu yksilöllinen tunniste. Valitse sitten niiden tyyppi, ja paina \"Valitse\" tai \"Poista valinnat\". Rivit jotka eivät täsmänneet mihinkään muutetaan <span class=\"unmatchedRow\">eri väriseksi</span>. Voit muokata niitä ja suorittaa valinnan uudelleen. Duplikaatit ja tyhjät rivit poistetaan."
+      type: "Tyyppi"
+      select: "Valitse"
+      deselect: "Poista valinnat"
     columns:
       top_button: "Sarakkeet"
       explanation: "Voit järjestellä sarakkeita raahaamalla niiden otsakkeita taulukossa hiirellä. Klikkaus = lajittele, raahaus = järjestele."
       search_placeholder: "Etsi"
       save: "Tallenna"
+      select_all: "Valitse kaikki näkyvät"
+      deselect_all: "Poista kaikki näkyvät valinnat"
       default_columns: "Oletukset"
-      select_all: "Valitse kaikki"
-      deselect_all: "Poista kaikki valinnat"
       default_order: "Lajittele sarakkeet oletusjärjestykseen"
     filtering:
       top_button: "Suodatuseditori"
@@ -480,25 +502,15 @@ fi:
         contents: "Mallin sisältö"
     mass:
       top_button: "Massatoiminnot"
-      row_select:
-        title: "Rivien massavalinta"
-        whole_table_title: "Koko taulukko"
-        select_all: "Valitse kaikki rivit"
-        deselect_all: "Epävalitse kaikki rivit"
-        invert_selection: "Käänteinen valinta"
-        deselect_successfull: "Epävalitse onnistuneesti käsitellyt rivit"
-        specific_rows_title: "Vain tietyt rivit"
-        explanation: "Syötä yksi tai useampi nimi, lyhenne, ID, tai jokin muu yksilöllinen tunniste. Valitse sitten niiden tyyppi, ja paina \"Valitse\" tai \"Poista valinnat\". Rivit jotka eivät täsmänneet mihinkään muutetaan <span class=\"unmatchedRow\">eri väriseksi</span>. Voit muokata niitä ja suorittaa valinnan uudelleen. Duplikaatit ja tyhjät rivit poistetaan."
-        type: "Tyyppi"
-        select: "Valitse"
-        deselect: "Poista valinnat"
       operation_title: "Operaatio"
-      execute_button: "Suorita"
+      start_button: "Aloita"
+      stop_button: "Pysäytä"
       settings_title: "Operaation asetukset"
     paging:
       top_rows_per_page: "Montako riviä näytetään per sivu"
       top_first_page: "Ensimmäinen sivu"
       top_previous_page: "Edellinen sivu"
+      top_jump_to_page_placeholder: "Sivu: -/- ▼"
       top_jump_to_page: "Hyppää sivulle..."
       top_next_page: "Seuraava sivu"
       top_last_page: "Viimeinen sivu"
@@ -586,6 +598,15 @@ fi:
       user_moved_to_school: "Käyttäjä siirretty kouluun \"%{name}\""
       school_moving_failed: "Koulun vaihto epäonnistui"
       sso_session_gone: "Käyttäjän SSO-istunto nollattu (jos sellainen oli olemassa)"
+      admin_permissions_updated: "Oikeudet päivitetty"
+      not_an_admin: "Ylläpitäjän oikeuksia ei voi muokata, koska käyttäjä ei ole ylläpitäjä"
+      reset_email_sent: "Nollaussähköposti lähetetty."
+      reset_failed_no_emails: "Käyttäjällä ei ole sähköpostiosoitetta. Lokikoodi: %{request_id}."
+      reset_failed_user_not_found: "Käyttäjää ei löytynyt sähköpostiosoitteella. Lokikoodi: %{request_id}."
+      reset_failed_link_already_sent: "Tällä käyttäjällä on jo aktiivinen nollauspyyntö päällä. Lokikoodi: %{request_id}."
+      reset_failed_link_sending_failed: "Sähköpostiviestin lähetys epäonnistui. Lokikoodi: %{request_id}."
+      reset_failed_puavo_rest_call_failed: "puavo-rest -kutsu epäonnistui. Lokikoodi: %{request_id}."
+      reset_failed_generic: "Nollaussähköpostin lähetys epäonnistui. Lokikoodi: %{request_id}."
 
       # messages generated by synchronous actions
       synchronous_actions:
@@ -694,7 +715,7 @@ fi:
     new:
       title: Uuden LDAP-palvelun tiedot
     edit:
-      title: LDAP-palvelun tietojen muokkaus
+      title: LDAP-palvelun "%{service}" tietojen muokkaus
 
   # Boot servers
   servers:
@@ -728,6 +749,7 @@ fi:
     path_prefix: "Polun etuliite"
     additional_info: "Lisätietoja..."
     organisation_wide_activation: "Tämä palvelu on aktivoitu organisaatiotasolla kaikkiin kouluihin."
+    requires_verified_email: "Palveluun kirjautuminen vaatii vahvistetun sähköpostiosoitteen."
 
   # Organisation/external files
   external_files:
@@ -905,12 +927,6 @@ fi:
         clear_column:
           title: "Tyhjennä sarakkeen sisältö..."
           column_title: "Sarake:"
-          columns:
-            eid: "Ulkoinen ID"
-            email: "Email"
-            telephone: "Puhelinnumero"
-            learner_id: "Oppijanumero"
-            pnumber: "Henkilönumero"
         username_list:
           title: "Luo käyttäjätunnuslista"
           description: "Listan nimi tai lyhyt kuvaus (valinnainen)"
@@ -937,10 +953,13 @@ fi:
       user_is_a_school_admin: "Käyttäjä on koulun \"%{school_name}\" ylläpitäjissä"
       schools: "Koulut"
       primary_school: "(pääkoulu)"
+      verified_email: "vahvistettu"
+      primary_email: "pääosoite"
       user_is_locked: "Käyttäjätunnus on lukittu"
       user_is_marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
       user_deletion_prevented: "Käyttäjän poisto on estetty"
       user_devices: Käyttäjän laitteet
+      user_licenses: "Lisenssit"
       lock: "Lukitse tunnus"
       unlock: "Avaa tunnuksen lukitus"
       mark_for_removal: Merkitse poistettavaksi
@@ -949,9 +968,11 @@ fi:
       prevent_removal: Estä poisto
       prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
       deletion_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\t%{systems}\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
+      request_password_reset: "Lähetä salasanan nollaus-email"
       reset_sso_session: "Nollaa SSO-istunto"
-      extra_permissions:
-        title: "Sallitut lisäoikeudet"
+      edit_admin_permissions: "Muokkaa ylläpitäjän oikeuksia..."
+      admin_permissions:
+        title: "Ylläpitäjän oikeudet"
         create_users: "voi luoda käyttäjiä"
         delete_users: "voi poistaa käyttäjiä"
         import_users: "käyttäjien massalisäystyökalu"
@@ -960,6 +981,7 @@ fi:
     edit:
       title: "Muokkaa käyttäjää"
       automatic_email: "Sähköpostiosoite (automaattinen)"
+      have_verified_addresses: "Tällä käyttäjällä on vahvistettuja osoitteita. Niitä ei voi muokata tai poistaa."
     form:
       add_email: "Lisää sähköpostiosoitteita"
       add_telephone_number: "Lisää puhelinnumeroita"
@@ -967,7 +989,7 @@ fi:
       primus_warning_edit: "Primus-integraatio on päällä tässä koulussa. Olemassaolevien käyttäjien nimien, sähköpostiosoitteiden ja puhelinnumeroiden vaihdot saatetaan kumota seuraavan synkronisaation ajon aikana. Ulkoisen ID:n vaihtaminen/asettaminen voi rikkoa synkronoinnin ja aiheuttaa virheellisiä käyttäjän poistettavaksi merkitsemisiä!"
       gsuite_duplicate_prevention: "G Suite -integraatio on päällä. Jos olet luomassa tunnusta käyttäjälle jolla on jo tunnus Googlessa, ota ensin yhteys tukeen jotta luomasi uusi Puavo-tunnus voidaan liittää hallitusti jo olemassaolevaan Google-tunnukseen. Näin käyttäjien synkronisaatio ei mene rikki ja tuplatunnuksien luonnin yritykset estetään."
       password_sync_new: "Salasanasynkronointi on käytössä. Et voi asettaa uudelle käyttäjälle salasanaa ennenkuin uusi käyttäjä on synkronoitu ulkoisiin järjestelmiin. Synkronisaatioaikataulu on listattu sivun yläreunassa; odota, kunnes kaikki synkronisaatiot on ajettu läpi ainakin kerran ja aseta salasana sitten."
-      password_sync_edit: "Salasanasynkronointi on käytössä. Ennen kuin vaihdat salasanan, varmista, että käyttäjä on synkronoitunut ulkoisiin järjestelmiin. Muutoin salasananvaihto onnistunee Puavoon, mutta ei näihin järjestelmiin, ja muutos on epätäydellinen. Jos muokkat käyttäjää joka ei ole synronoinnin piirissä, tästä viestistä ei tarvitse välittää (järjestelmä ei tiedä mitkä käyttäjät oikeasti on synkronoitu ja mitkä eivät)."
+      password_sync_edit: "Salasanasynkronointi on käytössä. Ennen kuin vaihdat salasanan, varmista, että käyttäjä on synkronoitunut ulkoisiin järjestelmiin. Muutoin salasananvaihto onnistunee Puavoon, mutta ei näihin järjestelmiin, ja muutos on epätäydellinen. Jos muokkat käyttäjää joka ei ole synkronoinnin piirissä, tästä viestistä ei tarvitse välittää (järjestelmä ei tiedä mitkä käyttäjät oikeasti on synkronoitu ja mitkä eivät)."
       conflicting_roles: "Ole varovainen jos annat oppilaalle myös opettaja-/henkilökuntaroolin. Tämä yhdistelmä, vaikkakin mahdollinen, ei välttämättä toimi oikein esimerkiksi integraatioiden kanssa."
       group_search_placeholder: "Etsi ryhmiä nimeltä..."
       no_group_search_hits: "Ei osumia"
@@ -991,6 +1013,14 @@ fi:
       cant_remove_from_primary_school_one: "Käyttäjää ei voi poistaa hänen pääkoulustaan, mutta voit siirtää hänet toiseen kouluun."
       cant_remove_from_primary_school_multiple: "Käyttäjää ei voi poistaa hänen pääkoulustaan."
       back: "Takaisin"
+
+    edit_admin_permissions:
+      title: "Muokkaaa ylläpitäjän oikeuksia"
+      header: "Muokkaa ylläpitäjän \"%{name}\" oikeuksia"
+      permissions:
+        create_users: "Voi luoda käyttäjiä"
+        delete_users: "Voi poistaa käyttäjiä"
+        import_users: "Voi käyttää käyttäjien massalisäys/-päivitystyökalua"
 
   # New new user mass import/update tool
   new_import:
@@ -1062,6 +1092,7 @@ fi:
       eid: "Ulkoinen ID"
       group: "Ryhmä"
       rawgroup: "Käsittelemätön ryhmä"
+      licenses: "Lisenssit"
       phone: "Puhelinnumero"
       email: "Email-osoite"
       pnumber: "Henkilönumero"
@@ -1085,13 +1116,12 @@ fi:
       download_template_file: "Lataa"
       read_data: "Lue kaikki tiedot ja siirry tuontivaiheeseen"
       show_infers: "Näytä päättelyt..."
-
       select_existing_uids: "Valitse olemassaolevat käyttäjät"
       everyone: "Kaikki"
       everyone_in_this_school: "Kaikki tässä koulussa"
       everyone_in_other_schools: "Kaikki jossain muussa koulussa"
       select_rows: "Valitse rivit"
-      select_all: "Valise kaikki rivit"
+      select_all: "Valitse kaikki rivit"
       deselect_all: "Epävalitse kaikki rivit"
       invert_selection: "Käänteinen valinta"
       select_unprocessed_rows: "Valitse rivit joita ei käsitelty"
@@ -1103,13 +1133,10 @@ fi:
       username_list: "Käyttäjätunnuslista"
       analyze: "Analysoi"
       compare_attributes: "Vertaa ei-käyttäjänimi -attribuutteja palvelimen dataan"
-
       begin: "Tuo kaikki rivit"
       begin_selected: "Tuo valitut rivit"
       stop: "Pysäytä tuonti"
       begin_failed: "Tuo epäonnistuneet rivit uudelleen"
-      get_pdf_without_passwords: "Lataa PDF käyttäjistä"
-      get_pdf_with_passwords: "Lataa PDF käyttäjistä salasanoineen"
       delete_selected_rows: "Poista valitut rivit"
       save: "Tallenna (Enter)"
       cancel: "Peruuta (Esc)"
@@ -1466,13 +1493,16 @@ fi:
           xserver: "Näytönohjaimen ajuri"
           monitors_xml: "Näyttöasetukset (XML)"
           invalid_json: "Virheellinen JSON-data"
-          validity_warning_json: "Tämän täytyy olla kunnollista JSONia. Sen oikeellisuus tarkistetaan ennen massaoperaation suorittamista."
+          invalid_xml: "Virheellinen XML-data"
           validity_warning_string: "Tähän antamasi arvon oikeellisuutta ei tarkisteta mitenkään! Jos arvo on virheellinen, se saatetaan hylätä palvelinpäässä tallennusvaiheessa."
+          validity_warning_json: "Tämän täytyy olla kunnollista JSONia. Sen oikeellisuus tarkistetaan ennen massaoperaation suorittamista."
+          validity_warning_xml: "Tämän täytyy olla kunnollista XML:ää. Sen oikeellisuus tarkistetaan ennen massaoperaation suorittamista."
+          unknown_user: "Tuntematon käyttäjä \"%{name}\""
         delete:
           title: "Poista"
         purchase_info:
           title: "Hankintatiedot..."
-          validity_warning: "Ruksaa jokainen kenttä jonka arvoa haluat muuttaa tämän operaation aikana. Asetettuja arvoja ei tarkisteta millään tavalla! Jos kentän sisältö on vihreellinen, tietokanta hylkää arvon!"
+          validity_warning: "Ruksaa jokainen kenttä jonka arvoa haluat muuttaa tämän operaation aikana. <strong>Näitä arvoja ei tarkisteta millään tavalla! Jos kentän sisältö on vihreellinen, tietokanta hylkää arvon!</strong> Kentän sisältö voi olla tyhjä, silloin sen sisältö poistetaan tietokannasta."
         reset:
           title: "Aseta/poista nollaustila"
           action: "Toiminto:"
@@ -1499,6 +1529,7 @@ fi:
       operation: "Operaatio"
     show:
       change_school: Vaihda koulua...
+      copy_basic_info: "Kopioi perustiedot leikepöydälle"
     select_school:
       title: "Siirrä laite \"%{name}\" toiseen kouluun"
       select_new_school: "Valitse uusi koulu"
@@ -1632,6 +1663,8 @@ fi:
     logins:
       title: "Laitteelle kirjautumiset"
       last_login: "Viimeisin kirjautuja: %{username}, %{at}."
+    uptime:
+      title: "Uptime"
 
   # Username lists for mass password resets (created by mass imports)
   lists:
@@ -1693,6 +1726,7 @@ fi:
       file_size: Koko
       wlan_name: Nimi
       wlan_type: Tyyppi
+      wlan_priority: Tämän yhteyden käyttö
       wlan_password: Salasana
       wlan_identity: Identiteetti
       wlan_ca_cert: CA-sertifikaatti
@@ -1706,6 +1740,10 @@ fi:
       select_value_eaptls: EAP-TLS
       select_value_eapttls: EAP-TTLS
       select_value_eappeap: EAP-PEAP
+      select_value_strongprefer: Suosi vahvasti
+      select_value_weakprefer: Suosi hieman
+      select_value_strongavoid: Vältä vahvasti
+      select_value_weakavoid: Vältä hieman
       default: Oletus
     mountpoint:
       title: Levyliitokset (paikallinen/verkko)
@@ -1756,9 +1794,12 @@ fi:
         too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
         image_failed: "Kuvaa ei voitu tallentaa"
         email_not_valid: "Sähköpostiosoite ei ole kunnollinen."
+        invalid_verified_email: "Vahvistettua sähköpostiosoitetta ei löydy tavallisten sähköpostiosoitteiden listalta"
+        invalid_primary_email: "Pääsähköpostiosoitetta ei löydy varmennettujen osoitteiden listalta"
         user:
           must_begin_with: "Käyttäjätunnuksen pitää alkaa pienellä kirjaimella"
           invalid_characters: "Käyttäjätunnus sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
+          invalid_license_data: "Virheellinen lisenssidata"
         group:
           invalid_characters: "Lyhenne sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9-)"
         school:
@@ -1885,7 +1926,6 @@ fi:
         givenName: Etunimi
         uid: "Käyttäjätunnus"
         primary_group: "Ensisijainen ryhmä"
-        homeDirectory: Kotikansio
         uidNumber: Uid-numero
         gidNumber: "Ryhmä"
         password: Salasana
@@ -1901,7 +1941,6 @@ fi:
         puavoAllowRemoteAccess_true: "Kyllä"
         puavoAllowRemoteAccess_false: Ei
         puavoAllowRemoteAccess_: Ei
-        puavoEduPersonReverseDisplayName: Sukunimi Etunimi
         puavoEduPersonPersonnelNumber: "Henkilönumero"
         image: Kuva
         jpegPhoto: Kuva
@@ -2052,7 +2091,7 @@ fi:
       domain_or: " tai "
     own:
       title: Vaihda oma salasanasi
-      password: Vanha salasana
+      password: Nykyinen salasana
       link_other_password: "Vaihda toisen käyttäjän salasana"
     forgot:
       title: "Unohdin salasanani"
@@ -2071,11 +2110,59 @@ fi:
   profiles:
     edit:
       title: "Omat tiedot"
+      licenses: "Käyttäjätunnuksen lisenssikoodit"
+
+      emails:
+        automatic_notice: "Organisaatiossasi on käytössä automaattiset sähköpostiosoitteet. Et voi muokata osoitetta, mutta voit vahvistaa sen jos sitä ei ole vielä vahvistettu."
+        help: "Voit antaa itsellesi yhden tai useamman osoitteen. Kun olet tallentanut osoitteen, voit palata lomakkeeseen ja lähettää siihen vahvistusviestin jolla todistat, että osoite todellakin on käytössäsi. Jotkut palvelut vaativat vähintään yhden vahvistetun osoitteen. Ensimmäisestä vahvistetusta osoitteesta tehdään <strong>pääosoite</strong>, jota käytetään viestinnässä ja paikoissa joihin voidaan välittää vain yksi osoite."
+        verified_address: "Vahvistettu"
+        primary_address: "pääosoitteesi"
+        verify_button: "Lähetä vahvistusviesti"
+        verify_title: "Lähetä vahvistusviesti tähän osoitteeseen. Viesti sisältää linkin joka sinun on avattava."
+        verification_sent: "Vahvistusviesti lähetetty"
+        delete_button: "Poista"
+        delete_title: "Poista tämä osoite kun sivu tallennetaan"
+        undo_deletion_button: "Kumoa poisto"
+        undo_deletion_title: "Älä poistakaan tätä osoitetta"
+        new_placeholder: "Kirjoita uusi osoite tähän"
+        new_button: "Lisää"
+        new_title: "Lisää uusi osoite taulukkoon. Muista tallentaa lomake!"
+
+        errors:
+          invalid: "Osoite ei ole kunnollinen."
+          already_in_use: "Tämä osoite on jo käytössäsi."
+          unknown: "Tuntematon virhe."
+          already_verified: "Tämä osoite on jo vahvistettu."
+          verification_not_sent: "Vahvistusviestiä ei voitu lähettää. Yritä uudelleen.\n\nJos otat yhteyden tekniseen tukeen, anna heille tämä koodi: %{code}."
+          verification_rate_limit: "Sinun on odotettava minuutti vahvistuspyyntöjen lähetyksen välillä."
+
+        delete:
+          base: "Oletko varma että haluat poistaa osoitteen {address}?"
+          verified_primary: "Osoite on vahvistettu, ja se on lisäksi pääosoitteesi!"
+          verified: "Osoite on vahvistettu."
+          breakage: "Jos muita vahvistettuja osoitteita ei ole, jotkin kirjautumiset voivat rikkoontua siihen asti kunnes vahvistat jonkun toisen osoitteen!"
+
+      remove_photo_on_save: "Poista kuva tallennettaessa"
+
+    failed:
+      email: "sähköpostiosoitteiden muutosten tallennus"
+      phone: "puhelinnumeron asetus"
+      locale: "kielen asetus"
+      photo_save: "profiilikuvan tallennus"
     show:
-      photo_failed: "Profiilikuvan tallennus ei onnistunut. Tarkista että valitsit toimivan kuvatiedoston ja yritä uudelleen."
-      save_failed: "Tietojesi tallennus epäonnistui jostain syystä. Yritä uudelleen ja jos ongelma toistuu, ota yhteys Opinsysin tukeen."
-      save_failed_code: "Tietojesi tallennus epäonnistui. Yritä uudelleen ja jos ongelma toistuu, ota yhteys Opinsysin tukeen ja anta heille tämä koodi: \"%{request_id}\"."
+      partially_failed_code: "Kaikkia tietojasi ei voitu tallentaa. Näiden tietojen tallennus epäonnistui: %{failed}. Voit yrittää uudelleen. Jos otat yhteyttä Opinsysin tekniseen tukeen, anna heille tämä koodi: \"%{request_id}\"."
       updated: "Omat tietosi on päivitetty"
+      go_back: "Takaisin omien tietojen muokkaukseen"
+
+  # Email address verification
+  email_verifications:
+    title: "Vahvista sähköpostiosoite"
+    expired_token: "Tämä vahvistuslinkki on virheellinen tai vanhentunut. Ole hyvä ja pyydä uutta vahvistusviestiä Profiilin muokkauksen kautta. Jos ottaa yhteyttä tekniseen tukeen, anna heille tämä koodi: %{code}."
+    verification_failed: "Osoitetta ei voitu vahvistaa sisäisen virheen vuoksi. Ole hyvä ja ota yhteys tekniseen tukeen ja anna heille tämä koodi: %{code}."
+    verification_complete: "Osoite on vahvistettu. Voit sulkea tämän ikkunan tai välilehden."
+    verify_message1: "Painamalla alla olevaa nappia vahvistat, että osoite"
+    verify_message2: " on toimiva, sinun ja että pääset käsiksi siihen. Jos et halua vahvistaa osoitetta, sulje ikkuna tai välilehti."
+    verify_button: "Vahvista tämä osoite"
 
   # Used by script/create_organisation_owner
   create_organisation_owner:

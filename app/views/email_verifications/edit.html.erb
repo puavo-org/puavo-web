@@ -1,0 +1,10 @@
+<% if @invalid_token %>
+<p class="message_alert"><%= t('email_verifications.expired_token', code: @request_id) %></p>
+<% else %>
+<form action="<%= email_verification_update_path(@token) %>" accept-charset="UTF-8" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="lang" id="lang" value="<%= @language %>">
+  <p><%= t('email_verifications.verify_message1') %> <span id="verificationAddress"><%= h @data['email'] %></span><%= t('email_verifications.verify_message2') %></p>
+  <button type="submit"><%= t('email_verifications.verify_button') %></button>
+</form>
+<% end %>

@@ -33,6 +33,18 @@ describe LdapModel do
       )
       @user.save!
 
+      @user2 = PuavoRest::User.new(
+        :first_name => 'Email',
+        :last_name  => 'Verification',
+        :username   => 'email',
+        :roles      => [ 'student' ],
+        :school_dns => [ @school.dn.to_s ],
+        :email      => 'v_address1@example.com',
+        :verified_email => 'v_address1@example.com',
+        :primary_email => 'v_address1@example.com',
+      )
+      @user2.save!
+
       @teaching_group = PuavoRest::Group.new(
         :abbreviation => 'gryffindor-5a',
         :name         => '5A',
@@ -60,7 +72,7 @@ describe LdapModel do
     end
 
     it "has email" do
-      assert_equal @user.email, "heli.kopteri@example.com"
+      assert_equal @user.email, ["heli.kopteri@example.com"]
     end
 
     it "has home directory" do
@@ -125,105 +137,208 @@ describe LdapModel do
 
     it "can clear the email address" do
       user = PuavoRest::User.by_dn!(@user.dn)
-      assert_equal user.email, "heli.kopteri@example.com"
+      assert_equal user.email, ["heli.kopteri@example.com"]
 
       user.email = nil
       assert user.save!
 
       user = PuavoRest::User.by_dn!(@user.dn)
-      assert_nil user.email
+      assert_equal user.email, []
     end
 
-    it "can add secondary emails" do
-      @user.secondary_emails = ["heli.another@example.com"]
-      @user.save!
+    it "primary email change tests" do
+      # 1
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.primary_email = 'example@example.com'
 
-      assert_equal @user.email, "heli.kopteri@example.com"
-      assert_equal @user.secondary_emails, ["heli.another@example.com"]
+      exception = assert_raises ValidationError do
+        user.save!
+      end
 
-      user = PuavoRest::User.by_dn!(@user.dn)
-      assert_equal user.email, "heli.kopteri@example.com"
-      assert_equal user.secondary_emails, ["heli.another@example.com"]
+      assert_equal exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array"), false
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), true
 
-      # Moar
-      user = PuavoRest::User.by_dn!(@user.dn)
-      assert_equal user.secondary_emails, ["heli.another@example.com"]
-      user.secondary_emails = ["heli.another@example.com", "third@one.tld"]
-      assert user.save!
+      # 2
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.verified_email = 'v_address2@example.com'
 
-      user = PuavoRest::User.by_dn!(@user.dn)
-      assert_equal user.email, "heli.kopteri@example.com"
-      assert_equal user.secondary_emails, ["heli.another@example.com", "third@one.tld"]
-      user.secondary_emails = ["third@one.tld", "heli.another@example.com"]   # swap
-      assert user.save!
+      exception = assert_raises ValidationError do
+        user.save!
+      end
 
-      user = PuavoRest::User.by_dn!(@user.dn)
-      assert_equal user.email, "heli.kopteri@example.com"
-      assert_equal user.secondary_emails, ["third@one.tld", "heli.another@example.com"]
+      assert_equal exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array"), true
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), true
     end
 
-    it "can change primary email without affecting secondary emails" do
-      @user.secondary_emails = ["heli.another@example.com"]
-      @user.save!
-
-      @user.email = "newemail@example.com"
-      @user.save!
-
-      assert_equal @user.email, "newemail@example.com"
-      assert_equal @user.secondary_emails, ["heli.another@example.com"]
-
-      user = PuavoRest::User.by_dn!(@user.dn)
-      assert_equal user.email, "newemail@example.com"
-      assert_equal user.secondary_emails, ["heli.another@example.com"]
+    it "can remove verified email" do
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.verified_email = nil
+      user.primary_email = nil
+      assert user.save!
     end
 
-    it "removing the secondary email addresses does not modify the primary email address" do
-      # Set and verify
-      user = PuavoRest::User.by_dn!(@user.dn)
-      user.secondary_emails = ["heli.another@example.com"]
+    it "can remove primary email" do
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      user.primary_email = nil
       assert user.save!
-      user = PuavoRest::User.by_dn!(@user.dn)
-      assert_equal user.email, "heli.kopteri@example.com"
-      assert_equal user.secondary_emails, ["heli.another@example.com"]
-
-      # Clear and verify
-      user = PuavoRest::User.by_dn!(@user.dn)
-      user.secondary_emails = []
-      assert user.save!
-      assert_equal user.email, "heli.kopteri@example.com"
-      assert_equal user.secondary_emails, []
     end
 
-    it "removing the email address shifts the secondary addresses" do
-      # Add a secondary email address
-      user = PuavoRest::User.by_dn!(@user.dn)
-      user.secondary_emails = ["heli.another@example.com"]
+    it "can add a verified address" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address@example.com'],
+        verified_email: 'address@example.com',
+      )
+
       assert user.save!
+    end
 
-      # Verify it
-      user = PuavoRest::User.by_dn!(@user.dn)
-      assert_equal user.email, "heli.kopteri@example.com"
-      assert_equal user.secondary_emails, ["heli.another@example.com"]
+    it "can add a verified address and a primary email (single)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address1@example.com', 'address2@example.com'],
+        verified_email: 'address1@example.com',
+        primary_email: 'address1@example.com'
+      )
 
-      # Removing the primary email shifts the address array so that the first secondary
-      # address becomes the primary address
-      user = PuavoRest::User.by_dn!(@user.dn)
-      user.email = nil
       assert user.save!
+    end
 
-      # Verify it
-      user = PuavoRest::User.by_dn!(@user.dn)
-      assert_equal user.email, "heli.another@example.com"
-      assert_equal user.secondary_emails, []
+    it "can add a verified address and a primary email (multiple)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address1@example.com', 'address2@example.com'],
+        verified_email: ['address1@example.com', 'address2@example.com'],
+        primary_email: 'address2@example.com'
+      )
 
-      # Again
-      user = PuavoRest::User.by_dn!(@user.dn)
-      user.email = nil
       assert user.save!
+    end
 
-      user = PuavoRest::User.by_dn!(@user.dn)
-      assert_nil user.email
-      assert_equal user.secondary_emails, []
+    it "can't add a primary email without normal emails and verified emails" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        primary_email: 'foo@bar.com',
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert_equal exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array"), false
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), true
+    end
+
+    it "can't add a verified address that aren't also normal addresses (empty)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        verified_email: 'foo@bar.com',
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array")
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), false
+    end
+
+    it "can't add a verified address that aren't also normal addresses (single)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: 'address@example.com',
+        verified_email: 'foo@bar.com',
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array")
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), false
+    end
+
+    it "can't add a verified address that aren't also normal addresses (multiple)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address1@example.com', 'address2@example.com'],
+        verified_email: 'foo@bar.com',
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array")
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), false
+    end
+
+    it "can't add a primary email that isn't on the verified emails array" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address1@example.com', 'address2@example.com'],
+        verified_email: ['address1@example.com'],
+        primary_email: 'address2@example.com'
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert_equal exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array"), false
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), true
+    end
+
+    it "can't add a primary email that isn't on the verified emails array (more)" do
+      user = PuavoRest::User.new(
+        username: 'test.user',
+        first_name: 'Test',
+        last_name: 'User',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+        email: ['address1@example.com', 'address2@example.com'],
+        verified_email: ['address1@example.com'],
+        primary_email: 'foo@com.com'
+      )
+
+      exception = assert_raises ValidationError do
+        user.save!
+      end
+
+      assert_equal exception.message.include?("the verified emails array contains an address that isn't in the normal email addresses array"), false
+      assert_equal exception.message.include?("the primary email address must be in the verified emails array"), true
     end
 
     it "can authenticate using the username and password" do

@@ -1,79 +1,3 @@
-// Table column definitions
-const COLUMN_DEFINITIONS = {
-    abbr: {
-        key: "abbr",
-        type: ST.ColumnType.STRING,
-    },
-
-    created: {
-        key: "created",
-        type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
-    },
-
-    eid: {
-        key: "eid",
-        type: ST.ColumnType.STRING,
-    },
-
-    id: {
-        key: "id",
-        type: ST.ColumnType.NUMERIC,
-    },
-
-    modified: {
-        key: "modified",
-        type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
-    },
-
-    members_count: {
-        key: "members_count",
-        type: ST.ColumnType.NUMERIC,
-    },
-
-    name: {
-        key: "name",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
-    },
-
-<% if @is_organisation %>
-    school: {
-        key: "school",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
-    },
-<% end %>
-
-    type: {
-        key: "type",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.USER_TRANSFORM,
-        missing: {
-            display: `<span class="missingData"><%= t('missing_data') %></span>`,
-            sort: "",
-            filter: "",
-        }
-    },
-};
-
-// Localized column titles. The keys must be same as in the keys in the column
-// definitions object above.
-const COLUMN_TITLES = {
-    abbr: "<%= t('columns.groups.abbreviation') %>",
-    created: "<%= t('columns.created') %>",
-    eid: "<%= t('columns.groups.eid') %>",
-    id: "<%= t('columns.puavoid') %>",
-    modified: "<%= t('columns.modified') %>",
-    members_count: "<%= t('columns.groups.members_count') %>",
-    name: "<%= t('columns.groups.name') %>",
-<% if @is_organisation %>
-    school: "<%= t('columns.school') %>",
-<% end %>
-    type: "<%= t('columns.groups.type') %>",
-};
-
 // Localized group types
 const GROUP_TYPES = {
     "teaching group": "<%= t('group_type.teaching group') %>",
@@ -82,6 +6,100 @@ const GROUP_TYPES = {
     "administrative group": "<%= t('group_type.administrative group') %>",
     "archive users": "<%= t('group_type.archive users') %>",
     "other groups": "<%= t('group_type.other groups') %>",
+};
+
+// Table column definitions
+const COLUMN_DEFINITIONS = {
+    abbr: {
+        key: "abbr",
+        title: "<%= t('columns.groups.abbreviation') %>",
+        type: ST.ColumnType.STRING,
+    },
+
+    created: {
+        key: "created",
+        title: "<%= t('columns.created') %>",
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+    },
+
+    eid: {
+        key: "eid",
+        title: "<%= t('columns.groups.eid') %>",
+        type: ST.ColumnType.STRING,
+    },
+
+    id: {
+        key: "id",
+        title: "<%= t('columns.puavoid') %>",
+        type: ST.ColumnType.NUMERIC,
+    },
+
+    modified: {
+        key: "modified",
+        title: "<%= t('columns.modified') %>",
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+    },
+
+    members_count: {
+        key: "members_count",
+        title: "<%= t('columns.groups.members_count') %>",
+        type: ST.ColumnType.NUMERIC,
+    },
+
+    name: {
+        key: "name",
+        title: "<%= t('columns.groups.name') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => {
+            return [
+                `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`,
+                entry.name
+            ];
+        }
+    },
+
+<% if @is_organisation %>
+    school: {
+        key: "school",
+        title: "<%= t('columns.school') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => {
+            // Makes filtering by school name work as expected, but the exported CSV
+            // will contain display names. Can't have everything.
+            return [
+                entry.school[1],
+                entry.school[1]
+            ];
+        },
+    },
+<% end %>
+
+    type: {
+        key: "type",
+        title: "<%= t('columns.groups.type') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => {
+            let type = null;
+
+            if (entry.type in GROUP_TYPES) {
+                type = GROUP_TYPES[entry.type];
+
+                if (entry.type == 'course group')
+                    type = `<span class="stCourseGroup">${type}</span>`;
+            } else {
+                type = `<span class="missingData"><%= t('missing_data') %></span>`;
+            }
+
+            return [type, entry.type];
+        },
+        missing: {
+            display: `<span class="missingData"><%= t('missing_data') %></span>`,
+            sort: "",
+            filter: "",
+        }
+    },
 };
 
 // The default order for columns. "DEFAULT_COLUMNS" above does not have to be in this order.
@@ -99,148 +117,73 @@ const COLUMN_ORDER = [
     "modified",
 ];
 
-const USER_TRANSFORM_FUNCTIONS = {
-    name: function(entry) {
-        return [
-            `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`,
-            entry.name
-        ];
-    },
-
-    type: function(entry) {
-        let type = null;
-
-        if (entry.type in GROUP_TYPES) {
-            type = GROUP_TYPES[entry.type];
-
-            if (entry.type == 'course group')
-                type = `<span class="stCourseGroup">${type}</span>`;
-        } else {
-            type = `<span class="missingData"><%= t('missing_data') %></span>`;
-        }
-
-        return [type, entry.type];
-    },
-
-    school: function(entry) {
-        // Makes filtering by school name work as expected, but the exported CSV
-        // will contain display names. Can't have everything.
-        return [
-            entry.school[1],
-            entry.school[1]
-        ];
-    },
-};
-
-class MassGroupDeletion extends ST.MassOperation {
+// Mass operation: remove all members from the group
+class MassGroupRemoveMembers extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
-
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_delete`,
-            { id: item.id[ST.INDEX_FILTERABLE] }
-        );
-    }
+    prepareItem(item) { return { state: "ready" }; }
 };
 
-class MassGroupClear extends ST.MassOperation {
-    constructor(parent, container) { super(parent, container); }
-
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_clear`,
-            { id: item.id[ST.INDEX_FILTERABLE] }
-        );
-    }
-};
-
+// Mass operation: lock all members
 class MassGroupLockMembers extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
-
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_lock_members`,
-            { id: item.id[ST.INDEX_FILTERABLE], state: true }
-        );
-    }
+    prepareItem(item) { return { state: "ready" }; }
 };
 
+// Mass operation: unlock all members
 class MassGroupUnlockMembers extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
-
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_lock_members`,
-            { id: item.id[ST.INDEX_FILTERABLE], state: false }
-        );
-    }
+    prepareItem(item) { return { state: "ready" }; }
 };
 
+// Mass operation: mark all members for deletion
 class MassGroupMarkMembersForDeletion extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
-
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_mark_members_for_deletion`,
-            { id: item.id[ST.INDEX_FILTERABLE], state: true }
-        );
-    }
+    prepareItem(item) { return { state: "ready" }; }
 };
 
+// Mass operation: remove member deletion marks
 class MassGroupUnmarkMembersForDeletion extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
+    prepareItem(item) { return { state: "ready" }; }
+};
 
-    processItem(item)
-    {
-        return ST.doPOST(
-            `/users/${item.school_id}/mass_op_group_mark_members_for_deletion`,
-            { id: item.id[ST.INDEX_FILTERABLE], state: false }
-        );
-    }
+// Mass operation: delete the group
+class MassGroupDeletion extends ST.MassOperation {
+    constructor(parent, container) { super(parent, container); }
+    prepareItem(item) { return { state: "ready" }; }
 };
 
 // JavaScript class fields support is so poor that I can't really
 // define titles, IDs and other things in classes, they must be here
 const MASS_OPERATIONS = [
     {
-        id: "clear",
+        operation: "remove_members",
         title: "<%= t('link.remove_all_members_from_group') %>",
-        flags: 0,
-        cls: MassGroupClear
+        cls: MassGroupRemoveMembers
     },
     {
-        id: "lock_users",
+        operation: "lock_members",
         title: "<%= t('link.lock_all_group_members') %>",
-        flags: 0,
         cls: MassGroupLockMembers
     },
     {
-        id: "unlock_users",
+        operation: "unlock_members",
         title: "<%= t('link.unlock_all_group_members') %>",
-        flags: 0,
         cls: MassGroupUnlockMembers
     },
     {
-        id: "mark_for_deletion",
+        operation: "mark_members",
         title: "<%= t('link.mark_group_members_for_deletion') %>",
-        flags: 0,
         cls: MassGroupMarkMembersForDeletion
     },
     {
-        id: "unmark_deletion",
+        operation: "unmark_members",
         title: "<%= t('link.unmark_group_members_deletion') %>",
-        flags: 0,
         cls: MassGroupUnmarkMembersForDeletion
     },
     {
-        id: "delete",
+        operation: "delete",
         title: "<%= t('link.delete_group') %>",
-        flags: 0,
         cls: MassGroupDeletion
     },
 ];

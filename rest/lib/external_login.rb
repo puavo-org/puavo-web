@@ -15,6 +15,7 @@ class ExternalLoginConfigError         < ExternalLoginError; end
 class ExternalLoginNotConfigured       < ExternalLoginError; end
 class ExternalLoginPasswordChangeError < ExternalLoginError; end
 class ExternalLoginUnavailable         < ExternalLoginError; end
+class ExternalLoginPuavoUserMissing    < ExternalLoginError; end
 class ExternalLoginUserMissing         < ExternalLoginError; end
 class ExternalLoginWrongCredentials    < ExternalLoginError; end
 
@@ -24,6 +25,7 @@ module PuavoRest
     CONFIGERROR      = 'CONFIGERROR'
     NOCHANGE         = 'NOCHANGE'
     NOTCONFIGURED    = 'NOTCONFIGURED'
+    PUAVOUSERMISSING = 'PUAVOUSERMISSING'
     UNAVAILABLE      = 'UNAVAILABLE'
     UPDATED          = 'UPDATED'
     UPDATED_BUT_FAIL = 'UPDATED_BUT_FAIL'
@@ -32,7 +34,7 @@ module PuavoRest
   end
 
   class ExternalLogin
-    attr_reader :config
+    attr_reader :config, :manage_puavousers, :puavo_extlogin_id_field
 
     def initialize(organisation=nil)
       # Parse config with relevant information for doing external logins.
@@ -62,6 +64,16 @@ module PuavoRest
       @login_service_name = @config['service']
       raise ExternalLoginConfigError, 'external_login service not set' \
         unless @login_service_name
+
+      @manage_puavousers = @config['manage_puavousers']
+      raise ExternalLoginConfigError,
+            'external_login manage_puavousers not set' \
+        if @manage_puavousers.nil?
+
+      @puavo_extlogin_id_field = @config['puavo_extlogin_id_field']
+      raise ExternalLoginConfigError,
+            'puavo_extlogin_id_field is missing or has an unsupported value' \
+        unless %w(external_id id learner_id).include?(@puavo_extlogin_id_field)
 
       # More login classes could be added here in the future,
       # for other types of external logins.
@@ -95,39 +107,51 @@ module PuavoRest
                       :organisation => @organisation)
     end
 
+    def extlogin_id(user)
+      user.send(@puavo_extlogin_id_field)
+    end
+
     def check_user_is_manageable(username)
       user = User.by_username(username)
 
       # If we do not have a user with this username, that username slot is
       # available for external logins.
-      unless user then
+      if !user then
+        if !@manage_puavousers then
+          raise ExternalLoginPuavoUserMissing,
+                "no username '#{ username }' in puavo and user management" \
+                  + ' is disabled'
+        end
         @rlog.info("username '#{ username }' is available for external logins")
         return true
       end
 
-      unless user.external_id.to_s.empty? then
-        # User is managed by external logins, if external_id is set to a
+      if extlogin_id(user) then
+        # User is managed by external logins, if extlogin_id is set to a
         # non-empty value.
-        @rlog.info("username '#{ username }' has non-empty external id, ok")
+        @rlog.info("username '#{ username }' has non-empty extlogin id" \
+                     + " (#{ @puavo_extlogin_id_field }), ok")
         return true
       end
 
       message = "user '#{ username }' exists but does not have" \
-                  + ' an external id set, refusing to manage'
+                  + " an extlogin id (#{ @puavo_extlogin_id_field }) set," \
+                  + " refusing to manage"
       raise ExternalLoginNotConfigured, message
     end
 
     def new_external_service_handler()
-      @external_login_class.new(@external_login_params,
+      @external_login_class.new(self,
+                                @external_login_params,
                                 @login_service_name,
                                 @rlog)
     end
 
-    def set_puavo_password(username, external_id, new_password)
+    def set_puavo_password(username, extlogin_id, new_password)
       begin
-        user = puavo_user_by_external_id(external_id)
+        user = puavo_user_by_extlogin_id(extlogin_id)
         if !user then
-          msg = "user with external id '#{ external_id }' (#{ username }?)" \
+          msg = "user with extlogin id '#{ extlogin_id }' (#{ username }?)" \
                   + ' not found in Puavo, can not set password'
           @rlog.info(msg)
           return ExternalLoginStatus::NOCHANGE
@@ -164,11 +188,11 @@ module PuavoRest
       end
     end
 
-    def maybe_invalidate_puavo_password(username, external_id, old_password)
+    def maybe_invalidate_puavo_password(username, extlogin_id, old_password)
       begin
-        user = puavo_user_by_external_id(external_id)
+        user = puavo_user_by_extlogin_id(extlogin_id)
         if !user then
-          msg = "user with external id '#{ external_id }' (#{ username }?)" \
+          msg = "user with extlogin id '#{ extlogin_id }' (#{ username }?)" \
                   + ' not found in Puavo, can not try to invalidate password'
           @rlog.info(msg)
           return ExternalLoginStatus::NOCHANGE
@@ -202,16 +226,20 @@ module PuavoRest
       return ExternalLoginStatus::NOCHANGE
     end
 
-    def puavo_user_by_external_id(external_id)
-      users = User.by_attr(:external_id, external_id, :multiple => true)
+    def puavo_user_by_extlogin_id(extlogin_id)
+      users = User.by_attr(@puavo_extlogin_id_field, extlogin_id,
+                           :multiple => true)
       if users.count > 1 then
-        raise "multiple users with the same external id: #{ external_id }"
+        raise('multiple users with the same' \
+                + " #{ @puavo_extlogin_id_field }: #{ extlogin_id }")
       end
       users.first
     end
 
     def manage_groups_for_user(user, external_groups_by_type)
       external_login_status = ExternalLoginStatus::NOCHANGE
+
+      return external_login_status unless @manage_puavousers
 
       user.schools.each do |school|
         external_groups_by_type.each do |ext_group_type, external_groups|
@@ -302,68 +330,16 @@ module PuavoRest
     end
 
     def update_user_info(userinfo, password, params)
-      if userinfo['school_dns'].empty? then
-        school_dn_param = params[:school_dn].to_s
-        if !school_dn_param.empty? then
-          userinfo['school_dns'] = [ school_dn_param ]
-        end
-      end
-      if userinfo['school_dns'].empty? then
-        raise ExternalLoginError,
-              "could not determine user school for #{ userinfo['username'] }"
-      end
-
-      if userinfo['roles'].empty? then
-        role_param = params[:role].to_s
-        if !role_param.empty? then
-          userinfo['roles'] = [ role_param ]
-        end
-      end
-      if userinfo['roles'].empty? then
-        raise ExternalLoginError,
-              "could not determine user role for #{ userinfo['username'] }"
-      end
-
       external_groups_by_type = userinfo.delete('external_groups')
 
-      user_update_status = nil
-
-      begin
-        user = puavo_user_by_external_id(userinfo['external_id'])
-        userinfo = adjust_userinfo(user, userinfo)
-
-        if !user then
-          user = User.new(userinfo)
-          user.save!
-          @rlog.info("created a new user '#{ userinfo['username'] }'")
-          user_update_status = ExternalLoginStatus::UPDATED
-        elsif user.check_if_changed_attributes(userinfo) then
-          user.update!(userinfo)
-          user.locked = false
-          user.removal_request_time = nil
-          user.save!
-          @rlog.info("updated user information for '#{ userinfo['username'] }'")
-          user_update_status = ExternalLoginStatus::UPDATED
-        else
-          if user.locked || user.removal_request_time then
-            user.locked = false
-            user.removal_request_time = nil
-            user.save!
-          end
-
-          @rlog.info('no change in user information for' \
-                       + " '#{ userinfo['username'] }'")
-          user_update_status = ExternalLoginStatus::NOCHANGE
-        end
-      rescue ValidationError => e
-        raise ExternalLoginError,
-              "error saving user because of validation errors: #{ e.message }"
-      end
+      user = puavo_user_by_extlogin_id(userinfo[@puavo_extlogin_id_field])
+      user, user_update_status = update_user_attributes(user, userinfo, params)
 
       if password then
-        pw_update_status = set_puavo_password(userinfo['username'],
-                                              userinfo['external_id'],
-                                              password)
+        pw_update_status \
+          = set_puavo_password(userinfo['username'],
+                               userinfo[@puavo_extlogin_id_field],
+                               password)
         if pw_update_status == ExternalLoginStatus::UPDATED \
           && userinfo['password_last_set'] then
             # must update the password_last_set to match what external ldap has
@@ -389,6 +365,79 @@ module PuavoRest
               || mg_update_status == ExternalLoginStatus::UPDATED)
 
       return ExternalLoginStatus::NOCHANGE
+    end
+
+    def update_user_attributes(user, userinfo, params)
+      user_update_status = ExternalLoginStatus::NOCHANGE
+
+      return user_update_status unless @manage_puavousers
+
+      if userinfo['school_dns'].empty? then
+        school_dn_param = params[:school_dn].to_s
+        if !school_dn_param.empty? then
+          userinfo['school_dns'] = [ school_dn_param ]
+        end
+      end
+      if userinfo['school_dns'].empty? then
+        raise ExternalLoginError,
+              "could not determine user school for #{ userinfo['username'] }"
+      end
+
+      if userinfo['roles'].empty? then
+        role_param = params[:role].to_s
+        if !role_param.empty? then
+          userinfo['roles'] = [ role_param ]
+        end
+      end
+      if userinfo['roles'].empty? then
+        raise ExternalLoginError,
+              "could not determine user role for #{ userinfo['username'] }"
+      end
+
+      begin
+        userinfo = adjust_userinfo(user, userinfo)
+
+        if !user then
+          if userinfo['id'] then
+            # We should not be creating users with a specific puavoId,
+            # this should never happen and something is configured in an
+            # unsupported way.
+            raise ExternalLoginError,
+                  'puavoId set for new user in external_login'
+          end
+
+          # All is good, we are missing a user and should create one.
+          user = User.new(userinfo)
+          user.save!
+          @rlog.info("created a new user '#{ userinfo['username'] }'")
+          user_update_status = ExternalLoginStatus::UPDATED
+
+        elsif user.check_if_changed_attributes(userinfo) then
+          userinfo.delete('id')
+          user.update!(userinfo)
+          user.locked = false
+          user.removal_request_time = nil
+          user.save!
+          @rlog.info("updated user info for '#{ userinfo['username'] }'")
+          user_update_status = ExternalLoginStatus::UPDATED
+
+        else
+          if user.locked || user.removal_request_time then
+            user.locked = false
+            user.removal_request_time = nil
+            user.save!
+          end
+
+          @rlog.info('no change in user information for' \
+                       + " '#{ userinfo['username'] }'")
+          user_update_status = ExternalLoginStatus::NOCHANGE
+        end
+      rescue ValidationError => e
+        raise ExternalLoginError,
+              "error saving user because of validation errors: #{ e.message }"
+      end
+
+      return user, user_update_status
     end
 
     def adjust_userinfo(user, userinfo)
@@ -443,7 +492,7 @@ module PuavoRest
           raise ExternalLoginUnavailable, e
         end
 
-        if remove_user_if_found then
+        if external_login.manage_puavousers && remove_user_if_found then
           # No user information in external login service, so remove user
           # from Puavo if there is one.  But instead of removing
           # we simply generate a new, random password, and mark the account
@@ -461,16 +510,16 @@ module PuavoRest
         if wrong_credentials then
           # Try looking up user from Puavo, but in case a user does not exist
           # yet (there is a mismatch between username in Puavo and username
-          # in external service), look up the user external_id from external
+          # in external service), look up the user extlogin_id from external
           # service so we can try to invalidate the password matching
           # the right Puavo username.
           user = User.by_username(username)
-          external_id = (user && user.external_id) \
-                          || login_service.lookup_external_id(username)
+          extlogin_id = (user && external_login.extlogin_id(user)) \
+                          || login_service.lookup_extlogin_id(username)
 
           pw_update_status \
             = external_login.maybe_invalidate_puavo_password(username,
-                                                             external_id,
+                                                             extlogin_id,
                                                              password)
           if pw_update_status == ExternalLoginStatus::UPDATED then
             msg = 'user password invalidated'
@@ -522,6 +571,9 @@ module PuavoRest
       rescue ExternalLoginNotConfigured => e
         rlog.info("external login is not configured: #{ e.message }")
         user_status = ExternalLogin.status_notconfigured(e.message)
+      rescue ExternalLoginPuavoUserMissing => e
+        rlog.warn("external login puavo user is missing: #{ e.message }")
+        user_status = ExternalLogin.status_puavousermissing(e.message)
       rescue ExternalLoginUnavailable => e
         rlog.warn("external login is unavailable: #{ e.message }")
         user_status = ExternalLogin.status_unavailable(e.message)
@@ -560,6 +612,11 @@ module PuavoRest
              (msg || 'external logins not configured'))
     end
 
+    def self.status_puavousermissing(msg=nil)
+      status(ExternalLoginStatus::PUAVOUSERMISSING,
+             (msg || 'external logins puavo user missing'))
+    end
+
     def self.status_unavailable(msg=nil)
       status(ExternalLoginStatus::UNAVAILABLE,
              (msg || 'external login service not available'))
@@ -584,15 +641,16 @@ module PuavoRest
   class ExternalLoginService
     attr_reader :service_name
 
-    def initialize(service_name, rlog)
-      @rlog         = rlog
-      @service_name = service_name
+    def initialize(external_login, service_name, rlog)
+      @external_login = external_login
+      @rlog           = rlog
+      @service_name   = service_name
     end
   end
 
   class ExternalLdapService < ExternalLoginService
-    def initialize(ldap_config, service_name, rlog)
-      super(service_name, rlog)
+    def initialize(external_login, ldap_config, service_name, rlog)
+      super(external_login, service_name, rlog)
 
       # this is a reference to configuration, do not modify!
       @ldap_config = ldap_config
@@ -626,27 +684,29 @@ module PuavoRest
       raise ExternalLoginConfigError, 'ldap server not configured' \
         unless @ldap_config['server']
 
-      user_mappings = @ldap_config['user_mappings']
-      raise ExternalLoginConfigError, 'user_mappings configured wrong' \
-        unless user_mappings.nil? || user_mappings.kind_of?(Hash)
+      if @external_login.manage_puavousers then
+        user_mappings = @ldap_config['user_mappings']
+        raise ExternalLoginConfigError, 'user_mappings configured wrong' \
+          unless user_mappings.nil? || user_mappings.kind_of?(Hash)
 
-      @user_mapping_defaults = (user_mappings && user_mappings['defaults']) \
-                                 || {}
-      @user_mappings_by_dn = (user_mappings && user_mappings['by_dn']) || []
-      @user_mappings_by_memberof \
-        = (user_mappings && user_mappings['by_memberof']) || []
+        @user_mapping_defaults = (user_mappings && user_mappings['defaults']) \
+                                   || {}
+        @user_mappings_by_dn = (user_mappings && user_mappings['by_dn']) || []
+        @user_mappings_by_memberof \
+          = (user_mappings && user_mappings['by_memberof']) || []
 
-      raise ExternalLoginConfigError, 'user_mappings/by_dn is not an array' \
-        unless @user_mappings_by_dn.kind_of?(Array)
-      raise ExternalLoginConfigError, \
-            'user_mappings/by_memberof is not an array' \
-        unless @user_mappings_by_memberof.kind_of?(Array)
-      raise ExternalLoginConfigError, 'user_mappings/defaults is not a hash' \
-        unless @user_mapping_defaults.kind_of?(Hash)
+        raise ExternalLoginConfigError, 'user_mappings/by_dn is not an array' \
+          unless @user_mappings_by_dn.kind_of?(Array)
+        raise ExternalLoginConfigError, \
+              'user_mappings/by_memberof is not an array' \
+          unless @user_mappings_by_memberof.kind_of?(Array)
+        raise ExternalLoginConfigError, 'user_mappings/defaults is not a hash' \
+          unless @user_mapping_defaults.kind_of?(Hash)
+      end
 
-      @external_id_field = @ldap_config['external_id_field']
-      raise ExternalLoginConfigError, 'external_id_field not configured' \
-        unless @external_id_field.kind_of?(String)
+      @extlogin_id_field = @ldap_config['extlogin_id_field']
+      raise ExternalLoginConfigError, 'extlogin_id_field not configured' \
+        unless @extlogin_id_field.kind_of?(String)
 
       # external_learner_id_field is not mandatory
       @external_learner_id_field = @ldap_config['external_learner_id_field']
@@ -659,10 +719,12 @@ module PuavoRest
       raise ExternalLoginConfigError, 'password_change style not configured' \
         unless @external_password_change.kind_of?(Hash)
 
-      @external_ldap_subtrees = @ldap_config['subtrees']
-      raise ExternalLoginConfigError, 'subtrees not configured' \
-        unless @external_ldap_subtrees.kind_of?(Array) \
-                 && @external_ldap_subtrees.all? { |s| s.kind_of?(String) }
+      if @external_login.manage_puavousers then
+        @external_ldap_subtrees = @ldap_config['subtrees']
+        raise ExternalLoginConfigError, 'subtrees not configured' \
+          unless @external_ldap_subtrees.kind_of?(Array) \
+                   && @external_ldap_subtrees.all? { |s| s.kind_of?(String) }
+      end
 
       setup_ldap_connection(@ldap_config['bind_dn'],
                             @ldap_config['bind_password'])
@@ -762,6 +824,11 @@ module PuavoRest
 
     def change_password(actor_username, actor_password, target_user_username,
                         target_user_password)
+      if @external_password_change['api'] == 'do-nothing' then
+        raise ExternalLoginNotConfigured,
+              'password changes are disabled in configuration'
+      end
+
       update_ldapuserinfo(target_user_username)
 
       target_dn = Array(@ldap_userinfo['dn']).first.to_s
@@ -814,46 +881,24 @@ module PuavoRest
             unless res[:exit_status] == 0
         else
           raise ExternalLoginPasswordChangeError,
-                'password change api not configured'
+                'unsupported password change api'
       end
 
       return true
     end
 
-    def lookup_external_id(username)
+    def lookup_extlogin_id(username)
       update_ldapuserinfo(username)
 
-      external_id = @ldap_userinfo \
-                      && Array(@ldap_userinfo[@external_id_field]).first.to_s
-      if !external_id || external_id.empty? then
-        raise ExternalLoginUnavailable,
-              "could not lookup external id for user '#{ username }'"
+      extlogin_id = @ldap_userinfo \
+                      && Array(@ldap_userinfo[@extlogin_id_field]).first.to_s
+      if !extlogin_id || extlogin_id.empty? then
+        raise(ExternalLoginUnavailable,
+              "could not lookup extlogin id (#{ @extlogin_id_field })" \
+                + " for user '#{ username }'")
       end
 
-      external_id
-    end
-
-    # XXX we can throw this out if we lookup all users anyway
-    def user_exists?(external_id)
-      user_filter = Net::LDAP::Filter.eq(@external_id_field, external_id)
-
-      ldap_entries = ext_ldapop('user_exists?/search',
-                                :search,
-                                :filter => user_filter,
-                                :time   => 5)
-      if !ldap_entries then
-        msg = "ldap search for user '#{ username }' failed: " \
-                + @ldap.get_operation_result.message
-        raise ExternalLoginUnavailable, msg
-      end
-
-      return false if ldap_entries.count == 0
-
-      if ldap_entries.count > 1
-        raise ExternalLoginUnavailable, 'ldap search returned too many entries'
-      end
-
-      return true
+      extlogin_id
     end
 
     def get_userinfo(username)
@@ -862,11 +907,12 @@ module PuavoRest
       # Use .dup here for userinfo values so that we can use force_encoding
       # (that may fail on frozen strings).
 
+      puavo_extlogin_id_field = @external_login.puavo_extlogin_id_field
       userinfo = {
-        'external_id' => lookup_external_id(username).dup,
-        'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s.dup,
-        'last_name'   => Array(@ldap_userinfo['sn']).first.to_s.dup,
-        'username'    => username.dup,
+        puavo_extlogin_id_field => lookup_extlogin_id(username).dup,
+        'first_name' => Array(@ldap_userinfo['givenname']).first.to_s.dup,
+        'last_name'  => Array(@ldap_userinfo['sn']).first.to_s.dup,
+        'username'   => username.dup,
       }
 
       if userinfo['first_name'].empty? then
@@ -884,9 +930,10 @@ module PuavoRest
               "User '#{ username }' has no account name external ldap"
       end
 
-      if @external_learner_id_field then
-        userinfo['learner_id'] \
-          = Array(@ldap_userinfo[@external_learner_id_field]).first.to_s.dup
+      if @external_learner_id_field \
+        && @puavo_extlogin_id_field != 'learner_id' then
+          userinfo['learner_id'] \
+            = Array(@ldap_userinfo[@external_learner_id_field]).first.to_s.dup
       end
 
       # We presume that ldap result strings are UTF-8.
@@ -900,7 +947,8 @@ module PuavoRest
         # so do not show errors in case it is missing.
         ad_pwd_last_set = Array(@ldap_userinfo['pwdLastSet']).first
         if ad_pwd_last_set then
-          pwd_last_set = (Time.new(1601, 1, 1) + (ad_pwd_last_set.to_i)/10000000).to_i
+          pwd_last_set \
+            = (Time.new(1601, 1, 1) + (ad_pwd_last_set.to_i)/10000000).to_i
           raise 'pwdLastSet value is clearly wrong' if pwd_last_set < 1000000000
           userinfo['password_last_set'] = pwd_last_set
         end
@@ -910,11 +958,13 @@ module PuavoRest
       end
 
       # we apply some magicks to determine user school, groups and roles
-      apply_user_mappings!(userinfo,
-                           [ [ Array(@ldap_userinfo['dn']),
-                               @user_mappings_by_dn ],
-                             [ Array(@ldap_userinfo['memberof']),
-                               @user_mappings_by_memberof ]])
+      if @external_login.manage_puavousers then
+        apply_user_mappings!(userinfo,
+                             [ [ Array(@ldap_userinfo['dn']),
+                                 @user_mappings_by_dn ],
+                               [ Array(@ldap_userinfo['memberof']),
+                                 @user_mappings_by_memberof ]])
+      end
 
       userinfo
     end
@@ -922,10 +972,10 @@ module PuavoRest
     def lookup_all_users
       users = {}
 
-      user_filter = Net::LDAP::Filter.eq(@external_id_field, '*') \
+      user_filter = Net::LDAP::Filter.eq(@extlogin_id_field, '*') \
                       & Net::LDAP::Filter.eq(@external_username_field, '*')
 
-      id_sym       = @external_id_field.downcase.to_sym
+      id_sym       = @extlogin_id_field.downcase.to_sym
       username_sym = @external_username_field.downcase.to_sym
 
       @external_ldap_subtrees.each do |subtree|
@@ -941,8 +991,8 @@ module PuavoRest
         end
 
         ldap_entries.each do |ldap_entry|
-          external_id = Array(ldap_entry[id_sym]).first
-          next unless external_id.kind_of?(String)
+          extlogin_id = Array(ldap_entry[id_sym]).first
+          next unless extlogin_id.kind_of?(String)
 
           userprincipalname = Array(ldap_entry[username_sym]).first
           next unless userprincipalname.kind_of?(String)
@@ -950,7 +1000,7 @@ module PuavoRest
           match = userprincipalname.match(/\A(.*)@/)
           next unless match
 
-          users[ external_id ] = {
+          users[ extlogin_id ] = {
             'ldap_entry' => ldap_entry,
             'username'   => match[1],
           }
@@ -1243,37 +1293,40 @@ module PuavoRest
       if ldap_entries.count == 0 then
         # ExternalLoginUserMissing means that user is missing in external ldap
         # and it can be removed from Puavo in case it exists there.
-        msg = "user '#{ username }' does not exist in external ldap"
         puavouser = User.by_username(username)
-        raise ExternalLoginUserMissing, msg \
-          unless puavouser && puavouser.external_id
+        raise ExternalLoginUserMissing,
+              "user '#{ username }' does not exist in Puavo" unless puavouser
 
-        extid_filter = Net::LDAP::Filter.eq(@external_id_field,
-                                            puavouser.external_id)
+        extlogin_id = @external_login.extlogin_id(puavouser)
+        raise ExternalLoginUserMissing,
+              "user '#{ username }' does not exist in external ldap" \
+          unless extlogin_id
+
+        extid_filter = Net::LDAP::Filter.eq(@extlogin_id_field, extlogin_id)
         extid_ldap_entries = ext_ldapop('update_ldapuserinfo/search_extid',
                                         :search,
                                         :filter => extid_filter,
                                         :time   => 5)
         if !extid_ldap_entries then
-          msg = "ldap search for external_id '#{ puavouser.external_id }'" \
+          msg = "ldap search for extlogin_id '#{ extlogin_id }'" \
                   + " failed: #{ @ldap.get_operation_result.message }"
           raise ExternalLoginUnavailable, msg
         end
 
         if extid_ldap_entries.count == 0 then
-          msg = "user '#{ username }' (#{ puavouser.external_id }) does not" \
+          msg = "user '#{ username }' (#{ extlogin_id }) does not" \
                   + ' exist in external ldap'
           raise ExternalLoginUserMissing, msg
         end
 
         # User exists in Puavo and in external ldap, but wrong username was
         # used for login (we could lookup another user in the external ldap
-        # with the same external id as is associated with this username
+        # with the same extlogin id as is associated with this username
         # in Puavo).
         raise ExternalLoginWrongCredentials, msg
       end
 
-      if ldap_entries.count > 1
+      if ldap_entries.count > 1 then
         raise ExternalLoginUnavailable, 'ldap search returned too many entries'
       end
 

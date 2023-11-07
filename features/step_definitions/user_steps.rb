@@ -157,8 +157,6 @@ Then(/^the ([^ ]*) attribute should contain "([^\"]*)" of "([^\"]*)"$/) do |attr
     user.puavoSchool.to_s.should == school.dn.to_s
   when "gidNumber"
     user.gidNumber.to_s.should == school.gidNumber.to_s
-  when "homeDirectory"
-    user.homeDirectory.to_s.should == "/home/" + uid
   when "sambaPrimaryGroupSID"
     user.sambaPrimaryGroupSID.to_s.should == "#{SambaDomain.first.sambaSID}-#{school.puavoId}"
   end
@@ -196,6 +194,17 @@ end
 # Used when testing password changing timeouts
 Then(/^I wait (\d+) seconds$/) do |number|
   sleep(number)
+end
+
+Given(/"(.*?)" has verified email addresses$/) do |name|
+  set_ldap_admin_connection
+  user = User.find(:first, :attribute => "uid", :value => name)
+
+  # TODO: Need a way to actually specify these in the scenario
+  user.mail = ['address1@example.com', 'address2@example.com', 'address3@example.com']
+  user.puavoVerifiedEmail = ['address1@example.com', 'address2@example.com']
+  user.puavoPrimaryEmail = 'address2@example.com'
+  user.save!
 end
 
 private

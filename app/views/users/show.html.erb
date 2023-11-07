@@ -20,9 +20,9 @@
     <% end %>
     <% end %>
 
-    <% if @extra_permissions_list && !@extra_permissions_list.empty? %>
-    <p class="infoTitle infoNotice"><%= t('.extra_permissions.title') %></p>
-    <p class="infoValue infoNotice"><%= @extra_permissions_list.map{ |p| t(".extra_permissions.#{p}") }.join(', ') %></p>
+    <% unless @admin_permissions.empty? %>
+    <p class="infoTitle infoNotice"><%= t('.admin_permissions.title') %></p>
+    <p class="infoValue infoNotice"><%= @admin_permissions.collect { |p| t(".admin_permissions.#{p.to_s}") }.join(', ') %></p>
     <% end %>
 
     <% if @user.puavoLocked == true %>
@@ -78,8 +78,28 @@
 <%= start_box t('.contact_information') %>
 <table id="contactInformation">
   <tr>
-  <th><%= t('activeldap.attributes.user.mail') %></th>
-  <td class="noWrap"><%= h Array(@user.mail).map{ |mail| mail }.join("<br>").html_safe %></td>
+    <th><%= t('activeldap.attributes.user.mail') %></th>
+    <td class="noWrap">
+      <% if @user.mail %>
+      <ul class="no-list-bullets margin-0 padding-0">
+
+      <% Array(@user.mail || []).each do |e| %>
+        <% primary = (e == @user.puavoPrimaryEmail) %>
+        <li>
+        <% if primary %><strong><% end %>
+        <%= h e %>
+        <%
+        attr = []
+        attr << t('.verified_email') if @verified_addresses.include?(e)
+        attr << t('.primary_email') if primary
+        %>
+        <% unless attr.empty? %> (<%= attr.join(', ') %>)<% end %>
+        <% if primary %></strong><% end %>
+        </li>
+      <% end %>
+      </ul>
+      <% end %>
+    </td>
   </tr>
 
   <tr>
@@ -92,11 +112,6 @@
 <%= start_box t('.system_information') %>
 <table>
   <tr>
-    <th><%= t('activeldap.attributes.user.homeDirectory') %></th>
-    <td><%= h @user.homeDirectory %></td>
-  </tr>
-
-  <tr>
     <th><%= t('activeldap.attributes.user.uidNumber') %></th>
     <td><%= h @user.uidNumber %></td>
   </tr>
@@ -104,6 +119,11 @@
   <tr>
     <th><%= t('activeldap.attributes.dn') %></th>
     <td><%= h @user.dn %></td>
+  </tr>
+
+  <tr>
+    <th>UUID</th>
+    <td><code><%= h @user.puavoUuid %></code></td>
   </tr>
 
   <tr>
@@ -158,6 +178,23 @@
     <td class="value_td">
       <% @user_devices.each do |device| %>
       <%= link_to device.puavoHostname, device_path(device.school_id, device) %><br />
+      <% end %>
+    </td>
+  </tr>
+
+  <tr>
+    <th><%= t('.user_licenses') %></th>
+    <td>
+      <% if @licenses %>
+      <% if @licenses_ok %>
+      <ul>
+        <% @licenses.keys.sort.each do |l| %>
+        <li><%= l %>: <%= @licenses[l] %></li>
+        <% end %>
+      </ul>
+      <% else %>
+        <p class="missingData"><%= t('activeldap.errors.messages.user.invalid_license_data') %>: <code><%= h @licenses %></code></p>
+      <% end %>
       <% end %>
     </td>
   </tr>
@@ -220,6 +257,26 @@
         </li>
       </ul>
       <% end %>
+      <% end %>
+
+      <% if current_user.organisation_owner? && Array(@user.puavoEduPersonAffiliation || []).include?('admin') %>
+      <ul>
+        <li class="ownersOnly">
+          <%= link_to edit_admin_permissions_path(@school, @user) do %>
+            <i class='icon-sliders'></i><%= t('.edit_admin_permissions') %>
+          <% end %>
+        </li>
+      </ul>
+      <% end %>
+
+      <% if current_user.organisation_owner? && Array(@user.mail || []).count > 0 %>
+      <ul>
+        <li class="ownersOnly">
+          <%= link_to request_password_reset_path(@school, @user) do %>
+            <i class='icon-mail-alt'></i><%= t('.request_password_reset') %>
+          <% end %>
+        </li>
+      </ul>
       <% end %>
 
       <% if @have_sso_sessions %>
