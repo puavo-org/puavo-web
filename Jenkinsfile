@@ -27,7 +27,11 @@ pipeline {
         sh '''
           apt-get update
           apt-get -y dist-upgrade
-          apt-get install -y devscripts dpkg-dev make rsync wget
+          apt-get install -y devscripts dpkg-dev locales make rsync wget
+
+          # setup en_US.UTF-8 locale (needed by Ansible)
+          echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
+          locale-gen
         '''
       }
     }
