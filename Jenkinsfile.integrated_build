@@ -13,67 +13,12 @@ pipeline {
       steps { sh 'chown -R root:root .' }
     }
 
-    stage('Setup APT repositories') {
+    stage('Enable service startup') {
       steps {
         // Debian Docker container contains a policy to not start services
         // when packages are installed, but we want that to work, so remove
         // the 'exit 101' policy when starting services.
         sh 'ln -fns /bin/true /usr/sbin/policy-rc.d'
-
-        // "nodejs" in Stretch does not have "npm", must install the upstream
-        // deb-packages. ("npm" in a build-dependency for puavo-users)
-        // XXX Perhaps this should be done by puavo-standalone?
-        sh '''
-          cat <<'EOF' > /etc/apt/sources.list.d/nodesource.list
-deb http://deb.nodesource.com/node_14.x bullseye main
-deb-src http://deb.nodesource.com/node_14.x bullseye main
-EOF
-        '''
-
-        // Apt key for nodesource.
-        sh '''
-          base64 -d <<'EOF' > /etc/apt/trusted.gpg.d/nodesource.gpg
-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
-EOF
-        '''
       }
     }
 
