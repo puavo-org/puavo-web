@@ -1,3 +1,4 @@
+require 'set'
 require 'sinatra/r18n'
 
 module PuavoRest

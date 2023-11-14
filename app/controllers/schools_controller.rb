@@ -1,3 +1,5 @@
+require 'set'
+
 class SchoolsController < ApplicationController
   include Puavo::Integrations
   include Puavo::PuavomenuEditor

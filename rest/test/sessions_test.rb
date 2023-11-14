@@ -1,5 +1,7 @@
 require_relative "./helper"
 
+require 'set'
+
 def create_printer(server, name)
   printer = Printer.new
   printer.attributes = {
