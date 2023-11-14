@@ -1,4 +1,4 @@
-require "set"
+require 'set'
 
 # ldap attribute conversions
 class LdapModel

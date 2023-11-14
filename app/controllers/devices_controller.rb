@@ -1,4 +1,5 @@
-require "devices_helper"
+require 'devices_helper'
+require 'set'
 
 require_relative '../../rest/lib/inventory.rb'
 

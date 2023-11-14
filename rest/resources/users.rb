@@ -5,6 +5,7 @@ require_relative '../lib/eltern.rb'
 
 require 'date'
 require 'securerandom'
+require 'set'
 
 module PuavoRest
 

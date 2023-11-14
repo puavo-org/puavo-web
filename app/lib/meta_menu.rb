@@ -1,3 +1,5 @@
+require 'set'
+
 class MetaMenu
 
   @@store = {}
