@@ -268,7 +268,7 @@ class LDAPObject
 
     args = [
       'ldappasswd', '-x', '-Z',
-      '-h', @ldap_host,
+      '-H', "ldap://#{ @ldap_host }",
       '-D', @dn,
       '-w', @password,
       '-s', new_password,
