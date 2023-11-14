@@ -1,5 +1,7 @@
 require_relative "./helper"
 
+require 'set'
+
 describe PuavoRest::BootServer do
 
   before(:each) do

@@ -1,5 +1,6 @@
-require "set"
 require_relative "./helper"
+
+require 'set'
 
 describe PuavoRest::WlanNetworks do
   def create_laptop(hostname, mac_address, school_dn)

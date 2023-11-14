@@ -3,6 +3,7 @@
 # This is a highly-condensed version of the same file in puavo-web.
 
 require 'json'
+require 'set'
 
 module Puavo
   module Integrations

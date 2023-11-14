@@ -1,3 +1,5 @@
+require 'set'
+
 class OrganisationsController < ApplicationController
   include Puavo::Integrations
   include Puavo::PuavomenuEditor

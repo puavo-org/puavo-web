@@ -1,3 +1,5 @@
+require 'set'
+
 module DevicesHelper
   include Puavo::Helpers
 

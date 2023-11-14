@@ -1,3 +1,5 @@
+require 'set'
+
 class UsersController < ApplicationController
   include Puavo::Integrations
   include Puavo::UsersShared

@@ -1,3 +1,5 @@
+require 'set'
+
 class LdapModel
   def self.from_ldap_hash(ldap_attrs, serialize_attrs=nil)
     new({}, :serialize => serialize_attrs, :existing => true).ldap_merge!(ldap_attrs)

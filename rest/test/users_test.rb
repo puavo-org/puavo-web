@@ -1,5 +1,7 @@
 require_relative "./helper"
 
+require 'set'
+
 describe PuavoRest::Users do
 
   IMG_FIXTURE = File.join(File.dirname(__FILE__), "fixtures", "profile.jpg")

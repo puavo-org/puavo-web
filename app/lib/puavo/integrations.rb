@@ -1,6 +1,7 @@
 # Helper methods for third-party system integrations
 
 require 'json'
+require 'set'
 
 if ENV.include?('RAILS_ENV') && ENV['RAILS_ENV'] != 'test'
   # OF COURSE puavo-rest tests will include this file and then explode

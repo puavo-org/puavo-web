@@ -1,5 +1,6 @@
-require 'list'
 require 'csv'
+require 'list'
+require 'set'
 
 class GroupsController < ApplicationController
   include Puavo::Helpers
