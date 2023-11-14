@@ -286,7 +286,7 @@ module Puavo
               # issue StartTLS (Transport Layer Security) extended operation
               '-Z',
               # specify an alternate host on which the ldap server is running
-              '-h', host,
+              '-H', "ldap://#{ host }",
               # Distinguished Name used to bind to the LDAP directory
               '-D', bind_dn,
               # the password to bind with
