@@ -54,6 +54,13 @@
       <th><%= t('ldap_modify_time') %></th>
       <td><%= @group['modifyTimestamp'] %></td>
     </tr>
+
+    <% if @group.puavoExternalData %>
+    <tr>
+      <th><%= t('groups.show.external_data') %></th>
+      <td><code><%= h @group.puavoExternalData %></code></td>
+    </tr>
+    <% end %>
   </table>
 <%= end_box %>
 

@@ -9,6 +9,7 @@ class Group < LdapModel
   ldap_map :puavoEduGroupType, :type, LdapConverters::SingleValue
   ldap_map :puavoId, :id, LdapConverters::SingleValue
   ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
+  ldap_map :puavoExternalData, :external_data, LdapConverters::SingleValue
   ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :cn, :abbreviation
   ldap_map :displayName, :name

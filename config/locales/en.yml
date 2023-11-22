@@ -1377,6 +1377,7 @@ en:
       placeholder_for_search: Name of the user
       hidden_members_hidden_tools_warning: "This group contains members from other schools that you don't have an access to. The member mass tools will not touch them, and username lists and CSV files generated from this group will not include them."
       group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
+      external_data: "External data"
     new:
       title: New group
     edit:

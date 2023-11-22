@@ -1377,6 +1377,7 @@ fi:
       placeholder_for_search: "Käyttäjän nimi tai osa siitä"
       hidden_members_hidden_tools_warning: "Ryhmä sisältää jäseniä kouluista joihin sinulla ei ole hallintaoikeutta. Jäsenten massamuokkaustyökalut eivät koske heihin, ja ryhmästä luodut käyttäjätunnuslistat ja CSV-tiedostot eivät sisällä heitä."
       group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
+      external_data: "Ulkoinen data"
     new:
       title: "Luo uusi ryhmä"
     edit:
