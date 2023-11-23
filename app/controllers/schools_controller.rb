@@ -16,7 +16,9 @@ class SchoolsController < ApplicationController
       schools: [],
     }
 
-    if @schools.count > 1
+    @is_owner = is_owner?
+
+    if @is_owner || @schools.count > 1
       # Count groups and devices by school
       @group_counts = {}
       @device_counts = {}
@@ -73,7 +75,7 @@ class SchoolsController < ApplicationController
     end
 
     respond_to do |format|
-      if @schools.count < 2  && !current_user.organisation_owner?
+      if @schools.count < 2 && !current_user.organisation_owner?
         format.html { redirect_to( school_path(@schools.first) ) }
         format.json  { render :json => @schools }
       else
