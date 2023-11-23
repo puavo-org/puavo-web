@@ -626,6 +626,7 @@ const COLUMN_DEFINITIONS = {
         key: "uptime",
         title: "<%= t('columns.devices.uptime') %>",
         type: ST.ColumnType.NUMERIC,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
         transform: entry => {
             return [`${entry.uptime} (${formatUptime(entry.uptime)})`, entry.uptime, entry.uptime];
         },
