@@ -930,6 +930,8 @@ class UsersController < ApplicationController
 
     @current_permissions = Array(@user.puavoAdminPermissions).to_set.freeze
 
+    @user_is_owner = Array(LdapOrganisation.current.owner).include?(@user.dn)
+
     respond_to do |format|
       format.html
     end

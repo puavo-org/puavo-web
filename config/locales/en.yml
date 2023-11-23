@@ -1017,6 +1017,7 @@ en:
     edit_admin_permissions:
       title: "Edit Admin Permissions"
       header: "Edit permissions for user \"%{name}\""
+      user_is_owner: "This user is an organisation owner, so these permissions are not used. Owners always have full access to everything."
       permissions:
         create_users: "Can create users"
         delete_users: "Can delete users"

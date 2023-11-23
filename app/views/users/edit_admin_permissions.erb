@@ -2,6 +2,10 @@
 
 <h1><%= t('.header', name: link_to(@user.displayName, './')).html_safe %></h1>
 
+<% if @user_is_owner %>
+<p class="genericNotice"><%= t('.user_is_owner') %><p>
+<% end %>
+
 <%= form_for(@user, url: save_admin_permissions_path, html: { method: :post })  do |f| %>
   <ul class="no-list-bullets margin-0 padding-0">
   <% User::ADMIN_PERMISSIONS.each do |permission| %>
