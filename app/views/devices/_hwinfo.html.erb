@@ -467,11 +467,11 @@ end
 <tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.puavopkg.title') %></th>
   <td colspan="2">
-    <p class="margin-top-0"><%= t('hwinfo.puavopkg.totals', num_packages: @info['puavopkgs'].fetch('installed', []).count, disk_space: @info['puavopkgs'].fetch('diskspace_used', '?')) %></p>
+    <p class="padding-0"><%= t('hwinfo.puavopkg.totals', num_packages: @info['puavopkgs'].fetch('installed', []).count, disk_space: @info['puavopkgs'].fetch('diskspace_used', '?')) %></p>
 
     <% packages = @info['puavopkgs'].fetch('installed', {}) %>
     <% unless packages.empty? %>
-    <table class="smart">
+    <table class="smart margin-top-10px">
       <thead>
         <tr>
           <th><%= t('hwinfo.puavopkg.package_name') %></th>
