@@ -13,6 +13,10 @@ class GroupsMassOperationsController < MassOperationsController
       logger.info "[#{@request_id}] Processing item #{id}, item data=#{data.inspect}"
 
       case @operation
+        when 'set_type'
+          Puavo::GroupsShared::set_type(Group.find(id), @parameters['type'])
+          next [true, nil]
+
         when 'remove_members'
           Puavo::GroupsShared::remove_all_members(Group.find(id))
           next [true, nil]

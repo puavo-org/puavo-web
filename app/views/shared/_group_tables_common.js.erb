@@ -153,9 +153,69 @@ class MassGroupDeletion extends ST.MassOperation {
     prepareItem(item) { return { state: "ready" }; }
 };
 
+// Mass operation: set type
+class MassGroupSetType extends ST.MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+        this.type = null;
+    }
+
+    buildInterface()
+    {
+        let html = "";
+
+        html +=
+`<table class="settingsChild"><tr>
+<th><label for="group_type"><%= t('activeldap.attributes.group.puavoEduGroupType') %>:</label></th>
+<td><select id="group_type">`;
+
+        for (const [type, title] of Object.entries(GROUP_TYPES))
+            html += `<option value="${type}">${title}</option>`;
+
+        html += "</select></td></tr></table>";
+
+        this.container.innerHTML = html;
+
+        this.container.querySelector("select#group_type").addEventListener("change", e => this.type = e.target.value);
+        this.type = this.container.querySelector("select#group_type").value;
+    }
+
+    start()
+    {
+        this.container.querySelector("select#group_type").disabled = true;
+    }
+
+    finish()
+    {
+        this.container.querySelector("select#group_type").disabled = false;
+    }
+
+    getOperationParameters()
+    {
+        return {
+            type: this.type
+        };
+    }
+
+    prepareItem(item)
+    {
+        if (item.type[ST.INDEX_FILTERABLE] == this.type)
+            return { state: "skip" };
+
+        return { state: "ready" };
+    }
+};
+
 // JavaScript class fields support is so poor that I can't really
 // define titles, IDs and other things in classes, they must be here
 const MASS_OPERATIONS = [
+    {
+        operation: "set_type",
+        title: "<%= t('groups.index.mass_operations.set_type.title') %>",
+        haveSettings: true,
+        cls: MassGroupSetType
+    },
     {
         operation: "remove_members",
         title: "<%= t('link.remove_all_members_from_group') %>",

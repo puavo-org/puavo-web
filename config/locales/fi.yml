@@ -1365,6 +1365,8 @@ fi:
         remove:
           title: "Poista ryhmistä..."
           help: "Poista valitut käyttäjät näistä ryhmistä jos he ovat niissä:"
+        set_type:
+          title: "Aseta tyyppi..."
 
         search_placeholder: "Etsi nimellä"
         reload: "Päivitä ryhmälista"

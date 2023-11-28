@@ -2,6 +2,15 @@
 
 module Puavo
   module GroupsShared
+    # Changes the group's type
+    def self.set_type(group, type)
+      group.puavoEduGroupType = type
+      group.save!
+      true
+    rescue StandardError => e
+      false
+    end
+
     # Remove all users from a group (don't delete them, just remove them from the group)
     def self.remove_all_members(group)
       members = group.members

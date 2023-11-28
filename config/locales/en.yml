@@ -1365,6 +1365,8 @@ en:
         remove:
           title: "Remove from groups..."
           help: "Remove the selected users from these groups if they are in them:"
+        set_type:
+          title: "Set type..."
 
         search_placeholder: "Search..."
         reload: "Reload groups list"
