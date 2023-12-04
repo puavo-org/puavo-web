@@ -18,6 +18,8 @@ class OrganisationsController < ApplicationController
 
     make_puavomenu_preview(@organisation.puavoMenuData)
 
+    @full_puavoconf = list_all_puavoconf_values(LdapOrganisation.current.puavoConf, nil, nil)
+
     # Dig up the organisation-level timestamps
     timestamps = LdapBase.search_as_utf8(:filter => "(&(objectClass=puavoEduOrg)(cn=#{@organisation.cn}))",
                                          :attributes => ["createTimestamp", "modifyTimestamp"])

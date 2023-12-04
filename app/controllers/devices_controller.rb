@@ -143,6 +143,8 @@ class DevicesController < ApplicationController
 
     @fqdn = "#{@device.puavoHostname}.#{LdapOrganisation.current.puavoDomain}"
 
+    @full_puavoconf = list_all_puavoconf_values(LdapOrganisation.current.puavoConf, @school.puavoConf, @device.puavoConf)
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @device }

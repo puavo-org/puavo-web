@@ -15,8 +15,8 @@ class ApplicationController < ActionController::Base
                  :show_authentication_error, :store_location,
                  :redirect_back_or_default, :organisation_key_from_host,
                  :set_initial_locale, :remove_ldap_connection, :theme,
-                 :school_list, :rack_mount_point, :password_management_host,
-                 :email_management_host )
+                 :school_list, :list_all_puavoconf_values, :rack_mount_point,
+                 :password_management_host, :email_management_host )
 
   # Raise an exception if the CSRF check fails. Ignore JSON and XML
   # requests, as they're used in scripts and tests and protecting
@@ -81,6 +81,29 @@ class ApplicationController < ActionController::Base
     return @school_cache if @school_cache
     @school_cache = current_organisation.schools current_user
     @school_cache.sort{|a, b| a.displayName.downcase <=> b.displayName.downcase }
+  end
+
+  def list_all_puavoconf_values(org, school, device)
+    # Parse and iterate over each "source" of puavo-conf data. Store them all, while keeping track
+    # where they come from (organisation/school/device). All the views in various puavo-conf tables
+    # can be constructed from these.
+    full = {}
+
+    [
+      [org    ? JSON.parse(org)    : {}, 'org'],
+      [school ? JSON.parse(school) : {}, 'sch'],
+      [device ? JSON.parse(device) : {}, 'dev'],
+    ].each do |config, source|
+      config.each do |key, value|
+        full[key] ||= {}
+        full[key].merge!({ source => value })
+      end
+    end
+
+    full.sort
+
+    # There is no error handling here. If there's invalid puavo-conf somewhere in the chain, we must
+    # explode loudly and violently with internal server error, to force someone to investigate it.
   end
 
   def rack_mount_point

@@ -329,6 +329,24 @@ en:
       available_images: "Available images"
       schools: "School limits?"
 
+  puavoconf_table:
+    show:
+      directly_set: "Only directly set (default)"
+      effective: "Inherited settings (\"effective\")"
+      effective_overrides: "Inherited settings with upper levels"
+      all: "All settings on all levels"
+    color_key: "Colors: <span class=\"source_org\">Organisation level</span>, <span class=\"source_sch\">school level</span>, <span class=\"source_dev\">device level</span>, <span class=\"overridden\">a setting that gets overridden on lower level</span>."
+    titles:
+      org:
+        abbr: "O"
+        full: "An organisation-level setting"
+      sch:
+        abbr: "S"
+        full: "A school-level setting"
+      dev:
+        abbr: "D"
+        full: "A device-level setting"
+
   # Quick search
   search:
     search_result:

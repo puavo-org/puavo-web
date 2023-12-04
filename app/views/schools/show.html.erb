@@ -62,8 +62,18 @@
 
   <div class="multilineItem">
     <div class="title"><%= t('activeldap.attributes.school.puavoConf') %></div>
-    <div class="value">
-      <%= render :partial => 'shared/puavoconf', :locals  => { :object => @school.puavoConf } %>
+
+    <select id="changeVisibleConfig" class="margin-left-25px margin-bottom-5px" autocomplete="off">
+      <option value="directly_set"><%= t('puavoconf_table.show.directly_set') %></option>
+      <option value="effective"><%= t('puavoconf_table.show.effective') %></option>
+      <option value="effective_overrides"><%= t('puavoconf_table.show.effective_overrides') %></option>
+      <option value="all"><%= t('puavoconf_table.show.all') %></option>
+    </select>
+
+    <button id="copyPuavoconf"><%= t('link.copy_to_clipboard') %></button>
+
+    <div class="puavoConfOutput margin-left-25px flex-rows gap-5px">
+      <%= render partial: 'shared/puavoconf', locals: { puavoconf: @full_puavoconf, type: 'sch' } %>
     </div>
   </div>
 
@@ -268,3 +278,12 @@
 
 </div>
 <hr>
+
+<script>
+const ALL_PUAVOCONF = <%= raw JSON.pretty_generate(@full_puavoconf) %>;
+</script>
+
+<% content_for :javascript do %>
+<%= render partial: 'shared/copy_text.js' %>
+<%= render partial: 'shared/puavoconf_table.js', locals: { select: 'div.dashboard select#changeVisibleConfig', container: 'div.dashboard div.puavoConfOutput', type: 'sch' } %>
+<% end %>

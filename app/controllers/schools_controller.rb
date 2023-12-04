@@ -114,6 +114,8 @@ class SchoolsController < ApplicationController
 
     make_puavomenu_preview(@school.puavoMenuData)
 
+    @full_puavoconf = list_all_puavoconf_values(LdapOrganisation.current.puavoConf, @school.puavoConf, nil)
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @school }

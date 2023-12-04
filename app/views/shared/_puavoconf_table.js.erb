@@ -1,0 +1,223 @@
+<!-- shared/_puavoconf_table.js.erb begins -->
+
+<script>
+"use strict";
+
+const COLORKEY = `<div class="pcColorKey"><%= raw t('puavoconf_table.color_key') %></div>`;
+
+// Translated source level titles
+const SOURCES = {
+    "org": {
+        abbr: "(<%= t('puavoconf_table.titles.org.abbr') %>)",
+        full: "<%= t('puavoconf_table.titles.org.full') %>",
+    },
+
+    "sch": {
+        abbr: "(<%= t('puavoconf_table.titles.sch.abbr') %>)",
+        full: "<%= t('puavoconf_table.titles.sch.full') %>",
+    },
+
+    "dev": {
+        abbr: "(<%= t('puavoconf_table.titles.dev.abbr') %>)",
+        full: "<%= t('puavoconf_table.titles.dev.full') %>",
+    }
+};
+
+// Only list the puavo-conf values that have been directly set. This is the default.
+function listDirectlySet()
+{
+    let html = `<table class="puavoConf">`;
+
+    for (const [key, values] of ALL_PUAVOCONF) {
+        if (!("<%= type %>" in values))
+            continue;
+
+        html +=
+`<tr>
+    <th>${key}</th>
+    <td><code>${values["<%= type %>"]}</code></td>
+</tr>`;
+    }
+
+    html += `</table>`;
+
+    return html;
+}
+
+// List the effective configuration, ie. the values that are actually used
+function listEffective()
+{
+    let html = `<table class="puavoConf">`;
+
+    for (const [key, values] of ALL_PUAVOCONF) {
+        let index = null;
+
+        // Device overrides school, and school overrides organisation
+        for (const i of ["dev", "sch", "org"]) {
+            if (i in values) {
+                index = i;
+                break;
+            }
+        }
+
+        const source = SOURCES[index];
+
+        html +=
+`<tr title="${source.full}">
+    <th>${key}</th>
+    <th class="source_${index}">${source.abbr}</th>
+    <td><code>${values[index]}</code></td>
+</tr>`;
+    }
+
+    html += `</table>`;
+
+    return html;
+}
+
+function listEffectiveWithOverrides()
+{
+    let html = `<table class="puavoConf">`;
+
+    for (const [key, values] of ALL_PUAVOCONF) {
+        html += `<tr><th>${key}</th>`;
+        html += `<td><table class="values">`;
+
+        // Only the last source level matters
+        let numSources = 0;
+
+        for (const source of ["org", "sch", "dev"])
+            if (source in values)
+                numSources++;
+
+        let i = 0;
+
+        for (const source of ["org", "sch", "dev"]) {
+            if (!(source in values))
+                continue;
+
+            const s = SOURCES[source];
+
+            html += `<tr title="${s.full}"`;
+
+            if (i++ < numSources - 1) {
+                // This source has been overridden by a higher-priority source
+                html += ` class="overridden"`;
+            }
+
+            html +=
+`>
+<th class="source_${source}">${s.abbr}</th>
+<td><code>${values[source]}</code></td>
+</tr>`;
+        }
+
+        html += `</td></table>`;
+    }
+
+    html += `</table>`;
+
+    return html;
+}
+
+// List all puavo-conf source in separate tables, without merging anything
+function listAllSourcesSeparately()
+{
+    let html = "";
+
+    for (const source of ["org", "sch", "dev"]) {
+        let html2 = "";
+
+        for (const [key, values] of ALL_PUAVOCONF) {
+            if (source in values) {
+                const s = SOURCES[source];
+
+                let color = "",
+                    cls = "";
+
+                if (source == "org") {
+                    if ("sch" in values || "dev" in values)
+                        cls = ` class="overriddenAll"`;
+                } else if (source == "sch") {
+                    if ("dev" in values)
+                        cls = ` class="overriddenAll"`;
+                }
+
+                html2 += `<tr${cls} title="${s.full}"><th>${key}</th>`;
+
+                html2 +=
+`<th class="source_${source}">${s.abbr}</th>
+    <td><code>${values[source]}</code></td>
+</tr>`;
+            }
+        }
+
+        if (html2 != "")
+            html += `<table class="puavoConf">` + html2 + `</table>`;
+    }
+
+    return html;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector("<%= select %>")?.addEventListener("change", e => {
+        let html = "";
+
+        switch (e.target.value) {
+            case "directly_set":
+            default:
+                html = listDirectlySet();
+                break;
+
+            case "effective":
+                html = COLORKEY + listEffective();
+                break;
+
+            case "effective_overrides":
+                html = COLORKEY + listEffectiveWithOverrides();
+                break;
+
+            case "all":
+                html = COLORKEY + listAllSourcesSeparately();
+                break;
+        }
+
+        document.querySelector("<%= container %>").innerHTML = html;
+
+        // Can't copy everything because they're not presentable in JavaScript in a way
+        // that would make sense (or work, if pasted into somewhere)
+        const button = document.querySelector("button#copyPuavoconf");
+
+        if (button)
+            button.disabled = (e.target.value == "effective_overrides" || e.target.value == "all");
+    });
+
+    document.querySelector("button#copyPuavoconf")?.addEventListener("click", () => {
+        const value = document.querySelector("<%= select %>").value;
+        let conf = {};
+
+        if (value == "directly_set") {
+            for (const [key, values] of ALL_PUAVOCONF)
+                if ("<%= type %>" in values)
+                    conf[key] = values["<%= type %>"];
+        } else {
+            for (const [key, values] of ALL_PUAVOCONF) {
+                let index = null;
+
+                // Device overrides school, and school overrides organisation
+                for (const i of ["dev", "sch", "org"]) {
+                    if (i in values) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                conf[key] = values[index];
+            }
+        }
+
+        copyTextToClipboard(JSON.stringify(conf, null, "  "));
+    });
+});
+</script>
+<!-- shared/_puavoconf_table.js.erb ends -->

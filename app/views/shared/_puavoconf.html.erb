@@ -1,11 +1,10 @@
 <!-- shared/_puavoconf starts -->
 <table class="puavoConf">
-  <% puavoconf_data = JSON.parse(object) rescue nil
-     if !puavoconf_data.nil? && puavoconf_data.kind_of?(Hash) %>
-  <% puavoconf_data.sort.each do |key, value| %>
+  <% puavoconf.sort.each do |key, values| %>
+  <% if values.include?(type) %>
   <tr>
     <th><%= h key %></th>
-    <td><%= h value %></td>
+    <td><code><%= h values[type] %></code></td>
   </tr>
   <% end %>
   <% end %>

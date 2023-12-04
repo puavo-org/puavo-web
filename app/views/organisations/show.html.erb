@@ -110,8 +110,7 @@
     <tr>
       <th><%= t("activeldap.attributes.ldap_organisation.puavoConf") %></th>
       <td>
-        <%= render :partial => 'shared/puavoconf',
-                   :locals  => { :object => @organisation.puavoConf } %>
+        <%= render partial: 'shared/puavoconf', locals: { puavoconf: @full_puavoconf, type: 'org' } %>
       </td>
     </tr>
 

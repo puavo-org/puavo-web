@@ -186,7 +186,14 @@ $inpageTabsTabHoverForeground: 000;
 /* puavo-conf tables */
 $puavoConfOddRow: #f0f0f0;
 $puavoConfEvenRow: #e0e0e0;
-$puavoConfBorder: #bbb;
+$puavoConfBorder: #ccc;
+
+$puavoConfOverriddenOddRow: #faa;
+$puavoConfOverriddenEvenRow: #fcc;
+$puavoConfSourceOrganisation: #ff2b00;
+$puavoConfSourceSchool: #9c64ff;
+$puavoConfSourceDevice: #00bb66;
+
 
 /* puavo-conf editor */
 $pceDeleteForeground: #f00;

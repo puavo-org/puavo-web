@@ -139,6 +139,8 @@ class ServersController < ApplicationController
 
     @fqdn = "#{@server.puavoHostname}.#{LdapOrganisation.current.puavoDomain}"
 
+    @full_puavoconf = list_all_puavoconf_values(LdapOrganisation.current.puavoConf, nil, @server.puavoConf)
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @server }

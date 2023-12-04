@@ -329,6 +329,24 @@ fi:
       available_images: "Tarjolla olevat kuvatiedostot"
       schools: "Koulurajoitus?"
 
+  puavoconf_table:
+    show:
+      directly_set: "Vain asetetut (oletus)"
+      effective: "Periytetyt asetukset (\"efektiivinen\")"
+      effective_overrides: "Periytetyt asetukset ylätasoineen"
+      all: "Kaikkien tasojen asetukset"
+    color_key: "Värit: <span class=\"source_org\">Organisaatiotaso</span>, <span class=\"source_sch\">koulutaso</span>, <span class=\"source_dev\">laitetaso</span>, <span class=\"overridden\">asetus jonka alempi taso ajaa yli</span>."
+    titles:
+      org:
+        abbr: "O"
+        full: "Organisaatiotason asetus"
+      sch:
+        abbr: "K"
+        full: "Koulutason asetus"
+      dev:
+        abbr: "L"
+        full: "Laitetason asetus"
+
   # Quick search
   search:
     search_result:

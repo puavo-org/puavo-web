@@ -19,18 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
         copyTextToClipboard(full);
     });
 
-<% if device.puavoConf %>
-    document.querySelector("button#copyPuavoconf")?.addEventListener("click", () => {
-        copyTextToClipboard(<%= raw JSON.pretty_generate(device.puavoConf) %>);
-    });
-<% end %>
-
 <% if @fqdn %>
     document.querySelector("button#copyFQDN")?.addEventListener("click", () => {
         copyTextToClipboard("<%= @fqdn %>");
     });
 <% end %>
 });
-
 </script>
 <!-- shared/_copy_basic_info.js.erb ends -->

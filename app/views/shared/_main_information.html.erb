@@ -18,13 +18,21 @@
     <p class="infoValue"><%= h device.puavoTag %></p>
     <% end %>
 
-    <% unless device.puavoConf.nil? || device.puavoConf.empty? %>
-    <div class="flex-cols flex-vcenter gap-10px">
-      <p class="infoTitle"><%= t('activeldap.attributes.device.puavoConf') %></p>
-      <button id="copyPuavoconf"><%= t('link.copy_to_clipboard') %></button>
+    <% if @full_puavoconf && !@full_puavoconf.empty? %>
+    <p class="infoTitle"><%= t('activeldap.attributes.device.puavoConf') %></p>
+
+    <select id="changeVisibleConfig" class="margin-left-25px margin-top-5px" autocomplete="off">
+      <option value="directly_set"><%= t('puavoconf_table.show.directly_set') %></option>
+      <option value="effective"><%= t('puavoconf_table.show.effective') %></option>
+      <option value="effective_overrides"><%= t('puavoconf_table.show.effective_overrides') %></option>
+      <option value="all"><%= t('puavoconf_table.show.all') %></option>
+    </select>
+
+    <button id="copyPuavoconf"><%= t('link.copy_to_clipboard') %></button>
+
+    <div id="puavoConfOutput">
+    <%= render partial: 'shared/puavoconf', locals: { puavoconf: @full_puavoconf, type: 'dev' } %>
     </div>
-    <%= render :partial => 'shared/puavoconf',
-               :locals  => { :object => device.puavoConf } %>
     <% end %>
 
     <% if @puavomenu_data %>

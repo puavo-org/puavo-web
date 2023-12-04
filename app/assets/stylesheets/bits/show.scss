@@ -251,7 +251,40 @@
   }
 
   td {
-    font-family: monospace;
     width: 100%;
   }
+
+  table.values th {
+    padding: 0;
+  }
+
+  table.values td {
+    /* Hack: try to align the multiple values so they look as if the nested table does not exist
+    (visual consistency) */
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 12px;
+  }
+
+  /* Source level colors */
+  th.source_org { color: $puavoConfSourceOrganisation; }
+  th.source_sch { color: $puavoConfSourceSchool; }
+  th.source_dev { color: $puavoConfSourceDevice; }
+
+  /* Various override indicator statuses */
+  tr.overridden:nth-child(odd) td { text-decoration: line-through; color: #888; }
+  tr.overridden:nth-child(even) td { text-decoration: line-through; color: #888; }
+  tr.overriddenAll:nth-child(odd) { background: $puavoConfOverriddenOddRow; }
+  tr.overriddenAll:nth-child(even) { background: $puavoConfOverriddenEvenRow; }
 }
+
+/* Puavo-conf table color keys */
+div.basicInfoDetails div.pcColorKey {
+  margin-top: 5px;
+  margin-left: 25px;
+}
+
+div.pcColorKey span.source_org { color: $puavoConfSourceOrganisation; }
+div.pcColorKey span.source_sch { color: $puavoConfSourceSchool; }
+div.pcColorKey span.source_dev { color: $puavoConfSourceDevice; }
+div.pcColorKey span.overridden { background: $puavoConfOverriddenOddRow; }
