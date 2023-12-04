@@ -65,7 +65,10 @@ if ENV['RACK_ENV'] == 'test' then
         }
       }
     },
-    'mfa_server' => 'http://127.0.0.1:8080',
+    'mfa_server' => {
+      'server' => 'http://127.0.0.1:8081',
+      'bearer_key' => 'devel'
+    },
     'mfa_management' => {
       'ip_whitelist' => ['127.0.0.1'],
       'client' => {

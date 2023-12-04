@@ -512,9 +512,9 @@ class SSO < PuavoSinatra
       rlog.info("[#{request_id}] sending the code check request to \"#{CONFIG['mfa_server']}\"")
 
       response = HTTP
-        .auth('Bearer devel')
+        .auth("Bearer devel #{CONFIG['mfa_server']['bearer_key']}")
         .headers('X-Request-ID' => request_id)
-        .post("#{CONFIG['mfa_server']}/v1/authenticate", json: {
+        .post("#{CONFIG['mfa_server']['server']}/v1/authenticate", json: {
           userid: user_uuid,
           code: mfa_code
         })

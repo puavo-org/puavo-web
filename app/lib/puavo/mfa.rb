@@ -7,7 +7,7 @@ module Puavo
     # to send JSON in the request body if the HTTP method supports it.
     def self.mfa_call(request_id, method, url, data: nil)
       http = HTTP
-        .auth('Bearer devel')
+        .auth("Bearer #{CONFIG['mfa_server']['bearer_key']}")
         .headers('X-Request-ID' => request_id)
 
       full_url = "#{CONFIG['mfa_server']['address']}/v1/#{url}"
