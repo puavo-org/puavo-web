@@ -12,7 +12,7 @@ Apply Ansible rules from [puavo-standalone](https://github.com/puavo-org/puavo-s
 
 Clone this repository and install build dependencies
 
-    sudo make install-build-dep
+    sudo make install-build-deps
 
 ### puavo-web
 
