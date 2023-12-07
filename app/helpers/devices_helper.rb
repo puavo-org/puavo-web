@@ -106,17 +106,6 @@ module DevicesHelper
     return (self.get_device_attributes() + ["puavoDeviceAvailableImage"] - ["puavoDevicePrimaryUser"]).freeze
   end
 
-  def self.get_release_name(image_file_name, releases)
-    return nil unless image_file_name
-
-    image_file_name.gsub!('.img', '')
-
-    {
-      file: image_file_name,
-      release: releases.fetch(image_file_name, nil),
-    }
-  end
-
   def self.format_device_primary_user(dn, school_id)
     begin
       u = User.find(dn)
@@ -190,7 +179,7 @@ module DevicesHelper
     end
 
     if dev.include?('puavoDeviceImage') && dev['puavoDeviceImage']
-      out[:image] = self.get_release_name(dev['puavoDeviceImage'][0], releases)
+      out[:image] = Puavo::Helpers::get_release_name(dev['puavoDeviceImage'][0], releases)
     end
 
     if dev.include?('puavoDeviceXrandr')
@@ -360,7 +349,7 @@ module DevicesHelper
 
       # We have puavoImage and puavoCurrentImage fields in the database, but
       # they aren't always reliable
-      out[:current_image] = self.get_release_name(info['this_image'], releases)
+      out[:current_image] = Puavo::Helpers::get_release_name(info['this_image'], releases)
 
       # For some reason, when I wrote the sysinfo collector tool back in 2017, I
       # used megabytes as the unit, instead of bytes. Too late to change that.

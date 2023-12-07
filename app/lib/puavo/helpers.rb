@@ -55,5 +55,18 @@ module Puavo
       Time.strptime(t[0], '%Y%m%d%H%M%S%z').to_i
     end
 
+    # Given a list of Puavo-OS desktop image file names and their release names, formats them so
+    # that the JavaScript tables can display and filter them nicely
+    def self.get_release_name(image_file_name, releases)
+      return nil unless image_file_name
+
+      image_file_name.gsub!('.img', '')
+
+      {
+        file: image_file_name,
+        release: releases.fetch(image_file_name, nil),
+      }
+    end
+
   end
 end
