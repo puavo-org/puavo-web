@@ -72,6 +72,7 @@ class SchoolsController < ApplicationController
           conf: s.puavoConf.nil? ? [] : JSON.parse(s.puavoConf).collect { |k, v| "#{k} = #{v}" },
           integrations: get_school_integrations_by_type(@organisation_name, s.id),
           desktop_image: Puavo::Helpers::get_release_name(s.puavoDeviceImage, releases),
+          image_series: s.puavoImageSeriesSourceURL,
           link: school_path(s),
         }
       end

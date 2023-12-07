@@ -217,6 +217,12 @@ const COLUMN_DEFINITIONS = {
             return [display, value, filter];
         }
     },
+
+    image_series: {
+        key: "image_series",
+        title: "<%= t('activeldap.attributes.school.puavoImageSeriesSourceURL') %>",
+        type: ST.ColumnType.STRING,
+    },
 };
 
 // The default order for columns
@@ -235,6 +241,7 @@ const COLUMN_ORDER = [
     "boot_servers",
     "conf",
     "desktop_image",
+    "image_series",
 ];
 
 function schoolActions(entry)
