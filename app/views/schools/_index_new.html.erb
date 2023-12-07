@@ -223,6 +223,42 @@ const COLUMN_DEFINITIONS = {
         title: "<%= t('activeldap.attributes.school.puavoImageSeriesSourceURL') %>",
         type: ST.ColumnType.STRING,
     },
+
+    allow_guest: {
+        key: "allow_guest",
+        title: "<%= t('activeldap.attributes.school.puavoAllowGuest') %>",
+        type: ST.ColumnType.BOOL,
+    },
+
+    personal_device: {
+        key: "personal_device",
+        title: "<%= t('activeldap.attributes.school.puavoPersonalDevice') %>",
+        type: ST.ColumnType.BOOL,
+    },
+
+    auto_updates: {
+        key: "auto_updates",
+        title: "<%= t('activeldap.attributes.school.puavoAutomaticImageUpdates') %>",
+        type: ST.ColumnType.BOOL,
+    },
+
+    autopower_mode: {
+        key: "autopower_mode",
+        title: "<%= t('activeldap.attributes.school.puavoDeviceAutoPowerOffMode') %>",
+        type: ST.ColumnType.STRING,
+    },
+
+    autopower_on: {
+        key: "autopower_on",
+        title: "<%= t('activeldap.attributes.school.puavoDeviceOnHour') %>",
+        type: ST.ColumnType.NUMERIC,
+    },
+
+    autopower_off: {
+        key: "autopower_off",
+        title: "<%= t('activeldap.attributes.school.puavoDeviceOffHour') %>",
+        type: ST.ColumnType.NUMERIC,
+    },
 };
 
 // The default order for columns
@@ -242,6 +278,12 @@ const COLUMN_ORDER = [
     "conf",
     "desktop_image",
     "image_series",
+    "allow_guest",
+    "personal_device",
+    "auto_updates",
+    "autopower_mode",
+    "autopower_on",
+    "autopower_off",
 ];
 
 function schoolActions(entry)

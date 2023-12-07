@@ -73,6 +73,12 @@ class SchoolsController < ApplicationController
           integrations: get_school_integrations_by_type(@organisation_name, s.id),
           desktop_image: Puavo::Helpers::get_release_name(s.puavoDeviceImage, releases),
           image_series: s.puavoImageSeriesSourceURL,
+          allow_guest: s.puavoAllowGuest == true,
+          personal_device: s.puavoPersonalDevice == true,
+          auto_updates: s.puavoAutomaticImageUpdates == true,
+          autopower_mode: s.puavoDeviceAutoPowerOffMode,
+          autopower_on: s.puavoDeviceOnHour,
+          autopower_off: s.puavoDeviceOffHour,
           link: school_path(s),
         }
       end
