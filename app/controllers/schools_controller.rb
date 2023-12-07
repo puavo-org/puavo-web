@@ -42,6 +42,8 @@ class SchoolsController < ApplicationController
       @have_external_ids = @schools.any? { |s| s.puavoExternalId }
       @have_school_codes = @schools.any? { |s| s.puavoSchoolCode }
 
+      releases = get_releases()
+
       @schools.each do |s|
         bs_names = []
 
@@ -69,6 +71,7 @@ class SchoolsController < ApplicationController
           tags: Array(s.puavoTag),
           conf: s.puavoConf.nil? ? [] : JSON.parse(s.puavoConf).collect { |k, v| "#{k} = #{v}" },
           integrations: get_school_integrations_by_type(@organisation_name, s.id),
+          desktop_image: Puavo::Helpers::get_release_name(s.puavoDeviceImage, releases),
           link: school_path(s),
         }
       end

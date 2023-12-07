@@ -192,6 +192,31 @@ const COLUMN_DEFINITIONS = {
         alias: ["puavoconf", "puavo_conf"],
         export_name: "puavoconf",
     },
+
+    desktop_image: {
+        key: "desktop_image",
+        title: "<%= t('activeldap.attributes.school.puavoDeviceImage') %>",
+        type: ST.ColumnType.STRING,
+        transform: e => {
+            if (e.desktop_image === null)
+                return [null, null, null];
+
+            let display = "",
+                value = e.desktop_image.file,
+                filter = "";
+
+            if (e.desktop_image.release !== null) {
+                // Display the release name nicely
+                display = `${value} <span class="releaseName">(${e.desktop_image.release})</span>`;
+                filter = `${value} (${e.desktop_image.release})`;
+            } else {
+                display = value;
+                filter = value;
+            }
+
+            return [display, value, filter];
+        }
+    },
 };
 
 // The default order for columns
@@ -209,6 +234,7 @@ const COLUMN_ORDER = [
     "num_devices",
     "boot_servers",
     "conf",
+    "desktop_image",
 ];
 
 function schoolActions(entry)
