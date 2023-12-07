@@ -1486,7 +1486,7 @@ fi:
           default: "Oletus"
           "off": "Pois päältä"
           custom: "Mukautettu"
-          desktop_image: "Käytettävä työpöytäkuvatiedosto"
+          desktop_image: "Työpöytäkuva"
           kernel_args: "Kernel-parametrit"
           kernel_version: "Kernel-versio"
           puavoconf_replace: "PuavoConf (korvaa kaikki)"

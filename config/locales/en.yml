@@ -1486,7 +1486,7 @@ en:
           default: "Default"
           "off": "Off"
           custom: "Custom"
-          desktop_image: "Desired desktop image file"
+          desktop_image: "Desktop image"
           kernel_args: "Kernel parameters"
           kernel_version: "Kernel version"
           puavoconf_replace: "PuavoConf (replace all)"
