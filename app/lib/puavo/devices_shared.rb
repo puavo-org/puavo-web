@@ -176,7 +176,7 @@ module Puavo
             changed = true
           end
 
-        when 'daytime_start'
+        when 'day_start'
           return [false, nil] if is_server
 
           if value != device.puavoDeviceOnHour
@@ -184,7 +184,7 @@ module Puavo
             changed = true
           end
 
-        when 'daytime_end'
+        when 'day_end'
           return [false, nil] if is_server
 
           if value != device.puavoDeviceOffHour
