@@ -10,6 +10,10 @@
   <div class="basicInfoDetails">
     <h1><%= h @user.displayName %></h1>
 
+    <% if @user.puavoMFAEnabled %>
+    <p class="infoNotice"><%= t('.mfa_enabled') %></p>
+    <% end %>
+
     <% if @user_is_owner %>
     <p class="infoNotice"><%= t('.user_is_an_organisation_owner') %></p>
     <% end %>

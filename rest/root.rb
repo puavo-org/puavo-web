@@ -185,6 +185,7 @@ class Root < PuavoSinatra
   use PuavoRest::BootserverDNS
   use PuavoRest::MySchoolUsers
   use PuavoRest::EmailManagement
+  use PuavoRest::MFAManagement
 
   if CONFIG["cloud"]
     # You have to choose which one you want
@@ -199,6 +200,10 @@ class Root < PuavoSinatra
 
   if CONFIG["password_management"]
     use PuavoRest::Password
+  end
+
+  if CONFIG["mfa_management"]
+    use PuavoRest::MFAManagement
   end
 
 end

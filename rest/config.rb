@@ -65,6 +65,21 @@ if ENV['RACK_ENV'] == 'test' then
         }
       }
     },
+    'mfa_server' => {
+      'server' => 'http://127.0.0.1:8081',
+      'bearer_key' => 'devel'
+    },
+    'mfa_management' => {
+      'ip_whitelist' => ['127.0.0.1'],
+      'client' => {
+        'username' => 'mfa_user',
+        'password' => 'mfa_password'
+      },
+      'server' => {
+        'username' => 'uid=admin,o=puavo',
+        'password' => 'password'
+      },
+    },
     "redis" => {
       :db => 1
     },

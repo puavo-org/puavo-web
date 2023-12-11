@@ -1,0 +1,125 @@
+/* The multi-factor authentication editor */
+
+@import "bits/media_queries";
+@import "bits/composable";
+@import "bits/public_forms";
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--page-background);
+  font-family: var(--font);
+  margin: 0;
+  padding: 1em;
+}
+
+section header.header {
+  font-size: 120%;
+  border-bottom: 1px solid #ccc;
+}
+
+header.subHeader {
+  font-size: 110%;
+}
+
+section#existing table {
+  border-collapse: collapse;
+}
+
+section#existing table tr {
+  border-bottom: 1px solid #ccc;
+}
+
+section#existing table tr:last-of-type {
+  border-bottom: none;
+}
+
+section#existing table tr:hover {
+  background: #f0f0f0;
+}
+
+section#existing table td {
+  padding: 10px 15px;
+}
+
+section#existing table div#title {
+  font-weight: bold;
+}
+
+section#existing table div#stats {
+  font-size: 90%;
+  margin-left: 10px;
+}
+
+section#existing table td.button {
+  padding-left: 50px;
+  width: 0;
+}
+
+section#new div.wizardStep {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+section#new div.wizardStep p {
+  margin: 0;
+}
+
+section#new img#totp_qr {
+  display: block;
+
+  /*
+    The QR code is an SVG image, and its embedded size is 3.7x3.7cm. I can't change the generated
+    size, but I can scale it up in multiples of 3.7. I think this is the only time in the last
+    25 years (or so) that I'm actually using centimeters in CSS.
+  */
+  width: 7.4cm;
+  height: 7.4cm;
+}
+
+section#new p#totp_secret {
+  font-family: monospace;
+  font-size: 150%;
+  color: #00f;
+  letter-spacing: 0.1em;
+}
+
+input#totp_verification {
+  text-align: center;
+  font-size: 150%;
+  padding: 5px;
+  font-family: monospace;
+  letter-spacing: 0.1em;
+}
+
+input#yubikey_input {
+  text-align: center;
+  font-size: 150%;
+  padding: 5px;
+  font-family: monospace;
+}
+
+label {
+  user-select: none;
+}
+
+label.disabled {
+  opacity: 0.5;
+}
+
+section#recovery div#list ul {
+  font-family: monospace;
+  font-size: 150%;
+  letter-spacing: 0.1em;
+  list-style-type: none;
+  padding-left: 1em;
+}

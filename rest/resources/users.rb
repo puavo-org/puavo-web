@@ -54,7 +54,7 @@ class User < LdapModel
   ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
 
   ldap_map :puavoUuid, :uuid, LdapConverters::SingleValue
-  ldap_map :puavoMFAEnabled, :mfa_enabled
+  ldap_map :puavoMFAEnabled, :mfa_enabled, LdapConverters::StringBoolean
 
   ldap_map :puavoLicenses, :licenses
 
@@ -1178,6 +1178,9 @@ class Users < PuavoSinatra
     parameters.delete('verified_email')
     parameters.delete('primary_email')
 
+    # You're unlikely to have write access to this attribute anyway
+    parameters.delete('mfa_enabled')
+
     user.update!(parameters)
     user.save!
     json user
@@ -1357,6 +1360,7 @@ class Users < PuavoSinatra
     'licenses'           => 'puavoLicenses',
     'locale'             => 'puavoLocale',
     'locked'             => 'puavoLocked',
+    'mfa_enabled'        => 'puavoMFAEnabled',
     'modified'           => 'modifyTimestamp',  # LDAP operational attribute
     'personnel_number'   => 'puavoEduPersonPersonnelNumber',
     'phone'              => 'telephoneNumber',
@@ -1392,6 +1396,7 @@ class Users < PuavoSinatra
     'puavoLicenses'                 => { name: 'licenses', type: :json },
     'puavoLocale'                   => { name: 'locale' },
     'puavoLocked'                   => { name: 'locked', type: :boolean },
+    'puavoMFAEnabled'               => { name: 'mfa_enabled', type: :boolean },
     'puavoRemovalRequestTime'       => { name: 'removal_mark_time', type: :ldap_timestamp },
     'puavoSchool'                   => { name: 'school_ids', type: :id_from_dn },
     'puavoSshPublicKey'             => { name: 'ssh_public_key' },

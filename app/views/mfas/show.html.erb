@@ -1,0 +1,829 @@
+<% if @missing_uuid %>
+<p class="message_alert"><%= t('mfas.server.errors.missing_required_data', request_id: @request_id) %>
+<% else %>
+<% if @authenticators.nil? %>
+<p class="message_alert"><%= t('mfas.server.errors.mfa_server_not_responding', request_id: @request_id) %>
+<% else %>
+
+<p class="margin-top-0"><%= t('.logged_as', first_name: @user.givenName, last_name: @user.sn, username: @user.uid, organisation: @organisation.cn).html_safe %>.</p>
+
+<div class="flex-rows gap-20px">
+    <!-- NEW -->
+    <section id="new">
+        <header class="header"><%= t('.new.title') %></header>
+
+        <p><%= t('.new.explanation') %></p>
+
+        <div class="flex-rows gap-10px margin-top-10px">
+            <button type="button" id="addNew" class="margin-left-20px flex-align-start"><%= t('.buttons.add_new') %></button>
+
+            <div id="wizard" class="margin-left-20px margin-right-20px hidden">
+                <!-- STEP 1 -->
+                <div id="step1" class="wizardStep hidden">
+                    <header class="subHeader"><%= t('.new.step1.title') %></header>
+
+                    <p><%= t('.new.step1.type') %>:</p>
+
+                    <div class="flex-rows gap-5px margin-left-20px">
+                        <label><input type="radio" name="method" id="totp">TOTP (FreeOTP, Authenticator Pro, Google Authenticator, Bitwarden, ...)</label>
+                        <label><input type="radio" name="method" id="yubikey">Yubikey</label><br>
+                    </div>
+
+                    <p><%= t('.new.step1.description_title') %>:</p>
+
+                    <div class="flex-rows gap-5px margin-left-20px">
+                        <input type="text" id="description" class="flex-align-start" size="30" maxlength="30">
+                        <p class="font-80p"><%= t('.new.step1.description_help') %></p>
+                    </div>
+                </div>
+
+                <!-- STEP 2: TOTP -->
+                <div id="step2_totp" class="wizardStep hidden">
+                    <header class="subHeader"><%= t('.new.step2_totp.title') %></header>
+
+                    <p><%= t('.new.step2_totp.qrhelp') %></p>
+                    <p><%= t('.new.step2_totp.qrhelp2') %></p>
+
+                    <div class="flex-rows gap-10px flex-vcenter margin-top-10px">
+                        <img id="totp_qr"/>
+                        <p id="totp_secret">if you can see this text, something has failed</p>
+                    </div>
+                </div>
+
+                <!-- STEP 2: YUBIKEY -->
+                <div id="step2_yubikey" class="wizardStep hidden">
+                    <header class="subHeader"><%= t('.new.step2_yubikey.title') %></header>
+
+                    <p><%= t('.new.step2_yubikey.help').html_safe %></p>
+
+                    <div class="flex-rows flex-vcenter gap-10px" style="width: 250px; margin: 10px auto;">
+                        <input type="text" size="50" maxlength="44" id="yubikey_input">
+                        <button type="button" id="verifyYubikey"><%= t('.buttons.verify') %></button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: TOTP -->
+                <div id="step3_totp" class="wizardStep hidden">
+                    <header class="subHeader"><%= t('.new.step3_totp.title') %></header>
+                    <p><%= t('.new.step3_totp.verify_help') %></p>
+
+                    <div class="flex-rows flex-vcenter gap-10px" style="width: 250px; margin: 10px auto;">
+                        <input type="text" size="8" maxlength="6" id="totp_verification">
+                        <button type="button" id="verifyTOTP"><%= t('.buttons.verify') %></button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="controls" class="flex-cols gap-10px margin-top-10px hidden">
+                <button type="button" id="cancel"><%= t('.buttons.cancel') %></button>
+                <button type="button" id="previous"><%= t('.buttons.previous') %></button>
+                <button type="button" id="next"><%= t('.buttons.next') %></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXISTING -->
+    <section id="existing">
+        <header class="header"><%= t('.existing.title') %></header>
+        <div id="list"></div>
+    </section>
+
+    <!-- RECOVERY KEYS -->
+    <section id="recovery" class="hidden">
+        <header class="header"><%= t('.recovery.title') %></header>
+        <div class="flex-rows gap-10px margin-top-10px">
+            <p id="stats" class="margin-0"></p>
+
+            <div class="flex-cols gap-10px">
+                <button type="button" id="listKeys"><%= t('.buttons.list_keys') %></button>
+                <button type="button" id="createKeys"><%= t('.buttons.create_keys') %></button>
+                <button type="button" id="deleteKeys"><%= t('.buttons.delete_keys') %></button>
+            </div>
+
+            <div id="list"></div>
+        </div>
+    </section>
+</div>
+
+<!-- Existing authenticators table row template -->
+<template id="template_existingRow">
+<tr>
+    <td>
+        <div class="flex-rows gap-5px">
+            <div id="title"></div>
+            <div id="stats"></div>
+        </div>
+    </td>
+    <td class="button"><button type="button"><%= t('.buttons.remove') %></button></td>
+</tr>
+</template>
+
+<% content_for(:javascript) do %>
+<script>
+"use strict";
+
+// Currently active multifactor authenticators for this user
+let authenticators = <%= raw JSON.pretty_generate(@authenticators[:keys]) %>;
+
+// Recovery key status
+let haveRecoveryKeys = <% if @authenticators[:have_recovery_keys] %>true<% else %>false<% end %>;
+
+// -------------------------------------------------------------------------------------------------
+// UTILITY
+
+const KNOWN_MFA_TYPES = {
+    "totp": "TOTP",
+    "yubikey": "Yubikey",
+};
+
+const pad = (i, n=2) => i.toString().padStart(n, "0");
+
+const getTemplate = (id) => document.querySelector(`template#template_${id}`).content.cloneNode(true);
+
+function formatDateTime(i)
+{
+    const d = new Date(i * 1000);
+
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+function toggleClass(target, cls, state)
+{
+    if (!target) {
+        console.error(`toggleClass(): target element is NULL! (cls="${cls}", state=${state})`);
+        return;
+    }
+
+    if (state)
+        target.classList.add(cls);
+    else target.classList.remove(cls);
+}
+
+// Remember to chain all the required "then" parts to the return value
+function beginRequest(method, url, body)
+{
+    return fetch(url, {
+        method: method,
+        mode: "cors",
+        headers: {
+            // Use text/plain to prevent RoR from logging the post contents in plaintext
+            "Content-Type": "text/plain; charset=utf-8",
+            "X-CSRF-Token": document.querySelector(`meta[name="csrf-token"]`).content,
+        },
+        body: JSON.stringify(body)
+    }).then(response => {
+        if (!response.ok)
+            throw response;
+
+        return response.text();
+    });
+}
+
+// -------------------------------------------------------------------------------------------------
+
+function listExistingAuthenticators()
+{
+    const container = document.querySelector("section#existing div#list");
+
+    if (authenticators.length == 0) {
+        container.innerHTML = "<p><%= t('.existing.no_mfas') %></p>";
+        document.querySelector("section#recovery").classList.add("hidden");
+        return;
+    }
+
+    const table = document.createElement("table");
+
+    table.classList.add("margin-top-10px");
+
+    // Build the table
+    for (const a of authenticators) {
+        const row = getTemplate("existingRow");
+        let name = a.key_description;
+
+        // wrap the type in parenthesis only if the name has been given
+        if (a.key_description.length > 0)
+            name += " (";
+
+        name += KNOWN_MFA_TYPES[a.key_type] || "?";
+
+        if (a.key_description.length > 0)
+            name += ")";
+
+        let usage = [];
+
+        usage.push(`<%= t('.existing.table.created') %> ${formatDateTime(a.key_added)}`);
+        //usage.push(`<%= t('.existing.table.verified') %> ${formatDateTime(a.key_verified)}`);
+
+        if (a.key_last_used > 0)
+            usage.push(`<%= t('.existing.table.last_used') %> ${formatDateTime(a.key_last_used)}`);
+        else usage.push("<em><%= t('.existing.table.never_used') %></em>");
+
+        row.querySelector("div#title").innerText = name;
+        row.querySelector("div#stats").innerHTML = usage.join(",<br>");
+        row.querySelector("button").dataset.keyid = a.key_id;
+
+        table.appendChild(row);
+    }
+
+    container.innerText = "";
+    container.appendChild(table);
+
+    updateRecoveryKeys();
+
+    // Setup event handling
+    for (const b of document.querySelectorAll("section#existing table button"))
+        b.addEventListener("click", e => onRemoveAuthenticator(e));
+}
+
+function updateRecoveryKeys()
+{
+    // Format the recovery key statistics text
+    let recovery = "";
+
+    if (haveRecoveryKeys)
+        recovery += "<%= raw t('.recovery.have_keys') %>";
+    else recovery += "<%= raw t('.recovery.no_keys') %>";
+
+    document.querySelector("section#recovery p#stats").innerText = recovery;
+
+    toggleClass(document.querySelector("section#recovery button#listKeys"), "hidden", !haveRecoveryKeys);
+    toggleClass(document.querySelector("section#recovery button#deleteKeys"), "hidden", !haveRecoveryKeys);
+
+    document.querySelector("section#recovery").classList.remove("hidden");
+}
+
+// -------------------------------------------------------------------------------------------------
+// DELETE AUTHENTICATOR
+
+function onRemoveAuthenticator(e)
+{
+    if (!window.confirm("<%= t('general_confirm') %>"))
+        return;
+
+    const enableUI = (state) => {
+        for (const b of document.querySelectorAll("section#existing div#list table button"))
+            b.disabled = !state;
+
+        document.querySelector("button#addNew").disabled = !state;
+    };
+
+    enableUI(false);
+
+    beginRequest("DELETE", "<%= mfa_delete_path %>", { keyid: e.target.dataset.keyid, })
+    .then(data => {
+        const response = JSON.parse(data);
+
+        console.log(response);
+
+        if (!response.success) {
+            window.alert(response.message);
+            return;
+        }
+
+        if (response.authenticators === null) {
+            window.alert("<%= t('.errors.key_deleted_but_not_updated') %>");
+            return;
+        }
+
+        authenticators = response.authenticators.keys;
+        haveRecoveryKeys = response.authenticators.have_recovery_keys;
+        document.querySelector("section#recovery div#list").innerText = "";
+        listExistingAuthenticators();
+    }).catch(error => {
+        console.error(error);
+        window.alert("<%= t('.errors.generic') %>");
+    }).finally(() => {
+        enableUI(true);
+    });
+}
+
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// THE NEW AUTHENTICATOR WIZARD
+
+// We're Windows 95 now. Just missing the image.
+
+// Direct handles to various UI elements
+const wizardUI = {
+    wrapper: document.querySelector("section#new div#wizard"),
+
+    // Wizard controls
+    controls: document.querySelector("section#new div#controls"),
+    cancel: document.querySelector("section#new div#controls button#cancel"),
+    prev: document.querySelector("section#new div#controls button#previous"),
+    next: document.querySelector("section#new div#controls button#next"),
+
+    // Step 1
+    methodTOTP: document.querySelector("section#new div#wizard input#totp"),
+    methodYubikey: document.querySelector("section#new div#wizard input#yubikey"),
+    description: document.querySelector("section#new div#wizard input#description"),
+
+    // Step 2
+    totpQR: document.querySelector("section#new div#wizard img#totp_qr"),
+    totpSecret: document.querySelector("section#new div#wizard p#totp_secret"),
+    yubikeyInput: document.querySelector("section#new div#wizard input#yubikey_input"),
+    yubikeyVerify: document.querySelector("section#new div#wizard button#verifyYubikey"),
+
+    // Step 3
+    totpCode: document.querySelector("section#new div#wizard input#totp_verification"),
+    totpVerify: document.querySelector("section#new div#wizard button#verifyTOTP"),
+};
+
+let wizardStep = 1;
+
+const wizardData = {
+    // "totp", "yubikey", etc.
+    method: "yubikey",
+
+    // the description text
+    description: null,
+
+    // ID of the newly-added but yet unverified key
+    keyid: null,
+
+    // The TOTP secret string
+    secret: null,
+
+    // The TOTP QR code image as a base64-encoded SVG "data" url
+    qr: null,
+
+    // TOTP code (for one-time verification)
+    code: null,
+
+    // Yubikey input
+    yubikey: null
+};
+
+// Fetches a new TOTP init code and QR image from the server. The key is not activated yet.
+function newTOTPSecret(e)
+{
+    beginRequest("POST", "<%= mfa_prepare_totp_path %>", {
+        type: "totp",
+        description: wizardData.description,
+    }).then(data => {
+        const response = JSON.parse(data);
+
+        if (!response.success) {
+            window.alert(response.message);
+            updateWizard();
+            return;
+        }
+
+        wizardData.keyID = response.keyid;
+        wizardData.secret = response.secret;
+        wizardData.qr = response.qr;
+
+        // Go to step 2
+        wizardStep = 2;
+        updateWizard();
+    }).catch(error => {
+        console.error(error);
+        window.alert("<%= t('.errors.generic') %>");
+        updateWizard();
+    });
+}
+
+function showWizardStep(id)
+{
+    for (const step of wizardUI.wrapper.querySelectorAll("div.wizardStep"))
+        toggleClass(step, "hidden", step.id != id);
+}
+
+// Ensures the wizard UI is in the state it should be in the current step
+function updateWizard()
+{
+    console.log(`updateWizard(): step=${wizardStep}, mode="${wizardData.method}"`);
+
+    wizardUI.cancel.disabled = false;
+    wizardUI.prev.disabled = (wizardStep == 1);
+
+    if (wizardData.method == "totp")
+        wizardUI.next.disabled = (wizardStep == 3);
+    else wizardUI.next.disabled = (wizardStep == 2);
+
+    switch (wizardStep) {
+        case 1: {
+            if (wizardData.method == "totp")
+                wizardUI.methodTOTP.checked = true;
+            else wizardUI.methodYubikey.checked = true;
+
+            wizardUI.methodTOTP.disabled = false;
+            wizardUI.methodYubikey.disabled = false;
+            wizardUI.description.disabled = false;
+            wizardUI.description.value = wizardData.description;
+            showWizardStep("step1");
+            wizardUI.description.focus();
+            break;
+        }
+
+        case 2: {
+            if (wizardData.method == "totp") {
+                wizardUI.totpQR.src = wizardData.qr;
+                wizardUI.totpSecret.innerText = wizardData.secret;
+                showWizardStep("step2_totp");
+                wizardUI.next.focus();
+            } else {
+                showWizardStep("step2_yubikey");
+                wizardUI.yubikeyVerify.disabled = true;
+                wizardUI.yubikeyInput.value = "";
+                wizardUI.yubikeyInput.focus();
+            }
+
+            break;
+        }
+
+        case 3: {
+            if (wizardData.method == "totp") {
+                wizardUI.totpVerify.disabled = true;
+                wizardUI.totpCode.value = "";
+                showWizardStep("step3_totp");
+                wizardUI.totpCode.focus();
+            } else {
+                window.alert("Yubikey support not implemented yet");
+            }
+
+            break;
+        }
+
+        default:
+            window.alert(`updateWizard(): unhandled step ${wizardStep} in mode "${wizardData.method}"`);
+            break;
+    }
+}
+
+function onStartAddingNewAuthenticator()
+{
+    wizardStep = 1;
+    wizardData.method = "yubikey";
+    wizardData.description = "";
+    wizardData.secret = null;
+    wizardData.qr = null;
+    wizardData.code = "";
+    wizardData.yubikey = "";
+
+    // Prepare the UI for the wizard
+    document.querySelector("section#new button#addNew").classList.add("hidden");
+    document.querySelector("section#existing").classList.add("hidden");
+    document.querySelector("section#recovery").classList.add("hidden");
+
+    wizard.classList.remove("hidden");
+    wizardUI.controls.classList.remove("hidden");
+
+    updateWizard();
+}
+
+function onCancelNewAuthenticator(confirm=true)
+{
+    if (confirm && !window.confirm("<%= t('general_confirm') %>"))
+        return;
+
+    // Reset
+    showWizardStep("");
+    wizard.classList.add("hidden");
+    wizardUI.controls.classList.add("hidden");
+    document.querySelector("section#new button#addNew").classList.remove("hidden");
+    document.querySelector("section#existing").classList.remove("hidden");
+
+    if (authenticators.length > 0)
+        document.querySelector("section#recovery").classList.remove("hidden");
+}
+
+function onNewAuthenticatorPrevious()
+{
+    switch (wizardStep) {
+        case 2:
+            wizardStep = 1;
+            updateWizard();
+            break;
+
+        case 3:
+            wizardStep = 2;
+            updateWizard();
+            break;
+
+        default:
+            break;
+    }
+}
+
+function onNewAuthenticatorNext()
+{
+    switch (wizardStep) {
+        case 1:
+            if (wizardData.method == "totp") {
+                if (wizardData.secret !== null) {
+                    // Already have a secret
+                    wizardStep = 2;
+                    updateWizard();
+                    return;
+                }
+
+                // We don't have the secret code yet. Fetch it from the server, then
+                // move to step 2.
+                wizardUI.methodTOTP.disabled = true;
+                wizardUI.methodYubikey.disabled = true;
+                wizardUI.description.disabled = true;
+                wizardUI.cancel.disabled = true;
+                wizardUI.next.disabled = true;
+                newTOTPSecret();
+            } else {
+                wizardStep = 2;
+                updateWizard();
+                return;
+            }
+
+            break;
+
+        case 2:
+            if (wizardData.method == "totp") {
+                wizardStep = 3;
+                updateWizard();
+                return;
+            }
+
+            break;
+
+        default:
+            window.alert(`onNewAuthenticatorNext(): unhandled step ${wizardStep} in mode "${wizardData.method}"`);
+            break;
+    }
+}
+
+// Verifies and activates the new TOTP method
+function onVerifyTOTP(e)
+{
+    const enableUI = (state) => {
+        wizardUI.cancel.disabled = !state;
+        wizardUI.prev.disabled = !state;
+        wizardUI.next.disabled = !state;
+        wizardUI.totpCode.disabled = !state;
+        wizardUI.totpVerify.disabled = !state;
+    };
+
+    enableUI(false);
+
+    beginRequest("POST", "<%= mfa_verify_path %>", {
+        type: "totp",
+        keyid: wizardData.keyID,
+        code: wizardData.code,
+    }).then(data => {
+        const response = JSON.parse(data);
+
+        if (!response.success) {
+            window.alert(response.message);
+            wizardUI.totpCode.disabled = false;
+            wizardUI.totpCode.focus();
+            return;
+        }
+
+        if (response.code_ok) {
+            if (response.authenticators !== null) {
+                authenticators = response.authenticators.keys;
+                haveRecoveryKeys = response.authenticators.have_recovery_keys;
+                listRecoveryKeys([]);
+                listExistingAuthenticators();
+            } else {
+                // This can happen... in theory
+                window.alert("<%= t('.errors.code_partially_verified') %>");
+            }
+
+            onCancelNewAuthenticator(false);    // eww...
+        } else {
+            window.alert("<%= t('.errors.totp_code_incorrect') %>");
+            wizardUI.totpCode.disabled = false;
+            wizardUI.totpCode.focus();
+        }
+    }).catch(error => {
+        console.error(error);
+        window.alert("<%= t('.errors.generic') %>");
+        wizardUI.totpCode.disabled = false;
+        wizardUI.totpCode.focus();
+    }).finally(() => {
+        enableUI(true);
+    });
+}
+
+function onVerifyYubikey(e)
+{
+    const enableUI = (state) => {
+        wizardUI.cancel.disabled = !state;
+        wizardUI.prev.disabled = !state;
+        // The "next" button is always disabled here
+        wizardUI.yubikeyInput.disabled = !state;
+        wizardUI.yubikeyVerify.disabled = !state;
+    };
+
+    enableUI(false);
+
+    beginRequest("POST", "<%= mfa_verify_path %>", {
+        type: "yubikey",
+        code: wizardData.yubikey,
+        description: wizardData.description,
+    }).then(data => {
+        const response = JSON.parse(data);
+
+        console.log(response);
+
+        if (!response.success || response.reused_key) {
+            window.alert(response.message);
+            wizardUI.yubikeyInput.disabled = false;
+            wizardUI.yubikeyInput.focus();
+            return;
+        }
+
+        if (response.code_ok) {
+            if (response.authenticators !== null) {
+                authenticators = response.authenticators.keys;
+                haveRecoveryKeys = response.authenticators.have_recovery_keys;
+                listRecoveryKeys([]);
+                listExistingAuthenticators();
+            } else {
+                // This can happen... in theory
+                window.alert("<%= t('.errors.code_partially_verified') %>");
+            }
+
+            onCancelNewAuthenticator(false);    // eww...
+        } else {
+            window.alert("<%= t('.errors.yubikey_input_incorrect') %>");
+            wizardUI.yubikeyInput.disabled = false;
+            wizardUI.yubikeyInput.focus();
+        }
+    }).catch(error => {
+        console.error(error);
+        window.alert("<%= t('.errors.generic') %>");
+        wizardUI.yubikeyInput.disabled = false;
+        wizardUI.yubikeyInput.focus();
+    }).finally(() => {
+        enableUI(true);
+    });
+}
+
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// RECOVERY KEYS
+
+function enableRecoveryUI(state)
+{
+    document.querySelector("section#new button#addNew").disabled = !state;
+
+    for (const b of document.querySelectorAll("section#existing div#list table button, section#recovery button"))
+        b.disabled = !state;
+}
+
+function listRecoveryKeys(keys)
+{
+    const elem = document.querySelector("section#recovery div#list");
+
+    if (haveRecoveryKeys && keys.length > 0) {
+        elem.innerHTML =
+            "<p><%= t('.recovery.list_disclaimer') %></p><ul>" + keys.map(k => `<li>${k}</li>`).join("") + "</ul>";
+    } else elem.innerText = "";
+}
+
+function onListRecoveryKeys()
+{
+    enableRecoveryUI(false);
+
+    beginRequest("GET", "<%= mfa_list_recovery_keys_path %>").then(data => {
+        const response = JSON.parse(data);
+
+        if (!response.success) {
+            window.alert(response.message);
+            return;
+        }
+
+        listRecoveryKeys(response.keys);
+    }).catch(error => {
+        console.error(error);
+        window.alert("<%= t('.errors.generic') %>");
+    }).finally(() => {
+        enableRecoveryUI(true);
+    });
+}
+
+function onCreateRecoveryKeys()
+{
+    if (haveRecoveryKeys && !window.confirm("<%= t('.recovery.confirm_new') %>"))
+        return;
+
+    enableRecoveryUI(false);
+
+    beginRequest("POST", "<%= mfa_create_recovery_keys_path %>").then(data => {
+        const response = JSON.parse(data);
+
+        if (!response.success) {
+            window.alert(response.message);
+            return;
+        }
+
+        haveRecoveryKeys = true;
+        listRecoveryKeys(response.keys);
+        updateRecoveryKeys();
+    }).catch(error => {
+        console.error(error);
+        window.alert("<%= t('.errors.generic') %>");
+    }).finally(() => {
+        enableRecoveryUI(true);
+    });
+}
+
+function onDeleteRecoveryKeys()
+{
+    if (!window.confirm("<%= t('general_confirm') %>"))
+        return;
+
+    enableRecoveryUI(false);
+
+    beginRequest("DELETE", "<%= mfa_delete_recovery_keys_path %>").then(data => {
+        const response = JSON.parse(data);
+
+        if (!response.success) {
+            window.alert(response.message);
+            return;
+        }
+
+        haveRecoveryKeys = false;
+        listRecoveryKeys([]);
+        updateRecoveryKeys();
+    }).catch(error => {
+        console.error(error);
+        window.alert("<%= t('.errors.generic') %>");
+    }).finally(() => {
+        enableRecoveryUI(true);
+    });
+}
+
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", e => {
+    listExistingAuthenticators();
+
+    // Setup wizard events
+    document.querySelector("button#addNew").addEventListener("click", onStartAddingNewAuthenticator);
+    wizardUI.cancel.addEventListener("click", () => onCancelNewAuthenticator(true));
+    wizardUI.prev.addEventListener("click", onNewAuthenticatorPrevious);
+    wizardUI.next.addEventListener("click", onNewAuthenticatorNext);
+
+    // Setup step 1 events
+    wizardUI.methodTOTP.addEventListener("click", () => {
+        wizardData.method = "totp"
+        wizardUI.description.focus();
+    });
+
+    wizardUI.methodYubikey.addEventListener("click", () => {
+        wizardData.method = "yubikey"
+        wizardUI.description.focus();
+    });
+
+    wizardUI.description.addEventListener("input", e => {
+        // I found some TOTP URL documentation that says the key can be only 40 characters
+        // long, so trim it. The same operation is also done in the server end.
+        wizardData.description = e.target.value.trim().substring(0, 30);
+    });
+
+    wizardUI.description.addEventListener("keypress", e => {
+        // Go to step 2 when Enter is pressed in the description field
+        if (e.key == "Enter")
+            onNewAuthenticatorNext();
+    });
+
+    // Setup TOTP step 2/3 events
+    wizardUI.totpCode.addEventListener("input", e => {
+        // Remove everything that isn't a digit
+        wizardData.code = e.target.value = e.target.value.replace(/\D/g, "");
+        wizardUI.totpVerify.disabled = (wizardData.code.length != 6);
+    });
+
+    wizardUI.totpCode.addEventListener("keypress", e => {
+        // Make Enter to submit the code
+        if (e.key == "Enter" && wizardData.code.length == 6)
+            onVerifyTOTP(null);
+    });
+
+    wizardUI.totpVerify.addEventListener("click", onVerifyTOTP);
+
+    // Setup Yubikey step 2 events
+    wizardUI.yubikeyInput.addEventListener("input", e => {
+        wizardData.yubikey = e.target.value = e.target.value.trim();
+        wizardUI.yubikeyVerify.disabled = (wizardData.yubikey.length < 13);
+    });
+
+    wizardUI.yubikeyInput.addEventListener("keypress", e => {
+        // Make Enter to submit the code, because Yubikey "presses" Enter after it's done
+        if (e.key == "Enter" && wizardData.yubikey.length > 12)
+            onVerifyYubikey(null);
+    });
+
+    wizardUI.yubikeyVerify.addEventListener("click", onVerifyYubikey);
+
+    // Setup recovery key events
+    document.querySelector("section#recovery button#listKeys").addEventListener("click", onListRecoveryKeys);
+    document.querySelector("section#recovery button#createKeys").addEventListener("click", onCreateRecoveryKeys);
+    document.querySelector("section#recovery button#deleteKeys").addEventListener("click", onDeleteRecoveryKeys);
+});
+
+</script>
+<% end %>
+<% end %>
+<% end %>

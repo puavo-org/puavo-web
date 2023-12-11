@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<title>MFA</title>
+<%= csrf_meta_tags %>
+<%= stylesheet_link_tag 'mfa', media: 'all' %>
+</head>
+<body>
+<div id="container">
+<%= yield %>
+</div>
+<% if content_for?(:javascript) %><%= yield :javascript %><% end %>
+</body>
+</html>

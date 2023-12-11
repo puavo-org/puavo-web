@@ -27,6 +27,9 @@ Rails.application.routes.draw do
   get '/get_all_groups' => 'organisations#get_all_groups'
   post '/groups_mass_operations' => 'groups_mass_operations#groups_mass_operation'
 
+  get '/mfa_form' => 'sessions#mfa_ask', :as => :mfa_ask_code
+  post '/mfa_form' => 'sessions#mfa_post', :as => :mfa_post_code
+
   # Organisation-level Puavomenu editor
   get '/puavomenu' => 'organisations#edit_puavomenu', :as => 'organisation_puavomenu'
   post '/puavomenu/save' => 'organisations#save_puavomenu', :as => 'organisation_puavomenu_save'
@@ -209,6 +212,14 @@ Rails.application.routes.draw do
     post('email_verification/:token', to: 'email_verifications#update', as: :email_verification_update, constraints: { token: /[0-9a-fA-F]{128}/ })
     get 'email_verification/complete' => 'email_verifications#complete', :as => :email_verification_completed
 
+    # The MFA editor
+    resource :mfa, only: [:show]
+    post 'mfa/prepare_totp' => 'mfas#prepare_totp', as: :mfa_prepare_totp
+    post 'mfa/verify' => 'mfas#verify', as: :mfa_verify
+    match 'mfa/delete' => 'mfas#delete', as: :mfa_delete, via: :delete
+    get 'mfa/list_recovery_keys' => 'mfas#list_recovery_keys', as: :mfa_list_recovery_keys
+    post 'mfa/create_recovery_keys' => 'mfas#create_recovery_keys', as: :mfa_create_recovery_keys
+    delete 'mfa/delete_recovery_keys' => 'mfas#delete_recovery_keys', as: :mfa_delete_recovery_keys
   end
 
   scope :path => "devices" do

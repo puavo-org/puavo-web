@@ -1,11 +1,13 @@
 class SessionsController < ApplicationController
   include Puavo::LoginCustomisations
+  include Puavo::Integrations     # request ID generation
+  include Puavo::MFA              # MFA server request helper
 
   layout 'sessions'
 
-  skip_before_action :require_puavo_authorization, :only => [ :new, :create ]
+  skip_before_action :require_puavo_authorization, :only => [ :new, :create, :mfa_ask, :mfa_post ]
+  skip_before_action :require_login, :only => [ :new, :create, :mfa_ask, :mfa_post ]
 
-  skip_before_action :require_login, :only => [ :new, :create ]
 
   def new
     # Base content
@@ -49,6 +51,8 @@ class SessionsController < ApplicationController
     session[:uid] = params[:username]
     session[:password_plaintext] = params[:password]
 
+    mfa_init_session
+
     redirect_back_or_default  rack_mount_point
   end
 
@@ -72,6 +76,8 @@ class SessionsController < ApplicationController
 
     # Forget language changes
     session.delete :user_locale
+
+    mfa_purge_session
   end
 
   def destroy
@@ -94,5 +100,162 @@ class SessionsController < ApplicationController
     end
 
     redirect_back(fallback_location: "/users")
+  end
+
+  # ------------------------------------------------------------------------------------------------
+  # MULTI-FACTOR AUTHENTICATION
+
+  def _mfa_redis
+    Redis::Namespace.new('puavo:mfa:login', redis: REDIS_CONNECTION)
+  end
+
+  def mfa_init_session
+    session[:uuid] = nil          # we haven't authenticated the user yet, so this is unknown
+    session[:mfa] = 'unknown'     # we don't know yet if the user even has MFA enabled or not
+  end
+
+  def mfa_purge_session
+    session.delete :uuid
+    session.delete :mfa
+  end
+
+  # Asks for the MFA code
+  def mfa_ask
+    request_id = generate_synchronous_call_id
+
+    begin
+      unless session.include?(:mfa) || session.include?(:uuid) || ['ask', 'fail'].include?(session[:mfa])
+        # This can happen if the MFA form URL is accessed directly, or the user tries
+        # to return to it
+        purge_session
+        mfa_error(t('sessions.new.mfa.errors.no_session'))
+        return
+      end
+
+      if session[:mfa] == 'fail'
+        redis = _mfa_redis
+
+        if !session.include?(:uuid) || redis.get(session[:uuid]).nil?
+          # This can happen if the Redis token expires before the form is opened
+          # (because if the code was not correct, we're essentially in a loop
+          # asking the code again and again, and the token can expire between the
+          # previous and this iteration).
+          purge_session
+          mfa_error(t('sessions.new.mfa.errors.expired'))
+          return
+        end
+
+        @mfa_error = t('sessions.new.mfa.incorrect_code')
+      end
+
+      mfa_form
+    rescue StandardError => e
+      purge_session
+      logger.error("[#{request_id}] unhandled exception: #{e}")
+      mfa_error(t('sessions.new.mfa.errors.fatal_error', request_id: request_id))
+    end
+  end
+
+  # Validate the MFA code
+  def mfa_post
+    request_id = generate_synchronous_call_id
+    redis = _mfa_redis
+
+    if !session.include?(:uuid) || redis.get(session[:uuid]).nil?
+      # This can happen if the Redis token expires while the form is being displayed
+      purge_session
+      mfa_error(t('sessions.new.mfa.errors.expired'))
+      return
+    end
+
+    if params.include?('cancel')
+      # Cancel the login attempt. This one is simpler to implement than on puavo-rest side,
+      # because here the login form path is always fixed.
+      redis.del(session[:uuid])
+      purge_session
+      redirect_to login_path
+      return
+    end
+
+    begin
+      logger.info("[#{request_id}] checking the MFA code for user #{session[:uuid]}")
+
+      response, data = Puavo::MFA.mfa_call(request_id, :post, 'authenticate', data: {
+        userid: session[:uuid],
+        code: params.fetch('mfa_code', '')
+      })
+
+      logger.info("[#{request_id}] MFA server response ID: #{response.headers['X-Request-ID']}")
+
+      if response.status == 200 && data['status'] == 'success' && data['messages'].include?('1002')
+        logger.info("[#{request_id}] the code is valid")
+        redis.del(session[:uuid])
+        session[:mfa] = 'pass'
+        redirect_back_or_default rack_mount_point
+      elsif response.status == 403 && data['status'] == 'fail' && data['messages'].include?('2002')
+        logger.info("[#{request_id}] the code is not valid")
+        session[:mfa] = 'fail'
+
+        if redis.incr(session[:uuid]) > 4
+          # Too many attempts
+          redis.del(session[:uuid])
+          purge_session
+          logger.error("[#{request_id}] too many failed MFA attempts")
+          mfa_error(t('sessions.new.mfa.errors.too_many_attempts'))
+          return
+        end
+
+        redirect_to mfa_ask_code_path
+      else
+        logger.error("[#{request_id}] unhandled MFA server response:")
+        logger.error("[#{request_id}]   #{response.inspect}")
+        logger.error("[#{request_id}]   #{data.inspect}")
+        redis.del(session[:uuid])
+        purge_session
+        mfa_error(t('sessions.new.mfa.errors.mfa_server_error', request_id: request_id))
+      end
+    rescue StandardError => e
+      redis.del(session[:uuid])
+      purge_session
+      logger.error("[#{request_id}] unhandled exception: #{e}")
+      mfa_error(t('sessions.new.mfa.errors.fatal_error', request_id: request_id))
+    end
+  end
+
+  def mfa_form
+    # The form layout is the same for normal puavo-web logins and also puavo-rest's SSO logins,
+    # so all these must be set. The MFA form cannot be customised yet.
+    @login_content = {
+      'prefix' => '/login',
+      'mfa_post_uri' => mfa_post_code_path,
+
+      # The form translations come from different places, so they cannot be embedded directly
+      # into the template. (FIXME: Or can they?)
+      'mfa_help' => t('sessions.new.mfa.help'),
+      'mfa_help2' => t('sessions.new.mfa.help2'),
+      'mfa_continue' => t('sessions.new.mfa.continue'),
+      'mfa_cancel' => t('sessions.new.mfa.cancel'),
+    }
+
+    respond_to do |format|
+      format.html do
+        render :file => 'rest/views/mfa_form'
+      end
+    end
+  end
+
+  def mfa_error(message)
+    # The same layout is used here too
+    @login_content = {
+      'error_message' => message,
+      'technical_support' => t('sessions.new.technical_support'),
+      'prefix' => '/login',
+    }
+
+    respond_to do |format|
+      format.html do
+        render :file => 'rest/views/generic_error'
+      end
+    end
   end
 end

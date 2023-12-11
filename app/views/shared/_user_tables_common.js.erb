@@ -242,6 +242,12 @@ const COLUMN_DEFINITIONS = {
         type: ST.ColumnType.STRING,
         customCSS: ["font-monospace"],      // this makes these easier to read
     },
+
+    mfa: {
+        key: "mfa",
+        title: "MFA?",
+        type: ST.ColumnType.BOOL,
+    },
 };
 
 // The default order for columns
@@ -270,6 +276,7 @@ const COLUMN_ORDER = [
     "created",
     "modified",
     "licenses",
+    "mfa",
 ];
 
 <% if @is_owner %>

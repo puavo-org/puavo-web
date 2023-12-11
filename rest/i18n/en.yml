@@ -39,3 +39,13 @@ email_verification:
   message_head: "You just requested for this email address to be verified."
   message: "Verify the address by clicking this link: %1"
   footer: "The link is valid for one hour. If you did not make this request, you can ignore this message. If you suspect that someone else is trying to verify this address without you knowing about it, please contact Opinsys technical support and give them the contents of this message."
+mfa:
+  help: "Two-factor authentication has been activated on your account. Please enter the single-use authentication code or one of the recovery codes, then press Enter or click \"Continue\"."
+  help2: "The code must be entered within five minutes, otherwise the login expires.<br>Five incorrect attempts will also halt the login process."
+  continue: "Continue"
+  cancel: "Cancel"
+  token_expired: "Your login attempt has expired. Go to the original login form and try logging in again."
+  too_many_attempts: "Too many failed two-factor login attempts. Login halted. Go to the original login form and try logging in again."
+  incorrect_code: "Incorrect code"
+  validation_server_error: "Authentication server error. Try logging in again. If the problem persists, please contact support and give them this code: %1."
+  system_error: "Fatal error, login halted. Please contact support and give them this code: %1."
