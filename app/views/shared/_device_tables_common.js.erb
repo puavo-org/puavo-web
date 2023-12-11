@@ -75,11 +75,13 @@ const COLUMN_DEFINITIONS = {
         transform: entry => [entry.abitti_version, entry.abitti_version, entry.abitti_version],
     },
 
+<% unless @is_servers %>
     allow_guest: {
         key: "allow_guest",
         title: "<%= t('columns.devices.allow_guest') %>",
         type: ST.ColumnType.BOOL,
     },
+<% end %>
 
     audio_sink: {
         key: "audio_sink",
@@ -95,6 +97,7 @@ const COLUMN_DEFINITIONS = {
         export_name: "audio_in",
     },
 
+<% unless @is_servers %>
     auto_updates: {
         key: "auto_updates",
         title: "<%= t('columns.devices.auto_updates') %>",
@@ -118,6 +121,7 @@ const COLUMN_DEFINITIONS = {
         title: "<%= t('columns.devices.autopower_off') %>",
         type: ST.ColumnType.NUMERIC,
     },
+<% end %>
 
 <% if @is_servers %>
     available_images: {
@@ -510,6 +514,7 @@ const COLUMN_DEFINITIONS = {
         },
     },
 
+<% unless @is_servers %>
     personal_admin: {
         key: "personal_admin",
         title: "<%= t('columns.devices.personal_admin') %>",
@@ -522,6 +527,7 @@ const COLUMN_DEFINITIONS = {
         title: "<%= t('columns.devices.personal_device') %>",
         type: ST.ColumnType.BOOL,
     },
+<% end %>
 
     printer_uri: {
         key: "printer_uri",
@@ -741,6 +747,7 @@ const COLUMN_ORDER = [
     "printer_uri",
     "audio_src",
     "audio_sink",
+<% unless @is_servers %>
     "allow_guest",
     "personal_admin",
     "personal_device",
@@ -748,7 +755,6 @@ const COLUMN_ORDER = [
     "autopower_mode",
     "autopower_on",
     "autopower_off",
-<% unless @is_servers %>
     "reset_from",
     "reset_time",
     "reset_pin",
