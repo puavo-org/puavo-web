@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   get '/extended_search' => 'extended_search#index'
   post '/extended_search' => 'extended_search#do_search', via: [:options]
 
+  post '/schools_mass_operations' => 'schools_mass_operations#schools_mass_operation'
+
   get '/all_devices' => 'organisations#all_devices'
   get '/get_all_devices' => 'organisations#get_all_devices'
   post '/devices_mass_operations' => 'devices_mass_operations#devices_mass_operation'
