@@ -291,6 +291,8 @@ function schoolActions(entry)
     return `<a href="/users/schools/${entry.id[ST.INDEX_FILTERABLE]}/edit" class="btn"><%= t('link.edit') %></a>`;
 }
 
+<% if @is_owner %>
+
 // Mass operation: set database field value
 class MassSchoolSetFieldValue extends ST.MassOperation {
     constructor(parent, container)
@@ -603,6 +605,8 @@ const MASS_OPERATIONS = [
     },
 ];
 
+<% end %>
+
 const DEFAULT_COLUMNS = ["name", "prefix", "school_code", "school_oid", "eid", "integrations", "num_members", "num_groups", "num_devices", "boot_servers"];
 const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
 
@@ -639,13 +643,17 @@ document.addEventListener("DOMContentLoaded", function() {
             id: "schools",
             locale: "<%= supertable_sorting_locale %>",
             csvPrefix: `<%= LdapOrganisation.current.o %>-schools`,
+<% if @is_owner %>
             enableSelection: true,
+<% end %>
             enablePagination: false,
             columnDefinitions: COLUMN_DEFINITIONS,
             columnOrder: COLUMN_ORDER,
             actions: schoolActions,
+<% if @is_owner %>
             massOperations: MASS_OPERATIONS,
             massOperationsEndpoint: "<%= schools_mass_operations_path %>",
+<% end %>
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
             staticData: RAW_DATA,
