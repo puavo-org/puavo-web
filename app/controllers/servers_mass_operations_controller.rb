@@ -1,7 +1,7 @@
 # All servers-related mass operations
 
 class ServersMassOperationsController < MassOperationsController
-  include Puavo::DevicesShared
+  include Puavo::CommonShared
 
   # POST '/servers_mass_operation'
   def servers_mass_operation
@@ -12,9 +12,11 @@ class ServersMassOperationsController < MassOperationsController
 
       case @operation
         when 'set_field'
-          set_database_field(Server.find(id), is_server: true)
+          # This comes from Puavo::CommonShared
+          set_database_field(Server.find(id))
 
         when 'puavoconf_edit'
+          # This comes from Puavo::CommonShared
           puavoconf_edit(Server.find(id))
 
         else

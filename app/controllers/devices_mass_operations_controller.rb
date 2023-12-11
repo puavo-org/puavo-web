@@ -1,7 +1,7 @@
 # All devices-related mass operations
 
 class DevicesMassOperationsController < MassOperationsController
-  include Puavo::DevicesShared
+  include Puavo::CommonShared
 
   # POST '/devices_mass_operation'
   def devices_mass_operation
@@ -12,12 +12,14 @@ class DevicesMassOperationsController < MassOperationsController
 
       case @operation
         when 'set_field'
+          # This comes from Puavo::CommonShared
           set_database_field(Device.find(id))
 
         when 'purchase_info'
           _change_purchase_info(id, data)
 
         when 'puavoconf_edit'
+          # This comes from Puavo::CommonShared
           puavoconf_edit(Device.find(id))
 
         when 'change_school'
