@@ -15,7 +15,7 @@ class MFAManagement < PuavoSinatra
     got = request.env.fetch('HTTP_AUTHORIZATION', '')
 
     auth_config = CONFIG['mfa_management']['client']
-    expected = 'Basic ' + Base64.encode64(auth_config['username'] + ':' + auth_config['password']).strip
+    expected = 'Basic ' + Base64.strict_encode64(auth_config['username'] + ':' + auth_config['password']).strip
 
     unless got == expected
       $rest_log.error("got a POST /mfa/change_state with invalid authorisation (#{got}), from an IP address \"#{request.ip}\"")
