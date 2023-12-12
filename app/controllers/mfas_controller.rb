@@ -360,6 +360,7 @@ class MfasController < ApplicationController
 
     response = HTTP
       .basic_auth(user: auth['username'], pass: auth['password'])
+      .headers(host: LdapOrganisation.current.puavoDomain)
       .post(mfa_management_host + '/v3/mfa/change_state', json: {
         request_id: @request_id,
         user_dn: user.dn.to_s,
