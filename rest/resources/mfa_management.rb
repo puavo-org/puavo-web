@@ -48,18 +48,18 @@ class MFAManagement < PuavoSinatra
       # Ensure we have a boolean
       case data['mfa_state']
         when true
-          user.mfa_enabled = true
           $rest_log.info("[#{request_id}] MFA enabled")
+          new_state = ['TRUE']
         when false
-          user.mfa_enabled = false
           $rest_log.info("[#{request_id}] MFA disabled")
+          new_state = ['FALSE']
         else
           $rest_log.error("[#{request_id}] Cannot interpret the MFA state as a boolean")
           status 400
           return
       end
 
-      user.save!
+      user.class.ldap_op(:modify, data['user_dn'], [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoMFAEnabled', new_state)])
     rescue StandardError => e
       $rest_log.error("[#{request_id}] Could not update the MFA activation state: #{e}")
       status 500

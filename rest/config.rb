@@ -76,7 +76,7 @@ if ENV['RACK_ENV'] == 'test' then
         'password' => 'mfa_password'
       },
       'server' => {
-        'username' => 'uid=admin,o=puavo',
+        'username' => 'uid=mfa-mgmt,o=puavo',
         'password' => 'password'
       },
     },
