@@ -509,10 +509,10 @@ class SSO < PuavoSinatra
       # Is the code valid? Only the MFA verification server knows that, so ask it.
       mfa_code = params.fetch('mfa_code', nil)
 
-      rlog.info("[#{request_id}] sending the code check request to \"#{CONFIG['mfa_server']}\"")
+      rlog.info("[#{request_id}] sending the code check request to \"#{CONFIG['mfa_server']['server']}\"")
 
       response = HTTP
-        .auth("Bearer devel #{CONFIG['mfa_server']['bearer_key']}")
+        .auth("Bearer #{CONFIG['mfa_server']['bearer_key']}")
         .headers('X-Request-ID' => request_id)
         .post("#{CONFIG['mfa_server']['server']}/v1/authenticate", json: {
           userid: user_uuid,
