@@ -16,6 +16,7 @@ html {
 
 body {
   background: var(--page-background);
+  color: var(--content-foreground);
   font-family: var(--font);
   margin: 0;
   padding: 1em;
@@ -23,7 +24,7 @@ body {
 
 section header.header {
   font-size: 120%;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--input-border-active);
 }
 
 header.subHeader {
@@ -35,7 +36,7 @@ section#existing table {
 }
 
 section#existing table tr {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--button-border);
 }
 
 section#existing table tr:last-of-type {
@@ -43,7 +44,7 @@ section#existing table tr:last-of-type {
 }
 
 section#existing table tr:hover {
-  background: #f0f0f0;
+  background: var(--slight-background-hover);
 }
 
 section#existing table td {
@@ -89,7 +90,6 @@ section#new img#totp_qr {
 section#new p#totp_secret {
   font-family: monospace;
   font-size: 150%;
-  color: #00f;
   letter-spacing: 0.1em;
 }
 
