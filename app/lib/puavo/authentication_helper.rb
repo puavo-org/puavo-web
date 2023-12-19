@@ -149,6 +149,14 @@ module Puavo
           # That's how long the user has time to enter the code.
           redis = Redis::Namespace.new('puavo:mfa:login', redis: REDIS_CONNECTION)
           redis.set(session[:uuid], '0', nx: true, ex: 60 * 5)
+
+          # Remember the original URL the user was trying to access. We need to store this again,
+          # because the redirect from the login form does not go directly to the MFA form, but
+          # instead the login code calls redirect_back_or_default() (see below), which removes the
+          # URL from the session data and causes a new redirect which then leads to the MFA form.
+          # But fortunately we need to do this only once; entering an invalid MFA code does not
+          # lose the URL because we don't call redirect_back_or_default until the code is valid.
+          store_location
         else
           # MFA is not active, just continue normally
           session[:mfa] = 'skip'
