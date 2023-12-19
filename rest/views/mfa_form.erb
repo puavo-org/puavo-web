@@ -8,7 +8,7 @@
             <p id="mfa_help2"><%= raw @login_content['mfa_help2'] %></p>
 
             <div class="mfa_row">
-                <input type="text" id="mfa_code" name="mfa_code" maxlength="50" size="60" autocomplete="off" autofocus>
+                <input type="text" id="mfa_code" name="mfa_code" maxlength="50" size="50" autocomplete="off" autofocus>
                 <% if @mfa_error %>
                 <div id="mfa_invalid_code"><%= @mfa_error %></div>
                 <% end %>
