@@ -676,7 +676,7 @@ function listRecoveryKeys(keys)
 
     if (haveRecoveryKeys && keys.length > 0) {
         elem.innerHTML =
-            "<p><%= t('.recovery.list_disclaimer') %></p><ul>" + keys.map(k => `<li>${k}</li>`).join("") + "</ul>";
+            "<p><%= t('.recovery.list_disclaimer') %></p><div class=\"keys\">" + keys.map(k => `${k}</br>`).join("") + "</div>";
     } else elem.innerText = "";
 }
 
