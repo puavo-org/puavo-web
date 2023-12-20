@@ -210,6 +210,19 @@ class MfasController < ApplicationController
           unless set_mfa_state(@user, false)
             result[:success] = false
             result[:message] = t('.server.errors.mfa_deactivation_error', request_id: @request_id)
+          else
+            # Delete the recovery keys too (all authenticators have been deleted). Calling mfa_operation() inside
+            # mfa_operation() would cause a double rendering error, so there's no error handling here.
+            logger.info("[#{@request_id}] all authenticators deleted, removing the recovery keys (if any)")
+            response, data = Puavo::MFA.mfa_call(@request_id, :delete, "recovery/keys/#{@user.puavoUuid}")
+
+            unless response.code == 200 && data['status'] == 'success'
+              logger.error("[#{@request_id}] failed to delete the recovery keys:")
+              logger.error("[#{@request_id}] #{data.inspect}")
+            else
+              # Clear the keys
+              result[:authenticators][:have_recovery_keys] = false
+            end
           end
         end
       elsif response.code == 404 && data['status'] == 'error'
