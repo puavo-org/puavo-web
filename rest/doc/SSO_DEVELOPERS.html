@@ -128,6 +128,22 @@
 
 <pre>https://example.com/path?custom_field=bar&amp;jwt=&lt;the jwt token&gt;</pre>
 
+<h2>Full user information using separate API</h2>
+
+<p>Because browsers have length limits for URLs and headers, full school and group information for user can not always be included in JWT-data. In this situation you can fetch the full information using separate API.</p>
+
+<p>If you need to use this API, ask required credentials from <code>tuki @ opinsys.fi</code>. You need to tell which <code>organisation_domain</code> users information you want to fetch.</p>
+
+<p>API uses Basic Authentication with username and password.</p>
+
+<p>API is available using the <code>GET</code>-request from:</p>
+
+<pre>https://DOMAIN/v3/users/USERNAME</pre>
+
+<p>Substitute <code>DOMAIN</code> with the users <code>organisation_domain</code> and <code>USERNAME</code> with users username.</p>
+
+<p>API returns all available user information as JSON.</p>
+
 <h2>Implementation help</h2>
 
 <ul>
