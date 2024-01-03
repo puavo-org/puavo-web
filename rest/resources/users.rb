@@ -677,13 +677,32 @@ class User < LdapModel
     end
   end
 
-  computed_attr :external_domain_username
-  def external_domain_username
-    return nil unless CONFIG.has_key?("external_domain")
-    return nil if CONFIG["external_domain"].class != Hash
-    return nil unless CONFIG["external_domain"].has_key?(organisation.organisation_key)
+  def get_request_domain(request_username, request_domain)
+    return request_domain if request_domain
 
-    "#{ username }@#{ CONFIG["external_domain"][organisation.organisation_key] }"
+    if request_username.include?('@') then
+      username, domain = request_username.split('@')
+      return domain
+    end
+
+    return nil
+  end
+
+  computed_attr :external_domain_username
+  def external_domain_username(request_username, request_domain)
+    domain_to_consider = get_request_domain(request_username, request_domain)
+
+    return nil unless domain_to_consider
+    return nil unless CONFIG.has_key?('external_domains')
+    return nil unless CONFIG['external_domains'].kind_of?(Hash)
+    return nil unless CONFIG['external_domains'].has_key?(organisation.organisation_key)
+
+    external_domains = CONFIG['external_domains'][organisation.organisation_key]
+
+    return nil unless external_domains.kind_of?(Array)
+    return nil unless external_domains.any?(domain_to_consider)
+
+    "#{ username }@#{ domain_to_consider }"
   end
 
   def server_user?

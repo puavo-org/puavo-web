@@ -155,8 +155,8 @@ class SSO < PuavoSinatra
       rlog.info("[#{request_id}] the user has a verified email address")
     end
 
-    url, user_hash =
-      @external_service.generate_login_url(@external_service.filtered_user_hash(user), return_to)
+    filtered_user = @external_service.filtered_user_hash(user, params['username'], params['organisation'])
+    url, user_hash = @external_service.generate_login_url(filtered_user, return_to)
 
     rlog.info("[#{request_id}] SSO login ok")
 
@@ -287,14 +287,19 @@ class SSO < PuavoSinatra
 
       # If external domains are specified, then try doing a reverse lookup
       # (ie. convert the external domain back into an organisation name)
-      if CONFIG.include?('external_domain')
-        CONFIG['external_domain'].each do |name, external|
-          if external == req_organisation
-            rlog.info("Found a reverse mapping from external domain \"#{external}\" " \
-                      "to \"#{name}\", using it instead")
-            req_organisation = name
-            break
+      if CONFIG.include?('external_domains') then
+        org_found = false
+        CONFIG['external_domains'].each do |name, external_list|
+          external_list.each do |external|
+            if external == req_organisation then
+              rlog.info("Found a reverse mapping from external domain \"#{external}\" " \
+                        "to \"#{name}\", using it instead")
+              req_organisation = name
+              org_found = true
+              break
+            end
           end
+          break if org_found
         end
       end
 
@@ -375,8 +380,8 @@ class SSO < PuavoSinatra
   def ensure_topdomain(org)
     return if org.nil?
 
-    CONFIG["external_domain"]&.each do |k, e|
-      if e == org
+    CONFIG['external_domains']&.each do |k, e|
+      if e.include?(org) then
         org = k + "." + topdomain
         break
       end
@@ -385,6 +390,7 @@ class SSO < PuavoSinatra
     if !org.end_with?(topdomain)
       return "#{ org }.#{ topdomain }"
     end
+
     org
   end
 
