@@ -680,7 +680,7 @@ class User < LdapModel
   def get_request_domain(request_username, request_domain)
     return request_domain if request_domain
 
-    if request_username.include?('@') then
+    if request_username && request_username.include?('@') then
       username, domain = request_username.split('@')
       return domain
     end
@@ -689,10 +689,7 @@ class User < LdapModel
   end
 
   computed_attr :external_domain_username
-  def external_domain_username(request_username, request_domain)
-    domain_to_consider = get_request_domain(request_username, request_domain)
-
-    return nil unless domain_to_consider
+  def external_domain_username(request_username=nil, request_domain=nil)
     return nil unless CONFIG.has_key?('external_domains')
     return nil unless CONFIG['external_domains'].kind_of?(Hash)
     return nil unless CONFIG['external_domains'].has_key?(organisation.organisation_key)
@@ -700,6 +697,13 @@ class User < LdapModel
     external_domains = CONFIG['external_domains'][organisation.organisation_key]
 
     return nil unless external_domains.kind_of?(Array)
+
+    domain_to_consider = get_request_domain(request_username, request_domain)
+    if !domain_to_consider && external_domains.count == 1 then
+      domain_to_consider = external_domains.first
+    end
+
+    return nil unless domain_to_consider
     return nil unless external_domains.any?(domain_to_consider)
 
     "#{ username }@#{ domain_to_consider }"
