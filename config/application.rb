@@ -3,11 +3,6 @@ require_relative 'boot'
 require 'puavo'
 require "rails"
 
-# The Rails upgrade process wants this, but we cannot use it. We aren't using Rails'
-# database layer and we don't have config/database.yml. I guess I could add an empty
-# file, but I don't know enough of how Rails works to ensure that won't break anything.
-#require 'rails/all'
-
 require "action_controller/railtie"
 require "action_mailer/railtie"
 require "rails/test_unit/railtie"
