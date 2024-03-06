@@ -41,7 +41,7 @@ class ExternalService < LdapModel
   end
 
   # Filters a User.to_hash down to a suitable level for SSO URLs
-  def filtered_user_hash(user)
+  def filtered_user_hash(user, request_username, request_domain)
     schools_hash = user.schools_hash()    # Does not call json()
 
     primary_school_id = user.primary_school_id
@@ -87,7 +87,7 @@ class ExternalService < LdapModel
       'year_class' => yc_name,
       'organisation_name' => user.organisation_name,
       'organisation_domain' => user.organisation_domain,
-      'external_domain_username' => user.external_domain_username,
+      'external_domain_username' => user.external_domain_username(request_username, request_domain),
       'schools' => schools_hash,
       'learner_id' => user.learner_id,
     }

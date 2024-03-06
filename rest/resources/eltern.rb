@@ -156,8 +156,8 @@ class Eltern < PuavoSinatra
       return render_form(t.sso.service_not_activated)
     end
 
-    url, user_hash =
-      @external_service.generate_login_url(@external_service.filtered_user_hash(user), return_to)
+    filtered_user = @external_service.filtered_user_hash(user, params['username'], params['organisation'])
+    url, user_hash = @external_service.generate_login_url(filtered_user, return_to)
 
     rlog.info("[#{request_id}] SSO login ok")
     rlog.info("[#{request_id}] redirecting SSO auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
