@@ -682,6 +682,9 @@ class Devices < PuavoSinatra
         next unless conf.fetch('puavo.profile.ers', '') == 'true' ||
                     conf.fetch('puavo.profiles.list', '').split(',').include?('ers')
 
+        # ERS servers with a naksu profile do not have exam-o-matic integration
+        next if conf.fetch('puavo.ers.mode', '') == 'naksu'
+
         # Include school information directly in the response,
         # so we don't have to make multiple searches
         school_dn = dev['puavoSchool'][0]
