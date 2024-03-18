@@ -667,7 +667,7 @@ fi:
       invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
       extlogin_password_changed_but_puavo_failed: "Salasananvaihto onnistui, mutta ei kuitenkaan kaikkiin palveluihin.  Ota tarvittaessa yhteys tukipalveluun."
       connection_failed: "Pahoittelut, mutta jotain meni nyt pieleen. Yritä uudelleen hetken kuluttua. Jos vaihto epäonnistuu uudelleen, ota yhteys Opinsysin tukeen."
-      can_not_change_password: "Jostain syystä salasanan vaihto ei onnistunut. Yritä uudelleen hetken kuluttua. Jos vaihto epäonnistuu yhä, ota yhtey Opinsysin tukeen ja anna heille tämä koodi: %{code}."
+      can_not_change_password: "Jostain syystä salasanan vaihto ei onnistunut. Yritä uudelleen hetken kuluttua. Jos vaihto epäonnistuu yhä, ota yhteys Opinsysin tukeen ja anna heille tämä koodi: %{code}."
       can_not_change_upstream_password: "Jostain syystä salasanan vaihto lähdepalveluun ei onnistunut. Yritä uudelleen hetken kuluttua, ja jos vaihto epäonnistuu yhä, ota yhteys Opisysin tukeen."
       token_lifetime_has_expired: "Linkkisi on vanhentunut tai virheellinen. Syötä sähköpostiosoite uudelleen."
       too_many_attempts: "Salasanan vaihtojen välillä on odotettava 10 sekuntia."
