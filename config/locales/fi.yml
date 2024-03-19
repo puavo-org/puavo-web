@@ -1245,6 +1245,7 @@ fi:
       unknown_group: "Tuntematon/virheellinen ryhmä"
 
     pdf:
+      no_users: "(Ei käyttäjiä)"
       page: "sivu"
       end: "Loppu"
 

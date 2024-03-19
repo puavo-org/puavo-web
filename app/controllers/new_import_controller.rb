@@ -477,7 +477,7 @@ class NewImportController < ApplicationController
         pdf.start_new_page()
         pdf.font('unicodefont')
         pdf.font_size(12)
-        pdf.draw_text("(No users)",
+        pdf.draw_text(t('new_import.pdf.no_users'),
                       at: pdf.bounds.top_left)
       else
         grouped_users.each do |group_name, group_users|
