@@ -58,6 +58,8 @@ class User < LdapModel
 
   ldap_map :puavoLicenses, :licenses
 
+  ldap_map :puavoCitrixId, :citrix_id
+
   skip_serialize :external_data
 
   # List of school DNs where the user is school admin
