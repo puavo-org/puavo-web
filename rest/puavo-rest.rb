@@ -47,6 +47,10 @@ require_relative "./resources/external_login"
 require_relative "./resources/bootserver_dns"
 require_relative "./resources/my_school_users"
 
+if CONFIG['citrix']
+  require_relative './resources/citrix'
+end
+
 if ENV.include?('ENABLE_ELTERN_SSO')
 require_relative "./resources/eltern"
 end

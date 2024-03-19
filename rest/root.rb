@@ -206,5 +206,9 @@ class Root < PuavoSinatra
     use PuavoRest::MFAManagement
   end
 
+  if CONFIG['citrix']
+    use PuavoRest::Citrix
+  end
+
 end
 end
