@@ -83,6 +83,8 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}), {
         list_missing_users: "The list was not created. The table contains %{count} users who could not be found. They might have been deleted, or they could be in a school you do not have access to:",
         list_loading_failed: "List loading failed:",
         download_template_nothing_selected: "Please select at least one column.",
+        server_sent_invalid_filename: "The server sent an invalid filename for the generated PDF. You will have to rename the file yourself.",
+        pdf_generation_failed: "PDF generation failed:\n\n%{message}\n\nThe server log might contain more information.",
     },
 
     errors: {
@@ -204,6 +206,8 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}), {
         list_missing_users: "Listaa ei luotu. Taulukko sisältää %{count} käyttäjää joita ei löydy. Heidät on ehkä poistettu, tai he ovat koulussa johon sinulla ei ole pääsyoikeutta:",
         list_loading_failed: "Listan lataus epäonnistui:",
         download_template_nothing_selected: "Valitse edes yksi sarake.",
+        server_sent_invalid_filename: "Palvelin lähetti PDF-tiedoston virheellisellä tiedostonimellä. Sinun on nimettävä tiedosto uudelleen itse.",
+        pdf_generation_failed: "PDF:n luonti epäonnistui:\n\n%{message}\n\nPalvelimen lokissa voi olla lisätietoa.",
     },
 
     errors: {

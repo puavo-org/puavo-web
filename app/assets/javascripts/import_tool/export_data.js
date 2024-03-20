@@ -97,7 +97,7 @@ function exportPDF(data, selectionState, includePasswords)
         const match = /^attachment; filename="(?<filename>.+)"$/.exec(response.headers.get("Content-Disposition"));
 
         if (!match) {
-            window.alert("The server sent an invalid filename for the generated PDF. You will have to rename it yourself.");
+            window.alert(_tr("alerts.server_sent_invalid_filename"));
             filename = "generated_passwords.pdf";
         } else filename = match.groups.filename;
 
@@ -105,7 +105,7 @@ function exportPDF(data, selectionState, includePasswords)
     }).then(data => {
         if (failed) {
             console.log(data);
-            throw new Error(`PDF generation failed:\n\n${data.message}\n\nThe server log might contain more information.`);
+            throw new Error(_tr("alerts.pdf_generation_failed", { message: data.message }));
         }
 
         // Trigger a download
