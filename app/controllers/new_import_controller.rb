@@ -1,6 +1,8 @@
 # New Mass Users Import/Update
 
 class NewImportController < ApplicationController
+  include PasswordsPdfHelper      # PDF generation
+
   # Attributes whose values must be unique and must therefore be processed separately, so
   # that if their values cause problems, other values can be still saved
   UNIQUE_ATTRS = ['eid', 'phone', 'email'].freeze
@@ -409,15 +411,7 @@ class NewImportController < ApplicationController
 
       # Find a suitable group for each user. Since a user can belong to many groups,
       # prioritize the groups and try to find the "best" match.
-      group_priority = {
-        'teaching group' => 5,
-        'year class' => 4,
-        'course group' => 3,
-        'administrative group' => 2,
-        'archive users' => 1,
-        'other groups' => 0,
-        nil => -1,
-      }.freeze
+      group_priority = PasswordsPdfHelper.get_group_priorities()
 
       users.each do |user|
         best = nil
@@ -426,7 +420,6 @@ class NewImportController < ApplicationController
           next unless this[:members].include?(user[:dn])
 
           if best.nil? || group_priority[this[:type]] > group_priority[best[:type]]
-            # This group type has a higher priority than the existing group
             best = this
           end
         end
@@ -437,6 +430,8 @@ class NewImportController < ApplicationController
           else
             user[:group] = "#{best[:name]}"
           end
+        else
+          user[:group] = t('new_import.pdf.no_group')
         end
       end
 
@@ -445,82 +440,11 @@ class NewImportController < ApplicationController
         [a[:group], a[:last], a[:first], a[:uid]] <=> [b[:group], b[:last], b[:first], b[:uid]]
       end
 
-      # Figure out the total page count. Each teaching group gets its own page (or pages).
-      # I determined empirically that 18 users per page is more or less the maximum.
-      # If you put more, the final user can get split across two pages.
-      users_per_page = 18
-      num_pages = 0
-      current_page = 0
-
-      grouped_users = users.chunk { |u| u[:group] }
-
-      grouped_users.each do |group_name, group_users|
-        num_pages += group_users.each_slice(users_per_page).count
-      end
-
-      now = Time.now
-      header_timestamp = now.strftime('%Y-%m-%d %H:%M:%S')
-      filename_timestamp = now.strftime('%Y%m%d_%H%M%S')
-
-      pdf = Prawn::Document.new(skip_page_creation: true, page_size: 'A4')
-      Prawn::Fonts::AFM.hide_m17n_warning = true
-
-      # Use a proper Unicode font
-      pdf.font_families['unicodefont'] = {
-        normal: {
-          font: 'Regular',
-          file: Pathname.new(Rails.root.join('app', 'assets', 'stylesheets', 'font', 'FreeSerif.ttf')),
-        }
-      }
-
-      if users.count == 0
-        pdf.start_new_page()
-        pdf.font('unicodefont')
-        pdf.font_size(12)
-        pdf.draw_text(t('new_import.pdf.no_users'),
-                      at: pdf.bounds.top_left)
-      else
-        grouped_users.each do |group_name, group_users|
-          group_users.each_slice(users_per_page).each_with_index do |block, _|
-            pdf.start_new_page()
-
-            pdf.font('unicodefont')
-            pdf.font_size(18)
-            headertext = "#{current_organisation.name}"
-            headertext += ", #{group_name}" if group_name && group_name.length > 0
-            pdf.text(headertext)
-
-            pdf.font('unicodefont')
-            pdf.font_size(12)
-            pdf.draw_text("(#{t('new_import.pdf.page')} #{current_page + 1}/#{num_pages}, #{header_timestamp})",
-                          at: [(pdf.bounds.right - 160), 0])
-            pdf.text("\n")
-
-            current_page += 1
-
-            block.each do |u|
-              pdf.font('unicodefont')
-              pdf.font_size(12)
-
-              pdf.text("#{u[:last]}, #{u[:first]} (#{u[:uid]})")
-
-              if u[:password]
-                pdf.font('Courier')
-                pdf.text(u[:password])
-              end
-
-              pdf.text("\n")
-            end
-          end
-        end
-      end
-
+      # Generate the PDF
+      filename_timestamp, pdf = PasswordsPdfHelper.generate_pdf(users, current_organisation.name)
       filename = "#{current_organisation.organisation_key}_#{@school.cn}_#{filename_timestamp}.pdf"
 
-      send_data(pdf.render,
-                filename: filename,
-                type: 'application/pdf',
-                disposition: 'attachment')
+      send_data(pdf.render, filename: filename, type: 'application/pdf', disposition: 'attachment')
     rescue => e
       puts e
       puts e.backtrace.join("\n")

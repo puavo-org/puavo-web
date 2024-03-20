@@ -1245,6 +1245,7 @@ en:
       unknown_group: "Unknown/invalid group"
 
     pdf:
+      no_group: "(No group at all)"
       no_users: "(No users)"
       page: "page"
       end: "End"
