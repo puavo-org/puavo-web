@@ -1,47 +1,34 @@
+require 'set'
+
 class ListsController < ApplicationController
+  include Puavo::Integrations     # request ID generation
+  include PasswordsPdfHelper      # PDF generation
 
   # GET /users/:school_id/lists
   def index
-
+    # List all non-downloaded lists in this school
     @lists = List.all.select do |list|
-      list.school_id.to_s == @school.puavoId.to_s &&
-        (!list.downloaded || params[:downloaded] )
+      (list.school_id.to_s == @school.puavoId.to_s) && (!list.downloaded || params[:downloaded])
     end
 
-    @users_by_id = {}
+    groups = list_groups(school.dn.to_s)
+
+    # Load user data and the best group for every user on every list. Find each user only once.
+    # Deleted/invalid users get a placeholder entry that does not mess up sorting.
+    @list_members = {}
+
     @lists.each do |list|
-      list.users.each do |user_id|
-        begin
-          user = User.find(user_id)
-        rescue ActiveLdap::EntryNotFound
-          puts "Can't find user by ID #{user_id}, maybe the user has been deleted? Ignoring..."
-          next
-        end
-
-        @users_by_id[user_id] = user
+      list.users.each do |id|
+        next if @list_members.include?(id)
+        @list_members[id] = get_user_and_group(id, groups)
       end
+
+      # Sort the users alphabetically, ignoring letter case
+      list.users.sort! { |a, b| @list_members[a][:sort] <=> @list_members[b][:sort] }
     end
 
-    @lists.each do |li|
-      missing_users = false
-
-      li.users.each do |u|
-        unless @users_by_id.include?(u)
-          missing_users = true
-          break
-        end
-      end
-
-      # don't try to sort broken lists
-      next if missing_users
-
-      li.users.sort! do |u_a, u_b|
-        (@users_by_id[u_a].givenName + @users_by_id[u_a].sn).downcase <=>
-        (@users_by_id[u_b].givenName + @users_by_id[u_b].sn).downcase
-      end
-    end
-
-    @lists.sort{|a, b| a.created_at <=> b.created_at}.reverse!
+    # Sort the lists by creation date, newest first
+    @lists.sort! { |a, b| a.created_at <=> b.created_at }.reverse!
 
     respond_to do |format|
       format.html
@@ -76,112 +63,151 @@ class ListsController < ApplicationController
 
   # POST /users/:school_id/lists/:id
   def download
-    @list = List.by_id(params[:id])
+    request_id = generate_synchronous_call_id()
 
-    # First group users by their group. Filter out missing users.
-    @users_by_group = {}
+    list = List.by_id(params[:id])
 
-    @list.users.each do |user_id|
-      begin
-        user = User.find(user_id)
-      rescue ActiveLdap::EntryNotFound
-        # This can happen if a user is deleted after they were imported
-        # but before the list is downloaded. The lists are maintained
-        # separately, so their contents are not updated.
-        puts "Can't find user by ID #{user_id}, maybe the user has been deleted? Ignoring..."
-        next
-      end
+    groups = list_groups(@school.dn.to_s)
+    users = []
 
-      # group users by their group
-      group_name = "<?>"
+    # Set the new passwords
+    randomize_password = params[:list][:generate_password] == 'true'
+    new_password = params[:new_password]
 
-      if Array(user.puavoEduPersonAffiliation).include?("student")
-        grp = user.teaching_group
+    list.users.each do |id|
+      plain_user = get_user_and_group(id, groups)
+      next if plain_user[:missing]
 
-        if grp.nil?
-          # teaching group is not set, use the first group then
-          if user.groups && user.groups.first
-            group_name = user.groups.first.displayName
-          end
-        else
-          group_name = grp.displayName
-        end
+      # Ungrouped users need some "marker", otherwise grouping will break in the generated PDF.
+      # The PDF generator is the same used in the new users mass import/update tool, so
+      # we use its translation strings.
+      plain_user[:group] = t('new_import.pdf.no_group') if plain_user[:group].nil?
+
+      user = User.find(id)
+
+      if randomize_password
+        user.set_generated_password
+        plain_user[:password] = user.new_password
       else
-        # assume that users who aren't students are teachers...
-        group_name = I18n.t("puavoEduPersonAffiliation_teacher")
+        user.set_password(new_password)
+        plain_user[:password] = new_password
       end
 
-      @users_by_group[group_name] ||= []
-      @users_by_group[group_name].push(user)
+      begin
+        user.save!
+      rescue StandardError => e
+        logger.error("[#{request_id}] #{e}")
+        flash[:alert] = t('.password_changing_failed', request_id: request_id)
+        redirect_to lists_path(@school)
+        return
+      end
+
+      users << plain_user
     end
 
-    # All users have been grouped now, so actually change their passwords
-    @users_by_group.each do |group, users|
-      users.each do |u|
-        if params[:list][:generate_password] == "true"
-          u.set_generated_password
-        else
-          u.new_password = params[:list][:new_password]
-        end
-
-        u.save!
-      end
+    # Sort the users
+    users.sort! do |a, b|
+      [a[:group], a[:first], a[:last]] <=>
+      [b[:group], b[:first], b[:last]]
     end
 
-    # Then generate a PDF containing the new passwords
-    pdf = Prawn::Document.new( :skip_page_creation => true, :page_size => 'A4')
+    # Generate the PDF
+    filename_timestamp, pdf = PasswordsPdfHelper.generate_pdf(users, current_organisation.name)
+    filename = "#{current_organisation.organisation_key}_#{@school.cn}_#{filename_timestamp}.pdf"
 
-    # Use a proper Unicode font, not the built-in PDF fonts
-    font_file = Pathname.new(Rails.root.join('app', 'assets', 'stylesheets', 'font', 'FreeSerif.ttf'))
-    pdf.font_families["unicodefont"] = { :normal => { :file => font_file, :font => "Regular" } }
-
-    @users_by_group.each do |group_name, users|
-      # Sort users by sn + givenName
-      users = users.sort do |a,b|
-        (a.givenName + a.sn).downcase <=> (b.givenName + b.sn).downcase
-      end
-
-      pdf.start_new_page
-      pdf.font "unicodefont"
-      pdf.font_size = 12
-      pdf.draw_text "#{ current_organisation.name }, #{ @school.displayName }, #{ group_name }",
-        :at => pdf.bounds.top_left
-      pdf.text "\n"
-
-      users_of_page_count = 0
-      users.each do |user|
-        pdf.indent(300) do
-          pdf.text "#{t('activeldap.attributes.user.displayName')}: #{user.displayName}"
-          pdf.text "#{t('activeldap.attributes.user.uid')}: #{user.uid}"
-          pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"
-        end
-        users_of_page_count += 1
-        if users_of_page_count > 10 && user != users.last
-          users_of_page_count = 0
-          pdf.start_new_page
-          pdf.draw_text "#{ current_organisation.name }, #{ @school.displayName }, #{ group_name }",
-            :at => pdf.bounds.top_left
-          pdf.text "\n"
-        end
-      end
-
-    end
-
-    filename = current_organisation.organisation_key + "_" +
-      @school.cn + "_" + Time.now.strftime("%Y%m%d_%H%M%S") + ".pdf"
-
-    @list.downloaded = true
-    @list.save
+    # Hide the list (it will be automatically deleted eventually)
+    list.downloaded = true
+    #list.save
 
     respond_to do |format|
       format.pdf do
-        send_data(
-                  pdf.render,
-                  :filename => filename,
-                  :type => 'application/pdf',
-                  :disposition => 'attachment' )
+        send_data(pdf.render, filename: filename, type: 'application/pdf', disposition: 'attachment')
       end
-
     end
+  rescue StandardError => e
+    logger.error("[#{request_id}] #{e}")
+    flash[:alert] = t('.password_changing_failed', request_id: request_id)
+    redirect_to lists_path(@school)
+    return
+  end
+
+  def download_as_csv
+    list = List.by_id(params[:id])
+
+    data = %w[puavoid first_name last_name username roles group].join(',')
+    data += "\n"
+
+    groups = list_groups(@school.dn.to_s)
+
+    list.users.each do |id|
+      user = get_user_and_group(id, groups)
+      next if user[:missing]    # we have no data for missing users
+
+      data += [
+        id, user[:first], user[:last], user[:uid], user[:roles].join(';'), user[:group]
+      ].join(',') + "\n"
+    end
+
+    filename = "#{current_organisation.organisation_key}_#{@school.cn}_#{Time.now.strftime("%Y%m%d_%H%M%S")}.csv"
+
+    send_data(data, filename: filename, type: 'text/csv', disposition: 'attachment')
+  end
+
+private
+  # Extracts puavoId from a DN. Returns -1 if failed.
+  PUAVOID_MATCHER = /puavoId=(\d+)/.freeze
+
+  def puavoid_from_dn(dn)
+    match = dn.to_s.match(PUAVOID_MATCHER)
+    match ? match[1].to_i : -1
+  rescue StandardError
+    -1
+  end
+
+  # Makes a list of groups and their members in the specified school
+  def list_groups(school_dn)
+    Group.search_as_utf8(
+      filter: "(&(objectClass=puavoEduGroup)(puavoSchool=#{Net::LDAP::Filter.escape(school_dn.to_s)}))",
+      attributes: ['displayName', 'puavoEduGroupType', 'member']
+    ).collect do |_, raw_group|
+      {
+        name: raw_group['displayName'][0],
+        type: raw_group.fetch('puavoEduGroupType', [nil])[0],
+        members: Array(raw_group['member'] || []).map { |dn| puavoid_from_dn(dn) }.to_set.freeze
+      }
+    end.freeze
+  end
+
+  # Raw searches for the specified user, and fills in their information and the best group
+  def get_user_and_group(puavoid, groups)
+    raw_user = User.search_as_utf8(
+      filter: "(puavoId=#{Net::LDAP::Filter.escape(puavoid.to_s)})",
+      attributes: ['uid', 'givenName', 'sn', 'puavoEduPersonAffiliation']
+    )
+
+    if raw_user.nil? || raw_user.empty?
+      # Return a placeholder so that sorting will work without hacks
+      return {
+        missing: true,
+        sort: ''
+      }
+    end
+
+    raw_user = raw_user[0][1]
+
+    user = {
+      missing: false,
+      uid: raw_user['uid'][0],
+      first: raw_user['givenName'][0],
+      last: raw_user['sn'][0],
+      roles: Array(raw_user['puavoEduPersonAffiliation'] || []),
+      sort: "#{raw_user['givenName'][0]} #{raw_user['sn'][0]}".downcase,    # used when sorting the list
+      group: nil
+    }
+
+    best = PasswordsPdfHelper.find_best_group(puavoid, groups)
+    user[:group] = best[:name] if best
+
+    user
   end
 end

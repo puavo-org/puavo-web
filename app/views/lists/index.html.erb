@@ -1,94 +1,110 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.users'), t('titles.users_lists') %>
 
 <% if @lists.empty? %>
-<div class="genericNotice"><%= t(".description_empty") %></div>
+<div class="genericNotice"><%= t('.description_empty') %></div>
 <% else %>
-<h1><%= t(".title") %></h1>
+<h1><%= t('.title') %></h1>
 <p class="description"><%= t(".help") %><p>
 
 <%= show_password_requirements(@organisation_name, @school.id) %>
 
-<% id = 1 %>
-<% @lists.sort{ |a, b| a.created_at <=> b.created_at }.reverse.each do |list| %>
-<div class="userListTable">
-  <div class="userListRow">
-    <div class="userListCol userListMeta">
-      <p><strong><%= t(".created") %>:</strong> <span><%= I18n.l(Time.at(list.created_at), :format => '%Y-%m-%d %H:%M:%S') %></span></p>
-      <p><strong><%= t(".expires") %>:</strong> <span><%= I18n.l(Time.at(list.created_at + (60 * 60 * 24 * 30 * 6)), :format => '%Y-%m-%d %H:%M:%S') %></span></p>
-      <p><strong><%= t(".created_by") %>:</strong> <%= list.creator %></p>
-      <p><strong><%= t(".description") %>:</strong> <%= list.description %></p>
-      <p><strong><%= t(".users_count_title") %>:</strong> <span><%= list.users.count %></span></p>
-    </div>
-  </div>
+<div class="flex-rows gap-20px">
+<% @lists.each_with_index do |list, index| %>
+  <div class="flex-rows gap-5px usernameListEntry">
+    <!-- Upper: list metadata -->
+    <p class="margin-0 padding-0">
+      <strong><%= t(".created") %>:</strong> <span><%= I18n.l(Time.at(list.created_at), format: '%Y-%m-%d %H:%M:%S') %></span><br>
+      <strong><%= t(".expires") %>:</strong> <span><%= I18n.l(Time.at(list.created_at + (60 * 60 * 24 * 30 * 6)), format: '%Y-%m-%d %H:%M:%S') %></span><br>
+      <strong><%= t(".created_by") %>:</strong> <%= list.creator %><br>
+      <strong><%= t(".description") %>:</strong> <%= list.description %><br>
+      <strong><%= t(".users_count_title") %>:</strong> <span><%= list.users.count %></span>
+    </p>
 
-  <div class="userListRow">
-    <div class="userListCol userListLeft">
-      <div class="userListBox">
-        <table class="list">
-          <tr class="thead">
-            <th><%= t("activeldap.attributes.user.displayName") %></th>
-            <th><%= t("activeldap.attributes.user.groups") %></th>
-          </tr>
-          <% list.users.each do |user_id| %>
-          <% user = @users_by_id[user_id] %>
-          <% if user.nil? %>
-          <tr>
-            <td><%= t(".invalid_id", id: user_id) %></td>
-            <td>&nbsp;</td>
-          </tr>
-          <% else %>
-          <tr>
-            <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%= user.displayName %></td>
-            <td data-title="<%= t('activeldap.attributes.group.displayName')%>">
-            <% if user.groups && user.groups.first %>
-              <%= user.groups.first.displayName %>
+    <!-- Lower: list and list controls -->
+    <div class="flex-cols flex-wrap gap-10px width-100p">
+      <!-- Left side: usernames list -->
+      <div class="width-33p">
+        <div class="userListBox">
+          <table class="list width-100p">
+            <tr class="thead">
+              <th><%= t("activeldap.attributes.user.displayName") %></th>
+              <th><%= t("activeldap.attributes.user.groups") %></th>
+            </tr>
+            <% list.users.each do |pid| %>
+            <% user = @list_members[pid] %>
+            <% if user[:missing] %>
+            <tr>
+              <td colspan="2"><%= t('.invalid_id', id: pid) %></td>
+            </tr>
             <% else %>
-              ?
+            <tr>
+              <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%= user[:first] %> <%= user[:last] %> (<%= user[:uid] %>)</td>
+              <td data-title="<%= t('activeldap.attributes.group.displayName')%>"><%= user[:group] %></td>
+            </tr>
             <% end %>
-            </td>
-          </tr>
-          <% end %>
-          <% end %>
-        </table>
+            <% end %>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right side: list controls -->
+      <div class="flex-grow-2" id="listControls">
+        <%= form_for(:list, url: download_list_path(school_id: @school.puavoId, id: list.uuid, format: :pdf)) do |f| %>
+          <div class="flex-rows gap-10px">
+            <div class="flex-cols gap-10px">
+              <%= link_to download_list_as_csv_path(id: list.uuid), class: 'btn' do %>
+                <i class="icon-download"></i><%= t('.download_list_as_csv') %>
+              <% end %>
+
+              <%= link_to delete_list_path(id: list.uuid), data: { confirm: t('general_confirm') }, method: :delete, class: 'btn btn-danger' do %>
+                <i class="icon-trash"></i><%= t('.delete_without_downloading') %>
+              <% end %>
+            </div>
+
+            <fieldset class="margin-0">
+              <legend><%= t('.password_mass_setting') %></legend>
+
+              <div class="flex-rows gap-5px margin-bottom-10px">
+                <label>
+                  <%= f.radio_button :generate_password, true,
+                                     checked: true,
+                                     autocomplete: 'off',
+                                     id: "list_generate_password_true_#{ index }" %>
+                  <%= t('.label_generate_password') %>
+                </label>
+
+                <div class="flex-cols gap-5px">
+                  <label>
+                    <%= f.radio_button :generate_password, false,
+                                        autocomplete: 'off',
+                                        id: "list_generate_password_false_#{ index }" %>
+                    <%= t('.label_set_password') %>
+                  </label>
+
+                  <input id="new_password" name="new_password" type="text" size="20" autocomplete="off">
+                </div>
+              </div>
+
+              <%= f.submit t('.label_submit_button'), class: 'btn', data: { confirm: t('general_confirm') } %>
+            </fieldset>
+          </div>
+        <% end %>
       </div>
     </div>
-
-    <div class="userListCol userListRight">
-      <%= form_for(:list, :url => download_list_path(:school_id => @school.puavoId,
-                                                     :id => list.uuid,
-                                                     :format => :pdf)) do |f| %>
-        <p>
-          <%= f.radio_button :generate_password, true,
-                             :checked => true,
-                             :id => "list_generate_password_true_#{ id }" %>
-
-          <%= f.label t(".label_generate_password"),
-                      :for => "list_generate_password_true_#{ id }" %>
-        </p>
-
-        <p>
-          <%= f.radio_button :generate_password, false,
-                             :id => "list_generate_password_false_#{ id }" %>
-
-          <%= f.label t(".label_set_password"),
-                      :for => "list_generate_password_false_#{ id }" %>
-
-          <%= f.text_field :new_password,
-                           :size => 20,
-                           onfocus: "document.getElementById('list_generate_password_false_#{id}').checked = true;" %>
-        </p>
-
-        <p class="submitRow"><%= f.submit t(".label_submit_button"), class: 'btn' %></p>
-
-        <p>
-          <%= link_to delete_list_path(:id => list.uuid), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger" do %>
-            <i class="icon-trash"></i><%= t('.delete_without_downloading') %>
-          <% end %>
-        </p>
-      <% end %>
-    </div>
   </div>
-</div>
-<% id += 1 %>
 <% end %>
+</div>
+
+<% end %>
+
+<% content_for(:javascript) do %>
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", e => {
+    for (const i of document.querySelectorAll("div#listControls input#new_password"))
+        i.addEventListener("focus", e => i.parentNode.querySelector(`input[type="radio"]`).checked = true);
+});
+
+</script>
 <% end %>

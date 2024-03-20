@@ -1714,11 +1714,15 @@ fi:
       created_by: Listan luoja
       description: "Kuvaus"
       users_count_title: Käyttäjiä listassa
-      label_generate_password: Aseta satunnainen salasana listan käyttäjille
-      label_set_password: Aseta kaikkien listan käyttäjien salasanaksi
-      label_submit_button: Aseta salasanat ja lataa PDF-tiedosto
+      password_mass_setting: "Salasanojen massa-asetus"
+      label_generate_password: "Luo jokaiselle käyttäjälle satunnainen salasana"
+      label_set_password: "Aseta sama salasana jokaiselle käyttäjälle (vaarallinen!):"
+      label_submit_button: "Aseta salasanat ja lataa PDF-tiedosto (poistaa listan jälkeenpäin)"
       invalid_id: "(Tuntematon käyttäjä %{id}, ehkä poistettu?)"
-      delete_without_downloading: "Poista lista lataamatta sitä"
+      download_list_as_csv: "Lataa lista CSV-tiedostona"
+      delete_without_downloading: "Poista lista"
+    download:
+      password_changing_failed: "Salasanan vaihto epäonnistui. Ole hyvä ja yritä uudelleen. Jos haluat ottaa yhteyttä Opinsysin tukeen, anna heille tämä koodi: %{request_id}."
     delete:
       invalid_list: "Tuntematon lista"
       deletion_failed: "Listan poisto epäonnistui"

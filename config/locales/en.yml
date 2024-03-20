@@ -1714,11 +1714,15 @@ en:
       created_by: List created by
       description: "Description"
       users_count_title: Number of users
-      label_generate_password: Set a random password for each user on the list
-      label_set_password: Set the following password for each user on the list
-      label_submit_button: Set passwords and download a PDF
+      password_mass_setting: "Password mass setting"
+      label_generate_password: "Generate random passwords for all users"
+      label_set_password: "Set the same password for all users (dangerous!):"
+      label_submit_button: "Set passwords and download a PDF (will delete the list afterwards)"
       invalid_id: "(Unknown user %{id}, maybe deleted?)"
-      delete_without_downloading: "Delete list without downloading it"
+      download_list_as_csv: "Download list as a CSV file"
+      delete_without_downloading: "Delete list"
+    download:
+      password_changing_failed: "Password changing failed. Please try again. If you want to contact Opinsys support, please give them this code: %{request_id}."
     delete:
       invalid_list: "Unknown list"
       deletion_failed: "List deletion failed"
