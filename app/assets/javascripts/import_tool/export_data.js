@@ -94,7 +94,7 @@ function exportPDF(data, selectionState, includePasswords)
         }
 
         // Extract the filename from the headers
-        const match = /^attachment; filename="(?<filename>.+)"$/.exec(response.headers.get("Content-Disposition"));
+        const match = /^attachment; filename="(?<filename>.+)"/.exec(response.headers.get("Content-Disposition"));
 
         if (!match) {
             window.alert(_tr("alerts.server_sent_invalid_filename"));
