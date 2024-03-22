@@ -5,7 +5,7 @@ module Wlan
   # Set WLAN networks as array
   #
   # @param [Array] Array of wlan networks.
-  #     Each item should be a Hash with keys :ssid, :type, :wlan_ap and
+  #     Each item should be a Hash with keys :ssid, :description, :type, :wlan_ap and
   #     :password
   def wlan_networks=(data)
     set_attribute("puavoWlanSSID",
@@ -82,11 +82,12 @@ module Wlan
       new_wlan_type = new_attrs[:wlan_type][index_s]
 
       wlaninfo = {
-        :ssid     => new_attrs[:wlan_name][index_s],
-        :type     => new_attrs[:wlan_type][index_s],
-        :priority => new_attrs[:wlan_priority][index_s],
-        :wlan_ap  => %w(open psk).include?(new_wlan_type) \
-                      && (new_wlan_ap[index_s] == 'enabled'),
+        :ssid        => new_attrs[:wlan_name][index_s],
+        :description => new_attrs[:wlan_description][index_s],
+        :type        => new_attrs[:wlan_type][index_s],
+        :priority    => new_attrs[:wlan_priority][index_s],
+        :wlan_ap     => %w(open psk).include?(new_wlan_type) \
+                         && (new_wlan_ap[index_s] == 'enabled'),
       }
 
       case new_attrs[:wlan_type][index_s]
@@ -142,6 +143,7 @@ module Wlan
   def wlan_ap;          wlan_attrs('wlan_ap');     end
   def wlan_identity;    wlan_attrs('identity');    end
   def wlan_name;        wlan_attrs('ssid');        end
+  def wlan_description; wlan_attrs('description'); end
   def wlan_password;    wlan_attrs('password');    end
   def wlan_phase2_auth; wlan_attrs('phase2_auth'); end
   def wlan_priority;    wlan_attrs('priority');    end

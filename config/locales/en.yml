@@ -1768,6 +1768,7 @@ en:
       file_md5: MD5
       file_size: Size
       wlan_name: Name
+      wlan_description: Description
       wlan_type: Type
       wlan_priority: Priority
       wlan_password: Password

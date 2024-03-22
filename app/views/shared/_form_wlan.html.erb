@@ -28,6 +28,13 @@
       </td>
     </tr>
 
+    <tr class="wlan_description_<%= index %>">
+      <th><%= label_tag "wlan_description[#{ index }]", t('.wlan_description') %></th>
+      <td>
+        <%= text_area_tag "wlan_description[#{ index }]", f.object.wlan_description ? f.object.wlan_description[index] : "", class: "resize-v" %>
+      </td>
+    </tr>
+
     <tr>
       <th><%= label_tag "wlan_type[#{ index }]", t('.wlan_type') %></th>
       <td>

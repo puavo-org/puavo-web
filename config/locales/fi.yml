@@ -1767,6 +1767,7 @@ fi:
       file_md5: MD5
       file_size: Koko
       wlan_name: Nimi
+      wlan_description: Kuvaus
       wlan_type: Tyyppi
       wlan_priority: Tämän yhteyden käyttö
       wlan_password: Salasana

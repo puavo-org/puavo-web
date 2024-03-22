@@ -9,14 +9,15 @@ Feature: Manage wlan networks
     Given I follow "Wireless networks"
     When I select "Open" from "wlan_type[0]"
     And I fill in the following:
-    | wlan_name[0] | Open_test_network |
+    | wlan_name[0]        | Open_test_network  |
+    | wlan_description[0] | An example network |
     And I check "wlan_ap[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-          { "ssid": "Open_test_network", "type": "open", "priority": "", "wlan_ap": true }
+          { "description": "An example network", "ssid": "Open_test_network", "type": "open", "priority": "", "wlan_ap": true }
         ]
       """
 
@@ -24,8 +25,9 @@ Feature: Manage wlan networks
     Given I follow "Wireless networks"
     When I select "PSK" from "wlan_type[0]"
     And I fill in the following:
-    | wlan_name[0]     | WPA_PSK_test_network   |
-    | wlan_password[0] | HessuHoponHauskutukset |
+    | wlan_name[0]        | WPA_PSK_test_network   |
+    | wlan_description[0] | Goofy                  |
+    | wlan_password[0]    | HessuHoponHauskutukset |
     And I check "wlan_ap[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
@@ -33,6 +35,7 @@ Feature: Manage wlan networks
       """
         [
           {
+            "description": "Goofy",
             "ssid": "WPA_PSK_test_network",
             "type": "psk",
             "priority": "",
@@ -47,17 +50,19 @@ Feature: Manage wlan networks
     When I select "Open" from "wlan_type[0]"
     When I select "PSK" from "wlan_type[1]"
     And I fill in the following:
-    | wlan_name[0]     | OpenNetworkNoAP       |
-    | wlan_name[1]     | WPANetworkYesAP       |
-    | wlan_password[1] | TipiLinnunTaikatemput |
+    | wlan_name[0]       | OpenNetworkNoAP       |
+    | wlan_name[1]       | WPANetworkYesAP       |
+    | wlan_description[1]| Tweety                |
+    | wlan_password[1]   | TipiLinnunTaikatemput |
     And I check "wlan_ap[1]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-          { "ssid": "OpenNetworkNoAP", "type": "open", "priority": "", "wlan_ap": false },
+          { "description": "", "ssid": "OpenNetworkNoAP", "type": "open", "priority": "", "wlan_ap": false },
           {
+            "description": "Tweety",
             "ssid": "WPANetworkYesAP",
             "type": "psk",
             "priority": "",
@@ -78,6 +83,7 @@ Feature: Manage wlan networks
       """
         [
           {
+            "description": "",
             "ssid": "MyOwnNetwork",
             "type": "open",
             "priority": "",
@@ -89,7 +95,8 @@ Feature: Manage wlan networks
     And I follow "Wireless networks"
     And I select "PSK" from "wlan_type[0]"
     And I fill in the following:
-    | wlan_password[0] | AllYouNeedIsLove |
+    | wlan_description[0] | My network       |
+    | wlan_password[0]    | AllYouNeedIsLove |
     And I check "wlan_ap[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
@@ -97,6 +104,7 @@ Feature: Manage wlan networks
       """
         [
           {
+            "description": "My network",
             "ssid": "MyOwnNetwork",
             "password": "AllYouNeedIsLove",
             "type": "psk",
@@ -118,6 +126,7 @@ Feature: Manage wlan networks
       """
         [
           {
+            "description": "",
             "ssid": "MyOwnNetwork",
             "password": "SkiesAreBlue",
             "type": "psk",
@@ -135,6 +144,7 @@ Feature: Manage wlan networks
       """
         [
           {
+            "description": "",
             "ssid": "MyOwnNetwork",
             "type": "open",
             "priority": "",
@@ -159,6 +169,7 @@ Feature: Manage wlan networks
       """
         [
           {
+            "description": "",
             "ssid": "EAP-TLS_test_network",
             "type": "eap-tls",
             "priority": "",
@@ -178,9 +189,10 @@ Feature: Manage wlan networks
     Given I follow "Wireless networks"
     When I select "EAP-TLS" from "wlan_type[0]"
     And I fill in the following:
-    | wlan_name[0]     | EAP-TLS_test_network |
-    | wlan_password[0] | playblackholesun     |
-    | wlan_identity[0] | Mulperi              |
+    | wlan_name[0]       | EAP-TLS_test_network |
+    | wlan_description[0]| Musta aukko          |
+    | wlan_password[0]   | playblackholesun     |
+    | wlan_identity[0]   | Mulperi              |
     And I check "wlan_ap[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
@@ -188,6 +200,7 @@ Feature: Manage wlan networks
       """
         [
           {
+            "description": "Musta aukko",
             "ssid": "EAP-TLS_test_network",
             "type": "eap-tls",
             "priority": "",
@@ -212,6 +225,7 @@ Feature: Manage wlan networks
       """
         [
           {
+            "description": "",
             "ssid": "EAP-TTLS_test_network",
             "type": "eap-ttls",
             "priority": "",
@@ -231,8 +245,10 @@ Feature: Manage wlan networks
     When I select "EAP-TLS" from "wlan_type[2]"
     And I fill in the following:
     | wlan_name[0]                | OpenNetworkYesAP                  |
+    | wlan_description[0]         | Open for everyone                 |
     | wlan_name[1]                | WPANetworkNoAP                    |
     | wlan_name[2]                | EAPTLSNetwork                     |
+    | wlan_description[2]         | Lusikka-haarukka                  |
     | wlan_password[1]            | SpoonmanComeTogetherWithYourHands |
     | wlan_client_key_password[2] | GetRightWithMe                    |
     | wlan_identity[2]            | EAPTLSNetworkIdentity             |
@@ -249,8 +265,9 @@ Feature: Manage wlan networks
     And I should see the following JSON on the "School" object with "Example school 1" on attribute "wlan_networks":
       """
         [
-          { "ssid": "OpenNetworkYesAP", "type": "open", "priority": "", "wlan_ap": true },
+          { "description": "Open for everyone", "ssid": "OpenNetworkYesAP", "type": "open", "priority": "", "wlan_ap": true },
           {
+            "description": "",
             "ssid": "WPANetworkNoAP",
             "type": "psk",
             "priority": "",
@@ -258,6 +275,7 @@ Feature: Manage wlan networks
             "password": "SpoonmanComeTogetherWithYourHands"
           },
           {
+            "description": "Lusikka-haarukka",
             "ssid": "EAPTLSNetwork",
             "type": "eap-tls",
             "priority": "",
@@ -270,5 +288,32 @@ Feature: Manage wlan networks
               "client_key_password": "GetRightWithMe"
             }
           }
+        ]
+      """
+
+  Scenario: Test network descriptions
+    Given I follow "Wireless networks"
+    When I select "Open" from "wlan_type[0]"
+    And I fill in the following:
+    | wlan_name[0]        | Open_test_network                     |
+    | wlan_description[0] | This is a description of this network |
+    And I check "wlan_ap[0]"
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          { "description": "This is a description of this network", "ssid": "Open_test_network", "type": "open", "priority": "", "wlan_ap": true }
+        ]
+      """
+    Then I follow "Wireless networks"
+    And I fill in the following:
+    | wlan_description[0] |  |
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          { "description": "", "ssid": "Open_test_network", "type": "open", "priority": "", "wlan_ap": true }
         ]
       """
