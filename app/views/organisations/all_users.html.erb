@@ -21,12 +21,8 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 <%= t('organisations.all_users.sync_deletion_1').html_safe %>
 
 <ul>
-<% @synchronised_deletions_by_school.each do |school_name, systems| %>
-  <li><%= school_name %><ul>
-    <% systems.each do |s| %>
-    <li><%= s %></li>
-    <% end %>
-  </ul></li>
+<% @synchronised_deletions_by_school.collect { |key, value| [key, value] }.sort { |a, b| a[0] <=> b[0] }.each do |school_name, systems| %>
+  <li><%= school_name %>: <%= systems.join(', ') %></li>
 <% end %>
 </ul>
 
