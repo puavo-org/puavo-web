@@ -117,7 +117,7 @@ class ListsController < ApplicationController
 
     # Hide the list (it will be automatically deleted eventually)
     list.downloaded = true
-    #list.save
+    list.save
 
     respond_to do |format|
       format.pdf do
