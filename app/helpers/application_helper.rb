@@ -360,4 +360,8 @@ module ApplicationHelper
 
     parts.join(' ')
   end
+
+  def format_notes(notes)
+    notes.nil? ? nil : h(notes).gsub("\r", '').gsub("\n", '<br>').html_safe
+  end
 end
