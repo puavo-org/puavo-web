@@ -30,6 +30,8 @@ class Organisation < LdapModel
   ldap_map :puavoDeviceOffHour,          :daytime_end_hour
   ldap_map :puavoKerberosRealm,          :puavo_kerberos_realm
 
+  ldap_map :puavoNotes, :notes, LdapConverters::SingleValue
+
   ldap_map :puavoMenuData, :puavomenu_data
   skip_serialize :puavomenu_data
 
@@ -160,6 +162,7 @@ class Organisation < LdapModel
       base: self.base,
       name: self.name,
       domain: self.domain,
+      notes: self.notes,
       preferred_image: self.preferred_image,
       preferred_language: self.preferred_language,
       locale: self.locale,

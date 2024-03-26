@@ -10,7 +10,9 @@ describe LdapModel do
 
       @school = PuavoRest::School.new(
         :name => "Test School 1",
-        :abbreviation => "testschool1"
+        :abbreviation => "testschool1",
+        :description => 'School description',
+        :notes => 'School notes',
       )
 
       @school.save!
@@ -30,6 +32,15 @@ describe LdapModel do
 
     it "has name" do
       assert_equal "Test School 1", @school.name
+    end
+
+    it 'has description' do
+      assert_equal 'School description', @school.description
+    end
+
+    it 'has notes' do
+      school = PuavoRest::School.by_dn!(@school.dn)
+      assert_equal 'School notes', school.notes
     end
 
     it "has internal samba attributes" do

@@ -64,6 +64,7 @@ module DevicesHelper
       'puavoTag',
       'puavoConf',
       'description',
+      'puavoNotes',
       'puavoDevicePrimaryUser',
       'puavoDeviceHWInfo',
       'puavoPurchaseDate',
@@ -168,6 +169,10 @@ module DevicesHelper
 
     if dev.include?('description')
       out[:desc] = dev['description'][0]
+    end
+
+    if dev.include?('puavoNotes')
+      out[:notes] = dev['puavoNotes'][0]
     end
 
     if dev.include?('puavoDeviceKernelArguments')

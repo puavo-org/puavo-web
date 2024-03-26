@@ -707,7 +707,13 @@ class GroupsController < ApplicationController
   private
     def group_params
       # arrays must be listed last due to some weird syntax thing
-      return params.require(:group).permit(:displayName, :cn, :puavoExternalId, :puavoEduGroupType).to_hash
+      return params.require(:group).permit(
+        :displayName,
+        :cn,
+        :puavoExternalId,
+        :puavoEduGroupType,
+        :puavoNotes
+      ).to_hash
     end
 
     def get_group(id)

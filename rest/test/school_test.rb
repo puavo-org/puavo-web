@@ -20,6 +20,7 @@ describe PuavoRest::School do
       :cn => "school2",
       :displayName => "School 2",
       :puavoSchoolCode => "0123450",
+      :puavoNotes => 'Muistiinpanoja',
     )
 
     @school2.save!
@@ -63,6 +64,21 @@ describe PuavoRest::School do
     school.save!
     assert_nil PuavoRest::School.by_dn!(@school.dn).school_code
     assert_nil PuavoRest::School.by_dn!(@school2.dn).school_code
+  end
+
+  it 'can change and clear the notes' do
+    school = PuavoRest::School.by_dn!(@school2.dn)
+    assert_equal 'Muistiinpanoja', school.notes
+    school.notes = 'Notes'
+    school.save!
+
+    school = PuavoRest::School.by_dn!(@school2.dn)
+    assert_equal 'Notes', school.notes
+    school.notes = nil
+    school.save!
+
+    school = PuavoRest::School.by_dn!(@school2.dn)
+    assert_nil school.notes
   end
 
 end

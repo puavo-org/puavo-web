@@ -25,6 +25,8 @@ Feature: Manage devices
     And I press "Edit..." on the "fatclient-01" row
     When I fill in "Default input audio device" with "usb://input-audio-device"
     And I fill in "Default output audio device" with "usb://output-audio-device"
+    And I fill in "Description" with "An example device"
+    And I fill in "Notes" with "This is a fatclient used in this test"
     And I fill in "device_fs_0" with "nfs3"
     And I fill in "device_path_0" with "10.0.0.1/share"
     And I fill in "device_mountpoint_0" with "/home/share"
@@ -45,6 +47,8 @@ Feature: Manage devices
     And I press "Update"
     Then I should see "usb://input-audio-device"
     And I should see "usb://output-audio-device"
+    And I should see "An example device"
+    And I should see "This is a fatclient used in this test"
     And I should see "nfs3"
     And I should see "10.0.0.1/share"
     And I should see "/home/share"

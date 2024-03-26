@@ -115,6 +115,11 @@
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.description") %></th>
       <td><%= html_escape(device.description.to_s) %></td>
     </tr>
+
+    <tr>
+      <th><%= t('activeldap.attributes.device.puavoNotes') %></th>
+      <td><%= format_notes(device.puavoNotes) %></td>
+    </tr>
   </table>
 <%= end_box %>
 

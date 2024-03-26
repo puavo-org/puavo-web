@@ -259,6 +259,24 @@ const COLUMN_DEFINITIONS = {
         title: "<%= t('activeldap.attributes.school.puavoDeviceOffHour') %>",
         type: ST.ColumnType.NUMERIC,
     },
+
+    description: {
+        key: "description",
+        title: "<%= t('columns.description') %>",
+        type: ST.ColumnType.STRING,
+    },
+
+    notes: {
+        key: "notes",
+        title: "<%= t('columns.notes') %>",
+        type: ST.ColumnType.STRING,
+        transform: e => {
+            if (e.notes === null)
+                return [null, null, null];
+
+            return [ST.escapeHTML(e.notes).replaceAll("\r", "").replaceAll("\n", "<br>"), e.notes, e.notes];
+        }
+    },
 };
 
 // The default order for columns
@@ -284,6 +302,8 @@ const COLUMN_ORDER = [
     "autopower_mode",
     "autopower_on",
     "autopower_off",
+    "description",
+    "notes",
 ];
 
 function schoolActions(entry)

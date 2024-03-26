@@ -55,6 +55,7 @@ Feature: Manage users
     | Confirm new password      | secretpw              |
     | Personnel Number          | 556677                |
     | SSH public key            | ssh-rsa Zm9vYmFy      |   # the key is "foobar" in base64
+    | Notes                     | A certified cool guy  |
 # FIXME test mail and telephoneNumber for more values
 #   | Group                      |       |
 #   | Password                   |       |
@@ -87,6 +88,7 @@ Feature: Manage users
     | Yes                                             |
     | 556677                                          |
     | 38:58:f6:22:30:ac:3c:91:5f:30:0c:66:43:12:c6:3f |
+    | A certified cool guy                            |
     And I should see image of "ben"
     And the memberUid should include "ben" on the "Class 4" group
     And the member should include "ben" on the "Class 4" group
@@ -524,6 +526,22 @@ Feature: Manage users
     And I should see "This user has verified email addresses. They cannot be edited nor removed."
     # TODO: Test that the fields are read-only
 
+  Scenario: HTML in the notes box is properly escaped
+    Given I am on the new user page
+    Then I fill in the following:
+    | Surname    | Donald      |
+    | Given name | Duck        |
+    | Username   | donald.duck |
+    And I fill in "Notes" with:
+    """
+    <strong>Hax!</strong> <script>alert("You've been hacked by The SySniPo CrEw!!");</script>
+    """
+    And I check "Test user"
+    And I press "Create"
+    Then I should see:
+    """
+    <strong>Hax!</strong> <script>alert("You've been hacked by The SySniPo CrEw!!");</script>
+    """
 
 # FIXME
 #  @allow-rescue

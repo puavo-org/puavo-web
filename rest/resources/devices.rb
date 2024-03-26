@@ -17,6 +17,7 @@ class Device < Host
   ldap_map :puavoDeviceXrandr,             :xrandr,                   LdapConverters::ArrayValue
   ldap_map :puavoDeviceXserver,            :graphics_driver
   ldap_map :puavoMountpoint,               :mountpoints,              LdapConverters::ArrayValue
+  ldap_map :puavoNotes,                    :notes,                    LdapConverters::SingleValue
   ldap_map :puavoPersonalDevice,           :personal_device,          LdapConverters::StringBoolean
   ldap_map :puavoPersonallyAdministered,   :personally_administered,  LdapConverters::StringBoolean
   ldap_map :puavoPrinterDeviceURI,         :printer_device_uri
@@ -753,6 +754,7 @@ class Devices < PuavoSinatra
     'model'                   => 'puavoDeviceModel',
     'modified'                => 'modifyTimestamp', # LDAP operational attribute
     'monitors_xml'            => 'puavoDeviceMonitorsXML',
+    'notes'                   => 'puavoNotes',
     'personal_device'         => 'puavoPersonalDevice',
     'personally_administered' => 'puavoPersonallyAdministered',
     'primary_user_id'         => 'puavoDevicePrimaryUser',
@@ -806,6 +808,7 @@ class Devices < PuavoSinatra
     'puavoLatitude'                 => { name: 'location_lat' },
     'puavoLocationName'             => { name: 'location_name' },
     'puavoLongitude'                => { name: 'location_lon' },
+    'puavoNotes'                    => { name: 'notes' },
     'puavoPersonalDevice'           => { name: 'personal_device', type: :boolean },
     'puavoPersonallyAdministered'   => { name: 'personally_administered', type: :boolean },
     'puavoPrinterQueue'             => { name: 'printer_queue' },

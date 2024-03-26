@@ -38,6 +38,7 @@ module UsersHelper
       'puavoLicenses',
       'puavoUuid',
       'puavoMFAEnabled',
+      'puavoNotes',
     ].freeze
   end
 
@@ -78,6 +79,10 @@ module UsersHelper
 
     if raw.include?('puavoExternalId')
       out[:eid] = raw['puavoExternalId'][0]
+    end
+
+    if raw['puavoNotes']
+      out[:notes] = raw['puavoNotes'][0]
     end
 
     if raw.include?('telephoneNumber')

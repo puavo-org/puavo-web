@@ -130,6 +130,17 @@
     </div>
   </div>
   <% end %>
+
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.description') %></div>
+    <div class="value"><%= h @school.description %></div>
+  </div>
+
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoNotes') %></div>
+    <div class="value"><%= format_notes(@school.puavoNotes) %></div>
+  </div>
+
 <%= end_box %>
 
 <!-- School information -->

@@ -248,6 +248,13 @@ const COLUMN_DEFINITIONS = {
         title: "MFA?",
         type: ST.ColumnType.BOOL,
     },
+
+    notes: {
+        key: "notes",
+        title: "<%= t('columns.notes') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => [ST.escapeHTML(entry.notes), entry.notes],
+    },
 };
 
 // The default order for columns
@@ -277,6 +284,7 @@ const COLUMN_ORDER = [
     "modified",
     "licenses",
     "mfa",
+    "notes",
 ];
 
 <% if @is_owner %>

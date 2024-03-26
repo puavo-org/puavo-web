@@ -16,6 +16,7 @@ describe LdapModel do
       :name => "Test group 1",
       :abbreviation => "testgroup1",
       :type => "teaching group",
+      :notes => 'This is just an example teaching group. Nothing special.',
       :school_dn => @school.dn
     )
     @group.save!
@@ -55,6 +56,10 @@ describe LdapModel do
 
     it "has type" do
       assert_equal "teaching group", @group.type
+    end
+
+    it 'has notes' do
+      assert_equal 'This is just an example teaching group. Nothing special.', @group.notes
     end
   end
 
@@ -182,6 +187,23 @@ describe LdapModel do
 
       assert_equal reloaded_group.member_usernames.include?(@user.username), true
       assert_equal reloaded_group.member_dns.include?(@user.dn), true
+    end
+
+    it 'can change and clear notes' do
+      group = PuavoRest::Group.by_dn!(@group.dn)
+      assert_equal 'This is just an example teaching group. Nothing special.', group.notes
+      group.notes = 'No notes today'
+      group.save!
+
+      group = PuavoRest::Group.by_dn!(@group.dn)
+      assert_equal 'No notes today', group.notes
+
+      group = PuavoRest::Group.by_dn!(@group.dn)
+      group.notes = nil
+      group.save!
+
+      group = PuavoRest::Group.by_dn!(@group.dn)
+      assert_nil group.notes
     end
   end
 

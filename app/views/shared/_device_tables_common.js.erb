@@ -244,6 +244,13 @@ const COLUMN_DEFINITIONS = {
         alias: ["description"],
     },
 
+    notes: {
+        key: "notes",
+        title: "<%= t('columns.notes') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => [ST.escapeHTML(entry.notes), entry.notes],
+    },
+
     df_home: {
         key: "df_home",
         title: "<%= t('columns.devices.df_home') %>",
@@ -696,7 +703,6 @@ const COLUMN_ORDER = [
     "model",
     "serial",
     "status",
-    "desc",
     "image",
     "current_image",
     "image_series",
@@ -763,6 +769,8 @@ const COLUMN_ORDER = [
     "ll_uid",
     "ll_time",
     "uptime",
+    "desc",
+    "notes",
 ];
 
 const FILTER_PRESETS = [

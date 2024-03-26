@@ -15,11 +15,13 @@ Feature: Manage groups
     Then I should see "New group"
     When I fill in "Group name" with "Class 4A"
     And I fill in "Abbreviation" with "class4a"
+    And I fill in "Notes" with "Just some random group used in this test"
     And I press "Create"
     Then I should see "Group was successfully created."
     And I should see "Class 4A"
     And I should see "Example school 1"
     And I should see "class4a"
+    And I should see "Just some random group used in this test"
     When I follow "New group"
     Then I should be on the new group page
 

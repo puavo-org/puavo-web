@@ -8,6 +8,7 @@ module GroupsHelper
       'cn',
       'puavoEduGroupType',
       'puavoExternalId',
+      'puavoNotes',
       'memberUid',          # for listing the members count
       'puavoSchool',
       'createTimestamp',    # LDAP operational attribute
@@ -30,6 +31,10 @@ module GroupsHelper
 
     if raw.include?('puavoExternalId')
       out[:eid] = raw['puavoExternalId'][0]
+    end
+
+    if raw.include?('puavoNotes')
+      out[:notes] = raw['puavoNotes'][0]
     end
 
     # This is just a plain number field, always include it

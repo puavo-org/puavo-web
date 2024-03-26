@@ -33,6 +33,7 @@ Feature: Manage schools
     | Desktop Image                       | presice-20121023                                                               |
     | school[puavoBillingInfo][]          | school_base:500                                                                |
     | Tags                                | testag1 testag2 testag2                                                        |
+    | Notes                               | This school is of course completely fake and it does not really exist.         |
     | school_fs_0                         | nfs3                                                                           |
     | school_path_0                       | 10.0.0.1/share                                                                 |
     | school_mountpoint_0                 | /home/share                                                                    |
@@ -80,6 +81,7 @@ Feature: Manage schools
     | Daytime start                   |
     | Daytime end                     |
     | http://foobar.puavo.net/trusty  |
+    | This school is of course completely fake and it does not really exist. |
     And I should see "School was successfully created."
     And I should see school image of "Bourne School"
     And I should see the following special ldap attributes on the "School" object with "Bourne School":

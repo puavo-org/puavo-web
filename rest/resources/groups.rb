@@ -19,6 +19,7 @@ class Group < LdapModel
   ldap_map :memberUid, :member_usernames, LdapConverters::ArrayValue
   ldap_map :member, :member_dns, LdapConverters::ArrayValue
   ldap_map :puavoEduGroupType, :type, LdapConverters::SingleValue
+  ldap_map :puavoNotes, :notes, LdapConverters::SingleValue
 
   before :create do
     if Array(object_classes).empty?
@@ -177,6 +178,7 @@ class Groups < PuavoSinatra
     'member_uid'    => 'memberUid',
     'modified'      => 'modifyTimestamp',   # LDAP operational attribute
     'name'          => 'displayName',
+    'notes'         => 'puavoNotes',
     'school_id'     => 'puavoSchool',
     'type'          => 'puavoEduGroupType',
   }
@@ -194,6 +196,7 @@ class Groups < PuavoSinatra
     'puavoExternalId'   => { name: 'external_id' },
     'puavoEduGroupType' => { name: 'type' },
     'puavoId'           => { name: 'id', type: :integer },
+    'puavoNotes'        => { name: 'notes' },
     'puavoSchool'       => { name: 'school_id', type: :id_from_dn },
   }
 

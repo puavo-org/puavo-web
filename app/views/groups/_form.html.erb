@@ -26,6 +26,11 @@
     <td><%= f.select :puavoEduGroupType, group_types_for_select %></td>
   </tr>
 
+  <tr>
+    <th><%= f.label :puavoNotes %></th>
+    <td><%= f.text_area :puavoNotes, rows: 10, class: 'resize-v' %></td>
+  </tr>
+
   <tr class="buttonRow">
     <td colspan="2">
       <%= f.submit submit_text, class: 'btn' %>

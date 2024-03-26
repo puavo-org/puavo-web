@@ -43,6 +43,7 @@ class School < LdapModel
   ldap_map :facsimileTelephoneNumber, :fax_number, LdapConverters::SingleValue
   ldap_map :telephoneNumber, :phone_number, LdapConverters::SingleValue
   ldap_map :description, :description, LdapConverters::SingleValue
+  ldap_map :puavoNotes, :notes, LdapConverters::SingleValue
 
   ldap_map :puavoMenuData, :puavomenu_data
   skip_serialize :puavomenu_data
@@ -297,6 +298,7 @@ class Schools < PuavoSinatra
     'mount_point'           => "puavoMountpoint",
     'name'                  => 'displayName',
     'name_prefix'           => "puavoNamePrefix",
+    'notes'                 => 'puavoNotes',
     'personal_device'       => "puavoPersonalDevice",
     'postal_address'        => "postalAddress",
     'postal_code'           => "postalCode",
@@ -343,6 +345,7 @@ class Schools < PuavoSinatra
     'puavoLocale'                 => { name: 'locale' },
     'puavoMountpoint'             => { name: 'mount_point', type: :json },
     'puavoNamePrefix'             => { name: 'name_prefix' },
+    'puavoNotes'                  => { name: 'notes' },
     'puavoPersonalDevice'         => { name: 'personal_device', type: :boolean },
     'puavoSchoolCode'             => { name: 'school_code' },
     'puavoSchoolOID'              => { name: 'school_oid' },

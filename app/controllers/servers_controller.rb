@@ -337,6 +337,7 @@ class ServersController < ApplicationController
         :puavoDeviceDefaultAudioSource,
         :puavoDeviceDefaultAudioSink,
         :description,
+        :puavoNotes,
         :puavoPurchaseDate,
         :puavoWarrantyEndDate,
         :puavoPurchaseLocation,

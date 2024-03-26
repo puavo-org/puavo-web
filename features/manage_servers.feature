@@ -16,9 +16,13 @@ Feature: Manage servers
     Then I should see "someserver"
     And I follow "someserver"
     And I follow "Edit..."
+    And I fill in "Description" with "Example bootserver"
+    And I fill in "Notes" with "Pretend there's something important here"
     And I check "Example school 2"
     And I press "Update"
     And I should see "Example school 2" within "#serverSchoolLimitBox"
+    And I should see "Example bootserver"
+    And I should see "Pretend there's something important here"
 
   Scenario: Check for unique server tags
     Given I am on the server list page

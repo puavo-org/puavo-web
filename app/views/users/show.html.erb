@@ -178,6 +178,11 @@
   </tr>
 
   <tr>
+    <th><%= t('activeldap.attributes.ldap_organisation.puavoNotes')  %></th>
+    <td class="noWrap"><%= format_notes(@user.puavoNotes) %></td>
+  </tr>
+
+  <tr>
     <th><%= t('.user_devices') %></th>
     <td class="value_td">
       <% @user_devices.each do |device| %>

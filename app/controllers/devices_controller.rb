@@ -581,6 +581,7 @@ class DevicesController < ApplicationController
       :puavoPersonallyAdministered,
       :ipHostNumber,
       :description,
+      :puavoNotes,
       :puavoDeviceAutoPowerOffMode,
       :puavoDeviceOnHour,
       :puavoDeviceOffHour,

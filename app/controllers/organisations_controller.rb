@@ -514,6 +514,7 @@ class OrganisationsController < ApplicationController
         :o,
         :puavoEduOrgAbbreviation,
         :description,
+        :puavoNotes,
         :telephoneNumber,
         :facsimileTelephoneNumber,
         :l,

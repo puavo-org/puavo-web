@@ -79,6 +79,8 @@ class SchoolsController < ApplicationController
           autopower_mode: s.puavoDeviceAutoPowerOffMode,
           autopower_on: s.puavoDeviceOnHour,
           autopower_off: s.puavoDeviceOffHour,
+          description: s.description,
+          notes: s.puavoNotes,
           link: school_path(s),
         }
       end
@@ -416,6 +418,7 @@ class SchoolsController < ApplicationController
         :puavoNamePrefix,
         :puavoSchoolHomePageURL,
         :description,
+        :puavoNotes,
         :telephoneNumber,
         :facsimileTelephoneNumber,
         :l,

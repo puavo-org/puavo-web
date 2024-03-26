@@ -20,6 +20,11 @@
     </tr>
 
     <tr>
+      <th><%= t('activeldap.attributes.ldap_organisation.puavoNotes')  %></th>
+      <td class="noWrap"><%= format_notes(@organisation.puavoNotes) %></td>
+    </tr>
+
+    <tr>
       <th><%= t("activeldap.attributes.ldap_organisation.telephoneNumber") %></th>
       <td><%=h @organisation.telephoneNumber %></td>
     </tr>

@@ -30,6 +30,7 @@ describe LdapModel do
         :roles      => [ 'student' ],
         :school_dns => [ @school.dn.to_s ],
         :username   => 'heli',
+        :notes      => "Teacher's favorite student"
       )
       @user.save!
 
@@ -458,5 +459,16 @@ describe LdapModel do
       user = PuavoRest::User.by_dn!(user.dn)
       assert_equal user.username, 'duplicate.attribute'
     end
+
+    it 'has notes' do
+      user = PuavoRest::User.by_dn!(@user.dn)
+      assert_equal "Teacher's favorite student", user.notes
+    end
+
+    it 'does not have notes' do
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_nil user.notes
+    end
+
   end
 end

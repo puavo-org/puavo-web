@@ -26,7 +26,8 @@ describe PuavoRest::BootServer do
         "https://foobar.puavo.net/images1.json",
         "https://foobar.puavo.net/images2.json"],
       :puavoDeviceType => "bootserver",
-      :puavoConf => '{ "puavo.kernel.version": "fresh" }'
+      :puavoConf => '{ "puavo.kernel.version": "fresh" }',
+      :puavoNotes => 'This is an example bootserver'
     }
     @server1.save!
 
@@ -55,6 +56,7 @@ describe PuavoRest::BootServer do
       assert_equal "server1", data.first["hostname"]
       assert data.first["dn"]
       assert data.first["school_dns"]
+      assert_equal 'This is an example bootserver', data.first['notes']
     end
 
     it "can list single boot server" do
@@ -73,6 +75,8 @@ describe PuavoRest::BootServer do
       assert_equal( Set.new(["https://foobar.puavo.net/images1.json",
                              "https://foobar.puavo.net/images2.json"]),
                     Set.new(data["image_series_source_urls"]) )
+
+      assert_equal 'This is an example bootserver', data['notes']
     end
 
     it "can be used to fetch single boot server data by hostname" do
@@ -84,6 +88,7 @@ describe PuavoRest::BootServer do
       assert_equal "server1", data["hostname"]
       assert data["dn"]
       assert data["school_dns"]
+      assert_equal 'This is an example bootserver', data['notes']
     end
   end
 

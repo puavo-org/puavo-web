@@ -3,6 +3,7 @@ require_relative '../lib/inventory.rb'
 module PuavoRest
 class BootServer < Host
   ldap_map(:puavoSchool, :school_dns) { |s| s }
+  ldap_map :puavoNotes, :notes, LdapConverters::SingleValue
 
   # Return true if the current puavo-rest server is running on a boot server
   def self.running_on?

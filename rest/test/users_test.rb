@@ -36,6 +36,7 @@ describe PuavoRest::Users do
       :telephone_number => [ '123', '456' ],
       :ssh_public_key   => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
       :username         => 'bob',
+      :notes            => 'Our best teacher',
     )
     @teacher.save!
 
@@ -83,8 +84,56 @@ describe PuavoRest::Users do
       :roles         => [ 'testuser' ],
       :school_dns    => [ @school.dn.to_s ],
       :username      => 'poistettava.kayttaja',
+      :notes         => 'This user exists only to be deleted',
     )
     @user5.save!
+  end
+
+  describe 'notes tests' do
+    it 'has notes' do
+      user = PuavoRest::User.by_dn!(@teacher.dn)
+      assert_equal 'Our best teacher', user.notes
+
+      user = PuavoRest::User.by_dn!(@user4.dn)
+      assert_nil user.notes
+
+      user = PuavoRest::User.by_dn!(@user5.dn)
+      assert_equal 'This user exists only to be deleted', user.notes
+    end
+
+    it 'does not have notes' do
+      user = PuavoRest::User.by_dn!(@user2.dn)
+      assert_nil user.notes
+
+      user = PuavoRest::User.by_dn!(@user4.dn)
+      assert_nil user.notes
+
+      user = PuavoRest::User.by_dn!(@user5.dn)
+      assert_equal 'This user exists only to be deleted', user.notes
+    end
+
+    it 'can set and clear user notes' do
+      user = PuavoRest::User.by_dn!(@user4.dn)
+      assert_nil user.notes
+
+      user.notes = 'Lorem ipsum dolor sit amet'
+      user.save!
+
+      user = PuavoRest::User.by_dn!(@user4.dn)
+      assert_equal 'Lorem ipsum dolor sit amet', user.notes
+
+      user.notes = 'consectetur adipiscing elit'
+      user.save!
+
+      user = PuavoRest::User.by_dn!(@user4.dn)
+      assert_equal 'consectetur adipiscing elit', user.notes
+
+      user.notes = nil
+      user.save!
+
+      user = PuavoRest::User.by_dn!(@user4.dn)
+      assert_nil user.notes
+    end
   end
 
   describe 'Learner ID tests' do

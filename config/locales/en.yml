@@ -234,6 +234,8 @@ en:
     school: "School"
     primary_school: "Primary school"
     tags: "Tags"
+    description: "Description"
+    notes: "Notes"
 
     schools:
       integrations: "Integrations"
@@ -1889,6 +1891,7 @@ en:
       puavoMenuDataPreview: "Puavomenu menu data (preview)"
       ldap_organisation:
         description: Description
+        puavoNotes: "Notes"
         telephoneNumber: Phone number
         facsimileTelephoneNumber: Fax number
         l: Locality
@@ -1964,6 +1967,7 @@ en:
         puavoImageSeriesSourceURL: Image series source URL
         puavoExternalId: External ID
         bootservers: "Boot servers"
+        puavoNotes: "Notes"
       user:
         displayName: Name
         sn: Surname
@@ -1998,6 +2002,7 @@ en:
         year_class: Year class
         puavoLearnerId: "Learner ID"
         mpass_materials_charge: "Learning materials charge (MPASS)"
+        puavoNotes: "Notes"
       group:
         displayName: Group name
         cn: Abbreviation
@@ -2006,6 +2011,7 @@ en:
         members: Members
         puavoEduGroupType: Type
         puavoExternalId: External ID
+        puavoNotes: "Notes"
       device:
         dn: DN
         puavoHostname: Hostname
@@ -2025,6 +2031,7 @@ en:
         puavoDeviceStatus: Status
         puavoDeviceBootMode: Boot mode
         description: Description
+        puavoNotes: "Notes"
         puavoTag: Tags
         puavoConf: PuavoConf settings
         puavoPurchaseDate: Purchase date
@@ -2080,6 +2087,7 @@ en:
         puavoRole: Role
         puavoDeviceStatus: Status
         description: Description
+        puavoNotes: "Notes"
         puavoTag: Tags
         puavoConf: PuavoConf settings
         puavoPurchaseDate: Purchase date

@@ -234,6 +234,8 @@ fi:
     school: "Koulu"
     primary_school: "Pääkoulu"
     tags: "Tagit"
+    description: "Kuvaus"
+    notes: "Muistiinpanot"
 
     schools:
       integrations: "Integraatiot"
@@ -1888,6 +1890,7 @@ fi:
       puavoMenuDataPreview: "Puavomenun valikkodata (esikatselu)"
       ldap_organisation:
         description: Kuvaus
+        puavoNotes: "Muistiinpanot"
         telephoneNumber: Puhelinnumero
         facsimileTelephoneNumber: Faxin numero
         l: Sijainti
@@ -1963,6 +1966,7 @@ fi:
         puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
         puavoExternalId: Ulkoinen ID
         bootservers: "Boot-palvelimet"
+        puavoNotes: "Muistiinpanot"
       user:
         displayName: Nimi
         sn: Sukunimi
@@ -1997,6 +2001,7 @@ fi:
         year_class: Vuosiluokka
         puavoLearnerId: "Oppijanumero"
         mpass_materials_charge: "Oppimateriaalien maksullisuus (MPASS)"
+        puavoNotes: "Muistiinpanot"
       group:
         displayName: "Ryhmän nimi"
         cn: Lyhenne
@@ -2005,6 +2010,7 @@ fi:
         members: "Jäsenet"
         puavoEduGroupType: Tyyppi
         puavoExternalId: Ulkoinen ID
+        puavoNotes: "Muistiinpanot"
       device:
         dn: DN
         puavoHostname: Verkkonimi
@@ -2024,6 +2030,7 @@ fi:
         puavoDeviceStatus: Tila
         puavoDeviceBootMode: "Käynnistymistapa"
         description: Kuvaus
+        puavoNotes: "Muistiinpanot"
         puavoTag: Tagit
         puavoConf:  PuavoConf-asetukset
         puavoPurchaseDate: Hankintapäivä
@@ -2079,6 +2086,7 @@ fi:
         puavoRole: Rooli
         puavoDeviceStatus: Tila
         description: Kuvaus
+        puavoNotes: "Muistiinpanot"
         puavoTag: Tagit
         puavoConf: PuavoConf-asetukset
         puavoPurchaseDate: Hankintapäivä

@@ -94,6 +94,11 @@
     <th><%= f.label :description %></th>
     <td><%= f.text_area :description, cols: 40, rows: 6 %></td>
   </tr>
+
+  <tr>
+    <th><%= f.label :puavoNotes %></th>
+    <td><%= f.text_area :puavoNotes, rows: 10, class: 'resize-v' %></td>
+  </tr>
 </table>
 
 <% unless f.object.classes.include?('puavoServer') || f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>

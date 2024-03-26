@@ -37,6 +37,7 @@ Feature: Manage organisation
     And I follow "Edit..."
     Then I fill in the following:
     | Description                                    | Example Organisation located  in the middle of the Finland |
+    | Notes                                          | Just an example organisation. Nothing serious.             |
     | Phone number                                   | 123456789                                                  |
     | Fax number                                     | 987654321                                                  |
     | Locality                                       | Example locality                                           |
@@ -73,6 +74,7 @@ Feature: Manage organisation
     When I press "Update"
     Then I should see the following:
     | Example Organisation located  in the middle of the Finland |
+    | Just an example organisation. Nothing serious.             |
     | 123456789                                                  |
     | 987654321                                                  |
     | Example locality                                           |

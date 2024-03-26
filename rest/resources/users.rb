@@ -55,6 +55,7 @@ class User < LdapModel
 
   ldap_map :puavoUuid, :uuid, LdapConverters::SingleValue
   ldap_map :puavoMFAEnabled, :mfa_enabled, LdapConverters::StringBoolean
+  ldap_map :puavoNotes, :notes, LdapConverters::SingleValue
 
   ldap_map :puavoLicenses, :licenses
 
@@ -1387,6 +1388,7 @@ class Users < PuavoSinatra
     'locked'             => 'puavoLocked',
     'mfa_enabled'        => 'puavoMFAEnabled',
     'modified'           => 'modifyTimestamp',  # LDAP operational attribute
+    'notes'              => 'puavoNotes',
     'personnel_number'   => 'puavoEduPersonPersonnelNumber',
     'phone'              => 'telephoneNumber',
     'preferred_language' => 'preferredLanguage',
@@ -1422,6 +1424,7 @@ class Users < PuavoSinatra
     'puavoLocale'                   => { name: 'locale' },
     'puavoLocked'                   => { name: 'locked', type: :boolean },
     'puavoMFAEnabled'               => { name: 'mfa_enabled', type: :boolean },
+    'puavoNotes'                    => { name: 'notes' },
     'puavoRemovalRequestTime'       => { name: 'removal_mark_time', type: :ldap_timestamp },
     'puavoSchool'                   => { name: 'school_ids', type: :id_from_dn },
     'puavoSshPublicKey'             => { name: 'ssh_public_key' },

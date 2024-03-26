@@ -26,7 +26,8 @@ describe PuavoRest::Devices do
         "puavo.login.external.enabled": false
       }',
       :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
-                            '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
+                            '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ],
+      :puavoNotes => ['This is a note for this school.'],
     )
 
     @user = PuavoRest::User.new(
@@ -104,6 +105,7 @@ describe PuavoRest::Devices do
           "puavo.guestlogin.enabled": true,
           "puavo.xbacklight.brightness": 80
         }',
+        :puavoNotes => ['Put some notes here'],
       )
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoAllowGuest = "TRUE"
@@ -234,6 +236,24 @@ describe PuavoRest::Devices do
       assert_equal "sv_FI.UTF-8", data["locale"]
     end
 
+    # FIXME: Why does calling PuavoRest::Device.by_dn!(...) result in a "RuntimeError: Connection is not setup!"
+    # error? How can the connection not be set up? where is it pulling these and saving the object
+    # if the connection does not exist? I don't understand.
+    it 'it has notes' do
+      assert_equal 'Put some notes here', @data['notes']
+    end
+
+    it 'can clear out the notes' do
+      assert_equal 'Put some notes here', @data['notes']
+      @_athin.puavoNotes = nil
+      @_athin.save!
+
+      get '/v3/devices/athin'
+      assert_200
+      @data = JSON.parse last_response.body
+
+      assert_nil @data['notes']
+    end
   end
 
   describe "device information with school fallback" do

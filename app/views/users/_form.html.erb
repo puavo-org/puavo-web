@@ -175,6 +175,11 @@
     </tr>
 
     <tr>
+      <th><%= f.label :puavoNotes %></th>
+      <td><%= f.text_area :puavoNotes, rows: 10, class: 'resize-v' %></td>
+    </tr>
+
+    <tr>
       <th class="requiredField"><%= f.label :new_password %></th>
       <td>
       <% if @pw_warning == :none %>
