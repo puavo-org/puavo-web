@@ -392,7 +392,7 @@ private
         'last_name' => last_name,
         'username' => username,
         # TODO: Use more special symbols
-        'password' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890!.*&'.split('').sample(15).join + '%'
+        'password' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890!.*'.split('').sample(15).join + '%'
       }
 
       # Normal users don't have enough rights to call "user.save!", so update the attribute directly
