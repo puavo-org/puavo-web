@@ -938,6 +938,8 @@ en:
         marked_for_deletion_not_locked: "Is marked for deletion, but not locked"
         locked_users: "Locked users"
         short_uids: "Usernames that are 1-5 characters long"
+        students_only: "Students only"
+        teachers_and_staff_only: "Teachers and staff only"
 
       mass_operations:
         lock:

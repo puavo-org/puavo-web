@@ -938,6 +938,8 @@ fi:
         marked_for_deletion_not_locked: "Merkitty poistettavaksi, ei lukittu"
         locked_users: "Lukitut käyttäjät"
         short_uids: "Käyttäjätunnukset jotka ovat 1-5 merkkiä pitkiä"
+        students_only: "Vain oppilaat"
+        teachers_and_staff_only: "Vain opettajat ja henkilökunta"
 
       mass_operations:
         lock:

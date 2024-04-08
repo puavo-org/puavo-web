@@ -698,6 +698,50 @@ const MASS_OPERATIONS = [
 const FILTER_PRESETS = [
     // Traditional
     {
+        students_only: {
+            title: "<%= t('users.index.filters.students_only') %>",
+            filters: [
+                [1,"role","=","student"],
+                [1,"role","!=","teacher|staff|test|admin|visitor"]
+            ]
+        },
+
+        teachers_and_staff_only: {
+            title: "<%= t('users.index.filters.teachers_and_staff_only') %>",
+            filters: [
+                [1,"role","=","teacher|staff"],
+                [1,"role","!=","test|admin"]
+            ]
+        },
+
+        marked_for_3months: {
+            title: "<%= t('users.index.filters.marked_3months') %>",
+            filters: [
+                [1,"rrt","<","-90d"],
+            ],
+        },
+
+        marked_for_6months: {
+            title: "<%= t('users.index.filters.marked_6months') %>",
+            filters: [
+                [1,"rrt","<","-180d"],
+            ],
+        },
+
+        marked_for_9months: {
+            title: "<%= t('users.index.filters.marked_9months') %>",
+            filters: [
+                [1,"rrt","<","-270d"],
+            ],
+        },
+
+        marked_for_12months: {
+            title: "<%= t('users.index.filters.marked_12months') %>",
+            filters: [
+                [1,"rrt","<","-365d"],
+            ],
+        },
+
         smoketest_users: {
             title: "<%= t('users.index.filters.smoketest_users') %>",
             filters: [
@@ -724,39 +768,6 @@ const FILTER_PRESETS = [
             filters: [
                 [1,"locked","!=","1"],
                 [1,"rrt",">=","2010-01-01 00:00:00"],
-                [0,"eid","=","^$"]
-            ],
-        },
-
-        marked_for_3months: {
-            title: "<%= t('users.index.filters.marked_3months') %>",
-            filters: [
-                [1,"rrt","<","-90d"],
-                [0,"eid","=",""]
-            ],
-        },
-
-        marked_for_6months: {
-            title: "<%= t('users.index.filters.marked_6months') %>",
-            filters: [
-                [1,"rrt","<","-180d"],
-                [0,"eid","=",""]
-            ],
-        },
-
-        marked_for_9months: {
-            title: "<%= t('users.index.filters.marked_9months') %>",
-            filters: [
-                [1,"rrt","<","-270d"],
-                [0,"eid","=",""]
-            ],
-        },
-
-        marked_for_12months: {
-            title: "<%= t('users.index.filters.marked_12months') %>",
-            filters: [
-                [1,"rrt","<","-365d"],
-                [0,"eid","=",""]
             ],
         },
 
