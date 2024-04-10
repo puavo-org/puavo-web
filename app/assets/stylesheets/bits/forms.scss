@@ -185,9 +185,9 @@ input[type="submit"]:hover {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  height: 500px;
+  max-height: 400px;
   overflow-x: clip;
-  overflow-y: scroll;
+  overflow-y: auto;
   resize: vertical;
 }
 
