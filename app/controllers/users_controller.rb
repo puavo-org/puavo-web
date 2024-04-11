@@ -64,6 +64,8 @@ class UsersController < ApplicationController
     end
 
     # These have to be set, because there are tests for the admin rights
+    # (don't bother with mass deletion, as that tool is only available
+    # through JavaScript and the tests don't run JS)
     @is_owner = is_owner?
     @permit_user_creation = @is_owner || current_user.has_admin_permission?(:create_users)
     @permit_user_deletion = @is_owner || current_user.has_admin_permission?(:delete_users)
@@ -80,6 +82,7 @@ class UsersController < ApplicationController
     @is_owner = is_owner?
     @permit_user_creation = @is_owner || current_user.has_admin_permission?(:create_users)
     @permit_user_deletion = @is_owner || current_user.has_admin_permission?(:delete_users)
+    @permit_mass_user_deletion = @is_owner || (@permit_user_deletion && current_user.has_admin_permission?(:mass_delete_users))
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
@@ -570,7 +573,7 @@ class UsersController < ApplicationController
   def destroy
     # Can't use redirected_nonowner_user? here because we must allow school admins
     # to get here too if it has been explicitly allowed
-    unless is_owner? || current_user.has_admin_permission?(:delete_users)
+    unless is_owner? || (current_user.has_admin_permission?(:delete_users) && current_user.has_admin_permission?(:mass_delete_users))
       flash[:alert] = t('flash.you_must_be_an_owner')
       redirect_to schools_path
       return

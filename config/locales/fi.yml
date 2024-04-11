@@ -1010,6 +1010,7 @@ fi:
         title: "Ylläpitäjän oikeudet"
         create_users: "voi luoda käyttäjiä"
         delete_users: "voi poistaa käyttäjiä"
+        mass_delete_users: "voi massapoistaa käyttäjiä"
         import_users: "käyttäjien massalisäystyökalu"
     new:
       title: "Lisää uusi käyttäjä"
@@ -1056,6 +1057,7 @@ fi:
       permissions:
         create_users: "Voi luoda käyttäjiä"
         delete_users: "Voi poistaa käyttäjiä"
+        mass_delete_users: "Voi massapoistaa käyttäjiä (tavallinen käyttäjien poisto pitää myös olla sallittu, ei toimi muuten)"
         import_users: "Voi käyttää käyttäjien massalisäys/-päivitystyökalua"
 
   # New new user mass import/update tool

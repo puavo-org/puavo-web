@@ -55,7 +55,7 @@ class User < LdapBase
   ]
 
   # Valid and known permissions for school admins. Used in has_admin_permission?(), for example.
-  ADMIN_PERMISSIONS = %i[create_users delete_users import_users].freeze
+  ADMIN_PERMISSIONS = %i[create_users delete_users mass_delete_users import_users].freeze
 
   attr_accessor(*@@extra_attributes)
 
