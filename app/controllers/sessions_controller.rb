@@ -41,10 +41,9 @@ class SessionsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render :file => "rest/views/login_form"
+        render template: 'sessions/login_form'
       end
     end
-
   end
 
   def create
@@ -239,7 +238,7 @@ class SessionsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render :file => 'rest/views/mfa_form'
+        render 'sessions/mfa_form'
       end
     end
   end
@@ -254,7 +253,7 @@ class SessionsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render :file => 'rest/views/generic_error'
+        render 'sessions/generic_error'
       end
     end
   end
