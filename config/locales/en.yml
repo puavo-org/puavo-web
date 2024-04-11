@@ -1010,6 +1010,7 @@ en:
         title: "Admin permissions"
         create_users: "can create users"
         delete_users: "can delete users"
+        mass_delete_users: "can mass delete users"
         import_users: "user mass import tool"
     new:
       title: New user
@@ -1056,6 +1057,7 @@ en:
       permissions:
         create_users: "Can create users"
         delete_users: "Can delete users"
+        mass_delete_users: "Can mass delete users (normal user deletion must also be granted, will not work otherwise)"
         import_users: "Can use the users mass import/update tool"
 
   # New new user mass import/update tool
