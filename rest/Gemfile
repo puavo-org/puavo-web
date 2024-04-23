@@ -44,6 +44,7 @@ gem "byebug"
 gem "ttfunk"
 gem "gettext"
 gem "r18n-core"
+gem "matrix"
 
 group :test do
   gem "shotgun"

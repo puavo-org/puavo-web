@@ -82,7 +82,7 @@ GEM
       rexml
     crass (1.0.6)
     date (3.3.4)
-    dnsruby (1.72.0)
+    dnsruby (1.72.1)
       simpleidn (~> 0.2.1)
     domain_name (0.6.20240107)
     erubi (1.12.0)
@@ -156,12 +156,12 @@ GEM
       rubyntlm (~> 0.6, >= 0.6.3)
       webrick (~> 1.7)
       webrobots (~> 0.1.2)
-    method_source (1.0.0)
+    method_source (1.1.0)
     mime-types (3.5.2)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2024.0305)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.5)
+    mini_portile2 (2.8.6)
     minitest (5.22.3)
     multi_json (1.15.0)
     multi_xml (0.6.0)
@@ -239,9 +239,9 @@ GEM
       rake (>= 12.2)
       thor (~> 1.0)
     rake (13.2.1)
-    redis (5.1.0)
-      redis-client (>= 0.17.0)
-    redis-client (0.21.1)
+    redis (5.2.0)
+      redis-client (>= 0.22.0)
+    redis-client (0.22.1)
       connection_pool
     redis-namespace (1.11.0)
       redis (>= 4)
@@ -331,6 +331,7 @@ DEPENDENCIES
   jwe
   jwt
   m
+  matrix
   mechanize
   minitest
   net-ldap
