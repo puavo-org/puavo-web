@@ -97,7 +97,7 @@ require_relative "../root"
 require "rmagick"
 
 # Include rack helpers and expose full application stack
-class MiniTest::Spec
+class Minitest::Spec
   include Rack::Test::Methods
   def app
     Rack::Builder.parse_file(File.dirname(__FILE__) + '/../config.ru').first
