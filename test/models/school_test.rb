@@ -1,6 +1,6 @@
 require_relative "../test_helper"
 
-class SchoolTest < MiniTest::Spec
+class SchoolTest < Minitest::Spec
 
 def create_printer(server, name)
   printer = Printer.new

@@ -1,6 +1,6 @@
 
 require_relative "./helper"
-class PrinterQueuesTest < MiniTest::Spec
+class PrinterQueuesTest < Minitest::Spec
 
 def create_printer(server, name, attrs={})
   printer = Printer.new
