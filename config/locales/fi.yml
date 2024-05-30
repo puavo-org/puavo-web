@@ -339,7 +339,7 @@ fi:
       reset_pin: "Nollaus-PIN"
       reset_time: "Nollauspyyntö tehty"
       reset_fulfilled: "Nollauspyyntö täytetty"
-      uptime: "Uptime"
+      uptime: "Käynnissäoloaika"
 
     servers:
       available_images: "Tarjolla olevat kuvatiedostot"
@@ -403,7 +403,7 @@ fi:
         laptop: "Kannettava"
         fatclient: "Verkkopääte"
         printer: "Tulostin"
-        bootserver: "Bootserver"
+        bootserver: "Boot-palvelin"
         other: "(Kaikki muut)"
 
     term_names:
@@ -824,7 +824,7 @@ fi:
   # Printer permissions (accessed through school devices)
   printer_permissions:
     no_printers_html: "Tällä koululla ei ole tulostimia. Pääkäyttäjänä voit lisätä koululle %{href}."
-    bootserver_ref: "boottipalvelimia"
+    bootserver_ref: "boot-palvelimia"
     no_printers_nonowner: "Tälle koululle ei ole määritetty tulostimia boot-palvelimien kautta. Ylläpitäjät, joilla on organisaatiotason omistajaoikeudet, voivat lisätä tulostimia."
     index:
       edit_permissions: Muokkaa oikeuksia...
@@ -1728,7 +1728,7 @@ fi:
       title: "Laitteelle kirjautumiset"
       last_login: "Viimeisin kirjautuja: %{username}, %{at}."
     uptime:
-      title: "Uptime"
+      title: "Käynnissäoloaika"
 
   # Username lists for mass password resets (created by mass imports)
   lists:
