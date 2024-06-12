@@ -26,7 +26,8 @@ class VirtualHostBase < Rack::Rewrite
         url, scheme, host, port, path = match.to_a
 
         env["REQUEST_PATH"] = path
-        env["HTTP_HOST"] = env["SERVER_NAME"] = host
+        env["HTTP_HOST"] = "#{host}:#{port}"
+        env["SERVER_NAME"] = host
         env["SERVER_PORT"] = port
         env["rack.url_scheme"] = scheme
         path
