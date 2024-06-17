@@ -1,4 +1,4 @@
-puts "Monkey patching LDAP schema caching. Assuming the activeldap gem version is 6.1.0."
+puts 'Monkey patching LDAP schema caching. Assuming the activeldap gem version is 7.0.0.'
 
 # TODO: Is this file still needed?
 
