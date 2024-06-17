@@ -16,6 +16,15 @@ STARTED = Time.now
 HOSTNAME = Socket.gethostname
 FQDN = Addrinfo.getaddrinfo(Socket.gethostname, nil).first.getnameinfo.first
 
+# Silence "rb_tainted_str_new is deprecated and will be removed in Ruby 3.2" and
+# "rb_tainted_str_new_cstr is deprecated and will be removed in Ruby 3.2" warnings.
+# They don't come from our code, they appear to originate from ruby-ldap, a library
+# which was last updated in July 2018. Running the full puavo-rest test suite will
+# produce around *44 megabytes* of these warnings and they drown out all other
+# messages. As of June 2024, we're not fully sure what do to about this problem,
+# but fixing the gem or replacing it with another gem have been discussed about.
+Warning[:deprecated] = false
+
 # Use $rest_log only when not in sinatra routes.
 # Sinatra routes have a "rlog" method which automatically
 # logs the route and user.
