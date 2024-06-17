@@ -3,7 +3,7 @@ require "yaml"
 require "puavo/etc"
 
 
-fqdn = Socket.gethostbyname(Socket.gethostname).first
+fqdn = Addrinfo.getaddrinfo(Socket.gethostname, nil).first.getnameinfo.first
 
 default_config = {
   "ldap" => fqdn,

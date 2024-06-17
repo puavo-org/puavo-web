@@ -1,5 +1,7 @@
 Encoding.default_external = Encoding::UTF_8
 
+require 'socket'
+
 require_relative "./puavo-rest"
 require_relative "./lib/mailer"
 
@@ -12,7 +14,7 @@ VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
 GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
 STARTED = Time.now
 HOSTNAME = Socket.gethostname
-FQDN = Socket.gethostbyname(Socket.gethostname).first
+FQDN = Addrinfo.getaddrinfo(Socket.gethostname, nil).first.getnameinfo.first
 
 # Use $rest_log only when not in sinatra routes.
 # Sinatra routes have a "rlog" method which automatically
