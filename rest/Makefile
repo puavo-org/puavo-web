@@ -6,13 +6,15 @@ build:
 	git rev-parse HEAD > GIT_COMMIT
 	cp ../VERSION VERSION
 	cp ../public/images/anonymous.png resources/anonymous.png
-	bundle install --deployment
+	bundle config set --local deployment 'true'
+	bundle install
 
 update-gemfile-lock: clean
 	rm -f Gemfile.lock
 	GEM_HOME=.tmpgem bundle install
 	rm -rf .tmpgem
-	bundle install --deployment
+	bundle config set --local deployment 'true'
+	bundle install
 
 clean: clean-doc
 	rm -rf .bundle vendor

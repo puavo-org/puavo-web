@@ -26,7 +26,8 @@ JS_INPUT = \
 
 build: config-to-example
 	git rev-parse HEAD > GIT_COMMIT
-	bundle install --deployment
+	bundle config set --local deployment 'true'
+	bundle install
 	npm ci --registry https://registry.npmjs.org
 	find node_modules/\@esbuild/ -type f ! -regex "linux-x64" -delete
 	$(MAKE) js
@@ -36,7 +37,8 @@ update-gemfile-lock: clean js-clean
 	rm -f Gemfile.lock
 	GEM_HOME=.tmpgem bundle install
 	rm -rf .tmpgem
-	bundle install --deployment
+	bundle config set --local deployment 'true'
+	bundle install
 
 clean-for-install:
 	# Remove testing gems
