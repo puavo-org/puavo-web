@@ -245,7 +245,7 @@ class OrganisationsController < ApplicationController
     @is_owner = true
 
     # Yes, you can
-    @permit_single_user_deletion = true
+    @permit_user_deletion = true
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
