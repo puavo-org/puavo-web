@@ -108,6 +108,8 @@ class UsersController < ApplicationController
     @synchronised_deletions = {}
     deletions = list_school_synchronised_deletion_systems(@organisation_name, school.id.to_i)
 
+    @current_user_id = current_user.id
+
     unless deletions.empty?
       @synchronised_deletions[school.id.to_i] = deletions.to_a.sort
     end

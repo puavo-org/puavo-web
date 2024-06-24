@@ -271,6 +271,8 @@ class OrganisationsController < ApplicationController
       @synchronised_deletions_by_school[s.displayName] = deletions.to_a.sort
     end
 
+    @current_user_id = current_user.id
+
     respond_to do |format|
       format.html   # all_users.html.erb
     end

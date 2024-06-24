@@ -839,6 +839,12 @@ function userActions(item)
         let isAdmin = false,
             message = null;
 
+        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>) {
+            // This is the current user, don't display the deletion button. The controller
+            // does not let users delete themselves, but this hides even the button.
+            return html;
+        }
+
         // Extra warning when deleting owners/admins
         for (let t of item.role[1].split(",")) {
             if (t == "owner" || t == "admin") {
