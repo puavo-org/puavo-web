@@ -5,7 +5,7 @@ module Wlan
   # Set WLAN networks as array
   #
   # @param [Array] Array of wlan networks.
-  #     Each item should be a Hash with keys :ssid, :description, :type, :wlan_ap and
+  #     Each item should be a Hash with keys :ssid, :description, :type, :hidden, :wlan_ap and
   #     :password
   def wlan_networks=(data)
     set_attribute("puavoWlanSSID",
@@ -86,6 +86,10 @@ module Wlan
         :description => new_attrs[:wlan_description][index_s],
         :type        => new_attrs[:wlan_type][index_s],
         :priority    => new_attrs[:wlan_priority][index_s],
+        # checkbox-type form elements are completely absent from the submitted data if they're
+        # not checked, so more complicated logic is needed. Just accessing the nested arrays
+        # directly will cause a crash.
+        :hidden      => new_attrs.fetch(:wlan_hidden, {}).fetch(index_s, nil) == 'hidden',
         :wlan_ap     => %w(open psk).include?(new_wlan_type) \
                          && (new_wlan_ap[index_s] == 'enabled'),
       }
@@ -148,6 +152,7 @@ module Wlan
   def wlan_phase2_auth; wlan_attrs('phase2_auth'); end
   def wlan_priority;    wlan_attrs('priority');    end
   def wlan_type;        wlan_attrs('type');        end
+  def wlan_hidden;      wlan_attrs('hidden');      end
 
   def wlan_ca_cert;             wlan_attrs('certs', 'ca_cert'            ); end
   def wlan_client_cert;         wlan_attrs('certs', 'client_cert'        ); end

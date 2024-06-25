@@ -17,7 +17,7 @@ Feature: Manage wlan networks
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-          { "description": "An example network", "ssid": "Open_test_network", "type": "open", "priority": "", "wlan_ap": true }
+          { "description": "An example network", "ssid": "Open_test_network", "type": "open", "priority": "", "hidden": false, "wlan_ap": true }
         ]
       """
 
@@ -40,6 +40,7 @@ Feature: Manage wlan networks
             "type": "psk",
             "priority": "",
             "wlan_ap": true,
+            "hidden": false,
             "password": "HessuHoponHauskutukset"
           }
         ]
@@ -60,13 +61,14 @@ Feature: Manage wlan networks
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-          { "description": "", "ssid": "OpenNetworkNoAP", "type": "open", "priority": "", "wlan_ap": false },
+          { "description": "", "ssid": "OpenNetworkNoAP", "type": "open", "priority": "", "hidden": false, "wlan_ap": false },
           {
             "description": "Tweety",
             "ssid": "WPANetworkYesAP",
             "type": "psk",
             "priority": "",
             "wlan_ap": true,
+            "hidden": false,
             "password": "TipiLinnunTaikatemput"
           }
         ]
@@ -87,6 +89,7 @@ Feature: Manage wlan networks
             "ssid": "MyOwnNetwork",
             "type": "open",
             "priority": "",
+            "hidden": false,
             "wlan_ap": false
           }
         ]
@@ -109,6 +112,7 @@ Feature: Manage wlan networks
             "password": "AllYouNeedIsLove",
             "type": "psk",
             "priority": "",
+            "hidden": false,
             "wlan_ap": true
           }
         ]
@@ -131,6 +135,7 @@ Feature: Manage wlan networks
             "password": "SkiesAreBlue",
             "type": "psk",
             "priority": "",
+            "hidden": false,
             "wlan_ap": false
           }
         ]
@@ -148,6 +153,7 @@ Feature: Manage wlan networks
             "ssid": "MyOwnNetwork",
             "type": "open",
             "priority": "",
+            "hidden": false,
             "wlan_ap": false
           }
         ]
@@ -173,6 +179,7 @@ Feature: Manage wlan networks
             "ssid": "EAP-TLS_test_network",
             "type": "eap-tls",
             "priority": "",
+            "hidden": false,
             "wlan_ap": false,
             "identity": "Puavo",
             "certs": {
@@ -204,6 +211,7 @@ Feature: Manage wlan networks
             "ssid": "EAP-TLS_test_network",
             "type": "eap-tls",
             "priority": "",
+            "hidden": false,
             "wlan_ap": false,
             "identity": "Mulperi",
             "password": "playblackholesun"
@@ -229,6 +237,7 @@ Feature: Manage wlan networks
             "ssid": "EAP-TTLS_test_network",
             "type": "eap-ttls",
             "priority": "",
+            "hidden": false,
             "wlan_ap": false,
             "identity": "Hillhouse",
             "password": "justgetveracrypt",
@@ -265,12 +274,13 @@ Feature: Manage wlan networks
     And I should see the following JSON on the "School" object with "Example school 1" on attribute "wlan_networks":
       """
         [
-          { "description": "Open for everyone", "ssid": "OpenNetworkYesAP", "type": "open", "priority": "", "wlan_ap": true },
+          { "description": "Open for everyone", "ssid": "OpenNetworkYesAP", "type": "open", "priority": "", "hidden": false, "wlan_ap": true },
           {
             "description": "",
             "ssid": "WPANetworkNoAP",
             "type": "psk",
             "priority": "",
+            "hidden": false,
             "wlan_ap": false,
             "password": "SpoonmanComeTogetherWithYourHands"
           },
@@ -279,6 +289,7 @@ Feature: Manage wlan networks
             "ssid": "EAPTLSNetwork",
             "type": "eap-tls",
             "priority": "",
+            "hidden": false,
             "wlan_ap": false,
             "identity": "EAPTLSNetworkIdentity",
             "certs": {
@@ -303,7 +314,7 @@ Feature: Manage wlan networks
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-          { "description": "This is a description of this network", "ssid": "Open_test_network", "type": "open", "priority": "", "wlan_ap": true }
+          { "description": "This is a description of this network", "ssid": "Open_test_network", "type": "open", "priority": "", "hidden": false, "wlan_ap": true }
         ]
       """
     Then I follow "Wireless networks"
@@ -314,6 +325,67 @@ Feature: Manage wlan networks
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-          { "description": "", "ssid": "Open_test_network", "type": "open", "priority": "", "wlan_ap": true }
+          { "description": "", "ssid": "Open_test_network", "type": "open", "priority": "", "hidden": false, "wlan_ap": true }
+        ]
+      """
+
+  Scenario: Test hidden networks
+    Given I follow "Wireless networks"
+    When I select "Open" from "wlan_type[0]"
+    And I fill in the following:
+    | wlan_name[0]   | Hidden_network |
+    And I check "wlan_hidden[0]"
+    And I check "wlan_ap[0]"
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          { "description": "", "ssid": "Hidden_network", "type": "open", "priority": "", "hidden": true, "wlan_ap": true }
+        ]
+      """
+    Then I follow "Wireless networks"
+    And I uncheck "wlan_hidden[0]"
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          { "description": "", "ssid": "Hidden_network", "type": "open", "priority": "", "hidden": false, "wlan_ap": true }
+        ]
+      """
+
+  # Adapted from an earlier test
+  Scenario: Create a new hidden EAP-TLS network
+    Given I follow "Wireless networks"
+    When I select "EAP-TLS" from "wlan_type[0]"
+    And I fill in the following:
+    | wlan_name[0] | EAP-TLS_test_network |
+    | wlan_client_key_password[0] | AnotherSecretOfMine |
+    | wlan_identity[0] | Puavo |
+    And I attach the file at "features/support/wlan_eaptls_ca_cert.txt" to "wlan_ca_cert[0]"
+    And I attach the file at "features/support/wlan_eaptls_client_cert.txt" to "wlan_client_cert[0]"
+    And I attach the file at "features/support/wlan_eaptls_client_key.txt" to "wlan_client_key[0]"
+    And I check "wlan_hidden[0]"
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          {
+            "description": "",
+            "ssid": "EAP-TLS_test_network",
+            "type": "eap-tls",
+            "priority": "",
+            "hidden": true,
+            "wlan_ap": false,
+            "identity": "Puavo",
+            "certs": {
+              "ca_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2EtY2VydGlmaWNhdGUsIGJ1dCBh\nIGZha2Ugb25lLgo=\n",
+              "client_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWNlcnRpZmljYXRlLCBi\ndXQgYSBmYWtlIG9uZS4K\n",
+              "client_key": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWtleSwgYnV0IGEgZmFr\nZSBvbmUuCg==\n",
+              "client_key_password": "AnotherSecretOfMine"
+            }
+          }
         ]
       """
