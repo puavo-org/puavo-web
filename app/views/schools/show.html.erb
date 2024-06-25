@@ -275,7 +275,7 @@
       </ul>
 
       <ul>
-      <li>
+        <li class="ownersOnly">
         <%= link_to school_path(@school), data: { confirm: t('general_confirm') }, method: :delete do %>
           <i class='icon-trash'></i><%= t('link.delete_school') %>
         <% end %>
