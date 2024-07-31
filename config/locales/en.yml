@@ -1012,6 +1012,9 @@ en:
         delete_users: "can delete users"
         mass_delete_users: "can mass delete users"
         import_users: "user mass import tool"
+        create_devices: "can add new devices"
+        delete_devices: "can delete devices"
+        mass_delete_devices: "can mass delete multiple devices"
     new:
       title: New user
     edit:
@@ -1059,6 +1062,9 @@ en:
         delete_users: "Can delete users"
         mass_delete_users: "Can mass delete users (normal user deletion must also be granted, will not work otherwise)"
         import_users: "Can use the users mass import/update tool"
+        create_devices: "Can add new devices (laptop registration is currently always allowed)"
+        delete_devices: "Can delete devices"
+        mass_delete_devices: "Can mass delete multiple devices (normal device deletion must also be granted)"
 
   # New new user mass import/update tool
   new_import:

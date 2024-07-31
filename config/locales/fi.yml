@@ -1010,8 +1010,11 @@ fi:
         title: "Ylläpitäjän oikeudet"
         create_users: "voi luoda käyttäjiä"
         delete_users: "voi poistaa käyttäjiä"
-        mass_delete_users: "voi massapoistaa käyttäjiä"
+        mass_delete_users: "voi massapoistaa useita käyttäjiä"
         import_users: "käyttäjien massalisäystyökalu"
+        create_devices: "voi lisätä uusia laitteita"
+        delete_devices: "voi poistaa laitteita"
+        mass_delete_devices: "voi massapoistaa useita laitteita"
     new:
       title: "Lisää uusi käyttäjä"
     edit:
@@ -1057,8 +1060,11 @@ fi:
       permissions:
         create_users: "Voi luoda käyttäjiä"
         delete_users: "Voi poistaa käyttäjiä"
-        mass_delete_users: "Voi massapoistaa käyttäjiä (tavallinen käyttäjien poisto pitää myös olla sallittu, ei toimi muuten)"
+        mass_delete_users: "Voi massapoistaa useita käyttäjiä (tavallinen käyttäjien poisto pitää myös olla sallittu, ei toimi muuten)"
         import_users: "Voi käyttää käyttäjien massalisäys/-päivitystyökalua"
+        create_devices: "Voi lisätä uusia laitteita (kannettavien rekisteröinti on toistaiseksi aina sallittu)"
+        delete_devices: "Voi poistaa laitteita"
+        mass_delete_devices: "voi massapoistaa useita laitteita (tavallinen laitteiden poisto on myös oltava sallittuna)"
 
   # New new user mass import/update tool
   new_import:

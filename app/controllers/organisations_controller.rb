@@ -390,6 +390,10 @@ class OrganisationsController < ApplicationController
     # You can't get here unless you're an owner
     @is_owner = true
 
+    # Yes, you can
+    @permit_device_deletion = true
+    @permit_device_mass_deletion = true
+
     # List ALL schools, hide nothing
     @school_list = DevicesHelper.device_school_change_list(true, nil, nil)
 

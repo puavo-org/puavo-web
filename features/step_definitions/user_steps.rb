@@ -207,6 +207,16 @@ Given(/"(.*?)" has verified email addresses$/) do |name|
   user.save!
 end
 
+Given(/admin "(.*?)" has these permissions: "(.*?)"/) do |uid, permissions|
+  set_ldap_admin_connection
+  user = User.find(:first, attribute: 'uid', value: uid)
+  raise "can't find user \"#{uid}\"" if user.nil?
+  raise "user \"#{uid}\" is not an admin" unless Array(user.puavoEduPersonAffiliation).include?('admin')
+
+  user.puavoAdminPermissions = permissions.split(' ')
+  user.save!
+end
+
 private
 
 def get_object_by_model_and_key(model, key)

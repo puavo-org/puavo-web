@@ -34,6 +34,9 @@ class ServersController < ApplicationController
 
     @servers = get_servers_list
 
+    # Only owners can get here
+    @permit_device_deletion = true
+
     respond_to do |format|
       format.html # index.html.erb
     end

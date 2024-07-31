@@ -36,6 +36,11 @@ class DevicesController < ApplicationController
       @devices = Device.find(:all)
     end
 
+    @is_owner = is_owner?
+    @permit_device_creation = @is_owner || current_user.has_admin_permission?(:create_devices)
+    @permit_device_deletion = @is_owner || current_user.has_admin_permission?(:delete_devices)
+    @permit_device_mass_deletion = false    # JavaScript only, and the legacy index does not have JS
+
     if request.format == 'text/html'
       @device_types = Host.types('nothing', current_user)["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
       @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
@@ -51,6 +56,10 @@ class DevicesController < ApplicationController
   # New AJAX-based index for non-test environments
   def new_cool_devices_index
     @is_owner = is_owner?
+
+    @permit_device_creation = @is_owner || current_user.has_admin_permission?(:create_devices)
+    @permit_device_deletion = @is_owner || current_user.has_admin_permission?(:delete_devices)
+    @permit_device_mass_deletion = @is_owner || (@permit_device_deletion && current_user.has_admin_permission?(:mass_delete_devices))
 
     @device = Device.new
 
@@ -119,6 +128,8 @@ class DevicesController < ApplicationController
     @device.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @device.get_ca_certificate(current_organisation.organisation_key)
 
+    @permit_device_deletion = is_owner? || current_user.has_admin_permission?(:delete_devices)
+
     @releases = get_releases
 
     @reset = nil
@@ -180,6 +191,12 @@ class DevicesController < ApplicationController
   # GET /devices/new.xml
   # GET /devices/new.json
   def new
+    unless is_owner? || current_user.has_admin_permission?(:create_devices)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to devices_url
+      return
+    end
+
     # validate the device type before doing anything else
     if !Puavo::CONFIG["device_types"].has_key?(params[:device_type])
       flash[:error] = t('flash.unknown_device_type')
@@ -237,6 +254,12 @@ class DevicesController < ApplicationController
   # POST /devices.xml
   # POST /devices.json
   def create
+    unless is_owner? || current_user.has_admin_permission?(:create_devices)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to devices_url
+      return
+    end
+
     device_objectClass = params[:device][:classes]
     params[:device].delete(:classes)
 
@@ -365,6 +388,12 @@ class DevicesController < ApplicationController
   # DELETE /devices/1
   # DELETE /devices/1.xml
   def destroy
+    unless is_owner? || current_user.has_admin_permission?(:delete_devices)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to devices_url
+      return
+    end
+
     @device = get_device(params[:id])
     return if @device.nil?
 

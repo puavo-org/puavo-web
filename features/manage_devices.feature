@@ -3,10 +3,12 @@ Feature: Manage devices
   Background:
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | admin                     |
-      | Huey      | Duck   | huey  | password | false        | student                   |
-    And I am logged in as "pavel" with password "secret"
+      | givenName | sn     | uid        | password   | school_admin | puavoEduPersonAffiliation |
+      | Pavel     | Taylor | pavel      | secret     | true         | admin                     |
+      | Huey      | Duck   | huey       | password   | false        | student                   |
+      | Super     | Admin  | superadmin | tXFwIFcJN9 | true         | admin                     |
+    And I am logged in as "example" organisation owner
+    And admin "superadmin" has these permissions: "create_devices delete_devices"
     And the following devices:
       | puavoHostname | macAddress        | puavoDeviceType | puavoMountpoint                                                      |
       | fatclient-01  | 33:2d:2b:13:ce:a0 | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
@@ -233,3 +235,35 @@ Feature: Manage devices
       """
       <monitors version="1"> <configuration> <clone>no</clone> <output name="DP1"> ... </output> </configuration> </monitors>
       """
+
+  Scenario: Admins should not see the new device button unless device creation has been permitted
+    Given I am logged in as "pavel" with password "secret"
+    And I am on the devices list page
+    Then I should not see "Add a new device"
+
+  Scenario: Admins should not see device deletion buttons unless device deletion has been permitted
+    Given I am logged in as "pavel" with password "secret"
+    Then I am on the devices list page
+    And I should not see "Remove"
+    Then I follow "laptop-01"
+    And I should see "laptop-01.example.puavo.net"
+    And I should not see "Delete device"
+
+  Scenario: Admins should see the new device button if device creation has been permitted
+    Given I am logged in as "superadmin" with password "tXFwIFcJN9"
+    And I am on the devices list page
+    Then I should see "Add a new device"
+
+  Scenario: Admins should see device deletion buttons if device deletion has been permitted
+    Given I am logged in as "superadmin" with password "tXFwIFcJN9"
+    Then I am on the devices list page
+    And I should see "Remove"
+    Then I follow "laptop-01"
+    And I should see "laptop-01.example.puavo.net"
+    And I should see "Delete device"
+
+  Scenario: List admin permissions
+    Given I am on the show user page with "superadmin"
+    And I should see "can add new devices"
+    And I should see "can delete devices"
+    And I should not see "can mass delete multiple devices"

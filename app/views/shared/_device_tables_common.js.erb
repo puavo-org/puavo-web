@@ -1601,6 +1601,7 @@ class MassDeviceReset extends ST.MassOperation {
     }
 };
 
+<% if @permit_device_deletion && @permit_device_mass_deletion %>
 // Mass operation: delete device
 class MassDeviceDeletion extends ST.MassOperation {
     constructor(parent, container)
@@ -1613,6 +1614,7 @@ class MassDeviceDeletion extends ST.MassOperation {
         return { state: "ready" };
     }
 };
+<% end %>
 <% end %>
 
 const MASS_OPERATIONS = [
@@ -1649,11 +1651,13 @@ const MASS_OPERATIONS = [
         haveSettings: true,
         cls: MassDeviceReset
     },
+<% if @permit_device_deletion && @permit_device_mass_deletion %>
     {
         operation: "delete",
         title: "<%= t('devices.index.mass_operations.delete.title') %>",
         cls: MassDeviceDeletion
     },
+<% end %>
 <% end %>
 ];
 
@@ -1669,9 +1673,11 @@ function userActions(item)
 
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
+<% if @permit_device_deletion %>
     let message = "<%= t('general_confirm') %>";
 
     html += `<a href="${link}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+<% end %>
 
     return html;
 }
