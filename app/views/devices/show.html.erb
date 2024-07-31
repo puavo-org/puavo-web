@@ -82,6 +82,7 @@
 </ul>
 <% end %>
 
+<% unless test_environment? %>
 <% content_for :javascript do %>
 
 <script>
@@ -91,4 +92,5 @@ const ALL_PUAVOCONF = <%= raw JSON.pretty_generate(@full_puavoconf) %>;
 <%= render partial: 'shared/copy_text.js' %>
 <%= render partial: 'shared/copy_basic_info.js', locals: { device: @device } %>
 <%= render partial: 'shared/puavoconf_table.js', locals: { select: "div.basicInfo select#changeVisibleConfig", container: "div.basicInfo div#puavoConfOutput", type: 'dev' } %>
+<% end %>
 <% end %>
