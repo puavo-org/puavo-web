@@ -688,7 +688,7 @@ en:
       updated: Printer was successfully updated
     devices:
       school_changed: Device school has been changed!
-      no_other_schools: "This organisation has no other schools to where you could move this device"
+      no_other_schools: "This organisation has no other schools where you could move this device to"
 
     # Message codes received from third-party integration subsystems
     integrations:
@@ -980,6 +980,7 @@ en:
           target_school: "Target school:"
           cant_remove_primary_school: "Can't remove user from their primary school"
           no_available_schools: "Select the target school from the list. The school cannot be the same as the current school. If you can't select anything from the list, it means you have no access to any other schools and you can't run this mass operation."
+          no_other_schools: "This organisation has no other schools where you could move users to."
 
     show:
       system_information: System information
@@ -1492,7 +1493,7 @@ en:
         change_school:
           title: "Change school..."
           school_title: "New school:"
-          no_other_schools: "This organisation has no other schools you could move devices to."
+          no_other_schools: "This organisation has no other schools where you could move devices to."
           no_other_schools_alert: "There are no other schools. This operation cannot continue."
         puavoconf:
           json_warning: "This tool can add, remove and change <strong>single</strong> PuavoConf values. If you want to replace them all at once and you already have them in JSON format, select <em>\"Set database field value...\"</em> from the Operation list, then select <em>\"PuavoConf (replace all)\"</em>. That tool will let you overwrite all PuavoConf values at once.<br><br>"

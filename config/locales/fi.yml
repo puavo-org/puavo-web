@@ -980,6 +980,7 @@ fi:
           target_school: "Kohdekoulu:"
           cant_remove_primary_school: "Käyttäjää ei voi poistaa hänen pääkoulustaan"
           no_available_schools: "Valitse kohdekoulu listalta. Koulu ei voi olla sama kuin nykyinen koulu. Jos listalta ei voi valita yhtään koulua, se tarkoittaa ettei sinulla ole pääsyä muihin kouluihin etkä voi ajaa tätä massatoimintoa."
+          no_other_schools: "Tässä organisaatiossa ei ole muita kouluja mihin voisit siirtää käyttäjiä."
 
     show:
       system_information: "Järjestelmätietoja"

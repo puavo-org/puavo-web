@@ -572,6 +572,11 @@ class MassUserChangeSchool extends ST.MassOperation {
     buildInterface()
     {
         let html =
+<% if @allowed_destination_schools.empty? %>
+        `<p class="genericWarning"><%= t('users.index.mass_operations.change_school.no_other_schools') %></p>`;
+
+        this.container.innerHTML = html;
+<% else %>
 `<p class="genericWarning"><%= t('users.index.mass_operations.change_school.automation_warning') %></p>
 <table class="settingsChild">
 <tr>
@@ -591,9 +596,7 @@ class MassUserChangeSchool extends ST.MassOperation {
     <td>
         <select id="destination_school">
 
-        <% @schools_list.sort { |a, b| a[:name].downcase <=> b[:name].downcase }.each do |s| %>
-            <% next if !@allowed_schools.nil? && !@allowed_schools.include?(s[:dn]) %>
-            <% next if !@is_organisation && s[:dn] == @school.dn.to_s %>
+        <% @allowed_destination_schools.sort { |a, b| a[:name].downcase <=> b[:name].downcase }.each do |s| %>
             <option value="<%= s[:id] %>"><%= s[:name] %></option>
         <% end %>
 
@@ -613,16 +616,21 @@ class MassUserChangeSchool extends ST.MassOperation {
         });
 
         this.schoolID = this.container.querySelector("select#destination_school").value;
+<% end %>
     }
 
     canProceed()
     {
+<% if @allowed_destination_schools.empty? %>
+        return false;
+<% else %>
         if (this.container.querySelector("select#destination_school").selectedIndex == -1) {
             window.alert("<%= t('users.index.mass_operations.change_school.no_available_schools').html_safe %>");
             return false;
         }
 
         return true;
+<% end %>
     }
 
     start()

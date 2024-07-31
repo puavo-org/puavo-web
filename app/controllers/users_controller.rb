@@ -104,6 +104,15 @@ class UsersController < ApplicationController
     # We'll maintain a separate list of schools this user is allowed to access. Unused for owners.
     @allowed_schools = @is_owner ? nil : Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
 
+    # A list of schools where the current user (admin or owner) can move other users to. It can be empty.
+    @allowed_destination_schools = []
+
+    @schools_list.each do |s|
+      next if !@allowed_schools.nil? && !@allowed_schools.include?(s[:dn])
+      next if !@is_organisation && s[:dn] == @school.dn.to_s
+      @allowed_destination_schools << s
+    end
+
     # List of systems where user deletions are synchronised
     @synchronised_deletions = {}
     deletions = list_school_synchronised_deletion_systems(@organisation_name, school.id.to_i)
