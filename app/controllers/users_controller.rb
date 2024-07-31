@@ -577,9 +577,9 @@ class UsersController < ApplicationController
   def destroy
     # Can't use redirected_nonowner_user? here because we must allow school admins
     # to get here too if it has been explicitly allowed
-    unless is_owner? || (current_user.has_admin_permission?(:delete_users) && current_user.has_admin_permission?(:mass_delete_users))
+    unless is_owner? || current_user.has_admin_permission?(:delete_users)
       flash[:alert] = t('flash.you_must_be_an_owner')
-      redirect_to schools_path
+      redirect_to users_path
       return
     end
 
