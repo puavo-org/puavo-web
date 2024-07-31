@@ -986,6 +986,7 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
             { title: "<%= t('devices.index.mass_operations.set_field.default_printer') %>", key: "default_printer", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.image_source_url') %>", key: "image_source_url", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.xserver') %>", key: "xserver", type: "s" },
+            { title: "<%= t('devices.index.mass_operations.set_field.xrandr') %>", key: "xrandr", type: "xrandr" },
             { title: "<%= t('devices.index.mass_operations.set_field.monitors_xml') %>", key: "monitors_xml", type: "xml" },
         ];
 
@@ -1084,7 +1085,8 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
     {
         const stringWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_string') %></p>`,
               jsonWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_json') %></p>`,
-              xmlWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_xml') %></p>`;
+              xmlWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_xml') %></p>`,
+              xrandrWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_xrandr') %></p>`;
 
         const item = this.items[index];
 
@@ -1125,6 +1127,10 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
 <label><input type="radio" name="value-radio" id="value-radio-custom"><%= t('devices.index.mass_operations.set_field.custom') %></label>
 </div>`;
                 break;
+
+            case "xrandr":          // Multiline Xrandr string
+                ui = `<textarea id="field_value" rows="5" cols="80"></textarea>${xrandrWarning}`;
+                break;
         }
 
         this.container.querySelector("div#uiChild").innerHTML = ui;
@@ -1158,6 +1164,9 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
             case "json":
             case "xml":
                 return ui.querySelector("textarea").value;
+
+            case "xrandr":
+                return ui.querySelector("textarea").value.split("\n").map(r => r.trim());
 
             case "tfd":
                 if (ui.querySelector("input#value-radio-yes").checked)

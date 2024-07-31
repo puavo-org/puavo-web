@@ -219,6 +219,12 @@ module Puavo
             changed = true
           end
 
+        when 'xrandr'
+          if value != object.puavoDeviceXrandr
+            object.puavoDeviceXrandr = value
+            changed = true
+          end
+
         when 'monitors_xml'
           if value != object.puavoDeviceMonitorsXML
             object.puavoDeviceMonitorsXML = value
