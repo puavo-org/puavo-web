@@ -143,6 +143,7 @@ en:
     change_school: "Change school..."
     new_import: "Import and update users"
     group_members_mass_edit: "Members mass edit"
+    copy: "Copy"
     copy_to_clipboard: "Copy to clipboard"
 
   # Main application layout
