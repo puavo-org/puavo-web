@@ -246,6 +246,7 @@ class OrganisationsController < ApplicationController
 
     # Yes, you can
     @permit_user_deletion = true
+    @permit_mass_user_deletion = true
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
