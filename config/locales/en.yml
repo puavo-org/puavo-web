@@ -948,17 +948,20 @@ en:
           action: "Action:"
           lock: "Lock (if not locked yet)"
           unlock: "Unlock (if locked)"
+          cant_lock_yourself: "You cannot lock yourself"
         mark:
           title: "Mark account for deletion..."
           action: "Action:"
           mark: "Mark for deletion if not marked yet"
           mark_force: "Force-mark for deletion and reset the timestamp to now (ie. \"always mark\")"
           unmark: "Unmark"
+          cant_mark_yourself: "You cannot mark yourself for deletion"
         delete:
           title: "Account removal"
           deletion_prevented: "User deletion has been prevented"
           not_marked_for_deletion: "User has not been marked for deletion"
           marked_too_recently: "User has been marked for deletion for less than a week"
+          cant_delete_yourself: "You cannot delete yourself"
         clear_column:
           title: "Clear column contents..."
           column_title: "Column:"

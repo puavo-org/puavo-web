@@ -314,6 +314,9 @@ class MassUserDeletion extends ST.MassOperation {
               marked = item.rrt[ST.INDEX_EXISTS] === true && item.rrt[ST.INDEX_FILTERABLE] !== undefined,
               locked = item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === true;
 
+        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>)
+            return { state: "error", message: "<%= t('users.index.mass_operations.delete.cant_delete_yourself') %>" };
+
         if (dnd)
             return { state: "error", message: "<%= t('users.index.mass_operations.delete.deletion_prevented') %>" };
 
@@ -382,6 +385,9 @@ class MassUserLocking extends ST.MassOperation {
         if (item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === this.lock)
             return { state: "skip" };
 
+        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>)
+            return { state: "error", message: "<%= t('users.index.mass_operations.lock.cant_lock_yourself') %>" };
+
         return { state: "ready" };
     }
 };
@@ -440,6 +446,9 @@ class MassUserMarkForDeletion extends ST.MassOperation {
         // are also done on the server end.
         const dnd = item.dnd[ST.INDEX_EXISTS] === true && item.dnd[ST.INDEX_FILTERABLE] !== undefined,
               marked = item.rrt[ST.INDEX_EXISTS] === true && item.rrt[ST.INDEX_FILTERABLE] !== undefined;
+
+        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>)
+            return { state: "error", message: "<%= t('users.index.mass_operations.mark.cant_mark_yourself') %>" };
 
         if (dnd) {
             // Deletion prevented, can't mark for deletion

@@ -67,6 +67,10 @@ class UsersMassOperationsController < MassOperationsController
     # Re-check the data. The client-side checks exist only to prevent easily avoidable
     # network traffic, but because they're run in the client, they cannot be fully
     # trusted. But we can trust these.
+    if user.id == current_user.id
+      return false, t('users.index.mass_operations.delete.cant_delete_yourself')
+    end
+
     if user.puavoDoNotDelete
       return false, t('users.index.mass_operations.delete.deletion_prevented')
     end
@@ -96,6 +100,10 @@ class UsersMassOperationsController < MassOperationsController
     lock = @parameters['lock']
     changed = false
 
+    if user.id == current_user.id
+      return false, t('users.index.mass_operations.lock.cant_lock_yourself')
+    end
+
     if user.puavoLocked && !lock
       user.puavoLocked = false
       changed = true
@@ -115,6 +123,10 @@ class UsersMassOperationsController < MassOperationsController
   def _mark_for_deletion(user_id, data)
     user = User.find(user_id)
     changed = false
+
+    if user.id == current_user.id
+      return false, t('users.index.mass_operations.mark.cant_mark_yourself')
+    end
 
     case @parameters
       when 'mark'
