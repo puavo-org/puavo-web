@@ -314,7 +314,7 @@ const COLUMN_DEFINITIONS = {
             let extra = "";
 
 <% unless @is_servers %>
-            if (entry.reset_from)
+            if (entry.reset_from && !entry.reset_fulfilled)
                 extra = ` <i class="icon-attention iconError" title="<%= t('devices.index.pending_reset') %>"></i>`;
 <% end %>
 
