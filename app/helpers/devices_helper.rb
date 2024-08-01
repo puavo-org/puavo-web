@@ -309,17 +309,15 @@ module DevicesHelper
     if dev.include?('puavoDeviceReset')
       reset = JSON.parse(dev['puavoDeviceReset'][0]) rescue {}
 
-      if reset['request-time'] && !reset['request-fulfilled']
-        out[:reset_from] = reset['from']
+      out[:reset_from] = reset['from'] if reset.include?('from')
+      out[:reset_pin] = reset['pin'].to_i if reset.include?('pin')
+      out[:reset_operation] = reset['mode'] if reset.include?('mode')
 
+      if reset.include?('request-time')
         begin
-          out[:reset_time] = DateTime.parse(reset.fetch('request-time', '')).to_i
+          out[:reset_time] = DateTime.parse(reset['request-time']).to_i
         rescue
-          out[:reset_time] = 0
         end
-
-        out[:reset_pin] = reset['pin'].to_i
-        out[:reset_operation] = reset['mode']
       end
     end
 
