@@ -950,6 +950,7 @@ fi:
           lock: "Lukitse (jos ei lukittu)"
           unlock: "Avaa (jos on lukittu)"
           cant_lock_yourself: "Et voi lukita itseäsi"
+          cant_lock_owners: "Et voi massalukita organisaation omistajia"
         mark:
           title: "Merkitse poistettavaksi..."
           action: "Toiminto:"
@@ -957,12 +958,14 @@ fi:
           mark_force: "Merkitse poistettavaksi ja nollaa aikaleima nykyhetkeen (ts. \"pakota merkintä aina\")"
           unmark: "Poista merkintä"
           cant_mark_yourself: "Et voi merkitä itseäsi poistettavaksi"
+          cant_mark_owners: "Et voi massamerkitä organisaation omistajia poistettavaksi"
         delete:
           title: "Tunnuksen poisto"
           deletion_prevented: "Käyttäjän poisto on estetty"
           not_marked_for_deletion: "Käyttäjää ei ole merkitty poistettavaksi"
           marked_too_recently: "Käyttäjä on ollut merkittynä poistettavaksi alle viikon"
           cant_delete_yourself: "Et voi poistaa itseäsi"
+          cant_delete_owners: "Et voi massapoistaa organisaation omistajia"
         clear_column:
           title: "Tyhjennä sarakkeen sisältö..."
           column_title: "Sarake:"

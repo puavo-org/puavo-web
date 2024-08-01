@@ -314,9 +314,6 @@ class MassUserDeletion extends ST.MassOperation {
               marked = item.rrt[ST.INDEX_EXISTS] === true && item.rrt[ST.INDEX_FILTERABLE] !== undefined,
               locked = item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === true;
 
-        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>)
-            return { state: "error", message: "<%= t('users.index.mass_operations.delete.cant_delete_yourself') %>" };
-
         if (dnd)
             return { state: "error", message: "<%= t('users.index.mass_operations.delete.deletion_prevented') %>" };
 
@@ -328,6 +325,14 @@ class MassUserDeletion extends ST.MassOperation {
 
         if (next > now)
             return { state: "error", message: "<%= t('users.index.mass_operations.delete.marked_too_recently') %>" };
+
+        // Don't delete yourself
+        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>)
+            return { state: "error", message: "<%= t('users.index.mass_operations.delete.cant_delete_yourself') %>" };
+
+        // Don't delete organisation owners
+        if (item.role[ST.INDEX_FILTERABLE].includes("owner"))
+            return { state: "error", message: "<%= t('users.index.mass_operations.delete.cant_delete_owners') %>" };
 
         return { state: "ready" };
     }
@@ -381,12 +386,17 @@ class MassUserLocking extends ST.MassOperation {
 
     prepareItem(item)
     {
+        // Don't lock yourself
+        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>)
+            return { state: "error", message: "<%= t('users.index.mass_operations.lock.cant_lock_yourself') %>" };
+
+        // Don't lock organisation owners
+        if (item.role[ST.INDEX_FILTERABLE].includes("owner"))
+            return { state: "error", message: "<%= t('users.index.mass_operations.lock.cant_lock_owners') %>" };
+
         // Do nothing if the user is already in the desired locking state
         if (item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === this.lock)
             return { state: "skip" };
-
-        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>)
-            return { state: "error", message: "<%= t('users.index.mass_operations.lock.cant_lock_yourself') %>" };
 
         return { state: "ready" };
     }
@@ -447,8 +457,13 @@ class MassUserMarkForDeletion extends ST.MassOperation {
         const dnd = item.dnd[ST.INDEX_EXISTS] === true && item.dnd[ST.INDEX_FILTERABLE] !== undefined,
               marked = item.rrt[ST.INDEX_EXISTS] === true && item.rrt[ST.INDEX_FILTERABLE] !== undefined;
 
+        // Don't mark yourself for deletion
         if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>)
             return { state: "error", message: "<%= t('users.index.mass_operations.mark.cant_mark_yourself') %>" };
+
+        // Don't mark organisation owners for deletion
+        if (item.role[ST.INDEX_FILTERABLE].includes("owner"))
+            return { state: "error", message: "<%= t('users.index.mass_operations.mark.cant_mark_owners') %>" };
 
         if (dnd) {
             // Deletion prevented, can't mark for deletion

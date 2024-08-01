@@ -950,6 +950,7 @@ en:
           lock: "Lock (if not locked yet)"
           unlock: "Unlock (if locked)"
           cant_lock_yourself: "You cannot lock yourself"
+          cant_lock_owners: "You cannot mass lock organisation owners"
         mark:
           title: "Mark account for deletion..."
           action: "Action:"
@@ -957,12 +958,14 @@ en:
           mark_force: "Force-mark for deletion and reset the timestamp to now (ie. \"always mark\")"
           unmark: "Unmark"
           cant_mark_yourself: "You cannot mark yourself for deletion"
+          cant_mark_owners: "You cannot mass mark organisation owners for deletion"
         delete:
           title: "Account removal"
           deletion_prevented: "User deletion has been prevented"
           not_marked_for_deletion: "User has not been marked for deletion"
           marked_too_recently: "User has been marked for deletion for less than a week"
           cant_delete_yourself: "You cannot delete yourself"
+          cant_delete_owners: "You cannot mass delete organisation owners"
         clear_column:
           title: "Clear column contents..."
           column_title: "Column:"
