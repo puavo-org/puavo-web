@@ -1021,6 +1021,8 @@ fi:
         create_devices: "voi lisätä uusia laitteita"
         delete_devices: "voi poistaa laitteita"
         mass_delete_devices: "voi massapoistaa useita laitteita"
+        reset_devices: "voi nollata laitteita"
+        mass_reset_devices: "voi massanollata laitteita"
     new:
       title: "Lisää uusi käyttäjä"
     edit:
@@ -1071,6 +1073,8 @@ fi:
         create_devices: "Voi lisätä uusia laitteita (kannettavien rekisteröinti on toistaiseksi aina sallittu)"
         delete_devices: "Voi poistaa laitteita"
         mass_delete_devices: "voi massapoistaa useita laitteita (tavallinen laitteiden poisto on myös oltava sallittuna)"
+        reset_devices: "Voi asettaa/poistaa laitteiden nollaustilan"
+        mass_reset_devices: "Voi massa-asettaa/-poistaa laitteiden nollaustilan (tavallinen nollaustilan asettaminen on myös oltava sallittuna)"
 
   # New new user mass import/update tool
   new_import:

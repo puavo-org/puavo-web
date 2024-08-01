@@ -60,6 +60,8 @@ class DevicesController < ApplicationController
     @permit_device_creation = @is_owner || current_user.has_admin_permission?(:create_devices)
     @permit_device_deletion = @is_owner || current_user.has_admin_permission?(:delete_devices)
     @permit_device_mass_deletion = @is_owner || (@permit_device_deletion && current_user.has_admin_permission?(:mass_delete_devices))
+    @permit_device_reset = @is_owner || current_user.has_admin_permission?(:reset_devices)
+    @permit_device_mass_reset = @is_owner || current_user.has_admin_permission?(:mass_reset_devices)
 
     @device = Device.new
 
@@ -129,6 +131,7 @@ class DevicesController < ApplicationController
     @device.get_ca_certificate(current_organisation.organisation_key)
 
     @permit_device_deletion = is_owner? || current_user.has_admin_permission?(:delete_devices)
+    @permit_device_reset = is_owner? || current_user.has_admin_permission?(:reset_devices)
 
     @releases = get_releases
 
@@ -429,6 +432,12 @@ class DevicesController < ApplicationController
   end
 
   def clear_reset_mode
+    unless is_owner? || current_user.has_admin_permission?(:reset_devices)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to devices_url
+      return
+    end
+
     @device = get_device(params[:id])
     return if @device.nil?
 
@@ -441,6 +450,12 @@ class DevicesController < ApplicationController
   end
 
   def set_reset_mode
+    unless is_owner? || current_user.has_admin_permission?(:reset_devices)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to devices_url
+      return
+    end
+
     @device = get_device(params[:id])
     return if @device.nil?
 

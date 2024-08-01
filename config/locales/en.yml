@@ -1021,6 +1021,8 @@ en:
         create_devices: "can add new devices"
         delete_devices: "can delete devices"
         mass_delete_devices: "can mass delete multiple devices"
+        reset_devices: "can reset devices"
+        mass_reset_devices: "can mass reset devices"
     new:
       title: New user
     edit:
@@ -1071,6 +1073,8 @@ en:
         create_devices: "Can add new devices (laptop registration is currently always allowed)"
         delete_devices: "Can delete devices"
         mass_delete_devices: "Can mass delete multiple devices (normal device deletion must also be granted)"
+        reset_devices: "Can set/clear device reset mode"
+        mass_reset_devices: "Can mass set/clear device reset modes (normal reset mode must also be allowed)"
 
   # New new user mass import/update tool
   new_import:

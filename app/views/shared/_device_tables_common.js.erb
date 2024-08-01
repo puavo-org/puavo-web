@@ -1554,6 +1554,7 @@ class MassDeviceChangeSchool extends ST.MassOperation {
     }
 };
 
+<% if @permit_device_reset && @permit_device_mass_reset %>
 // Mass operation: set or clear the reset mode
 class MassDeviceReset extends ST.MassOperation {
     constructor(parent, container)
@@ -1616,6 +1617,7 @@ class MassDeviceReset extends ST.MassOperation {
         return { state: "ready" };
     }
 };
+<% end %>
 
 <% if @permit_device_deletion && @permit_device_mass_deletion %>
 // Mass operation: delete device
@@ -1661,12 +1663,14 @@ const MASS_OPERATIONS = [
         haveSettings: true,
         cls: MassDeviceChangeSchool
     },
+<% if @permit_device_reset && @permit_device_mass_reset %>
     {
         operation: "reset",
         title: "<%= t('devices.index.mass_operations.reset.title') %>",
         haveSettings: true,
         cls: MassDeviceReset
     },
+<% end %>
 <% if @permit_device_deletion && @permit_device_mass_deletion %>
     {
         operation: "delete",
