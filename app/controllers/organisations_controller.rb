@@ -272,6 +272,9 @@ class OrganisationsController < ApplicationController
       @synchronised_deletions_by_school[s.displayName] = deletions.to_a.sort
     end
 
+    # Allow moving users to any school
+    @allowed_destination_schools = @schools_list
+
     @current_user_id = current_user.id
 
     respond_to do |format|
