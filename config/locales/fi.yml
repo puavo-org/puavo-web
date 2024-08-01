@@ -338,6 +338,7 @@ fi:
       reset_operation: "Nollausoperaatio"
       reset_pin: "Nollaus-PIN"
       reset_time: "Nollauspyyntö tehty"
+      reset_fulfilled: "Nollauspyyntö täytetty"
       uptime: "Uptime"
 
     servers:

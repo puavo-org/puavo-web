@@ -338,6 +338,7 @@ en:
       reset_operation: "Reset operation"
       reset_pin: "Reset PIN"
       reset_time: "Reset mode requested at"
+      reset_fulfilled: "Reset fulfilled at"
       uptime: "Uptime"
 
     servers:

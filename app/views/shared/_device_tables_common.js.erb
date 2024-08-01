@@ -608,6 +608,12 @@ const COLUMN_DEFINITIONS = {
         title: "<%= t('columns.devices.reset_time') %>",
         type: ST.ColumnType.UNIXTIME,
     },
+
+    reset_fulfilled: {
+        key: "reset_time",
+        title: "<%= t('columns.devices.reset_fulfilled') %>",
+        type: ST.ColumnType.UNIXTIME,
+    },
 <% end %>
 
     serial: {
@@ -763,6 +769,7 @@ const COLUMN_ORDER = [
     "autopower_off",
     "reset_from",
     "reset_time",
+    "reset_fulfilled",
     "reset_pin",
     "reset_operation",
 <% end %>

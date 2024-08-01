@@ -319,6 +319,11 @@ module DevicesHelper
         rescue
         end
       end
+
+      begin
+        out[:reset_fulfilled] = DateTime.parse(reset['request-fulfilled']).to_i
+      rescue
+      end
     end
 
     # Parse the hardware information
