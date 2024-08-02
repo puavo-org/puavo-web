@@ -260,6 +260,7 @@ en:
       is_locked: "Locked?"
       other_schools: "Other schools"
       licenses: "Licenses"
+      devices: "User's devices"
 
     groups:
       name: "Name"

@@ -260,6 +260,7 @@ fi:
       is_locked: "Lukittu?"
       other_schools: "Muut koulut"
       licenses: "Lisenssit"
+      devices: "Käyttäjän laitteet"
 
     groups:
       name: "Nimi"

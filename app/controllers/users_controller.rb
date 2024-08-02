@@ -156,6 +156,32 @@ class UsersController < ApplicationController
                               :scope => :one,
                               :attributes => UsersHelper.get_user_attributes())
 
+    # Build a list of devices whose primary users are in this school. If the viewer is a school
+    # admin and the device is in a school they don't have access to, then ACLs will prevent the
+    # device search below from seeing the device.
+    puavoid_extractor = /puavoId=([^, ]+)/.freeze
+
+    users_devices = {}
+
+    raaka = Device.search_as_utf8(
+      filter: "(puavoDevicePrimaryUser=*)",
+      scope: :one,
+      attributes: ['puavoDevicePrimaryUser', 'puavoHostname', 'puavoSchool']
+    ).each do |device_dn, raw_device|
+      # PuavoIDs for manual link formatting (manual is faster than automatic)
+      device_id = device_dn.match(puavoid_extractor)[1].to_i
+      device_school_id = raw_device['puavoSchool'][0].match(puavoid_extractor)[1].to_i
+
+      user_dn = raw_device['puavoDevicePrimaryUser'][0]
+      users_devices[user_dn] ||= []
+
+      users_devices[user_dn] << [
+        raw_device['puavoHostname'][0],
+        "/devices/#{device_school_id}/devices/#{device_id}",
+        device_school_id
+      ]
+    end
+
     # Convert the raw data into something we can easily parse in JavaScript
     school_id = @school.id.to_i
     users = []
@@ -168,6 +194,7 @@ class UsersController < ApplicationController
       user[:link] = "/users/#{school.id}/users/#{user[:id]}"
       user[:school_id] = school_id
       user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school_id]
+      user[:devices] = users_devices[dn] if users_devices.include?(dn)
 
       users << user
     end

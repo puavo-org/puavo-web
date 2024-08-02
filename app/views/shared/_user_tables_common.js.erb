@@ -255,6 +255,40 @@ const COLUMN_DEFINITIONS = {
         type: ST.ColumnType.STRING,
         transform: entry => [ST.escapeHTML(entry.notes).replaceAll("\r", "").replaceAll("\n", "<br>"), entry.notes],
     },
+
+    devices: {
+        key: "devices",
+        title: "<%= t('columns.users.devices') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
+        transform: entry => {
+            let display = [],
+                raw = [];
+
+            if (entry.devices) {
+                for (const d of entry.devices) {
+                    let link = `<a href="${d[1]}">${d[0]}</a>`,
+                        plain = d[0];
+
+                    if (d[2] in SCHOOLS) {
+                        const name = SCHOOLS[d[2]].name;
+
+                        link += ` (${name})`;
+                        plain += `,${name}`;
+                    }
+
+                    display.push(link);
+                    raw.push(plain);
+                }
+            }
+
+            // Use the raw output for both sorting and filtering. Now you can filter by both
+            // device hostnames and device schools.
+            raw = raw.join(",");
+
+            return [display.join("<br>"), raw, raw];
+        }
+    },
 };
 
 // The default order for columns
@@ -283,6 +317,7 @@ const COLUMN_ORDER = [
     "created",
     "modified",
     "licenses",
+    "devices",
     "mfa",
     "notes",
 ];
