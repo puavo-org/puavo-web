@@ -343,7 +343,7 @@ en:
 
     servers:
       available_images: "Available images"
-      schools: "School limits?"
+      schools: "School restrictions?"
 
   puavoconf_table:
     show:
@@ -438,7 +438,7 @@ en:
         model: "Devices: Model"
         serial_number: "Devices: Serial number"
 
-    school_limit_title: "School limit:"
+    school_limit_title: "School restriction:"
     school_limit_all: "(All schools)"
 
     more_settings:
@@ -466,7 +466,7 @@ en:
       invalid_search_data: "Invalid search parameters: missing search terms or search terms type"
       search_terms_cleanup_failed: "Search term cleanup failed"
       no_search_terms: "No search terms"
-      school_limit_failed: "School limit parsing failed"
+      school_limit_failed: "School restriction parsing failed"
       invalid_regexp: "Invalid regexp "
       unknown_search_term_type: "Unknown search term type "
 
@@ -764,7 +764,7 @@ en:
       automounts: Automounts
       no_automounts: "(No automounts)"
     school_limit:
-      title: School limit
+      title: School restriction
       boot_description: "Schools that this boot server will serve:"
       ltsp_description: "This LTSP server will only serve these schools:"
       ltsp_description_edit: If none is selected it will serve all schools in the organisation.
