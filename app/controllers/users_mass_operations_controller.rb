@@ -95,6 +95,16 @@ class UsersMassOperationsController < MassOperationsController
     status, message = delete_user_from_external_systems(user, plaintext_message: true)
     return [false, message] unless status
 
+    # LDAP is not a relational database, so if this user was the primary user of any devices,
+    # we must manually break those connections.
+    begin
+      DevicesHelper.clear_device_primary_user(user.dn)
+    rescue StandardError => e
+      # At least one device failed, CANCEL the opeation to avoid dangling references
+      logger.info("Failed to clear the primary user of a device: #{e}")
+      return false, t('flash.device_primary_user_removal_failed')
+    end
+
     user.destroy
 
     return [true, nil]

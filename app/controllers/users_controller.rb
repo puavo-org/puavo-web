@@ -1,4 +1,5 @@
 require 'set'
+require 'devices_helper'    # Need clear_device_primary_user
 
 class UsersController < ApplicationController
   include Puavo::Integrations
@@ -626,22 +627,16 @@ class UsersController < ApplicationController
         end
       end
 
-      # Any primary devices? LDAP is not a relational database, so manually break the
-      # connection between a deleted user and devices where they were the primary user.
-      user_devices = Device.find(:all,
-                                 :attribute => 'puavoDevicePrimaryUser',
-                                 :value => @user.dn.to_s)
-
-      user_devices.each do |device|
-        begin
-          device.puavoDevicePrimaryUser = nil
-          device.save!
-        rescue
-          # If the primary user cannot be cleared, CANCEL the deletion
-          flash[:alert] = t('flash.device_primary_user_removal_failed')
-          redirect_to(user_path(@school, @user))
-          return
-        end
+      # LDAP is not a relational database, so if this user was the primary user of any devices,
+      # we must manually break those connections.
+      begin
+        DevicesHelper.clear_device_primary_user(@user.dn)
+      rescue StandardError => e
+        # At least one device failed, CANCEL the opeation to avoid dangling references
+        logger.info("Failed to clear the primary user of a device: #{e}")
+        flash[:alert] = t('flash.device_primary_user_removal_failed')
+        redirect_to(user_path(@school, @user))
+        return
       end
 
       if @user.destroy

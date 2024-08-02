@@ -483,4 +483,17 @@ module DevicesHelper
 
     schools
   end
+
+  # Resets (clears) the primary user of all devices this user is the primary user of.
+  # Does not handle exceptions; if even one of the devices fail, the operation stops.
+  def self.clear_device_primary_user(user_dn)
+    Device.find(
+      :all,
+      attribute: 'puavoDevicePrimaryUser',
+      value: user_dn.to_s
+    ).each do |device|
+      device.puavoDevicePrimaryUser = nil
+      device.save!
+    end
+  end
 end
