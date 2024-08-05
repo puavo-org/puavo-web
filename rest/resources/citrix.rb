@@ -291,7 +291,7 @@ class Citrix < PuavoSinatra
       count = 1
 
       loop do
-        if count > 5
+        if count > 10
           rlog.error("[#{@request_id}]     This is taking too long, aborting")
 
           return json({
