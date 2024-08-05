@@ -372,6 +372,23 @@ class Citrix < PuavoSinatra
   end
 
 private
+  # Ensures the password has at least one digit, one lowercase letter, and one uppercase letter
+  def valid_password?(str)
+    return false unless /\d/.match(str)
+    return false unless /[a-z]/.match(str)
+    return false unless /[A-Z]/.match(str)
+    true
+  end
+
+  # Generates a random Citrix-compatible password
+  def generate_password
+    password_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890'.split('')
+
+    loop do
+      password = password_chars.sample(15).join
+      return password if valid_password?(password)
+    end
+  end
 
   # Returns the Citrix license data for this user. If it does not exist yet, builds it first.
   def get_citrix_license_data(user)
@@ -391,8 +408,7 @@ private
         'first_name' => first_name,
         'last_name' => last_name,
         'username' => username,
-        # TODO: Use more special symbols
-        'password' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890!.*'.split('').sample(15).join + '%'
+        'password' => generate_password()
       }
 
       # Normal users don't have enough rights to call "user.save!", so update the attribute directly
