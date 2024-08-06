@@ -264,6 +264,6 @@ Feature: Manage devices
 
   Scenario: List admin permissions
     Given I am on the show user page with "superadmin"
-    And I should see "can add new devices"
+    And I should see "can add and register new devices"
     And I should see "can delete devices"
     And I should not see "can mass delete multiple devices"
