@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 <% end %>
 
+<% if @permit_group_creation %>
 <% content_for :tools do %>
 <ul>
   <li>
@@ -58,4 +59,5 @@ document.addEventListener("DOMContentLoaded", function() {
     <% end %>
   </li>
 </ul>
+<% end %>
 <% end %>

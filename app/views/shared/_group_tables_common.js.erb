@@ -155,11 +155,13 @@ class MassGroupUnmarkMembersForDeletion extends ST.MassOperation {
     prepareItem(item) { return { state: "ready" }; }
 };
 
+<% if @permit_mass_group_deletion %>
 // Mass operation: delete the group
 class MassGroupDeletion extends ST.MassOperation {
     constructor(parent, container) { super(parent, container); }
     prepareItem(item) { return { state: "ready" }; }
 };
+<% end %>
 
 // Mass operation: set type
 class MassGroupSetType extends ST.MassOperation {
@@ -249,11 +251,13 @@ const MASS_OPERATIONS = [
         title: "<%= t('link.unmark_group_members_deletion') %>",
         cls: MassGroupUnmarkMembersForDeletion
     },
+<% if @permit_mass_group_deletion %>
     {
         operation: "delete",
         title: "<%= t('link.delete_group') %>",
         cls: MassGroupDeletion
     },
+<% end %>
 ];
 
 function userActions(item)
@@ -264,9 +268,11 @@ function userActions(item)
 
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
+<% if @permit_group_deletion %>
     let message = "<%= t('general_confirm') %>";
 
     html += `<a href="${link}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+<% end %>
 
     return html;
 }

@@ -343,6 +343,10 @@ class OrganisationsController < ApplicationController
     # You can't get here unless you're an owner
     @is_owner = true
 
+    # Yes, you can
+    @permit_group_deletion = true
+    @permit_mass_group_deletion = true
+
     respond_to do |format|
       format.html   # all_groups.html.erb
     end

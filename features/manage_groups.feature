@@ -6,8 +6,12 @@ Feature: Manage groups
   Background:
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | admin                     |
+      | givenName | sn     | uid     | password | school_admin | puavoEduPersonAffiliation |
+      | Pavel     | Taylor | pavel   | secret   | true         | admin                     |
+      | Another   | Admin  | another | secret2  | true         | admin                     |
+      | Third     | Admin  | third   | secret3  | true         | admin                     |
+    And admin "pavel" has these permissions: "create_groups delete_groups"
+    And admin "third" has these permissions: "create_groups"
     And I am logged in as "pavel" with password "secret"
 
   Scenario: Add new group to school
@@ -175,3 +179,42 @@ Feature: Manage groups
       """
       Group moved to school "School 2"
       """
+
+  Scenario: Can't create a new group if it hasn't been granted
+    Given I am logged in as "another" with password "secret2"
+    And I am on the new group page
+    Then I should see "You do not have enough rights to access that page."
+
+  Scenario: Can't see certain buttons
+    Given I am logged in as "another" with password "secret2"
+    And I am on the groups list page
+    Then I should not see "New group..."
+    And I should not see "Remove"
+    Then I am on the group page with "Class 1"
+    And I should not see "New group..."
+    And I should not see "Remove group"
+
+  Scenario: Can only see some buttons
+    Given I am logged in as "third" with password "secret3"
+    And I am on the groups list page
+    Then I should see "New group..."
+    And I should not see "Remove"
+    Then I am on the group page with "Class 1"
+    And I should see "New group..."
+    And I should not see "Remove group"
+
+  Scenario: Limited admin can create new groups
+    Given I am logged in as "third" with password "secret3"
+    And I am on the groups list page
+    When I follow "New group..."
+    Then I should not see "You do not have enough rights to access that page."
+    # The following steps were copied from an earlier scenario
+    When I fill in "Group name" with "Class 4A"
+    And I fill in "Abbreviation" with "class4a"
+    And I fill in "Notes" with "Just some random group used in this test"
+    And I press "Create"
+    Then I should see "Group was successfully created."
+    And I should see "Class 4A"
+    And I should see "Example school 1"
+    And I should see "class4a"
+    And I should see "Just some random group used in this test"

@@ -43,6 +43,10 @@ class GroupsController < ApplicationController
       @groups.delete_if{ |g| !Array(g.memberUid).include?(params[:memberUid]) }
     end
 
+    @is_owner = is_owner?
+    @permit_group_creation = @is_owner || current_user.has_admin_permission?(:create_groups)
+    @permit_group_deletion = @is_owner || current_user.has_admin_permission?(:delete_groups)
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @groups }
@@ -53,6 +57,9 @@ class GroupsController < ApplicationController
   # New AJAX-based index for non-test environments
   def new_cool_groups_index
     @is_owner = is_owner?
+    @permit_group_creation = @is_owner || current_user.has_admin_permission?(:create_groups)
+    @permit_group_deletion = @is_owner || current_user.has_admin_permission?(:delete_groups)
+    @permit_mass_group_deletion = @is_owner || (@permit_group_deletion && current_user.has_admin_permission?(:mass_delete_groups))
 
     respond_to do |format|
       format.html # index.html.erb
@@ -97,6 +104,10 @@ class GroupsController < ApplicationController
 
     @members, @num_hidden = get_and_sort_group_members(@group)
 
+    @is_owner = is_owner?
+    @permit_group_creation = @is_owner || current_user.has_admin_permission?(:create_groups)
+    @permit_group_deletion = @is_owner || current_user.has_admin_permission?(:delete_groups)
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @group }
@@ -106,6 +117,12 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups/new
   # GET /:school_id/groups/new.xml
   def new
+    unless is_owner? || current_user.has_admin_permission?(:create_groups)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to groups_path
+      return
+    end
+
     @group = Group.new
     @is_new_group = true
 
@@ -125,6 +142,12 @@ class GroupsController < ApplicationController
   # POST /:school_id/groups
   # POST /:school_id/groups.xml
   def create
+    unless is_owner? || current_user.has_admin_permission?(:create_groups)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to groups_path
+      return
+    end
+
     @group = Group.new(group_params)
 
     @group.puavoSchool = @school.dn
@@ -164,6 +187,12 @@ class GroupsController < ApplicationController
   # DELETE /:school_id/groups/1
   # DELETE /:school_id/groups/1.xml
   def destroy
+    unless is_owner? || current_user.has_admin_permission?(:delete_groups)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to groups_path
+      return
+    end
+
     @group = get_group(params[:id])
     return if @group.nil?
 
