@@ -776,7 +776,7 @@ fi:
     title: "Ulkoiset palvelut"
     title_organisation: "Organisaatiossa aktivoidut ulkoiset palvelut"
     title_school: "Koulussa aktivoidut ulkoiset palvelut"
-    description: "Ulkoiset palvelut ovat järjestelmiä joihin voi kirjautua Opinsys-tunnuksilla. Käyttäjän kirjaudutta heidän nimi, käyttäjänimi, roolit, koulutiedot ja organisaatiotiedot välitetään kohdepalvelulle. Palveluita voi aktivoida myös koulukohtaisesti."
+    description: "Ulkoiset palvelut ovat järjestelmiä joihin voi kirjautua Opinsys-tunnuksilla. Käyttäjän kirjauduttua heidän nimi, käyttäjänimi, roolit, koulutiedot ja organisaatiotiedot välitetään kohdepalvelulle. Palveluita voi aktivoida myös koulukohtaisesti."
     activation: "Tämä sivu vain listaa aktivoidut palvelut. Tietoturvasyistä johtuen ulkoisia palveluita voivat luoda, muokata ja aktivoida vain Opinsysin työntekijät. "
     no_services_organisation: "Ulkoisia palveluita ei ole aktivoitu tässä organisaatiossa"
     no_services_school: "Ulkoisia palveluita ei ole aktivoitu tässä koulussa"
