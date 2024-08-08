@@ -58,5 +58,9 @@ end
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 DISTRIBUTED_LOCK = Redlock::Client.new([REDIS_CONNECTION])
 
+# SSO sessions
 PUAVO_SSO_SESSION_KEY = '_puavo_sso_session'.freeze
 PUAVO_SSO_SESSION_LENGTH = (60 * 60 * 8).freeze       # 8 hours
+
+# MFA
+PUAVO_MFA_LOGIN_TIME = (60 * 5).freeze

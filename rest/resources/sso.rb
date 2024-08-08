@@ -596,14 +596,14 @@ class SSO < PuavoSinatra
   end
 
   def mfa_create_session(key, uuid, data)
-    # Store the data for 5 minutes. If the user does not enter their MFA code within that time,
-    # the login process is invalidated.
+    # Store the data for PUAVO_MFA_LOGIN_TIME seconds. If the user does not enter their MFA code
+    # within that time, the login process is invalidated.
     redis = _mfa_redis
 
     # I don't know how reliable Redis' transactions really are
     redis.multi do |m|
-      m.set(key, data.to_json.to_s, nx: true, ex: 60 * 5)
-      m.set(uuid, '0', nx: true, ex: 60 * 5)
+      m.set(key, data.to_json.to_s, nx: true, ex: PUAVO_MFA_LOGIN_TIME)
+      m.set(uuid, '0', nx: true, ex: PUAVO_MFA_LOGIN_TIME)
     end
   end
 
