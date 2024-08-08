@@ -46,6 +46,7 @@ require_relative "./resources/certs"
 require_relative "./resources/external_login"
 require_relative "./resources/bootserver_dns"
 require_relative "./resources/my_school_users"
+require_relative './resources/openidconnect'
 
 if CONFIG['citrix']
   require_relative './resources/citrix'
@@ -64,3 +65,6 @@ PUAVO_SSO_SESSION_LENGTH = (60 * 60 * 8).freeze       # 8 hours
 
 # MFA
 PUAVO_MFA_LOGIN_TIME = (60 * 5).freeze
+
+# OpenID Connect
+PUAVO_OIDC_LOGIN_TIME = (PUAVO_MFA_LOGIN_TIME + 30).freeze

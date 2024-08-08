@@ -197,6 +197,7 @@ class Root < PuavoSinatra
   use PuavoRest::MySchoolUsers
   use PuavoRest::EmailManagement
   use PuavoRest::MFAManagement
+  use PuavoRest::OpenIDConnect
 
   if CONFIG["cloud"]
     # You have to choose which one you want
