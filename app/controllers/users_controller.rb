@@ -215,8 +215,10 @@ class UsersController < ApplicationController
     @user = get_user(params[:id])
     return if @user.nil?
 
-    # get the creation and modification timestamps from LDAP operational attributes
-    extra = User.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
+    # get the creation, modification and last authentication timestamps from
+    # LDAP operational attributes
+    extra = User.find(params[:id], :attributes => ['authTimestamp', 'createTimestamp', 'modifyTimestamp'])
+    @user['authTimestamp']   = convert_timestamp(extra['authTimestamp']) if extra['authTimestamp']
     @user['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @user['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 

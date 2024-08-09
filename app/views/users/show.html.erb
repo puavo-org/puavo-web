@@ -209,6 +209,11 @@
   </tr>
 
   <tr>
+    <th><%= t('ldap_last_auth_time') %></th>
+    <td class="noWrap"><%= h @user['authTimestamp'] %></td>
+  </tr>
+
+  <tr>
     <th><%= t('ldap_create_time') %></th>
     <td class="noWrap"><%= h @user['createTimestamp'] %></td>
   </tr>

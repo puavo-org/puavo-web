@@ -133,8 +133,10 @@ class ServersController < ApplicationController
     @server.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @server.get_ca_certificate(current_organisation.organisation_key)
 
-    # get the creation and modification timestamps from LDAP operational attributes
-    extra = Server.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
+    # get the creation, modification and last authentication timestamps from
+    # LDAP operational attributes
+    extra = Server.find(params[:id], :attributes => ['authTimestamp', 'createTimestamp', 'modifyTimestamp'])
+    @server['authTimestamp']   = convert_timestamp(extra['authTimestamp']) if extra['authTimestamp']
     @server['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @server['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 
