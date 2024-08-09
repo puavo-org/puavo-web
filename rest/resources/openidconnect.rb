@@ -2,22 +2,12 @@ require 'securerandom'
 
 module PuavoRest
 
-# TODO: Move this to the main config
-OIDC_CONFIG = {
-  'clients' => {
-    'devel' => {
-      'redirect_uris' => [
-        'https://openidconnect.net/callback',
-      ],
-    },
-  },
-}.freeze
-
 class OpenIDConnect < PuavoSinatra
   get '/oidc/authorize' do
     request_id = make_request_id
+    oidc_config = CONFIG['openid_connect'].freeze
 
-    $rest_log.info("[#{request_id}] New OpenIDConnect authentication request")
+    $rest_log.info("[#{request_id}] New OpenID Connect authentication request")
 
     puts params.inspect
 
@@ -39,13 +29,13 @@ class OpenIDConnect < PuavoSinatra
 
     $rest_log.info("[#{request_id}] client_id=\"#{client_id}\"")
 
-    unless OIDC_CONFIG['clients'].include?(client_id)
+    unless oidc_config['clients'].include?(client_id)
       $rest_log.error("[#{request_id}] Unknown/invalid client")
       status 403
       return
     end
 
-    client_config = OIDC_CONFIG['clients'][client_id].freeze
+    client_config = oidc_config['clients'][client_id]
 
     # ----------------------------------------------------------------------------------------------
     # Verify the redirect URL(s)
