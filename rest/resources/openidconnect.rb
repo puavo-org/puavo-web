@@ -87,7 +87,7 @@ class OpenIDConnect < PuavoSinatra
     key = SecureRandom.hex(64)
 
     redis = _oidc_redis()
-    redis.set("authorize:#{key}", data, nx: true, ex: PUAVO_OIDC_LOGIN_TIME)
+    redis.set("authorize:#{key}", data.to_json, nx: true, ex: PUAVO_OIDC_LOGIN_TIME)
 
     # TODO: Put the user verification/login step here
 
