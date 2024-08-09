@@ -73,6 +73,7 @@ class OpenIDConnect < PuavoSinatra
     # Build Redis data
 
     data = {
+      'request_id' => request_id,
       'redirect_url' => redirect_uri,
       'scopes' => scopes,
       'state' => params.fetch('state', nil),
