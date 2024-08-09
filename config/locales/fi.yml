@@ -186,6 +186,7 @@ fi:
   destroy_confirm_admin: "Tämä käyttäjä on omistaja ja/tai koulun ylläpitäjä. Oletko varma?"
   destroy_generic_sync_warning: "Poistot synkronoidaan mahdollisesti yhteen tai useampaan ulkoiseen järjestelmään.\nOletko varma, että haluat jatkaa?"
   destroy_exact_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\tSYSTEM_NAMES_HERE\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
+  ldap_last_auth_time: Viimeisin kirjautumisaika (LDAP)
   ldap_create_time: Luotu (LDAP)
   ldap_modify_time: Muokattu (LDAP)
   actions: Toiminnot

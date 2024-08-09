@@ -93,6 +93,7 @@ module DevicesHelper
       'puavoDeviceOnHour',
       'puavoDeviceOffHour',
       'puavoDeviceReset',
+      'authTimestamp',      # LDAP operational attribute
       'createTimestamp',    # LDAP operational attribute
       'modifyTimestamp'     # LDAP operational attribute
     ].freeze
@@ -159,6 +160,10 @@ module DevicesHelper
 
     if dev.include?('puavoTag')
       out[:tags] = dev['puavoTag']
+    end
+
+    if dev.include?('authTimestamp')
+      out[:last_auth_time] = Puavo::Helpers::convert_ldap_time(dev['authTimestamp'])
     end
 
     if dev.include?('createTimestamp')

@@ -122,8 +122,10 @@ class DevicesController < ApplicationController
     @device = get_device(params[:id])
     return if @device.nil?
 
-    # get the creation and modification timestamps from LDAP operational attributes
-    extra = Device.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
+    # get the creation, modification and last authentication timestamps from
+    # LDAP operational attributes
+    extra = Device.find(params[:id], :attributes => ['authTimestamp', 'createTimestamp', 'modifyTimestamp'])
+    @device['authTimestamp']   = convert_timestamp(extra['authTimestamp']) if extra['authTimestamp']
     @device['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @device['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 
