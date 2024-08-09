@@ -118,7 +118,7 @@ module UsersHelper
       out[:created] = Puavo::Helpers::convert_ldap_time(raw['createTimestamp'])
     end
 
-    if raw.include?('createTimestamp')
+    if raw.include?('modifyTimestamp')
       out[:modified] = Puavo::Helpers::convert_ldap_time(raw['modifyTimestamp'])
     end
 
