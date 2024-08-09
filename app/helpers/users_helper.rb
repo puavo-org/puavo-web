@@ -70,7 +70,7 @@ module UsersHelper
     end
 
     if raw['puavoDoNotDelete']
-      out[:dnd] = raw['puavoDoNotDelete'] ? true : false
+      out[:dnd] = raw['puavoDoNotDelete'][0] == 'TRUE' ? true : false
     end
 
     if raw['puavoLocked']
