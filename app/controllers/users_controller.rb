@@ -222,6 +222,9 @@ class UsersController < ApplicationController
     @user['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @user['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 
+    @user.kerberos_last_successful_auth \
+      = @user.kerberos_last_successful_auth_utc ? convert_timestamp(@user.kerberos_last_successful_auth_utc) : nil
+
     if @user.puavoRemovalRequestTime
       @user.puavoRemovalRequestTime = convert_timestamp(@user.puavoRemovalRequestTime)
     end

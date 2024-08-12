@@ -209,6 +209,11 @@
   </tr>
 
   <tr>
+    <th><%= t('kerberos_last_auth_time') %></th>
+    <td class="noWrap"><%= h @user.kerberos_last_successful_auth %></td>
+  </tr>
+
+  <tr>
     <th><%= t('ldap_last_auth_time') %></th>
     <td class="noWrap"><%= h @user['authTimestamp'] %></td>
   </tr>
