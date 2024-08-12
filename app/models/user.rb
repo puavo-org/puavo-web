@@ -51,7 +51,8 @@ class User < LdapBase
      :image,
      :earlier_user,
      :new_password_confirmation,
-     :password_change_mode
+     :password_change_mode,
+     :kerberos_last_successful_auth,
   ]
 
   # Valid and known permissions for school admins. Used in has_admin_permission?(), for example.
@@ -142,6 +143,14 @@ class User < LdapBase
       attrs[attr.to_s] = send(attr)
     end
     attrs
+  end
+
+  def kerberos_last_successful_auth_utc
+    return @krb_last_auth_utc if @krb_last_auth_utc
+    realm = LdapOrganisation.current.puavoKerberosRealm
+    raise 'could not find kerberos realm' unless realm
+    k = Kerberos.find(:first, :attribute => 'krbPrincipalName', :value => "#{ self.uid }@#{ realm }")
+    @krb_last_auth_utc = k.krbLastSuccessfulAuth
   end
 
   def validate
