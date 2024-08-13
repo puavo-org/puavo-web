@@ -151,6 +151,8 @@ class UsersController < ApplicationController
       }
     end
 
+    krb_auth_times_by_uid = Kerberos.all_auth_times_by_uid
+
     # Get a raw list of users in this school
     raw = User.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
                               :scope => :one,
@@ -195,6 +197,9 @@ class UsersController < ApplicationController
       user[:school_id] = school_id
       user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school_id]
       user[:devices] = users_devices[dn] if users_devices.include?(dn)
+
+      krb_auth_time = Integer(krb_auth_times_by_uid[ user[:uid] ]) rescue nil
+      user[:last_kerberos_auth_time] = krb_auth_time if krb_auth_time
 
       users << user
     end
