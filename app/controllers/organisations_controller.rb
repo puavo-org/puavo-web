@@ -312,6 +312,8 @@ class OrganisationsController < ApplicationController
       Array(school['puavoSchoolAdmin'] || []).each{ |dn| school_admins << dn }
     end
 
+    krb_auth_times_by_uid = Kerberos.all_auth_times_by_uid
+
     # Get a raw list of all users in all schools
     raw = User.search_as_utf8(:filter => '(puavoSchool=*)',
                               :scope => :one,
@@ -331,6 +333,9 @@ class OrganisationsController < ApplicationController
       user[:school] = [school[:cn], school[:name]]
       user[:school_id] = school[:id]
       user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school[:id]]
+
+      krb_auth_time = Integer(krb_auth_times_by_uid[ user[:uid] ]) rescue nil
+      user[:last_kerberos_auth_time] = krb_auth_time if krb_auth_time
 
       users << user
     end
