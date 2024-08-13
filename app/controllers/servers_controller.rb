@@ -136,7 +136,7 @@ class ServersController < ApplicationController
     # get the creation, modification and last authentication timestamps from
     # LDAP operational attributes
     extra = Server.find(params[:id], :attributes => ['authTimestamp', 'createTimestamp', 'modifyTimestamp'])
-    @server['authTimestamp']   = convert_timestamp(extra['authTimestamp']) if extra['authTimestamp']
+    @server['authTimestamp']   = convert_timestamp_pick_date(extra['authTimestamp']) if extra['authTimestamp']
     @server['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @server['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 

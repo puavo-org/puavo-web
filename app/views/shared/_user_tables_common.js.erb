@@ -201,18 +201,18 @@ const COLUMN_DEFINITIONS = {
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
-    last_kerberos_auth_time: {
-        key: "last_kerberos_auth_time",
-        title: "<%= t('columns.last_kerberos_auth_time') %>",
+    last_kerberos_auth_date: {
+        key: "last_kerberos_auth_date",
+        title: "<%= t('columns.last_kerberos_auth_date') %>",
         type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_DATEONLY,
     },
 
-    last_ldap_auth_time: {
-        key: "last_ldap_auth_time",
-        title: "<%= t('columns.last_ldap_auth_time') %>",
+    last_ldap_auth_date: {
+        key: "last_ldap_auth_date",
+        title: "<%= t('columns.last_ldap_auth_date') %>",
         type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_DATEONLY,
     },
 
 <% if @is_organisation %>

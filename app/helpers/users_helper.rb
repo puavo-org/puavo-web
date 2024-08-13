@@ -116,7 +116,7 @@ module UsersHelper
     end
 
     if raw.include?('authTimestamp')
-      out[:last_ldap_auth_time] = Puavo::Helpers::convert_ldap_time(raw['authTimestamp'])
+      out[:last_ldap_auth_date] = Puavo::Helpers::convert_ldap_time_pick_date(raw['authTimestamp'])
     end
 
     if raw.include?('createTimestamp')

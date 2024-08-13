@@ -186,8 +186,8 @@ en:
   destroy_confirm_admin: "This user is an owner and/or a school admin. Are you sure?"
   destroy_generic_sync_warning: "Deletions will potentially be synchronised to one or more external systems.\nAre you sure you want to continue?"
   destroy_exact_sync_warning: "The user will also be removed from these external systems:\n\n\tSYSTEM_NAMES_HERE\n\nPlease verify that this is what you intended to do."
-  last_kerberos_auth_time: Last login time (Kerberos)
-  last_ldap_auth_time: Last login time (LDAP)
+  last_kerberos_auth_date: Last login date (Kerberos)
+  last_ldap_auth_date: Last login date (LDAP)
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
   actions: Actions
@@ -239,8 +239,8 @@ en:
     tags: "Tags"
     description: "Description"
     notes: "Notes"
-    last_kerberos_auth_time: "Last login time (Kerberos)"
-    last_ldap_auth_time: "Last login time (LDAP)"
+    last_kerberos_auth_date: "Last login date (Kerberos)"
+    last_ldap_auth_date: "Last login date (LDAP)"
 
     schools:
       integrations: "Integrations"

@@ -150,6 +150,9 @@ class ApplicationController < ActionController::Base
   def convert_timestamp(t)
     t.localtime.strftime('%Y-%m-%d %H:%M:%S') rescue '?'
   end
+  def convert_timestamp_pick_date(t)
+    t.localtime.strftime('%Y-%m-%d') rescue '?'
+  end
 
   def password_management_host
     url = "http://" +

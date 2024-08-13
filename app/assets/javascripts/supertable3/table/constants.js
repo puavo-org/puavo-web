@@ -23,6 +23,9 @@ export const ColumnFlag = {
     // This column can be NULL, ie. the !! operator is useful here. Used only in the Filter
     // Editor to display warnings about useless !! comparisons.
     F_NULLABLE: 0x40,
+
+    // In case column is UNIXTIME, only date will be shown in the UI.
+    F_DATEONLY: 0x80,
 };
 
 // Column data types. Affects filtering and sorting.
