@@ -198,8 +198,9 @@ class UsersController < ApplicationController
       user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school_id]
       user[:devices] = users_devices[dn] if users_devices.include?(dn)
 
-      krb_auth_time = Integer(krb_auth_times_by_uid[ user[:uid] ]) rescue nil
-      user[:last_kerberos_auth_time] = krb_auth_time if krb_auth_time
+      krb_auth_date = Integer(krb_auth_times_by_uid[ user[:uid] ] \
+                        .to_date.to_time) rescue nil
+      user[:last_kerberos_auth_date] = krb_auth_date if krb_auth_date
 
       users << user
     end
@@ -223,12 +224,12 @@ class UsersController < ApplicationController
     # get the creation, modification and last authentication timestamps from
     # LDAP operational attributes
     extra = User.find(params[:id], :attributes => ['authTimestamp', 'createTimestamp', 'modifyTimestamp'])
-    @user['authTimestamp']   = convert_timestamp(extra['authTimestamp']) if extra['authTimestamp']
+    @user['authTimestamp']   = convert_timestamp_pick_date(extra['authTimestamp']) if extra['authTimestamp']
     @user['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @user['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 
     @user.kerberos_last_successful_auth \
-      = @user.kerberos_last_successful_auth_utc ? convert_timestamp(@user.kerberos_last_successful_auth_utc) : nil
+      = @user.kerberos_last_successful_auth_utc ? convert_timestamp_pick_date(@user.kerberos_last_successful_auth_utc) : nil
 
     if @user.puavoRemovalRequestTime
       @user.puavoRemovalRequestTime = convert_timestamp(@user.puavoRemovalRequestTime)

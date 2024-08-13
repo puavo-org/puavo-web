@@ -43,7 +43,8 @@ function _transformValue(raw, key, coldef, defVal)
             break;
 
         case ColumnType.UNIXTIME:
-            [, value] = convertTimestamp(value);
+            let dateOnly = (coldef.flags & ColumnFlag.F_DATEONLY);
+            [, value] = convertTimestamp(value, dateOnly);
             break;
 
         default:

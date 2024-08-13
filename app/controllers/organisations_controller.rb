@@ -334,8 +334,9 @@ class OrganisationsController < ApplicationController
       user[:school_id] = school[:id]
       user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school[:id]]
 
-      krb_auth_time = Integer(krb_auth_times_by_uid[ user[:uid] ]) rescue nil
-      user[:last_kerberos_auth_time] = krb_auth_time if krb_auth_time
+      krb_auth_date = Integer(krb_auth_times_by_uid[ user[:uid] ] \
+                        .to_date.to_time) rescue nil
+      user[:last_kerberos_auth_date] = krb_auth_date if krb_auth_date
 
       users << user
     end

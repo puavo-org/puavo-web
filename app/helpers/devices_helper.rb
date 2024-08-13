@@ -163,7 +163,7 @@ module DevicesHelper
     end
 
     if dev.include?('authTimestamp')
-      out[:last_auth_time] = Puavo::Helpers::convert_ldap_time(dev['authTimestamp'])
+      out[:last_auth_time] = Puavo::Helpers::convert_ldap_time_pick_date(dev['authTimestamp'])
     end
 
     if dev.include?('createTimestamp')
