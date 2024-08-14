@@ -292,11 +292,14 @@ class User < LdapModel
   end
 
   def delete_kerberos_principal
-    # XXX We should really destroy the kerberos principal for this user,
-    # XXX but for now we just set a password to some unknown value
-    # XXX so that the kerberos principal can not be used.
-    # XXX This also invalidates downstream passwords.
+    # invalidate password, needed to invalidate possible downstream passwords
     change_user_password(:no_upstream, SecureRandom.hex(128))
+
+    # destroy user kerberos principal if found
+    expected_principal = "#{ username }@#{ organisation.puavo_kerberos_realm }"
+    k = Kerberos.by_attr(:krb_principal_name, expected_principal)
+    return unless k
+    k.destroy!
   end
 
   def delete_all_associations

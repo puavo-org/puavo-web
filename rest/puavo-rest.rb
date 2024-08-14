@@ -46,6 +46,7 @@ require_relative "./resources/certs"
 require_relative "./resources/external_login"
 require_relative "./resources/bootserver_dns"
 require_relative "./resources/my_school_users"
+require_relative "./resources/kerberos"
 
 if CONFIG['citrix']
   require_relative './resources/citrix'
