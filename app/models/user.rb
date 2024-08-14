@@ -145,12 +145,19 @@ class User < LdapBase
     attrs
   end
 
-  def kerberos_last_successful_auth_utc
-    return @krb_last_auth_utc if @krb_last_auth_utc
+  def user_kerberos_record
+    return @krb_record if @krb_record
     realm = LdapOrganisation.current.puavoKerberosRealm
     raise 'could not find kerberos realm' unless realm
-    k = Kerberos.find(:first, :attribute => 'krbPrincipalName', :value => "#{ self.uid }@#{ realm }")
-    @krb_last_auth_utc = k.krbLastSuccessfulAuth
+    @krb_record = Kerberos.find(:first, :attribute => 'krbPrincipalName',
+                                        :value => "#{ self.uid }@#{ realm }")
+    return @krb_record
+  end
+
+  def kerberos_last_successful_auth_utc
+    k = user_kerberos_record
+    return nil unless k
+    k.krbLastSuccessfulAuth
   end
 
   def validate
@@ -737,11 +744,9 @@ class User < LdapBase
   end
 
   def delete_kerberos_principal
-    # XXX We should really destroy the kerberos principal for this user,
-    # XXX but for now we just set a password to some unknown value
-    # XXX so that the kerberos principal can not be used.
-    self.new_password = generate_password(40)
-    change_password(:no_upstream)
+    k = user_kerberos_record
+    return unless k
+    k.destroy
   end
 
   def set_samba_settings
