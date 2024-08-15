@@ -1,7 +1,7 @@
 <div id="container">
     <form action="<%= @login_content['mfa_post_uri'] %>" method="post" accept-charset="utf-8" style="margin: 0 auto;">
         <%= token_tag form_authenticity_token %>
-        <input type="hidden" name="token" value="<%= @token %>">
+        <input type="hidden" name="login_key" value="<%= @login_content['login_key'] %>">
 
         <fieldset>
             <p id="mfa_help"><%= raw @login_content['mfa_help'] %></p>
@@ -9,8 +9,8 @@
 
             <div class="mfa_row">
                 <input type="text" id="mfa_code" name="mfa_code" maxlength="50" size="50" autocomplete="off" autofocus>
-                <% if @mfa_error %>
-                <div id="mfa_invalid_code"><%= @mfa_error %></div>
+                <% if @login_content['error'] %>
+                <div id="mfa_invalid_code"><%= @login_content['error'] %></div>
                 <% end %>
             </div>
 

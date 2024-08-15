@@ -19,7 +19,7 @@ class SessionsController < ApplicationController
 
       "external_service_name" => I18n.t("sessions.new.external_service_name"),
       "service_title_override" => nil,
-      "return_to" => params['return_to'] || params['return'] || nil,
+      "login_key" => nil,
       "organisation" => request.host,
       "display_domain" => request.host,   # used mainly in SSO code, but must be set here too
       "username_placeholder" => I18n.t("sessions.new.username_placeholder"),
@@ -227,6 +227,7 @@ class SessionsController < ApplicationController
     @login_content = {
       'prefix' => '/login',
       'mfa_post_uri' => mfa_post_code_path,
+      "login_key" => nil,
 
       # The form translations come from different places, so they cannot be embedded directly
       # into the template. (FIXME: Or can they?)

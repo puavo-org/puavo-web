@@ -1,4 +1,8 @@
 sso:
+  jwt_missing_return_url: "Kirjautumisosoitteesta puuttuu \"return_to\", pyyntöä ei voida käsitellä.<br>Ole hyvä ja ota yhteys Opinsysin tukeen, ja anna heille tämä koodi: %1."
+  unknown_external_service: "Tuntematon palvelu, kirjautumista ei voi suorittaa.<br>Ole hyvä ja ota yhteys Opinsysin tukeen, ja anna heille tämä koodi: %1."
+  unspecified_error: "Määrittelemätön kertakirjautumisjärjestelmän virhe. Kirjautuminen on pysäytetty.<br>Ole hyvä ja ota yhteys Opinsysin tukeen, ja anna heille tämä koodi: %1."
+  expired_login: "Kirjautumisistuntosi on vanhentunut. Yritä kirjautumista uudelleen.<br>Jos ongelma toistuu uudelleen, ota yhteys Opinsysin tukeen ja anna heille tämä koodi: %1."
   title: Opinsys-tunnistautuminen
   username: Käyttäjätunnus
   organisation: organisaatio
@@ -8,18 +12,23 @@ sso:
   no_organisation: Organisaatiota ei ole asetettu
   organisation_missing: Organisaatio puuttuu käyttäjänimestä. Käytä muotoa käyttäjätunnus@organisaatiosi.opinsys.fi
   invalid_username: Väärän muotoinen käyttäjätunnus
+  trusted_state_mismatch: "Ristiriita luotetun ja ei-luotetun palvelun tiloissa. Kirjautumisprosessi ei voi jatkua.<br>Ole hyvä ja ota yhteys Opinsysin tukeen ja anna heille tämä koodi: %1."
   verified_address_missing: "Tämä palvelu vaatii vahvennetun sähköpostiosoitteen. <a href=\"%1\">Ole hyvä, ja vahvista osoitteesi Omien tietojen muokkauksen kautta</a>, ja yritä sitten kirjautumista uudelleen. Jos et tiedä mitä tämä tarkoittaa, ota yhteys Opinsys Oy:n tukeen."
   login_to: Kirjaudu palveluun
   login: Kirjaudu
   error: Virhe
-  help: Apua
   technical_support: "Tekninen tuki"
+  help: Apua
   developers: Kehittäjät
   developers_info: "Lue <a href=/v3/sso/developers target=_blank>tämä</a> dokumentti, jos olet kiinnostunut Opinsys-tunnistautumisen toteuttamisesta."
   username_help: Käytä samaa käyttäjätunnusta kuin Opinsys-tietokoneille kirjautuessasi.
   organisation_help: "Käyttäjätunnus tulee syöttää muodossa <em>käyttäjätunnus</em>@<em>organisaatio</em>.opinsys.fi. Käyttäjätunnus on sama kuin Opinsys-tietokoneille kirjautuessasi. Organisaatio-osa tulee koulusi kaupungin/kunnan mukaan. Se kirjoitetaan pienellä, sekä siitä tulee poistaa tarkkeet ja aksentit. Esimerkiksi, jos olet Jyväskylästä ja Opinsys-tunnuksesi on matti.meikalainen, on organisaatio-osa <em>jyvaskyla</em> ja kirjaudut tunnuksella <em>matti.meikalainen@jyvaskyla.opinsys.fi</em>."
   service_not_activated: Tämä palvelu ei ole aktivoitu. Voit pyytää koulusi pääkäyttäjää aktivoimaan sen.
   support_info: Ongelmatapauksissa voit olla yhteydessä puhelimitse Opinsysin tukeen <a href="tel:+358144591624">014 4591 624</a>.
+sso_logout:
+  missing_redirect_url: "Puuttuva uudelleenohjaus-URL. Uloskirjautuminen ei voi jatkua..<br>Ole hyvä ja ota yhteys Opinsysin tukeen ja anna heille tämä koodi: %1."
+  unauthorized_redirect_url: "Annettu uudelleenkirjautumisosoite ei ole sallittu. Uloskirjautumista ei voida suorittaa turvallisuussyistä johtuen.<br>Ole hyvä ja ota yhteys Opinsysin tukeen ja anna heille tämä koodi: %1."
+  generic_error: "Tuntematon uloskirjautumisvirhe.<br>Ole hyvä ja ota yhteys Opinsysin tukeen ja anna heille tämä koodi: %1."
 eltern_sso:
   title: "Welcome!"
   header: "Login by entering your username or email address, and password below."

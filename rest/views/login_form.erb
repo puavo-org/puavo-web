@@ -29,7 +29,9 @@
 
     <form action="" method="post" accept-charset="utf-8">
         <%= token_tag form_authenticity_token %>
-        <input type="hidden" name="return_to" value="<%= @login_content['return_to'] %>">
+        <% if @login_content['login_key'] %>
+        <input type="hidden" name="login_key" value="<%= @login_content['login_key'] %>">
+        <% end %>
         <% if @login_content['display_domain'] %>
         <input type="hidden" name="organisation" value="<%= @login_content['display_domain'] %>">
         <% end %>
@@ -134,8 +136,8 @@ const TOP_DOMAIN = "<%= @login_content['topdomain'] %>";
     });
 }());
 
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelector("form").addEventListener("submit", (e) => {
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector("form").addEventListener("submit", e => {
         <% if @login_content['display_domain'] %>
         // We're in a "forced domain" mode, so if the username already
         // contains the domain name (any domain), remove it.
