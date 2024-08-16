@@ -200,9 +200,9 @@ module PuavoLoginForm
     school_allows = Array(primary_school['external_services']).include?(external_service['dn'])
 
     unless organisation_allows || school_allows
-      render_login_form(login_key, external_service,
-                        error_message: t.sso.service_not_activated,
-                        login_data: login_data)
+      sso_render_login_form(login_key, external_service,
+                            error_message: t.sso.service_not_activated,
+                            login_data: login_data)
     end
 
     # If the service is trusted, block users who don't have a verified email address
@@ -215,9 +215,9 @@ module PuavoLoginForm
         # Build a link to the profile editor in the current organisation
         org = organisation.domain.split('.')[0]
 
-        render_login_form(login_key, external_service,
-                          error_message: t.sso.verified_address_missing("https://#{org}.opinsys.fi/users/profile/edit"),
-                          force_error_message: true, login_data: login_data)
+        sso_render_login_form(login_key, external_service,
+                              error_message: t.sso.verified_address_missing("https://#{org}.opinsys.fi/users/profile/edit"),
+                              force_error_message: true, login_data: login_data)
       end
 
       rlog.info("[#{request_id}] the user has a verified email address")
