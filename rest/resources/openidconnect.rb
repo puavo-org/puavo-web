@@ -1,8 +1,18 @@
 require 'securerandom'
 
+require_relative '../lib/login/utility'
+require_relative '../lib/login/login_form'
+require_relative '../lib/login/session'
+require_relative '../lib/login/mfa'
+
 module PuavoRest
 
 class OpenIDConnect < PuavoSinatra
+  register Sinatra::R18n
+  include PuavoLoginForm
+  include PuavoLoginSession
+  include PuavoLoginMFA
+
   get '/oidc/authorize' do
     request_id = make_request_id
     oidc_config = CONFIG['openid_connect'].freeze
@@ -62,7 +72,7 @@ class OpenIDConnect < PuavoSinatra
     # ----------------------------------------------------------------------------------------------
     # Build Redis data
 
-    data = {
+    oidc_data = {
       'request_id' => request_id,
       'redirect_url' => redirect_uri,
       'scopes' => scopes,
@@ -70,23 +80,63 @@ class OpenIDConnect < PuavoSinatra
     }
 
     if params.include?('nonce')
-      data['nonce'] = params['nonce']
+      oidc_data['nonce'] = params['nonce']
     end
 
-    # Stash the data in Redis
-    key = SecureRandom.hex(64)
+    login_key = SecureRandom.hex(8)
 
-    redis = _oidc_redis()
-    redis.set("authorize:#{key}", data.to_json, nx: true, ex: PUAVO_OIDC_LOGIN_TIME)
+    begin
+      # TODO: Determine the service from the client ID, not URL
+      external_service = ExternalService.by_url('XXX')
 
-    # TODO: Put the user verification/login step here
+      login_data = login_create_data(request_id, external_service, false, '/oidc/stage2')
+      login_data['oidc'] = oidc_data
 
-    status 200
+      _login_redis.set(login_key, login_data.to_json, nx: true, ex: 60 * 2)
+      redirect "/v3/sso/login?login_key=#{login_key}"
+    rescue StandardError => e
+      # WARNING: This resuce block can only handle exceptions that happen *before* the
+      # login form is rendered, because the login form renderer halts and never comes
+      # back to this method.
+      rlog.error("[#{request_id}] Unhandled exception in the SSO system: #{e}")
+      rlog.error("[#{request_id}] #{e.backtrace.join("\n")}")
+      login_clear_data(login_key)
+      generic_error(t.sso.unspecified_error(request_id))
+    end
+
+    # Unreachable
+  end
+
+  get '/oidc/stage2' do
+    login_key = params.fetch('login_key', '')
+    login_data = login_get_data(login_key)
+    request_id = login_data['request_id']
+    rlog.info("[#{request_id}] OpenID Connect login stage 2 init")
+
+    puts login_data.inspect
+
+    halt
   end
 
 private
   def _oidc_redis
     Redis::Namespace.new('oidc_session', redis: REDIS_CONNECTION)
+  end
+
+  # FIXME: It should not be necessary to duplicate these, especially when they're just
+  # dummy placeholders (which should be fixed too)
+  helpers do
+    def raw(string)
+      return string
+    end
+
+    def token_tag(token)
+      # FIXME
+    end
+
+    def form_authenticity_token
+      # FIXME
+    end
   end
 
 end
