@@ -85,11 +85,6 @@ class OpenIDConnect < PuavoSinatra
   end
 
 private
-  # TODO: Move this to the root class?
-  def make_request_id
-    'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
-  end
-
   def _oidc_redis
     Redis::Namespace.new('oidc_session', redis: REDIS_CONNECTION)
   end

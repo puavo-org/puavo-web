@@ -69,5 +69,9 @@ class PuavoSinatra < Sinatra::Base
     end
   end
 
+  def make_request_id
+    'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
+  end
+
 end
 end

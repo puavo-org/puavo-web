@@ -279,10 +279,6 @@ private
     end
   end
 
-  def make_request_id
-    'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
-  end
-
   def topdomain
     CONFIG['topdomain']
   end
