@@ -70,7 +70,7 @@ class SSO < PuavoSinatra
 
     begin
       initialize_jwt_login(request_id, login_key, false)
-      sso_login_user_with_request_params(login_key)
+      redirect "/v3/sso/login?login_key=#{login_key}"
     rescue StandardError => e
       # WARNING: This resuce block can only handle exceptions that happen *before* the
       # login form is rendered, because the login form renderer halts and never comes
@@ -91,7 +91,7 @@ class SSO < PuavoSinatra
 
     begin
       initialize_jwt_login(request_id, login_key, true)
-      sso_login_user_with_request_params(login_key)
+      redirect "/v3/sso/login?login_key=#{login_key}"
     rescue StandardError => e
       # WARNING: This resuce block can only handle exceptions that happen *before* the
       # login form is rendered, because the login form renderer halts and never comes
@@ -105,8 +105,12 @@ class SSO < PuavoSinatra
     # Unreachable
   end
 
+  get '/v3/sso/login' do
+    sso_login_user_with_request_params(params.fetch('login_key', ''))
+  end
+
   # Handle a normal SSO login form submission
-  post '/v3/sso' do
+  post '/v3/sso/login' do
     handle_login_form_post
   end
 
