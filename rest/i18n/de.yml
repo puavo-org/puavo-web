@@ -1,4 +1,8 @@
 sso:
+  jwt_missing_return_url: "\"return_to\" is missing from the login URL, unable to process the request.<br>Please contact Opinsys support and give them this code: %1."
+  unknown_external_service: "Unknown service, cannot login.<br>Please contact Opinsys support and give them this code: %1."
+  unspecified_error: "Unspecified single-sign on system error. Login has been halted.<br>Please contact Opinsys support and give them this code: %1."
+  expired_login: "Your login session has expired. Please try loggin in again.<br>If the problem persists, please contact Opinsys support and give them this code: %1."
   title: Opinsys-Authentifikation
   username: benutzername
   organisation: organisation
@@ -8,10 +12,12 @@ sso:
   no_organisation: Organisation ist nicht angelegt worden
   organisation_missing: "Oranisation fehlt im Benutzernamen. Geben Sie bitte den Benutzernamen in folgender Form ein: benutzername@organisation.opinsys.fi"
   invalid_username: Falscher Benutzername
+  trusted_state_mismatch: "Mismatch between trusted and untrusted service states. Login process cannot continue.<br>Please contact Opinsys support and give them this code: %1."
   verified_address_missing: "Dieser Dienst anfordert eine bestätigte E-Mail-Adresse. <a href=\"%1\">Bitte bestätigten Sie Ihre Adresse durch Veränderung der eigenen Daten</a> und melden sich erneut. Wenn Sie nicht verstehen, was das bedeutet, bitte mit Opinsys Helpdesk Kontakt aufnehmen."
-  login_to: Einloggen in den Service
   login: Einloggen
+  login_to: Einloggen in den Service
   error: Fehler
+  technical_support: "Technical support"
   help: Hinweis
   developers: Entwickler
   developers_info: "Lesen Sie <a href=\"/v3/sso/developers\" target=\"_blank\">dieses</a> Dokument, wenn Sie Interesse an der Implementierung der Opinsys-Authentifizierung haben."
@@ -19,6 +25,10 @@ sso:
   organisation_help: "Der Benutzername muss in folgender Form angeben werden:  <em>benutzername</em>@<em>organisation</em>.opinsys.fi. Der Benutzername ist derselbe den Sie für die Anmeldung an Opinsys-Computern verwenden. Die Organisation entspricht der Stadt / Gemeinde in der sich Ihrer Schule befindet. Der Benutzername besteht nur aus Kleinbuchstaben und alle diakritische Zeichen sowie Akzente müssen entfernt werden.  Wenn Sie beispielsweise aus dem Harz kommen und Ihr Opinsys-Benutzername ’max.mustermann’ lautet, ist die Organisation <em>’harz’</em>. Somit melden Sie sich mit der Benutzerkennung <em>’max.mustermann@harz.opinsys.fi’</em> an."
   service_not_activated: Dieser Service ist nicht aktiviert. Bitte nehmen Sie Kontakt zu dem Administrator ihrer Schule auf.
   support_info: "Wenn Sie Probleme mit der Anmeldung haben, bitte ihre SchulIT kontaktieren."
+sso_logout:
+  missing_redirect_url: "Missing return redirect URL. Logout cannot proceed.<br>Please contact Opinsys support and give them this code: %1."
+  unauthorized_redirect_url: "The supplied redirect URL is not permitted. Logout cannot be processed for security reasons.<br>Please contact Opinsys support and give them this code: %1."
+  generic_error: "Unknown logout processing error.<br>Please contact Opinsys support and give them this code: %1."
 eltern_sso:
   title: "Welcome!"
   header: "Login by entering your username or email address, and password below."
@@ -38,3 +48,13 @@ email_verification:
   message_head: "Sie haben gerade gewünscht, dass diese E-Mail-Adresse bestätigt wird."
   message: "Bitte klicken Sie den folgenden Link um die Adresse zu bestätigen: %1"
   footer: "Der Link gilt nur eine Stunde. Wenn Sie diese Nachfrage nicht gemacht haben, bitten wir Sie darum den Link einfach zu ignorieren. Falls Sie den Verdacht haben, dass jemand anderer die Adresse zu bestätigen versucht, bitte umgehend mit dem Opinsys-Support Kontakt aufnehmen und den Inhalt dieser E-Mail an Opinsys weiterleiten."
+mfa:
+  help: "Two-factor authentication has been activated on your account. Please enter the single-use authentication code or one of the recovery codes, then press Enter or click \"Continue\"."
+  help2: "The code must be entered within five minutes, otherwise the login expires.<br>Five incorrect attempts will also halt the login process."
+  continue: "Continue"
+  cancel: "Cancel"
+  token_expired: "Your login attempt has expired. Go to the original login form and try logging in again."
+  too_many_attempts: "Too many failed two-factor login attempts. Login halted. Go to the original login form and try logging in again."
+  incorrect_code: "Incorrect code"
+  validation_server_error: "Authentication server error. Try logging in again. If the problem persists, please contact support and give them this code: %1."
+  system_error: "Backend server error, login halted.<br>Please contact Opinsys support and give them this code: %1."
