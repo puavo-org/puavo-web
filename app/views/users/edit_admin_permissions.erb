@@ -7,7 +7,9 @@
 <% end %>
 
 <%= form_for(@user, url: save_admin_permissions_path, html: { method: :post })  do |f| %>
-  <ul class="no-list-bullets margin-0 padding-0">
+  <input type="hidden" name="org_admins" value="<%= @org_admins %>">
+
+  <ul class="no-list-bullets margin-0 padding-0" id="permissionsList">
   <% User::ADMIN_PERMISSIONS.each do |permission| %>
     <li><label><input type="checkbox" name="permissions[]" id="<%= permission.to_s %>" value="<%= permission.to_s %>" <%= @current_permissions.include?(permission.to_s) ? 'checked' : '' %>><%= t(".permissions.#{permission.to_s}") %></label></li>
   <% end %>
@@ -15,6 +17,27 @@
 
   <div class="flex-cols gap-10px margin-top-10px">
     <%= f.submit t('link.update'), class: 'btn' %>
-    <div class="cancel"><%=link_to t('link.cancel'), user_path(@school, @user), class: 'btn' %></div>
+    <div class="cancel"><%=link_to t('link.cancel'), @org_admins ? all_admins_organisation_path : user_path(@school, @user), class: 'btn' %></div>
+    <a href="#" id="selectAll" class="btn"><%= t('.select_all') %></a>
+    <a href="#" id="deselectAll" class="btn"><%= t('.deselect_all') %></a>
   </div>
+<% end %>
+
+<% content_for :post_load_javascript do %>
+<script>
+"use strict";
+
+function selectAll(event, state)
+{
+    event.preventDefault();
+
+    for (const cb of document.querySelectorAll("ul#permissionsList input"))
+        cb.checked = state;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector("a#selectAll").addEventListener("click", e => selectAll(e, true));
+    document.querySelector("a#deselectAll").addEventListener("click", e => selectAll(e, false));
+});
+</script>
 <% end %>
