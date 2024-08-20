@@ -7,7 +7,7 @@ module PuavoLoginUtility
     Redis::Namespace.new('sso:login', redis: REDIS_CONNECTION)
   end
 
-  def login_create_data(request_id, external_service, is_trusted, next_stage)
+  def login_create_data(request_id, external_service, is_trusted: false, next_stage: nil)
     {
       'request_id' => request_id,
 

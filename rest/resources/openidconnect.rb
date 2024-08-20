@@ -85,7 +85,7 @@ class OpenIDConnect < PuavoSinatra
       # TODO: Determine the service from the client ID, not URL
       external_service = ExternalService.by_url('XXX')
 
-      login_data = login_create_data(request_id, external_service, false, '/oidc/stage2')
+      login_data = login_create_data(request_id, external_service, is_trusted: false, next_stage: '/oidc/stage2')
       login_data['oidc'] = oidc_data
 
       _login_redis.set(login_key, login_data.to_json, nx: true, ex: 60 * 2)

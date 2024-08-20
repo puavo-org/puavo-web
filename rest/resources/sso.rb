@@ -42,7 +42,7 @@ class SSO < PuavoSinatra
       generic_error(t.sso.trusted_state_mismatch(request_id))
     end
 
-    login_data = login_create_data(request_id, external_service, is_trusted_url, '/v3/sso/jwt')
+    login_data = login_create_data(request_id, external_service, is_trusted: is_trusted_url, next_stage: '/v3/sso/jwt')
     login_data['return_to'] = return_to().to_s
     login_data['original_url'] = request.url.to_s
 
