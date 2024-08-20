@@ -227,6 +227,7 @@ module PuavoLoginForm
 
     # Update the login data in Redis without resetting the TTL
     login_data['organisation']['name'] = organisation.name
+    login_data['organisation']['domain'] = organisation.domain
     login_data['organisation']['dn'] = organisation.dn
     login_data['user']['dn'] = user.dn
     login_data['user']['uuid'] = user.uuid

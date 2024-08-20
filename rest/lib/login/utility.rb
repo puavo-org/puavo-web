@@ -19,6 +19,7 @@ module PuavoLoginUtility
 
       'organisation' => {
         'name' => nil,
+        'domain' => nil,
         'dn' => nil,
       },
 
