@@ -1,17 +1,13 @@
 require 'securerandom'
 
 require_relative '../lib/login/utility'
-require_relative '../lib/login/login_form'
-require_relative '../lib/login/session'
-require_relative '../lib/login/mfa'
 
 module PuavoRest
 
 class OpenIDConnect < PuavoSinatra
   register Sinatra::R18n
-  include PuavoLoginForm
-  include PuavoLoginSession
-  include PuavoLoginMFA
+
+  include PuavoLoginUtility
 
   get '/oidc/authorize' do
     request_id = make_request_id
@@ -121,22 +117,6 @@ class OpenIDConnect < PuavoSinatra
 private
   def _oidc_redis
     Redis::Namespace.new('oidc_session', redis: REDIS_CONNECTION)
-  end
-
-  # FIXME: It should not be necessary to duplicate these, especially when they're just
-  # dummy placeholders (which should be fixed too)
-  helpers do
-    def raw(string)
-      return string
-    end
-
-    def token_tag(token)
-      # FIXME
-    end
-
-    def form_authenticity_token
-      # FIXME
-    end
   end
 
 end
