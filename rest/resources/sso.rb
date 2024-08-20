@@ -139,7 +139,7 @@ class SSO < PuavoSinatra
     session_try_logout
   end
 
-  # Show the MFA form (cannot be reached directly, as you need a valid login state for it to work)
+  # Show the MFA form (cannot be reached directly, as you need a valid login key for it to work)
   get '/v3/mfa' do
     mfa_ask_code
   end
