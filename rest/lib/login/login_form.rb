@@ -195,14 +195,15 @@ module PuavoLoginForm
       PuavoRest::Organisation.by_dn(LdapModel.organisation['dn'])
     end
 
-    # Is the service active?
+    # Is the service active? This check cannot be done at earlier phase, because we don't
+    # know what organisation and/or school the user is in. Even if the organisation is
+    # known when the form is shown, it won't be enough, because the service could be active
+    # on just school level.
     organisation_allows = Array(organisation['external_services']).include?(external_service['dn'])
     school_allows = Array(primary_school['external_services']).include?(external_service['dn'])
 
     unless organisation_allows || school_allows
-      sso_render_login_form(login_key, external_service,
-                            error_message: t.sso.service_not_activated,
-                            login_data: login_data)
+      generic_error(t.sso.service_not_activated)
     end
 
     # If the service is trusted, block users who don't have a verified email address
