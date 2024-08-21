@@ -54,6 +54,12 @@ class SSO < PuavoSinatra
       # Restore the relevant parts of the login data from the cached data
       login_data['organisation'] = session[:data]['organisation']
       login_data['user'] = session[:data]['user']
+    else
+      if request.env.include?('HTTP_USER_AGENT')
+        # HACK: "Smuggle" the user agent header across the redirect.
+        # Needed for tests, not sure if needed in production.
+        login_data['user_agent'] = request.env['HTTP_USER_AGENT']
+      end
     end
 
     _login_redis.set(login_key, login_data.to_json, nx: true, ex: 60 * 2)

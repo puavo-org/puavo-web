@@ -19,6 +19,11 @@ module PuavoLoginForm
     external_service ||= get_external_service(login_data)
     request_id = login_data['request_id']
 
+    if login_data['user_agent']
+      # HACK: Restore the user agent header. Needed for tests, not sure if needed in production.
+      request.env['HTTP_USER_AGENT'] = login_data['user_agent']
+    end
+
     # Try to log in
     begin
       auth :basic_auth, :from_post, :kerberos

@@ -34,6 +34,7 @@ module PuavoLoginUtility
       'had_session' => nil,
       'return_to' => nil,
       'original_url' => nil,
+      'user_agent' => nil,          # Hack for tests, not yet sure if really needed
 
       'next_stage' => next_stage
     }
