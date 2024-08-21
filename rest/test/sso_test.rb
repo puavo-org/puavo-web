@@ -99,6 +99,7 @@ describe PuavoRest::SSO do
     url.query_values = { "return_to" => "http://test-client-service.example.com/path" }
     basic_authorize "bob", "bad"
     get url.to_s
+    follow_redirect!    # basic auth login
     assert_equal 401, last_response.status
   end
 
@@ -110,6 +111,8 @@ describe PuavoRest::SSO do
       # Only firefox on linux will get the negotiate request
       "HTTP_USER_AGENT" => "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
     }
+
+    follow_redirect!    # basic auth login
 
     # This is required for the Kerberos-GSSAPI based authentication for Firefox.
     # Without this header firefox will never send the kerberos ticket.
@@ -127,13 +130,13 @@ describe PuavoRest::SSO do
     url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
 
     get url.to_s
+    follow_redirect!    # basic auth login
 
     assert(!last_response.headers["WWW-Authenticate"])
     assert_equal 401, last_response.status
   end
 
   describe "roles in jwt" do
-
     it "is set to 'schooladmin' when user is a school admin" do
       @user.roles = [ 'admin' ]
       @user.save!
@@ -145,7 +148,10 @@ describe PuavoRest::SSO do
       url = Addressable::URI.parse("/v3/sso")
       url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
       basic_authorize "bob", "secret"
+
       get url.to_s
+      follow_redirect!    # basic auth login
+      follow_redirect!    # actual JWT (second stage)
       assert last_response.headers["Location"]
       redirect_url = Addressable::URI.parse(last_response.headers["Location"])
       jwt_decode_data = JWT.decode(
@@ -164,6 +170,8 @@ describe PuavoRest::SSO do
       url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
       basic_authorize "bob", "secret"
       get url.to_s
+      follow_redirect!    # basic auth login
+      follow_redirect!    # actual JWT (second stage)
       assert last_response.headers["Location"]
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
       jwt_decode_data = JWT.decode(
@@ -217,7 +225,11 @@ describe PuavoRest::SSO do
       url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
       basic_authorize "bob", "secret"
       get url.to_s
-      assert_equal 401, last_response.status
+
+      follow_redirect!    # basic auth login
+
+      assert_equal 400, last_response.status
+      assert last_response.body.include?('This service has not been activated in your organisation or school. Please contact Opinsys support for assistance.')
     end
 
     it "responds 302 when service is activated on user's school" do
@@ -229,6 +241,8 @@ describe PuavoRest::SSO do
       url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
       basic_authorize "bob", "secret"
       get url.to_s
+      follow_redirect!    # basic auth login
+      follow_redirect!    # actual JWT (second stage)
       assert_equal 302, last_response.status
     end
 
@@ -242,6 +256,8 @@ describe PuavoRest::SSO do
       url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
       basic_authorize "bob", "secret"
       get url.to_s
+      follow_redirect!    # basic auth login
+      follow_redirect!    # actual JWT (second stage)
       assert_equal 302, last_response.status
     end
   end
@@ -253,13 +269,19 @@ describe PuavoRest::SSO do
       get url.to_s, {}, {
         "HTTP_HOST" => "api.puavo.net"
       }
+
+      # Verify there's a redirect with a login key and extract the key
+      assert last_response.redirect?
+      @login_key = URI(last_response.headers['Location']).query
+
+      # Login form/basic auth
+      follow_redirect!
     end
 
     it "renders login form with 401 for missing credentials" do
       assert_equal 401, last_response.status, last_response.body
       assert last_response.body.include?("form"), "has login form  #{ last_response.body }"
     end
-
 
     describe "login" do
       def decode_jwt
@@ -273,51 +295,61 @@ describe PuavoRest::SSO do
       end
 
       it "from post"  do
-        post "/v3/sso", {
+        post "/v3/sso/login?#{@login_key}", {
           "username" => "bob",
           "password" => "secret",
           "organisation" => "example.puavo.net",
           "return_to" => "http://test-client-service.example.com/path"
         }
 
+        # Generate the JWT
+        assert last_response.redirect?
+        follow_redirect!
+
         claims = decode_jwt
         assert_equal "example.puavo.net", claims["organisation_domain"]
       end
 
       it "from post using custom organisation"  do
-        post "/v3/sso", {
+        post "/v3/sso/login?#{@login_key}", {
           "username" => "admin",
           "password" => "admin",
           "organisation" => "anotherorg.puavo.net",
           "return_to" => "http://test-client-service.example.com/path"
         }
 
+        # Generate the JWT
+        assert last_response.redirect?
+        follow_redirect!
+
         claims = decode_jwt
         assert_equal "anotherorg.puavo.net", claims["organisation_domain"]
       end
 
       it "from post using custom organisation in username"  do
-        post "/v3/sso", {
+        post "/v3/sso/login?#{@login_key}", {
           "username" => "admin@anotherorg.puavo.net",
           "password" => "admin",
           "return_to" => "http://test-client-service.example.com/path"
         }
 
+        # Generate the JWT
+        assert last_response.redirect?
+        follow_redirect!
+
         claims = decode_jwt
         assert_equal "anotherorg.puavo.net", claims["organisation_domain"]
       end
-
     end
 
     describe "hidden organisation field" do
-
       def hidden_organisation_field
         el = css("input[name=organisation]").first
         el.attributes["value"].value if el
       end
 
       it "is overridden from query string" do
-        get "/v3/sso", {
+        get "/v3/sso/login?#{@login_key}", {
           "organisation" => "anotherorg.puavo.net",
           "return_to" => "http://test-client-service.example.com/path",
         }, {
@@ -327,19 +359,17 @@ describe PuavoRest::SSO do
       end
 
       it "is not set for non-organisation domains" do
-        get "/v3/sso", {
+        get "/v3/sso/login?#{@login_key}", {
           "return_to" => "http://test-client-service.example.com/path",
         }, {
             "HTTP_HOST" => "login.puavo.net"
         }
         assert_nil hidden_organisation_field
       end
-
-
     end
 
     it "renders form errors on the form"  do
-      post "/v3/sso", {
+      post "/v3/sso/login?#{@login_key}", {
         "username" => "bob",
         "password" => "bad",
         "organisation" => "example.puavo.net",
@@ -353,7 +383,6 @@ describe PuavoRest::SSO do
         "Error message missing from #{ last_response.body }"
       )
     end
-
   end
 
   describe "sub service with path prefix" do
@@ -377,6 +406,8 @@ describe PuavoRest::SSO do
       url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
       basic_authorize "bob", "secret"
       get url.to_s
+      follow_redirect!    # basic auth login
+      follow_redirect!    # actual JWT (second stage)
       assert last_response.headers["Location"]
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
       jwt_decode_data = JWT.decode(
@@ -392,6 +423,8 @@ describe PuavoRest::SSO do
       url.query_values = { "return_to" => "http://test-client-service.example.com/prefix?foo=bar" }
       basic_authorize "bob", "secret"
       get url.to_s
+      follow_redirect!    # basic auth login
+      follow_redirect!    # actual JWT (second stage)
       assert last_response.headers["Location"]
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
       jwt_decode_data = JWT.decode(
@@ -407,6 +440,8 @@ describe PuavoRest::SSO do
       url.query_values = { "return_to" => "http://test-client-service.example.com" }
       basic_authorize "bob", "secret"
       get url.to_s
+      follow_redirect!    # basic auth login
+      follow_redirect!    # actual JWT (second stage)
       assert last_response.headers["Location"]
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
       jwt_decode_data = JWT.decode(
@@ -436,14 +471,16 @@ describe PuavoRest::SSO do
       url.query_values = { 'return_to' => 'http://test-client-service.example.com/path' }
       get url.to_s
 
-      assert_equal 401, last_response.status
-      assert JSON.parse(last_response.body)['error']['message'].include?("Mismatch between trusted service states. Please check the URL you're using to display the login form.")
+      assert_equal 400, last_response.status
+      assert last_response.body.include?('Mismatch between trusted and untrusted service states. Login process cannot continue.')
     end
 
     it "Can access the normal SSO form for the normal service" do
       url = Addressable::URI.parse('/v3/sso')
       url.query_values = { 'return_to' => 'http://test-client-service.example.com/path' }
       get url.to_s
+
+      follow_redirect!    # login form
 
       assert_equal 401, last_response.status
       assert !last_response.body.include?('This service requires a verified email address.')
@@ -454,8 +491,8 @@ describe PuavoRest::SSO do
       url.query_values = { 'return_to' => 'https://verified.example.com/' }
       get url.to_s
 
-      assert_equal 401, last_response.status
-      assert JSON.parse(last_response.body)['error']['message'].include?("Mismatch between trusted service states. Please check the URL you're using to display the login form.")
+      assert_equal 400, last_response.status
+      assert last_response.body.include?('Mismatch between trusted and untrusted service states. Login process cannot continue.')
     end
 
     it "Can access the verified SSO form for the verified service" do
@@ -463,17 +500,26 @@ describe PuavoRest::SSO do
       url.query_values = { 'return_to' => 'https://verified.example.com/' }
       get url.to_s
 
+      follow_redirect!    # login form
+
       # The response is always 401 (Unauthorized) even if we just display the form normally and nothing is wrong
       assert_equal 401, last_response.status
       assert last_response.body.include?('Login to service <span>Verified service</span>')
     end
 
     it 'verified SSO login fails without a verified email address' do
-      post '/v3/verified_sso', {
+      url = Addressable::URI.parse('/v3/verified_sso')
+      url.query_values = { 'return_to' => 'https://verified.example.com/' }
+      get url.to_s
+
+      assert last_response.redirect?
+      login_key = URI(last_response.headers['Location']).query
+      follow_redirect!    # basic auth login
+
+      post "/v3/verified_sso?#{login_key}", {
         'username' => 'bob',
         'password' => 'secret',
         'organisation' => 'example.puavo.net',
-        'return_to' => 'https://verified.example.com/'
       }
 
       # The login must fail
@@ -483,12 +529,22 @@ describe PuavoRest::SSO do
     end
 
     it 'verified SSO login succeeds with a verified email address' do
-      post '/v3/verified_sso', {
+      url = Addressable::URI.parse('/v3/verified_sso')
+      url.query_values = { 'return_to' => 'https://verified.example.com/' }
+      get url.to_s
+
+      assert last_response.redirect?
+      login_key = URI(last_response.headers['Location']).query
+      follow_redirect!    # basic auth login
+
+      post "/v3/verified_sso?#{login_key}", {
         'username' => 'verified',
         'password' => 'trustno1',
         'organisation' => 'example.puavo.net',
-        'return_to' => 'https://verified.example.com/'
       }
+
+      assert last_response.redirect?
+      follow_redirect!    # actual JWT (second stage)
 
       # The login must succeed
       assert_equal 302, last_response.status
@@ -500,12 +556,22 @@ describe PuavoRest::SSO do
     end
 
     it 'verified user can log into a non-verified SSO' do
-      post '/v3/sso', {
+      url = Addressable::URI.parse('/v3/sso')
+      url.query_values = { 'return_to' => 'http://test-client-service.example.com' }
+      get url.to_s
+
+      assert last_response.redirect?
+      login_key = URI(last_response.headers['Location']).query
+      follow_redirect!    # basic auth login
+
+      post "/v3/verified_sso?#{login_key}", {
         'username' => 'verified',
         'password' => 'trustno1',
         'organisation' => 'example.puavo.net',
-        'return_to' => 'http://test-client-service.example.com/path'
       }
+
+      assert last_response.redirect?
+      follow_redirect!    # actual JWT (second stage)
 
       # The login must succeed
       assert_equal 302, last_response.status
