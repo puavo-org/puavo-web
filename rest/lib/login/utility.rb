@@ -70,7 +70,7 @@ module PuavoLoginUtility
 
     if service.nil?
       rlog.error("[#{login_data['request_id']}] get_external_service(): can't find external service by DN \"#{service_dn}\"")
-      generic_error(t.sso.unknown_external_service(request_id))
+      generic_error(t.sso.unknown_external_service(request_id), status_code: 401)
     end
 
     service

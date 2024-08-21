@@ -29,7 +29,7 @@ class SSO < PuavoSinatra
 
     if external_service.nil?
       rlog.error("[#{request_id}] no external service could be found by domain \"#{return_to()}\"")
-      generic_error(t.sso.unknown_external_service(request_id))
+      generic_error(t.sso.unknown_external_service(request_id), status_code: 401)
     end
 
     rlog.info("[#{request_id}] attempting to log into external service \"#{external_service.name}\" (#{external_service.dn.to_s}), login data Redis key=\"#{login_key}\"")
