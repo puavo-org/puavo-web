@@ -132,12 +132,19 @@ class SSO < PuavoSinatra
     request_id = login_data['request_id']
     rlog.info("[#{request_id}] JWT login stage 2 init")
 
-    puts login_data.inspect
+    # "Log in"
+    organisation = Organisation.by_domain(login_data['organisation']['domain'])
+    LdapModel.setup(organisation: organisation, credentials: { dn: '...', password: '...' })
 
-    # TODO: Get the organisation, user and external service from LDAP again here
-    # and construct the JWT hash, then do the redirect
+    user = PuavoRest::User.by_dn(login_data['user']['dn'])
+    external_service = PuavoRest::ExternalService.by_dn(login_data['service']['dn'])
 
-    halt
+    # Generate the JWT hash
+    filtered_user = external_service.filtered_user_hash(user, login_data['user']['username'], login_data['organisation']['name'])
+    url, user_hash = external_service.generate_login_url(filtered_user, login_data['return_to'])
+
+    rlog.info("[#{request_id}] redirecting SSO auth for \"#{ login_data['user']['username'] }\" to #{ url }")
+    redirect url
   end
 
   # SSO session logout
