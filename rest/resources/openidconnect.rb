@@ -11,7 +11,6 @@ class OpenIDConnect < PuavoSinatra
 
   get '/oidc/authorize' do
     request_id = make_request_id
-    oidc_config = CONFIG['openid_connect'].freeze
 
     $rest_log.info("[#{request_id}] New OpenID Connect authentication request")
 
@@ -25,6 +24,17 @@ class OpenIDConnect < PuavoSinatra
     unless response_type == 'code'
       $rest_log.error("[#{request_id}] Unknown response type \"#{response_type}\", don't know how to handle it")
       status 400
+      return
+    end
+
+    # ----------------------------------------------------------------------------------------------
+    # (Re)Load the OpenID Connect configuration file
+
+    begin
+      oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml')).freeze
+    rescue StandardError => e
+      $rest_log.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
+      status 500
       return
     end
 

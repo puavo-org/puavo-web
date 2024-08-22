@@ -80,15 +80,7 @@ if ENV['RACK_ENV'] == 'test' then
         'password' => 'password'
       },
     },
-    'openid_connect' => {
-      'clients' => {
-        'devel' => {
-          'redirect_uris' => [
-            'https://openidconnect.net/callback',
-          ],
-        },
-      },
-    },
+    'openid_connect' => {},
     "redis" => {
       :db => 1
     },
