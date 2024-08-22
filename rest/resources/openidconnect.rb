@@ -51,7 +51,20 @@ class OpenIDConnect < PuavoSinatra
       return
     end
 
-    client_config = oidc_config['clients'][client_id]
+    client_config = oidc_config['clients'][client_id].freeze
+
+    # Find the target service
+    service_dn = client_config['puavo_service']
+
+    external_service = LdapModel.setup(credentials: CONFIG['server']) do
+      PuavoRest::ExternalService.by_dn(service_dn)
+    end
+
+    if external_service.nil?
+      $rest_log.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
+      status 403
+      return
+    end
 
     # ----------------------------------------------------------------------------------------------
     # Verify the redirect URL(s)
@@ -92,9 +105,6 @@ class OpenIDConnect < PuavoSinatra
     login_key = SecureRandom.hex(8)
 
     begin
-      # TODO: Determine the service from the client ID, not URL
-      external_service = ExternalService.by_url('XXX')
-
       login_data = login_create_data(request_id, external_service, is_trusted: false, next_stage: '/oidc/stage2')
       login_data['oidc'] = oidc_data
 
