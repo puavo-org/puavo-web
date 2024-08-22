@@ -2,7 +2,7 @@
 require "puavo/etc"
 require "socket"
 
-fqdn = Socket.gethostbyname(Socket.gethostname).first
+fqdn = Addrinfo.getaddrinfo(Socket.gethostname, nil).first.getnameinfo.first
 
 authentication = Puavo::Authentication.new
 authentication.configure_ldap_connection({
