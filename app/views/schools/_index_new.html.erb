@@ -222,6 +222,7 @@ const COLUMN_DEFINITIONS = {
         key: "image_series",
         title: "<%= t('activeldap.attributes.school.puavoImageSeriesSourceURL') %>",
         type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
     },
 
     allow_guest: {
@@ -329,7 +330,7 @@ class MassSchoolSetFieldValue extends ST.MassOperation {
             { title: "<%= t('activeldap.attributes.school.puavoDeviceAutoPowerOffMode') %>", key: "automatic_poweroff", type: "autopoweroff" },
             { title: "<%= t('activeldap.attributes.school.puavoDeviceOnHour') %>", key: "day_start", type: "s" },
             { title: "<%= t('activeldap.attributes.school.puavoDeviceOffHour') %>", key: "day_end", type: "s" },
-            { title: "<%= t('activeldap.attributes.school.puavoImageSeriesSourceURL') %>", key: "image_source_url", type: "s" },
+            { title: "<%= t('activeldap.attributes.school.puavoImageSeriesSourceURL') %>", key: "image_source_url", type: "image_source_url" },
         ];
 
         this.currentUI = -1;
@@ -427,7 +428,8 @@ class MassSchoolSetFieldValue extends ST.MassOperation {
     {
         const stringWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_string') %></p>`,
               jsonWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_json') %></p>`,
-              xmlWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_xml') %></p>`;
+              xmlWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_xml') %></p>`,
+              imageSourceWarning = `<p class="validityWarning margin-0"><%= t('devices.index.mass_operations.set_field.validity_warning_image_source') %></p>`;
 
         const item = this.items[index];
 
@@ -467,6 +469,10 @@ class MassSchoolSetFieldValue extends ST.MassOperation {
 <label><input type="radio" name="value-radio" id="value-radio-off"><%= t('devices.index.mass_operations.set_field.off') %></label>
 <label><input type="radio" name="value-radio" id="value-radio-custom"><%= t('devices.index.mass_operations.set_field.custom') %></label>
 </div>`;
+                break;
+
+            case "image_source_url":    // Multiline image sources string (one URL per line)
+                ui = `<textarea id="field_value" rows="5" cols="80"></textarea>${imageSourceWarning}`;
                 break;
         }
 
@@ -518,6 +524,9 @@ class MassSchoolSetFieldValue extends ST.MassOperation {
                     return "off";
 
                 return "default";
+
+            case "image_source_url":
+                return ui.querySelector("textarea").value.split("\n").map(r => r.trim());
         }
     }
 };

@@ -1581,6 +1581,7 @@ fi:
           validity_warning_json: "Tämän täytyy olla kunnollista JSONia. Sen oikeellisuus tarkistetaan ennen massaoperaation suorittamista."
           validity_warning_xml: "Tämän täytyy olla kunnollista XML:ää. Sen oikeellisuus tarkistetaan ennen massaoperaation suorittamista."
           validity_warning_xrandr: "Jokainen rivi on erillinen Xrandr-komento. Rivien alusta ja lopusta poistetaan tyhjät merkit. Komentojen oikeellisuutta ei tarkisteta!"
+          validity_warning_image_source: "Jokainen rivi on erillinen lähdeosoite. Rivien alusta ja lopusta poistetaan tyhjät merkit. Osoitteiden oikeellisuutta ei tarkisteta!"
           unknown_user: "Tuntematon käyttäjä \"%{name}\""
         delete:
           title: "Poista"
