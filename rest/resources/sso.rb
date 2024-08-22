@@ -134,7 +134,7 @@ class SSO < PuavoSinatra
 
     # "Log in"
     organisation = Organisation.by_domain(login_data['organisation']['domain'])
-    LdapModel.setup(organisation: organisation, credentials: { dn: '...', password: '...' })
+    LdapModel.setup(organisation: organisation, credentials: CONFIG['server'])
 
     user = PuavoRest::User.by_dn(login_data['user']['dn'])
     external_service = PuavoRest::ExternalService.by_dn(login_data['service']['dn'])
