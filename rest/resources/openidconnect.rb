@@ -341,10 +341,10 @@ class OpenIDConnect < PuavoSinatra
     payload.merge!(gather_user_data(request_id, oidc_state['scopes'], organisation, user))
 
     # The client has to supply this token in future requests to other OIDC endpoints
-    access_token = SecureRandom.hex(16)
+    #access_token = SecureRandom.hex(16)
 
     out = {
-      'access_token' => access_token,
+      'access_token' => nil, #access_token,
       'token_type' => 'Bearer',
       'expires_in' => expires_in,
       'id_token' => JWT.encode(payload, external_service.secret, 'HS256'),
