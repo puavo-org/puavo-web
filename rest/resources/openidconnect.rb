@@ -12,7 +12,6 @@ BUILTIN_SCOPES = %w(
   profile
   email
   phone
-  roles
   organisation
   schools
   groups
@@ -494,8 +493,10 @@ private
     if scopes.include?('admins')
       out['is_organisation_owner'] = organisation.owner.include?(user.dn)
 
-      out['admin_in_schools'] = user.admin_of_school_dns.collect do |dn|
-        get_school(dn, school_cache).abbreviation
+      if scopes.include?('schools')
+        out['admin_in_schools'] = user.admin_of_school_dns.collect do |dn|
+          get_school(dn, school_cache).abbreviation
+        end
       end
     end
 
