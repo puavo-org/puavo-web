@@ -205,6 +205,9 @@ class OpenIDConnect < PuavoSinatra
     oidc_state['user'] = login_data['user']
     _login_redis.del(login_key)
 
+    # Optional
+    oidc_state['auth_time'] = Time.now.utc.to_i
+
     # Generate the session code and stash everything in Redis
     code = SecureRandom.hex(8)
     _oidc_redis.set(code, oidc_state.to_json, nx: true) #, ex: 10 * 60)
@@ -314,7 +317,7 @@ class OpenIDConnect < PuavoSinatra
     # TODO: Should this be configurable as per-service?
     expires_in = 3600
 
-    now = Time.now.to_i
+    now = Time.now.utc.to_i
 
     payload = {
       'iss' => 'https://auth.opinsys.fi',
@@ -323,6 +326,7 @@ class OpenIDConnect < PuavoSinatra
       'aud' => oidc_state['client_id'],
       'iat' => now,
       'exp' => now + expires_in,
+      'auth_time' => oidc_state['auth_time'],
     }
 
     if oidc_state.include?('nonce')
