@@ -26,7 +26,7 @@ class OpenIDConnect < PuavoSinatra
   include PuavoLoginUtility
 
   # ------------------------------------------------------------------------------------------------
-  # Stage 1: Verify the initial request parameters and authenticate the user
+  # Stage 1: Authorization request
 
   # Accept both GET and POST stage 1 authorization calls
   get '/oidc/authorize' do
@@ -43,25 +43,15 @@ class OpenIDConnect < PuavoSinatra
     $rest_log.info("[#{request_id}] New OpenID Connect authentication request")
 
     # ----------------------------------------------------------------------------------------------
-    # Check the response type
-
-    response_type = params.fetch('response_type', nil)
-
-    unless response_type == 'code'
-      $rest_log.error("[#{request_id}] Unknown response type \"#{response_type}\", don't know how to handle it")
-      status 400
-      return
-    end
-
-    # ----------------------------------------------------------------------------------------------
     # (Re)Load the OpenID Connect configuration file
 
     begin
       oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml')).freeze
     rescue StandardError => e
       $rest_log.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
-      status 500
-      return
+
+      # Don't reveal the exact reason
+      generic_error(t.sso.unspecified_error(request_id))
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -73,8 +63,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless oidc_config['clients'].include?(client_id)
       $rest_log.error("[#{request_id}] Unknown/invalid client")
-      status 403
-      return
+      generic_error(t.sso.invalid_client_id(request_id))
     end
 
     client_config = oidc_config['clients'][client_id].freeze
@@ -85,8 +74,7 @@ class OpenIDConnect < PuavoSinatra
 
     if external_service.nil?
       $rest_log.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
-      status 403
-      return
+      generic_error(t.sso.invalid_client_id(request_id))
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -97,8 +85,19 @@ class OpenIDConnect < PuavoSinatra
     # TODO: Use longest prefix search, not full string matching
     if client_config.fetch('allowed_redirect_uris', []).find { |uri| uri == redirect_uri }.nil?
       $rest_log.error("[#{request_id}] Redirect URI \"#{redirect_uri}\" is not allowed")
-      status 403
-      return
+      generic_error(t.sso.invalid_redirect_uri(request_id))
+    end
+
+    # The client ID and the redirect URI have been validated. We can now do proper error redirects.
+
+    # ----------------------------------------------------------------------------------------------
+    # Check the response type
+
+    response_type = params.fetch('response_type', nil)
+
+    unless response_type == 'code'
+      $rest_log.error("[#{request_id}] Unknown response type \"#{response_type}\", don't know how to handle it")
+      return redirect_error(redirect_uri, 400, 'invalid_request', state: params.fetch('state', nil), request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -108,8 +107,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless scopes.include?('openid')
       $rest_log.error("[#{request_id}] No 'openid' found in scopes (#{scopes.inspect})")
-      status 400
-      return
+      return redirect_error(redirect_uri, 400, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
     end
 
     # Build a set of all scopes this client is allowed to access. If the list contains scopes
@@ -130,8 +128,7 @@ class OpenIDConnect < PuavoSinatra
       end
 
       $rest_log.error("[#{request_id}] Client \"#{client_id}\" has an invalid allowed scope \"#{scope}\"; it is neither a built-in scope nor a scope alias.")
-      status 400
-      return
+      return redirect_error(redirect_uri, 400, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
     end
 
     client_allowed = client_allowed.flatten.to_set & BUILTIN_SCOPES
@@ -188,7 +185,7 @@ class OpenIDConnect < PuavoSinatra
   end
 
   # ------------------------------------------------------------------------------------------------
-  # Stage 2: Generate the return value for stage 1
+  # Stage 2: Authorization request continues (generate the return value for stage 1)
 
   get '/oidc/stage2' do
     login_key = params.fetch('login_key', '')
@@ -224,7 +221,7 @@ class OpenIDConnect < PuavoSinatra
   end
 
   # ------------------------------------------------------------------------------------------------
-  # Stage 3: Token generation and the initial JWT generation
+  # Stage 3: Access token request
 
   post '/oidc/token' do
     # ----------------------------------------------------------------------------------------------
@@ -234,21 +231,37 @@ class OpenIDConnect < PuavoSinatra
     oidc_state = _oidc_redis.get(code)
 
     if oidc_state.nil?
-      $rest_log.error("[???] No OpenID Connect state found by code \"#{code}\"")
-      status 400
-      return
+      # TODO: How to properly handle this error?
+      temp_request_id = make_request_id
+
+      $rest_log.error("[#{temp_request_id}] No OpenID Connect state found by code \"#{code}\"")
+      generic_error(t.sso.invalid_login_state(temp_request_id))
     end
 
     begin
       oidc_state = JSON.parse(oidc_state)
     rescue StandardError => e
-      $rest_log.error("[???] Unable to parse the JSON in OIDC state \"#{code}\"")
-      status 400
-      return
+      # TODO: How to properly handle this error?
+      temp_request_id = make_request_id
+
+      $rest_log.error("[#{temp_request_id}] Unable to parse the JSON in OIDC state \"#{code}\"")
+      generic_error(t.sso.invalid_login_state(temp_request_id))
     end
 
     request_id = oidc_state['request_id']
     $rest_log.info("[#{request_id}] OIDC stage 3 token generation for state \"#{code}\"")
+
+    # ----------------------------------------------------------------------------------------------
+    # Verify the redirect URI
+
+    # This has to be the same address where the response was sent at the end of stage 2
+    redirect_uri = params.fetch('redirect_uri', nil)
+
+    unless redirect_uri == oidc_state['redirect_uri']
+      # TODO: How to properly handle this error?
+      $rest_log.error("[#{request_id}] Mismatching redirect URIs: got \"#{redirect_uri}\", expected \"#{oidc_state['redirect_uri']}\"")
+      generic_error(t.sso.invalid_login_state(request_id))
+    end
 
     # ----------------------------------------------------------------------------------------------
     # Verify the grant type
@@ -257,8 +270,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless grant_type == 'authorization_code'
       $rest_log.error("[#{request_id}] Grant type of \"#{grant_type}\" is not supported")
-      status 400
-      return
+      return json_error(redirect_uri, 'invalid_request', state: oidc_state['state'], request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -268,8 +280,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless client_id == oidc_state['client_id']
       $rest_log.error("[#{request_id}] The client ID has changed: got \"#{client_id}\", expected \"#{oidc_state['client_id']}\"")
-      status 400
-      return
+      return json_error(redirect_uri, 'unauthorized_client', state: oidc_state['state'], request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -280,20 +291,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless client_secret == external_service.secret
       $rest_log.error("[#{request_id}] Invalid client secret in the request")
-      status 400
-      return
-    end
-
-    # ----------------------------------------------------------------------------------------------
-    # Verify the redirect URI
-
-    # This has to be the same address where the response was sent at the end of stage 2
-    redirect_uri = params.fetch('redirect_uri', nil)
-
-    unless redirect_uri == oidc_state['redirect_uri']
-      $rest_log.error("[#{request_id}] Mismatching redirect URIs: got \"#{redirect_uri}\", expected \"#{oidc_state['redirect_uri']}\"")
-      status 400
-      return
+      return json_error(redirect_uri, 'unauthorized_client', state: oidc_state['state'], request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -303,8 +301,7 @@ class OpenIDConnect < PuavoSinatra
       client_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml'))
     rescue StandardError => e
       $rest_log.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
-      status 500
-      return
+      return json_error(redirect_uri, 'server_error', state: oidc_state['state'], request_id: request_id)
     end
 
     # Assume this does not fail, since we've validated everything
@@ -352,6 +349,8 @@ class OpenIDConnect < PuavoSinatra
     # TODO: The access token must be stored in Redis
 
     headers['Cache-Control'] = 'no-store'
+    headers['Pragma'] = 'no-cache'
+
     json(out)
   end
 
@@ -359,6 +358,38 @@ private
 
   def _oidc_redis
     Redis::Namespace.new('oidc_session', redis: REDIS_CONNECTION)
+  end
+
+  # RFC 6749 section 4.1.2.1.
+  def redirect_error(redirect_uri, http_status, error, error_description: nil, error_uri: nil, state: nil, request_id: nil)
+    params = { 'error' => error }
+    params['error_description'] = error_description if error_description
+    params['error_uri'] = error_uri if error_uri
+    params['state'] = state if state
+    params['puavo_request_id'] = request_id if request_id
+
+    uri = URI(redirect_uri)
+    uri.query = URI.encode_www_form(params)
+
+    redirect uri
+  end
+
+  # RFC 6749 section 5.2.
+  def json_error(redirect_uri, error, http_status: 400, error_description: nil, error_uri: nil, state: nil, request_id: nil)
+    out = {}
+
+    out['error'] = error
+    out['error_description'] = error_description if error_description
+    out['error_uri'] = error_uri if error_uri
+    out['state'] = state if state
+    out['puavo_request_id'] = request_id if request_id
+
+    headers['Cache-Control'] = 'no-store'
+    headers['Pragma'] = 'no-cache'
+
+    return http_status, json(out)
+  rescue StandardError => e
+    puts e
   end
 
   def get_external_service(dn)
