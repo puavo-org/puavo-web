@@ -1,4 +1,6 @@
 sso:
+  invalid_client_id: "Virheellinen asiakastunnus. Kirjautuminen pysäytetty.<br>Ole hyvä ja ota yhteys Opinsysin tukeen, ja anna heille tämä koodi: %1."
+  invalid_redirect_uri: "Virheellinen uudelleenohjausosoite. Kirjautuminen pysäytetty.<br>Ole hyvä ja ota yhteys Opinsysin tukeen, ja anna heille tämä koodi: %1."
   jwt_missing_return_url: "Kirjautumisosoitteesta puuttuu \"return_to\", pyyntöä ei voida käsitellä.<br>Ole hyvä ja ota yhteys Opinsysin tukeen, ja anna heille tämä koodi: %1."
   unknown_external_service: "Tuntematon palvelu, kirjautumista ei voi suorittaa.<br>Ole hyvä ja ota yhteys Opinsysin tukeen, ja anna heille tämä koodi: %1."
   unspecified_error: "Määrittelemätön kertakirjautumisjärjestelmän virhe. Kirjautuminen on pysäytetty.<br>Ole hyvä ja ota yhteys Opinsysin tukeen, ja anna heille tämä koodi: %1."
