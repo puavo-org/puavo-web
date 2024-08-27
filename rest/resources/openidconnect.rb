@@ -82,7 +82,6 @@ class OpenIDConnect < PuavoSinatra
 
     redirect_uri = params['redirect_uri']
 
-    # TODO: Use longest prefix search, not full string matching
     if client_config.fetch('allowed_redirect_uris', []).find { |uri| uri == redirect_uri }.nil?
       $rest_log.error("[#{request_id}] Redirect URI \"#{redirect_uri}\" is not allowed")
       generic_error(t.sso.invalid_redirect_uri(request_id))
