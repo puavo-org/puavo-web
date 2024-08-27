@@ -232,7 +232,7 @@ Feature: Manage multiple schools
   Scenario: When an admin user is removed from a school, they lose their admin status in that school
     # Check the admins page
     Given I am on the school page with "School 1"
-    When I follow "Admins"
+    When I follow "Admins" within "div#tabs"
     And I should see "Admin Admin (admin) School 1" on the school admin list
     # Add another school (so that we can remove the current primary school)
     Given I am on the show user page with "admin"
@@ -251,12 +251,12 @@ Feature: Manage multiple schools
       """
     # Double-check the school admins page
     Given I am on the school page with "School 1"
-    When I follow "Admins"
+    When I follow "Admins" within "div#tabs"
     And I should not see "Admin Admin (admin) School 1" on the school admin list
 
   Scenario: Admin rights are removed when user is moved directly to another school
     Given I am on the school page with "School 1"
-    When I follow "Admins"
+    When I follow "Admins" within "div#tabs"
     And I should see "Admin Admin (admin) School 1" on the school admin list
     Then I am on the change schools page with "admin"
     And I follow "Move to this school" within "#available-school2"
@@ -265,7 +265,7 @@ Feature: Manage multiple schools
     User moved to school "School 2"
     """
     Then I am on the school page with "School 1"
-    When I follow "Admins"
+    When I follow "Admins" within "div#tabs"
     Then I should not see "Admin Admin (admin) School 1" on the school admin list
 
   Scenario: Non-owners can't see or change other user's schools
