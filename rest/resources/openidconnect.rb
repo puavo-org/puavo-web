@@ -15,7 +15,7 @@ BUILTIN_SCOPES = %w(
   organisation
   schools
   groups
-  admin
+  admins
   ldap
   security
 ).to_set.freeze
