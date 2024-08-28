@@ -476,10 +476,10 @@ private
           'external_id' => s.external_id,
           'school_code' => s.school_code,
           'oid' => s.school_oid,
+          'primary' => user.primary_school_dn == s.dn,
         }
 
         school['ldap_dn'] = s.dn if has_ldap
-        school['primary'] = true if user.primary_school_dn == s.dn
 
         schools << school
       end
