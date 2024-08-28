@@ -354,6 +354,7 @@ class OpenIDConnect < PuavoSinatra
       'token_type' => 'Bearer',
       'expires_in' => expires_in,
       'id_token' => JWT.encode(payload, external_service.secret, 'HS256'),
+      'puavo_request_id' => request_id,
     }
 
     # TODO: The access token must be stored in Redis
