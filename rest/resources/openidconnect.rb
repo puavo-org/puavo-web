@@ -223,11 +223,22 @@ class OpenIDConnect < PuavoSinatra
   # Stage 3: Access token request
 
   post '/oidc/token' do
+    rlog.info('OpenID Connect access token request')
+
     # ----------------------------------------------------------------------------------------------
     # Retrive the code and the current state
 
-    code = params.fetch('code', nil)
-    oidc_state = _oidc_redis.get(code)
+    begin
+      code = params.fetch('code', nil)
+      oidc_state = _oidc_redis.get(code)
+    rescue StandardError => e
+      # TODO: How to properly handle this error?
+      temp_request_id = make_request_id
+
+      $rest_log.error("[#{temp_request_id}] An attempt to get OIDC state from Redis raised an exception: #{e}")
+      $rest_log.error("[#{temp_request_id}] Request parameters: #{params.inspect}")
+      generic_error(t.sso.invalid_login_state(temp_request_id))
+    end
 
     if oidc_state.nil?
       # TODO: How to properly handle this error?
