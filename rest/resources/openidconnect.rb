@@ -205,7 +205,7 @@ class OpenIDConnect < PuavoSinatra
 
     # Generate the session code and stash everything in Redis
     code = SecureRandom.hex(8)
-    _oidc_redis.set(code, oidc_state.to_json, nx: true) #, ex: 10 * 60)
+    _oidc_redis.set(code, oidc_state.to_json, nx: true, ex: 6 * 60)
     rlog.info("[#{request_id}] Generated OIDC session #{code}")
 
     # Return to the caller
@@ -356,6 +356,9 @@ class OpenIDConnect < PuavoSinatra
       'id_token' => JWT.encode(payload, external_service.secret, 'HS256'),
       'puavo_request_id' => request_id,
     }
+
+    # Clean up
+    _oidc_redis.del(code)
 
     # TODO: The access token must be stored in Redis
 
