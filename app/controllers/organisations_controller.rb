@@ -227,7 +227,7 @@ class OrganisationsController < ApplicationController
         name: "#{admin.givenName} #{admin.sn}",
         username: admin.uid,
         owner: owners.include?(admin.dn.to_s),
-        primary_school: admin.primary_school.to_s,
+        primary_school: nil,          # placeholder for synthetic data
         other_schools: Array(admin.puavoSchool || []).map(&method(:cache_school)) - [primary_school],
         admin_in: Array(admin.puavoAdminOfSchool || []).map(&method(:cache_school)),
         permissions: Array(admin.puavoAdminPermissions || []),
