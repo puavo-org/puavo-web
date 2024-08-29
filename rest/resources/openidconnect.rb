@@ -24,6 +24,7 @@ class OpenIDConnect < PuavoSinatra
   register Sinatra::R18n
 
   include PuavoLoginUtility
+  include PuavoLoginSession
 
   # ------------------------------------------------------------------------------------------------
   # Stage 1: Authorization request
@@ -165,10 +166,26 @@ class OpenIDConnect < PuavoSinatra
       # Use the same request ID for everything
       login_data = login_create_data(request_id, external_service, is_trusted: false, next_stage: '/oidc/stage2')
 
+      # Is there a session for this service?
+      session = session_try_login(request_id, external_service)
+
+      if session[:had_session] && session[:redirect]
+        # Restore session data
+        login_data['had_session'] = true
+        login_data['service'] = session[:data]['service']
+        login_data['organisation'] = session[:data]['organisation']
+        login_data['user'] = session[:data]['user']
+      end
+
       # Will be moved elsewhere once the login completes
       login_data['oidc_state'] = oidc_state
 
       _login_redis.set(login_key, login_data.to_json, nx: true, ex: 60 * 2)
+
+      if session[:had_session] && session[:redirect]
+        return stage2(login_key, login_data)
+      end
+
       redirect "/v3/sso/login?login_key=#{login_key}"
     rescue StandardError => e
       # WARNING: This resuce block can only handle exceptions that happen *before* the
@@ -202,6 +219,13 @@ class OpenIDConnect < PuavoSinatra
 
     # Optional
     oidc_state['auth_time'] = Time.now.utc.to_i
+
+    # Handle SSO sessions
+    session_create(login_key, login_data, {
+      'service' => login_data['service'],
+      'organisation' => login_data['organisation'],
+      'user' => login_data['user'],
+    })
 
     # Generate the session code and stash everything in Redis
     code = SecureRandom.hex(8)
