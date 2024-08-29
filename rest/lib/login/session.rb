@@ -7,8 +7,10 @@ module PuavoLoginSession
     Redis::Namespace.new('sso:session', redis: REDIS_CONNECTION)
   end
 
-  # Creates a new SSO session and stores it in Redis and the user's browser cookies
-  def session_create(login_key, login_data)
+  # Creates a new SSO session and stores it in Redis and the user's browser cookies.
+  # The 'session_data' is what's actually stored in Redis. Its contents depends on
+  # the authentication method, and they're not compatible between each other.
+  def session_create(login_key, login_data, session_data)
     # Don't recreate the session cookie if it already exists
     return if login_data['had_session']
 
@@ -28,16 +30,8 @@ module PuavoLoginSession
     session_key = SecureRandom.hex(64)
     rlog.info("[#{request_id}] creating a new SSO session cookie #{session_key}")
 
-    # The data in Redis is not obfuscated or encrypted. Anyone who can access the production
-    # Redis database (a very, very small group of people in the world) can already generate
-    # the full user information anyway.
-    session_data = {
-      'organisation' => login_data['organisation'],
-      'user' => login_data['user'],
-    }.to_json
-
     redis = _session_redis
-    redis.set("data:#{session_key}", session_data, nx: true, ex: PUAVO_SSO_SESSION_LENGTH)
+    redis.set("data:#{session_key}", session_data.to_json, nx: true, ex: PUAVO_SSO_SESSION_LENGTH)
 
     # This is used to locate and invalidate the session if the user is edited/removed
     redis.set("user:#{login_data['organisation']['name']}:#{login_data['user']['puavoid']}",

@@ -110,7 +110,6 @@ module PuavoLoginMFA
         rlog.info("[#{request_id}] the code is valid, continuing")
 
         mfa_clear(login_key)
-        session_create(login_key, login_data)
 
         return stage2(login_key, login_data)
       else

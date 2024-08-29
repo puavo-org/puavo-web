@@ -132,6 +132,11 @@ class SSO < PuavoSinatra
     request_id = login_data['request_id']
     rlog.info("[#{request_id}] JWT login stage 2 init")
 
+    session_create(login_key, login_data, {
+      'organisation' => login_data['organisation'],
+      'user' => login_data['user'],
+    })
+
     # "Log in"
     organisation = Organisation.by_domain(login_data['organisation']['domain'])
     LdapModel.setup(organisation: organisation, credentials: CONFIG['server'])

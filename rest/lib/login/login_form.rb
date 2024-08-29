@@ -245,9 +245,6 @@ module PuavoLoginForm
 
     # Does the user have MFA enabled?
     unless login_data['user']['has_mfa']
-      # No, just handle the session and continue to stage 2
-      session_create(login_key, login_data)
-
       return stage2(login_key, login_data)
     end
 
