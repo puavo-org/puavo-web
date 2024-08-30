@@ -166,6 +166,8 @@ class OpenIDConnect < PuavoSinatra
       # Use the same request ID for everything
       login_data = login_create_data(request_id, external_service, is_trusted: external_service.trusted, next_stage: '/oidc/stage2')
 
+      login_data['original_url'] = request.url.to_s
+
       if request.env.include?('HTTP_USER_AGENT')
         # HACK: "Smuggle" the user agent header across the redirect.
         # Needed for tests, not sure if needed in production.
