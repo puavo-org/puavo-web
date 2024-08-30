@@ -156,7 +156,7 @@ class OpenIDConnect < PuavoSinatra
       oidc_state['nonce'] = params['nonce']
     end
 
-    login_key = SecureRandom.hex(8)
+    login_key = SecureRandom.hex(64)
 
     begin
       # Use the same request ID for everything
@@ -232,7 +232,7 @@ class OpenIDConnect < PuavoSinatra
     })
 
     # Generate the session code and stash everything in Redis
-    code = SecureRandom.hex(8)
+    code = SecureRandom.hex(64)
     _oidc_redis.set(code, oidc_state.to_json, nx: true, ex: PUAVO_OIDC_LOGIN_TIME)
     rlog.info("[#{request_id}] Generated OIDC session #{code}")
 

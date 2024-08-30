@@ -72,7 +72,7 @@ class SSO < PuavoSinatra
   # Normal SSO login form
   get '/v3/sso' do
     request_id = make_request_id()
-    login_key = SecureRandom.hex(8)
+    login_key = SecureRandom.hex(64)
 
     begin
       initialize_jwt_login(request_id, login_key, false)
@@ -93,7 +93,7 @@ class SSO < PuavoSinatra
   # Verified SSO login form
   get '/v3/verified_sso' do
     request_id = make_request_id()
-    login_key = SecureRandom.hex(8)
+    login_key = SecureRandom.hex(64)
 
     begin
       initialize_jwt_login(request_id, login_key, true)
