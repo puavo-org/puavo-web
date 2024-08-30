@@ -590,16 +590,17 @@ class User < LdapBase
 
     # This organisation has SSO login cookies enabled. If this user has an active session,
     # remove it immediately.
-    db = Redis::Namespace.new('sso_session', :redis => REDIS_CONNECTION)
+    db = Redis::Namespace.new('sso:session', redis: REDIS_CONNECTION)
 
-    key = db.get("user:#{self.id}")
+    org = LdapOrganisation.current.cn
+    key = db.get("user:#{org}:#{self.id}")
     return unless key
 
     if db.get("data:#{key}")
       db.del("data:#{key}")
     end
 
-    db.del("user:#{self.id}")
+    db.del("user:#{org}:#{self.id}")
   end
 
   def has_admin_permission?(permission)
