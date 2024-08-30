@@ -41,7 +41,7 @@ class OpenIDConnect < PuavoSinatra
   def oidc_stage1_authorization
     request_id = make_request_id
 
-    $rest_log.info("[#{request_id}] New OpenID Connect authentication request")
+    rlog.info("[#{request_id}] New OpenID Connect authentication request")
 
     # ----------------------------------------------------------------------------------------------
     # (Re)Load the OpenID Connect configuration file
@@ -49,7 +49,7 @@ class OpenIDConnect < PuavoSinatra
     begin
       oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml')).freeze
     rescue StandardError => e
-      $rest_log.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
+      rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
 
       # Don't reveal the exact reason
       generic_error(t.sso.unspecified_error(request_id))
@@ -60,10 +60,10 @@ class OpenIDConnect < PuavoSinatra
 
     client_id = params.fetch('client_id', nil)
 
-    $rest_log.info("[#{request_id}] client_id=\"#{client_id}\"")
+    rlog.info("[#{request_id}] client_id=\"#{client_id}\"")
 
     unless oidc_config['clients'].include?(client_id)
-      $rest_log.error("[#{request_id}] Unknown/invalid client")
+      rlog.error("[#{request_id}] Unknown/invalid client")
       generic_error(t.sso.invalid_client_id(request_id))
     end
 
@@ -74,7 +74,7 @@ class OpenIDConnect < PuavoSinatra
     external_service = get_external_service(service_dn)
 
     if external_service.nil?
-      $rest_log.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
+      rlog.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
       generic_error(t.sso.invalid_client_id(request_id))
     end
 
@@ -84,7 +84,7 @@ class OpenIDConnect < PuavoSinatra
     redirect_uri = params['redirect_uri']
 
     if client_config.fetch('allowed_redirect_uris', []).find { |uri| uri == redirect_uri }.nil?
-      $rest_log.error("[#{request_id}] Redirect URI \"#{redirect_uri}\" is not allowed")
+      rlog.error("[#{request_id}] Redirect URI \"#{redirect_uri}\" is not allowed")
       generic_error(t.sso.invalid_redirect_uri(request_id))
     end
 
@@ -96,7 +96,7 @@ class OpenIDConnect < PuavoSinatra
     response_type = params.fetch('response_type', nil)
 
     unless response_type == 'code'
-      $rest_log.error("[#{request_id}] Unknown response type \"#{response_type}\", don't know how to handle it")
+      rlog.error("[#{request_id}] Unknown response type \"#{response_type}\", don't know how to handle it")
       return redirect_error(redirect_uri, 400, 'invalid_request', state: params.fetch('state', nil), request_id: request_id)
     end
 
@@ -106,7 +106,7 @@ class OpenIDConnect < PuavoSinatra
     scopes = params.fetch('scope', '').split(' ').to_set
 
     unless scopes.include?('openid')
-      $rest_log.error("[#{request_id}] No 'openid' found in scopes (#{scopes.inspect})")
+      rlog.error("[#{request_id}] No 'openid' found in scopes (#{scopes.inspect})")
       return redirect_error(redirect_uri, 400, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
     end
 
@@ -127,7 +127,7 @@ class OpenIDConnect < PuavoSinatra
         next
       end
 
-      $rest_log.error("[#{request_id}] Client \"#{client_id}\" has an invalid allowed scope \"#{scope}\"; it is neither a built-in scope nor a scope alias.")
+      rlog.error("[#{request_id}] Client \"#{client_id}\" has an invalid allowed scope \"#{scope}\"; it is neither a built-in scope nor a scope alias.")
       return redirect_error(redirect_uri, 400, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
     end
 
@@ -267,8 +267,8 @@ class OpenIDConnect < PuavoSinatra
       # TODO: How to properly handle this error?
       temp_request_id = make_request_id
 
-      $rest_log.error("[#{temp_request_id}] An attempt to get OIDC state from Redis raised an exception: #{e}")
-      $rest_log.error("[#{temp_request_id}] Request parameters: #{params.inspect}")
+      rlog.error("[#{temp_request_id}] An attempt to get OIDC state from Redis raised an exception: #{e}")
+      rlog.error("[#{temp_request_id}] Request parameters: #{params.inspect}")
       generic_error(t.sso.invalid_login_state(temp_request_id))
     end
 
@@ -276,7 +276,7 @@ class OpenIDConnect < PuavoSinatra
       # TODO: How to properly handle this error?
       temp_request_id = make_request_id
 
-      $rest_log.error("[#{temp_request_id}] No OpenID Connect state found by code \"#{code}\"")
+      rlog.error("[#{temp_request_id}] No OpenID Connect state found by code \"#{code}\"")
       generic_error(t.sso.invalid_login_state(temp_request_id))
     end
 
@@ -286,12 +286,12 @@ class OpenIDConnect < PuavoSinatra
       # TODO: How to properly handle this error?
       temp_request_id = make_request_id
 
-      $rest_log.error("[#{temp_request_id}] Unable to parse the JSON in OIDC state \"#{code}\"")
+      rlog.error("[#{temp_request_id}] Unable to parse the JSON in OIDC state \"#{code}\"")
       generic_error(t.sso.invalid_login_state(temp_request_id))
     end
 
     request_id = oidc_state['request_id']
-    $rest_log.info("[#{request_id}] OIDC stage 3 token generation for state \"#{code}\"")
+    rlog.info("[#{request_id}] OIDC stage 3 token generation for state \"#{code}\"")
 
     # ----------------------------------------------------------------------------------------------
     # Verify the redirect URI
@@ -301,7 +301,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless redirect_uri == oidc_state['redirect_uri']
       # TODO: How to properly handle this error?
-      $rest_log.error("[#{request_id}] Mismatching redirect URIs: got \"#{redirect_uri}\", expected \"#{oidc_state['redirect_uri']}\"")
+      rlog.error("[#{request_id}] Mismatching redirect URIs: got \"#{redirect_uri}\", expected \"#{oidc_state['redirect_uri']}\"")
       generic_error(t.sso.invalid_login_state(request_id))
     end
 
@@ -311,7 +311,7 @@ class OpenIDConnect < PuavoSinatra
     grant_type = params.fetch('grant_type', nil)
 
     unless grant_type == 'authorization_code'
-      $rest_log.error("[#{request_id}] Grant type of \"#{grant_type}\" is not supported")
+      rlog.error("[#{request_id}] Grant type of \"#{grant_type}\" is not supported")
       return json_error(redirect_uri, 'invalid_request', state: oidc_state['state'], request_id: request_id)
     end
 
@@ -321,7 +321,7 @@ class OpenIDConnect < PuavoSinatra
     client_id = params.fetch('client_id', nil)
 
     unless client_id == oidc_state['client_id']
-      $rest_log.error("[#{request_id}] The client ID has changed: got \"#{client_id}\", expected \"#{oidc_state['client_id']}\"")
+      rlog.error("[#{request_id}] The client ID has changed: got \"#{client_id}\", expected \"#{oidc_state['client_id']}\"")
       return json_error(redirect_uri, 'unauthorized_client', state: oidc_state['state'], request_id: request_id)
     end
 
@@ -332,7 +332,7 @@ class OpenIDConnect < PuavoSinatra
     client_secret = params.fetch('client_secret', nil)
 
     unless client_secret == external_service.secret
-      $rest_log.error("[#{request_id}] Invalid client secret in the request")
+      rlog.error("[#{request_id}] Invalid client secret in the request")
       return json_error(redirect_uri, 'unauthorized_client', state: oidc_state['state'], request_id: request_id)
     end
 
@@ -342,7 +342,7 @@ class OpenIDConnect < PuavoSinatra
     begin
       client_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml'))
     rescue StandardError => e
-      $rest_log.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
+      rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
       return json_error(redirect_uri, 'server_error', state: oidc_state['state'], request_id: request_id)
     end
 
@@ -463,7 +463,7 @@ private
         extra = User.raw_filter("ou=People,#{organisation['base']}", "(puavoId=#{user.id})", ['modifyTimestamp'])
         updated_at = Time.parse(extra[0]['modifyTimestamp'][0]).to_i
       rescue StandardError => e
-        $rest_log.warn("[#{request_id}] Cannot determine the user's last modification time: #{e}")
+        rlog.warn("[#{request_id}] Cannot determine the user's last modification time: #{e}")
         updated_at = nil
       end
     end
