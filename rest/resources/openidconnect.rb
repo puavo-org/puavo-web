@@ -164,7 +164,7 @@ class OpenIDConnect < PuavoSinatra
 
     begin
       # Use the same request ID for everything
-      login_data = login_create_data(request_id, external_service, is_trusted: false, next_stage: '/oidc/stage2')
+      login_data = login_create_data(request_id, external_service, is_trusted: external_service.trusted, next_stage: '/oidc/stage2')
 
       # Is there a session for this service?
       session = session_try_login(request_id, external_service)
