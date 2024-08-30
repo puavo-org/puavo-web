@@ -110,32 +110,28 @@ class OpenIDConnect < PuavoSinatra
       return redirect_error(redirect_uri, 400, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
     end
 
-    # Build a set of all scopes this client is allowed to access. If the list contains scopes
-    # that aren't built-in or scope aliases, the operation stops, because this list MUST contain
-    # only valid scopes.
-    scope_aliases = oidc_config.fetch('scope_aliases', {}).freeze
+    # Build a set of scopes the client is allowed to access
     client_allowed = ['openid']
+    client_allowed += client_config.fetch('allowed_scopes', nil) || []
+    client_allowed = client_allowed.to_set.freeze
 
-    client_config.fetch('allowed_scopes', []).each do |scope|
-      if BUILTIN_SCOPES.include?(scope)
-        client_allowed << scope
-        next
-      end
+    # Remove scopes that aren't allowed for this client
+    scopes &= client_allowed
 
+    # Expand scope aliases
+    scope_aliases = oidc_config.fetch('scope_aliases', {})
+    expanded_scopes = []
+
+    scopes.each do |scope|
       if scope_aliases.include?(scope)
-        client_allowed << scope_aliases[scope]
-        next
+        expanded_scopes += scope_aliases[scope]
+      else
+        expanded_scopes << scope
       end
-
-      rlog.error("[#{request_id}] Client \"#{client_id}\" has an invalid allowed scope \"#{scope}\"; it is neither a built-in scope nor a scope alias.")
-      return redirect_error(redirect_uri, 400, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
     end
 
-    client_allowed = client_allowed.flatten.to_set & BUILTIN_SCOPES
-
-    # Remove scopes that aren't allowed. Because aliases have been expanded, their names can be
-    # safely removed from the list.
-    scopes = (scopes & client_allowed).to_a
+    # Finally remove all invalid scopes
+    scopes = expanded_scopes.to_set & BUILTIN_SCOPES
 
     # ----------------------------------------------------------------------------------------------
     # Build Redis data
