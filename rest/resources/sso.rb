@@ -154,7 +154,7 @@ class SSO < PuavoSinatra
     redirect url
   end
 
-  # SSO session logout
+  # JWT SSO session logout
   get '/v3/sso/logout' do
     session_try_logout
   end

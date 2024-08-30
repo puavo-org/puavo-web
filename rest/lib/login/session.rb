@@ -196,6 +196,7 @@ module PuavoLoginSession
         rlog.info("[#{request_id}] logout not done (no session data in Redis), redirecting the browser anyway")
       end
 
+      response.delete_cookie(PUAVO_SSO_SESSION_KEY)
       return redirect(redirect_to)
     rescue StandardError => e
       rlog.error("[#{request_id}] session logout failed: #{e}")

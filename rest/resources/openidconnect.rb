@@ -407,6 +407,11 @@ class OpenIDConnect < PuavoSinatra
     json(out)
   end
 
+  # OpenID Connect SSO session logout
+  get '/oidc/authorize/logout' do
+    session_try_logout
+  end
+
 private
 
   def _oidc_redis
