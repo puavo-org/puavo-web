@@ -137,6 +137,8 @@ class SSO < PuavoSinatra
       'user' => login_data['user'],
     })
 
+    _login_redis.del(login_key)
+
     # "Log in"
     organisation = Organisation.by_domain(login_data['organisation']['domain'])
     LdapModel.setup(organisation: organisation, credentials: CONFIG['server'])
