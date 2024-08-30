@@ -370,7 +370,18 @@ class OpenIDConnect < PuavoSinatra
     # Collect the user data and append it to the payload
     organisation = Organisation.by_domain(oidc_state['organisation']['domain'])
     LdapModel.setup(organisation: organisation, credentials: CONFIG['server'])
+
     user = PuavoRest::User.by_dn(oidc_state['user']['dn'])
+
+    if user.nil?
+      rlog.error("[#{request_id}] Cannot find the logged-in user (DN=#{oidc_state['user']['dn']})")
+      return json_error(redirect_uri, 'access_denied', state: oidc_state['state'], request_id: request_id)
+    end
+
+    if user.locked || user.removal_request_time
+      rlog.error("[#{request_id}] The target user (#{user.username}) is locked or marked for deletion")
+      return json_error(redirect_uri, 'access_denied', state: oidc_state['state'], request_id: request_id)
+    end
 
     payload.merge!(gather_user_data(request_id, oidc_state['scopes'], organisation, user))
 
