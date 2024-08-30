@@ -188,7 +188,7 @@ class OpenIDConnect < PuavoSinatra
       # Will be moved elsewhere once the login completes
       login_data['oidc_state'] = oidc_state
 
-      _login_redis.set(login_key, login_data.to_json, nx: true, ex: 60 * 2)
+      _login_redis.set(login_key, login_data.to_json, nx: true, ex: PUAVO_LOGIN_TIME)
 
       if session[:had_session] && session[:redirect]
         return stage2(login_key, login_data)

@@ -62,7 +62,7 @@ class SSO < PuavoSinatra
       end
     end
 
-    _login_redis.set(login_key, login_data.to_json, nx: true, ex: 60 * 2)
+    _login_redis.set(login_key, login_data.to_json, nx: true, ex: PUAVO_LOGIN_TIME)
 
     if session[:redirect]
       return stage2(login_key, login_data)
