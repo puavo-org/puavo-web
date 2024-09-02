@@ -40,9 +40,15 @@ module PuavoLoginUtility
     }
   end
 
-  # Retrieves the login data from Redis
-  def login_get_data(login_key)
+  # Retrieves the login data from Redis. If 'delete_immediately' is true, the
+  # value is instantly deleted from Redis after it has been retrieved.
+  def login_get_data(login_key, delete_immediately: false)
     login_data = _login_redis.get(login_key)
+
+    if delete_immediately
+      # FIXME: 'getdel' does not work with the redis-namespace gem
+      _login_redis.del(login_key)
+    end
 
     if login_data.nil?
       # The key is invalid and we can't load the request ID from Redis. Make a new one.

@@ -209,7 +209,7 @@ class OpenIDConnect < PuavoSinatra
 
   get '/oidc/stage2' do
     login_key = params.fetch('login_key', '')
-    login_data = login_get_data(login_key)
+    login_data = login_get_data(login_key, delete_immediately: true)
     request_id = login_data['request_id']
     rlog.info("[#{request_id}] OpenID Connect login stage 2 init")
 
@@ -219,7 +219,6 @@ class OpenIDConnect < PuavoSinatra
     oidc_state['service'] = login_data['service']
     oidc_state['organisation'] = login_data['organisation']
     oidc_state['user'] = login_data['user']
-    _login_redis.del(login_key)
 
     # Optional
     oidc_state['auth_time'] = Time.now.utc.to_i
@@ -348,6 +347,9 @@ class OpenIDConnect < PuavoSinatra
     # ----------------------------------------------------------------------------------------------
     # All good. Build and return the JWT token.
 
+    # No longer needed
+    _oidc_redis.del(code)
+
     # TODO: Should this be configurable as per-service?
     expires_in = 3600
 
@@ -395,9 +397,6 @@ class OpenIDConnect < PuavoSinatra
       'id_token' => JWT.encode(payload, external_service.secret, 'HS256'),
       'puavo_request_id' => request_id,
     }
-
-    # Clean up
-    _oidc_redis.del(code)
 
     # TODO: The access token must be stored in Redis
 
