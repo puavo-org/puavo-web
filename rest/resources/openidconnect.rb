@@ -60,7 +60,7 @@ class OpenIDConnect < PuavoSinatra
 
     client_id = params.fetch('client_id', nil)
 
-    rlog.info("[#{request_id}] client_id=\"#{client_id}\"")
+    rlog.info("[#{request_id}] client_id: #{client_id.inspect}")
 
     unless oidc_config['clients'].include?(client_id)
       rlog.error("[#{request_id}] Unknown/invalid client")
@@ -88,6 +88,8 @@ class OpenIDConnect < PuavoSinatra
       generic_error(t.sso.invalid_redirect_uri(request_id))
     end
 
+    rlog.info("[#{request_id}] Redirect URI: #{redirect_uri.inspect}")
+
     # The client ID and the redirect URI have been validated. We can now do proper error redirects.
 
     # ----------------------------------------------------------------------------------------------
@@ -103,10 +105,12 @@ class OpenIDConnect < PuavoSinatra
     # ----------------------------------------------------------------------------------------------
     # Verify the scopes
 
-    scopes = params.fetch('scope', '').split(' ').to_set
+    scopes = params.fetch('scope', '').split(' ')
+    rlog.info("[#{request_id}] Raw incoming scopes: #{scopes.inspect}")
+    scopes = scopes.to_set
 
     unless scopes.include?('openid')
-      rlog.error("[#{request_id}] No 'openid' found in scopes (#{scopes.inspect})")
+      rlog.error("[#{request_id}] No 'openid' found in scopes")
       return redirect_error(redirect_uri, 400, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
     end
 
@@ -133,6 +137,8 @@ class OpenIDConnect < PuavoSinatra
     # Finally remove all invalid scopes
     scopes = expanded_scopes.to_set & BUILTIN_SCOPES
 
+    rlog.info("[#{request_id}] Final cleaned-up scopes: #{scopes.to_a.inspect}")
+
     # ----------------------------------------------------------------------------------------------
     # Build Redis data
 
@@ -157,6 +163,8 @@ class OpenIDConnect < PuavoSinatra
     end
 
     login_key = SecureRandom.hex(64)
+
+    rlog.info("[#{request_id}] Login key: #{login_key.inspect}")
 
     begin
       # Use the same request ID for everything
@@ -211,7 +219,7 @@ class OpenIDConnect < PuavoSinatra
     login_key = params.fetch('login_key', '')
     login_data = login_get_data(login_key, delete_immediately: true)
     request_id = login_data['request_id']
-    rlog.info("[#{request_id}] OpenID Connect login stage 2 init")
+    rlog.info("[#{request_id}] OpenID Connect login stage 2 init, login key was #{login_key.inspect}")
 
     # Copy the OpenID Connect session state from the login data,
     # and delete the login session from Redis
