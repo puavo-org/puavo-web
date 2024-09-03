@@ -236,6 +236,9 @@ class OpenIDConnect < PuavoSinatra
 
     # What kind of a request are we dealing with?
     case grant_type
+      when 'client_credentials'
+        handle_client_credentials
+
       when 'authorization_code'
         handle_authorization_code
 
@@ -243,6 +246,128 @@ class OpenIDConnect < PuavoSinatra
         rlog.error("[#{temp_request_id}] Grant type of \"#{grant_type}\" is not supported")
         json_error(nil, 'invalid_request', request_id: temp_request_id)
     end
+  end
+
+  # Handles a "client_credentials" request
+  def handle_client_credentials
+    request_id = make_request_id
+
+    content_type = request.env.fetch('CONTENT_TYPE', nil)
+
+    unless content_type == 'application/x-www-form-urlencoded'
+      rlog.error("[#{request_id}] Received a client_credentials request with an incorrect Content-Type header (#{content_type.inspect})")
+      return json_error(nil, 'invalid_request', request_id: request_id)
+    end
+
+    # ----------------------------------------------------------------------------------------------
+    # Verify and authorize the client
+
+    unless request.env.include?('HTTP_AUTHORIZATION')
+      rlog.error("[#{request_id}] Received a client_credentials request without an HTTP_AUTHORIZATION header")
+      return json_error(nil, 'invalid_request', request_id: request_id)
+    end
+
+    begin
+      credentials = request.env.fetch('HTTP_AUTHORIZATION', '').split(' ')
+      credentials = Base64::strict_decode64(credentials[1])
+      credentials = credentials.split(':')
+      raise StandardError.new('the HTTP_AUTHORIZATION header does not contain a username:password combo') if credentials.count != 2
+    rescue StandardError => e
+      rlog.error("[#{request_id}] Received a client_credentials request with a malformed authentication header: #{e}")
+      rlog.error("[#{request_id}] Raw header: #{request.env['HTTP_AUTHORIZATION'].inspect}")
+      return json_error(nil, 'invalid_request', request_id: request_id)
+    end
+
+    puts credentials.inspect
+
+    # ----------------------------------------------------------------------------------------------
+    # (Re)Load the OpenID Connect configuration file
+
+    begin
+      oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml')).freeze
+    rescue StandardError => e
+      rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
+      return json_error(nil, 'unauthorized_client', request_id: request_id)
+    end
+
+    # ----------------------------------------------------------------------------------------------
+    # Verify the client ID and the target service
+
+    rlog.info("[#{request_id}] client_id: #{credentials[0].inspect}")
+
+    unless oidc_config['clients'].include?(credentials[0])
+      rlog.error("[#{request_id}] Unknown/invalid client")
+      return json_error(nil, 'unauthorized_client', request_id: request_id)
+    end
+
+    client_config = oidc_config['clients'][credentials[0]].freeze
+
+    # Find the target service
+    service_dn = client_config['puavo_service']
+    external_service = get_external_service(service_dn)
+
+    if external_service.nil?
+      rlog.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
+      return json_error(nil, 'unauthorized_client', request_id: request_id)
+    end
+
+    # ----------------------------------------------------------------------------------------------
+    # Verify the client secret
+
+    unless credentials[1] == external_service.secret
+      rlog.error("[#{request_id}] Invalid client secret")
+      return json_error(nil, 'unauthorized_client', request_id: request_id)
+    end
+
+    # ----------------------------------------------------------------------------------------------
+    # Verify the scopes (if present)
+
+    if params.include?('scope')
+      scopes = clean_scopes(params.fetch('scope', ''), oidc_config, client_config, request_id)
+
+      if scopes.nil?
+        return json_error(nil, 'invalid_scope', request_id: request_id)
+      end
+    else
+      # Use the default scopes for this client
+      scopes = ['openid']
+      scopes += client_config.fetch('allowed_scopes', nil) || []
+      scopes = scopes.to_set
+      rlog.info("[#{request_id}] No scopes in the request, using all allowed (#{scopes.to_a.inspect})")
+    end
+
+    # ----------------------------------------------------------------------------------------------
+    # Generate the access token
+
+    expires_in = 3600
+    now = Time.now.utc.to_i
+
+    payload = {
+      'iss' => 'https://auth.opinsys.fi',
+      'jti' => SecureRandom.uuid,
+      'iat' => now,
+      'exp' => now + expires_in,
+      'auth_time' => now,
+    }
+
+    # TODO: The access token must be stored in Redis. We don't have yet any endpoint that
+    # needs it, so this part has not been implemented yet.
+    access_token = SecureRandom.hex(64)
+
+    rlog.info("[#{request_id}] Generated access token #{access_token.inspect}")
+
+    out = {
+      'access_token' => access_token,
+      'token_type' => 'Bearer',
+      'expires_in' => expires_in,
+      'id_token' => JWT.encode(payload, external_service.secret, 'HS256'),
+      'puavo_request_id' => request_id,
+    }
+
+    headers['Cache-Control'] = 'no-store'
+    headers['Pragma'] = 'no-cache'
+
+    json(out)
   end
 
   # Handles a "authorization_code" request
