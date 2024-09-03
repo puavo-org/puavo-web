@@ -230,8 +230,23 @@ class OpenIDConnect < PuavoSinatra
   # Stage 3: Access token request
 
   post '/oidc/token' do
-    rlog.info('OpenID Connect access token request')
+    temp_request_id = make_request_id
+    grant_type = params.fetch('grant_type', nil)
+    rlog.info("OpenID Connect access token request, grant type: #{grant_type.inspect}")
 
+    # What kind of a request are we dealing with?
+    case grant_type
+      when 'authorization_code'
+        handle_authorization_code
+
+      else
+        rlog.error("[#{temp_request_id}] Grant type of \"#{grant_type}\" is not supported")
+        json_error(nil, 'invalid_request', request_id: temp_request_id)
+    end
+  end
+
+  # Handles a "authorization_code" request
+  def handle_authorization_code
     # ----------------------------------------------------------------------------------------------
     # Retrive the code and the current state
 
@@ -278,16 +293,6 @@ class OpenIDConnect < PuavoSinatra
       # TODO: How to properly handle this error?
       rlog.error("[#{request_id}] Mismatching redirect URIs: got \"#{redirect_uri}\", expected \"#{oidc_state['redirect_uri']}\"")
       generic_error(t.sso.invalid_login_state(request_id))
-    end
-
-    # ----------------------------------------------------------------------------------------------
-    # Verify the grant type
-
-    grant_type = params.fetch('grant_type', nil)
-
-    unless grant_type == 'authorization_code'
-      rlog.error("[#{request_id}] Grant type of \"#{grant_type}\" is not supported")
-      return json_error(redirect_uri, 'invalid_request', state: oidc_state['state'], request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
