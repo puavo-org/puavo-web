@@ -86,6 +86,8 @@ class OpenIDConnect < PuavoSinatra
     # ----------------------------------------------------------------------------------------------
     # Verify the redirect URL(s)
 
+    # RFC 6749 section 4.1.1. says this is optional, but we require it
+
     redirect_uri = params['redirect_uri']
 
     if client_config.fetch('allowed_redirect_uris', []).find { |uri| uri == redirect_uri }.nil?
@@ -256,7 +258,7 @@ class OpenIDConnect < PuavoSinatra
 
       else
         rlog.error("[#{temp_request_id}] Grant type of \"#{grant_type}\" is not supported")
-        json_error(nil, 'invalid_request', request_id: temp_request_id)
+        json_error('unsupported_grant_type', request_id: temp_request_id)
     end
   end
 
@@ -268,7 +270,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless content_type == 'application/x-www-form-urlencoded'
       rlog.error("[#{request_id}] Received a client_credentials request with an incorrect Content-Type header (#{content_type.inspect})")
-      return json_error(nil, 'invalid_request', request_id: request_id)
+      return json_error('invalid_request', request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -276,7 +278,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless request.env.include?('HTTP_AUTHORIZATION')
       rlog.error("[#{request_id}] Received a client_credentials request without an HTTP_AUTHORIZATION header")
-      return json_error(nil, 'invalid_request', request_id: request_id)
+      return json_error('invalid_request', request_id: request_id)
     end
 
     begin
@@ -287,7 +289,7 @@ class OpenIDConnect < PuavoSinatra
     rescue StandardError => e
       rlog.error("[#{request_id}] Received a client_credentials request with a malformed authentication header: #{e}")
       rlog.error("[#{request_id}] Raw header: #{request.env['HTTP_AUTHORIZATION'].inspect}")
-      return json_error(nil, 'invalid_request', request_id: request_id)
+      return json_error('invalid_request', request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -297,7 +299,7 @@ class OpenIDConnect < PuavoSinatra
       oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml')).freeze
     rescue StandardError => e
       rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
-      return json_error(nil, 'unauthorized_client', request_id: request_id)
+      return json_error('unauthorized_client', request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -307,7 +309,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless oidc_config['clients'].include?(credentials[0])
       rlog.error("[#{request_id}] Unknown/invalid client")
-      return json_error(nil, 'unauthorized_client', request_id: request_id)
+      return json_error('unauthorized_client', request_id: request_id)
     end
 
     client_config = oidc_config['clients'][credentials[0]].freeze
@@ -318,7 +320,7 @@ class OpenIDConnect < PuavoSinatra
 
     if external_service.nil?
       rlog.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
-      return json_error(nil, 'unauthorized_client', request_id: request_id)
+      return json_error('unauthorized_client', request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -326,7 +328,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless credentials[1] == external_service.secret
       rlog.error("[#{request_id}] Invalid client secret")
-      return json_error(nil, 'unauthorized_client', request_id: request_id)
+      return json_error('unauthorized_client', request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -336,7 +338,7 @@ class OpenIDConnect < PuavoSinatra
       scopes = clean_scopes(params.fetch('scope', ''), oidc_config, client_config, request_id)
 
       if scopes.nil?
-        return json_error(nil, 'invalid_scope', request_id: request_id)
+        return json_error('invalid_scope', request_id: request_id)
       end
     else
       # Use the default scopes for this client
@@ -391,24 +393,24 @@ class OpenIDConnect < PuavoSinatra
       code = params.fetch('code', nil)
       oidc_state = _oidc_redis.get(code)
     rescue StandardError => e
-      # TODO: How to properly handle this error?
+      # Don't log the secret (we know it already, but don't log it)
+      params['client_secret'] = '[REDACTED]' if params.include?('client_secret')
+
       rlog.error("[#{temp_request_id}] An attempt to get OIDC state from Redis raised an exception: #{e}")
       rlog.error("[#{temp_request_id}] Request parameters: #{params.inspect}")
-      generic_error(t.sso.invalid_login_state(temp_request_id))
+      return json_error('server_error', request_id: temp_request_id)
     end
 
     if oidc_state.nil?
-      # TODO: How to properly handle this error?
       rlog.error("[#{temp_request_id}] No OpenID Connect state found by code \"#{code}\"")
-      generic_error(t.sso.invalid_login_state(temp_request_id))
+      return json_error('invalid_request', request_id: temp_request_id)
     end
 
     begin
       oidc_state = JSON.parse(oidc_state)
     rescue StandardError => e
-      # TODO: How to properly handle this error?
       rlog.error("[#{temp_request_id}] Unable to parse the JSON in OIDC state \"#{code}\"")
-      generic_error(t.sso.invalid_login_state(temp_request_id))
+      return json_error('server_error', request_id: temp_request_id)
     end
 
     request_id = oidc_state['request_id']
@@ -417,17 +419,16 @@ class OpenIDConnect < PuavoSinatra
     # ----------------------------------------------------------------------------------------------
     # Verify the redirect URI
 
-    # This has to be the same address where the response was sent at the end of stage 2
+    # This has to be the same address where the response was sent at the end of stage 2.
+    # RFC 6749 says this is optional, but we require it.
     redirect_uri = params.fetch('redirect_uri', nil)
 
     unless redirect_uri == oidc_state['redirect_uri']
-      # TODO: How to properly handle this error?
       rlog.error("[#{request_id}] Mismatching redirect URIs: got \"#{redirect_uri}\", expected \"#{oidc_state['redirect_uri']}\"")
-      generic_error(t.sso.invalid_login_state(request_id))
+      return json_error('invalid_request', request_id: temp_request_id)
     end
 
-    # From here on, we can again do proper error redirects as specified in RFC 6749 sections
-    # 4.1.3. and 4.1.4.
+    # From here on, the redirect URI is usable, if needed
 
     # ----------------------------------------------------------------------------------------------
     # Verify the client ID
@@ -436,7 +437,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless client_id == oidc_state['client_id']
       rlog.error("[#{request_id}] The client ID has changed: got \"#{client_id}\", expected \"#{oidc_state['client_id']}\"")
-      return json_error(redirect_uri, 'unauthorized_client', state: oidc_state['state'], request_id: request_id)
+      return json_error('unauthorized_client', state: oidc_state['state'], request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -447,7 +448,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless client_secret == external_service.secret
       rlog.error("[#{request_id}] Invalid client secret in the request")
-      return json_error(redirect_uri, 'unauthorized_client', state: oidc_state['state'], request_id: request_id)
+      return json_error('unauthorized_client', state: oidc_state['state'], request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -457,7 +458,7 @@ class OpenIDConnect < PuavoSinatra
       client_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml'))
     rescue StandardError => e
       rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
-      return json_error(redirect_uri, 'server_error', state: oidc_state['state'], request_id: request_id)
+      return json_error('server_error', state: oidc_state['state'], request_id: request_id)
     end
 
     # Assume this does not fail, since we've validated everything
@@ -494,12 +495,12 @@ class OpenIDConnect < PuavoSinatra
 
     if user.nil?
       rlog.error("[#{request_id}] Cannot find the logged-in user (DN=#{oidc_state['user']['dn']})")
-      return json_error(redirect_uri, 'access_denied', state: oidc_state['state'], request_id: request_id)
+      return json_error('access_denied', state: oidc_state['state'], request_id: request_id)
     end
 
     if user.locked || user.removal_request_time
       rlog.error("[#{request_id}] The target user (#{user.username}) is locked or marked for deletion")
-      return json_error(redirect_uri, 'access_denied', state: oidc_state['state'], request_id: request_id)
+      return json_error('access_denied', state: oidc_state['state'], request_id: request_id)
     end
 
     payload.merge!(gather_user_data(request_id, oidc_state['scopes'], organisation, user))
@@ -590,7 +591,7 @@ private
   end
 
   # RFC 6749 section 5.2.
-  def json_error(redirect_uri, error, http_status: 400, error_description: nil, error_uri: nil, state: nil, request_id: nil)
+  def json_error(error, http_status: 400, error_description: nil, error_uri: nil, state: nil, request_id: nil)
     out = {}
 
     out['error'] = error
