@@ -29,19 +29,22 @@ class OpenIDConnect < PuavoSinatra
   # ------------------------------------------------------------------------------------------------
   # Stage 1: Authorization request
 
-  # Accept both GET and POST stage 1 authorization calls
+  # Accept both GET and POST authorization requests
   get '/oidc/authorize' do
-    oidc_stage1_authorization
+    oidc_authorization_request
   end
 
   post '/oidc/authorize' do
-    oidc_stage1_authorization
+    oidc_authorization_request
   end
 
-  def oidc_stage1_authorization
+  def oidc_authorization_request
     request_id = make_request_id
 
-    rlog.info("[#{request_id}] New OpenID Connect authentication request")
+    rlog.info("[#{request_id}] New OpenID Connect authorization request")
+
+    # Until the client ID and redirection URI have been validated, we cannot do error redirects.
+    # Instead we display an error message in the browser. This matches RFC 6749 section 3.1.2.4.
 
     # ----------------------------------------------------------------------------------------------
     # (Re)Load the OpenID Connect configuration file
@@ -60,7 +63,7 @@ class OpenIDConnect < PuavoSinatra
 
     client_id = params.fetch('client_id', nil)
 
-    rlog.info("[#{request_id}] client_id: #{client_id.inspect}")
+    rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
 
     unless oidc_config['clients'].include?(client_id)
       rlog.error("[#{request_id}] Unknown/invalid client")
@@ -78,6 +81,8 @@ class OpenIDConnect < PuavoSinatra
       generic_error(t.sso.invalid_client_id(request_id))
     end
 
+    rlog.info("[#{request_id}] Target external service: name=#{external_service.name.inspect}, DN=#{external_service.dn.inspect}")
+
     # ----------------------------------------------------------------------------------------------
     # Verify the redirect URL(s)
 
@@ -90,7 +95,8 @@ class OpenIDConnect < PuavoSinatra
 
     rlog.info("[#{request_id}] Redirect URI: #{redirect_uri.inspect}")
 
-    # The client ID and the redirect URI have been validated. We can now do proper error redirects.
+    # The client ID and the redirect URI have been validated. We can now do proper error redirects,
+    # as specified in RFC 6479 section 4.1.2.1.
 
     # ----------------------------------------------------------------------------------------------
     # Check the response type
@@ -114,9 +120,10 @@ class OpenIDConnect < PuavoSinatra
     # ----------------------------------------------------------------------------------------------
     # Build Redis data
 
-    # This structure tracks the user's whole OpenID Connect session. It is separate from the
-    # "login session" that exists during the login form (and the MFA form, if enabled).
-    # It persists in Redis for as long as the user stays logged in.
+    # This structure tracks the user's OpenID Connect authorization session. While separate
+    # from the "login session" that exists during the login form (and the MFA form, if enabled),
+    # it is briefly stored inside the login session data when the forms are displayed. It is
+    # deleted after the OIDC access token (or the initial JWT) has been generated.
     oidc_state = {
       'request_id' => request_id,
       'client_id' => client_id,
@@ -124,7 +131,8 @@ class OpenIDConnect < PuavoSinatra
       'scopes' => scopes,
       'state' => params.fetch('state', nil),
 
-      # These will be copied from the login session once it completes
+      # These will be copied from the login session once it completes (we need to persist these
+      # until the initial JWT/access token has been generated)
       'service' => nil,
       'organisation' => nil,
       'user' => nil,
@@ -167,9 +175,11 @@ class OpenIDConnect < PuavoSinatra
       _login_redis.set(login_key, login_data.to_json, nx: true, ex: PUAVO_LOGIN_TIME)
 
       if session[:had_session] && session[:redirect]
+        # We had a session, skip the form(s)
         return stage2(login_key, login_data)
       end
 
+      # Display the login form (and MFA form if enabled)
       redirect "/v3/sso/login?login_key=#{login_key}"
     rescue StandardError => e
       # WARNING: This resuce block can only handle exceptions that happen *before* the
@@ -185,25 +195,26 @@ class OpenIDConnect < PuavoSinatra
   end
 
   # ------------------------------------------------------------------------------------------------
-  # Stage 2: Authorization request continues (generate the return value for stage 1)
+  # Stage 2: Generate the authorization request response
 
+  # We get here from the login form, or directly from stage 1 if a session existed
   get '/oidc/stage2' do
+    # Get and delete the login data from Redis
     login_key = params.fetch('login_key', '')
     login_data = login_get_data(login_key, delete_immediately: true)
     request_id = login_data['request_id']
-    rlog.info("[#{request_id}] OpenID Connect login stage 2 init, login key was #{login_key.inspect}")
+    rlog.info("[#{request_id}] OpenID Connect authorization request continues, login key was #{login_key.inspect}")
 
-    # Copy the OpenID Connect session state from the login data,
-    # and delete the login session from Redis
+    # Copy the OpenID Connect session state from the login data
     oidc_state = login_data['oidc_state']
     oidc_state['service'] = login_data['service']
     oidc_state['organisation'] = login_data['organisation']
     oidc_state['user'] = login_data['user']
 
-    # Optional
+    # Optional (but we can support it easily)
     oidc_state['auth_time'] = Time.now.utc.to_i
 
-    # Handle SSO sessions
+    # Create an SSO session if possible
     session_create(login_key, login_data, {
       'service' => login_data['service'],
       'organisation' => login_data['organisation'],
@@ -229,12 +240,13 @@ class OpenIDConnect < PuavoSinatra
   # ------------------------------------------------------------------------------------------------
   # Stage 3: Access token request
 
+  # The client calls this after the authorization is complete
   post '/oidc/token' do
+    # What kind of a request are we dealing with?
     temp_request_id = make_request_id
     grant_type = params.fetch('grant_type', nil)
     rlog.info("OpenID Connect access token request, grant type: #{grant_type.inspect}")
 
-    # What kind of a request are we dealing with?
     case grant_type
       when 'client_credentials'
         handle_client_credentials
@@ -370,8 +382,10 @@ class OpenIDConnect < PuavoSinatra
     json(out)
   end
 
-  # Handles a "authorization_code" request
+  # Handles a "authorization_code" request. See RFC 6479 section 4.1.3.
   def handle_authorization_code
+    temp_request_id = make_request_id
+
     # ----------------------------------------------------------------------------------------------
     # Retrive the code and the current state
 
@@ -380,8 +394,6 @@ class OpenIDConnect < PuavoSinatra
       oidc_state = _oidc_redis.get(code)
     rescue StandardError => e
       # TODO: How to properly handle this error?
-      temp_request_id = make_request_id
-
       rlog.error("[#{temp_request_id}] An attempt to get OIDC state from Redis raised an exception: #{e}")
       rlog.error("[#{temp_request_id}] Request parameters: #{params.inspect}")
       generic_error(t.sso.invalid_login_state(temp_request_id))
@@ -389,8 +401,6 @@ class OpenIDConnect < PuavoSinatra
 
     if oidc_state.nil?
       # TODO: How to properly handle this error?
-      temp_request_id = make_request_id
-
       rlog.error("[#{temp_request_id}] No OpenID Connect state found by code \"#{code}\"")
       generic_error(t.sso.invalid_login_state(temp_request_id))
     end
@@ -399,8 +409,6 @@ class OpenIDConnect < PuavoSinatra
       oidc_state = JSON.parse(oidc_state)
     rescue StandardError => e
       # TODO: How to properly handle this error?
-      temp_request_id = make_request_id
-
       rlog.error("[#{temp_request_id}] Unable to parse the JSON in OIDC state \"#{code}\"")
       generic_error(t.sso.invalid_login_state(temp_request_id))
     end
@@ -419,6 +427,9 @@ class OpenIDConnect < PuavoSinatra
       rlog.error("[#{request_id}] Mismatching redirect URIs: got \"#{redirect_uri}\", expected \"#{oidc_state['redirect_uri']}\"")
       generic_error(t.sso.invalid_login_state(request_id))
     end
+
+    # From here on, we can again do proper error redirects as specified in RFC 6749 sections
+    # 4.1.3. and 4.1.4.
 
     # ----------------------------------------------------------------------------------------------
     # Verify the client ID
@@ -457,12 +468,10 @@ class OpenIDConnect < PuavoSinatra
     # ----------------------------------------------------------------------------------------------
     # All good. Build and return the JWT token.
 
-    # No longer needed
+    # Prevent code reuse
     _oidc_redis.del(code)
 
-    # TODO: Should this be configurable as per-service?
     expires_in = 3600
-
     now = Time.now.utc.to_i
 
     payload = {
