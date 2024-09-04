@@ -240,7 +240,7 @@ class OpenIDConnect < PuavoSinatra
   end
 
   # ------------------------------------------------------------------------------------------------
-  # Stage 3: Access token request
+  # Stage 3: ID token and access token requests
 
   # The client calls this after the authorization is complete
   post '/oidc/token' do
@@ -467,7 +467,7 @@ class OpenIDConnect < PuavoSinatra
     client_config = client_config['clients'][client_id].freeze
 
     # ----------------------------------------------------------------------------------------------
-    # All good. Build and return the JWT token.
+    # All good. Build the ID token, stash it in a JWT and return.
 
     # Prevent code reuse
     _oidc_redis.del(code)
