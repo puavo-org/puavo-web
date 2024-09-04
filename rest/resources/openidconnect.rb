@@ -290,8 +290,6 @@ class OpenIDConnect < PuavoSinatra
       return json_error(nil, 'invalid_request', request_id: request_id)
     end
 
-    puts credentials.inspect
-
     # ----------------------------------------------------------------------------------------------
     # (Re)Load the OpenID Connect configuration file
 
