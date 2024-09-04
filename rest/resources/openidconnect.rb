@@ -413,6 +413,8 @@ class OpenIDConnect < PuavoSinatra
       return json_error('server_error', request_id: temp_request_id)
     end
 
+    state = oidc_state['state'].freeze
+
     request_id = oidc_state['request_id']
     rlog.info("[#{request_id}] OIDC stage 3 token generation for state \"#{code}\"")
 
@@ -437,7 +439,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless client_id == oidc_state['client_id']
       rlog.error("[#{request_id}] The client ID has changed: got \"#{client_id}\", expected \"#{oidc_state['client_id']}\"")
-      return json_error('unauthorized_client', state: oidc_state['state'], request_id: request_id)
+      return json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -448,7 +450,7 @@ class OpenIDConnect < PuavoSinatra
 
     unless client_secret == external_service.secret
       rlog.error("[#{request_id}] Invalid client secret in the request")
-      return json_error('unauthorized_client', state: oidc_state['state'], request_id: request_id)
+      return json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -458,7 +460,7 @@ class OpenIDConnect < PuavoSinatra
       client_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml'))
     rescue StandardError => e
       rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
-      return json_error('server_error', state: oidc_state['state'], request_id: request_id)
+      return json_error('server_error', state: state, request_id: request_id)
     end
 
     # Assume this does not fail, since we've validated everything
@@ -495,12 +497,12 @@ class OpenIDConnect < PuavoSinatra
 
     if user.nil?
       rlog.error("[#{request_id}] Cannot find the logged-in user (DN=#{oidc_state['user']['dn']})")
-      return json_error('access_denied', state: oidc_state['state'], request_id: request_id)
+      return json_error('access_denied', state: state, request_id: request_id)
     end
 
     if user.locked || user.removal_request_time
       rlog.error("[#{request_id}] The target user (#{user.username}) is locked or marked for deletion")
-      return json_error('access_denied', state: oidc_state['state'], request_id: request_id)
+      return json_error('access_denied', state: state, request_id: request_id)
     end
 
     payload.merge!(gather_user_data(request_id, oidc_state['scopes'], organisation, user))
