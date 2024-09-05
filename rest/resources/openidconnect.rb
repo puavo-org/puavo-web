@@ -572,14 +572,16 @@ private
 
   # RFC 6749 section 4.1.2.1.
   def redirect_error(redirect_uri, http_status, error, error_description: nil, error_uri: nil, state: nil, request_id: nil)
-    params = { 'error' => error }
-    params['error_description'] = error_description if error_description
-    params['error_uri'] = error_uri if error_uri
-    params['state'] = state if state
-    params['puavo_request_id'] = request_id if request_id
+    out = {}
+
+    out['error'] = error
+    out['error_description'] = error_description if error_description
+    out['error_uri'] = error_uri if error_uri
+    out['state'] = state if state
+    out['puavo_request_id'] = request_id if request_id
 
     uri = URI(redirect_uri)
-    uri.query = URI.encode_www_form(params)
+    uri.query = URI.encode_www_form(out)
 
     redirect uri
   end
