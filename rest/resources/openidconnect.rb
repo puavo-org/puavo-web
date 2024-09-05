@@ -115,7 +115,7 @@ class OpenIDConnect < PuavoSinatra
 
     scopes = clean_scopes(params.fetch('scope', ''), oidc_config, client_config, request_id)
 
-    if scopes.nil?
+    unless scopes[:success]
       return redirect_error(redirect_uri, 400, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
     end
 
@@ -130,7 +130,8 @@ class OpenIDConnect < PuavoSinatra
       'request_id' => request_id,
       'client_id' => client_id,
       'redirect_uri' => redirect_uri,
-      'scopes' => scopes,
+      'scopes' => scopes[:scopes],
+      'scopes_changed' => scopes[:changed],     # remember this for later responses
       'state' => params.fetch('state', nil),
 
       # These will be copied from the login session once it completes (we need to persist these
@@ -231,10 +232,20 @@ class OpenIDConnect < PuavoSinatra
     # Return to the caller
     redirect_uri = URI(oidc_state['redirect_uri'])
 
-    redirect_uri.query = URI.encode_www_form({
+    query = {
       'code' => code,
       'state' => oidc_state['state']
-    })
+    }
+
+    if oidc_state['scopes_changed']
+      # RFC 6749 section 3.3. says the scopes must be included in the response if
+      # it is different from the scopes the client specified. The spec is unclear
+      # how the scopes should be encoded (array or list). Return them in the way
+      # they are specified in the request.
+      query['scope'] = oidc_state['scopes'].join(' ')
+    end
+
+    redirect_uri.query = URI.encode_www_form(query)
 
     redirect redirect_uri
   end
@@ -501,6 +512,14 @@ class OpenIDConnect < PuavoSinatra
       'puavo_request_id' => request_id,
     }
 
+    if oidc_state['scopes_changed']
+      # RFC 6749 section 3.3. says the scopes must be included in the response if
+      # it is different from the scopes the client specified. The spec is unclear
+      # how the scopes should be encoded (array or list). Return them in the way
+      # they are specified in the request.
+      out['scopes'] = oidc_state['scopes'].join(' ')
+    end
+
     # TODO: The access token must be stored in Redis
 
     headers['Cache-Control'] = 'no-store'
@@ -520,45 +539,35 @@ private
     Redis::Namespace.new('oidc_session', redis: REDIS_CONNECTION)
   end
 
-  # Removes invalid scopes and scopes that aren't allowed for this client.
-  # Returns nil if something failed.
+  # Parses a string containing scopes separated by spaces, and removes the scopes that
+  # aren't allowed for this client and also the invalid scopes.
   def clean_scopes(raw_scopes, oidc_config, client_config, request_id)
     rlog.info("[#{request_id}] Raw incoming scopes: #{raw_scopes.inspect}")
     scopes = raw_scopes.split(' ').to_set
 
     unless scopes.include?('openid')
       rlog.error("[#{request_id}] No 'openid' found in scopes")
-      return nil
+      return { success: false }
     end
 
-    # Build a set of scopes the client is allowed to access
-    client_allowed = ['openid']
-    client_allowed += client_config.fetch('allowed_scopes', nil) || []
-    client_allowed = client_allowed.to_set.freeze
+    original = scopes.dup
 
     # Remove scopes that aren't allowed for this client
+    client_allowed = (['openid'] + client_config.fetch('allowed_scopes', [])).to_set
     scopes &= client_allowed
 
-    # Expand scope aliases
-    scope_aliases = oidc_config.fetch('scope_aliases', {})
-    expanded_scopes = []
-
-    scopes.each do |scope|
-      if scope_aliases.include?(scope)
-        expanded_scopes += scope_aliases[scope]
-      else
-        expanded_scopes << scope
-      end
-    end
-
-    # Finally remove all invalid scopes
-    scopes = expanded_scopes.to_set & BUILTIN_SCOPES
+    # Remove unknown scopes
+    scopes &= BUILTIN_SCOPES
     rlog.info("[#{request_id}] Final cleaned-up scopes: #{scopes.to_a.inspect}")
 
-    scopes
+    {
+      success: true,
+      scopes: scopes.to_a,
+      changed: scopes != original       # need to inform the client about changed scopes
+    }
   rescue StandardError => e
     rlog.info("[#{request_id}] Could not clean up the scopes: #{e}")
-    nil
+    { success: false }
   end
 
   # RFC 6749 section 4.1.2.1.
