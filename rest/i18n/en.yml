@@ -4,7 +4,6 @@ sso:
   jwt_missing_return_url: "\"return_to\" is missing from the login URL, unable to process the request.<br>Please contact Opinsys support and give them this code: %1."
   unknown_external_service: "Unknown service, cannot login.<br>Please contact Opinsys support and give them this code: %1."
   unspecified_error: "Unspecified single-sign on system error. Login halted.<br>Please contact Opinsys support and give them this code: %1."
-  invalid_login_state: "Invalid login state. Login halted.<br>Please contact Opinsys support and give them this code: %1."
   expired_login: "Your login session has expired. Please try loggin in again.<br>If the problem persists, please contact Opinsys support and give them this code: %1."
   title: Opinsys Authentication
   username: Username

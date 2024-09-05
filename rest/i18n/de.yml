@@ -1,4 +1,6 @@
 sso:
+  invalid_client_id: "Invalid client ID. Login halted.<br>Please contact Opinsys support and give them this code: %1."
+  invalid_redirect_uri: "Invalid redirect URI. Login halted.<br>Please contact Opinsys support and give them this code: %1."
   jwt_missing_return_url: "\"return_to\" is missing from the login URL, unable to process the request.<br>Please contact Opinsys support and give them this code: %1."
   unknown_external_service: "Unknown service, cannot login.<br>Please contact Opinsys support and give them this code: %1."
   unspecified_error: "Unspecified single-sign on system error. Login has been halted.<br>Please contact Opinsys support and give them this code: %1."
