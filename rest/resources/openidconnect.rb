@@ -461,6 +461,18 @@ class OpenIDConnect < PuavoSinatra
     client_config = client_config['clients'][client_id].freeze
 
     # ----------------------------------------------------------------------------------------------
+    # Verify the scopes
+
+    # TODO: If scopes are specified, they must be compared against the scopes that were
+    # specified in the original authorization request. The scopes must be identical or
+    # a subset. If they include new scopes, the request must be rejected.
+
+    # TODO: I don't know what to do with the new scopes. Do we use them below, or do we
+    # use the original scopes? I don't know. I can't find any specifications for this,
+    # nor any examples. RFC 6749 simply mentions it's possible to specify the scopes
+    # again this call.
+
+    # ----------------------------------------------------------------------------------------------
     # All good. Build the ID token, stash it in a JWT and return.
 
     # Prevent code reuse
