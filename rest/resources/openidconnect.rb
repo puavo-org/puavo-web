@@ -332,23 +332,6 @@ class OpenIDConnect < PuavoSinatra
     end
 
     # ----------------------------------------------------------------------------------------------
-    # Verify the scopes (if present)
-
-    if params.include?('scope')
-      scopes = clean_scopes(params.fetch('scope', ''), oidc_config, client_config, request_id)
-
-      if scopes.nil?
-        return json_error('invalid_scope', request_id: request_id)
-      end
-    else
-      # Use the default scopes for this client
-      scopes = ['openid']
-      scopes += client_config.fetch('allowed_scopes', nil) || []
-      scopes = scopes.to_set
-      rlog.info("[#{request_id}] No scopes in the request, using all allowed (#{scopes.to_a.inspect})")
-    end
-
-    # ----------------------------------------------------------------------------------------------
     # Generate the access token
 
     expires_in = 3600
