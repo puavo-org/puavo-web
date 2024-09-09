@@ -274,6 +274,8 @@ class OpenIDConnect < PuavoSinatra
   end
 
   # Handles a "client_credentials" request
+  # TODO: This call requires further authentication. Clients need to authenticate themselves
+  # before a token is generated. Also, client A cannot generate access tokens for client B.
   def handle_client_credentials
     request_id = make_request_id
 
@@ -356,6 +358,8 @@ class OpenIDConnect < PuavoSinatra
       'token_type' => 'Bearer',
       'puavo_request_id' => request_id,
     }
+
+    # TODO: Validate the caller and generate a suitable access token for it.
 
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'
