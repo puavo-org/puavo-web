@@ -345,17 +345,6 @@ class OpenIDConnect < PuavoSinatra
     # ----------------------------------------------------------------------------------------------
     # Generate the access token
 
-    expires_in = 3600
-    now = Time.now.utc.to_i
-
-    payload = {
-      'iss' => 'https://auth.opinsys.fi',
-      'jti' => SecureRandom.uuid,
-      'iat' => now,
-      'exp' => now + expires_in,
-      'auth_time' => now,
-    }
-
     # TODO: The access token must be stored in Redis. We don't have yet any endpoint that
     # needs it, so this part has not been implemented yet.
     access_token = SecureRandom.hex(64)
@@ -365,8 +354,6 @@ class OpenIDConnect < PuavoSinatra
     out = {
       'access_token' => access_token,
       'token_type' => 'Bearer',
-      'expires_in' => expires_in,
-      'id_token' => JWT.encode(payload, external_service.secret, 'HS256'),
       'puavo_request_id' => request_id,
     }
 
