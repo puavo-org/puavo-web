@@ -1,4 +1,5 @@
 require 'redis'
+require 'securerandom'
 
 module PuavoRest
 module MixinUserList
@@ -45,7 +46,7 @@ module MixinUserList
 
   module InstanceMethods
     def initialize(user_ids = nil, creator = nil, description = nil)
-      self.uuid = UUID.generate
+      self.uuid = SecureRandom.uuid
       self.created_at = Time.now.to_i
       self.creator = creator
       self.downloaded = false

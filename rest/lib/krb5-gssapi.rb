@@ -1,7 +1,5 @@
-
+require 'securerandom'
 require_relative "./krb5"
-require "uuid"
-
 
 class Krb5Gssapi
 
@@ -12,7 +10,7 @@ class Krb5Gssapi
 
   def initialize(fqdn, keytab)
     @srv = GSSAPI::Simple.new(fqdn, "HTTP", keytab)
-    @cachename = "MEMORY:#{ UUID.generator.generate }"
+    @cachename = "MEMORY:#{ SecureRandom.uuid }"
   end
 
   def display_name

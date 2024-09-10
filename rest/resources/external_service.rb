@@ -1,5 +1,6 @@
 require "jwt"
 require "addressable/uri"
+require 'securerandom'
 
 module PuavoRest
 
@@ -102,7 +103,7 @@ class ExternalService < LdapModel
       # Issued At
       "iat" => Time.now.to_i,
       # JWT ID
-      "jti" => UUID.generator.generate,
+      "jti" => SecureRandom.uuid,
       "external_service_path_prefix" => prefix
     })
 
