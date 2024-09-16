@@ -1890,6 +1890,7 @@ en:
         user:
           must_begin_with: Username must begin with a small letter
           invalid_characters: Username contains invalid characters (allowed characters are a-z0-9.-)
+          username_cannot_end_in_dot: "Username cannot end in a dot"
           invalid_license_data: "Invalid license data"
         group:
           invalid_characters: Abbreviation contains invalid characters (allowed characters are a-z0-9-)

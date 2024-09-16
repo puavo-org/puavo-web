@@ -164,6 +164,10 @@ class User < LdapModel
         add_validation_error(:username, :username_invalid, "Invalid username. Allowed characters a-z, 0-9, dot and dash. Also it must begin with a letter")
       end
 
+      if username[-1] == '.'
+        add_validation_error(:username, :username_invalid, 'Username cannot end in a dot')
+      end
+
       if username.size < 3
         add_validation_error(:username, :username_too_short, "Username too short")
       end

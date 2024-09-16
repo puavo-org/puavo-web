@@ -232,6 +232,11 @@ class User < LdapBase
       usernameFailed = true
     end
 
+    if !self.uid.empty? && self.uid[-1] == '.'
+      errors.add(:uid, I18n.t('activeldap.errors.messages.user.username_cannot_end_in_dot'))
+      usernameFailed = true
+    end
+
     locale_puavoEduPersonAffiliation_name = I18n.t("activeldap.attributes.user.puavoEduPersonAffiliation")
 
     if self.puavoEduPersonAffiliation.nil?
