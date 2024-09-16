@@ -149,6 +149,12 @@ class User < LdapBase
     if self.givenName.empty?
       errors.add( :givenName, I18n.t("activeldap.errors.messages.blank",
                                     :attribute => I18n.t("activeldap.attributes.user.givenName") ) )
+    else
+      self.givenName.strip!
+    end
+
+    unless self.sn.empty?
+      self.sn.strip!
     end
 
     if !self.new_password_confirmation.nil? && self.new_password != self.new_password_confirmation

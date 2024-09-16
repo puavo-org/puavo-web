@@ -195,8 +195,6 @@ describe LdapModel do
 
     [ # deny these
       "1foo",
-      " foo",
-      "foo ",
       "Foo",
       "foo bar",
       "-foo",

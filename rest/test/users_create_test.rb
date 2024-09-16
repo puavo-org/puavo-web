@@ -470,5 +470,32 @@ describe LdapModel do
       assert_nil user.notes
     end
 
+    it 'Names are trimmed' do
+      user = PuavoRest::User.new(
+        first_name: '  Test  ',
+        last_name: '  User  ',
+        username: '  testuser  ',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+      )
+
+      assert user.save!
+
+      user = PuavoRest::User.by_dn!(user.dn)
+
+      assert_equal 'Test', user.first_name
+      assert_equal 'User', user.last_name
+      assert_equal 'testuser', user.username
+
+      user.first_name = ' FOO BAR '
+      user.username = ' testuser2 '
+      assert user.save!
+
+      user = PuavoRest::User.by_dn!(user.dn)
+
+      assert_equal 'FOO BAR', user.first_name
+      assert_equal 'testuser2', user.username
+    end
+
   end
 end
