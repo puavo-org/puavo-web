@@ -748,7 +748,7 @@ private
 
     if scopes.include?('security')
       out['mfa_enabled'] = user.mfa_enabled == true
-      out['opinsys_admin'] = false    # TODO: Future placeholder (for now)
+      out['opinsys_admin'] = nil    # TODO: Future placeholder (for now)
     end
 
     school_cache = nil
