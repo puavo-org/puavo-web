@@ -728,15 +728,26 @@ en:
       none_left: "(All admin-level users are already organisation owners)"
       cant_remove_yourself: "(You can't remove your own owner-level rights)"
     all_admins:
-      title: "All admin users in the organisation"
-      description: "A quick overview of all the admins in this organisation, where they are and what they can do."
-      name: "Name"
-      schools: "Schools"
-      admin: "admin"
-      default_permissions_title: "In this organisation, the following permissions have been given to all school admins by default:"
-      default_permissions_footer: "Extra permissions granted to individual admins will override these defaults."
-      permission_allow: "allowed"
-      permission_deny: "denied"
+      title: "All admin users in the organisation and their permissions"
+
+      columns:
+        name: "Name (username)"
+        permissions: "Permissions"
+        owner: "Owner?"
+        admin_in: "Admin in schools"
+
+      invalid_admin_school: "This user is an admin in a school they're not a member of"
+
+      edit: "Edit permissions..."
+
+      set_permissions: "Set permissions"
+      grant_permissions: "Grant permissions"
+      revoke_permissions: "Revoke permissions"
+
+      set_permissions_title: "Set the permissions to exactly these:"
+      grant_permissions_title: "Select the permissions to be granted:"
+      revoke_permissions_title: "Select the permissions to be revoked:"
+
     all_users:
       sync_deletion_1: "<strong>WARNING:</strong> The following schools have enabled synchronised user deletions to various external systems:"
       sync_deletion_2: "Perform user deletions (either individually or by en masse) in the above schools very carefully. You might end up deleting more than what you intended to, for example, user email accounts with their contents!"
@@ -1072,6 +1083,8 @@ en:
       title: "Edit Admin Permissions"
       header: "Edit admin permissions for \"%{name}\""
       user_is_owner: "This user is an organisation owner, so these permissions are not used. Owners always have full access to everything."
+      select_all: "Select all"
+      deselect_all: "Remove all"
       permissions:
         create_users: "Can create users"
         delete_users: "Can delete users"
@@ -1568,6 +1581,7 @@ en:
           validity_warning_json: "This must be valid JSON. It will be validated before the mass operation is launched."
           validity_warning_xml: "This must be valid XML. It will be validated before the mass operation is launched."
           validity_warning_xrandr: "Every row is a separate Xrandr command. Whitespace will be removed from the start and end of each row. The commands are not validated!"
+          validity_warning_image_source: "Every row is a separate source URL. Whitespace will be removed from the start and end of each row. The addresses are not validated!"
           unknown_user: "Unknown user \"%{name}\""
         delete:
           title: "Delete"
@@ -1876,6 +1890,7 @@ en:
         user:
           must_begin_with: Username must begin with a small letter
           invalid_characters: Username contains invalid characters (allowed characters are a-z0-9.-)
+          username_cannot_end_in_dot: "Username cannot end in a dot"
           invalid_license_data: "Invalid license data"
         group:
           invalid_characters: Abbreviation contains invalid characters (allowed characters are a-z0-9-)

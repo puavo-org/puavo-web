@@ -70,7 +70,7 @@ module UsersHelper
     end
 
     if raw['puavoDoNotDelete']
-      out[:dnd] = raw['puavoDoNotDelete'] ? true : false
+      out[:dnd] = raw['puavoDoNotDelete'][0] == 'TRUE' ? true : false
     end
 
     if raw['puavoLocked']
@@ -118,7 +118,7 @@ module UsersHelper
       out[:created] = Puavo::Helpers::convert_ldap_time(raw['createTimestamp'])
     end
 
-    if raw.include?('createTimestamp')
+    if raw.include?('modifyTimestamp')
       out[:modified] = Puavo::Helpers::convert_ldap_time(raw['modifyTimestamp'])
     end
 

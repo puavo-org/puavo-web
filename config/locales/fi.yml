@@ -728,15 +728,26 @@ fi:
       none_left: "(Kaikilla ylläpitäjä-roolissa olevilla käyttäjillä on jo omistajaoikeudet.)"
       cant_remove_yourself: "(Et voi poistaa omaa omistusoikeuttasi)"
     all_admins:
-      title: "Kaikki organisaation ylläpitäjät"
-      description: "Pikasilmäys kaikkiin organisaation ylläpitäjiin, missä he ovat ja mitä he voivat tehdä."
-      name: "Nimi"
-      schools: "Koulut"
-      admin: "ylläpitäjä"
-      default_permissions_title: "Tässä organisaatiossa on määritetty oletuksena koulujen ylläpitäjille seuraavat oikeudet:"
-      default_permissions_footer: "Yksittäisten ylläpitäjien lisäoikeudet ajavat näiden oletusten yli."
-      permission_allow: "sallittu"
-      permission_deny: "estetty"
+      title: "Kaikki organisaation ylläpitäjät ja heidän oikeutensa"
+
+      columns:
+        name: "Nimi (käyttäjänimi)"
+        permissions: "Oikeudet"
+        owner: "Omistaja?"
+        admin_in: "Ylläpitäjä kouluissa"
+
+      invalid_admin_school: "Käyttäjä on ylläpitäjänä koulussa jossa hän ei ole jäsenenä"
+
+      edit: "Muokkaa oikeuksia..."
+
+      set_permissions: "Aseta oikeudet"
+      grant_permissions: "Salli oikeuksia"
+      revoke_permissions: "Poista oikeuksia"
+
+      set_permissions_title: "Aseta ylläpitäjän oikeuksiksi täsmälleen nämä:"
+      grant_permissions_title: "Ruksaa oikeudet jotka lisätään:"
+      revoke_permissions_title: "Ruksaa oikeudet jotka poistetaan:"
+
     all_users:
       sync_deletion_1: "<strong>VAROITUS:</strong> Seuraavissa kouluissa on käytössä käyttäjien synkronoituja poistoja eri ulkoisiin järjestelmiin:"
       sync_deletion_2: "Tee ylläolevien koulujen käyttäjien poistoja (yksittäin tai massana) hyvin varovasti. Saatat poistaa enemmän kuin mitä aioit, kuten käyttäjien sähköpostitilit sisältöineen! "
@@ -1072,6 +1083,8 @@ fi:
       title: "Muokkaaa ylläpitäjän oikeuksia"
       header: "Muokkaa ylläpitäjän \"%{name}\" oikeuksia"
       user_is_owner: "Tämä käyttäjä on organisaation omistajissa, joten näitä oikeuksia ei käytetä. Omistajilla on aina täydet oikeudet kaikkeen."
+      select_all: "Valitse kaikki"
+      deselect_all: "Poista kaikki"
       permissions:
         create_users: "Voi luoda käyttäjiä"
         delete_users: "Voi poistaa käyttäjiä"
@@ -1568,6 +1581,7 @@ fi:
           validity_warning_json: "Tämän täytyy olla kunnollista JSONia. Sen oikeellisuus tarkistetaan ennen massaoperaation suorittamista."
           validity_warning_xml: "Tämän täytyy olla kunnollista XML:ää. Sen oikeellisuus tarkistetaan ennen massaoperaation suorittamista."
           validity_warning_xrandr: "Jokainen rivi on erillinen Xrandr-komento. Rivien alusta ja lopusta poistetaan tyhjät merkit. Komentojen oikeellisuutta ei tarkisteta!"
+          validity_warning_image_source: "Jokainen rivi on erillinen lähdeosoite. Rivien alusta ja lopusta poistetaan tyhjät merkit. Osoitteiden oikeellisuutta ei tarkisteta!"
           unknown_user: "Tuntematon käyttäjä \"%{name}\""
         delete:
           title: "Poista"
@@ -1876,6 +1890,7 @@ fi:
         user:
           must_begin_with: "Käyttäjätunnuksen pitää alkaa pienellä kirjaimella"
           invalid_characters: "Käyttäjätunnus sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
+          username_cannot_end_in_dot: "Käyttäjätunnus ei saa päättyä pisteeseen"
           invalid_license_data: "Virheellinen lisenssidata"
         group:
           invalid_characters: "Lyhenne sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9-)"

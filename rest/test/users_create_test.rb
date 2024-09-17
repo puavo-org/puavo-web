@@ -470,5 +470,71 @@ describe LdapModel do
       assert_nil user.notes
     end
 
+    it 'Username cannot end in a dot' do
+      user = PuavoRest::User.new(
+        first_name: 'Test',
+        last_name: ' User',
+        username: 'testuser.',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+      )
+
+      error = assert_raises ValidationError do
+        user.save!
+      end
+
+      error = error.as_json[:error][:meta][:invalid_attributes]
+
+      assert error
+      assert_equal 'Username cannot end in a dot', error[:username][0][:message]
+      #assert_equal 'First name cannot start or end with a dot', error[:first_name][0][:message]
+      #assert_equal 'Last name cannot start or end with a dot', error[:last_name][0][:message]
+    end
+
+    it 'Cannot edit a username to end in a dot' do
+      user = PuavoRest::User.by_dn!(@user2.dn)
+
+      assert_equal 'Email', user.first_name
+      assert_equal 'Verification', user.last_name
+      assert_equal 'email', user.username
+
+      # Change
+      user.username = 'email.'
+
+      error = assert_raises ValidationError do
+        user.save!
+      end
+
+      error = error.as_json[:error][:meta][:invalid_attributes]
+      assert_equal 'Username cannot end in a dot', error[:username][0][:message]
+    end
+
+    it 'Names are trimmed' do
+      user = PuavoRest::User.new(
+        first_name: '  Test  ',
+        last_name: '  User  ',
+        username: '  testuser  ',
+        roles: ['student'],
+        school_dns: [@school.dn.to_s],
+      )
+
+      assert user.save!
+
+      user = PuavoRest::User.by_dn!(user.dn)
+
+      assert_equal 'Test', user.first_name
+      assert_equal 'User', user.last_name
+      assert_equal 'testuser', user.username
+
+      user.first_name = ' FOO BAR '
+      user.username = ' testuser2 '
+      assert user.save!
+
+      user = PuavoRest::User.by_dn!(user.dn)
+
+      assert_equal 'FOO BAR', user.first_name
+      assert_equal 'testuser2', user.username
+    end
+
   end
 end

@@ -68,6 +68,9 @@ I18n.locale = "<%= I18n.locale %>";
             <% school_list.each do |school| %>
             <li><span class="schoolTitle"><%= link_to school.displayName, school_path(school) %></span>
               <ul class="schoolLinks">
+<% if current_user.organisation_owner? %>
+                <li><%= link_to t('schools.menu.admins'), admins_school_path(school) %></li>
+<% end %>
                 <li><%= link_to t('.users'), users_path(school) %></li>
                 <li><%= link_to t('.groups'), groups_path(school) %></li>
                 <li><%= link_to t('.devices'), devices_path(school) %></li>

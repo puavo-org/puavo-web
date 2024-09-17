@@ -970,6 +970,9 @@ class UsersController < ApplicationController
 
     @user_is_owner = Array(LdapOrganisation.current.owner).include?(@user.dn)
 
+    # If we come here from the "all organisation admins" page, we'll return there
+    @org_admins = params.fetch('org_admins', '') == '1'
+
     respond_to do |format|
       format.html
     end
@@ -996,7 +999,11 @@ class UsersController < ApplicationController
       flash[:alert] = t('flash.save_failed')
     end
 
-    redirect_to(user_path(@school, @user))
+    if params.fetch('org_admins', '') == 'true'
+      redirect_to(all_admins_organisation_path)
+    else
+      redirect_to(user_path(@school, @user))
+    end
   end
 
   def lock

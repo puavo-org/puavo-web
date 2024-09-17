@@ -1,48 +1,324 @@
 <% page_title t('titles.organisation'), t('titles.admins') %>
 
-<h1><%= t('.title') %></h1>
+<% content_for :javascript do %>
+<script>
+const SUPERTABLE_WORKER_FILE = "<%= javascript_path 'supertable3_worker' %>";
+let GLOBAL_SUPERTABLE_INSTANCE = null;
+</script>
 
-<p><%= t('.description') %></p>
-
-<table class="list">
-<tr>
-  <th><%= t('.name') %></th>
-  <th><%= t('.schools') %></th>
-  <th><%= t('users.show.admin_permissions.title') %></th>
-</tr>
-
-<% @all_admins.each do |a| %>
-<tr>
-  <td>
-    <%= link_to "#{a[:user].displayName} (#{a[:user].uid})", user_path(a[:user].primary_school, a[:user]) %>
-    <% if @current_owners.include?(a[:user].dn.to_s) %>
-    <br><span class="adminOrOwner">(<%= t('organisation_owner_role') %>)</span>
-    <% end %>
-  </td>
-  <td>
-    <ul class="no-list-bullets margin-0 padding-0">
-    <% a[:schools].each do |s| %>
-      <%
-      parts = []
-      parts << '<span class="adminOrOwner">' + t('.admin') + '</span>' if a[:admin_in].include?(s.id.to_i)
-      parts << t('users.show.primary_school') if s.dn == a[:pri_school]
-      %>
-      <li><%= link_to(s.displayName, school_path(s)) %> <%= parts.join(' ').html_safe %></li>
-    <% end %>
-    </ul>
-  </td>
-  <td>
-    <% unless a[:permissions].empty? %>
-    <ul class="no-list-bullets margin-0 padding-0">
-    <% a[:permissions].each do |p| %>
-      <li><%= t("users.show.admin_permissions.#{p}") %></li>
-    <% end %>
-    </ul>
-    <% end %>
-  </td>
-</tr>
+<%= javascript_include_tag 'bundles/modal_popup' %>
+<%= javascript_include_tag 'bundles/supertable3' %>
+<%= javascript_include_tag 'i18n/supertable3' %>
 <% end %>
 
-</table>
+<h1><%= t('.title') %></h1>
 
-<hr>
+<%= render 'shared/supertable_controls' %>
+<div class="superTable" id="tableOrgAdmins"></div>
+
+<template id="template_permissionsChecklist">
+    <div class="flex-cols gap-10px">
+        <div class="flex-rows gap-5px checkboxScrollListOuter">
+            <div id="permissionsList" class="checkboxScrollList" style="width: 25em; height: 20em;">
+<% User::ADMIN_PERMISSIONS.each do |permission| %>
+                <% name = "users.show.admin_permissions.#{permission}" %>
+                <div class="item" data-permission="<%= permission.to_s %>" data-filter="<%= t(name).downcase %>"><input type="checkbox"><%= t(name) %></div>
+<% end %>
+            </div>
+        </div>
+
+        <div class="flex flex-rows gap-5px">
+            <button id="selectAll"><%= t('users.edit_admin_permissions.select_all') %></button>
+            <button id="deselectAll"><%= t('users.edit_admin_permissions.deselect_all') %></button>
+        </div>
+    </div>
+</template>
+
+<% content_for :post_load_javascript do %>
+<script>
+"use strict";
+
+// Localized permission names
+const PERMISSIONS = {
+<% User::ADMIN_PERMISSIONS.each do |permission| %>
+    "<%= permission.to_s %>": "<%= t("users.show.admin_permissions.#{permission}") %>",
+<% end %>
+};
+
+// For sorting the permissions
+const PERMISSIONS_SET = new Set(Object.keys(PERMISSIONS));
+
+const SCHOOLS = <%= raw JSON.pretty_generate(@schools) %>;
+const ADMINS = <%= raw JSON.pretty_generate(@admins) %>;
+
+function sortSchools(schools)
+{
+    schools.sort((a, b) => a[1].localeCompare(b[1]));
+
+    let names = schools.map(i => i[1]);
+
+    schools = schools.map(i => i[0]);
+
+    return [schools.join("<br>"), names.join(","), names.join(",")];
+}
+
+const COLUMN_DEFINITIONS = {
+    id: {
+        key: "id",
+        title: "<%= t('columns.puavoid') %>",
+        type: ST.ColumnType.NUMERIC,
+        alias: ["puavoid"],
+    },
+
+    name: {
+        key: "name",
+        title: "<%= t('organisations.all_admins.columns.name') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => [`<a href="/users/${entry.school_id}/users/${entry.id}">${entry.name}</a> (${entry.username})`, entry.name, entry.name]
+    },
+
+    owner: {
+        key: "owner",
+        title: "<%= t('organisations.all_admins.columns.owner') %>",
+        type: ST.ColumnType.BOOL,
+    },
+
+    primary_school: {
+        key: "primary_school",
+        title: "<%= t('columns.primary_school') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => {
+            const name = SCHOOLS[entry.school_id].name;
+            return [`<a href="/users/schools/${entry.school_id}">${name}</a>`, name, name];
+        },
+    },
+
+    admin_in: {
+        key: "admin_in",
+        title: "<%= t('organisations.all_admins.columns.admin_in') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
+        transform: entry => {
+            // Make a list of schools and highlight schools the user *isn't* in, but
+            // they've granted admin rights to
+            let schools = [];
+
+            for (const id of entry.admin_in) {
+                const name = SCHOOLS[id].name;
+
+                let v = `<a href="/users/schools/${id}">${name}</a>`;
+
+                if (entry.school_id != id && !entry.other_schools.includes(id))
+                    v += ` <span class="invalidAdminSchool" title="<%= t('organisations.all_admins.invalid_admin_school') %>">⚠️</span>`;
+
+                schools.push([v, name]);
+            }
+
+            return sortSchools(schools);
+        }
+    },
+
+    other_schools: {
+        key: "other_schools",
+        title: "<%= t('columns.users.other_schools') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
+        transform: entry => {
+            // Make a list of schools
+            let schools = [];
+
+            for (const id of entry.other_schools) {
+                const name = SCHOOLS[id].name;
+
+                schools.push([`<a href="/users/schools/${id}">${name}</a>`, name]);
+            }
+
+            return sortSchools(schools);
+        }
+    },
+
+    permissions: {
+        key: "permissions",
+        title: "<%= t('organisations.all_admins.columns.permissions') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
+        transform: entry => {
+            const userPermissions = new Set(entry.permissions);
+            let out = [];
+
+            // This sorts the permissions in the order they're defined. The underlying order can
+            // be arbitrary, but we always display them in order.
+            for (const p of PERMISSIONS_SET)
+                if (userPermissions.has(p))
+                    out.push(PERMISSIONS[p]);
+
+            return [out.join("<br>"), entry.permissions.join(","), entry.permissions.join(",")];
+        }
+    }
+};
+
+// Base class for all permission mass operations (they share them)
+class MassPermissionBase extends ST.MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+        this.permissions = [];
+    }
+
+    _buildInterface(preamble)
+    {
+        let list = document.querySelector("template#template_permissionsChecklist").content.cloneNode(true);
+
+        if (preamble)
+            this.container.innerHTML = `<p class="margin-0">${preamble}</p>`;
+
+        this.container.appendChild(list);
+
+        for (const i of this.container.querySelectorAll("div.item"))
+            i.addEventListener("click", e => this.onTogglePermission(e.target));
+
+        this.container.querySelector("button#selectAll").addEventListener("click", e => this.onSelectAll(true));
+        this.container.querySelector("button#deselectAll").addEventListener("click", e => this.onSelectAll(false));
+    }
+
+    onTogglePermission(target)
+    {
+        if (target.classList.contains("disabled"))
+            return;
+
+        if (target.classList.contains("selected")) {
+            target.classList.remove("selected");
+            target.childNodes[0].checked = false;
+        } else {
+            target.classList.add("selected");
+            target.childNodes[0].checked = true;
+        }
+    }
+
+    onSelectAll(state)
+    {
+        for (const i of this.container.querySelectorAll("div.item")) {
+            i.classList.add("selected");
+            i.childNodes[0].checked = state;
+        }
+    }
+
+    canProceed()
+    {
+        return true;
+    }
+
+    start()
+    {
+        this.permissions = [];
+
+        for (const i of this.container.querySelectorAll("div#permissionsList div.item.selected"))
+            this.permissions.push(i.dataset.permission);
+
+        console.log(this.permissions);
+    }
+
+    getOperationParameters()
+    {
+        return {
+            permissions: this.permissions,
+        };
+    }
+
+    prepareItem(item)
+    {
+        // TODO: Check if the user already has (or has not) all the checked permissions
+        return {
+            state: "ready"
+        };
+    }
+};
+
+class MassSetPermissions extends MassPermissionBase {
+    buildInterface()
+    {
+        this._buildInterface("<%= t('organisations.all_admins.set_permissions_title') %>");
+    }
+};
+
+class MassGrantPermissions extends MassPermissionBase {
+    buildInterface()
+    {
+        this._buildInterface("<%= t('organisations.all_admins.grant_permissions_title') %>");
+    }
+};
+
+class MassRevokePermissions extends MassPermissionBase {
+    buildInterface()
+    {
+        this._buildInterface("<%= t('organisations.all_admins.revoke_permissions_title') %>");
+    }
+};
+
+const MASS_OPERATIONS = [
+    {
+        operation: "set_permissions",
+        title: "<%= t('organisations.all_admins.set_permissions') %>",
+        cls: MassSetPermissions,
+        haveSettings: true,
+    },
+    {
+        operation: "grant_permissions",
+        title: "<%= t('organisations.all_admins.grant_permissions') %>",
+        cls: MassGrantPermissions,
+        haveSettings: true,
+    },
+    {
+        operation: "revoke_permissions",
+        title: "<%= t('organisations.all_admins.revoke_permissions') %>",
+        cls: MassRevokePermissions,
+        haveSettings: true,
+    },
+];
+
+function userActions(admin)
+{
+    if (admin.owner[ST.INDEX_FILTERABLE])
+        return "";
+
+    console.log(admin.school_id);
+
+    return `<a href="/users/${admin.school_id}/users/${admin.id[ST.INDEX_FILTERABLE]}/edit_admin_permissions?org_admins=1" class="btn"><%= t('organisations.all_admins.edit') %></a>`;
+}
+
+const COLUMN_ORDER = [
+    "id",
+    "name",
+    "permissions",
+    "owner",
+    "primary_school",
+    "admin_in",
+    "other_schools",
+];
+
+const DEFAULT_COLUMNS = ["name", "owner", "primary_school", "admin_in", "other_schools", "permissions"];
+const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
+
+document.addEventListener("DOMContentLoaded", () => {
+    modalPopup.setupGlobalEvents();
+
+    GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(
+        document.getElementById("tableOrgAdmins"),
+        {
+            id: "tableOrgAdmins",
+            locale: "<%= supertable_sorting_locale %>",
+            csvPrefix: `<%= LdapOrganisation.current.o %>-admins`,
+            columnDefinitions: COLUMN_DEFINITIONS,
+            columnOrder: COLUMN_ORDER,
+            actions: userActions,
+            massOperations: MASS_OPERATIONS,
+            massOperationsEndpoint: "<%= all_admins_mass_operations_path %>",
+            defaultColumns: DEFAULT_COLUMNS,
+            defaultSorting: DEFAULT_SORTING,
+            staticData: ADMINS,
+        }
+    );
+});
+
+</script>
+<% end %>

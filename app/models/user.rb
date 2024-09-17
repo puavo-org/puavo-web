@@ -149,6 +149,12 @@ class User < LdapBase
     if self.givenName.empty?
       errors.add( :givenName, I18n.t("activeldap.errors.messages.blank",
                                     :attribute => I18n.t("activeldap.attributes.user.givenName") ) )
+    else
+      self.givenName.strip!
+    end
+
+    unless self.sn.empty?
+      self.sn.strip!
     end
 
     if !self.new_password_confirmation.nil? && self.new_password != self.new_password_confirmation
@@ -223,6 +229,11 @@ class User < LdapBase
 
     unless self.uid.to_s =~ /^[a-z0-9.-]+$/
       errors.add( :uid, I18n.t("activeldap.errors.messages.user.invalid_characters") )
+      usernameFailed = true
+    end
+
+    if !self.uid.empty? && self.uid[-1] == '.'
+      errors.add(:uid, I18n.t('activeldap.errors.messages.user.username_cannot_end_in_dot'))
       usernameFailed = true
     end
 

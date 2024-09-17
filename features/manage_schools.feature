@@ -215,7 +215,6 @@ Feature: Manage schools
     Then I should see "School was successfully removed."
     And I should see "Example Organisation" within "#schoolsTitle"
 
-
   Scenario: Add school management access rights to the user
     Given the following users:
     | givenName | sn     | uid   | password | puavoEduPersonAffiliation | school                   |
@@ -223,7 +222,7 @@ Feature: Manage schools
     And I am on the show user page with "pavel"
     Then I should not see "This user is an administrator of the school"
     Given I am on the school page with "Greenwich Steiner School"
-    When I follow "Admins"
+    When I follow "Admins" within "div#tabs"
     Then I should see "Current administrators"
     And I should see "Add administrator rights"
     And I should not see "Pavel Taylor (pavel) Greenwich Steiner School" on the school admin list
@@ -239,7 +238,6 @@ Feature: Manage schools
       This user is an administrator of the school "Greenwich Steiner School"
       """
 
-
   Scenario: Remove school management access rights from the user
     Given the following users:
     | givenName | sn     | uid   | password | puavoEduPersonAffiliation | school           | school_admin |
@@ -250,7 +248,7 @@ Feature: Manage schools
       This user is an administrator of the school "Example school 1"
       """
     Then I am on the school page with "Greenwich Steiner School"
-    When I follow "Admins"
+    When I follow "Admins" within "div#tabs"
     And I follow "Add" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor (Greenwich Steiner School) is now an admin user"
     And I should see "Pavel Taylor (pavel) Example school 1" on the school admin list
@@ -261,13 +259,12 @@ Feature: Manage schools
     And I should be added school management access to the "Pavel Taylor (pavel) Example school 1"
     And the memberUid should include "pavel" on the "Domain Admins" samba group
     When I am on the school page with "Example school 1"
-    And I follow "Admins"
+    And I follow "Admins" within "div#tabs"
     And I follow "Remove" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor (Example school 1) is no longer an admin user in this school"
     And the memberUid should not include "pavel" on the "Domain Admins" samba group
     Given I am on the show user page with "pavel"
     Then I should not see "This user is an administrator of the school"
-
 
   Scenario: School management access can be added only if user type is admin
     Given the following users:
@@ -275,7 +272,7 @@ Feature: Manage schools
     | Pavel     | Taylor | pavel | secret   | admin                     | Greenwich Steiner School |
     | Ben       | Mabey  | ben   | secret   | staff                     | Greenwich Steiner School |
     And I am on the school page with "Greenwich Steiner School"
-    When I follow "Admins"
+    When I follow "Admins" within "div#tabs"
     Then I should be added school management access to the "Pavel Taylor (pavel) Greenwich Steiner School"
     And I should not be added school management access to the "Ben Mabey (ben) Greenwich Steiner School"
     When I try to add "Ben Mabey" to admin user on the "Greenwich Steiner School" school

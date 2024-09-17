@@ -199,6 +199,7 @@ Rails.application.routes.draw do
     match 'add_owner/:user_id' => 'organisations#add_owner', :as => :add_owner_organisations, :via => :put
 
     match 'all_admins' => 'organisations#all_admins', :as => :all_admins_organisation, :via => :get
+    post 'all_admins_mass_operations' => 'admin_permissions_mass_operations#admin_permissions_mass_operation'
 
     match 'wlan' => 'organisations#wlan', :as => :wlan_organisation, :via => :get
     match 'wlan_update' => 'organisations#wlan_update', :as => :wlan_update_organisation, :via => :patch

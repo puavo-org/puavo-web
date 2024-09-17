@@ -15,9 +15,9 @@
 <% if @pme_mode == :organisation %>
 <h1><%= t('puavomenu_editor.page_title.organisation') %></h1>
 <% elsif @pme_mode == :school %>
-<h1><%= t('puavomenu_editor.page_title.school', { name: @school.displayName }) %></h1>
+<h1><%= t('puavomenu_editor.page_title.school', name: @school.displayName) %></h1>
 <% elsif @pme_mode == :device %>
-<h1><%= t('puavomenu_editor.page_title.device', { name: @device.cn }) %></h1>
+<h1><%= t('puavomenu_editor.page_title.device', name: @device.cn) %></h1>
 <% end %>
 
 <div class="flex-cols gap-10px margin-bottom-10px">

@@ -35,7 +35,7 @@ module PuavoRest
   VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
   GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
   HOSTNAME = Socket.gethostname
-  FQDN = Socket.gethostbyname(Socket.gethostname).first
+  FQDN = Addrinfo.getaddrinfo(Socket.gethostname, nil).first.getnameinfo.first
 
   $prompt_logger = RestLogger.new(
     :hostname => HOSTNAME,

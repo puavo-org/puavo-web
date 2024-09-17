@@ -8,7 +8,6 @@ gem "prawn"
 gem "net-ldap"
 gem "activeldap", :require => "active_ldap"
 gem "rmagick"
-gem "uuid"
 gem "nokogiri"
 
 # puavo-web specific gems

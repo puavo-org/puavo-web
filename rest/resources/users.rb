@@ -160,8 +160,12 @@ class User < LdapModel
 
       # XXX: In puavo-web it's possible to configure from organisation upper
       # case letters as allowed but it's not implemented here yet
-      if !/^[a-z]+[a-z0-9.-]+$/.match(username)
+      if !/^[a-z]+[a-z0-9.-]+$/.match(username.strip)
         add_validation_error(:username, :username_invalid, "Invalid username. Allowed characters a-z, 0-9, dot and dash. Also it must begin with a letter")
+      end
+
+      if username[-1] == '.'
+        add_validation_error(:username, :username_invalid, 'Username cannot end in a dot')
       end
 
       if username.size < 3
@@ -464,12 +468,22 @@ class User < LdapModel
     end
   end
 
-  def username=(_username)
-    write_raw(:uid, Array(_username))
-    write_raw(:cn, Array(_username))
+  def first_name=(name)
+    write_raw(:givenName, [name.strip])
+  end
+
+  def last_name=(name)
+    write_raw(:sn, [name.strip])
+  end
+
+  def username=(name)
+    name.strip!
+
+    write_raw(:uid, [name])
+    write_raw(:cn, [name])
 
     # The posixAccount class *requires* this, so we have to set it. It's not used for anything.
-    write_raw(:homeDirectory, Array("/home/#{username}"))
+    write_raw(:homeDirectory, Array("/home/#{name}"))
   end
 
   def clean_up_email_array(a)

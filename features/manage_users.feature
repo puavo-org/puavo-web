@@ -489,7 +489,7 @@ Feature: Manage users
     And I should see "Thomas Anderson (neo) School 1" within "#currentOwners"
     And I should not see "Thomas Anderson (neo) School 1" within "#availableAdmins"
     Then I am on the school page with "School 1"
-    When I follow "Admins"
+    When I follow "Admins" within "div#tabs"
     Then I should see "Thomas Anderson (neo) (Organisation owner) School 1" within "#other_admin_users"
     And I follow "Add" on the "Thomas Anderson" user
     Then I should see "Thomas Anderson (School 1) is now an admin user"
@@ -512,7 +512,7 @@ Feature: Manage users
     Then I should not see "Thomas Anderson (neo) School 1" within "#currentOwners"
     And I should not see "Thomas Anderson (neo) School 1" within "#availableAdmins"
     Then I am on the school page with "School 1"
-    When I follow "Admins"
+    When I follow "Admins" within "div#tabs"
     Then I should not see "Thomas Anderson (neo) School 1" within "#this_school_admin_users"
     And I should not see "Thomas Anderson (neo) School 1" within "#other_admin_users"
 
@@ -542,6 +542,30 @@ Feature: Manage users
     """
     <strong>Hax!</strong> <script>alert("You've been hacked by The SySniPo CrEw!!");</script>
     """
+
+  Scenario: New user username cannot end in a dot
+    Given I am on the new user page
+    And I fill in "Given name" with "First"
+    And I fill in "Surname" with "Last"
+    And I fill in "Username" with "username."
+    And I check "Test user"
+    And I press "Create"
+    Then I should see "Username cannot end in a dot"
+
+  Scenario: Existing user username cannot end in a dot
+    Given I am on the new user page
+    And I fill in "Given name" with "First"
+    And I fill in "Surname" with "Last"
+    And I fill in "Username" with "randomusername"
+    And I check "Test user"
+    And I press "Create"
+    Then I am on the edit user page with "randomusername"
+    And I fill in "Given name" with "First"
+    And I fill in "Surname" with "Last"
+    And I fill in "Username" with "username."
+    And I press "Update"
+    Then I should see "Username cannot end in a dot"
+
 
 # FIXME
 #  @allow-rescue
