@@ -616,7 +616,7 @@ private
   # School searches are slow, so cache them
   def get_school(dn, cache)
     unless cache.include?(dn)
-      cache[dn] = School.find(dn)
+      cache[dn] = School.by_dn(dn)
     end
 
     cache[dn]
