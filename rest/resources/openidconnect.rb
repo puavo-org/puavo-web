@@ -660,16 +660,21 @@ private
       # Prefer the primary email address if possible
       unless user.primary_email.nil?
         out['email'] = user.primary_email
-        out['email_verified'] = user.primary_email
+        out['email_verified'] = user.verified_email && user.verified_email.include?(user.primary_email)
       else
         unless user.verified_email.empty?
           # This should not really happen, as the first verified email is
           # also the primary email
           out['email'] = user.verified_email[0]
-          out['email_verified'] = user.verified_email[0]
+          out['email_verified'] = true
         else
-          if user.email
+          # Just pick the first available address
+          if user.email && !user.email.empty?
             out['email'] = user.email[0]
+            out['email_verified'] = false
+          else
+            out['email'] = nil
+            out['email_verified'] = false
           end
         end
       end
