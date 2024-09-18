@@ -502,7 +502,14 @@ class OpenIDConnect < PuavoSinatra
       return json_error('access_denied', state: state, request_id: request_id)
     end
 
-    payload.merge!(gather_user_data(request_id, oidc_state['scopes'], organisation, user))
+    begin
+      user_data = gather_user_data(request_id, oidc_state['scopes'], organisation, user)
+    rescue StandardError => e
+      rlog.error("[#{request_id}] Could not gather the user data for the token: #{e}")
+      return json_error('server_error', state: state, request_id: request_id)
+    end
+
+    payload.merge!(user_data)
 
     # The client has to supply this token in future requests to other OIDC endpoints
     #access_token = SecureRandom.hex(16)
