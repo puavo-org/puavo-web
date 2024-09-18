@@ -525,7 +525,7 @@ describe PuavoRest::Users do
       get "/v3/users/bob/profile.jpg"
       assert_200
 
-      img_data = File.read(PuavoRest::Users::ANONYMOUS_IMAGE_PATH)
+      img_data = File.read(PuavoRest::Users::default_profile_image_path())
       hash = Digest::MD5.hexdigest(img_data)
 
       assert_equal(hash, Digest::MD5.hexdigest(last_response.body))

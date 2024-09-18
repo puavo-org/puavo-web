@@ -1005,9 +1005,11 @@ end
 class Users < PuavoSinatra
   include PuavoRest::ElternHelpers
 
-  DIR = File.expand_path(File.dirname(__FILE__))
-  ANONYMOUS_IMAGE_PATH = DIR + "/anonymous.png"
-
+  # Locate public/images/anonymous.png in the repo root directory
+  # This is also used in at least one test
+  def self.default_profile_image_path
+    File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'public', 'images', 'anonymous.png'))
+  end
 
   post "/v3/users" do
     auth :basic_auth, :kerberos
@@ -1354,7 +1356,7 @@ class Users < PuavoSinatra
     if image
       image
     else
-      File.open(ANONYMOUS_IMAGE_PATH, "r") { |f| f.read }
+      File.read(PuavoRest::Users.default_profile_image_path())
     end
   end
 

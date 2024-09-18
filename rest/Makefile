@@ -5,7 +5,6 @@ installdir = /var/app/puavo-rest
 build:
 	git rev-parse HEAD > GIT_COMMIT
 	cp ../VERSION VERSION
-	cp ../public/images/anonymous.png resources/anonymous.png
 	bundle config set --local deployment 'true'
 	bundle install
 
