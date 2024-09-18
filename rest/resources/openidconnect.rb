@@ -6,8 +6,8 @@ require_relative '../lib/login/utility'
 
 module PuavoRest
 
-# Known built-in scopes
-BUILTIN_SCOPES = %w(
+# Known built-in scopes for OIDC logins (not used with client credentials)
+BUILTIN_LOGIN_SCOPES = %w(
   openid
   profile
   email
@@ -572,7 +572,7 @@ private
     scopes &= client_allowed
 
     # Remove unknown scopes
-    scopes &= BUILTIN_SCOPES
+    scopes &= BUILTIN_LOGIN_SCOPES
     rlog.info("[#{request_id}] Final cleaned-up scopes: #{scopes.to_a.inspect}")
 
     {
