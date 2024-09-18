@@ -9,6 +9,7 @@ class School < LdapModel
   ldap_map :dn, :dn
   ldap_map :puavoId, :id, LdapConverters::SingleValue
   ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
+  ldap_map :puavoExternalData, :external_data, LdapConverters::SingleValue
   ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :displayName, :name
   ldap_map :puavoSchoolCode, :school_code, LdapConverters::SingleValue
