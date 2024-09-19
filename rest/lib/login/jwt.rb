@@ -6,7 +6,7 @@ module PuavoLoginJWT
   include PuavoLoginUtility
 
   # Prepares a JWT login
-  def jwt_initialize_login(request_id, login_key, is_trusted_url)
+  def jwt_initialize_login(request_id, login_key, is_trusted_url, was_oidc)
     # Retrieve the external service we're trying to login into
     if return_to.nil?
       rlog.error("[#{request_id}] there's no \"return_to\" or \"return\" in the URL (#{request.url})")
@@ -30,7 +30,7 @@ module PuavoLoginJWT
       generic_error(t.sso.trusted_state_mismatch(request_id))
     end
 
-    login_data = login_create_data(request_id, external_service, is_trusted: is_trusted_url, next_stage: '/v3/sso/jwt')
+    login_data = login_create_data(request_id, external_service, is_trusted: is_trusted_url, next_stage: was_oidc ? '/oidc/jwt' : '/v3/sso/jwt', was_oidc: was_oidc)
     login_data['return_to'] = return_to().to_s
     login_data['original_url'] = request.url.to_s
 

@@ -151,7 +151,7 @@ class OpenIDConnect < PuavoSinatra
 
     begin
       # Use the same request ID for everything
-      login_data = login_create_data(request_id, external_service, is_trusted: external_service.trusted, next_stage: '/oidc/stage2')
+      login_data = login_create_data(request_id, external_service, is_trusted: external_service.trusted, next_stage: '/oidc/stage2', was_oidc: true)
 
       login_data['original_url'] = request.url.to_s
 
@@ -183,7 +183,7 @@ class OpenIDConnect < PuavoSinatra
       end
 
       # Display the login form (and MFA form if enabled)
-      redirect "/v3/sso/login?login_key=#{login_key}"
+      redirect login_data['was_oidc'] ? "/oidc/login?login_key=#{login_key}" : "/v3/sso/login?login_key=#{login_key}"
     rescue StandardError => e
       # WARNING: This resuce block can only handle exceptions that happen *before* the
       # login form is rendered, because the login form renderer halts and never comes

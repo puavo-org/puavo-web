@@ -28,17 +28,17 @@ module PuavoLoginMFA
     mfa_initialize(login_key, login_data)
 
     rlog.info("[#{request_id}] displaying the MFA login form for login session \"#{login_key}\"")
-    mfa_show_form(login_key)
+    mfa_show_form(login_key, was_oidc: login_data['was_oidc'])
   end
 
   # Shows the MFA code form
-  def mfa_show_form(login_key, error_message: nil, halt_code: 200)
+  def mfa_show_form(login_key, error_message: nil, halt_code: 200, was_oidc: false)
     # The MFA form uses the same base layout as the normal login form, so this must be set.
     # The form cannot be customised yet, but that's not important right now.
     @login_content = {
       'prefix' => '/v3/login',
       'login_key' => login_key,
-      'mfa_post_uri' => '/v3/mfa',
+      'mfa_post_uri' => was_oidc ? '/oidc/mfa' : '/v3/mfa',
       'error' => error_message,
 
       'mfa_help' => t.mfa.help,
@@ -104,7 +104,7 @@ module PuavoLoginMFA
           generic_error(t.mfa.too_many_attempts)
         end
 
-        mfa_show_form(login_key, error_message: t.mfa.incorrect_code, halt_code: 401)
+        mfa_show_form(login_key, error_message: t.mfa.incorrect_code, halt_code: 401, was_oidc: login_data['was_oidc'])
       elsif response.status == 200 && response_data['status'] == 'success' && response_data['messages'].include?('1002')
         # It was. Continue to the stage 2 handler.
         rlog.info("[#{request_id}] the code is valid, continuing")

@@ -24,6 +24,12 @@ module PuavoLoginForm
       request.env['HTTP_USER_AGENT'] = login_data['user_agent']
     end
 
+    if login_data['was_oidc']
+      rlog.info("[#{request_id}] We're in OIDC path")
+    else
+      rlog.info("[#{request_id}] We're in JWT path")
+    end
+
     # Try to log in
     begin
       auth :basic_auth, :from_post, :kerberos
@@ -253,7 +259,7 @@ module PuavoLoginForm
       rlog.info("[#{request_id}] the user has MFA enabled, opening the MFA code form")
 
       mfa_url = URI(request.url)
-      mfa_url.path = '/v3/mfa'
+      mfa_url.path = login_data['was_oidc'] ? '/oidc/mfa' : '/v3/mfa'
       mfa_url.query = "login_key=#{login_key}"
 
       redirect mfa_url

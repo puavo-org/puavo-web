@@ -26,12 +26,24 @@ class SSO < PuavoSinatra
     jwt_begin(trusted: false)
   end
 
+  get '/oidc/sso' do
+    jwt_begin(trusted: false, was_oidc: true)
+  end
+
   # Verified SSO login form
   get '/v3/verified_sso' do
     jwt_begin(trusted: true)
   end
 
+  get '/oidc/verified_sso' do
+    jwt_begin(trusted: true, was_oidc: true)
+  end
+
   get '/v3/sso/login' do
+    sso_login_user_with_request_params(params.fetch('login_key', ''))
+  end
+
+  get '/oidc/login' do
     sso_login_user_with_request_params(params.fetch('login_key', ''))
   end
 
@@ -40,8 +52,16 @@ class SSO < PuavoSinatra
     handle_login_form_post
   end
 
+  post '/oidc/login' do
+    handle_login_form_post
+  end
+
   # Handle a verified SSO login form submission
   post '/v3/verified_sso' do
+    handle_login_form_post
+  end
+
+  post '/oidc/verified_sso' do
     handle_login_form_post
   end
 
@@ -50,8 +70,16 @@ class SSO < PuavoSinatra
     jwt_handle_stage2
   end
 
+  get '/oidc/jwt' do
+    jwt_handle_stage2
+  end
+
   # Show the MFA form (cannot be reached directly, as you need a valid login key for it to work)
   get '/v3/mfa' do
+    mfa_ask_code
+  end
+
+  get '/oidc/mfa' do
     mfa_ask_code
   end
 
@@ -60,8 +88,16 @@ class SSO < PuavoSinatra
     mfa_check_code
   end
 
+  post '/oidc/mfa' do
+    mfa_check_code
+  end
+
   # JWT SSO session logout
   get '/v3/sso/logout' do
+    session_try_logout
+  end
+
+  get '/oidc/logout' do
     session_try_logout
   end
 
@@ -89,13 +125,19 @@ class SSO < PuavoSinatra
 
 private
 
-  def jwt_begin(trusted: false)
+  def jwt_begin(trusted: false, was_oidc: false)
     request_id = make_request_id()
     login_key = SecureRandom.hex(64)
 
+    if was_oidc
+      rlog.info("[#{request_id}] Starting an OIDC path")
+    else
+      rlog.info("[#{request_id}] Starting a JWT path")
+    end
+
     begin
-      jwt_initialize_login(request_id, login_key, trusted)
-      redirect "/v3/sso/login?login_key=#{login_key}"
+      jwt_initialize_login(request_id, login_key, trusted, was_oidc)
+      redirect was_oidc ? "/oidc/login?login_key=#{login_key}" : "/v3/sso/login?login_key=#{login_key}"
     rescue StandardError => e
       # WARNING: This resuce block can only handle exceptions that happen *before* the
       # login form is rendered, because the login form renderer halts and never comes
