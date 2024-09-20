@@ -6,8 +6,6 @@ require 'securerandom'
 
 require_relative './utility'
 
-require 'byebug'
-
 module PuavoLoginForm
   include PuavoLoginUtility
 
