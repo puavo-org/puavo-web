@@ -737,7 +737,7 @@ private
         }
 
         group['ldap_dn'] = g.dn if has_ldap
-        group['school_id'] = get_school(g.school_dn, school_cache).puavo_id.to_i if have_schools
+        group['school_abbreviation'] = get_school(g.school_dn, school_cache).abbreviation if have_schools
 
         groups << group
       end
