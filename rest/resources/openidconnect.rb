@@ -12,12 +12,12 @@ BUILTIN_LOGIN_SCOPES = %w(
   profile
   email
   phone
-  organisation
-  schools
-  groups
-  admins
-  ldap
-  security
+  puavo.read.organisation
+  puavo.read.schools
+  puavo.read.groups
+  puavo.read.ldap
+  puavo.read.admin
+  puavo.read.security
 ).to_set.freeze
 
 class OpenIDConnect < PuavoSinatra
@@ -650,22 +650,25 @@ private
     end
 
     # Include LDAP DNs in the response?
-    has_ldap = scopes.include?('ldap')
+    has_ldap = scopes.include?('puavo.read.ldap')
 
     if scopes.include?('profile')
+      # Standard claims
       out['given_name'] = user.first_name
       out['family_name'] = user.last_name
       out['name'] = "#{user.first_name} #{user.last_name}"
       out['preferred_username'] = user.username
-      out['uuid'] = user.uuid
-      out['puavoid'] = user.puavo_id.to_i
-      out['ldap_dn'] = user.dn if has_ldap
-      out['external_id'] = user.external_id if user.external_id
-      out['learner_id'] = user.learner_id if user.learner_id
-      out['roles'] = user.roles
       out['updated_at'] = updated_at unless updated_at.nil?
       out['locale'] = user.locale
       out['timezone'] = user.timezone
+
+      # Puavo-specific claims
+      out['puavo.uuid'] = user.uuid
+      out['puavo.puavoid'] = user.puavo_id.to_i
+      out['puavo.ldap_dn'] = user.dn if has_ldap
+      out['puavo.external_id'] = user.external_id if user.external_id
+      out['puavo.learner_id'] = user.learner_id if user.learner_id
+      out['puavo.roles'] = user.roles
     end
 
     if scopes.include?('email')
@@ -696,7 +699,7 @@ private
       out['phone_number'] = user.telephone_number[0] unless user.telephone_number.empty?
     end
 
-    if scopes.include?('schools')
+    if scopes.include?('puavo.read.schools')
       schools = []
 
       user.schools.each do |s|
@@ -717,11 +720,11 @@ private
         schools << school
       end
 
-      out['schools'] = schools
+      out['puavo.schools'] = schools
     end
 
-    if scopes.include?('groups')
-      have_schools = scopes.include?('schools')
+    if scopes.include?('puavo.read.groups')
+      have_schools = scopes.include?('puavo.read.schools')
       groups = []
 
       user.groups.each do |g|
@@ -739,10 +742,10 @@ private
         groups << group
       end
 
-      out['groups'] = groups
+      out['puavo.groups'] = groups
     end
 
-    if scopes.include?('organisation')
+    if scopes.include?('puavo.read.organisation')
       org = {
         'name' => organisation.name,
         'domain' => organisation.domain,
@@ -750,22 +753,22 @@ private
 
       org['ldap_dn'] = organisation.dn if has_ldap
 
-      out['organisation'] = org
+      out['puavo.organisation'] = org
     end
 
-    if scopes.include?('admins')
-      out['is_organisation_owner'] = organisation.owner.include?(user.dn)
+    if scopes.include?('puavo.read.admin')
+      out['puavo.is_organisation_owner'] = organisation.owner.include?(user.dn)
 
-      if scopes.include?('schools')
-        out['admin_in_schools'] = user.admin_of_school_dns.collect do |dn|
+      if scopes.include?('puavo.read.schools')
+        out['puavo.admin_in_schools'] = user.admin_of_school_dns.collect do |dn|
           get_school(dn, school_cache).abbreviation
         end
       end
     end
 
-    if scopes.include?('security')
-      out['mfa_enabled'] = user.mfa_enabled == true
-      out['opinsys_admin'] = nil    # TODO: Future placeholder (for now)
+    if scopes.include?('puavo.read.security')
+      out['puavo.mfa_enabled'] = user.mfa_enabled == true
+      out['puavo.opinsys_admin'] = nil    # TODO: Future placeholder (for now)
     end
 
     school_cache = nil
