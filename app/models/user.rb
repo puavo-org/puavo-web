@@ -150,6 +150,7 @@ class User < LdapBase
     realm = LdapOrganisation.current.puavoKerberosRealm
     raise 'could not find kerberos realm' unless realm
     k = Kerberos.find(:first, :attribute => 'krbPrincipalName', :value => "#{ self.uid }@#{ realm }")
+    return nil unless k
     @krb_last_auth_utc = k.krbLastSuccessfulAuth
   end
 
