@@ -481,8 +481,10 @@ en:
       top_button: "Export"
       title: "Export the table contents to a file"
       settings: "Settings"
-      only_visible_rows_checkbox: "Only visible rows"
-      only_visible_rows_title: "If checked, only the rows that aren't filtered will be exported. Otherwise all rows are exported."
+      only_selected_rows_checkbox: "Only selected rows"
+      only_selected_rows_title: "If checked, only the rows that are currently selected will be exported. This has no effect if the current table does not allow selecting rows."
+      only_visible_rows_checkbox: "Only rows visible after filtering"
+      only_visible_rows_title: "If checked, only the rows that are visible after filtering will be exported. Otherwise all rows are exported."
       only_visible_cols_checkbox: "Only visible columns"
       only_visible_cols_title: "If checked, only the currently selected columns will be exported. Otherwise all columns are exported."
     rows:

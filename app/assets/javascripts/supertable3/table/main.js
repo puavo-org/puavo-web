@@ -406,7 +406,7 @@ buildUI()
     elem = frag.querySelector("thead div#top button#export");
 
     if (this.settings.enableExport)
-        elem.addEventListener("click", e => Export.openPopup(e.target, this.data, this.columns, this.settings.csvPrefix));
+        elem.addEventListener("click", e => Export.openPopup(e.target, this.data, this.columns, this.settings.csvPrefix, this.settings.enableSelection));
     else elem.remove();
 
     const colButton = frag.querySelector("thead div#top button#columns");

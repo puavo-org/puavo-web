@@ -481,8 +481,10 @@ fi:
       top_button: "Lataa"
       title: "Lataa taulukon sisältö tiedostona"
       settings: "Asetukset"
-      only_visible_rows_checkbox: "Vain näkyvät rivit"
-      only_visible_rows_title: "Jos ruksattu, vain rivit joita ei suodateta pois tallennetaan. Muutoin kaikki rivit tallennetaan."
+      only_selected_rows_checkbox: "Vain valitut rivit"
+      only_selected_rows_title: "Jos ruksattu, vain rivit jotka on valittu tallennetaan. Tällä ei ole vaikutusta jos nykyinen taulukko ei salli rivien valitsemista."
+      only_visible_rows_checkbox: "Vain suodattimen jälkeen näkyvät rivit"
+      only_visible_rows_title: "Jos ruksattu, vain rivit jotka näkyvät suodattimen jälken tallennetaan. Muutoin kaikki rivit tallennetaan."
       only_visible_cols_checkbox: "Vain näkyvät sarakkeet"
       only_visible_cols_title: "Jos ruksattu, vain valitut sarakkeet tallennetaan. Muutoin kaikki sarakkeet tallennetaan."
     rows:
