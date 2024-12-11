@@ -405,6 +405,7 @@ private
       username = user.uuid[9..22].gsub!('-', '_')
 
       citrix_id = {
+        'created' => Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S.%L%z'),
         'first_name' => first_name,
         'last_name' => last_name,
         'username' => username,
