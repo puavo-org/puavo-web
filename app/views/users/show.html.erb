@@ -218,6 +218,10 @@
           <td><%= @citrix_license.include?('created') ? Time.parse(@citrix_license['created']).localtime.strftime('%Y-%m-%d %H:%M:%S') : '?' %></td>
         </tr>
         <tr>
+          <th><%= t('.user_citrix_license.last_used') %></th>
+          <td><%= @citrix_license.include?('last_used') ? Time.parse(@citrix_license['last_used']).localtime.strftime('%Y-%m-%d %H:%M:%S') : '?' %></td>
+        </tr>
+        <tr>
           <th><%= t('.user_citrix_license.first_name') %></th>
           <td><%= h @citrix_license['first_name'] %></td>
         </tr>

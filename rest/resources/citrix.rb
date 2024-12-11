@@ -404,8 +404,11 @@ private
       # included in it), so use 14 characters from the middle of the UUID.
       username = user.uuid[9..22].gsub!('-', '_')
 
+      now = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
+
       citrix_id = {
-        'created' => Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S.%L%z'),
+        'created' => now,
+        'last_used' => now,
         'first_name' => first_name,
         'last_name' => last_name,
         'username' => username,
@@ -417,7 +420,13 @@ private
         LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoCitrixId', [citrix_id.to_json])
       ])
     else
-      rlog.info("[#{@request_id}] Have Citrix licensing data in Puavo")
+      rlog.info("[#{@request_id}] Have Citrix licensing data in Puavo, updating timestamp")
+
+      citrix_id['last_used'] = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
+
+      user.class.ldap_op(:modify, user.dn, [
+        LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoCitrixId', [citrix_id.to_json])
+      ])
     end
 
     citrix_id

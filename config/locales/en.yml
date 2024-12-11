@@ -1025,6 +1025,7 @@ en:
       user_citrix_license:
         title: "Citrix license"
         created: "Created"
+        last_used: "Last used"
         first_name: "First name"
         last_name: "Last name"
         username: "Username"

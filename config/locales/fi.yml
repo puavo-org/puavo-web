@@ -1025,6 +1025,7 @@ fi:
       user_citrix_license:
         title: "Citrix-lisenssi"
         created: "Luotu"
+        last_used: "Viimeksi käytetty"
         first_name: "Etunimi"
         last_name: "Sukunimi"
         username: "Käyttäjänimi"
