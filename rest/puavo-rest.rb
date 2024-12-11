@@ -54,10 +54,6 @@ if CONFIG['citrix']
   require_relative './resources/citrix'
 end
 
-if ENV.include?('ENABLE_ELTERN_SSO')
-require_relative "./resources/eltern"
-end
-
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 DISTRIBUTED_LOCK = Redlock::Client.new([REDIS_CONNECTION])
 

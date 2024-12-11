@@ -1,8 +1,6 @@
 require_relative "../lib/password"
 require_relative "../lib/samba_attrs"
 
-require_relative '../lib/eltern.rb'
-
 require 'date'
 require 'securerandom'
 require 'set'
@@ -1003,8 +1001,6 @@ class User < LdapModel
 end
 
 class Users < PuavoSinatra
-  include PuavoRest::ElternHelpers
-
   # Locate public/images/anonymous.png in the repo root directory
   # This is also used in at least one test
   def self.default_profile_image_path
@@ -1466,19 +1462,9 @@ class Users < PuavoSinatra
 
     raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 
-    if params.include?('no_eltern')
-      # Explicitly disable Eltern processing for this request
-      do_eltern = false
-    else
-      # Handle supplementary Eltern data if the domain matches
-      do_eltern = CONFIG['eltern_users'] &&
-                  Array(CONFIG['eltern_users']['domains']).include?(Organisation.current.domain)
-    end
-
     v4_do_operation do
       # which fields to get?
       user_fields = v4_get_fields(params).to_set
-      user_fields << 'id' if do_eltern
 
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
 
@@ -1490,8 +1476,6 @@ class Users < PuavoSinatra
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
-
-      get_parents(out, puavoid) if do_eltern
 
       out = v4_ensure_is_array(out, 'role', 'email', 'phone', 'admin_school_id', 'school_ids')
 
