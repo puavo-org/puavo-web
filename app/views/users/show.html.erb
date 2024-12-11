@@ -208,6 +208,32 @@
     </td>
   </tr>
 
+  <% if @citrix_license %>
+  <tr>
+    <th><%= t('.user_citrix_license.title') %></th>
+    <td>
+      <table>
+        <tr>
+          <th><%= t('.user_citrix_license.created') %></th>
+          <td><%= @citrix_license.include?('created') ? Time.parse(@citrix_license['created']).localtime.strftime('%Y-%m-%d %H:%M:%S') : '?' %></td>
+        </tr>
+        <tr>
+          <th><%= t('.user_citrix_license.first_name') %></th>
+          <td><%= h @citrix_license['first_name'] %></td>
+        </tr>
+        <tr>
+          <th><%= t('.user_citrix_license.last_name') %></th>
+          <td><%= h @citrix_license['last_name'] %></td>
+        </tr>
+        <tr>
+          <th><%= t('.user_citrix_license.username') %></th>
+          <td><%= h @citrix_license['username'] %></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <% end %>
+
   <tr>
     <th><%= t('last_kerberos_auth_date') %></th>
     <td class="noWrap"><%= h @user.kerberos_last_successful_auth %></td>

@@ -1022,6 +1022,12 @@ en:
       user_deletion_prevented: "This user cannot be deleted"
       user_devices: User devices
       user_licenses: "Licenses"
+      user_citrix_license:
+        title: "Citrix license"
+        created: "Created"
+        first_name: "First name"
+        last_name: "Last name"
+        username: "Username"
       lock: "Lock user"
       unlock: "Unlock user"
       mark_for_removal: Mark for deletion

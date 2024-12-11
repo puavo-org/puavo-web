@@ -366,6 +366,9 @@ class UsersController < ApplicationController
       @licenses = @user.puavoLicenses.to_s
     end
 
+    # Citrix licensing data
+    @citrix_license = @user.puavoCitrixId.nil? ? nil : JSON.parse(@user.puavoCitrixId)
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }

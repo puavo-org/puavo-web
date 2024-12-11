@@ -1022,6 +1022,12 @@ fi:
       user_deletion_prevented: "Käyttäjän poisto on estetty"
       user_devices: Käyttäjän laitteet
       user_licenses: "Lisenssit"
+      user_citrix_license:
+        title: "Citrix-lisenssi"
+        created: "Luotu"
+        first_name: "Etunimi"
+        last_name: "Sukunimi"
+        username: "Käyttäjänimi"
       lock: "Lukitse tunnus"
       unlock: "Avaa tunnuksen lukitus"
       mark_for_removal: Merkitse poistettavaksi
