@@ -40,12 +40,15 @@ require_relative "./resources/hosts"
 require_relative "./resources/device_images"
 require_relative "./resources/password"
 require_relative "./resources/email_verification"
-require_relative "./resources/mfa_management"
 require_relative "./resources/user_lists"
 require_relative "./resources/certs"
 require_relative "./resources/external_login"
 require_relative "./resources/bootserver_dns"
 require_relative "./resources/my_school_users"
+
+if CONFIG['mfa_management']
+  require_relative './resources/mfa_management'
+end
 
 if CONFIG['citrix']
   require_relative './resources/citrix'
