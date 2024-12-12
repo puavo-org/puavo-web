@@ -1013,6 +1013,7 @@ fi:
       mfa_enabled: "Käyttäjällä on kaksivaiheinen kirjautuminen päällä."
       user_is_an_organisation_owner: "Käyttäjä on organisaation omistajissa"
       user_is_a_school_admin: "Käyttäjä on koulun \"%{school_name}\" ylläpitäjissä"
+      user_is_a_school_admin_error: "Virheellinen koulun ylläpitäjäviittaus \"%{school_dn}\""
       schools: "Koulut"
       primary_school: "(pääkoulu)"
       verified_email: "vahvistettu"

@@ -1013,6 +1013,7 @@ en:
       mfa_enabled: "This user has multifactor authentication enabled."
       user_is_an_organisation_owner: "The user is an owner of this organisation"
       user_is_a_school_admin: "This user is an administrator of the school \"%{school_name}\""
+      user_is_a_school_admin_error: "Invalid school administrator reference \"%{school_dn}\""
       schools: "Schools"
       primary_school: "(primary school)"
       verified_email: "verified"

@@ -247,13 +247,19 @@ class UsersController < ApplicationController
 
     Array(@user.puavoAdminOfSchool || []).each do |dn|
       begin
-        @admin_in_schools << School.find(dn)
+        school = School.find(dn)
       rescue StandardError => e
-        logger.error "Unable to find admin school by DN \"#{dn.to_s}\": #{e}"
+        school = nil
       end
+
+      @admin_in_schools << {
+        valid: !school.nil?,
+        dn: dn,
+        name: school.nil? ? '' : school.displayName,
+      }
     end
 
-    @admin_in_schools.sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+    @admin_in_schools.sort! { |a, b| a[:name].downcase <=> b[:name].downcase }
 
     # If the user is a member in more than one school, list them all in alphabetical order
     primary_school = @user.primary_school
