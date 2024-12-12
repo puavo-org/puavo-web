@@ -1004,7 +1004,7 @@ class Users < PuavoSinatra
   # Locate public/images/anonymous.png in the repo root directory
   # This is also used in at least one test
   def self.default_profile_image_path
-    File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'public', 'images', 'anonymous.png'))
+    File.expand_path(File.join(File.dirname(__FILE__), '..', 'public', 'images', 'anonymous.png'))
   end
 
   post "/v3/users" do
