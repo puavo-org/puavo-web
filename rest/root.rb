@@ -190,7 +190,10 @@ class Root < PuavoSinatra
   use PuavoRest::BootserverDNS
   use PuavoRest::MySchoolUsers
   use PuavoRest::EmailManagement
-  use PuavoRest::MFAManagement
+
+  if CONFIG['mfa_management']
+    use PuavoRest::MFAManagement
+  end
 
   if CONFIG["cloud"]
     use PuavoRest::SSO
