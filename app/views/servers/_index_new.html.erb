@@ -19,7 +19,7 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 <script>
 "use strict;"
 
-<%= render :partial => 'shared/device_tables_common.js' %>
+<%= render :partial => 'shared/device_tables_common', formats: [:js] %>
 
 const SERVERS = <%= raw JSON.pretty_generate(@servers) %>;
 

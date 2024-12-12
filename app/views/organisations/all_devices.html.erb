@@ -23,7 +23,7 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 <script>
 "use strict;"
 
-<%= render :partial => 'shared/device_tables_common.js' %>
+<%= render :partial => 'shared/device_tables_common', formats: [:js] %>
 
 const DEFAULT_COLUMNS = ["school", "hw_time", "hn", "type", "tags", "mac", "current_image", "ram", "hd", "cpu"];
 const DEFAULT_SORTING = { column: "hw_time", dir: ST.SortOrder.DESCENDING };

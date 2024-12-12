@@ -22,7 +22,7 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 <script>
 "use strict;"
 
-<%= render :partial => 'shared/group_tables_common.js' %>
+<%= render :partial => 'shared/group_tables_common', formats: [:js] %>
 
 const DEFAULT_COLUMNS = ["school", "name", "abbr", "type", "members_count", "eid", "created", "modified"];
 const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
