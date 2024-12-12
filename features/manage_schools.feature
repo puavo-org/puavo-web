@@ -348,3 +348,38 @@ Scenario: Set the school code for an existing school
     And I fill in "Desktop Image" with "example_image_2"
     And I press "Update"
     Then I should see "example_image_2"
+
+
+  Scenario: Deleting a school should remove all school admin references to it
+    Given I am on the new school page
+    Then I should see "New school"
+    When I fill in the following:
+    | School name | Test school |
+    | Group name  | testschool  |
+    And I press "Create"
+    Then I should see "School was successfully created."
+    Given I am on the school page with "Test school"
+    Then I follow "Admins" within "div#tabs"
+    When I follow "Add" on the "Donald Duck" user
+    Then I should see "Donald Duck (Test school) is now an admin user"
+    Given I am on the show user page with "donald"
+    Then I should see:
+      """
+      This user is an administrator of the school "Test school"
+      """
+    And I should not see "Invalid school administrator reference"
+    Given I am on the school page with "Test school"
+    And I follow "Delete school"
+    Then I should see "School was successfully removed."
+    # (Bug?) We have to "switch" the school below, otherwise @school will point to a wrong
+    # school in puavo_steps.rb's page visit function, which leads the rest of the test
+    # using wrong school and failing. So, at this point @school points to the school we
+    # just deleted.
+    Given I am on the school page with "Greenwich Steiner School"
+    # But now @school points to the correct school and the line below will succeed.
+    Given I am on the show user page with "donald"
+    Then I should not see "Invalid school administrator reference"
+    And I should not see:
+      """
+      This user is an administrator of the school "Test school"
+      """
