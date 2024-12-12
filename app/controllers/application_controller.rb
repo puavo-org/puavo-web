@@ -206,8 +206,8 @@ class ApplicationController < ActionController::Base
     unless school_id.nil?
       begin
         @school = School.find(school_id)
-      rescue
-        logger.info "Incorrect school id! Redirected..."
+      rescue StandardError => e
+        logger.error "Incorrect school id! Redirected..."
         flash[:alert] = t('flash.invalid_school_id')
         redirect_to schools_path
       end
