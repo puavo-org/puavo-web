@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 # gems shared with puavo-rest
-gem "rails", "6.1.7.8"
+gem "rails", "6.1.7.10"
 gem "sprockets"
 gem "sqlite3"
 gem "prawn"
