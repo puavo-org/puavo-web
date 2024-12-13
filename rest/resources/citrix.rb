@@ -270,7 +270,7 @@ class Citrix < PuavoSinatra
 
     config = CONFIG['citrix'][organisation.domain]
 
-    license = get_citrix_license_data(user)
+    license = get_puavo_citrix_license_data(user)
     license['domain'] = config['puavo_domain']
     rlog.info("[#{@request_id}] The generated Citrix username is \"#{license['username']}\"")
 
@@ -391,7 +391,7 @@ private
   end
 
   # Returns the Citrix license data for this user. If it does not exist yet, builds it first.
-  def get_citrix_license_data(user)
+  def get_puavo_citrix_license_data(user)
     citrix_id = JSON.parse(user.citrix_id || '{}')
 
     unless citrix_id.include?('first_name') && citrix_id.include?('last_name')
