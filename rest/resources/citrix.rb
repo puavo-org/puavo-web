@@ -206,6 +206,7 @@ class AtriaCortexAPI
     applications
   end
 
+  # Provisions a single application
   def provision_application(username, application_name, adname, state, rlog)
     query = prepare_query('lib/citrix/provision_application.xml', {
       '0' => @config['customer'],
@@ -214,6 +215,47 @@ class AtriaCortexAPI
       '3' => (state == true) ? 'True' : 'False',
       '4' => adname,
     })
+
+    result = do_query(query)
+    body_s = result.body.to_s
+    body = Nokogiri.XML(body_s)
+
+    unless body.xpath('//error').empty?
+      code = body.xpath('//error/id').children[0].to_s.to_i
+      message = body.xpath('//error/message').children[0].to_s
+      raise AtriaCortexAPIError.new(code, message)
+    end
+  end
+
+  # Provisions multiple applications in one call
+  def provision_multiple_applications(username, application_states, rlog)
+    # Duplicate the single application template for every application
+    # and combine them into one. I tried to do this by loading the XML
+    # template using Nokogiri, then by duplicating the nodes in the tree,
+    # but that turned out to be so difficult I decided to just concatenate
+    # strings.
+    application_template = File.read('lib/citrix/application_template.xml')
+
+    states_xml = ''
+
+    application_states.each do |name, state|
+      next if state['desired'] == state['actual']
+
+      xml = application_template.dup
+      xml.gsub!('[0]', name)
+      xml.gsub!('[1]', state['adname'])
+      xml.gsub!('[2]', (state['desired'] == true) ? 'True' : 'False')
+      states_xml += xml
+    end
+
+    # Build the full query and run it normally
+    query = prepare_query('lib/citrix/provision_multiple_applications.xml', {
+      '0' => @config['customer'],
+      '1' => username,
+      '2' => states_xml
+    })
+
+    puts query
 
     result = do_query(query)
     body_s = result.body.to_s
@@ -359,8 +401,8 @@ class Citrix < PuavoSinatra
         change_these = []
 
         applications['application_states'].each do |name, state|
-          puts "APP: #{name}  DESIRED STATE: #{state['desired']}  ACTUAL STATE: #{state['actual']}"
           next if state['desired'] == state['actual']
+          rlog.info("[#{@request_id}] Changing the enabled state of \"#{name}\" from \"#{state['actual']}\" to \"#{state['desired']}\"")
           change_these << name
         end
 
@@ -370,12 +412,7 @@ class Citrix < PuavoSinatra
           citrix_return('nothing_to_do')
         end
 
-        change_these.each do |name|
-          # tested
-          application = applications['application_states'][name]
-          rlog.info("[#{@request_id}] Changing the enabled state of \"#{name}\" to \"#{application['desired']}\"")
-          atria.provision_application(license['username'], name, application['adname'], application['desired'], rlog)
-        end
+        atria.provision_multiple_applications(license['username'], applications['application_states'], rlog)
 
         rlog.info("[#{@request_id}] Application provisioning changes complete")
         citrix_return('ok')
