@@ -228,6 +228,204 @@ class AtriaCortexAPI
 end
 
 class Citrix < PuavoSinatra
+  def citrix_return(status, error: nil, data: nil)
+    halt 200, json({
+      request_id: @request_id,
+      status: status,
+      error: error,
+      data: data
+    })
+  end
+
+  def handle_citrix_phase(phase)
+    auth :basic_auth, :kerberos
+
+    @request_id = Puavo::Integrations.generate_synchronous_call_id
+
+    unless CONFIG.include?('citrix')
+      # tested
+      rlog.error("[#{@request_id}] Citrix licensing configuration not found, doing nothing")
+      citrix_return('error', error: { puavo: { message: 'no_citrix_configuration' } })
+    end
+
+    user = User.current
+    organisation = LdapModel.organisation
+
+    rlog.info("[#{@request_id}] Citrix licensing and provisioning phase \"#{phase}\" for user \"#{user.username}\" in organisation \"#{organisation.domain}\"")
+
+    # Load per-organisation Citrix configuration
+    unless CONFIG['citrix'].include?(organisation.domain)
+      rlog.error("[#{@request_id}] Citrix licensing is not enabled in this organisation")
+      citrix_return('error', error: { puavo: { message: 'citrix_not_active_in_this_organisation' } })
+    end
+
+    config = CONFIG['citrix'][organisation.domain]
+    atria = AtriaCortexAPI.new(config)
+
+    # Read the current license data from Puavo
+    license = get_puavo_citrix_license_data(user)
+    license['domain'] = config['puavo_domain']
+    rlog.info("[#{@request_id}] The generated Citrix username is \"#{license['username']}\"")
+
+    case phase
+      # --------------------------------------------------------------------------------------------
+      when :check_user
+        rlog.info("[#{@request_id}] Retrieving the user status from Citrix...")
+        atria_user = atria.get_user(license['username'])
+
+        if atria_user
+          # tested
+          rlog.info("[#{@request_id}] The user already exists in Citrix")
+          status = 'user_exists'
+        else
+          # tested
+          rlog.info("[#{@request_id}] The user does not exist in Citrix")
+          status = 'user_does_not_exist'
+        end
+
+        # Must be done here because the Cortex API does not accept usernames with the domain
+        license['username'] += '@' + config['domain']
+        citrix_return(status, data: { license: license })
+
+      # --------------------------------------------------------------------------------------------
+      when :create_new_user
+        # tested
+        rlog.info("[#{@request_id}] Creating a new user")
+        data = atria.create_user(license['first_name'], license['last_name'], license['username'], license['password'])
+        citrix_return('user_creation_in_progress')
+
+      # --------------------------------------------------------------------------------------------
+      when :check_new_user
+        rlog.info("[#{@request_id}] Checking if the new user (#{license['username']}) has been created")
+        atria_user = atria.get_user(license['username'])
+
+        puts atria_user.to_s
+
+        if atria_user == false
+          # tested
+          rlog.error("[#{@request_id}] New user creation not in progress")
+          citrix_return('user_creation_not_in_progress')
+        end
+
+        begin
+          status = atria_user.xpath('//user/status').children[0].to_s
+        rescue StandardError => e
+          # not tested
+          rlog.error("[#{@request_id}] Cannot parse the returned XML: #{e}")
+          rlog.error("[#{@request_id}] Raw XML data: #{atria_user.to_s}")
+          citrix_return('xml_parsing_failed')
+        end
+
+        if status == 'Provisioned'
+          # tested
+          rlog.info("[#{@request_id}] New user has been created")
+          citrix_return('user_created')
+        elsif status == 'InProgress'
+          # tested
+          rlog.info("[#{@request_id}] New user creation is in progress")
+          citrix_return('user_creation_in_progress')
+        end
+
+        # not tested (don't know how to get here)
+        rlog.info("[#{@request_id}] Unknown status \"#{status}\"")
+        citrix_return('unknown_user_provisioning_status')
+
+      # --------------------------------------------------------------------------------------------
+      when :get_app_provisioning
+        # tested
+        rlog.info("[#{@request_id}] Getting the application provisioning states")
+        applications = atria.list_applications(license['username'], rlog)
+        citrix_return('ok', data: { application_states: applications })
+
+      # --------------------------------------------------------------------------------------------
+      when :set_app_provisioning
+        rlog.info("[#{@request_id}] Setting the application provisioning states")
+
+        # Parse the incoming application state data
+        body = request.body.read
+
+        begin
+          applications = JSON.parse(body)
+        rescue StandardError => e
+          # tested
+          rlog.error("[#{@request_id}] Cannot parse the request body JSON: #{e}")
+          rlog.error("[#{@request_id}] Raw body data: #{e}")
+          citrix_return('json_parsing_error')
+        end
+
+        puts applications.inspect
+
+        # Detect changes
+        change_these = []
+
+        applications['application_states'].each do |name, state|
+          puts "APP: #{name}  DESIRED STATE: #{state['desired']}  ACTUAL STATE: #{state['actual']}"
+          next if state['desired'] == state['actual']
+          change_these << name
+        end
+
+        if change_these.empty?
+          # tested
+          rlog.info("[#{@request_id}] No changes need to be done to provisioning states")
+          citrix_return('nothing_to_do')
+        end
+
+        change_these.each do |name|
+          # tested
+          application = applications['application_states'][name]
+          rlog.info("[#{@request_id}] Changing the enabled state of \"#{name}\" to \"#{application['desired']}\"")
+          atria.provision_application(license['username'], name, application['adname'], application['desired'], rlog)
+        end
+
+        rlog.info("[#{@request_id}] Application provisioning changes complete")
+        citrix_return('ok')
+
+      # --------------------------------------------------------------------------------------------
+      else
+        # tested
+        citrix_return('error', error: { puavo: { message: 'invalid_phase_id' } })
+    end
+  rescue AtriaCortexAPIError => e
+    # tested
+    rlog.error("[#{@request_id}] #{e}")
+
+    citrix_return('error',
+      error: {
+        citrix: {
+          code: e.code,
+          message: e.message
+        }
+      }
+    )
+  end
+
+  # Phase 1: Checks if the user account exists in Citrix
+  get '/v3/users/:username/citrix/check_user' do
+    return handle_citrix_phase(:check_user)
+  end
+
+  # Phase 2A: Initiates the asynchronous user creation in Citrix. You need to call phase 1 endpoint
+  # in a loop until the user account is created.
+  get '/v3/users/:username/citrix/create_new_user' do
+    return handle_citrix_phase(:create_new_user)
+  end
+
+  # Phase 2B: Checks the status of the newly-created user
+  get '/v3/users/:username/citrix/check_new_user' do
+    return handle_citrix_phase(:check_new_user)
+  end
+
+  # Phase 3
+  get '/v3/users/:username/citrix/get_app_provisioning' do
+    return handle_citrix_phase(:get_app_provisioning)
+  end
+
+  # Phase 4 (optional, depends on phase 3)
+  post '/v3/users/:username/citrix/set_app_provisioning' do
+    return handle_citrix_phase(:set_app_provisioning)
+  end
+
+  # All-in-one (old, don't call anymore, will be deleted soon-ish)
   get '/v3/users/:username/citrix' do
     auth :basic_auth, :kerberos
 
