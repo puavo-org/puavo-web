@@ -303,5 +303,37 @@ module Puavo
 
       return [true, nil]
     end
+
+    def tags_edit(object)
+      changed = false
+
+      current_tags = object.puavoTag.split(' ')
+      new_tags = @parameters['tags'].strip.split(' ')
+
+      case @parameters['action']
+        when 'add'
+          new_tags.each do |t|
+            unless current_tags.include?(t)
+              current_tags << t
+              changed = true
+            end
+          end
+
+        when 'remove'
+          new_tags.each do |t|
+            if current_tags.include?(t)
+              current_tags.delete(t)
+              changed = true
+            end
+          end
+      end
+
+      if changed
+        object.puavoTag = current_tags.join(' ')
+        object.save!
+      end
+
+      return [true, nil]
+    end
   end
 end

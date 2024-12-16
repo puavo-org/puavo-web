@@ -22,6 +22,10 @@ class DevicesMassOperationsController < MassOperationsController
           # This comes from Puavo::CommonShared
           puavoconf_edit(Device.find(id))
 
+        when 'tags_edit'
+          # This comes from Puavo::CommonShared
+          tags_edit(Device.find(id))
+
         when 'change_school'
           _change_school(id)
 

@@ -1551,6 +1551,15 @@ en:
           type_int: "integer"
           type_bool: "bool"
           empty_key: "The key cannot be empty"
+        tags:
+          warning: "This tool adds and removes tags without touching the other tags. If you need to remove or replace all of them, select <em>\"Set database field value...\"</em> from the Operation list, then select <em>\"Tags (replace all)\"</em>."
+          title: "Tags editor"
+          tags: "Tags:"
+          action: "Action:"
+          help: "Enter one or more tags separated by at least one space. Extra spaces are automatically removed (including leading and trailing spaces)."
+          add: "Add tag(s)"
+          remove: "Remove tag(s)"
+          empty_tag: "The tags field cannot be empty"
         set_field:
           title: "Set database field value..."
           field: "Field:"
