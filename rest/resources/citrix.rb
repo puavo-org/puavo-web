@@ -395,7 +395,7 @@ private
     citrix_id = JSON.parse(user.citrix_id || '{}')
 
     unless citrix_id.include?('first_name') && citrix_id.include?('last_name')
-      rlog.info("[#{@request_id}] Generating new licensing data")
+      rlog.info("[#{@request_id}] Generating new Citrix licensing data and storing it in Puavo")
 
       # Our clients do not want to use real names
       first_name, last_name = pseudonymize(user.uuid)
