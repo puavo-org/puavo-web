@@ -1,35 +1,92 @@
 <div class="resultsContainer">
-
-<%= render( :partial => "search_result",
-            :locals => {
-              :objects => @users,
-              :model => 'user',
-              :path => lambda { |school_id, id| user_path(school_id, id) },
-              :attributes => ["displayName", "uid"],
-              :schools => true } ) %>
-
-<%= render( :partial => "search_result",
-            :locals => {
-              :objects => @groups,
-              :model => 'group',
-              :path => lambda { |school_id, id| group_path(school_id, id) },
-              :attributes => ["displayName", "cn"],
-              :schools => true } ) %>
-
-<%= render( :partial => "search_result",
-            :locals => {
-              :objects => @devices,
-              :model => 'device',
-              :path => lambda { |school_id, id| device_path(school_id, id) },
-              :attributes => ["puavoHostname"],
-              :schools => true } ) %>
-
-<%= render( :partial => "search_result",
-            :locals => {
-              :objects => @servers,
-              :model => 'server',
-              :path => lambda { |school_id, id| server_path(id) },
-              :attributes => ["puavoHostname"],
-              :schools => false } ) %>
-
+<!-- USERS -->
+<% unless @users.empty? %>
+  <section class="searchResult">
+    <header><%= h t("search.search_result.title_user") %></header>
+    <table class="list">
+      <thead>
+        <tr class="stickyInline">
+          <th><%= t("activeldap.attributes.user.displayName") %></th>
+          <th><%= t("activeldap.attributes.user.uid") %></th>
+          <th><%= t('activeldap.attributes.school.displayName') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |u| %>
+        <tr>
+          <td><a href="<%= u[:link] %>"><%= h u[:name] %></a></td>
+          <td><%= h u[:uid] %></td>
+          <td><%= h @schools_cache[u[:school_id]][:name] %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+<% end %>
+<!-- GROUPS -->
+<% unless @groups.empty? %>
+  <section class="searchResult">
+    <header><%= h t("search.search_result.title_group") %></header>
+    <table class="list">
+      <thead>
+        <tr class="stickyInline">
+          <th><%= t("activeldap.attributes.group.displayName") %></th>
+          <th><%= t("activeldap.attributes.group.cn") %></th>
+          <th><%= t('activeldap.attributes.school.displayName') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @groups.each do |g| %>
+        <tr>
+          <td><a href="<%= g[:link] %>"><%= h g[:name] %></a></td>
+          <td><%= h g[:abbreviation] %></td>
+          <td><%= h @schools_cache[g[:school_id]][:name] %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+<% end %>
+<!-- DEVICES -->
+<% unless @devices.empty? %>
+  <section class="searchResult">
+    <header><%= h t("search.search_result.title_device") %></header>
+    <table class="list">
+      <thead>
+        <tr class="stickyInline">
+          <th><%= t("activeldap.attributes.device.puavoHostname") %></th>
+          <th><%= t('activeldap.attributes.school.displayName') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @devices.each do |d| %>
+        <tr>
+          <td><a href="<%= d[:link] %>"><%= h d[:name] %></a></td>
+          <td><%= h @schools_cache[d[:school_id]][:name] %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+<% end %>
+<!-- SERVERS -->
+<% unless @servers.empty? %>
+  <section class="searchResult">
+    <header><%= h t("search.search_result.title_server") %></header>
+    <table class="list">
+      <thead>
+        <tr class="stickyInline">
+          <th><%= t("activeldap.attributes.server.puavoHostname") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @servers.each do |s| %>
+        <tr>
+          <td><a href="<%= s[:link] %>"><%= h s[:name] %></a></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+<% end %>
 </div>
