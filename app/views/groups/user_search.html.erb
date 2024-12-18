@@ -1,6 +1,4 @@
 <% if @users.length > 0 %>
-<% attributes = ["displayName", "uid"] %>
-<% admin = Array(current_user.puavoAdminOfSchool || []).to_set %>
 <div class="resultsContainer">
 <table class="list">
   <tr>
@@ -11,10 +9,10 @@
   <% @users.each do |user| %>
   <tr>
     <td data-title="Name">
-      <% if current_user.organisation_owner? || admin.include?(user['puavoSchool']) %>
-      <%= link_to "#{h(user['name'])} (#{h(user['uid'][0])})", user_path(user['school_id'], user['id']) %>
+      <% if @owner || @admin.include?(user['school_dn']) %>
+      <%= link_to "#{h(user['name'])} (#{h(user['uid'])})", user_path(user['school_id'], user['id']) %>
       <% else %>
-      <%= h user['name'] %> (<%= h user['uid'][0] %>)
+      <%= h user['name'] %> (<%= h user['uid'] %>)
       <% end %>
     </td>
     <td data-title="<%= t('activeldap.attributes.school.displayName') %>">
