@@ -196,6 +196,11 @@ input[type="submit"]:hover {
   font-style: italic;
 }
 
+/* Printer permissions group filter */
+.invalidRegexp {
+  border: 2px solid $formErrorColor;
+}
+
 @media #{$screen-breakpoint-one} {
   /* Turn form tables into what looks like lists of table rows, just like
      non-form tables of things. */

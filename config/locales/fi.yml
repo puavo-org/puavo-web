@@ -857,8 +857,10 @@ fi:
       devices: Tulostusoikeus laitteen mukaan
       device_header_text: "Tulostaminen on sallittu seuraavilta yksittäisiltä laitteilta:"
       device_footer_text: Laitekohtaiset tulostusoikeudet asetetaan laitteen tiedoista
-      select_all: "Valitse kaikki"
-      deselect_all: "Epävalitse kaikki"
+      filter: "Nimen/lyhenteen regexp-suodatus"
+      select_all: "Valitse kaikki näkyvät ryhmät"
+      deselect_all: "Epävalitse kaikki näkyvät ryhmät"
+      help: "Suodatus toimii regexp-lausekkeilla. Jos lauseke ei ole kunnollinen, piirretään syötelaatikon reunat punaisella eikä suodatusta tehdä. Voit tehdä massavalintoja pitämällä Shift-näppäintä pohjassa samalla kun klikkaat <strong>valintalaatikoita</strong> (tämä on tärkeä!). Kaikki edellisen klikatun kohdan ja viimeksi klikatun väliltä asetetaan siihen arvoon missä ensin klikattu on. Pois suodatetut rivit jätetään pois myös massavalinnoista."
 
   # Organisation and school desktop image statistics
   image_statistics:

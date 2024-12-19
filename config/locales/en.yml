@@ -857,8 +857,10 @@ en:
       devices: Printer usage permissions by device
       device_header_text: "Printer is allowed for the these devices:"
       device_footer_text: "Printers for devices are set from the device edit page."
-      select_all: "Select all"
-      deselect_all: "Deselect all"
+      filter: "Name/abbreviation regexp filter"
+      select_all: "Select all visible groups"
+      deselect_all: "Deselect all visible groups"
+      help: "The filtering works with regexp clauses. If the clause isn't valid, the input box borders are drawn on red and filtering is not done. You can perform mass range selections by holding down the Shift key while clicking on the <strong>checkboxes</strong> (this is important!). Everything between the previously clicked item and the last clicked item will be set to the same state the previous item is. Rows hidden by the filter are ignored in mass selections."
 
   # Organisation and school desktop image statistics
   image_statistics:
