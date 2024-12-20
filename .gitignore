@@ -67,3 +67,8 @@ config/unicorn.rb
 
 # puavo-os directory might be included in Jenkins builds
 puavo-os
+
+# Citrix integration query XML templates live in this directory. It should only exist
+# on a production server, but if you need to do integration stuff on puavo-standalone,
+# the directory's contents must not be committed.
+rest/lib/citrix/
