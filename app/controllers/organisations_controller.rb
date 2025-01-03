@@ -206,12 +206,19 @@ class OrganisationsController < ApplicationController
       id = dn.rdns[0]['puavoId'].to_i
 
       unless @schools.include?(id)
-        s = School.find(id)
+        begin
+          s = School.find(id)
 
-        @schools[id] = {
-          id: s.cn,
-          name: s.displayName
-        }
+          @schools[id] = {
+            id: s.cn,
+            name: s.displayName
+          }
+        rescue ActiveLdap::EntryNotFound => e
+          @schools[id] = {
+            id: nil,
+            name: dn.to_s
+          }
+        end
       end
 
       id
