@@ -15,7 +15,7 @@
   }
 
   tr.school:hover {
-    background: $listRowHoverBack;
+    background: var(--list-row-back-hover);
   }
 
   tr.primary {
@@ -25,19 +25,19 @@
 
   /* argh, this needs to be its own class */
   .admin {
-    color: $importantBasicInfo;
+    color: #f00;
   }
 }
 
 /* The deletion timestamp on user "show" pages */
 .userMarkedForDeletion {
-  color: $deletionMarkTimestamp;
+  color: #f00;
 }
 
 /* Password policy info boxes. Also used on password changing forms. */
 .passwordNotice {
-  background: $passwordRequirementsBackground;
-  border: 1px solid $passwordRequirementsBorder;
+  background: var(--password-requirements-back);
+  border: 1px solid var(--password-requirements-border);
   padding: 1em;
 }
 
@@ -54,7 +54,7 @@
 /* Username lists page */
 .usernameListEntry {
   padding-bottom: 20px;
-  border-bottom: 1px solid $usernameListTableBorder;
+  border-bottom: 1px solid #ccc;
 }
 
 .usernameListEntry:last-of-type {

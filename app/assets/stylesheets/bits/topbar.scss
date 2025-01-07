@@ -11,8 +11,8 @@
   z-index: 10;
   padding: 0;
   margin: 0;
-  background: $topbarWrapperBack;
-  box-shadow: 0 4px 6px $defaultBoxShadow;
+  background: linear-gradient(var(--base-orange), var(--base-orange-gradient));
+  box-shadow: 0 4px 6px var(--default-box-shadow);
   min-width: 400px;
 }
 
@@ -54,7 +54,7 @@
       display: inline;
       margin: 0;
       padding: 5px 30px 5px 10px;
-      border: 1px solid $formElementBorderColor;
+      border: 1px solid var(--search-topbar-border);
       border-radius: 4px;
     }
 
@@ -65,11 +65,11 @@
       margin-left: 2px;
       border-radius: 5px;
       text-decoration: none !important;
-      color: $extendedSearchButtonFore;
+      color: var(--extendedsearch-button-fore);
     }
 
     a#extendedSearchButton:hover {
-      background: $extendedSearchButtonHoverBack;
+      background: var(--extendedsearch-button-back-hover);
     }
 
     a#extendedSearchButton:after {
@@ -94,8 +94,8 @@
   }
 
   li {
-    background: $topbarNavLinkBack;
-    color: $topbarNavLinkFore;
+    background: var(--topbar-navlink-back);
+    color: var(--topbar-navlink-fore);
   }
 
   li.asFlex {
@@ -125,15 +125,15 @@
     max-height: 600px;
     overflow-y: auto;
     z-index: 11;              /* topbar is 10 */
-    background: $topbarNavDropdownBack;
-    box-shadow: 0 10px 10px $defaultBoxShadow;
+    background: var(--base-orange-gradient);
+    box-shadow: 0 10px 10px var(--default-box-shadow);
     list-style-type: none;
     margin: 10px 0 0 -11px;   /* position the dropdown in relation to the parent */
   }
 
   .haveTopDropdown:hover {
-    background: $topbarNavLinkHoverBack;
-    color: $topbarNavLinkHoverFore;
+    background: var(--topbar-navlink-back-hover);
+    color: var(--topbar-navlink-fore-hover);
     cursor: default;
   }
 
@@ -155,13 +155,13 @@
   .org-separator {
     padding: 2px 0 0 0;
     margin: 0 0 2px 0;
-    border-bottom: 1px solid $topbarNavSeparators;
+    border-bottom: 1px solid var(--topbar-nav-separators);
   }
 
   .separators li {
     padding: 4px 0;
     margin: 0;
-    border-bottom: 1px solid $topbarNavSeparators;
+    border-bottom: 1px solid var(--topbar-nav-separators);
   }
 
   .separators li:first-of-type {
@@ -176,14 +176,14 @@
   ul a {
     display: block;
     padding: 5px 10px;
-    color: $topbarNavLinkFore;
-    background: $topbarNavLinkBack;
+    color: var(--topbar-navlink-fore);
+    background: var(--topbar-navlink-back);
     text-decoration: none;
   }
 
   ul a:hover {
-    color: $topbarNavLinkHoverFore;
-    background: $topbarNavLinkHoverBack;
+    color: var(--topbar-navlink-fore-hover);
+    background: var(--topbar-navlink-back-hover);
   }
 
   /* The per-school quick link list */
@@ -215,7 +215,7 @@
   }
 
   #loggedInName {
-    color: $topbarUsernameFore;
+    color: var(--topbar-username-fore);
   }
 
   .logoutButton {
@@ -224,16 +224,15 @@
     margin-top: 4px;
     padding: 2px;
     text-decoration: none;
-    background: $buttonDangerBack;
     border-radius: 2px;
 
     /* Reuse "btn-danger" colors */
-    color: $buttonDangerFore;
-    background: $buttonDangerBack;
+    background: var(--button-danger-back);
+    color: var(--button-danger-fore);
 
     &:hover, &:focus {
-      color: $buttonDangerFore;
-      background: $buttonDangerHoverBack;
+      background: var(--button-danger-back-hover);
+      color: var(--button-danger-fore);
     }
   }
 
@@ -251,7 +250,7 @@
     width: 100%;
     margin: 0;
     padding: 0;
-    box-shadow: 0 4px 6px $defaultBoxShadow;
+    box-shadow: 0 4px 6px var(--default-box-shadow);
   }
 
   #topbar nav {

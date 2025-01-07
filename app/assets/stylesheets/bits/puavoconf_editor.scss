@@ -1,5 +1,9 @@
+/*
+The interactive PuavoConf editor
+*/
+
 .pcRawError {
-  border: 1px solid $pceError;
+  border: 1px solid var(--pce-error-border);
 }
 
 .pcEditorWrapper {
@@ -34,15 +38,15 @@
 }
 
 .pcTable .buttons button.delete {
-  color: $pceDeleteForeground !important;
-  background: $pceDeleteBackground !important;
-  border: 1px solid $pceDeleteBorder !important;
+  background: var(--pce-delete-back) !important;
+  color: var(--pce-delete-fore) !important;
+  border: 1px solid var(--pce-delete-border) !important;
 }
 
 .pcTable .buttons .delete:hover {
-  color: $pceDeleteHoverForeground !important;
-  background: $pceDeleteHoverBackground !important;
-  border: 1px solid $pceDeleteHoverBorder !important;
+  background: var(--pce-delete-back-hover) !important;
+  color: var(--pce-delete-fore-hover) !important;
+  border: 1px solid var(--pce-delete-border-hover) !important;
 }
 
 .pcTable .key {
@@ -77,7 +81,7 @@
 }
 
 .pcTable .invalid {
-  border: 1px solid $pceError;
+  border: 1px solid var(--pce-error-border);
 }
 
 .pcTable div.editor div.details table {
@@ -98,7 +102,7 @@
 }
 
 .pcTable div.editor div.details table tr.invalid {
-  background: $pceErrorBackground;
+  background: var(--pce-error-back);
   border: none;
 }
 
@@ -111,8 +115,9 @@
 .pcSuggestions {
   position: absolute;
   z-index: 1;
-  border: 1px solid $pceAutocompleteBorder;
-  background: $pceAutocompleteBackground;
+  background: var(--pce-autocomplete-back);
+  color: var(--pce-autocomplete-fore);
+  border: 1px solid var(--pce-autocomplete-border);
   visibility: hidden;
   margin: 0;
   padding: 2px;
@@ -134,34 +139,34 @@
 }
 
 .pcSuggestions div.new {
-  color: #000;
   font-style: italic;
 }
 
 .pcSuggestions div.error {
-  color: $pceError;
+  color: var(--pce-error-fore);
   font-style: italic;
 }
 
 .pcSuggestions div.entry {
-  color: #000;
   white-space: nowrap;
 }
 
 .pcSuggestions dfn {
+  /* Default values and help texts, if available */
   margin-left: 10px;
-  color: #888;
-  font-size: 90%;
+  background: none;
+  color: var(--pce-autocomplete-hint);
+  font-size: 80%;
   text-overflow: ellipsis;
 }
 
 .pcSuggestions div.entry.selected, .pcSuggestions div.entry:hover {
-  background: #00f;
-  color: #fff;
+  background: var(--pce-autocomplete-entry-hover-back);
+  color: var(--pce-autocomplete-entry-hover-fore);
 }
 
 .pcSuggestions div.entry.selected dfn, .pcSuggestions div.entry:hover dfn {
-  color: #ccc;
+  color: var(--pce-autocomplete-hint);
 }
 
 .pcSuggestions span {
@@ -169,6 +174,7 @@
 }
 
 .pcSuggestions span.match {
-  color: $pceAutocompleteMatchForeground;
-  background: $pceAutocompleteMatchBackground;
+  /* Highlight the matching part */
+  background: var(--pce-autocomplete-match-back);
+  color: var(--pce-autocomplete-match-fore);
 }

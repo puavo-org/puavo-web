@@ -8,7 +8,8 @@
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-position: 0.5em center;
-  background-color: $searchFieldBackgroundColor;
+  background-color: var(--search-back);
+  color: var(--search-fore);
   text-indent: 2em;
 }
 
@@ -21,7 +22,7 @@
 /* Group members search box */
 .groupMembersSearch {
   padding: 5px;
-  border: 1px solid $formElementBorderColor;
+  border: 1px solid var(--form-element-border);
 }
 
 .searchLoading {
@@ -34,15 +35,15 @@
 
 /* Drop-down search result boxes */
 .searchResultsBox {
-  background: $searchResultsBackground;
-  border: 1px solid $searchResultsBorder;
+  background: var(--search-results-back);
+  border: 1px solid var(--search-results-border);
   margin: 0;
   padding: 5px;
   position: absolute;
   width: 750px;
   z-index: 9999;
   font-size: 80%;
-  box-shadow: 0 0 10px $defaultBoxShadow;
+  box-shadow: 0 0 10px var(--default-box-shadow);
 
   .resultsContainer {
     max-height: 350px;
@@ -57,12 +58,12 @@
   .searchResult header {
     font-size: 100%;
     font-weight: bold;
-    background: $listHeadingBack;
-    color: $listHeadingFore;
+    background: var(--list-heading-back);
+    color: var(--list-heading-fore);
     padding: 5px 10px;
   }
 
-  @media #{$screen-breakpoint-one} {
+  @media #{-screen-breakpoint-one} {
     padding: 0;
     margin: 0;
     left: 0 !important;
@@ -73,7 +74,7 @@
   p {
     padding: 0;
     margin: 0;
-    color: $searchNoResults;
+    color: var(--search-no-results);
   }
 
   table {
@@ -116,16 +117,16 @@
   }
 
   tr:nth-child(odd) {
-    background: $formOddRowBack;
+    background: var(--form-odd-back);
   }
 
   tr:nth-child(even) {
-    background: $formEvenRowBack;
+    background: var(--form-even-back);
   }
 
   .buttonRow {  /* copy-pasted from form.scss! */
     th, td {
-      background: $formButtonRowBack !important;
+      background: var(--form-button-row-back) !important;
       text-align: center;
     }
   }
@@ -176,28 +177,28 @@
 }
 
 #extendedSearchResultsTitle {
-  background: $extendedSearchResultsBack;
-  color: $extendedSearchResultsFore;
+  background: var(--extendedsearch-results-back);
+  color: var(--extendedsearch-results-fore);
   border: none;
   padding: 5px 10px;
 }
 
 #extendedSearchResultsContainer {
   .searchError {
-    color: $extendedSearchError;
+    color: var(--extendedsearch-error);
     padding: 0;
     margin: 0;
   }
 
   .noResults {
-    color: $extendedSearchNoResults;
+    color: var(--extendedsearch-no-results);
     padding: 0;
     margin: 0;
   }
 
   .list th.matched {
     /* The search term header column */
-    border-right: 1px solid $extendedSearchResultsDivider !important;
+    border-right: 1px solid var(--extendedsearch-results-divider) !important;
   }
 
   .term, .matched {
@@ -210,11 +211,11 @@
   }
 
   .matched {
-    border-right: 1px solid $extendedSearchResultsDivider;
+    border-right: 1px solid var(--extendedsearch-results-divider);
   }
 
   .noMatches {
-    color: $extendedSearchNoMatches;
+    color: var(--extendedsearch-no-matches);
   }
 }
 

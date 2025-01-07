@@ -38,34 +38,28 @@
     }
 
     ul {
-      background: $tabsFirstBarBack;
+      background: var(--tabs-pri-back);
     }
 
     li {
-      background: $tabsFirstTabBack;
-
       a {
-        color: $tabsFirstTabFore;
+        color: var(--tabs-pri-tab-fore);
       }
     }
 
     li:hover {
-      background: $tabsFirstTabHoverBack;
+      background: var(--tabs-pri-tab-back-hover);
 
       a {
-        color: $tabsFirstTabHoverFore;
+        color: var(--tabs-pri-tab-fore-hover);
       }
     }
 
     li.current {
-      background: $tabsFirstTabCurrentBack;
-
-      &:hover {
-        background: $tabsFirstTabHoverBack;
-      }
+      background: var(--tabs-pri-current-back);
 
       a {
-        color: $tabsFirstTabCurrentFore;
+        color: var(--tabs-pri-current-fore);
       }
     }
   }
@@ -73,7 +67,7 @@
   /* Second level */
   .second {
     ul {
-      background: $tabsSecondBarBack;
+      background: var(--tabs-sec-back);
     }
 
     li {
@@ -83,8 +77,7 @@
 
     /* use !important, #content > a tries to override these */
     a {
-      background: $tabsSecondTabBack;
-      color: $tabsSecondTabFore;
+      color: var(--tabs-sec-tab-fore);
       padding: 1em 1.5em;
       font-weight: normal;
       font-size: 70%;
@@ -92,8 +85,8 @@
     }
 
     a:hover, .current a {
-      background: $tabsSecondTabHoverBack;
-      color: $tabsSecondTabHoverFore;
+      background: var(--tabs-sec-tab-back-hover);
+      color: var(--tabs-sec-tab-fore-hover);
     }
   }
 
@@ -133,32 +126,32 @@
     padding: 5px 50px;
     outline: none;
     text-decoration: none;
-    background: $inpageTabsInactiveTabBackground !important;
-    color: $inpageTabsInactiveTabForeground !important;
+    background: var(--inpagetabs-tab-back) !important;
+    color: var(--inpagetabs-tab-fore) !important;
     font-weight: normal !important;
-    border: 1px solid $inpageTabsWrapperBorder;
+    border: 1px solid var(--inpagetabs-border);
 
     &:hover {
-      background: $inpageTabsTabHoverBackground !important;
-      color: $inpageTabsTabHoverForeground !important;
+      background: var(--inpagetabs-tab-back-hover) !important;
+      color: var(--inpagetabs-tab-fore-hover) !important;
     }
   }
 
   a.tabActive {
-    background: $inpageTabsActiveTabBackground !important;
-    color: $inpageTabsActiveTabForeground !important;
+    background: var(--inpagetabs-tab-back-active) !important;
+    color: var(--inpagetabs-tab-fore-active) !important;
     cursor: default !important;
-    border-bottom: 1px solid $inpageTabsActiveTabBackground;
+    border-bottom: 1px solid var(--inpagetabs-tab-back-active);
 
     &:hover {
-      background: $inpageTabsActiveTabBackground !important;
+      background: var(--inpagetabs-tab-back-active) !important;
     }
   }
 }
 
 .tabContentsWrapper {
   margin-top: -1px;
-  border: 1px solid $inpageTabsWrapperBorder;
+  border: 1px solid var(--inpagetabs-border);
 
   padding: 10px;
 

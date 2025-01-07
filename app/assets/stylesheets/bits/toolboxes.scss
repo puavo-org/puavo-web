@@ -3,7 +3,7 @@
 */
 
 .toolsContainer {
-  background: $toolsContainerBack;
+  background: var(--tools-back);
   margin: 0 0 20px 0;
   padding: 0;
 
@@ -31,11 +31,6 @@
   }
 }
 
-.haveDropdown {
-  /* The dropdown menu buttons aren't clickable */
-  cursor: default;
-}
-
 /* A tool dropdown menu */
 .dropdown {
   display: none;
@@ -47,11 +42,11 @@
      This width is approximately the width of the parent button. */
   min-width: 130px;
 
-  background: $toolsDropdownBack;
-  border: 1px solid $toolsDropdownBorder;
+  background: var(--tools-dropdown-back);
+  border: 1px solid var(--tools-dropdown-border);
   padding: 5px;
 
-  box-shadow: 0 0 10px $defaultBoxShadow;
+  box-shadow: 0 0 10px var(--default-box-shadow);
 
   z-index: 2;
 
@@ -65,7 +60,7 @@
     padding: 0 0 5px 0;
 
     /* Group with separator lines */
-    border-bottom: 1px solid $toolsDropdownSeparator;
+    border-bottom: 1px solid var(--tools-dropdown-separator);
   }
 
   ul:last-of-type {
@@ -83,7 +78,7 @@
     text-decoration: none;
     display: block;
     padding: 5px 10px;
-    color: $toolsContainerLinkFore !important;
+    color: var(--tools-dropdown-link-fore) !important;
     background: transparent !important;
     white-space: nowrap;
     font-size: 100%;
@@ -91,8 +86,8 @@
     font-weight: normal !important;
 
     &:hover {
-      color: $toolsContainerLinkHoverFore !important;
-      background: $toolsContainerLinkHoverBack !important;
+      background: var(--tools-dropdown-link-back-hover) !important;
+      color: var(--tools-dropdown-link-fore-hover) !important;
     }
   }
 }
@@ -105,7 +100,8 @@
 }
 
 .haveDropdown:hover .btn {
-  background: $buttonHoverBack !important;
+  /* Continue "highlighting" the button when its dropdown is hovered */
+  background: var(--button-back-hover) !important;
 }
 
 /* Make the dropdown menu visible */

@@ -62,11 +62,11 @@
   }
 
   .infoTable {
-    border: 1px solid $hwInfoBorder;
+    border: 1px solid var(--devices-hwinfo-border);
     border-collapse: collapse;
 
     th {
-      border: 1px solid $hwInfoBorder;
+      border: 1px solid var(--devices-hwinfo-border);
       padding: 7px;
       text-align: right;
       width: 150px;
@@ -80,16 +80,16 @@
     .main {
       text-align: center;
       vertical-align: middle;
-      background: $hwInfoTitleBack;
+      background: var(--devices-hwinfo-title-back);
     }
 
     td {
-      border: 1px solid $hwInfoBorder;
+      border: 1px solid var(--devices-hwinfo-border);
       padding: 7px;
     }
 
     .sectionEnd {
-      border-bottom: 1px solid $hwInfoBorder;
+      border-bottom: 1px solid var(--devices-hwinfo-border);
     }
 
     ol {
@@ -123,25 +123,25 @@
   border: none;
 
   th {
-    background: $listHeadingBack;
+    background: var(--list-heading-back);
   }
 
   .border {
-    border-left: 1px solid #000;
+    border-left: 1px solid var(--devices-imagestats-separator);
   }
 
   .header {
-    color: $deviceStatsImageHeaderFore;
-    background: $deviceStatsImageHeaderBack;
+    background: var(--devices-imagestats-header-back);
+    color: var(--devices-imagestats-header-fore);
     border: none;
     cursor: pointer;
 
     &:hover {
-      background: $listRowHoverBack;
+      background: var(--list-row-back-hover);
     }
 
     .releaseName {
-      color: $deviceStatsReleaseName;
+      color: var(--devices-imagestats-release-name);
       margin-left: 0.5em;
       font-weight: bold;
     }
@@ -150,15 +150,15 @@
     }
 
     .barOuter {
-      background: $deviceStatsPercentageBack;
-      border: 1px solid $deviceStatsPercentageBorder;
+      background: var(--devices-imagestats-percentage-back);
+      border: 1px solid var(--devices-imagestats-percentage-border);
       display: block;
       width: 100%;
       height: 100%;
     }
 
     .barInner {
-      background: $deviceStatsPercentageFore;
+      background: var(--devices-imagestats-percentage-fore);
       display: block;
       height: 100%;
     }
@@ -166,7 +166,7 @@
 
   .deviceListRow {
     ul {
-      border-left: 5px solid $deviceStatsDeviceListBorder;
+      border-left: 5px solid var(--devices-imagestats-devicelist-border);
       margin: 0 0 0 20px;
       padding: 0;
     }
@@ -179,13 +179,13 @@
 }
 
 span.release-other { }
-span.release-stretch { color: $deviceStatsReleaseStretch; }
-span.release-buster { color: $deviceStatsReleaseBuster; }
-span.release-bullseye { color: $deviceStatsReleaseBullseye; }
-span.release-bookworm { color: $deviceStatsReleaseBookworm; }
+span.release-stretch { color: var(--devices-imagestats-release-stretch); }
+span.release-buster { color: var(--devices-imagestats-release-buster); }
+span.release-bullseye { color: var(--devices-imagestats-release-bullseye); }
+span.release-bookworm { color: var(--devices-imagestats-release-bookworm); }
 
 .releaseName {
-  color: $deviceStatsReleaseName;
+  color: var(--devices-imagestats-release-name);
   font-weight: bold;
 }
 

@@ -96,12 +96,12 @@
 
     --st-header-bg: #bbb;
     --st-header-fg: #000;
-    --st-sortable-hover-bg: #{$stTableHeaderHoverBackground};
+    --st-sortable-hover-bg: linear-gradient(rgb(239, 158, 6), rgb(242, 121, 21));
     --st-sortable-hover-fg: #000;
 
-    --st-row-hover-bg: #{$listRowHoverBack};
+    --st-row-hover-bg: var(--list-row-back-hover);
     --st-row-sorted-column: #e0e0e0;
-    --st-row-sorted-hover-bg: #{$stTableSortedColumnHoverBackground};
+    --st-row-sorted-hover-bg: #efeabd;
 
     --st-row-processed-fg: #000;
     --st-row-processing-bg: #aff;
@@ -134,19 +134,19 @@
 body {
   margin: 0;
   padding: 0;
-  background: $bodyBack;
+  background: var(--body-back);
   font-family: Arial, "Helvetica Neue", sans-serif;
   line-height: 1.5;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: $headingFore;
-  background: $headingBack;
+  color: var(--page-content-fore);
+  background: var(--page-content-back);
 }
 
 h1 {
   font-size: 250%;
-  border-bottom: 1px solid $headerBorder;
+  border-bottom: 1px solid var(--hx-border);
 
   @media #{$screen-breakpoint-one} {
     font-size: 200%;
@@ -156,7 +156,7 @@ h1 {
 h2 {
   margin-top: 25px;
   font-size: 200%;
-  border-bottom: 1px dashed $headerBorder;
+  border-bottom: 1px dashed var(--hx-border);
 
   @media #{$screen-breakpoint-one} {
     font-size: 170%;
@@ -165,7 +165,7 @@ h2 {
 
 h3 {
   font-size: 130%;
-  border-bottom: 1px dotted $headerBorder;
+  border-bottom: 1px dotted var(--hx-border);
 }
 
 h4 {

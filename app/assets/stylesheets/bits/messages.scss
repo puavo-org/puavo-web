@@ -14,24 +14,24 @@
 
 .message_success {
   @include message;
-  background: $flashSuccessBack;
-  color: $flashSuccessFore;
-  border: 1px solid $flashSuccessBorder;
+  background: var(--flash-success-back);
+  color: var(--flash-success-fore);
+  border: 1px solid var(--flash-success-border);
 }
 
 .message_notice {
   @include message;
-  background: $flashNoticeBack;
-  color: $flashNoticeFore;
-  border: 1px solid $flashNoticeBorder;
+  background: var(--flash-notice-back);
+  color: var(--flash-notice-fore);
+  border: 1px solid var(--flash-notice-border);
 }
 
 /* TODO: Merge alert and error messages */
 .message_alert, .message_error {
   @include message;
-  background: $flashAlertBack;
-  color: $flashAlertFore;
-  border: 1px solid $flashAlertBorder;
+  background: var(--flash-alert-back);
+  color: var(--flash-alert-fore);
+  border: 1px solid var(--flash-alert-border);
 }
 
 @mixin genericBox {
@@ -41,21 +41,21 @@
 
 .genericNotice {
   @include genericBox;
-  color: $genericNoticeFore;
-  background: $genericNoticeBack;
-  border: 2px solid $genericNoticeBorder;
+  color: var(--generic-notice-fore);
+  background: var(--generic-notice-back);
+  border: 1px solid var(--generic-notice-border);
 }
 
 .genericWarning {
   @include genericBox;
-  color: $genericWarningFore;
-  background: $genericWarningBack;
-  border: 2px solid $genericWarningBorder;
+  color: var(--generic-warning-fore);
+  background: var(--generic-warning-back);
+  border: 1px solid var(--generic-warning-border);
 }
 
 .genericError {
   @include genericBox;
-  color: $genericErrorFore;
-  background: $genericErrorBack;
-  border: 2px solid $genericErrorBorder;
+  color: var(--generic-error-fore);
+  background: var(--generic-error-back);
+  border: 1px solid var(--generic-error-border);
 }

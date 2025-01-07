@@ -9,27 +9,27 @@
   float: left;
   margin: 5px;
   padding: 0;
-  box-shadow: 3px 3px 0 $contentBoxShadow;
+  box-shadow: 3px 3px 0 var(--contentbox-shadow);
 
   header {
-    background: $contentBoxHeaderBack;
-    color: $contentBoxHeaderFore;
+    background: var(--contentbox-header-back);
+    color: var(--contentbox-header-fore);
     padding: 5px 10px;
     margin: 0;
     font-size: 130%;
-    border-top: 1px solid $contentBoxBorder;
-    border-left: 1px solid $contentBoxBorder;
-    border-right: 1px solid $contentBoxBorder;
+    border-top: 1px solid var(--contentbox-border);
+    border-left: 1px solid var(--contentbox-border);
+    border-right: 1px solid var(--contentbox-border);
     font-weight: bold;
   }
 
   .contents {
     padding: 5px;
-    color: $contentBoxContentsFore;
-    background: $contentBoxContentsBack;
-    border-left: 1px solid $contentBoxBorder;
-    border-right: 1px solid $contentBoxBorder;
-    border-bottom: 1px solid $contentBoxBorder;
+    background: var(--contentbox-contents-back);
+    color: var(--contentbox-contents-fore);
+    border-left: 1px solid var(--contentbox-border);
+    border-right: 1px solid var(--contentbox-border);
+    border-bottom: 1px solid var(--contentbox-border);
   }
 
   table {
@@ -37,19 +37,19 @@
   }
 
   tr:nth-child(odd) {
-    background: $contentBoxTableOddRowBack;
+    background: var(--contentbox-table-odd-back);
   }
 
   tr:nth-child(even) {
-    background: $contentBoxTableEvenRowBack;
+    background: var(--contentbox-table-even-back);
   }
 
   h3 {
     margin: 0 0 10px 0;
     padding: 5px;
     font-weight: bold;
-    color: $contentBoxSubHeaderFore;
-    background: $contentBoxSubHeaderBack;
+    background: var(--contentbox-subheader-back);
+    color: var(--contentbox-subheader-fore);
     border: none;
   }
 
@@ -77,7 +77,7 @@
 
 /* A weird table/list hybrid style, used on school "show" pages */
 .multilineItem {
-  border-bottom: 1px solid $contentBoxMultilineItemBorder;
+  border-bottom: 1px solid var(--contentbox-multiline-item-border);
   padding-bottom: 10px;
   margin: 5px;
 
@@ -113,7 +113,7 @@
 /* Heading row/column of tables used in some content boxes. Can't use TH only,
    as it's usage varies. */
 .tableHeading th {
-  background: $contentBoxTableHeadingBack;
+  background: var(--contentbox-table-heading-back);
 }
 
 /* Prevent word wrapping, used on user email and phone number displays */
@@ -137,7 +137,7 @@
 
 .mountPoints th {
   text-align: center !important;
-  background: $mountPointsHeadingBack;
+  background: #ccc;
 }
 
 /* Basic user/device information block */
@@ -147,18 +147,16 @@
   margin-bottom: 20px;
   padding: 0;
 
-  $THUMBNAIL_PADDING: 10px;
-
   .basicInfoImage {
     img {
       max-width: 220px;
-      padding: $THUMBNAIL_PADDING;
-      border: 1px solid $basicInfoBorders;
+      padding: var(--basic-info-thumbnail-padding);
+      border: 1px solid var(--basic-info-borders);
     }
 
     /* Explicit size, to prevent the page from jumping once the image has been loaded */
-    width: 220px + ($THUMBNAIL_PADDING * 2);
-    height: 220px + ($THUMBNAIL_PADDING * 2);
+    width: calc(220px + var(--basic-info-thumbnail-padding) * 2);
+    height: calc(220px + var(--basic-info-thumbnail-padding) * 2);
 
     text-align: center;
   }
@@ -169,25 +167,25 @@
     padding-left: 15px;
 
     h1 {
-      border-bottom: 1px solid $basicInfoBorders;
+      border-bottom: 1px solid var(--basic-info-borders);
       padding: 0;
       margin: 0 0 10px 0;
     }
 
     .infoNotice {
-      color: $importantBasicInfo;
+      color: var(--basic-info-notice);
       padding: 0 0 0 10px;
       margin: 0;
     }
 
     .infoWarn {
-      color: $importantBasicWarn;
+      color: var(--basic-info-warn);
       padding: 0 0 0 10px;
       margin: 0;
     }
 
     .infoError {
-      color: $importantBasicError;
+      color: var(--basic-info-error);
       padding: 0 0 0 10px;
       margin: 0;
     }
@@ -242,14 +240,14 @@
 
 /* Puavo-conf tables in various places */
 .puavoConf {
-  border: 1px solid $puavoConfBorder;
+  border: 1px solid var(--puavoconf-border);
 
   tr:nth-child(odd) {
-    background: $puavoConfOddRow;
+    background: var(--puavoconf-odd-back);
   }
 
   tr:nth-child(even) {
-    background: $puavoConfEvenRow;
+    background: var(--puavoconf-even-back);
   }
 
   th {
@@ -273,15 +271,15 @@
   }
 
   /* Source level colors */
-  th.source_org { color: $puavoConfSourceOrganisation; }
-  th.source_sch { color: $puavoConfSourceSchool; }
-  th.source_dev { color: $puavoConfSourceDevice; }
+  th.source_org { color: var(--puavoconf-source-organisation); }
+  th.source_sch { color: var(--puavoconf-source-school); }
+  th.source_dev { color: var(--puavoconf-source-device); }
 
   /* Various override indicator statuses */
   tr.overridden:nth-child(odd) td { text-decoration: line-through; color: #888; }
   tr.overridden:nth-child(even) td { text-decoration: line-through; color: #888; }
-  tr.overriddenAll:nth-child(odd) { background: $puavoConfOverriddenOddRow; }
-  tr.overriddenAll:nth-child(even) { background: $puavoConfOverriddenEvenRow; }
+  tr.overriddenAll:nth-child(odd) { background: var(--puavoconf-overridden-odd-back); }
+  tr.overriddenAll:nth-child(even) { background: var(--puavoconf-overridden-even-back); }
 }
 
 /* Puavo-conf table color keys */
@@ -290,7 +288,7 @@ div.basicInfoDetails div.pcColorKey {
   margin-left: 25px;
 }
 
-div.pcColorKey span.source_org { color: $puavoConfSourceOrganisation; }
-div.pcColorKey span.source_sch { color: $puavoConfSourceSchool; }
-div.pcColorKey span.source_dev { color: $puavoConfSourceDevice; }
-div.pcColorKey span.overridden { background: $puavoConfOverriddenOddRow; }
+div.pcColorKey span.source_org { color: var(--puavoconf-source-organisation); }
+div.pcColorKey span.source_sch { color: var(--puavoconf-source-school); }
+div.pcColorKey span.source_dev { color: var(--puavoconf-source-device); }
+div.pcColorKey span.overridden { background: var(--puavoconf-overridden-odd-back); }

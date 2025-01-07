@@ -2,387 +2,259 @@
   Site-wide color definitions
 */
 
-/* Common elements */
-$baseBrown: rgb(163, 106, 42);
-$baseBrownGradient: rgb(186, 114, 45);
-$baseOrange: rgb(250, 179, 46);
-$baseOrangeGradient: rgb(245, 149, 69);
-
-$bodyBack: #eee;
-
-$headerBorder: #000;
-
-$defaultBoxShadow: rgba(34, 34, 34, 0.75);
-
-/* Highlight admins and owners in tables */
-$adminOwner: #00f;
-
-/*
---------------------------------------------------------------------------------
-Top bar
---------------------------------------------------------------------------------
-*/
-
-$topbarWrapperBack: linear-gradient($baseOrange, $baseOrangeGradient);
-
-$topbarNavLinkFore: #000;
-$topbarNavLinkBack: none;
-$topbarNavLinkHoverFore: #000;
-$topbarNavLinkHoverBack: #fff;
-$topbarNavSeparators: #ccc;
-$topbarNavDropdownBack: $baseOrangeGradient;
-
-$extendedSearchButtonFore: #000;
-$extendedSearchButtonHoverBack: #fff;
-
-$topbarUsernameFore: #000;
-
-/*
---------------------------------------------------------------------------------
-School name, integrations, tab bar
---------------------------------------------------------------------------------
-*/
-
-$schoolHeaderBack: #eee;
-
-$schoolNameFore: #000;
-
-/* Integration type and data flow direction labels */
-$integrationsBorder: #ccc;
-$integrationsInBack: #8ff;
-$integrationsInFore: #000;
-$integrationsOutBack: #8f8;
-$integrationsOutFore: #000;
-$integrationsInOutBack: #f88;
-$integrationsInOutFore: #000;
-$integrationsEmailBack: #44f;
-$integrationsEmailFore: #fff;
-$integrationsLoginBack: #88f;
-$integrationsLoginFore: #fff;
-$integrationsPasswordBack: #ff8;
-$integrationsPasswordFore: #000;
-$integrationsOtherBack: #eee;
-$integrationsOtherFore: #000;
-
-/* Tabs */
-$tabsFirstBarBack: linear-gradient($baseOrange, $baseOrangeGradient);
-$tabsFirstTabFore: #000;
-$tabsFirstTabBack: linear-gradient($baseOrange, $baseOrangeGradient);
-$tabsFirstTabHoverBack: linear-gradient($baseBrown, $baseBrownGradient);
-$tabsFirstTabHoverFore: #fff;
-$tabsFirstTabCurrentFore: #fff;
-$tabsFirstTabCurrentBack: linear-gradient($baseBrown, $baseBrownGradient);
-
-$tabsSecondBarBack: linear-gradient($baseBrownGradient 35%, $baseBrown 60%);
-$tabsSecondTabBack: none;
-$tabsSecondTabFore: #e6e6d8;
-$tabsSecondTabHoverBack: #fff;
-$tabsSecondTabHoverFore: #000;
-
-/*
---------------------------------------------------------------------------------
-Page contents
---------------------------------------------------------------------------------
-*/
-
-$pageContentBack: rgb(255, 255, 255);
-$pageContentFore: rgb(0, 0, 0);   /* used when no other rule applies */
-
-/* H1, H2, etc. headers */
-$headingFore: $pageContentFore;
-$headingBack: transparent;
-
-$missingDataFore: rgb(255, 0, 0);
-
-/* Things that only organisation owners can see */
-$ownersOnlyBorder: rgb(255, 0, 0);
-
-$footerFore: #999;
-$footerBorder: #ccc;
-
-/* Ordinary links on page content areas */
-$linkFore: #13243f;
-$linkBack: none;
-$linkHoverFore: #352608;
-$linkHoverBack: none;
-$linkFocusFore: #000;
-$linkFocusBack: none;
-
-/* Links styled as clickable buttons. Also used on form submit/reset buttons,
-so verify your changes thoroughly! */
-$buttonBorderHi: #f0f0f0;
-$buttonBorderLo: #b0b0b0;
-$buttonBack: #d0d0d0;
-$buttonFore: #000;
-$buttonForeDisabled: #888;
-$buttonHoverBack: #e0e0e0;
-$buttonDangerBorderHi: #f00;
-$buttonDangerBorderLo: #600;
-$buttonDangerBack: #a00;
-$buttonDangerFore: #fff;
-$buttonDangerForeDisabled: #888;
-$buttonDangerHoverBack: #c00;
-
-/* Flash messages */
-$flashSuccessBack: #e6efc2;
-$flashSuccessFore: #264409;
-$flashSuccessBorder: #c6d880;
-$flashNoticeBack: #86b410;
-$flashNoticeFore: default;
-$flashNoticeBorder: #56340e;
-$flashAlertBack: #a00;
-$flashAlertFore: #fff;
-$flashAlertBorder: #f00;
-
-/* Generic information boxes. These are NOT flash messages. */
-$genericNoticeBorder: #0f0;
-$genericNoticeBack: #cfc;
-$genericNoticeFore: #000;
-$genericWarningBorder: #ff0;
-$genericWarningBack: #ff9;
-$genericWarningFore: #000;
-$genericErrorBorder: #f00;
-$genericErrorBack: #faa;
-$genericErrorFore: #000;
-
-/* Toolboxes */
-$toolsContainerBack: none;
-$toolsDropdownBack: #fff;
-$toolsDropdownBorder: #aaa;
-$toolsContainerLinkFore: #000;
-$toolsContainerLinkHoverFore: #000;
-$toolsContainerLinkHoverBack: $baseOrangeGradient;
-$toolsDropdownSeparator: #ccc;
-
-/* Basic info blocks about users, devices, etc. */
-$importantBasicInfo: #00f;    /* notifications about important users, etc. */
-$importantBasicWarn: #f00;    /* warnings about users, etc. */
-$importantBasicError: #f00;   /* user errors, etc. */
-$basicInfoBorders: #ccc;
-
-/* Content boxes on "show" pages */
-$contentBoxHeaderBack: $baseOrangeGradient;
-$contentBoxHeaderFore: #000;
-$contentBoxBorder: #999;
-$contentBoxShadow: #aaa;
-$contentBoxContentsBack: #f0f0f0;
-$contentBoxContentsFore: #000;
-$contentBoxTableOddRowBack: #f0f0f0;
-$contentBoxTableEvenRowBack: #e0e0e0;
-$contentBoxContentsHeaderFore: #000;
-$contentBoxMultilineItemBorder: #ccc;
-$contentBoxTableHeadingBack: #ccc;
-$contentBoxSubHeaderFore: #000;
-$contentBoxSubHeaderBack: #ccc;
-
-/* In-page tabs */
-$inpageTabsWrapperBorder: #888;
-$inpageTabsInactiveTabBackground: #ccc;
-$inpageTabsInactiveTabForeground: #000;
-$inpageTabsActiveTabBackground: #fff;
-$inpageTabsActiveTabForeground: #000;
-$inpageTabsTabHoverBackground: $baseOrange;
-$inpageTabsTabHoverForeground: 000;
-
-/* puavo-conf tables */
-$puavoConfOddRow: #f0f0f0;
-$puavoConfEvenRow: #e0e0e0;
-$puavoConfBorder: #ccc;
-
-$puavoConfOverriddenOddRow: #faa;
-$puavoConfOverriddenEvenRow: #fcc;
-$puavoConfSourceOrganisation: #ff2b00;
-$puavoConfSourceSchool: #9c64ff;
-$puavoConfSourceDevice: #00bb66;
-
-
-/* puavo-conf editor */
-$pceDeleteForeground: #f00;
-$pceDeleteBackground: none;
-$pceDeleteBorder: transparent;
-$pceDeleteHoverForeground: #f00;
-$pceDeleteHoverBackground: #f88;
-$pceDeleteHoverBorder: #f00;
-$pceError: #f00;
-$pceErrorBackground: #f88;
-$pceAutocompleteBackground: #fff;
-$pceAutocompleteForeground: #000;
-$pceAutocompleteBorder: #000;
-$pceAutocompleteHint: #888;
-$pceAutocompleteEntryHoverForeground: #fff;
-$pceAutocompleteEntryHoverBackground: #ccc;
-$pceAutocompleteMatchForeground: #000;
-$pceAutocompleteMatchBackground: #ccc;
-
-/* Miscellaneous */
-$mountPointsHeadingBack: #ccc;
-$groupRenameTableHeaderBack: #ccc;
-$externallyMaintainedGroupFore: #080;
-$externallyMaintainedGroupBack: transparent;
-$deletionMarkTimestamp: #f00;
-$usernameListTableBorder: #ccc;
-$courseGroup: #080;
-
-/* Organisation password requirements info boxes */
-$passwordRequirementsBackground: rgb(217, 237, 247);
-$passwordRequirementsBorder: darken(rgb(217, 237, 247), 10%);
-
-/* School admin permissions page */
-$adminPermissionsAllowBackground: #0f0;
-$adminPermissionsAllowForeground: #000;
-$adminPermissionsDenyBackground: #f00;
-$adminPermissionsDenyForeground: #fff;
-
-/*
---------------------------------------------------------------------------------
-Forms
---------------------------------------------------------------------------------
-*/
-
-$formFieldsetBorderColor: #ccc;
-
-$formLabelColor: rgb(0, 0, 0);
-$formErrorColor: rgb(255, 0, 0);
-
-$formFore: #000;
-$formOddRowBack: #f5f5f5;
-$formEvenRowBack: #e9e9e9;
-$formButtonRowBack: #ccc;
-
-$errorRed: rgb(231, 6, 0);
-
-$focusColor: rgb(88, 151, 251);
-
-$formElementBorderColor: rgb(200, 200, 200);
-
-$adminGroupsHeaderBorder: #000;   /* used on user edit forms */
-
-/*
---------------------------------------------------------------------------------
-Lists in tables
---------------------------------------------------------------------------------
-*/
-
-$listHeadingBack: linear-gradient($baseOrange, $baseOrangeGradient);
-$listHeadingFore: #000;
-$listHeadingBorder: #888;
-$listOddRowBack: #ebebeb;
-$listEvenRowBack: #fafafa;
-$listRowHoverBack: #f9f7e6;
-$listRowBorder: #c8c8c8;
-$listFore: #000;
-
-/* Sortable Tables (not supertables) */
-$listSortableColumnHeaderBorder: #999;
-$listSortableColumnHover: linear-gradient(darken($baseOrange, 5%), darken($baseOrangeGradient, 5%));
-$listSelectedColumn: #d0d0d0;
-$listSelectedColumnRowHover: darken(#f9f7e6, 10%);
-
-/* Group member lists */
-$markedForDeletionOddRowBack: #faa;
-$markedForDeletionEvenRowBack: #fcc;
-$markedForDeletionRowHoverBack: #fdd;
-$markedForDeletionBackground: #f66;
-
-/*
---------------------------------------------------------------------------------
-Supertables
---------------------------------------------------------------------------------
-*/
-
-$stTabsBorder: #aaa;
-$stTabDisabledForeground: #aaa;
-$stTabDisabledBackground: #ddd;
-$stTabBackground: #ddd;
-$stTabHoverBackground: #eee;
-$stTabSelectedBackground: #fff;
-
-$stFiltersRowBorder: #ccc;
-$stFiltersInvalidColumn: #ffa;
-$stFiltersInvalidFilter: #faa;
-$stFiltersRowHoverBackground: #e0e0e0;
-$stFiltersOperator: #080;
-$stFiltersValue: #00f;
-
-$stFiltersPopupBorder: #aaa;
-$stFiltersPopupShadow: rgba(0, 0, 0, 1.0);
-$stFiltersPopupBackground: #fff;
-$stFiltersPopupHeaderBackground: #ccc;
-$stFiltersPopupHeaderBorder: #888;
-$filterPopupMissingColumn: #888;
-
-$stStatusBorder: $stTabsBorder;
-$stStatusSuccess: #6f6;
-$stStatusFail: #f66;
-
-$stErrorBorder: $genericErrorBorder;
-$stErrorBackground: #f44;
-$stErrorForeground: #fff;
-
-$stTableBorder: #888;
-$stTableHeaderBackground: $listHeadingBack;
-$stTableHeaderForeground: #000;
-$stTableHeaderHoverBackground: linear-gradient(darken($baseOrange, 10%), darken($baseOrangeGradient, 10%));
-$stTableRowHoverBackground: #f9f7e6;
-$stTableSortedColumnBackground: #e0e0e0;
-$stTableSortedColumnHoverBackground: darken(#f9f7e6, 10%);
-$stTableCheckboxColumnBack: #fff;
-
-$stTableSuccessRowBackground: #afa;
-$stTableSuccessRowHoverBackground: #8f8;
-$stTableSuccessRowSortedBackground: #80ff80;
-$stTableSuccessRowHoverSortedBackground: #6f6;
-
-$stTableFailRowBackground: #faa;
-$stTableFailRowHoverBackground: #f88;
-$stTableFailRowSortedBackground: #ff8080;
-$stTableFailRowHoverSortedBackground: #f66;
-
-$stTablePreviousRowBorder: #000;
-
-$stTableDragHeaderShadow: #000;
-$stTableDragHeaderMarker: #00f;
-
-/*
---------------------------------------------------------------------------------
-Search
---------------------------------------------------------------------------------
-*/
-
-$searchFieldBackgroundColor: #fff;
-$searchResultsBackground: #fff;
-$searchResultsBorder: #cccaaa;
-$searchResultsSeparatorLine: #000;
-$searchNoResults: #aaa;
-
-$extendedSearchError: #f00;
-$extendedSearchNoResults: #00f;
-$extendedSearchNoMatches: #666;
-
-$extendedSearchResultsFore: #000;
-$extendedSearchResultsBack: #ccc;
-$extendedSearchResultsDivider: #000;
-
-/*
---------------------------------------------------------------------------------
-Devices
---------------------------------------------------------------------------------
-*/
-
-/* Hardware info */
-$hwInfoBorder: #aaa;
-$hwInfoTitleBack: #eee;
-
-/* Image usage statistics */
-$deviceStatsImageHeaderFore: #000;
-$deviceStatsImageHeaderBack: $listOddRowBack;
-$deviceStatsPercentageBorder: #000;
-$deviceStatsPercentageBack: #fff;
-$deviceStatsPercentageFore: #080;
-$deviceStatsDeviceListBorder: #aaa;
-$deviceStatsReleaseName: #088;
-
-$deviceStatsReleaseStretch: #008;
-$deviceStatsReleaseBuster: #080;
-$deviceStatsReleaseBullseye: #a00;
-$deviceStatsReleaseBookworm: #808;
+:root {
+    --base-brown: rgb(163, 106, 42);
+    --base-brown-gradient: rgb(186, 114, 45);
+    --base-orange: rgb(250, 179, 46);
+    --base-orange-gradient: rgb(245, 149, 69);
+
+    --body-back: #eee;
+    --body-fore: #000;
+    --page-content-back: #fff;
+    --page-content-fore: #000;
+
+    --default-box-shadow: rgba(34, 34, 34, 0.75);
+
+    /* Top bar */
+    --topbar-navlink-back: none;
+    --topbar-navlink-fore: #000;
+    --topbar-navlink-back-hover: #fff;
+    --topbar-navlink-fore-hover: #000;
+    --topbar-nav-separators: #ccc;
+    --topbar-username-fore: #000;
+
+    /* Integrations */
+    --integrations-border: #ccc;
+    --integrations-in-back: #8ff;
+    --integrations-in-fore: #000;
+    --integrations-out-back: #8f8;
+    --integrations-out-fore: #000;
+    --integrations-inout-back: #f88;
+    --integrations-inout-fore: #000;
+    --integrations-email-back: #44f;
+    --integrations-email-fore: #fff;
+    --integrations-login-back: #88f;
+    --integrations-login-fore: #fff;
+    --integrations-password-back: #ff8;
+    --integrations-password-fore: #000;
+    --integrations-other-back: #eee;
+    --integrations-other-fore: #000;
+
+    /* Top tabs (primary and secondary level) */
+    --tabs-pri-back: linear-gradient(var(--base-orange), var(--base-orange-gradient));
+    --tabs-pri-tab-fore: #000;
+    --tabs-pri-tab-back-hover: linear-gradient(var(--base-brown), var(--base-brown-gradient));
+    --tabs-pri-tab-fore-hover: #fff;
+    --tabs-pri-current-back: var(--tabs-pri-tab-back-hover);
+    --tabs-pri-current-fore: #fff;
+    --tabs-sec-back: linear-gradient(var(--base-brown-gradient) 35%, var(--base-brown) 60%);
+    --tabs-sec-tab-fore: #e6e6d8;
+    --tabs-sec-tab-back-hover: #fff;
+    --tabs-sec-tab-fore-hover: #000;
+
+    /* Flash messages */
+    --flash-success-back: #e6efc2;
+    --flash-success-fore: #264409;
+    --flash-success-border: #c6d880;
+    --flash-notice-back: #86b410;
+    --flash-notice-fore: #000;
+    --flash-notice-border: #56340e;
+    --flash-alert-back: #a00;
+    --flash-alert-fore: #fff;
+    --flash-alert-border: #f00;
+
+    /* Generic "information boxes". Various notifications, reminders, warnings, etc. embedded on pages.
+       Not flash messages. */
+    --generic-notice-back: #cfc;
+    --generic-notice-fore: #000;
+    --generic-notice-border: #0f0;
+    --generic-warning-back: #ffc;
+    --generic-warning-fore: #000;
+    --generic-warning-border: #ff0;
+    --generic-error-back: #faa;
+    --generic-error-fore: #000;
+    --generic-error-border: #f00;
+
+    /* Search boxes */
+    --search-back: #fff;
+    --search-fore: #000;
+    --search-results-back: #fff;
+    --search-results-border: #cccaaa;
+    --search-no-results: #aaa;
+    --search-topbar-border: #c8c8c8;    /* the default form element border looks too dark here */
+
+    /* Extended search */
+    --extendedsearch-error: #f00;
+    --extendedsearch-no-results: #00f;
+    --extendedsearch-no-matches: #666;
+    --extendedsearch-results-back: #ccc;
+    --extendedsearch-results-fore: #000;
+    --extendedsearch-results-divider: #000;
+    --extendedsearch-button-fore: #000;
+    --extendedsearch-button-back-hover: #fff;
+
+    /* Common page elements */
+    --hx-border: #000;      /* H1/H2/H3 element border */
+    --admin-owner: #00f;    /* Highlight admins and owners in tables */
+    --missing-data: #f00;   /* Indicate required missing things */
+    --owners-only: #f00;    /* Things that only organisation owners can see */
+
+    /* Toolboxes (tool buttons and buttons with dropdown menus) */
+    --tools--back: none;
+    --tools-dropdown-back: #fff;
+    --tools-dropdown-border: #aaa;
+    --tools-dropdown-link-fore: #000;
+    --tools-dropdown-link-back-hover: var(--base-orange-gradient);
+    --tools-dropdown-link-fore-hover: #000;
+    --tools-dropdown-separator: #ccc;
+
+    /* Ordinary links on page content areas */
+    --link-back: none;
+    --link-fore: #13243f;
+    --link-back-hover: none;
+    --link-fore-hover: #352608;
+    --link-focus-back: none;
+    --link-focus-fore: #000;
+
+    /* Links styled as clickable buttons. Also used on form submit/reset buttons,
+       so verify your changes thoroughly! */
+    --button-border-hi: #f0f0f0;
+    --button-border-lo: #b0b0b0;
+    --button-back: #d0d0d0;
+    --button-fore: #000;
+    --button-fore-disabled: #888;
+    --button-back-hover: #e0e0e0;
+    --button-danger-border-hi: #f00;
+    --button-danger-border-lo: #600;
+    --button-danger-back: #a00;
+    --button-danger-fore: #fff;
+    --button-danger-fore-disabled: #888;
+    --button-danger-back-hover: #c00;
+
+    /* Content boxes on "show" pages */
+    --contentbox-border: #999;
+    --contentbox-shadow: #aaa;
+    --contentbox-header-back: var(--base-orange-gradient);
+    --contentbox-header-fore: #000;
+    --contentbox-subheader-back: #ccc;
+    --contentbox-subheader-fore: #000;
+    --contentbox-contents-back: #f0f0f0;
+    --contentbox-contents-fore: #000;
+    --contentbox-table-odd-back: #f0f0f0;
+    --contentbox-table-even-back: #e0e0e0;
+    --contentbox-multiline-item-border: #ccc;
+    --contentbox-table-heading-back: #ccc;
+
+    /* In-page tabs (JavaScript-based, does not cause page reloads) */
+    --inpagetabs-border: #888;
+    --inpagetabs-tab-back: #ccc;
+    --inpagetabs-tab-fore: #000;
+    --inpagetabs-tab-back-hover: var(--base-orange);
+    --inpagetabs-tab-fore-hover: 000;
+    --inpagetabs-tab-back-active: #fff;
+    --inpagetabs-tab-fore-active: #000;
+
+    /* Basic info blocks about users, devices, etc. */
+    --basic-info-borders: #ccc;
+    --basic-info-notice: #00f;  /* notifications about important users, etc. */
+    --basic-info-warn: #f00;    /* warnings about users, etc. */
+    --basic-info-error: #f00;   /* user errors, etc. */
+
+    /* puavo-conf tables */
+    --puavoconf-border: #ccc;
+    --puavoconf-odd-back: #f0f0f0;
+    --puavoconf-even-back: #e0e0e0;
+    --puavoconf-overridden-odd-back: #faa;
+    --puavoconf-overridden-even-back: #fcc;
+    --puavoconf-source-organisation: #ff2b00;
+    --puavoconf-source-school: #9c64ff;
+    --puavoconf-source-device: #00bb66;
+
+    /* puavo-conf editor */
+    --pce-error-fore: #f00;
+    --pce-error-back: #f88;
+    --pce-error-border: #f00;
+    --pce-delete-back: none;
+    --pce-delete-fore: #f00;
+    --pce-delete-border: transparent;
+    --pce-delete-back-hover: #f88;
+    --pce-delete-fore-hover: #f00;
+    --pce-delete-border-hover: #f00;
+    --pce-autocomplete-back: #fff;
+    --pce-autocomplete-fore: #000;
+    --pce-autocomplete-border: #000;
+    --pce-autocomplete-hint: #888;
+    --pce-autocomplete-entry-hover-back: #00f;
+    --pce-autocomplete-entry-hover-fore: #fff;
+    --pce-autocomplete-match-back: #ccc;
+    --pce-autocomplete-match-fore: #000;
+
+    /* School admin permissions page */
+    --admin-permissions-allow-back: #0f0;
+    --admin-permissions-allow-fore: #000;
+    --admin-permissions-deny-back: #f00;
+    --admin-permissions-deny-fore: #fff;
+
+    /* Password requirements info boxes */
+    --password-requirements-back: #d9edf7;
+    --password-requirements-border: #afd9ee;
+
+    /* Forms */
+    --form-fieldset-border: #ccc;
+    --form-fore: #000;
+    --form-label-fore: #000;
+    --form-error-fore: #f00;
+    --form-odd-back: #f5f5f5;
+    --form-even-back: #e9e9e9;
+    --form-button-row-back: #ccc;
+    --form-element-border: #90919f;
+
+    /* Lists */
+    --list-heading-back: linear-gradient(var(--base-orange), var(--base-orange-gradient));
+    --list-heading-fore: #000;
+    --list-heading-border: #888;
+    --list-fore: #000;
+    --list-odd-back: #ebebeb;
+    --list-even-back: #fafafa;
+    --list-row-back-hover: #f9f7e6;
+    --list-row-border: #c8c8c8;
+
+    /* Sortable Tables (not supertables) */
+    --list-selected-column: #d0d0d0;
+    --list-sortable-column-hover: linear-gradient(#f9aa15, #f4872d);
+    --list-sortable-odd-selected-back: #c3c3c3;
+    --list-sortable-even-selected-back: #dddddd;
+    --list-sortable-selected-column-back: #efeabd;
+
+    /* Group member lists */
+    --group-member-marked-deletion-odd-back: #faa;
+    --group-member-marked-deletion-even-back: #fcc;
+
+    /* Hardware info */
+    --devices-hwinfo-border: #aaa;
+    --devices-hwinfo-title-back: #eee;
+
+    /* Image usage statistics */
+    --devices-imagestats-header-back: var(--list-odd-back);
+    --devices-imagestats-header-fore: #00;
+    --devices-imagestats-release-name: #088;
+    --devices-imagestats-separator: #000;
+    --devices-imagestats-percentage-border: #000;
+    --devices-imagestats-percentage-back: #fff;
+    --devices-imagestats-percentage-fore: #080;
+    --devices-imagestats-devicelist-border: #aaa;
+
+    --devices-imagestats-release-stretch: #008;
+    --devices-imagestats-release-buster: #080;
+    --devices-imagestats-release-bullseye: #a00;
+    --devices-imagestats-release-bookworm: #808;
+
+    /* Page footer (build info, hostname, uptime, etc.) */
+    --footer-fore: #999;
+    --footer-border: #ccc;
+}
+
+/* Other variables */
+:root {
+    --basic-info-thumbnail-padding: 10px;
+}
