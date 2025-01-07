@@ -3,58 +3,56 @@
   margin: 8px 5px;
 }
 
-/* Schools editing page */
-.schoolsTable {
-  th span {
-    font-size: 120%;
-  }
+/* The "change schools" page */
+.schoolsTable th span {
+  font-size: 120%;
+}
 
-  tr.school {
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-  }
+.schoolsTable tr.school {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
 
-  tr.school:hover {
-    background: $listRowHoverBack;
-  }
+.schoolsTable tr.school:hover {
+  background: var(--list-row-back-hover);
+}
 
-  tr.primary {
-    background: #eee;
-    border: 2px solid #ccc;
-  }
+.schoolsTable tr.primary {
+  background: #eee;
+  border: 2px solid #ccc;
+}
 
-  /* argh, this needs to be its own class */
-  .admin {
-    color: $importantBasicInfo;
-  }
+/* argh, this needs to be its own class */
+.schoolsTable .admin {
+  color: #00f;
 }
 
 /* The deletion timestamp on user "show" pages */
 .userMarkedForDeletion {
-  color: $deletionMarkTimestamp;
+  color: #f00;
 }
 
 /* Password policy info boxes. Also used on password changing forms. */
 .passwordNotice {
-  background: $passwordRequirementsBackground;
-  border: 1px solid $passwordRequirementsBorder;
+  background: var(--password-requirements-back);
+  border: 1px solid var(--password-requirements-border);
   padding: 1em;
 }
 
 .userShowGroups {
   margin: 0;
   padding-left: 20px;
+}
 
-  ul {
-    padding-left: 20px;
-    margin-bottom: 10px;
-  }
+.userShowGroups ul {
+  padding-left: 20px;
+  margin-bottom: 10px;
 }
 
 /* Username lists page */
 .usernameListEntry {
   padding-bottom: 20px;
-  border-bottom: 1px solid $usernameListTableBorder;
+  border-bottom: 1px solid #ccc;
 }
 
 .usernameListEntry:last-of-type {

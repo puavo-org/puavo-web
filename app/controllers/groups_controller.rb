@@ -710,13 +710,30 @@ class GroupsController < ApplicationController
   def user_search
     @group = Group.find(params[:id])
 
-    @users = User.words_search_and_sort_by_name(
-      ["sn", "givenName", "uid"],
-      lambda{ |v| "#{v['sn'].first} #{v['givenName'].first}" },
-      lambda { |w| "(|(givenName=*#{w}*)(sn=*#{w}*)(uid=*#{w}*))" },
-      params[:words] )
+    words = Net::LDAP::Filter.escape(params[:words])
 
-    @users.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
+    @users = User.search_as_utf8(
+      scope: :one,
+      filter: '(&' + words.split(' ').map { |w| "(|(givenName=*#{w}*)(sn=*#{w}*)(uid=*#{w}*))" }.join + ')',
+      attributes: ['puavoId', 'puavoEduPersonPrimarySchool', 'sn', 'givenName', 'uid']
+    ).map do |dn, u|
+      school_id = u['puavoEduPersonPrimarySchool'][0].match(/^puavoId=([^,]+)/).to_a[1]
+      name = "#{u['sn'][0]}, #{u['givenName'][0]}"
+
+      {
+        'id' => u['puavoId'][0],
+        'uid' => u['uid'][0],
+        'school_id' => school_id,
+        'school_dn' => u['puavoEduPersonPrimarySchool'][0],
+        'name' => name,
+        'sortable_name' => name.downcase,
+      }
+    end.sort do |a, b|
+      a['sortable_name'] <=> b['sortable_name']
+    end
+
+    @owner = current_user.organisation_owner?
+    @admin = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
 
     @schools = Hash.new
     School.search_as_utf8( :scope => :one,
@@ -726,12 +743,14 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       if @users.length == 0
-        format.html { render :inline => "<p>#{t('search.no_matches')}</p>" }
+        format.html { render inline: "<p>#{t('search.no_matches')}</p>" }
       else
-        format.html { render :user_search, :layout => false }
+        format.html { render :user_search, layout: false }
       end
     end
-
+  rescue StandardError => e
+    puts e
+    render inline: "<p class=\"searchError\">#{t('search.failed')}</p>"
   end
 
   private

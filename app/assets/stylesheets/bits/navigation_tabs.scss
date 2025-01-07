@@ -6,165 +6,146 @@
    Can be done if we play with hover effects, for example. I hate that I have to
    first load the users list before I can access groups, for example. */
 
-#tabs {
-  /* Styles common for both levels */
-  ul {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+/* Styles common for both levels */
+#tabs ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#tabs li {
+  display: inline;
+}
+
+#tabs a {
+  display: block;
+  margin: 0;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* First level */
+#tabs .first a {
+  font-size: 80%;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 1em 1.5em;
+}
+
+#tabs .first ul {
+  background: var(--tabs-pri-back);
+}
+
+#tabs .first li a {
+  color: var(--tabs-pri-tab-fore);
+}
+
+#tabs .first li:hover {
+  background: var(--tabs-pri-tab-back-hover);
+}
+
+#tabs .first li:hover a {
+  color: var(--tabs-pri-tab-fore-hover);
+}
+
+#tabs .first li.current {
+  background: var(--tabs-pri-current-back);
+}
+
+#tabs .first li.current a {
+  color: var(--tabs-pri-current-fore);
+}
+
+/* Second level */
+#tabs .second ul {
+  background: var(--tabs-sec-back);
+}
+
+#tabs .second li {
+  margin: 0;
+  padding: 0;
+}
+
+/* use !important, #content > a tries to override these */
+#tabs .second a {
+  color: var(--tabs-sec-tab-fore);
+  padding: 1em 1.5em;
+  font-weight: normal;
+  font-size: 70%;
+  border: 1px solid transparent;
+}
+
+#tabs .second a:hover,
+#tabs .second .current a {
+  background: var(--tabs-sec-tab-back-hover);
+  color: var(--tabs-sec-tab-fore-hover);
+}
+
+@media #{$screen-breakpoint-one} {
+  .first a {
+    padding: 1em;
   }
 
-  li {
-    display: inline;
+  .navbarSecondLevel ul {
+    border: none;
   }
 
-  a {
-    display: block;
-    margin: 0;
-    text-align: center;
-    text-decoration: none;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  /* First level */
-  .first {
-    a {
-      font-size: 80%;
-      font-weight: bold;
-      text-transform: uppercase;
-      padding: 1em 1.5em;
-    }
-
-    ul {
-      background: $tabsFirstBarBack;
-    }
-
-    li {
-      background: $tabsFirstTabBack;
-
-      a {
-        color: $tabsFirstTabFore;
-      }
-    }
-
-    li:hover {
-      background: $tabsFirstTabHoverBack;
-
-      a {
-        color: $tabsFirstTabHoverFore;
-      }
-    }
-
-    li.current {
-      background: $tabsFirstTabCurrentBack;
-
-      &:hover {
-        background: $tabsFirstTabHoverBack;
-      }
-
-      a {
-        color: $tabsFirstTabCurrentFore;
-      }
-    }
-  }
-
-  /* Second level */
-  .second {
-    ul {
-      background: $tabsSecondBarBack;
-    }
-
-    li {
-      margin: 0;
-      padding: 0;
-    }
-
-    /* use !important, #content > a tries to override these */
-    a {
-      background: $tabsSecondTabBack;
-      color: $tabsSecondTabFore;
-      padding: 1em 1.5em;
-      font-weight: normal;
-      font-size: 70%;
-      border: 1px solid transparent;
-    }
-
-    a:hover, .current a {
-      background: $tabsSecondTabHoverBack;
-      color: $tabsSecondTabHoverFore;
-    }
-  }
-
-  @media #{$screen-breakpoint-one} {
-    .first a {
-      padding: 1em;
-    }
-
-    .navbarSecondLevel {
-      ul {
-        border: none;
-      }
-
-      a {
-        padding: 1em;
-      }
-    }
+  .navbarSecondLevel a {
+    padding: 1em;
   }
 }
 
 /* In-page JavaScript tabs */
-.tabBar {
-  ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0 0 0 5px;
-    display: flex;
-  }
+.tabBar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0 0 0 5px;
+  display: flex;
+}
 
-  li {
-    display: inline;
-    margin-right: 5px;
-  }
+.tabBar li {
+  display: inline;
+  margin-right: 5px;
+}
 
-  a {
-    display: block;
-    padding: 5px 50px;
-    outline: none;
-    text-decoration: none;
-    background: $inpageTabsInactiveTabBackground !important;
-    color: $inpageTabsInactiveTabForeground !important;
-    font-weight: normal !important;
-    border: 1px solid $inpageTabsWrapperBorder;
+.tabBar a {
+  display: block;
+  padding: 5px 50px;
+  outline: none;
+  text-decoration: none;
+  background: var(--inpagetabs-tab-back) !important;
+  color: var(--inpagetabs-tab-fore) !important;
+  font-weight: normal !important;
+  border: 1px solid var(--inpagetabs-border);
+}
 
-    &:hover {
-      background: $inpageTabsTabHoverBackground !important;
-      color: $inpageTabsTabHoverForeground !important;
-    }
-  }
+.tabBar a:hover {
+  background: var(--inpagetabs-tab-back-hover) !important;
+  color: var(--inpagetabs-tab-fore-hover) !important;
+}
 
-  a.tabActive {
-    background: $inpageTabsActiveTabBackground !important;
-    color: $inpageTabsActiveTabForeground !important;
-    cursor: default !important;
-    border-bottom: 1px solid $inpageTabsActiveTabBackground;
+.tabBar a.tabActive {
+  background: var(--inpagetabs-tab-back-active) !important;
+  color: var(--inpagetabs-tab-fore-active) !important;
+  cursor: default !important;
+  border-bottom: 1px solid var(--inpagetabs-tab-back-active);
+}
 
-    &:hover {
-      background: $inpageTabsActiveTabBackground !important;
-    }
-  }
+.tabBar a.tabActive:hover {
+  background: var(--inpagetabs-tab-back-active) !important;
 }
 
 .tabContentsWrapper {
-  margin-top: -1px;
-  border: 1px solid $inpageTabsWrapperBorder;
-
+  margin-top: -1px !important;
+  border: 1px solid var(--inpagetabs-border);
   padding: 10px;
+}
 
-  :first-child {
-    margin-top: 0;
-  }
+.tabContentsWrapper:first-child {
+  margin-top: 0;
 }
 
 .tabContentsInvisible {

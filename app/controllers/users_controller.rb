@@ -151,6 +151,8 @@ class UsersController < ApplicationController
       }
     end
 
+    krb_auth_times_by_uid = Kerberos.all_auth_times_by_uid
+
     # Get a raw list of users in this school
     raw = User.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
                               :scope => :one,
@@ -196,6 +198,10 @@ class UsersController < ApplicationController
       user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school_id]
       user[:devices] = users_devices[dn] if users_devices.include?(dn)
 
+      krb_auth_date = Integer(krb_auth_times_by_uid[ user[:uid] ] \
+                        .to_date.to_time) rescue nil
+      user[:last_kerberos_auth_date] = krb_auth_date if krb_auth_date
+
       users << user
     end
 
@@ -215,10 +221,15 @@ class UsersController < ApplicationController
     @user = get_user(params[:id])
     return if @user.nil?
 
-    # get the creation and modification timestamps from LDAP operational attributes
-    extra = User.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
+    # get the creation, modification and last authentication timestamps from
+    # LDAP operational attributes
+    extra = User.find(params[:id], :attributes => ['authTimestamp', 'createTimestamp', 'modifyTimestamp'])
+    @user['authTimestamp']   = convert_timestamp_pick_date(extra['authTimestamp']) if extra['authTimestamp']
     @user['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @user['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
+
+    @user.kerberos_last_successful_auth \
+      = @user.kerberos_last_successful_auth_utc ? convert_timestamp_pick_date(@user.kerberos_last_successful_auth_utc) : nil
 
     if @user.puavoRemovalRequestTime
       @user.puavoRemovalRequestTime = convert_timestamp(@user.puavoRemovalRequestTime)
@@ -236,13 +247,19 @@ class UsersController < ApplicationController
 
     Array(@user.puavoAdminOfSchool || []).each do |dn|
       begin
-        @admin_in_schools << School.find(dn)
+        school = School.find(dn)
       rescue StandardError => e
-        logger.error "Unable to find admin school by DN \"#{dn.to_s}\": #{e}"
+        school = nil
       end
+
+      @admin_in_schools << {
+        valid: !school.nil?,
+        dn: dn,
+        name: school.nil? ? '' : school.displayName,
+      }
     end
 
-    @admin_in_schools.sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+    @admin_in_schools.sort! { |a, b| a[:name].downcase <=> b[:name].downcase }
 
     # If the user is a member in more than one school, list them all in alphabetical order
     primary_school = @user.primary_school
@@ -354,6 +371,9 @@ class UsersController < ApplicationController
       @licenses_ok = false
       @licenses = @user.puavoLicenses.to_s
     end
+
+    # Citrix licensing data
+    @citrix_license = @user.puavoCitrixId.nil? ? nil : JSON.parse(@user.puavoCitrixId)
 
     respond_to do |format|
       format.html # show.html.erb

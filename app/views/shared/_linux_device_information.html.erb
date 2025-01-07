@@ -102,6 +102,11 @@
     <% end %>
 
     <tr>
+      <th><%= t('last_ldap_auth_date') %></th>
+      <td><%= h device['authTimestamp'] %></td>
+    </tr>
+
+    <tr>
       <th><%= t('ldap_create_time') %></th>
       <td><%= h device['createTimestamp'] %></td>
     </tr>

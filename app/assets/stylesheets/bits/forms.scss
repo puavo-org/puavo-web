@@ -12,7 +12,7 @@
 }
 
 fieldset {
-  border: 1px solid $formFieldsetBorderColor;
+  border: 1px solid var(--form-fieldset-border);
   margin: 20px 0;
 }
 
@@ -24,7 +24,7 @@ legend {
    schools, and so on */
 .editForm {
   width: 100%;
-  color: $formFore;
+  color: var(--form-fore);
 
   /* Labels for checkboxes/radio buttons */
   label {
@@ -36,6 +36,7 @@ legend {
   select {
     padding: 5px;
     width: 100%;
+    border: 1px solid var(--form-element-border);
   }
 
   textarea {
@@ -52,17 +53,17 @@ legend {
     font-size: 110%;
     font-weight: bold;
     word-wrap: none;
-    color: $formLabelColor;
+    color: var(--form-label-fore);
     padding: 0;
     margin: 0;
   }
 
   tr:nth-child(odd) {
-    background: $formOddRowBack;
+    background: var(--form-odd-back);
   }
 
   tr:nth-child(even) {
-    background: $formEvenRowBack;
+    background: var(--form-even-back);
   }
 
   th {
@@ -72,7 +73,7 @@ legend {
 
   .buttonRow {
     th, td {
-      background: $formButtonRowBack !important;
+      background: var(--form-button-row-back) !important;
       text-align: center;
     }
   }
@@ -83,15 +84,19 @@ legend {
     margin: 5px 0;
 
     background: #fff;
-    border: 1px solid #90919f;
+    border: 1px solid var(--form-element-border);
     color: #000;
   }
 
   /* Used in user edit forms when listing verified addresses. */
   input[type="text"]:read-only {
     background: #f4f4f4;
-    border: 1px solid #bdbec5;
+    border: 1px solid var(--form-element-border);
     color: #888;
+  }
+
+  textarea {
+    border: 1px solid var(--form-element-border);
   }
 
   input[type="checkbox"], input[type="radio"] {
@@ -132,7 +137,7 @@ input[type="submit"]:hover {
 
 /* The "* = required" label displayed at the top of forms */
 .requiredTitle {
-  color: $formErrorColor;
+  color: var(--form-error-fore);
   font-style: italic;
 }
 
@@ -147,27 +152,27 @@ input[type="submit"]:hover {
 .requiredField:after {
   content: " *";
   font-size: 120%;
-  color: $formErrorColor;
+  color: var(--form-error-fore);
 }
 
 .field_error {
-  color: $formErrorColor;
+  color: var(--form-error-fore);
   display: block;
 }
 
 /* Fields with invalid/missing values */
 .editForm .label_error {
-  color: $formErrorColor;
+  color: var(--form-error-fore);
 }
 
 /* The small label below the field explaining what's wrong with the current value.
    This class name cannot be changed, it comes from Rails' ActionView. */
 .field_with_errors {
-  color: $formLabelColor;
+  color: var(--form-label-fore);
 }
 
 .field_with_errors input, .field_with_errors select {
-  border: 1px solid $formErrorColor;
+  border: 1px solid var(--form-error-fore);
 }
 
 /* Groups list on user create/edit pages */
@@ -175,7 +180,7 @@ input[type="submit"]:hover {
   input[type="search"] {
     background: url("/images/magnifier.png") no-repeat scroll 5px center #fff;
     text-indent: 2em;
-    border: 1px solid var(--st-controls-border);
+    border: 1px solid var(--form-element-border);
     padding: 5px;
     width: 50%;
   }
@@ -194,6 +199,11 @@ input[type="submit"]:hover {
 .groupsList .noMatches {
   font-size: 110%;
   font-style: italic;
+}
+
+/* Printer permissions group filter */
+.invalidRegexp {
+  border: 2px solid var(--form-error-fore);
 }
 
 @media #{$screen-breakpoint-one} {
@@ -219,7 +229,7 @@ input[type="submit"]:hover {
     }
 
     .buttonRow {
-      background: $formButtonRowBack !important;
+      background: var(--form-button-row-back) !important;
     }
 
     td {

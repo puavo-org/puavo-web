@@ -190,16 +190,13 @@ class Root < PuavoSinatra
   use PuavoRest::BootserverDNS
   use PuavoRest::MySchoolUsers
   use PuavoRest::EmailManagement
-  use PuavoRest::MFAManagement
+
+  if CONFIG['mfa_management']
+    use PuavoRest::MFAManagement
+  end
 
   if CONFIG["cloud"]
-    # You have to choose which one you want
-    if ENV.include?('ENABLE_ELTERN_SSO')
-      use PuavoRest::Eltern
-    else
-      use PuavoRest::SSO
-    end
-
+    use PuavoRest::SSO
     use PuavoRest::Certs
   end
 

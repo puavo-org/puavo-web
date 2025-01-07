@@ -186,6 +186,8 @@ fi:
   destroy_confirm_admin: "Tämä käyttäjä on omistaja ja/tai koulun ylläpitäjä. Oletko varma?"
   destroy_generic_sync_warning: "Poistot synkronoidaan mahdollisesti yhteen tai useampaan ulkoiseen järjestelmään.\nOletko varma, että haluat jatkaa?"
   destroy_exact_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\tSYSTEM_NAMES_HERE\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
+  last_kerberos_auth_date: Viimeisin kirjautumispäivä (Kerberos)
+  last_ldap_auth_date: Viimeisin kirjautumispäivä (LDAP)
   ldap_create_time: Luotu (LDAP)
   ldap_modify_time: Muokattu (LDAP)
   actions: Toiminnot
@@ -237,6 +239,8 @@ fi:
     tags: "Tagit"
     description: "Kuvaus"
     notes: "Muistiinpanot"
+    last_kerberos_auth_date: "Viimeisin kirjautumispäivä (Kerberos)"
+    last_ldap_auth_date: "Viimeisin kirjautumispäivä (LDAP)"
 
     schools:
       integrations: "Integraatiot"
@@ -477,8 +481,10 @@ fi:
       top_button: "Lataa"
       title: "Lataa taulukon sisältö tiedostona"
       settings: "Asetukset"
-      only_visible_rows_checkbox: "Vain näkyvät rivit"
-      only_visible_rows_title: "Jos ruksattu, vain rivit joita ei suodateta pois tallennetaan. Muutoin kaikki rivit tallennetaan."
+      only_selected_rows_checkbox: "Vain valitut rivit"
+      only_selected_rows_title: "Jos ruksattu, vain rivit jotka on valittu tallennetaan. Tällä ei ole vaikutusta jos nykyinen taulukko ei salli rivien valitsemista."
+      only_visible_rows_checkbox: "Vain suodattimen jälkeen näkyvät rivit"
+      only_visible_rows_title: "Jos ruksattu, vain rivit jotka näkyvät suodattimen jälken tallennetaan. Muutoin kaikki rivit tallennetaan."
       only_visible_cols_checkbox: "Vain näkyvät sarakkeet"
       only_visible_cols_title: "Jos ruksattu, vain valitut sarakkeet tallennetaan. Muutoin kaikki sarakkeet tallennetaan."
     rows:
@@ -851,8 +857,10 @@ fi:
       devices: Tulostusoikeus laitteen mukaan
       device_header_text: "Tulostaminen on sallittu seuraavilta yksittäisiltä laitteilta:"
       device_footer_text: Laitekohtaiset tulostusoikeudet asetetaan laitteen tiedoista
-      select_all: "Valitse kaikki"
-      deselect_all: "Epävalitse kaikki"
+      filter: "Nimen/lyhenteen regexp-suodatus"
+      select_all: "Valitse kaikki näkyvät ryhmät"
+      deselect_all: "Epävalitse kaikki näkyvät ryhmät"
+      help: "Suodatus toimii regexp-lausekkeilla. Jos lauseke ei ole kunnollinen, piirretään syötelaatikon reunat punaisella eikä suodatusta tehdä. Voit tehdä massavalintoja pitämällä Shift-näppäintä pohjassa samalla kun klikkaat <strong>valintalaatikoita</strong> (tämä on tärkeä!). Kaikki edellisen klikatun kohdan ja viimeksi klikatun väliltä asetetaan siihen arvoon missä ensin klikattu on. Pois suodatetut rivit jätetään pois myös massavalinnoista."
 
   # Organisation and school desktop image statistics
   image_statistics:
@@ -1007,6 +1015,7 @@ fi:
       mfa_enabled: "Käyttäjällä on kaksivaiheinen kirjautuminen päällä."
       user_is_an_organisation_owner: "Käyttäjä on organisaation omistajissa"
       user_is_a_school_admin: "Käyttäjä on koulun \"%{school_name}\" ylläpitäjissä"
+      user_is_a_school_admin_error: "Virheellinen koulun ylläpitäjäviittaus \"%{school_dn}\""
       schools: "Koulut"
       primary_school: "(pääkoulu)"
       verified_email: "vahvistettu"
@@ -1016,6 +1025,13 @@ fi:
       user_deletion_prevented: "Käyttäjän poisto on estetty"
       user_devices: Käyttäjän laitteet
       user_licenses: "Lisenssit"
+      user_citrix_license:
+        title: "Citrix-lisenssi"
+        created: "Luotu"
+        last_used: "Viimeksi käytetty"
+        first_name: "Etunimi"
+        last_name: "Sukunimi"
+        username: "Käyttäjänimi"
       lock: "Lukitse tunnus"
       unlock: "Avaa tunnuksen lukitus"
       mark_for_removal: Merkitse poistettavaksi
@@ -1523,6 +1539,15 @@ fi:
           school_title: "Uusi koulu:"
           no_other_schools: "Tässä organisaatiossa ei ole muita kouluja mihin voisit siirtää laitteita."
           no_other_schools_alert: "Muita kouluja ei ole. Toimintoa ei voi suorittaa."
+        tags:
+          warning: "Tämä työkalu lisää ja poistaa yksittäisiä tageja koskematta muihin tageihin. Jos haluat poistaa tai vaihtaa kaikki tagit kerralla, valitse Operaatio-listasta <em>\"Aseta tietokannan kentän arvo..\"</em> ja sieltä <em>\"Tagit (korvaa kaikki)\"</em>."
+          title: "Tagieditori"
+          tag: "Tagit:"
+          action: "Toiminto:"
+          help: "Anna yksi tai useampi tagi välilyönneillä eroteltuna. Ylimääräiset välilyönnit poistetaan automaattisesti (mukaanlukien alusta ja lopusta)."
+          add: "Lisää tagi(t)"
+          remove: "Poista tagi(t)"
+          empty_tag: "Tagikenttä ei saa olla tyhjä"
         puavoconf:
           json_warning: "Tämä työkalu lisää, poistaa ja muokkaa <strong>yksittäisiä</strong> PuavoConf-arvoja. Jos haluat korvata ne kaikki yhdellä kertaa ja ne ovat sinulla valmiina JSON-muodossa, valitse Operaatio-listasta <em>\"Aseta tietokannan kentän arvo...\"</em> ja sieltä <em>\"PuavoConf (korvaa kaikki)\"</em>. Se antaa sinun ylikirjoittaa laitteen kaikki puavoconf -arvot yhdellä kertaa halutuiksi.<br><br>"
           title: "PuavoConf-muokkaus..."

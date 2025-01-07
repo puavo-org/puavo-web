@@ -1477,6 +1477,70 @@ class MassDevicePuavoconfEditor extends ST.MassOperation {
     }
 };
 
+// Mass tags editor
+class MassDeviceTagsEditor extends ST.MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+
+        this.tags = "";
+        this.action = "add";
+    }
+
+    buildInterface()
+    {
+        this.container.innerHTML =
+`<p class="margin-0 padding-0"><%= t('devices.index.mass_operations.tags.warning').html_safe %></p>
+<table class="settingsChild">
+<tr>
+    <th><label for="tags_tag"><%= t('devices.index.mass_operations.tags.tag') %></label></th>
+    <td>
+        <input type="text" id="tags_tag" size="50">
+        <p class="validityWarning margin-0 padding-0"><%= t('devices.index.mass_operations.tags.help') %></p>
+    </td>
+</tr>
+<tr>
+    <th><%= t('devices.index.mass_operations.tags.action') %></th>
+    <td>
+        <div class="flex-rows">
+            <label><input type="radio" name="tags_action" id="action_add" checked><%= t('devices.index.mass_operations.tags.add') %></label>
+            <label><input type="radio" name="tags_action" id="action_remove"><%= t('devices.index.mass_operations.tags.remove') %></label>
+        </div>
+    </td>
+</tr>
+</table>`;
+
+        // Setup event handling
+        this.container.querySelector("#tags_tag").addEventListener("input", e => this.tags = e.target.value.trim());
+        this.container.querySelector("#action_add").addEventListener("click", () => this.action = "add");
+        this.container.querySelector("#action_remove").addEventListener("click", () => this.action = "remove");
+    }
+
+    canProceed()
+    {
+        if (this.tags.length == 0) {
+            window.alert("<%= t('devices.index.mass_operations.tags.empty_tag') %>");
+            return false;
+        }
+
+        return true;
+    }
+
+    getOperationParameters()
+    {
+        return {
+            tags: this.tags,
+            type: this.type,
+            action: this.action
+        };
+    }
+
+    prepareItem(item)
+    {
+        return { state: "ready" };
+    }
+};
+
 <% unless @is_servers %>
 // Mass tool: move device to another school
 class MassDeviceChangeSchool extends ST.MassOperation {
@@ -1661,6 +1725,12 @@ const MASS_OPERATIONS = [
         title: "<%= t('devices.index.mass_operations.puavoconf.title') %>",
         haveSettings: true,
         cls: MassDevicePuavoconfEditor
+    },
+    {
+        operation: "tags_edit",
+        title: "<%= t('devices.index.mass_operations.tags.title') %>",
+        haveSettings: true,
+        cls: MassDeviceTagsEditor
     },
 <% unless @is_servers %>
     {

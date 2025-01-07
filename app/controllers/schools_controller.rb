@@ -219,6 +219,11 @@ class SchoolsController < ApplicationController
       can_delete = false
     end
 
+    # Remove school admins
+    User.find(:all, attribute: 'puavoAdminOfSchool', value: @school.dn).each do |user|
+      @school.remove_admin(user)
+    end
+
     respond_to do |format|
       if !can_delete
         flash[:alert] = t('flash.school.destroyed_failed')

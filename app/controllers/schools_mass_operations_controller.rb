@@ -19,6 +19,10 @@ class SchoolsMassOperationsController < MassOperationsController
           # This comes from Puavo::CommonShared
           puavoconf_edit(School.find(id))
 
+        when 'tags_edit'
+          # This comes from Puavo::CommonShared
+          tags_edit(School.find(id))
+
         else
           next false, "Unknown operation \"#{@operation}\""
       end

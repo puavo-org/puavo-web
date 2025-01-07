@@ -36,19 +36,22 @@
     <legend><%= t('.groups') %></legend>
 
     <% unless @school.groups.empty? %>
+    <p class="margin-top-0"><%= t('.help').html_safe %></p>
+
     <div class="flex-cols gap-10px margin-bottom-10px">
+      <input type="search" id="groupFilter" placeholder="<%= t('.filter') %>" maxlength="30" size="40" autocomplete="off">
       <button type="button" id="selectAll"><%= t('.select_all') %></button>
       <button type="button" id="deselectAll"><%= t('.deselect_all') %></button>
     </div>
     <% end %>
 
     <ul class="noBullets">
-      <% @school.groups.sort { |a, b| a.displayName.downcase <=> b.displayName.downcase }.each do |group| %>
-      <li>
+      <% @school.groups.sort { |a, b| a.displayName.downcase <=> b.displayName.downcase }.each_with_index do |group, index| %>
+      <li class="group" data-name="<%= group.displayName.downcase %>" data-abbr="<%= group.cn %>" }>
         <label>
           <%= hidden_field_tag "groups[#{ group.dn }]", false %>
           <%= check_box_tag "groups[#{ group.dn }]", true, group.has_printer?(@printer) %>
-          <%= group.displayName %> (<%= group.cn %>) <small><%= h humanize_group_type(group.puavoEduGroupType) %></small>
+          <span><%= group.displayName %> (<%= group.cn %>) <small><%= h humanize_group_type(group.puavoEduGroupType) %></small></span>
         </label>
       </li>
       <% end %>
@@ -99,14 +102,80 @@
 
 <% unless @school.groups.empty? %>
 <script>
+const allCheckboxes = Array.from(document.querySelectorAll(`fieldset.groups input[type="checkbox"]`));
+let previous = null;
+
 function selectAllGroups(state)
 {
-    // Must use input[type="checkbox"] here, otherwise we'll select the hidden elements too
-    for (let cb of document.querySelectorAll(`fieldset.groups input[type="checkbox"]`))
-        cb.checked = state;
+    for (const row of document.querySelectorAll("fieldset.groups li.group")) {
+        if (row.classList.contains("hidden"))
+            continue;
+
+        row.querySelector(`input[type="checkbox"]`).checked = state;
+    }
+
+    previous = null;
 }
 
+function filterGroups(e)
+{
+    let matcher = null;
+    let valid = false;
+
+    try {
+        matcher = new RegExp(e.target.value.trim(), 'i');
+        valid = true;
+    } catch (e) {
+    }
+
+    document.querySelector("input#groupFilter").classList.toggle("invalidRegexp", !valid);
+
+    for (const cb of document.querySelectorAll("fieldset.groups li.group")) {
+        if (!valid) {
+            cb.classList.remove("hidden");
+            continue;
+        }
+
+        cb.classList.toggle("hidden", !(cb.dataset.name.match(matcher) || cb.dataset.abbr.match(matcher)));
+    }
+
+    previous = null;
+}
+
+// Range select/deselect
+function onCheckboxClick(e)
+{
+    if (!previous || !event.shiftKey) {
+        previous = e.target;
+        return;
+    }
+
+    const prev = allCheckboxes.indexOf(previous),
+          now = allCheckboxes.indexOf(e.target);
+
+    const start = Math.min(now, prev),
+          end = Math.max(now, prev);
+
+    const state = previous.checked;
+
+    for (let i = start; i <= end; i++) {
+        // Ignore hidden rows
+        if (allCheckboxes[i].closest("li").classList.contains("hidden"))
+            continue;
+
+        allCheckboxes[i].checked = state;
+    }
+
+    previous = e.target;
+}
+
+// Setup events
+document.querySelector("input#groupFilter").addEventListener("input", e => filterGroups(e));
 document.querySelector("button#selectAll").addEventListener("click", () => selectAllGroups(true));
 document.querySelector("button#deselectAll").addEventListener("click", () => selectAllGroups(false));
+
+for (const cb of allCheckboxes)
+    cb.addEventListener("click", e => onCheckboxClick(e));
+
 </script>
 <% end %>

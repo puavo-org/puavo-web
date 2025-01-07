@@ -150,6 +150,9 @@ class ApplicationController < ActionController::Base
   def convert_timestamp(t)
     t.localtime.strftime('%Y-%m-%d %H:%M:%S') rescue '?'
   end
+  def convert_timestamp_pick_date(t)
+    t.localtime.strftime('%Y-%m-%d') rescue '?'
+  end
 
   def password_management_host
     url = "http://" +
@@ -203,8 +206,8 @@ class ApplicationController < ActionController::Base
     unless school_id.nil?
       begin
         @school = School.find(school_id)
-      rescue
-        logger.info "Incorrect school id! Redirected..."
+      rescue StandardError => e
+        logger.error "Incorrect school id! Redirected..."
         flash[:alert] = t('flash.invalid_school_id')
         redirect_to schools_path
       end

@@ -14,20 +14,20 @@
 /* A generic missing/unset information indicator for data that isn't
    always required to be present, but what really should be set */
 .missingData {
-  color: $missingDataFore;
+  color: var(--missing-data);
 }
 
 /* Buttons, links and areas that are only visible to organisation owners */
 .ownersOnly {
-  border: 1px dashed $ownersOnlyBorder;
+  border: 1px dashed var(--owners-only);
 }
 
 .ownersOnlyTop {
-  border: 1px dashed $ownersOnlyBorder !important;
+  border: 1px dashed var(--owners-only) !important;
 }
 
 .adminOrOwner {
-  color: $adminOwner;
+  color: var(--admin-owner);
 }
 
 /* Wraps everything on the page below the topmenu */
@@ -49,14 +49,13 @@
 /* School name, integrations */
 #schoolHeader {
   padding: 10px;
-  background: $schoolHeaderBack;
 
   @media #{$screen-breakpoint-one} {
     margin: 0;
   }
 
   #schoolName {
-    color: $schoolNameFore;
+    color: var(--body-fore);
     font-size: 250%;
     font-weight: bold;
     font-variant: small-caps;
@@ -72,8 +71,8 @@
 
 /* Page contents below the in-page tab bar */
 #content {
-  background: $pageContentBack;
-  color: $pageContentFore;
+  background: var(--page-content-back);
+  color: var(--page-content-fore);
   margin: 0;
   padding: 20px;
   position: relative;
@@ -107,20 +106,20 @@
 #content, .searchResultsBox {
   /* A generic link */
   a {
-    color: $linkFore;
-    background: $linkBack;
+    color: var(--link-fore);
+    background: var(--link-back);
     font-weight: bold;
   }
 
   a:hover {
-    color: $linkHoverFore;
-    background: $linkHoverBack;
+    color: var(--link-fore-hover);
+    background: var(--link-back-hover);
     text-decoration: none;
   }
 
   a:focus {
-    color: $linkFocusFore;
-    background: $linkFocusBack;
+    color: var(--link-focus-fore);
+    background: var(--link-focus-back);
   }
 
   /* Hyperlinks styled as buttons */
@@ -130,54 +129,54 @@
     margin: 2px;
     border-width: 2px;
     border-style: solid;
-    border-color: $buttonBorderHi $buttonBorderLo $buttonBorderLo $buttonBorderHi;
-    background: $buttonBack;
-    color: $buttonFore;
+    border-color: var(--button-border-hi) var(--button-border-lo) var(--button-border-lo) var(--button-border-hi);
+    background: var(--button-back);
+    color: var(--button-fore);
     text-decoration: none;
     font-weight: normal;
     cursor: pointer;
   }
 
   .btn:hover, .btn:focus {
-    background: $buttonHoverBack;
-    color: $buttonFore;
+    background: var(--button-back-hover);
+    color: var(--button-fore);
   }
 
   .btn:active {
-    border-color: $buttonBorderLo $buttonBorderHi $buttonBorderHi $buttonBorderLo;
-    background: $buttonHoverBack;
-    color: $buttonFore;
+    border-color: var(--button-border-lo) var(--button-border-hi) var(--button-border-hi) var(--button-border-lo);
+    background: var(--button-back-hover);
+    color: var(--button-fore-hover);
   }
 
   .btn-danger {
-    border-color: $buttonDangerBorderHi $buttonDangerBorderLo $buttonDangerBorderLo $buttonDangerBorderHi;
-    background: $buttonDangerBack;
-    color: $buttonDangerFore;
+    border-color: var(--button-danger-border-hi) var(--button-danger-border-lo) var(--button-danger-border-lo) var(--button-danger-border-hi);
+    background: var(--button-danger-back);
+    color: var(--button-danger-fore);
   }
 
   .btn-danger:hover, .btn-danger:focus {
-    background: $buttonDangerHoverBack;
-    color: $buttonDangerFore;
+    background: var(--button-danger-back-hover);
+    color: var(--button-danger-fore);
   }
 
   .btn-danger:active {
-    border-color: $buttonDangerBorderLo $buttonDangerBorderHi $buttonDangerBorderHi $buttonDangerBorderLo;
-    background: $buttonDangerHoverBack;
-    color: $buttonDangerFore;
+    border-color: var(--button-danger-border-lo) var(--button-danger-border-hi) var(--button-danger-border-hi) var(--button-danger-border-lo);
+    background: var(--button-danger-back-hover);
+    color: var(--button-danger-fore);
   }
 
   /* Disabled buttons */
   .btn:disabled, .btn:disabled:hover, .btn:active:disabled, .btn:focus:disabled {
-    border-color: $buttonBorderHi $buttonBorderLo $buttonBorderLo $buttonBorderHi;
-    color: $buttonForeDisabled;
-    background: $buttonBack;
+    border-color: var(--button-border-hi) var(--button-border-lo) var(--button-border-lo) var(--button-border-hi);
+    color: var(--button-fore-disabled);
+    background: var(--button-back);
     cursor: not-allowed;
   }
 
   .btn-danger:disabled, .btn-danger:disabled:hover, .btn-danger:active:disabled, .btn-danger:focus:disabled {
-    border-color: $buttonDangerBorderHi $buttonDangerBorderLo $buttonDangerBorderLo $buttonDangerBorderHi;
-    background: $buttonDangerBack;
-    color: $buttonDangerForeDisabled;
+    border-color: var(--button-danger-border-hi) var(--button-danger-border-lo) var(--button-danger-border-lo) var(--button-danger-border-hi);
+    background: var(--button-danger-back);
+    color: var(--button-danger-fore-disabled);
     cursor: not-allowed;
   }
 }
@@ -185,8 +184,8 @@
 /* Server and git commit infos */
 footer {
   display: block;
-  color: $footerFore;
-  border-top: 1px solid $footerBorder;
+  color: var(--footer-fore);
+  border-top: 1px solid var(--footer-border);
   text-align: right;
   font-size: 70%;
   margin: 0;

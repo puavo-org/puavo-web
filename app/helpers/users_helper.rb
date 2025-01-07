@@ -32,6 +32,7 @@ module UsersHelper
       'puavoLocked',
       'createTimestamp',
       'modifyTimestamp',
+      'authTimestamp',
       'puavoSchool',
       'puavoEduPersonPrimarySchool',
       'puavoLearnerId',
@@ -112,6 +113,10 @@ module UsersHelper
 
     if raw.include?('puavoEduPersonPersonnelNumber')
       out[:pnumber] = raw['puavoEduPersonPersonnelNumber'][0]
+    end
+
+    if raw.include?('authTimestamp')
+      out[:last_ldap_auth_date] = Puavo::Helpers::convert_ldap_time_pick_date(raw['authTimestamp'])
     end
 
     if raw.include?('createTimestamp')

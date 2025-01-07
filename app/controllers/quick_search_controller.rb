@@ -3,69 +3,162 @@ class QuickSearchController < ApplicationController
 
   # GET /quick_search?words=Williams
   def index
-    words = params[:query]
+    words = params[:query].split(' ').map { |q| Net::LDAP::Filter.escape(q) }
 
+    # Search results
     @users = []
     @groups = []
     @devices = []
+    @servers = []
+
+    # Schools lookup
+    @schools_cache = {}
+
+    is_owner = current_user.organisation_owner?
+    admin_schools = Array(current_user.puavoAdminOfSchool).map { |dn| puavoid_from_dn(dn.to_s) }.to_set
 
     begin
+      # Users. User searches can have multiple words.
+      # ACLs prevent admins from seeing users from schools they're not an admin of.
+      filter_parts = words.collect { |w| "(|(givenName=*#{w}*)(sn=*#{w}*)(uid=*#{w}*))" }
 
-      # Users search
-      @users = User.words_search_and_sort_by_name(
-        ["sn", "givenName", "uid"],
-        lambda{ |v| "#{v['sn'].first} #{v['givenName'].first}" },
-        lambda { |w| "(|(givenName=*#{w}*)(sn=*#{w}*)(uid=*#{w}*))" },
-        words )
+      User.search_as_utf8(
+        scope: :one,
+        filter: "(&#{filter_parts.join})",
+        attributes: ['puavoId', 'givenName', 'sn', 'uid', 'puavoEduPersonPrimarySchool']
+      ).collect do |u|
+        u = u[1]
 
-      # Groups search
-      @groups = Group.words_search_and_sort_by_name(
-        ['displayName', 'cn'],
-        'displayName',
-        lambda { |w| "(|(displayName=*#{w}*)(cn=*#{w}*))" },
-        words )
+        name = "#{u['sn'][0]}, #{u['givenName'][0]}"
+        id = u['puavoId'][0]
+        school_id = puavoid_from_dn(u['puavoEduPersonPrimarySchool'][0])
+        cache_school(@schools_cache, school_id)
+
+        @users << {
+          id: id,
+          name: name,
+          uid: u['uid'][0],
+          sortable_name: name.downcase,
+          school_id: school_id,
+          link: "/users/#{school_id}/users/#{id}",
+        }
+      end
+
+      @users.sort! { |a, b| a[:sortable_name] <=> b[:sortable_name] }
+
+      # Groups
+      Group.search_as_utf8(
+        scope: :one,
+        filter: "(&(|(displayName=*#{words[0]}*)(cn=*#{words[0]}*)))",
+        attributes: ['puavoId', 'displayName', 'cn', 'puavoSchool']
+      ).each do |g|
+        g = g[1]
+
+        id = g['puavoId'][0]
+        school_id = puavoid_from_dn(g['puavoSchool'][0])
+
+        next unless is_owner || admin_schools.include?(school_id)
+
+        cache_school(@schools_cache, school_id)
+
+        @groups << {
+          id: id,
+          name: g['displayName'][0],
+          sortable_name: g['displayName'][0].downcase,
+          abbreviation: g['cn'][0],
+          school_id: school_id,
+          link: "/users/#{school_id}/groups/#{id}"
+        }
+      end
+
+      @groups.sort! { |a, b| a[:sortable_name] <=> b[:sortable_name] }
 
       # Devices search
-      @devices = Device.words_search_and_sort_by_name(
-        ['puavoHostname'],
-        'puavoHostname',
-        lambda { |w| "(cn=*#{w}*)" },
-        words )
+      Device.search_as_utf8(
+        scope: :one,
+        filter: "(puavoHostname=*#{words[0]}*)",
+        attributes: ['puavoId', 'puavoHostname', 'puavoSchool']
+      ).each do |d|
+        d = d[1]
 
-      @devices.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
+        # ACLs prevent users from seeing the school attribute if they're not an admin
+        # in that school
+        next unless d.include?('puavoSchool')
 
-      # Bootservers search
-      @servers = Server.words_search_and_sort_by_name(
-        ['puavoHostname'],
-        'puavoHostname',
-        lambda { |w| "(cn=*#{w}*)" },
-        words )
+        id = d['puavoId'][0]
+        school_id = puavoid_from_dn(d['puavoSchool'][0])
+        cache_school(@schools_cache, school_id)
 
-      @servers.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
-
-      @schools = Hash.new
-      School.search_as_utf8( :scope => :one,
-                     :attributes => ["puavoId", "displayName"] ).map do |dn, v|
-        @schools[v["puavoId"].first] = v["displayName"].first
+        @devices << {
+          id: id,
+          name: d['puavoHostname'][0],
+          school_id: school_id,
+          link: "/devices/#{school_id}/devices/#{id}"
+        }
       end
 
-      # I don't know how "words_search_and_sort_by_name" sorts, but it
-      # doesn't seem to work
-      @users.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
-      @groups.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
+      @devices.sort! { |a, b| a[:name] <=> b[:name] }
+
+      # Bootservers search (owners only)
+      if is_owner
+        Server.search_as_utf8(
+          scope: :one,
+          filter: "(puavoHostname=*#{words[0]}*)",
+          attributes: ['puavoId', 'puavoHostname']
+        ).each do |s|
+          s = s[1]
+
+          id = s['puavoId'][0]
+
+          @servers << {
+            id: id,
+            name: s['puavoHostname'][0],
+            link: "/devices/servers/#{id}"
+          }
+        end
+
+        @servers.sort! { |a, b| a[:name] <=> b[:name] }
+      end
 
       respond_to do |format|
-        if @users.length == 0 && @groups.length == 0 && @devices.length == 0 && @servers.length == 0
-          format.html { render :inline => "<p>#{t('search.no_matches')}</p>" }
+        if @users.empty? && @groups.empty? && @devices.empty? && @servers.empty?
+          format.html { render inline: "<p>#{t('search.no_matches')}</p>" }
         else
-          format.html # index.html.erb
+          format.html   # index.html.erb
         end
       end
-
     rescue StandardError => e
-      render :inline => "<p class=\"searchError\">#{t('search.failed')}</p>"
+      puts e
+      render inline: "<p class=\"searchError\">#{t('search.failed')}</p>"
     end
-
   end
 
+private
+
+  # TODO: There are multiple similar methods like this scattered everywhere in the codebase.
+  # Merge them.
+  def puavoid_from_dn(dn)
+    dn.match(/^puavoId=([^,]+)/).to_a[1]
+  end
+
+  def cache_school(cache, id)
+    return if cache.include?(id)
+
+    s = School.search_as_utf8(
+      scope: :one,
+      filter: "(puavoId=#{id})",
+      attributes: ['displayName'])
+
+    if s.nil? || s.empty?
+      cache[id] = {
+        name: '?',
+        link: '',
+      }
+    else
+      cache[id] = {
+        name: s[0][1]['displayName'][0],
+        link: "/users/schools/#{id}",
+      }
+    end
+  end
 end

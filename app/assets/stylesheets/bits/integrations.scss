@@ -17,7 +17,7 @@
     margin: 2px 5px 2px 0;
     padding: 5px 10px;
     border-radius: 5px;
-    border: 1px solid $integrationsBorder;
+    border: 1px solid var(--integrations-border);
     white-space: nowrap;
     display: inline;
   }
@@ -39,8 +39,8 @@
 
   /* This system sends data to puavo */
   .in {
-    background: $integrationsInBack;
-    color: $integrationsInFore;
+    background: var(--integrations-in-back);
+    color: var(--integrations-in-fore);
 
     span:after {
       content: "\e829";
@@ -49,8 +49,8 @@
 
   /* Puavo sends data to this system */
   .out {
-    background: $integrationsOutBack;
-    color: $integrationsOutFore;
+    background: var(--integrations-out-back);
+    color: var(--integrations-out-fore);
 
     span:after {
       content: "\e829";
@@ -59,8 +59,8 @@
 
   /* Data flows in both directions between this system and puavo */
   .inout {
-    background: $integrationsInOutBack;
-    color: $integrationsInOutFore;
+    background: var(--integrations-inout-back);
+    color: var(--integrations-inout-fore);
 
     span:after {
       content: "\e819";
@@ -69,8 +69,8 @@
 
   /* This system uses Puavo as an SSO provider */
   .login {
-    background: $integrationsLoginBack;
-    color: $integrationsLoginFore;
+    background: var(--integrations-login-back);
+    color: var(--integrations-login-fore);
   }
 
   .login:before {
@@ -82,8 +82,8 @@
 
   /* Passwords synchronisation between Puavo and this system */
   .password {
-    background: $integrationsPasswordBack;
-    color: $integrationsPasswordFore;
+    background: var(--integrations-password-back);
+    color: var(--integrations-password-fore);
   }
 
   .password:before {
@@ -93,8 +93,8 @@
   }
 
   .email {
-    background: $integrationsEmailBack;
-    color: $integrationsEmailFore;
+    background: var(--integrations-email-back);
+    color: var(--integrations-email-fore);
   }
 
   .email:before {
@@ -105,8 +105,8 @@
 
   /* Some other type of integration */
   .other {
-    background: $integrationsOtherBack;
-    color: $integrationsOtherFore;
+    background: var(--integrations-other-back);
+    color: var(--integrations-other-fore);
   }
 
   .other:before {
@@ -125,7 +125,7 @@
   li {
     padding: 2px 5px;
     line-height: 2;
-    border: 1px solid $integrationsBorder;
+    border: 1px solid var(--integrations-border);
     white-space: nowrap;
     display: inline;
   }

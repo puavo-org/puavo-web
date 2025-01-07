@@ -7,11 +7,15 @@ import { ColumnType, INDEX_FILTERABLE } from "./constants.js";
 import { JAVASCRIPT_TIME_GRANULARITY } from "./utils.js";
 
 // Exports the data in columns, delimited by a single character
-function storeAsColumns(data, source, columns, timeColumns, separator, output)
+function storeAsColumns(data, source, columns, timeColumns, separator, onlySelected, output)
 {
     for (const rowIndex of source) {
         const row = data.transformed[rowIndex];
         let out = [];
+
+        if (onlySelected)
+            if (!data.selectedItems.has(row.id[INDEX_FILTERABLE]))
+                continue;
 
         for (const col of columns) {
             if (!(col in row) || row[col][INDEX_FILTERABLE] === null || row[col][INDEX_FILTERABLE] === undefined) {
@@ -31,7 +35,8 @@ function storeAsColumns(data, source, columns, timeColumns, separator, output)
 function _doExport(format, data, allColumns, prefix)
 {
     try {
-        const visibleRows = modalPopup.getContents().querySelector("input#only-visible-rows").checked,
+        const onlySelected = modalPopup.getContents().querySelector("input#only-selected-rows").checked,
+              visibleRows = modalPopup.getContents().querySelector("input#only-visible-rows").checked,
               visibleCols = modalPopup.getContents().querySelector("input#only-visible-cols").checked;
 
         let source = null;
@@ -69,7 +74,7 @@ function _doExport(format, data, allColumns, prefix)
             case "csv":
             default:
                 output.push(headers.join(";"));
-                storeAsColumns(data, source, columns, timeColumns, ";", output);
+                storeAsColumns(data, source, columns, timeColumns, ";", onlySelected, output);
 
                 output = output.join("\n");
                 mimetype = "text/csv";
@@ -78,7 +83,7 @@ function _doExport(format, data, allColumns, prefix)
 
             case "tsv":
                 output.push(headers.join("\t"));
-                storeAsColumns(data, source, columns, timeColumns, "\t", output);
+                storeAsColumns(data, source, columns, timeColumns, "\t", onlySelected, output);
 
                 output = output.join("\n");
                 mimetype = "text/tab-separated-values";
@@ -89,6 +94,10 @@ function _doExport(format, data, allColumns, prefix)
                 for (const rowIndex of source) {
                     const row = data.transformed[rowIndex];
                     let out = {};
+
+                    if (onlySelected)
+                        if (!data.selectedItems.has(row.id[INDEX_FILTERABLE]))
+                            continue;
 
                     for (let i = 0; i < columns.length; i++) {
                         const col = columns[i];
@@ -129,13 +138,15 @@ function _doExport(format, data, allColumns, prefix)
     }
 }
 
-export function openPopup(event, data, columns, prefix)
+export function openPopup(event, data, columns, prefix, enableSelection)
 {
     const template = getTemplate("exportPopup");
 
     template.querySelector(`button#btnCSV`).addEventListener("click", () => _doExport("csv", data, columns, prefix));
     template.querySelector(`button#btnTSV`).addEventListener("click", () => _doExport("tsv", data, columns, prefix));
     template.querySelector(`button#btnJSON`).addEventListener("click", () => _doExport("json", data, columns, prefix));
+
+    template.querySelector(`input#only-selected-rows`).disabled = !enableSelection;
 
     if (modalPopup.create()) {
         modalPopup.getContents().appendChild(template);

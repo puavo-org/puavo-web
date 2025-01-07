@@ -40,7 +40,6 @@ require_relative "./resources/hosts"
 require_relative "./resources/device_images"
 require_relative "./resources/password"
 require_relative "./resources/email_verification"
-require_relative "./resources/mfa_management"
 require_relative "./resources/user_lists"
 require_relative "./resources/certs"
 require_relative "./resources/external_login"
@@ -48,12 +47,12 @@ require_relative "./resources/bootserver_dns"
 require_relative "./resources/my_school_users"
 require_relative './resources/openidconnect'
 
-if CONFIG['citrix']
-  require_relative './resources/citrix'
+if CONFIG['mfa_management']
+  require_relative './resources/mfa_management'
 end
 
-if ENV.include?('ENABLE_ELTERN_SSO')
-require_relative "./resources/eltern"
+if CONFIG['citrix']
+  require_relative './resources/citrix'
 end
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys

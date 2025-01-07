@@ -20,7 +20,11 @@
 
     <% unless @admin_in_schools.empty? %>
     <% @admin_in_schools.each do |s| %>
-    <p class="infoNotice"><%= t('.user_is_a_school_admin', :school_name => s.displayName) %></p>
+    <% if s[:valid] %>
+    <p class="infoNotice"><%= t('.user_is_a_school_admin', school_name: s[:name]) %></p>
+    <% else %>
+    <p class="infoError"><%= t('.user_is_a_school_admin_error', school_dn: s[:dn]) %></p>
+    <% end %>
     <% end %>
     <% end %>
 
@@ -206,6 +210,46 @@
       <% end %>
       <% end %>
     </td>
+  </tr>
+
+  <% if @citrix_license %>
+  <tr>
+    <th><%= t('.user_citrix_license.title') %></th>
+    <td>
+      <table>
+        <tr>
+          <th><%= t('.user_citrix_license.created') %></th>
+          <td><%= @citrix_license.include?('created') ? Time.parse(@citrix_license['created']).localtime.strftime('%Y-%m-%d %H:%M:%S') : '?' %></td>
+        </tr>
+        <tr>
+          <th><%= t('.user_citrix_license.last_used') %></th>
+          <td><%= @citrix_license.include?('last_used') ? Time.parse(@citrix_license['last_used']).localtime.strftime('%Y-%m-%d %H:%M:%S') : '?' %></td>
+        </tr>
+        <tr>
+          <th><%= t('.user_citrix_license.first_name') %></th>
+          <td><%= h @citrix_license['first_name'] %></td>
+        </tr>
+        <tr>
+          <th><%= t('.user_citrix_license.last_name') %></th>
+          <td><%= h @citrix_license['last_name'] %></td>
+        </tr>
+        <tr>
+          <th><%= t('.user_citrix_license.username') %></th>
+          <td><%= h @citrix_license['username'] %></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <% end %>
+
+  <tr>
+    <th><%= t('last_kerberos_auth_date') %></th>
+    <td class="noWrap"><%= h @user.kerberos_last_successful_auth %></td>
+  </tr>
+
+  <tr>
+    <th><%= t('last_ldap_auth_date') %></th>
+    <td class="noWrap"><%= h @user['authTimestamp'] %></td>
   </tr>
 
   <tr>

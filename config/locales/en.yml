@@ -186,6 +186,8 @@ en:
   destroy_confirm_admin: "This user is an owner and/or a school admin. Are you sure?"
   destroy_generic_sync_warning: "Deletions will potentially be synchronised to one or more external systems.\nAre you sure you want to continue?"
   destroy_exact_sync_warning: "The user will also be removed from these external systems:\n\n\tSYSTEM_NAMES_HERE\n\nPlease verify that this is what you intended to do."
+  last_kerberos_auth_date: Last login date (Kerberos)
+  last_ldap_auth_date: Last login date (LDAP)
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
   actions: Actions
@@ -237,6 +239,8 @@ en:
     tags: "Tags"
     description: "Description"
     notes: "Notes"
+    last_kerberos_auth_date: "Last login date (Kerberos)"
+    last_ldap_auth_date: "Last login date (LDAP)"
 
     schools:
       integrations: "Integrations"
@@ -477,8 +481,10 @@ en:
       top_button: "Export"
       title: "Export the table contents to a file"
       settings: "Settings"
-      only_visible_rows_checkbox: "Only visible rows"
-      only_visible_rows_title: "If checked, only the rows that aren't filtered will be exported. Otherwise all rows are exported."
+      only_selected_rows_checkbox: "Only selected rows"
+      only_selected_rows_title: "If checked, only the rows that are currently selected will be exported. This has no effect if the current table does not allow selecting rows."
+      only_visible_rows_checkbox: "Only rows visible after filtering"
+      only_visible_rows_title: "If checked, only the rows that are visible after filtering will be exported. Otherwise all rows are exported."
       only_visible_cols_checkbox: "Only visible columns"
       only_visible_cols_title: "If checked, only the currently selected columns will be exported. Otherwise all columns are exported."
     rows:
@@ -851,8 +857,10 @@ en:
       devices: Printer usage permissions by device
       device_header_text: "Printer is allowed for the these devices:"
       device_footer_text: "Printers for devices are set from the device edit page."
-      select_all: "Select all"
-      deselect_all: "Deselect all"
+      filter: "Name/abbreviation regexp filter"
+      select_all: "Select all visible groups"
+      deselect_all: "Deselect all visible groups"
+      help: "The filtering works with regexp clauses. If the clause isn't valid, the input box borders are drawn on red and filtering is not done. You can perform mass range selections by holding down the Shift key while clicking on the <strong>checkboxes</strong> (this is important!). Everything between the previously clicked item and the last clicked item will be set to the same state the previous item is. Rows hidden by the filter are ignored in mass selections."
 
   # Organisation and school desktop image statistics
   image_statistics:
@@ -1007,6 +1015,7 @@ en:
       mfa_enabled: "This user has multifactor authentication enabled."
       user_is_an_organisation_owner: "The user is an owner of this organisation"
       user_is_a_school_admin: "This user is an administrator of the school \"%{school_name}\""
+      user_is_a_school_admin_error: "Invalid school administrator reference \"%{school_dn}\""
       schools: "Schools"
       primary_school: "(primary school)"
       verified_email: "verified"
@@ -1016,6 +1025,13 @@ en:
       user_deletion_prevented: "This user cannot be deleted"
       user_devices: User devices
       user_licenses: "Licenses"
+      user_citrix_license:
+        title: "Citrix license"
+        created: "Created"
+        last_used: "Last used"
+        first_name: "First name"
+        last_name: "Last name"
+        username: "Username"
       lock: "Lock user"
       unlock: "Unlock user"
       mark_for_removal: Mark for deletion
@@ -1537,6 +1553,15 @@ en:
           type_int: "integer"
           type_bool: "bool"
           empty_key: "The key cannot be empty"
+        tags:
+          warning: "This tool adds and removes tags without touching the other tags. If you need to remove or replace all of them, select <em>\"Set database field value...\"</em> from the Operation list, then select <em>\"Tags (replace all)\"</em>."
+          title: "Tags editor"
+          tags: "Tags:"
+          action: "Action:"
+          help: "Enter one or more tags separated by at least one space. Extra spaces are automatically removed (including leading and trailing spaces)."
+          add: "Add tag(s)"
+          remove: "Remove tag(s)"
+          empty_tag: "The tags field cannot be empty"
         set_field:
           title: "Set database field value..."
           field: "Field:"

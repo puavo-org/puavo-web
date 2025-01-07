@@ -295,6 +295,6 @@ const ALL_PUAVOCONF = <%= raw JSON.pretty_generate(@full_puavoconf) %>;
 </script>
 
 <% content_for :javascript do %>
-<%= render partial: 'shared/copy_text.js' %>
-<%= render partial: 'shared/puavoconf_table.js', locals: { select: 'div.dashboard select#changeVisibleConfig', container: 'div.dashboard div.puavoConfOutput', type: 'sch' } %>
+<%= render partial: 'shared/copy_text', formats: [:js] %>
+<%= render partial: 'shared/puavoconf_table', formats: [:js], locals: { select: 'div.dashboard select#changeVisibleConfig', container: 'div.dashboard div.puavoConfOutput', type: 'sch' } %>
 <% end %>

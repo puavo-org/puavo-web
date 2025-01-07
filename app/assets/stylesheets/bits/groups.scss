@@ -5,48 +5,44 @@
 /* Mass group rename */
 .massGroupRenameTable th {
   text-align: left !important;
-  background: $groupRenameTableHeaderBack;
-}
-
-/* Course groups and year class groups when certain external integrations
-   are used in this school */
-.externallyMaintainedGroup {
-  color: $externallyMaintainedGroupFore;
-  background: $externallyMaintainedGroupBack;
+  background: #ccc;
 }
 
 input#groupMembersSearch {
   max-width: 30em;
 }
 
-#groupMembers {
-  p {
-    margin: 0 0 5px 0;
-  }
+#groupMembers p {
+  margin: 0 0 5px 0;
+}
 
-  #membersTable {
-    max-height: 1000px;
-    overflow-y: auto;
-  }
+#groupMembers #membersTable {
+  max-height: 1000px;
+  overflow-y: auto;
+}
 
-  th {
-    background: $listHeadingBack;
-    color: $listHeadingFore;
-  }
+#groupMembers th {
+  background: var(--list-heading-back);
+  color: var(--list-heading-fore);
+}
 
-  tr {
-    border-bottom: 1px solid $listRowBorder;
-    background: none;
-  }
+#groupMembers tr {
+  border-bottom: 1px solid var(--list-row-border);
+  background: none;
+}
 
-  tr:hover {
-    background: $listRowHoverBack;
-  }
+#groupMembers tr:hover {
+  background: var(--list-row-back-hover);
+}
 
-  tr:last-of-type {
-    border-bottom: none;
-  }
+#groupMembers tr:last-of-type {
+  border-bottom: none;
+}
 
-  .markedForDeletion:nth-child(even) { background-color: $markedForDeletionEvenRowBack !important; }
-  .markedForDeletion:nth-child(odd) { background-color: $markedForDeletionOddRowBack !important; }
+#groupMembers .markedForDeletion:nth-child(even) {
+  background: var(--group-member-marked-deletion-odd-back) !important;
+}
+
+#groupMembers .markedForDeletion:nth-child(odd) {
+  background: var(--group-member-marked-deletion-even-back) !important;
 }

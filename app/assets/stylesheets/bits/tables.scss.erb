@@ -29,20 +29,20 @@ table.shrinkHeadingColumn td {
 /* Lists of schools, users, devices, etc. */
 .list {
   width: 100%;
-  color: $listFore;
+  color: var(--list-fore);
 
   th {
-    background: $listHeadingBack;
-    color: $listHeadingFore;
-    border-top: 1px solid $listHeadingBorder;
-    border-left: 1px solid $listHeadingBorder;
-    border-bottom: 1px solid $listHeadingBorder;
+    background: var(--list-heading-back);
+    color: var(--list-heading-fore);
+    border-top: 1px solid var(--list-heading-border);
+    border-left: 1px solid var(--list-heading-border);
+    border-bottom: 1px solid var(--list-heading-border);
     padding: 10px;
     font-size: 100%;
   }
 
   tbody > tr:last-child {
-    border-bottom: 1px solid $listHeadingBorder;
+    border-bottom: 1px solid var(--list-heading-border);
   }
 
   th:first-of-type {
@@ -51,20 +51,20 @@ table.shrinkHeadingColumn td {
 
   tr {
     &:nth-child(odd) {
-      background: $listOddRowBack;
+      background: var(--list-odd-back);
     }
 
     &:nth-child(even) {
-      background: $listEvenRowBack;
+      background: var(--list-even-back);
     }
 
     &:hover {
-      background: $listRowHoverBack;
+      background: var(--list-row-back-hover);
     }
   }
 
   td {
-    border-left: 1px solid $listRowBorder;
+    border-left: 1px solid var(--list-row-border);
   }
 
   td:first-of-type {
@@ -103,7 +103,7 @@ table.shrinkHeadingColumn td {
     tr {
       display: block;
       padding: 2%;
-      border-bottom: 1px solid $listRowBorder;
+      border-bottom: 1px solid var(--list-row-border);
     }
 
     td {
@@ -270,18 +270,18 @@ TABLE HEADER ROWS
 
 /* Sortable header cells */
 .stTable thead tr#headers th {
-  background: $listHeadingBack;
+  background: var(--list-heading-back);
   color: var(--st-header-fg);
 }
 
 .stTable thead tr#headers th.sortable:hover {
-  background: $stTableHeaderHoverBackground;
+  background: linear-gradient(rgb(239, 158, 6), rgb(242, 121, 21));
   color: var(--st-sortable-hover-fg);
 }
 
 .stTable thead tr#headers th.sorted {
   /* Permanently highlight the currently sorted column */
-  background: $stTableHeaderHoverBackground;
+  background: linear-gradient(rgb(239, 158, 6), rgb(242, 121, 21));
 }
 
 /* Column names and sort direction arrows */
@@ -708,7 +708,7 @@ TABLE BODY ROWS
 .stDragHeader {
   background: var(--st-sortable-hover-bg);
   color: var(--st-sortable-hover-fg);
-  border: 1px solid $stTableBorder;
+  border: 1px solid var(--st-border);
   position: absolute;
   display: flex;
   align-items: center;
@@ -760,7 +760,7 @@ where filtering and mass tools aren't needed.
   cursor: pointer;
 
   &:hover {
-    background: $listSortableColumnHover;
+    background: var(--list-sortable-column-hover);
   }
 
   /* The container DIV */
@@ -799,7 +799,7 @@ where filtering and mass tools aren't needed.
 };
 
 .orderAscending, .orderDescending {
-  background: $listSortableColumnHover !important;
+  background: var(--list-sortable-column-hover) !important;
 }
 
 .orderNone .arrow:after {
@@ -828,13 +828,13 @@ where filtering and mass tools aren't needed.
 }
 
 tr:nth-child(odd) .selectedColumn {
-  background: darken($listSelectedColumn, 5%);
+  background: var(--list-sortable-odd-selected-back);
 }
 
 tr:nth-child(even) .selectedColumn {
-  background: lighten($listSelectedColumn, 5%);
+  background: var(--list-sortable-even-selected-back);
 }
 
 tr:hover .selectedColumn {
-  background: $listSelectedColumnRowHover !important;
+  background: var(--list-sortable-selected-column-back) !important;
 }

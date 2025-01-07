@@ -104,11 +104,13 @@ const COLUMN_DEFINITIONS = {
             let schools = [];
 
             for (const id of entry.admin_in) {
-                const name = SCHOOLS[id].name;
+                const school = SCHOOLS[id];
 
-                let v = `<a href="/users/schools/${id}">${name}</a>`;
+                let v = (school.id === null) ?
+                    `<span class="missingData">${school.name}</span>` :
+                    `<a href="/users/schools/${id}">${school.name}</a>`;
 
-                if (entry.school_id != id && !entry.other_schools.includes(id))
+                if (school.id !== null && entry.school_id != id && !entry.other_schools.includes(id))
                     v += ` <span class="invalidAdminSchool" title="<%= t('organisations.all_admins.invalid_admin_school') %>">⚠️</span>`;
 
                 schools.push([v, name]);
@@ -280,8 +282,6 @@ function userActions(admin)
 {
     if (admin.owner[ST.INDEX_FILTERABLE])
         return "";
-
-    console.log(admin.school_id);
 
     return `<a href="/users/${admin.school_id}/users/${admin.id[ST.INDEX_FILTERABLE]}/edit_admin_permissions?org_admins=1" class="btn"><%= t('organisations.all_admins.edit') %></a>`;
 }
