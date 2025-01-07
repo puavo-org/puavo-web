@@ -12,39 +12,37 @@ input#groupMembersSearch {
   max-width: 30em;
 }
 
-#groupMembers {
-  p {
-    margin: 0 0 5px 0;
-  }
+#groupMembers p {
+  margin: 0 0 5px 0;
+}
 
-  #membersTable {
-    max-height: 1000px;
-    overflow-y: auto;
-  }
+#groupMembers #membersTable {
+  max-height: 1000px;
+  overflow-y: auto;
+}
 
-  th {
-    background: var(--list-heading-back);
-    color: var(--list-heading-fore);
-  }
+#groupMembers th {
+  background: var(--list-heading-back);
+  color: var(--list-heading-fore);
+}
 
-  tr {
-    border-bottom: 1px solid var(--list-row-border);
-    background: none;
-  }
+#groupMembers tr {
+  border-bottom: 1px solid var(--list-row-border);
+  background: none;
+}
 
-  tr:hover {
-    background: var(--list-row-back-hover);
-  }
+#groupMembers tr:hover {
+  background: var(--list-row-back-hover);
+}
 
-  tr:last-of-type {
-    border-bottom: none;
-  }
+#groupMembers tr:last-of-type {
+  border-bottom: none;
+}
 
-  .markedForDeletion:nth-child(even) {
-    background: var(--group-member-marked-deletion-odd-back) !important;
-  }
+#groupMembers .markedForDeletion:nth-child(even) {
+  background: var(--group-member-marked-deletion-odd-back) !important;
+}
 
-  .markedForDeletion:nth-child(odd) {
-    background: var(--group-member-marked-deletion-even-back) !important;
-  }
+#groupMembers .markedForDeletion:nth-child(odd) {
+  background: var(--group-member-marked-deletion-even-back) !important;
 }

@@ -6,28 +6,28 @@
   background: var(--tools-back);
   margin: 0 0 20px 0;
   padding: 0;
+}
 
-  /* The buttons are in a list */
-  > ul {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;  /* right align */
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+/* The buttons are in a list */
+.toolsContainer > ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;  /* right align */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 
-  > ul > li {
-    margin: 5px;
-    padding: 1px;
-  }
+.toolsContainer > ul > li {
+  margin: 5px;
+  padding: 1px;
+}
 
-  .btn {
-    padding: 7px 10px !important;
+.toolsContainer .btn {
+  padding: 7px 10px !important;
 
-    @media #{$screen-breakpoint-one} {
-      padding: 5px 10px !important;
-    }
+  @media #{$screen-breakpoint-one} {
+    padding: 5px 10px !important;
   }
 }
 
@@ -53,43 +53,43 @@
   @media #{$screen-breakpoint-one} {
     margin-right: 13px;
   }
+}
 
-  ul {
-    list-style: none;
-    margin: 0 0 5px 0;
-    padding: 0 0 5px 0;
+.dropdown  ul {
+  list-style: none;
+  margin: 0 0 5px 0;
+  padding: 0 0 5px 0;
 
-    /* Group with separator lines */
-    border-bottom: 1px solid var(--tools-dropdown-separator);
-  }
+  /* Group with separator lines */
+  border-bottom: 1px solid var(--tools-dropdown-separator);
+}
 
-  ul:last-of-type {
-    border: none;
-    padding: 0;
-    margin: 0;
-  }
+.dropdown  ul:last-of-type {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
 
   /* Dropdown menu entries */
-  li {
-    margin: 1px;
-  }
+.dropdown  li {
+  margin: 1px;
+}
 
-  a {
-    text-decoration: none;
-    display: block;
-    padding: 5px 10px;
-    color: var(--tools-dropdown-link-fore) !important;
-    background: transparent !important;
-    white-space: nowrap;
-    font-size: 100%;
-    width: auto;
-    font-weight: normal !important;
+.dropdown  a {
+  text-decoration: none;
+  display: block;
+  padding: 5px 10px;
+  color: var(--tools-dropdown-link-fore) !important;
+  background: transparent !important;
+  white-space: nowrap;
+  font-size: 100%;
+  width: auto;
+  font-weight: normal !important;
+}
 
-    &:hover {
-      background: var(--tools-dropdown-link-back-hover) !important;
-      color: var(--tools-dropdown-link-fore-hover) !important;
-    }
-  }
+.dropdown a:hover {
+  background: var(--tools-dropdown-link-back-hover) !important;
+  color: var(--tools-dropdown-link-fore-hover) !important;
 }
 
 /* Right-aligned dropdown menus. By default they are left-aligned. */
