@@ -405,6 +405,9 @@ class OpenIDConnect < PuavoSinatra
       return json_error('invalid_request', request_id: temp_request_id)
     end
 
+    # Prevent code reuse, even if we cannot parse the state or an error occurrs
+    _oidc_redis.del(code)
+
     begin
       oidc_state = JSON.parse(oidc_state)
     rescue StandardError => e
@@ -481,9 +484,6 @@ class OpenIDConnect < PuavoSinatra
 
     # ----------------------------------------------------------------------------------------------
     # All good. Build the ID token, stash it in a JWT and return.
-
-    # Prevent code reuse
-    _oidc_redis.del(code)
 
     expires_in = 3600
     now = Time.now.utc.to_i
