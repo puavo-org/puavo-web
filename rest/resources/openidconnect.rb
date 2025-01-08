@@ -27,7 +27,7 @@ class OpenIDConnect < PuavoSinatra
   include PuavoLoginSession
 
   # ------------------------------------------------------------------------------------------------
-  # Stage 1: Authorization request
+  # Stage 1: Authorization request (RFC 6749 section 4.1.1.)
 
   # Accept both GET and POST authorization requests
   get '/oidc/authorize' do
@@ -48,6 +48,7 @@ class OpenIDConnect < PuavoSinatra
 
     # ----------------------------------------------------------------------------------------------
     # (Re)Load the OpenID Connect configuration file
+    # TODO: These must be stored in the database.
 
     begin
       oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml')).freeze
@@ -77,7 +78,7 @@ class OpenIDConnect < PuavoSinatra
     external_service = get_external_service(service_dn)
 
     if external_service.nil?
-      rlog.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
+      rlog.error("[#{request_id}] Cannot find the external service by DN #{service_dn.inspect}")
       generic_error(t.sso.invalid_client_id(request_id))
     end
 
@@ -85,13 +86,12 @@ class OpenIDConnect < PuavoSinatra
 
     # ----------------------------------------------------------------------------------------------
     # Verify the redirect URL(s)
-
-    # RFC 6749 section 4.1.1. says this is optional, but we require it
+    # RFC 6749 section 4.1.1. says this is OPTIONAL, but we require it
 
     redirect_uri = params['redirect_uri']
 
     if client_config.fetch('allowed_redirect_uris', []).find { |uri| uri == redirect_uri }.nil?
-      rlog.error("[#{request_id}] Redirect URI \"#{redirect_uri}\" is not allowed")
+      rlog.error("[#{request_id}] Redirect URI #{redirect_uri.inspect} is not allowed")
       generic_error(t.sso.invalid_redirect_uri(request_id))
     end
 
@@ -101,12 +101,13 @@ class OpenIDConnect < PuavoSinatra
     # as specified in RFC 6479 section 4.1.2.1.
 
     # ----------------------------------------------------------------------------------------------
-    # Check the response type
+    # Check the response type. As per RFC 6749 section 4.1.1, this is REQUIRED
+    # and its value must be "code".
 
     response_type = params.fetch('response_type', nil)
 
     unless response_type == 'code'
-      rlog.error("[#{request_id}] Unknown response type \"#{response_type}\", don't know how to handle it")
+      rlog.error("[#{request_id}] Invalid response type #{response_type.inspect} (expected \"code\")")
       return redirect_error(redirect_uri, 400, 'invalid_request', state: params.fetch('state', nil), request_id: request_id)
     end
 
@@ -120,7 +121,7 @@ class OpenIDConnect < PuavoSinatra
     end
 
     # ----------------------------------------------------------------------------------------------
-    # Build Redis data
+    # The request is valid. Build a state structure that tracks the process and store it in Redis.
 
     # This structure tracks the user's OpenID Connect authorization session. While separate
     # from the "login session" that exists during the login form (and the MFA form, if enabled),
@@ -131,8 +132,8 @@ class OpenIDConnect < PuavoSinatra
       'client_id' => client_id,
       'redirect_uri' => redirect_uri,
       'scopes' => scopes[:scopes],
-      'scopes_changed' => scopes[:changed],     # remember this for later responses
-      'state' => params.fetch('state', nil),
+      'scopes_changed' => scopes[:changed],     # need to remember this for later responses
+      'state' => params.fetch('state', nil),    # the state is merely RECOMMENDED, but not required
 
       # These will be copied from the login session once it completes (we need to persist these
       # until the initial JWT/access token has been generated)
@@ -142,6 +143,9 @@ class OpenIDConnect < PuavoSinatra
     }
 
     if params.include?('nonce')
+      # The nonce is an optional value used to mitigate replay attacks. It is barely mentioned
+      # in RFC 6749, but it is mentioned in the full spec. If specified in the request, we must
+      # remember it.
       oidc_state['nonce'] = params['nonce']
     end
 
@@ -198,23 +202,27 @@ class OpenIDConnect < PuavoSinatra
   end
 
   # ------------------------------------------------------------------------------------------------
-  # Stage 2: Generate the authorization request response
+  # Stage 2: Generate the authorization request response (RFC 6749 section 4.1.2.)
 
-  # We get here from the login form, or directly from stage 1 if a session existed
+  # We get here from the login/MFA form, or directly from stage 1 if an SSO session existed
+  # or Kerberos authentication succeeded. In any case, it's a browser redirect.
   get '/oidc/stage2' do
     # Get and delete the login data from Redis
     login_key = params.fetch('login_key', '')
     login_data = login_get_data(login_key, delete_immediately: true)
     request_id = login_data['request_id']
-    rlog.info("[#{request_id}] OpenID Connect authorization request continues, login key was #{login_key.inspect}")
+    rlog.info("[#{request_id}] OpenID Connect authorization request continues, login key is #{login_key.inspect}")
 
     # Copy the OpenID Connect session state from the login data
     oidc_state = login_data['oidc_state']
+
+    # Now we know these values
     oidc_state['service'] = login_data['service']
     oidc_state['organisation'] = login_data['organisation']
     oidc_state['user'] = login_data['user']
 
-    # Optional (but we can support it easily)
+    # The authentication time is optional, but we can support it easily. It is specified in
+    # https://openid.net/specs/openid-connect-core-1_0.html#IDToken.
     oidc_state['auth_time'] = Time.now.utc.to_i
 
     # Create an SSO session if possible
@@ -229,7 +237,7 @@ class OpenIDConnect < PuavoSinatra
     _oidc_redis.set(code, oidc_state.to_json, nx: true, ex: PUAVO_OIDC_LOGIN_TIME)
     rlog.info("[#{request_id}] Generated OIDC session #{code}")
 
-    # Return to the caller
+    # Return the parameters to the caller using the redirect URI
     redirect_uri = URI(oidc_state['redirect_uri'])
 
     query = {
@@ -238,10 +246,11 @@ class OpenIDConnect < PuavoSinatra
     }
 
     if oidc_state['scopes_changed']
-      # RFC 6749 section 3.3. says the scopes must be included in the response if
-      # it is different from the scopes the client specified. The spec is unclear
-      # how the scopes should be encoded (array or list). Return them in the way
-      # they are specified in the request.
+      # RFC 6749 section 4.1.2. does not mention this at all, but section 3.3 says
+      # the scopes must be included in the response if they are different from the
+      # scopes the client specified. The spec is unclear how the scopes should be
+      # encoded (array or list). Return them as space-delimited string, because
+      # that's how they're originally specified.
       query['scope'] = oidc_state['scopes'].join(' ')
     end
 
@@ -255,10 +264,12 @@ class OpenIDConnect < PuavoSinatra
 
   # The client calls this after the authorization is complete
   post '/oidc/token' do
-    # What kind of a request are we dealing with?
+    # What kind of a request are we dealing with? We must create a temporary request ID
+    # because we cannot access the stored data before validation.
+
     temp_request_id = make_request_id
     grant_type = params.fetch('grant_type', nil)
-    rlog.info("OpenID Connect access token request, grant type: #{grant_type.inspect}")
+    rlog.info("[#{temp_request_id}] OpenID Connect access token request, grant type: #{grant_type.inspect}")
 
     case grant_type
       when 'client_credentials'
@@ -268,7 +279,7 @@ class OpenIDConnect < PuavoSinatra
         handle_authorization_code
 
       else
-        rlog.error("[#{temp_request_id}] Grant type of \"#{grant_type}\" is not supported")
+        rlog.error("[#{temp_request_id}] Unsupported grant type")
         json_error('unsupported_grant_type', request_id: temp_request_id)
     end
   end
@@ -367,7 +378,8 @@ class OpenIDConnect < PuavoSinatra
     json(out)
   end
 
-  # Handles a "authorization_code" request. See RFC 6479 section 4.1.3.
+  # Handles the "authorization_code" request. See RFC 6479 section 4.1.3.
+  # Clients must call this after authorization is complete to actually acquire an access token.
   def handle_authorization_code
     temp_request_id = make_request_id
 
@@ -407,7 +419,8 @@ class OpenIDConnect < PuavoSinatra
     # Verify the redirect URI
 
     # This has to be the same address where the response was sent at the end of stage 2.
-    # RFC 6749 says this is optional, but we require it.
+    # The RFC says this is OPTIONAL, but just like in stage 1, we require it. We can't
+    # even get past stage 1 if the URL is not allowed.
     redirect_uri = params.fetch('redirect_uri', nil)
 
     unless redirect_uri == oidc_state['redirect_uri']
@@ -461,7 +474,7 @@ class OpenIDConnect < PuavoSinatra
     # TODO: I don't know what to do with the new scopes. Do we use them below, or do we
     # use the original scopes? I don't know. I can't find any specifications for this,
     # nor any examples. RFC 6749 simply mentions it's possible to specify the scopes
-    # again this call.
+    # again this call but fails to elaborate further.
 
     # ----------------------------------------------------------------------------------------------
     # All good. Build the ID token, stash it in a JWT and return.
@@ -483,6 +496,7 @@ class OpenIDConnect < PuavoSinatra
     }
 
     if oidc_state.include?('nonce')
+      # If the nonce was present in the original request, send it back
       payload['nonce'] = oidc_state['nonce']
     end
 
@@ -498,6 +512,7 @@ class OpenIDConnect < PuavoSinatra
         return json_error('access_denied', state: state, request_id: request_id)
       end
 
+      # Locked users cannot access any resources
       if user.locked || user.removal_request_time
         rlog.error("[#{request_id}] The target user (#{user.username}) is locked or marked for deletion")
         return json_error('access_denied', state: state, request_id: request_id)
@@ -528,10 +543,7 @@ class OpenIDConnect < PuavoSinatra
     }
 
     if oidc_state['scopes_changed']
-      # RFC 6749 section 3.3. says the scopes must be included in the response if
-      # it is different from the scopes the client specified. The spec is unclear
-      # how the scopes should be encoded (array or list). Return them in the way
-      # they are specified in the request.
+      # See the stage 2 handler for explanation
       out['scopes'] = oidc_state['scopes'].join(' ')
     end
 
@@ -561,7 +573,7 @@ private
     scopes = raw_scopes.split(' ').to_set
 
     unless scopes.include?('openid')
-      rlog.error("[#{request_id}] No 'openid' found in scopes")
+      rlog.error("[#{request_id}] No \"openid\" found in scopes")
       return { success: false }
     end
 
@@ -570,6 +582,7 @@ private
     # Remove scopes that aren't allowed for this client
     client_allowed = (['openid'] + client_config.fetch('allowed_scopes', [])).to_set
     scopes &= client_allowed
+    rlog.info("[#{request_id}] Partially cleaned-up scopes: #{scopes.to_a.inspect}")
 
     # Remove unknown scopes
     scopes &= BUILTIN_LOGIN_SCOPES
