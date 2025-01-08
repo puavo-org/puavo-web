@@ -276,7 +276,7 @@ class OpenIDConnect < PuavoSinatra
         handle_client_credentials
 
       when 'authorization_code'
-        handle_authorization_code
+        handle_authorization_code(temp_request_id)
 
       else
         rlog.error("[#{temp_request_id}] Unsupported grant type")
@@ -380,9 +380,7 @@ class OpenIDConnect < PuavoSinatra
 
   # Handles the "authorization_code" request. See RFC 6479 section 4.1.3.
   # Clients must call this after authorization is complete to actually acquire an access token.
-  def handle_authorization_code
-    temp_request_id = make_request_id
-
+  def handle_authorization_code(temp_request_id)
     # ----------------------------------------------------------------------------------------------
     # Retrive the code and the current state
 
@@ -413,6 +411,7 @@ class OpenIDConnect < PuavoSinatra
     state = oidc_state['state'].freeze
 
     request_id = oidc_state['request_id']
+    rlog.info("[#{temp_request_id}] Resuming OIDC flow for request ID \"#{request_id}\"")
     rlog.info("[#{request_id}] OIDC stage 3 token generation for state \"#{code}\"")
 
     # ----------------------------------------------------------------------------------------------
