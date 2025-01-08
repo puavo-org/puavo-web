@@ -587,10 +587,18 @@ private
     scopes &= BUILTIN_LOGIN_SCOPES
     rlog.info("[#{request_id}] Final cleaned-up scopes: #{scopes.to_a.inspect}")
 
+    # We need to inform the client if the final scopes are different than what it sent
+    # (RFC 6749 section 3.3.)
+    changed = scopes != original
+
+    if changed
+      rlog.info("[#{request_id}] The scopes did change, informing the client")
+    end
+
     {
       success: true,
       scopes: scopes.to_a,
-      changed: scopes != original       # need to inform the client about changed scopes
+      changed: changed
     }
   rescue StandardError => e
     rlog.info("[#{request_id}] Could not clean up the scopes: #{e}")
