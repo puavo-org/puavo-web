@@ -20,6 +20,9 @@ BUILTIN_LOGIN_SCOPES = %w(
   puavo.read.security
 ).to_set.freeze
 
+# RFC 9207 issuer identifier
+ISSUER = 'https://auth.opinsys.fi'.freeze
+
 class OpenIDConnect < PuavoSinatra
   register Sinatra::R18n
 
@@ -241,6 +244,7 @@ class OpenIDConnect < PuavoSinatra
     redirect_uri = URI(oidc_state['redirect_uri'])
 
     query = {
+      'iss' => ISSUER,      # RFC 9207
       'code' => code,
       'state' => oidc_state['state']
     }
@@ -485,7 +489,7 @@ class OpenIDConnect < PuavoSinatra
     now = Time.now.utc.to_i
 
     payload = {
-      'iss' => 'https://auth.opinsys.fi',
+      'iss' => ISSUER,
       'jti' => SecureRandom.uuid,
       'sub' => oidc_state['user']['uuid'],
       'aud' => oidc_state['client_id'],
@@ -614,6 +618,7 @@ private
     out['error_uri'] = error_uri if error_uri
     out['state'] = state if state
     out['puavo_request_id'] = request_id if request_id
+    out['iss'] = ISSUER
 
     uri = URI(redirect_uri)
     uri.query = URI.encode_www_form(out)
@@ -630,6 +635,7 @@ private
     out['error_uri'] = error_uri if error_uri
     out['state'] = state if state
     out['puavo_request_id'] = request_id if request_id
+    out['iss'] = ISSUER
 
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'
