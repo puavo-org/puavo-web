@@ -265,6 +265,7 @@ en:
       other_schools: "Other schools"
       licenses: "Licenses"
       devices: "User's devices"
+      groups: "User's groups"
 
     groups:
       name: "Name"

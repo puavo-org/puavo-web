@@ -1,5 +1,6 @@
 require 'set'
 require 'devices_helper'    # Need clear_device_primary_user
+require 'groups_helper'     # For listing user groups in user tables
 
 class UsersController < ApplicationController
   include Puavo::Integrations
@@ -205,7 +206,16 @@ class UsersController < ApplicationController
       users << user
     end
 
-    render :json => users
+    # For listing user groups. Only link to schools the current user can see (if not an owner)
+    if is_owner?
+      accessible_schools = Set.new
+    else
+      accessible_schools = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set.freeze
+    end
+
+    groups, group_members = GroupsHelper.load_group_member_lists(schools_by_dn, accessible_schools)
+
+    render json: { users: users, groups: groups, group_members: group_members }
   end
 
   # GET /:school_id/users/1/image

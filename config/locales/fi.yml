@@ -265,6 +265,7 @@ fi:
       other_schools: "Muut koulut"
       licenses: "Lisenssit"
       devices: "Käyttäjän laitteet"
+      groups: "Käyttäjän ryhmät"
 
     groups:
       name: "Nimi"
