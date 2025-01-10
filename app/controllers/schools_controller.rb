@@ -329,9 +329,9 @@ class SchoolsController < ApplicationController
 
   # GET /schools/1/wlan
   def wlan
-    return unless can_edit_wlans?
-
     @school = School.find(params[:id])
+
+    return unless can_edit_wlans?
 
     respond_to do |format|
       format.html
@@ -340,9 +340,9 @@ class SchoolsController < ApplicationController
 
   # PUT /schools/1/wlan/update
   def wlan_update
-    return unless can_edit_wlans?
-
     @school = School.find(params[:id])
+
+    return unless can_edit_wlans?
 
     @school.update_wlan_attributes(params)
     @school.puavoWlanChannel = params[:school][:puavoWlanChannel]
