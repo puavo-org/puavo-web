@@ -148,7 +148,7 @@ class UsersController < ApplicationController
       schools_by_dn[dn] = {
         id: school['puavoId'][0].to_i,
         cn: school['cn'][0],
-        name: school['displayName'][0].force_encoding('utf-8'),
+        name: school['displayName'][0]
       }
     end
 
