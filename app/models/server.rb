@@ -37,23 +37,4 @@ class Server < DeviceBase
   def id
     self.puavoId.to_s unless self.puavoId.nil?
   end
-
-  # Special version of the base method, ignores schools completely
-  def self.words_search_and_sort_by_name(attributes, name_attribute_block, filter_block, words)
-    words = Net::LDAP::Filter.escape( words )
-
-    filter = "(&" + words.split(" ").map do |w|
-      filter_block.call(w)
-    end.join() + ")"
-
-    search_as_utf8(
-      :filter => filter,
-      :scope => :one,
-      :attributes => (["puavoId"] + attributes)
-    ).map do |dn, v|
-      { "id" => v["puavoId"].first,
-        "name" => name_attribute_block.class == Proc ? name_attribute_block.call(v) : v[name_attribute_block].first
-      }.merge( attributes.inject({}) { |result, a| result.merge(a => v[a]) } )
-    end.sort{ |a,b| a['name'] <=> b['name'] }
-  end
 end
