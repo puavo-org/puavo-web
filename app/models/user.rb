@@ -57,6 +57,7 @@ class User < LdapBase
 
   # Valid and known permissions for school admins. Used in has_admin_permission?(), for example.
   ADMIN_PERMISSIONS = %i[
+    school_edit school_edit_wlan
     create_users delete_users mass_delete_users import_users
     create_groups delete_groups mass_delete_groups
     create_devices delete_devices mass_delete_devices reset_devices mass_reset_devices

@@ -82,6 +82,12 @@ Given(/^I am on ([^\"]+) with "([^\"]*)"$/) do |page_name, value|
     @school = School.find( :first, :attribute => "displayName", :value => value )
     visit school_path(@school)
     #visit path_to(page_name) # FIXME
+  when /the school edit page/
+    @school = School.find( :first, attribute: 'displayName', value: value )
+    visit edit_school_path(@school)
+  when /the school WLAN page/
+    @school = School.find( :first, attribute: 'displayName', value: value )
+    visit wlan_school_path(@school)
   when /group page/
     group = Group.find( :first, :attribute => "displayName", :value => value )
     case page_name

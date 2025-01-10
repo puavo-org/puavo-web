@@ -1046,6 +1046,8 @@ en:
       edit_admin_permissions: "Edit admin permissions..."
       admin_permissions:
         title: "Admin permissions"
+        school_edit: "can edit school information"
+        school_edit_wlan: "can edit school wireless networks"
         create_users: "can create users"
         delete_users: "can delete users"
         mass_delete_users: "can mass delete users"
@@ -1103,6 +1105,8 @@ en:
       select_all: "Select all"
       deselect_all: "Remove all"
       permissions:
+        school_edit: "Can edit school information (the school dashboard is always accessible)"
+        school_edit_wlan: "Can edit school wireless networks"
         create_users: "Can create users"
         delete_users: "Can delete users"
         mass_delete_users: "Can mass delete users (normal user deletion must also be granted, will not work otherwise)"
