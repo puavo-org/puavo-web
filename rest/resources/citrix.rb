@@ -366,6 +366,10 @@ class Citrix < PuavoSinatra
           # tested
           rlog.info("[#{@request_id}] New user creation is in progress")
           citrix_return('user_creation_in_progress')
+        elsif status == 'Requested'
+          # tested
+          rlog.info("[#{@request_id}] New user creation requested")
+          citrix_return('user_creation_requested')
         end
 
         # not tested (don't know how to get here)
