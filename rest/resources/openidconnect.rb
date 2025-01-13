@@ -30,9 +30,12 @@ class OpenIDConnect < PuavoSinatra
   include PuavoLoginSession
 
   # ------------------------------------------------------------------------------------------------
-  # Stage 1: Authorization request (RFC 6749 section 4.1.1.)
+  # Stage 1: Authorization Code Grant request (RFC 6749 section 4.1.)
 
-  # Accept both GET and POST authorization requests
+  # This starts an interactive browser-based authorization that uses redirects
+
+  # Accept both GET and POST requests. RFC 6749 says GET requests MUST be supported, while
+  # POST requests MAY be supported.
   get '/oidc/authorize' do
     oidc_authorization_request
   end
@@ -41,6 +44,7 @@ class OpenIDConnect < PuavoSinatra
     oidc_authorization_request
   end
 
+  # RFC 6749 section 4.1.1.
   def oidc_authorization_request
     request_id = make_request_id
 
@@ -54,7 +58,7 @@ class OpenIDConnect < PuavoSinatra
     # TODO: These must be stored in the database.
 
     begin
-      oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml')).freeze
+      oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oauth2.yml')).freeze
     rescue StandardError => e
       rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
 
@@ -69,12 +73,12 @@ class OpenIDConnect < PuavoSinatra
 
     rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
 
-    unless oidc_config['clients'].include?(client_id)
+    unless oidc_config['oidc_logins'].include?(client_id)
       rlog.error("[#{request_id}] Unknown/invalid client")
       generic_error(t.sso.invalid_client_id(request_id))
     end
 
-    client_config = oidc_config['clients'][client_id].freeze
+    client_config = oidc_config['oidc_logins'][client_id].freeze
 
     # Find the target service
     service_dn = client_config['puavo_service']
@@ -205,7 +209,7 @@ class OpenIDConnect < PuavoSinatra
   end
 
   # ------------------------------------------------------------------------------------------------
-  # Stage 2: Generate the authorization request response (RFC 6749 section 4.1.2.)
+  # Stage 2: Generate the authorization response (RFC 6749 section 4.1.2.)
 
   # We get here from the login/MFA form, or directly from stage 1 if an SSO session existed
   # or Kerberos authentication succeeded. In any case, it's a browser redirect.
@@ -276,110 +280,18 @@ class OpenIDConnect < PuavoSinatra
     rlog.info("[#{temp_request_id}] OpenID Connect access token request, grant type: #{grant_type.inspect}")
 
     case grant_type
-      when 'client_credentials'
-        handle_client_credentials
-
+      # Access token request for user data during interactive OpenID Connect logins
       when 'authorization_code'
         handle_authorization_code(temp_request_id)
+
+      # Access token request for non-interactive machine <-> machine communication
+      when 'client_credentials'
+        handle_client_credentials
 
       else
         rlog.error("[#{temp_request_id}] Unsupported grant type")
         json_error('unsupported_grant_type', request_id: temp_request_id)
     end
-  end
-
-  # Handles a "client_credentials" request
-  # TODO: This call requires further authentication. Clients need to authenticate themselves
-  # before a token is generated. Also, client A cannot generate access tokens for client B.
-  def handle_client_credentials
-    request_id = make_request_id
-
-    content_type = request.env.fetch('CONTENT_TYPE', nil)
-
-    unless content_type == 'application/x-www-form-urlencoded'
-      rlog.error("[#{request_id}] Received a client_credentials request with an incorrect Content-Type header (#{content_type.inspect})")
-      return json_error('invalid_request', request_id: request_id)
-    end
-
-    # ----------------------------------------------------------------------------------------------
-    # Verify and authorize the client
-
-    unless request.env.include?('HTTP_AUTHORIZATION')
-      rlog.error("[#{request_id}] Received a client_credentials request without an HTTP_AUTHORIZATION header")
-      return json_error('invalid_request', request_id: request_id)
-    end
-
-    begin
-      credentials = request.env.fetch('HTTP_AUTHORIZATION', '').split(' ')
-      credentials = Base64::strict_decode64(credentials[1])
-      credentials = credentials.split(':')
-      raise StandardError.new('the HTTP_AUTHORIZATION header does not contain a username:password combo') if credentials.count != 2
-    rescue StandardError => e
-      rlog.error("[#{request_id}] Received a client_credentials request with a malformed authentication header: #{e}")
-      rlog.error("[#{request_id}] Raw header: #{request.env['HTTP_AUTHORIZATION'].inspect}")
-      return json_error('invalid_request', request_id: request_id)
-    end
-
-    # ----------------------------------------------------------------------------------------------
-    # (Re)Load the OpenID Connect configuration file
-
-    begin
-      oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml')).freeze
-    rescue StandardError => e
-      rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
-      return json_error('unauthorized_client', request_id: request_id)
-    end
-
-    # ----------------------------------------------------------------------------------------------
-    # Verify the client ID and the target service
-
-    rlog.info("[#{request_id}] client_id: #{credentials[0].inspect}")
-
-    unless oidc_config['clients'].include?(credentials[0])
-      rlog.error("[#{request_id}] Unknown/invalid client")
-      return json_error('unauthorized_client', request_id: request_id)
-    end
-
-    client_config = oidc_config['clients'][credentials[0]].freeze
-
-    # Find the target service
-    service_dn = client_config['puavo_service']
-    external_service = get_external_service(service_dn)
-
-    if external_service.nil?
-      rlog.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
-      return json_error('unauthorized_client', request_id: request_id)
-    end
-
-    # ----------------------------------------------------------------------------------------------
-    # Verify the client secret
-
-    unless credentials[1] == external_service.secret
-      rlog.error("[#{request_id}] Invalid client secret")
-      return json_error('unauthorized_client', request_id: request_id)
-    end
-
-    # ----------------------------------------------------------------------------------------------
-    # Generate the access token
-
-    # TODO: The access token must be stored in Redis. We don't have yet any endpoint that
-    # needs it, so this part has not been implemented yet.
-    access_token = SecureRandom.hex(64)
-
-    rlog.info("[#{request_id}] Generated access token #{access_token.inspect}")
-
-    out = {
-      'access_token' => access_token,
-      'token_type' => 'Bearer',
-      'puavo_request_id' => request_id,
-    }
-
-    # TODO: Validate the caller and generate a suitable access token for it.
-
-    headers['Cache-Control'] = 'no-store'
-    headers['Pragma'] = 'no-cache'
-
-    json(out)
   end
 
   # Handles the "authorization_code" request. See RFC 6479 section 4.1.3.
@@ -461,14 +373,14 @@ class OpenIDConnect < PuavoSinatra
     # (Re)Load the OIDC configuration
 
     begin
-      client_config = YAML.safe_load(File.read('/etc/puavo-web/oidc.yml'))
+      client_config = YAML.safe_load(File.read('/etc/puavo-web/oauth2.yml'))
     rescue StandardError => e
       rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
       return json_error('server_error', state: state, request_id: request_id)
     end
 
     # Assume this does not fail, since we've validated everything
-    client_config = client_config['clients'][client_id].freeze
+    client_config = client_config['oidc_logins'][client_id].freeze
 
     # ----------------------------------------------------------------------------------------------
     # Verify the scopes
@@ -551,6 +463,100 @@ class OpenIDConnect < PuavoSinatra
     end
 
     # TODO: The access token must be stored in Redis
+
+    headers['Cache-Control'] = 'no-store'
+    headers['Pragma'] = 'no-cache'
+
+    json(out)
+  end
+
+  # Handles a "client_credentials" request. This is for a machine <-> machine communication.
+  # TODO: This call requires further authentication. Clients need to authenticate themselves
+  # before a token is generated. Also, client A cannot generate access tokens for client B.
+  def handle_client_credentials
+    request_id = make_request_id
+
+    content_type = request.env.fetch('CONTENT_TYPE', nil)
+
+    unless content_type == 'application/x-www-form-urlencoded'
+      rlog.error("[#{request_id}] Received a client_credentials request with an incorrect Content-Type header (#{content_type.inspect})")
+      return json_error('invalid_request', request_id: request_id)
+    end
+
+    # ----------------------------------------------------------------------------------------------
+    # Verify and authorize the client
+
+    unless request.env.include?('HTTP_AUTHORIZATION')
+      rlog.error("[#{request_id}] Received a client_credentials request without an HTTP_AUTHORIZATION header")
+      return json_error('invalid_request', request_id: request_id)
+    end
+
+    begin
+      credentials = request.env.fetch('HTTP_AUTHORIZATION', '').split(' ')
+      credentials = Base64::strict_decode64(credentials[1])
+      credentials = credentials.split(':')
+      raise StandardError.new('the HTTP_AUTHORIZATION header does not contain a username:password combo') if credentials.count != 2
+    rescue StandardError => e
+      rlog.error("[#{request_id}] Received a client_credentials request with a malformed authentication header: #{e}")
+      rlog.error("[#{request_id}] Raw header: #{request.env['HTTP_AUTHORIZATION'].inspect}")
+      return json_error('invalid_request', request_id: request_id)
+    end
+
+    # ----------------------------------------------------------------------------------------------
+    # (Re)Load the OpenID Connect configuration file
+
+    begin
+      oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oauth2.yml')).freeze
+    rescue StandardError => e
+      rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
+      return json_error('unauthorized_client', request_id: request_id)
+    end
+
+    # ----------------------------------------------------------------------------------------------
+    # Verify the client ID and the target service
+
+    rlog.info("[#{request_id}] client_id: #{credentials[0].inspect}")
+
+    unless oidc_config['oidc_logins'].include?(credentials[0])
+      rlog.error("[#{request_id}] Unknown/invalid client")
+      return json_error('unauthorized_client', request_id: request_id)
+    end
+
+    client_config = oidc_config['oidc_logins'][credentials[0]].freeze
+
+    # Find the target service
+    service_dn = client_config['puavo_service']
+    external_service = get_external_service(service_dn)
+
+    if external_service.nil?
+      rlog.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
+      return json_error('unauthorized_client', request_id: request_id)
+    end
+
+    # ----------------------------------------------------------------------------------------------
+    # Verify the client secret
+
+    unless credentials[1] == external_service.secret
+      rlog.error("[#{request_id}] Invalid client secret")
+      return json_error('unauthorized_client', request_id: request_id)
+    end
+
+    # ----------------------------------------------------------------------------------------------
+    # Generate the access token
+
+    # TODO: The access token must be stored in Redis. We don't have yet any endpoint that
+    # needs it, so this part has not been implemented yet.
+    access_token = SecureRandom.hex(64)
+
+    rlog.info("[#{request_id}] Generated access token #{access_token.inspect}")
+
+    out = {
+      'access_token' => access_token,
+      'token_type' => 'Bearer',
+      'puavo_request_id' => request_id,
+    }
+
+    # TODO: Validate the caller and generate a suitable access token for it.
 
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'
