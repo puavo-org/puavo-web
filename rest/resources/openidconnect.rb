@@ -12,12 +12,12 @@ BUILTIN_LOGIN_SCOPES = %w(
   profile
   email
   phone
-  puavo.read.organisation
-  puavo.read.schools
-  puavo.read.groups
-  puavo.read.ldap
-  puavo.read.admin
-  puavo.read.security
+  puavo.read.userinfo.organisation
+  puavo.read.userinfo.schools
+  puavo.read.userinfo.groups
+  puavo.read.userinfo.ldap
+  puavo.read.userinfo.admin
+  puavo.read.userinfo.security
 ).to_set.freeze
 
 # RFC 9207 issuer identifier
@@ -682,7 +682,7 @@ private
     end
 
     # Include LDAP DNs in the response?
-    has_ldap = scopes.include?('puavo.read.ldap')
+    has_ldap = scopes.include?('puavo.read.userinfo.ldap')
 
     if scopes.include?('profile')
       # Standard claims
@@ -731,7 +731,7 @@ private
       out['phone_number'] = user.telephone_number[0] unless user.telephone_number.empty?
     end
 
-    if scopes.include?('puavo.read.schools')
+    if scopes.include?('puavo.read.userinfo.schools')
       schools = []
 
       user.schools.each do |s|
@@ -755,8 +755,8 @@ private
       out['puavo.schools'] = schools
     end
 
-    if scopes.include?('puavo.read.groups')
-      have_schools = scopes.include?('puavo.read.schools')
+    if scopes.include?('puavo.read.userinfo.groups')
+      have_schools = scopes.include?('puavo.read.userinfo.schools')
       groups = []
 
       user.groups.each do |g|
@@ -777,7 +777,7 @@ private
       out['puavo.groups'] = groups
     end
 
-    if scopes.include?('puavo.read.organisation')
+    if scopes.include?('puavo.read.userinfo.organisation')
       org = {
         'name' => organisation.name,
         'domain' => organisation.domain,
@@ -788,17 +788,17 @@ private
       out['puavo.organisation'] = org
     end
 
-    if scopes.include?('puavo.read.admin')
+    if scopes.include?('puavo.read.userinfo.admin')
       out['puavo.is_organisation_owner'] = organisation.owner.include?(user.dn)
 
-      if scopes.include?('puavo.read.schools')
+      if scopes.include?('puavo.read.userinfo.schools')
         out['puavo.admin_in_schools'] = user.admin_of_school_dns.collect do |dn|
           get_school(dn, school_cache).abbreviation
         end
       end
     end
 
-    if scopes.include?('puavo.read.security')
+    if scopes.include?('puavo.read.userinfo.security')
       out['puavo.mfa_enabled'] = user.mfa_enabled == true
       out['puavo.opinsys_admin'] = nil    # TODO: Future placeholder (for now)
     end
