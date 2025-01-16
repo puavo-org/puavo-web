@@ -286,7 +286,7 @@ class OpenIDConnect < PuavoSinatra
 
       # Access token request for non-interactive machine <-> machine communication
       when 'client_credentials'
-        handle_client_credentials
+        handle_client_credentials(temp_request_id)
 
       else
         rlog.error("[#{temp_request_id}] Unsupported grant type")
@@ -473,8 +473,8 @@ class OpenIDConnect < PuavoSinatra
   # Handles a "client_credentials" request. This is for a machine <-> machine communication.
   # TODO: This call requires further authentication. Clients need to authenticate themselves
   # before a token is generated. Also, client A cannot generate access tokens for client B.
-  def handle_client_credentials
-    request_id = make_request_id
+  def handle_client_credentials(request_id)
+    rlog.info("[#{request_id}] This is a client credentials request")
 
     content_type = request.env.fetch('CONTENT_TYPE', nil)
 
