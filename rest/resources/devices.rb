@@ -652,7 +652,8 @@ class Devices < PuavoSinatra
   # List all Abitti exam servers in the current organisation. School-level
   # filtering must be done on the client-side.
   get "/v3/abitti_exam_servers" do
-    auth :basic_auth, :server_auth
+    oauth2 endpoint: '/v3/abitti_exam_servers', scopes: ['puavo.read.devices']
+    auth :oauth2_token, :basic_auth, :kerberos
 
     # Get all laptop devices that have a non-empty puavoconf string. Only
     # return the attributes we want.
@@ -830,7 +831,8 @@ class Devices < PuavoSinatra
   # Retrieve all (or some) devices in the organisation
   # GET /v4/devices?fields=...
   get '/v4/devices' do
-    auth :basic_auth, :kerberos
+    oauth2 endpoint: '/v4/devices', scopes: ['puavo.read.devices']
+    auth :oauth2_token, :basic_auth, :kerberos
 
     raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 

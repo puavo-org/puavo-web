@@ -1458,7 +1458,8 @@ class Users < PuavoSinatra
   # Retrieve all (or some) users in the organisation
   # GET /v4/users?fields=...
   get '/v4/users' do
-    auth :basic_auth, :kerberos
+    oauth2 endpoint: '/v4/users', scopes: ['puavo.read.users']
+    auth :oauth2_token, :basic_auth, :kerberos
 
     raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 

@@ -369,7 +369,8 @@ class Schools < PuavoSinatra
   # Retrieve all (or some) schools in the organisation
   # GET /v4/schools?fields=...
   get '/v4/schools' do
-    auth :basic_auth, :kerberos
+    oauth2 endpoint: '/v4/schools', scopes: ['puavo.read.schools']
+    auth :oauth2_token, :basic_auth, :kerberos
 
     raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 
