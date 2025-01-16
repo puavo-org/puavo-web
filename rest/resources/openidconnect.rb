@@ -577,11 +577,11 @@ private
 
   # Parses a string containing scopes separated by spaces, and removes the scopes that
   # aren't allowed for this client and also the invalid scopes.
-  def clean_scopes(raw_scopes, oidc_config, client_config, request_id)
+  def clean_scopes(raw_scopes, global_allowed_scopes, client_config, request_id, require_openid: true)
     rlog.info("[#{request_id}] Raw incoming scopes: #{raw_scopes.inspect}")
     scopes = raw_scopes.split(' ').to_set
 
-    unless scopes.include?('openid')
+    if require_openid && !scopes.include?('openid')
       rlog.error("[#{request_id}] No \"openid\" found in scopes")
       return { success: false }
     end
