@@ -137,3 +137,15 @@ class Unauthorized < JSONError
     super.merge "WWW-Authenticate" => "Negotiate"
  end
 end
+
+class InvalidOAuth2Token < JSONError
+  def http_code
+    401
+  end
+end
+
+class InsufficientOAuth2Scope < JSONError
+  def http_code
+    401
+  end
+end

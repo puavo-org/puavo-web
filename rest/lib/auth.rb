@@ -5,6 +5,9 @@ require "base64"
 require "gssapi"
 require "gssapi/lib_gssapi"
 
+require 'openssl'
+require 'jwt'
+
 require_relative "./krb5-gssapi"
 
 module PuavoRest
@@ -112,6 +115,81 @@ class PuavoSinatra < Sinatra::Base
     return CONFIG["server"]
   end
 
+  # OAuth 2 self-validating access token
+  def oauth2_token
+    return if OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY.nil?
+
+    # If your endpoint supports OAuth2 tokens, you have to specify the parameters for it
+    return if @oauth2_params.nil?
+
+    return unless request.env.include?('HTTP_AUTHORIZATION')
+
+    # If there's an authorization header, see if it looks like a bearer token
+    authorization = request.env['HTTP_AUTHORIZATION'].split(' ')
+
+    return if authorization.count != 2 ||
+              authorization[0] != 'Bearer' ||
+              authorization[1].nil? ||
+              authorization[1].strip.empty?
+
+    # Assume it's an OAuth2 bearer token
+    rlog.info('oauth2_token(): have an authorization header that looks like a bearer token, checking it')
+
+    # The access token is a signed JWT. Validate it using the public key.
+    begin
+      decoded_token = JWT.decode(authorization[1], OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY, true, {
+        algorithm: 'ES256',
+
+        verify_iat: true,
+
+        # Verify the issuer
+        iss: 'https://auth.opinsys.fi',
+        verify_iss: true,
+
+        # Is this token even meant for us? RFC 9068 says the audience claim MUST be verified
+        # to prevent cross-JWT confusion.
+        aud: @oauth2_params[:audience],
+        verify_aud: true,
+      })
+
+      access_token = decoded_token[0]
+      headers = decoded_token[1]
+
+      # RFC 9068 section 4 says this MUST be checked. The jwt gem does not put it there
+      # and it does not validate it, so do it manually.
+      typ = headers.fetch('typ', nil)
+      raise "invalid header 'typ' value #{typ.inspect}; expected \"at+jwt\"" unless typ == 'at+jwt'
+    rescue StandardError => e
+      rlog.error("OAuth2 access token validation failed: #{e}")
+      rlog.error("Raw incoming token: #{authorization[1]}")
+      raise InvalidOAuth2Token, user: 'invalid_token'
+    end
+
+    # The access token is valid
+    rlog.info("Request authorized using access token #{access_token['jti'].inspect}, " \
+              "client #{access_token['client_id'].inspect}, subject #{access_token['sub'].inspect}, " \
+              "scopes #{access_token['scopes'].inspect}")
+
+    rlog.info("The access token expires at #{Time.at(access_token['exp']).to_s}")
+
+    # Verify the token contains the required scope(s) for this endoint
+    token_scopes = access_token['scopes'].split(' ').to_set
+    endpoint_scopes = Array(@oauth2_params[:scopes]).to_set
+
+    endpoint_scopes.each do |s|
+      unless token_scopes.include?(s)
+        rlog.error("Token scopes do not contain the endpoint scopes (#{endpoint_scopes.to_a.inspect})")
+        raise InsufficientOAuth2Scope, user: 'insufficient_scope'
+      end
+    end
+
+    # Good to go
+    {
+      dn: CONFIG['server'][:dn],
+      password: CONFIG['server'][:password],
+      access_token: access_token.freeze
+    }
+  end
 
   # This must be always the last authentication option because it is
   # initialized by the server by responding 401 Unauthorized
@@ -168,6 +246,14 @@ class PuavoSinatra < Sinatra::Base
     log_creds.delete(:password)
     self.rlog = rlog.merge(:credentials => log_creds)
     rlog.info("authenticated through '#{ auth_method }'")
+  end
+
+  def oauth2(**params)
+    @oauth2_params = {
+      endpoint: params[:endpoint] || nil,
+      scopes: params[:scopes],
+      audience: params[:audience] || 'puavo-rest-v4',
+    }
   end
 
 end
