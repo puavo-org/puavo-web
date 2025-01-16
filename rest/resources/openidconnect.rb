@@ -121,7 +121,7 @@ class OpenIDConnect < PuavoSinatra
     # ----------------------------------------------------------------------------------------------
     # Verify the scopes
 
-    scopes = clean_scopes(params.fetch('scope', ''), oidc_config, client_config, request_id)
+    scopes = clean_scopes(params.fetch('scope', ''), BUILTIN_LOGIN_SCOPES, client_config, request_id)
 
     unless scopes[:success]
       return redirect_error(redirect_uri, 400, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
@@ -594,7 +594,7 @@ private
     rlog.info("[#{request_id}] Partially cleaned-up scopes: #{scopes.to_a.inspect}")
 
     # Remove unknown scopes
-    scopes &= BUILTIN_LOGIN_SCOPES
+    scopes &= global_allowed_scopes
     rlog.info("[#{request_id}] Final cleaned-up scopes: #{scopes.to_a.inspect}")
 
     # We need to inform the client if the final scopes are different than what it sent
