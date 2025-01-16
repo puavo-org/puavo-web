@@ -410,6 +410,7 @@ class OpenIDConnect < PuavoSinatra
     # ----------------------------------------------------------------------------------------------
     # All good. Build the ID token, stash it in a JWT and return.
 
+    # TODO: Should this be client-configurable?
     expires_in = 3600
     now = Time.now.utc.to_i
 
@@ -419,6 +420,7 @@ class OpenIDConnect < PuavoSinatra
       'sub' => oidc_state['user']['uuid'],
       'aud' => oidc_state['client_id'],
       'iat' => now,
+      'nbf' => now,
       'exp' => now + expires_in,
       'auth_time' => oidc_state['auth_time'],
     }
@@ -459,11 +461,24 @@ class OpenIDConnect < PuavoSinatra
 
     payload.merge!(user_data)
 
-    # The client has to supply this token in future requests to other OIDC endpoints
-    #access_token = SecureRandom.hex(16)
+    # Generate the access token. Currently it's only usable with the userinfo endpoint,
+    # as the scope names are different.
+    token = build_access_token(
+      request_id,
+      subject: oidc_state['user']['uuid'],
+      audience: 'puavo-rest-userinfo',      # this token is only usable in the userinfo endpoint
+      scopes: oidc_state['scopes'],
+      expires_in: expires_in
+    )
+
+    unless token[:success]
+      return json_error('invalid_request', request_id: request_id)
+    end
+
+    rlog.info("[#{request_id}] Issued access token #{token[:jti].inspect} for the user, expires at #{Time.at(token[:expires_at])}")
 
     out = {
-      'access_token' => nil, #access_token,
+      'access_token' => token[:access_token],
       'token_type' => 'Bearer',
       'expires_in' => expires_in,
       'id_token' => JWT.encode(payload, external_service.secret, 'HS256'),
@@ -474,8 +489,6 @@ class OpenIDConnect < PuavoSinatra
       # See the stage 2 handler for explanation
       out['scopes'] = oidc_state['scopes'].join(' ')
     end
-
-    # TODO: The access token must be stored in Redis
 
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'
