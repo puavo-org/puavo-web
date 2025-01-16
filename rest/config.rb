@@ -89,6 +89,7 @@ if ENV['RACK_ENV'] == 'test' then
       :password => PUAVO_ETC.ldap_password
     },
     "puavo_ca" => "http://localhost:8080",
+    'oauth2_token_private_key' => '/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem',
     'oauth2_token_public_key' => '/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem',
   }
 else

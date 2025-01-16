@@ -1,12 +1,14 @@
-# OpenID Connect SSO system
+# OpenID Connect SSO system, and OAuth2 client credentials token generation
 
 require 'securerandom'
+require 'base64'
 
 require_relative '../lib/login/utility'
 
 module PuavoRest
 
-# Known built-in scopes for OIDC logins (not used with client credentials)
+# Allowed built-in scopes for OpenID Connect logins (not used with client credentials).
+# These scopes are also valid for the OIDC userinfo endpoint, but nowhere else ATM.
 BUILTIN_LOGIN_SCOPES = %w(
   openid
   profile
@@ -18,6 +20,17 @@ BUILTIN_LOGIN_SCOPES = %w(
   puavo.read.userinfo.ldap
   puavo.read.userinfo.admin
   puavo.read.userinfo.security
+).to_set.freeze
+
+# Allowed built-in OAuth 2 access token scopes, for client credential requests.
+# At the moment, we have scopes only for the puavo-rest V4 API. Possible scopes
+# for other systems remain TBD.
+BUILTIN_PUAVO_OAUTH2_SCOPES = %w(
+  puavo.read.organisation
+  puavo.read.schools
+  puavo.read.groups
+  puavo.read.users
+  puavo.read.devices
 ).to_set.freeze
 
 # RFC 9207 issuer identifier
@@ -613,6 +626,54 @@ private
   rescue StandardError => e
     rlog.info("[#{request_id}] Could not clean up the scopes: #{e}")
     { success: false }
+  end
+
+  # Builds an OAuth2 acces token
+  def build_access_token(request_id, scopes: [], client_id: nil, subject: nil, audience: 'puavo-rest-v4', expires_in: 3600, custom_claims: nil)
+    now = Time.now.utc.to_i
+
+    token_claims = {
+      'jti' => SecureRandom.uuid,
+      'iat' => now,
+      'nbf' => now,
+      'exp' => now + expires_in,
+      'iss' => ISSUER,
+      'sub' => subject,
+      'aud' => audience,
+      'scopes' => scopes.join(' '),
+    }
+
+    if client_id
+      token_claims['client_id'] = client_id
+    end
+
+    # Support custom claims
+    if custom_claims && custom_claims.is_a?(Hash)
+      token_claims.merge!(custom_claims)
+    end
+
+    # Load the signing private key. Unlike the public key, this is not kept in memory.
+    begin
+      private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2_token_private_key']))
+    rescue StandardError => e
+      rlog.error("[#{request_id}] Cannot load the access token signing private key file: #{e}")
+      return { success: false }
+    end
+
+    # TODO: Support encrypted tokens with JWE? The "jwe" gem is already installed.
+    # TODO: Install the jwt-eddsa gem and use EdDSA signing? Is it compatible with JWT?
+
+    # Sign the token data using the private key. RFC 9068 section 2.1. says the "typ" value
+    # SHOULD be "at+jwt", but the JWT gem does not set it, so let's set it manually.
+    # (I have no idea what I'm doing.)
+    access_token = JWT.encode(token_claims, private_key, 'ES256', { typ: 'at+jwt' })
+
+    {
+      success: true,
+      access_token: access_token,
+      jti: token_claims['jti'],
+      expires_at: now + expires_in
+    }
   end
 
   # RFC 6749 section 4.1.2.1.
