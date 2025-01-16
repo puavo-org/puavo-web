@@ -468,7 +468,13 @@ class OpenIDConnect < PuavoSinatra
       subject: oidc_state['user']['uuid'],
       audience: 'puavo-rest-userinfo',      # this token is only usable in the userinfo endpoint
       scopes: oidc_state['scopes'],
-      expires_in: expires_in
+      expires_in: expires_in,
+
+      # These are hard to determine afterwards, so stash them in the token
+      custom_claims: {
+        'organisation_domain' => oidc_state['organisation']['domain'],
+        'user_dn' => oidc_state['user']['dn']
+      }
     )
 
     unless token[:success]
@@ -649,6 +655,18 @@ class OpenIDConnect < PuavoSinatra
     json(out)
   end
 
+  # OpenID Connect userinfo endpoint. Only OAuth2 access token logins are supported.
+  # This is the only place where the access token generated during logins can be used in.
+  # https://openid.net/specs/openid-connect-core-1_0.html#UserInfo says we MUST support
+  # both GET and POST userinfo requests.
+  get '/oidc/userinfo' do
+    handle_userinfo
+  end
+
+  post '/oidc/userinfo' do
+    handle_userinfo
+  end
+
   # OpenID Connect SSO session logout
   get '/oidc/authorize/logout' do
     session_try_logout
@@ -797,6 +815,50 @@ private
     end
 
     cache[dn]
+  end
+
+  def handle_userinfo
+    oauth2 endpoint: '/oidc/userinfo', scopes: ['openid', 'profile'], audience: 'puavo-rest-userinfo'
+    auth :oauth2_token
+
+    request_id = make_request_id()
+
+    access_token = LdapModel.settings[:credentials][:access_token]
+
+    rlog.info("[#{request_id}] Returning userinfo data for user \"#{access_token['user_dn']}\" in organisation \"#{access_token['organisation_domain']}\"")
+
+    begin
+      organisation = Organisation.by_domain(access_token['organisation_domain'])
+      LdapModel.setup(organisation: organisation, credentials: CONFIG['server'])
+
+      user = PuavoRest::User.by_dn(access_token['user_dn'] + 'x')
+
+      if user.nil?
+        rlog.error("[#{request_id}] Cannot find user #{access_token['user_dn']}")
+        return json_error('access_denied', request_id: request_id)
+      end
+
+      # Locked users cannot access any resources
+      if user.locked || user.removal_request_time
+        rlog.error("[#{request_id}] The target user (#{user.username}) is locked or marked for deletion")
+        return json_error('access_denied', request_id: request_id)
+      end
+    rescue StandardError => e
+      rlog.error("[#{request_id}] Could not log in and retrieve the target user: #{e}")
+      return json_error('server_error', request_id: request_id)
+    end
+
+    begin
+      user_data = gather_user_data(request_id, access_token['scopes'], organisation, user)
+    rescue StandardError => e
+      rlog.error("[#{request_id}] Could not gather the user data for the token: #{e}")
+      return json_error('server_error', request_id: request_id)
+    end
+
+    headers['Cache-Control'] = 'no-store'
+    headers['Pragma'] = 'no-cache'
+
+    json(user_data)
   end
 
   def gather_user_data(request_id, scopes, organisation, user)
