@@ -497,7 +497,9 @@ class OpenIDConnect < PuavoSinatra
     end
 
     # ----------------------------------------------------------------------------------------------
-    # Verify and authorize the client
+    # Load client credentials from the request
+
+    # TODO: We need to support other client authorization systems
 
     unless request.env.include?('HTTP_AUTHORIZATION')
       rlog.error("[#{request_id}] Received a client_credentials request without an HTTP_AUTHORIZATION header")
@@ -508,9 +510,13 @@ class OpenIDConnect < PuavoSinatra
       credentials = request.env.fetch('HTTP_AUTHORIZATION', '').split(' ')
       credentials = Base64::strict_decode64(credentials[1])
       credentials = credentials.split(':')
-      raise StandardError.new('the HTTP_AUTHORIZATION header does not contain a username:password combo') if credentials.count != 2
+
+      if credentials.count != 2
+        rlog.error("[#{request_id}] the HTTP_AUTHORIZATION header does not contain a valid client_id:password combo")
+        return json_error('invalid_request', request_id: request_id)
+      end
     rescue StandardError => e
-      rlog.error("[#{request_id}] Received a client_credentials request with a malformed authentication header: #{e}")
+      rlog.error("[#{request_id}] Could not parse the HTTP_AUTHORIZATION header: #{e}")
       rlog.error("[#{request_id}] Raw header: #{request.env['HTTP_AUTHORIZATION'].inspect}")
       return json_error('invalid_request', request_id: request_id)
     end
@@ -526,50 +532,103 @@ class OpenIDConnect < PuavoSinatra
     end
 
     # ----------------------------------------------------------------------------------------------
-    # Verify the client ID and the target service
+    # Verify the client credentials
 
-    rlog.info("[#{request_id}] client_id: #{credentials[0].inspect}")
+    rlog.info("[#{request_id}] Client ID: #{credentials[0].inspect}")
 
-    unless oidc_config['oidc_logins'].include?(credentials[0])
+    client_config = oidc_config['oauth_clients'].fetch(credentials[0], nil)
+
+    if client_config.nil?
       rlog.error("[#{request_id}] Unknown/invalid client")
       return json_error('unauthorized_client', request_id: request_id)
     end
 
-    client_config = oidc_config['oidc_logins'][credentials[0]].freeze
+    # The client type can be an external service in Puavo, or a standalone client
+    # which simply exists to facilitate data transfer between systems.
+    client_type = client_config.fetch('type', nil)
 
-    # Find the target service
-    service_dn = client_config['puavo_service']
-    external_service = get_external_service(service_dn)
+    rlog.info("[#{request_id}] Client type: #{client_type.inspect}")
 
-    if external_service.nil?
-      rlog.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
-      return json_error('unauthorized_client', request_id: request_id)
+    case client_type
+      when 'puavo_service'
+        # Find the target service and check the password
+        service_dn = client_config.fetch('puavo_service', nil)
+        external_service = get_external_service(service_dn)
+
+        if external_service.nil?
+          rlog.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
+          return json_error('unauthorized_client', request_id: request_id)
+        end
+
+        # Verify the secret
+        unless credentials[1] == external_service.secret
+          rlog.error("[#{request_id}] Invalid client secret")
+          return json_error('unauthorized_client', request_id: request_id)
+        end
+
+      rlog.info("[#{request_id}] Client authorized using external service shared secret")
+
+      when 'standalone'
+        # A simple password check
+        password = client_config.fetch('password', nil)
+
+        if password.nil? || password.strip.empty?
+          rlog.error("[#{request_id}] Empty password specified for a standalone client, refusing access")
+          return json_error('unauthorized_client', request_id: request_id)
+        end
+
+        unless credentials[1] == password
+          rlog.error("[#{request_id}] Invalid client password")
+          return json_error('unauthorized_client', request_id: request_id)
+        end
+
+        rlog.info("[#{request_id}] Client authorized using standalone shared secret")
+
+      else
+        rlog.error("[#{request_id}] Invalid client type #{client_type.inspect}")
+        return json_error('unauthorized_client', request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
-    # Verify the client secret
+    # Validate the scopes. RFC 6479 says these are optional for client credential requests,
+    # but we require them. RFC 6479 section 3.3. says that if the scopes cannot be used,
+    # we must either use default scopes or fail the request. We have no default scopes,
+    # so we can only fail the request.
 
-    unless credentials[1] == external_service.secret
-      rlog.error("[#{request_id}] Invalid client secret")
-      return json_error('unauthorized_client', request_id: request_id)
+    # TODO: Is the "openid" scope required here?
+
+    scopes = clean_scopes(params.fetch('scope', ''), BUILTIN_PUAVO_OAUTH2_SCOPES, client_config, request_id, require_openid: false)
+
+    unless scopes[:success]
+      return json_error('invalid_scope', request_id: request_id)
+    end
+
+    if scopes[:scopes].empty?
+      rlog.error("[#{request_id}] The cleaned-up scopes list is completely empty")
+      return json_error('invalid_scope', request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
-    # Generate the access token
+    # Generate the token. Put it in a JWT and sign the JWT with a private key,
+    # so we now have a self-validating token.
 
-    # TODO: The access token must be stored in Redis. We don't have yet any endpoint that
-    # needs it, so this part has not been implemented yet.
-    access_token = SecureRandom.hex(64)
+    # TODO: Should this be client-configurable?
+    expires_in = 3600
 
-    rlog.info("[#{request_id}] Generated access token #{access_token.inspect}")
+    token = build_access_token(request_id, subject: credentials[0], client_id: credentials[0], scopes: scopes[:scopes], expires_in: expires_in)
+
+    unless token[:success]
+      return json_error('invalid_request', request_id: request_id)
+    end
 
     out = {
-      'access_token' => access_token,
+      'access_token' => token[:access_token],
       'token_type' => 'Bearer',
+      'expires_in' => expires_in,
       'puavo_request_id' => request_id,
     }
 
-    # TODO: Validate the caller and generate a suitable access token for it.
+    rlog.info("[#{request_id}] Issued access token #{token[:jti].inspect}, expires at #{Time.at(token[:expires_at])}")
 
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'
