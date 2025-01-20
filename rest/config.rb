@@ -80,7 +80,10 @@ if ENV['RACK_ENV'] == 'test' then
         'password' => 'password'
       },
     },
-    'openid_connect' => {},
+    'oauth2' => {
+      'token_private_key' => '/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem',
+      'token_public_key' => '/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem',
+    },
     "redis" => {
       :db => 1
     },
@@ -89,8 +92,6 @@ if ENV['RACK_ENV'] == 'test' then
       :password => PUAVO_ETC.ldap_password
     },
     "puavo_ca" => "http://localhost:8080",
-    'oauth2_token_private_key' => '/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem',
-    'oauth2_token_public_key' => '/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem',
   }
 else
   customizations = [
@@ -137,7 +138,7 @@ end
 # Load the public OAuth2 JWT validation key. The private key file is loaded only when
 # signing an access token, so that its contents cannot leak through global variables.
 begin
-  public_key = OpenSSL::PKey.read(File.read(CONFIG['oauth2_token_public_key']))
+  public_key = OpenSSL::PKey.read(File.read(CONFIG['oauth2']['token_public_key']))
 rescue StandardError => e
   puts "ERROR: Cannot load the OAuth2 JWT validation key: #{e}"
   puts "ERROR: OAuth2 access token validations will always fail and access tokens cannot be used"

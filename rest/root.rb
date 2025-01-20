@@ -212,7 +212,7 @@ class Root < PuavoSinatra
     use PuavoRest::Citrix
   end
 
-  if CONFIG['openid_connect']
+  if CONFIG['oauth2']
     use PuavoRest::OAuth2::OAuth2Endpoints
   end
 
