@@ -425,13 +425,21 @@ module OAuth2
       return json_error('invalid_request', request_id: request_id)
     end
 
+    # Load the signing private key. Unlike the public key, this is not kept in memory.
+    begin
+      private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2_token_private_key']))
+    rescue StandardError => e
+      rlog.error("[#{request_id}] Cannot load the access token signing private key file: #{e}")
+      return { success: false }
+    end
+
     rlog.info("[#{request_id}] Issued access token #{token[:jti].inspect} for the user, expires at #{Time.at(token[:expires_at])}")
 
     out = {
       'access_token' => token[:access_token],
       'token_type' => 'Bearer',
       'expires_in' => expires_in,
-      'id_token' => JWT.encode(payload, external_service.secret, 'HS256'),
+      'id_token' => JWT.encode(payload, private_key, 'ES256', { typ: 'at+jwt' }),
       'puavo_request_id' => request_id,
     }
 
