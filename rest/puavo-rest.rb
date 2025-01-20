@@ -45,7 +45,7 @@ require_relative "./resources/certs"
 require_relative "./resources/external_login"
 require_relative "./resources/bootserver_dns"
 require_relative "./resources/my_school_users"
-require_relative './resources/openidconnect'
+require_relative './resources/oauth2'
 
 if CONFIG['mfa_management']
   require_relative './resources/mfa_management'
