@@ -167,8 +167,8 @@ class PuavoSinatra < Sinatra::Base
 
     # The access token is valid
     rlog.info("Request authorized using access token #{access_token['jti'].inspect}, " \
-              "client #{access_token['client_id'].inspect}, subject #{access_token['sub'].inspect}, " \
-              "scopes #{access_token['scopes'].inspect}")
+              "client=#{access_token['client_id'].inspect}, audience=#{access_token['aud'].inspect}, " \
+              "subject=#{access_token['sub'].inspect}, scopes=#{access_token['scopes'].inspect}")
 
     rlog.info("The access token expires at #{Time.at(access_token['exp']).to_s}")
 

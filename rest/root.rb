@@ -213,7 +213,7 @@ class Root < PuavoSinatra
   end
 
   if CONFIG['openid_connect']
-    use PuavoRest::OpenIDConnect
+    use PuavoRest::OAuth2::OAuth2Endpoints
   end
 
 end
