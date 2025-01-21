@@ -9,6 +9,7 @@ gem "net-ldap"
 gem "activeldap", :require => "active_ldap"
 gem "rmagick"
 gem "nokogiri"
+gem 'concurrent-ruby', '1.3.4'    # 1.3.5 breaks Rails 6.x
 
 # puavo-web specific gems
 gem "pry"
