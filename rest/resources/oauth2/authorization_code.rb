@@ -140,7 +140,7 @@ module OAuth2
 
     begin
       # Use the same request ID for everything
-      login_data = login_create_data(request_id, external_service, is_trusted: external_service.trusted, next_stage: '/oidc/stage2', was_oidc: true)
+      login_data = login_create_data(request_id, external_service, is_trusted: external_service.trusted, next_stage: '/oidc/authorize/response', was_oidc: true)
 
       login_data['original_url'] = request.url.to_s
 

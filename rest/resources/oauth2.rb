@@ -35,7 +35,7 @@ class OAuth2Endpoints < PuavoSinatra
   end
 
   # OpenID Connect Stage 2
-  get '/oidc/stage2' do
+  get '/oidc/authorize/response' do
     oidc_stage2_authorization_response
   end
 
