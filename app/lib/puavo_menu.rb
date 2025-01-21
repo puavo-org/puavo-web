@@ -40,6 +40,7 @@ class PuavoMenu < MetaMenu
       link { wlan_school_path(@school) }
       active_on_action "wlan"
       active_on_action "wlan_update"
+      hide_when { !current_user.organisation_owner? && !current_user.has_admin_permission?(:school_edit_wlan) }
       owners_only { false }
     end
 

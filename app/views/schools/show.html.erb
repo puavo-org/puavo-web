@@ -256,11 +256,13 @@
 
 <% content_for :tools do %>
 <ul>
+  <% if @can_edit %>
   <li>
     <%= link_to edit_school_path(@school), class: "btn" do %>
       <i class='icon-pencil'></i><%= t('link.edit') %>
     <% end %>
   </li>
+  <% end %>
 
   <% if current_user.organisation_owner? %>
   <li class="haveDropdown">

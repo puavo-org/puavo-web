@@ -130,6 +130,8 @@ class SchoolsController < ApplicationController
 
     @full_puavoconf = list_all_puavoconf_values(LdapOrganisation.current.puavoConf, @school.puavoConf, nil)
 
+    @can_edit = is_owner? || current_user.has_admin_permission?(:school_edit)
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @school }
@@ -162,6 +164,12 @@ class SchoolsController < ApplicationController
   def edit
     @school = School.find(params[:id])
     @is_new_school = false
+
+    unless is_owner? || current_user.has_admin_permission?(:school_edit)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to school_path(@school)
+      return
+    end
   end
 
   # POST /schools
@@ -187,8 +195,13 @@ class SchoolsController < ApplicationController
   # PUT /schools/1
   # PUT /schools/1.xml
   def update
-
     @school = School.find(params[:id])
+
+    unless is_owner? || current_user.has_admin_permission?(:school_edit)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to school_path(@school)
+      return
+    end
 
     respond_to do |format|
       if @school.update_attributes(school_params)
@@ -329,9 +342,9 @@ class SchoolsController < ApplicationController
 
   # GET /schools/1/wlan
   def wlan
-    return unless can_edit_wlans?
-
     @school = School.find(params[:id])
+
+    return unless can_edit_wlans?
 
     respond_to do |format|
       format.html
@@ -340,9 +353,9 @@ class SchoolsController < ApplicationController
 
   # PUT /schools/1/wlan/update
   def wlan_update
-    return unless can_edit_wlans?
-
     @school = School.find(params[:id])
+
+    return unless can_edit_wlans?
 
     @school.update_wlan_attributes(params)
     @school.puavoWlanChannel = params[:school][:puavoWlanChannel]
@@ -478,6 +491,8 @@ class SchoolsController < ApplicationController
       admin_in =  Array(current_user.puavoAdminOfSchool || []).collect { |dn| dn.rdns[0]["puavoId"].to_i }
 
       return true if admin_in.include?(@school.id.to_i)
+
+      return true if current_user.has_admin_permission?(:school_edit_wlan)
 
       flash[:alert] = t('flash.you_must_be_an_owner')
       redirect_to school_path(current_user.primary_school)

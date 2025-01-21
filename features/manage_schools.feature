@@ -383,3 +383,40 @@ Scenario: Set the school code for an existing school
       """
       This user is an administrator of the school "Test school"
       """
+
+  Scenario: By default a school admin cannot edit school information
+    Given I am logged in as "donald" with password "313"
+    # No edit button
+    And I am on the show school page with "Greenwich Steiner School"
+    Then I should not see "Edit..."
+    # No URL manipulation
+    Then I am on the school edit page with "Greenwich Steiner School"
+    And I should see "You do not have enough rights to access that page."
+
+  Scenario: Grant the school edit permission
+    Given admin "donald" has these permissions: "school_edit"
+    And I am logged in as "donald" with password "313"
+    And I am on the show school page with "Greenwich Steiner School"
+    Then I should see "Edit..."
+    When I follow "Edit..."
+    And I should not see "You do not have enough rights to access that page."
+
+  Scenario: By default a school admin cannot view nor edit school WLAN information
+    Given I am logged in as "donald" with password "313"
+    # No edit button
+    And I am on the show school page with "Greenwich Steiner School"
+    Then I should not see "WLAN"
+    # No URL manipulation
+    Then I am on the school WLAN page with "Greenwich Steiner School"
+    And I should see "You do not have enough rights to access that page."
+
+  Scenario: Grant school WLAN editing
+    Given admin "donald" has these permissions: "school_edit_wlan"
+    Given I am logged in as "donald" with password "313"
+    # Have edit button
+    And I am on the show school page with "Greenwich Steiner School"
+    Then I should see "WLAN"
+    # Can edit WLANs
+    And I follow "WLAN"
+    Then I should not see "You do not have enough rights to access that page."
+    And I should see "Default Wireless Access Point setup"

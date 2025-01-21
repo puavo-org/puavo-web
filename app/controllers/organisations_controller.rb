@@ -1,4 +1,5 @@
 require 'set'
+require 'groups_helper'     # For listing user groups in user tables
 
 class OrganisationsController < ApplicationController
   include Puavo::Integrations
@@ -348,7 +349,11 @@ class OrganisationsController < ApplicationController
       users << user
     end
 
-    render :json => users
+    # For listing user groups. Use empty set for the accessible schools, because only owners
+    # can get here and they can see everything.
+    groups, group_members = GroupsHelper.load_group_member_lists(schools_by_dn, Set.new)
+
+    render json: { users: users, groups: groups, group_members: group_members }
   end
 
   def all_groups

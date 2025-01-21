@@ -1,5 +1,6 @@
 require 'set'
 require 'devices_helper'    # Need clear_device_primary_user
+require 'groups_helper'     # For listing user groups in user tables
 
 class UsersController < ApplicationController
   include Puavo::Integrations
@@ -142,21 +143,21 @@ class UsersController < ApplicationController
 
     schools_by_dn = {}
 
-    School.search_as_utf8(:filter => '',
-                          :attributes => ['cn', 'displayName', 'puavoId']).each do |dn, school|
+    School.search_as_utf8(filter: '',
+                          attributes: ['cn', 'displayName', 'puavoId']).each do |dn, school|
       schools_by_dn[dn] = {
         id: school['puavoId'][0].to_i,
         cn: school['cn'][0],
-        name: school['displayName'][0].force_encoding('utf-8'),
+        name: school['displayName'][0]
       }
     end
 
     krb_auth_times_by_uid = Kerberos.all_auth_times_by_uid
 
     # Get a raw list of users in this school
-    raw = User.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
-                              :scope => :one,
-                              :attributes => UsersHelper.get_user_attributes())
+    raw = User.search_as_utf8(filter: "(puavoSchool=#{@school.dn})",
+                              scope: :one,
+                              attributes: UsersHelper.get_user_attributes())
 
     # Build a list of devices whose primary users are in this school. If the viewer is a school
     # admin and the device is in a school they don't have access to, then ACLs will prevent the
@@ -205,7 +206,16 @@ class UsersController < ApplicationController
       users << user
     end
 
-    render :json => users
+    # For listing user groups. Only link to schools the current user can see (if not an owner)
+    if is_owner?
+      accessible_schools = Set.new
+    else
+      accessible_schools = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set.freeze
+    end
+
+    groups, group_members = GroupsHelper.load_group_member_lists(schools_by_dn, accessible_schools)
+
+    render json: { users: users, groups: groups, group_members: group_members }
   end
 
   # GET /:school_id/users/1/image
@@ -283,8 +293,8 @@ class UsersController < ApplicationController
 
     # find the user's devices
     @user_devices = Device.find(:all,
-                                :attribute => "puavoDevicePrimaryUser",
-                                :value => @user.dn.to_s)
+                                attribute: 'puavoDevicePrimaryUser',
+                                value: @user.dn.to_s)
 
     # group user's groups by school
     by_school_hash = {}
@@ -805,7 +815,7 @@ class UsersController < ApplicationController
       @user.puavoSchool = Array(@user.puavoSchool) + [@target.dn]
       @user.save!
 
-      flash[:notice] = t('flash.user.added_to_school', :name => @target.displayName)
+      flash[:notice] = t('flash.user.added_to_school', name: @target.displayName)
     rescue StandardError => e
       logger.error('-' * 50)
       logger.error(e)
@@ -834,7 +844,7 @@ class UsersController < ApplicationController
 
       Puavo::UsersShared::remove_user_from_school(@user, @target)
 
-      flash[:notice] = t('flash.user.removed_from_school', :name => @target.displayName)
+      flash[:notice] = t('flash.user.removed_from_school', name: @target.displayName)
     rescue StandardError => e
       logger.error('-' * 50)
       logger.error(e)
@@ -857,7 +867,7 @@ class UsersController < ApplicationController
       # This can only be done if the user already is in the target school.
       # The UI won't let you do this, but let's verify it.
       unless Array(@user.puavoSchool).include?(@target.dn)
-        flash[:alert] = t('flash.user.invalid_primary_school', :name => @target.displayName)
+        flash[:alert] = t('flash.user.invalid_primary_school', name: @target.displayName)
         redirect_to(change_schools_path(@user.primary_school, @user))
         return
       end
@@ -865,7 +875,7 @@ class UsersController < ApplicationController
       @user.puavoEduPersonPrimarySchool = @target.dn
       @user.save!
 
-      flash[:notice] = t('flash.user.primary_school_changed', :name => @target.displayName)
+      flash[:notice] = t('flash.user.primary_school_changed', name: @target.displayName)
     rescue StandardError => e
       logger.error('-' * 50)
       logger.error(e)
@@ -891,7 +901,7 @@ class UsersController < ApplicationController
       @user.puavoEduPersonPrimarySchool = @target.dn
       @user.save!
 
-      flash[:notice] = t('flash.user.primary_school_added_and_changed', :name => @target.displayName)
+      flash[:notice] = t('flash.user.primary_school_added_and_changed', name: @target.displayName)
     rescue StandardError => e
       logger.error('-' * 50)
       logger.error(e)
@@ -950,7 +960,7 @@ class UsersController < ApplicationController
       rescue ActiveLdap::LdapError::NoSuchAttribute
       end
 
-      flash[:notice] = t('flash.user.user_moved_to_school', :name => @target.displayName)
+      flash[:notice] = t('flash.user.user_moved_to_school', name: @target.displayName)
     rescue StandardError => e
       logger.error('-' * 50)
       logger.error(e)
@@ -962,11 +972,11 @@ class UsersController < ApplicationController
   end
 
   def username_redirect
-    user = User.find(:first, :attribute => "uid", :value => params["username"])
+    user = User.find(:first, attribute: 'uid', value: params['username'])
     if user.nil?
       return render :plain => "Unknown user #{ ActionController::Base.helpers.sanitize(params["username"]) }", :status => 400
     end
-    redirect_to user_path(params["school_id"], user.id)
+    redirect_to user_path(params['school_id'], user.id)
   end
 
   # GET /:school_id/users/:id/edit_admin_permissions
@@ -1131,7 +1141,7 @@ class UsersController < ApplicationController
     # "Group.all" is so easy, but so slow... multiple minutes slow in some places.
     school_names = {}
 
-    School.search_as_utf8(:filter => '', :attributes => ['displayName']).each do |dn, school|
+    School.search_as_utf8(filter: '', attributes: ['displayName']).each do |dn, school|
       school_names[dn] = school['displayName'][0]
     end
 

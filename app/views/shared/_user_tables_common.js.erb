@@ -22,6 +22,16 @@ const USER_ROLES = {
     unknown: "<%= t('unknown_role') %>",
 };
 
+// Localized group types
+const GROUP_TYPES = {
+    "teaching group": "<%= t('group_type.teaching group') %>",
+    "course group": "<%= t('group_type.course group') %>",
+    "year class": "<%= t('group_type.year class') %>",
+    "administrative group": "<%= t('group_type.administrative group') %>",
+    "archive users": "<%= t('group_type.archive users') %>",
+    "other groups": "<%= t('group_type.other groups') %>",
+};
+
 // All available columns, their names and types and other parameters
 const COLUMN_DEFINITIONS = {
     id: {
@@ -303,6 +313,49 @@ const COLUMN_DEFINITIONS = {
             return [display.join("<br>"), raw, raw];
         }
     },
+
+    groups: {
+        key: "groups",
+        title: "<%= t('columns.users.groups') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
+
+        transform: entry => {
+            let html = [],
+                value = [];
+
+            // If the user has groups, list them in clickable form.
+            // See the expandUserData() generator function elsewhere
+            // in this file.
+            if (entry.groups) {
+                for (const gid of entry.groups) {
+                    const group = GROUPS[gid];
+                    let h = "";
+
+                    // The group is not linked to if the current user cannot access
+                    // the school where the group is. We'll still display its name.
+                    if (group.link !== null)
+                        h += `<a href="${group.link}">`;
+
+                    h += group.name;
+
+                    if (group.link !== null)
+                        h += `</a>`;
+
+                    if (group.type in GROUP_TYPES)
+                        h += ` <small>(${GROUP_TYPES[group.type]})</small>`;
+
+                    html.push(h);
+                    value.push(group.name);
+                }
+            }
+
+            html = html.join("<br>");
+            value = value.join(",");
+
+            return [html, value, value];
+        },
+    }
 };
 
 // The default order for columns
@@ -334,6 +387,7 @@ const COLUMN_ORDER = [
     "last_ldap_auth_date",
     "licenses",
     "devices",
+    "groups",
     "mfa",
     "notes",
 ];
@@ -972,3 +1026,40 @@ const MASS_SELECTS = [
     ["eid", "<%= t('columns.users.eid') %>"],
     ["id", "<%= t('columns.puavoid') %>"],
 ];
+
+let GROUPS = {},
+    GROUP_MEMBERS = {};
+
+// User groups lists are not generated server-side due to their enormous size.
+// Instead the server simply generates a list of groups and their members (DNs).
+// This generator function is used to process that "raw" list into something we
+// can use when formatting user tables.
+function* expandUserData(raw)
+{
+    GROUPS = raw.groups;
+    GROUP_MEMBERS = {};
+
+    // First, generate a reverse lookup table. Instead of having a list groups and
+    // members in those groups, build a list of users and their groups.
+    for (const [groupID, members] of Object.entries(raw.group_members)) {
+        for (const dn of members) {
+            // Extract the user's PuavoID from the DN. This is faster than regexp.
+            const puavoId = parseInt(dn.split(",")[0].split("=")[1], 10);
+
+            if (!(puavoId in GROUP_MEMBERS))
+                GROUP_MEMBERS[puavoId] = [];
+
+            GROUP_MEMBERS[puavoId].push(groupID);
+        }
+    }
+
+    // Then for each user, insert the list of their groups into the user data
+    for (const [_, s] of Object.entries(raw.users)) {
+        let s2 = { ...s };
+
+        if (s2.id in GROUP_MEMBERS)
+            s2.groups = GROUP_MEMBERS[s2.id];
+
+        yield s2;
+    }
+}
