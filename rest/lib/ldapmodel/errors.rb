@@ -138,6 +138,12 @@ class Unauthorized < JSONError
  end
 end
 
+class Forbidden < JSONError
+  def http_code
+    403
+  end
+end
+
 class InvalidOAuth2Token < JSONError
   def http_code
     401
