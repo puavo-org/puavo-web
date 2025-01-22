@@ -141,6 +141,12 @@ module OAuth2
 
     custom_claims = {}
 
+    # Organisation restriction
+    if client_config.include?('allowed_organisations')
+      custom_claims['allowed_organisations'] = Array(client_config['allowed_organisations'])
+      rlog.info("[#{request_id}] Token is only allowed in these organisations: #{custom_claims['allowed_organisations'].inspect}")
+    end
+
     # Endpoint restriction
     if client_config.include?('allowed_endpoints')
       custom_claims['allowed_endpoints'] = Array(client_config['allowed_endpoints'])
