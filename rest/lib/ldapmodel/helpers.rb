@@ -38,6 +38,14 @@ class V4_DuplicateParameter < StandardError; end
 # Known filter operators
 OPERATORS = Set.new(['starts', 'ends', 'contains', 'is']).freeze
 
+# How many parameters different operators want
+PART_COUNTS = {
+  'starts' => 3,
+  'ends' => 3,
+  'contains' => 3,
+  'is' => 3,
+}.freeze
+
 # Known fields that can accept multiple values
 PERMIT_MULTIPLE = Set.new(['id']).freeze
 
@@ -76,8 +84,8 @@ def v4_get_filters_from_params(params, user_to_ldap, base_class = '*')
     parts = f.split('|')
 
     # Silently ignore invalid filters
-    next unless parts.count == 3
     next unless OPERATORS.include?(parts[1])
+    next unless PART_COUNTS[parts[1]] == parts.count
     next unless user_to_ldap.include?(parts[0])
 
     is_multi = PERMIT_MULTIPLE.include?(parts[0])
