@@ -36,7 +36,7 @@ class V4_InvalidParameter < StandardError; end
 class V4_DuplicateParameter < StandardError; end
 
 # Known filter operators
-OPERATORS = Set.new(['starts', 'ends', 'contains', 'is']).freeze
+OPERATORS = Set.new(['starts', 'ends', 'contains', 'is', 'exists', 'not_exists']).freeze
 
 # How many parameters different operators want
 PART_COUNTS = {
@@ -44,6 +44,8 @@ PART_COUNTS = {
   'ends' => 3,
   'contains' => 3,
   'is' => 3,
+  'exists' => 2,
+  'not_exists' => 2,
 }.freeze
 
 # Known fields that can accept multiple values
@@ -117,6 +119,12 @@ def v4_get_filters_from_params(params, user_to_ldap, base_class = '*')
           out << "(#{field}=#{LdapModel.ldap_escape(value)})"
           puavoid << value if parts[0] == 'id'
         end
+      when 'exists'
+        next if is_multi
+        out << "(#{field}=*)"
+      when 'not_exists'
+        next if is_multi
+        out << "(!(#{field}=*))"
     end
   end
 
