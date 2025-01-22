@@ -168,7 +168,8 @@ class PuavoSinatra < Sinatra::Base
     # The access token is valid
     rlog.info("Request authorized using access token #{access_token['jti'].inspect}, " \
               "client=#{access_token['client_id'].inspect}, audience=#{access_token['aud'].inspect}, " \
-              "subject=#{access_token['sub'].inspect}, scopes=#{access_token['scopes'].inspect}")
+              "subject=#{access_token['sub'].inspect}, scopes=#{access_token['scopes'].inspect}, " \
+              "endpoints=#{access_token.fetch('allowed_endpoints', nil)}")
 
     rlog.info("The access token expires at #{Time.at(access_token['exp']).to_s}")
 
@@ -180,6 +181,14 @@ class PuavoSinatra < Sinatra::Base
       unless token_scopes.include?(s)
         rlog.error("Token scopes do not contain the endpoint scopes (#{endpoint_scopes.to_a.inspect})")
         raise InsufficientOAuth2Scope, user: 'insufficient_scope'
+      end
+    end
+
+    # Is the endpoint allowed?
+    if access_token.include?('allowed_endpoints')
+      unless access_token['allowed_endpoints'].include?(@oauth2_params[:endpoint])
+        rlog.error("This token does not permit calling the #{@oauth2_params[:endpoint].inspect} endpoint")
+        raise Forbidden, user: 'invalid_token'
       end
     end
 

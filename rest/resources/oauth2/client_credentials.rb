@@ -137,6 +137,17 @@ module OAuth2
     end
 
     # ----------------------------------------------------------------------------------------------
+    # Firewalling
+
+    custom_claims = {}
+
+    # Endpoint restriction
+    if client_config.include?('allowed_endpoints')
+      custom_claims['allowed_endpoints'] = Array(client_config['allowed_endpoints'])
+      rlog.info("[#{request_id}] Token is only allowed in these endpoints: #{custom_claims['allowed_endpoints'].inspect}")
+    end
+
+    # ----------------------------------------------------------------------------------------------
     # Generate the token. Put it in a JWT and sign the JWT with a private key,
     # so we now have a self-validating token.
 
@@ -147,7 +158,8 @@ module OAuth2
                                subject: credentials[0],
                                client_id: credentials[0],
                                scopes: scopes[:scopes],
-                               expires_in: expires_in)
+                               expires_in: expires_in,
+                               custom_claims: custom_claims)
 
     unless token[:success]
       return json_error('invalid_request', request_id: request_id)
