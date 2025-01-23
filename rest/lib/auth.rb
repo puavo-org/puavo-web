@@ -185,9 +185,11 @@ class PuavoSinatra < Sinatra::Base
     end
 
     # Is the endpoint allowed?
+    verb, endpoint = request.env['sinatra.route'].split(' ')
+
     if access_token.include?('allowed_endpoints')
-      unless access_token['allowed_endpoints'].include?(@oauth2_params[:endpoint])
-        rlog.error("This token does not permit calling the #{@oauth2_params[:endpoint].inspect} endpoint")
+      unless access_token['allowed_endpoints'].include?(endpoint)
+        rlog.error("This token does not permit calling the #{endpoint} endpoint")
         raise Forbidden, user: 'invalid_token'
       end
     end
@@ -274,7 +276,6 @@ class PuavoSinatra < Sinatra::Base
 
   def oauth2(**params)
     @oauth2_params = {
-      endpoint: params[:endpoint] || nil,
       scopes: params[:scopes],
       audience: params[:audience] || 'puavo-rest-v4',
     }

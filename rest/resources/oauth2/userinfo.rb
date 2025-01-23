@@ -3,7 +3,7 @@
 module PuavoRest
 module OAuth2
   def oidc_handle_userinfo
-    oauth2 endpoint: '/oidc/userinfo', scopes: ['openid', 'profile'], audience: 'puavo-rest-userinfo'
+    oauth2 scopes: ['openid', 'profile'], audience: 'puavo-rest-userinfo'
     auth :oauth2_token
 
     request_id = make_request_id()
