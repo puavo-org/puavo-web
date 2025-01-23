@@ -427,7 +427,7 @@ module OAuth2
 
     # Load the signing private key. Unlike the public key, this is not kept in memory.
     begin
-      private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['token_private_key']))
+      private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['token_key']['private_file']))
     rescue StandardError => e
       rlog.error("[#{request_id}] Cannot load the access token signing private key file: #{e}")
       return { success: false }
