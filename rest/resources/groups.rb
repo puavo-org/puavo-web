@@ -210,7 +210,8 @@ class Groups < PuavoSinatra
   # Get all (or some) groups in the organisation.
   # GET /v4/groups?fields=...
   get "/v4/groups" do
-    auth :basic_auth, :kerberos
+    oauth2 scopes: ['puavo.read.groups']
+    auth :oauth2_token, :basic_auth, :kerberos
 
     raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
 
