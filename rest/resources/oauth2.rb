@@ -23,7 +23,7 @@ class OAuth2Endpoints < PuavoSinatra
 
   include OAuth2
 
-  # OpenID Connect Stage 1
+  # OpenID Connect Stage 1 (authorization request)
   # Accept both GET and POST requests. RFC 6749 says GET requests MUST be supported, while
   # POST requests MAY be supported.
   get '/oidc/authorize' do
@@ -34,7 +34,7 @@ class OAuth2Endpoints < PuavoSinatra
     oidc_stage1_authorization_request
   end
 
-  # OpenID Connect Stage 2
+  # OpenID Connect Stage 2 (authorization response)
   get '/oidc/authorize/response' do
     oidc_stage2_authorization_response
   end
