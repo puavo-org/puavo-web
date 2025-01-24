@@ -85,6 +85,13 @@ if ENV['RACK_ENV'] == 'test' then
         'private_file' => '/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem',
         'public_file' => '/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem',
       },
+      'client_database' => {
+        'host' => '127.0.0.1',
+        'port' => 5432,
+        'database' => 'oauth2',
+        'user' => 'standalone_user',
+        'password' => 'standalone_password'
+      },
     },
     "redis" => {
       :db => 1

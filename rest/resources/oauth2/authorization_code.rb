@@ -25,34 +25,25 @@ module OAuth2
     # Instead we display an error message in the browser. This matches RFC 6749 section 3.1.2.4.
 
     # ----------------------------------------------------------------------------------------------
-    # (Re)Load the OpenID Connect configuration file
-    # TODO: These must be stored in the database.
-
-    begin
-      oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oauth2.yml')).freeze
-    rescue StandardError => e
-      rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
-
-      # Don't reveal the exact reason
-      generic_error(t.sso.unspecified_error(request_id))
-    end
-
-    # ----------------------------------------------------------------------------------------------
     # Verify the client ID and the target external service
 
     client_id = params.fetch('client_id', nil)
-
     rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
 
-    unless oidc_config['oidc_logins'].include?(client_id)
+    client_config = get_client_configuration_by_id(request_id, client_id, :login)
+
+    if client_config.nil?
       rlog.error("[#{request_id}] Unknown/invalid client")
       generic_error(t.sso.invalid_client_id(request_id))
     end
 
-    client_config = oidc_config['oidc_logins'][client_id].freeze
+    unless client_config['enabled'] == 't'
+      rlog.error("[#{request_id}] This client exists but it has been disabled")
+      generic_error(t.sso.invalid_client_id(request_id))
+    end
 
     # Find the target service
-    service_dn = client_config['puavo_service']
+    service_dn = client_config['puavo_service_dn']
     rlog.info("[#{request_id}] Target external service DN: #{service_dn.inspect}")
 
     external_service = get_external_service(service_dn)
@@ -72,7 +63,7 @@ module OAuth2
 
     rlog.info("[#{request_id}] Redirect URI: #{redirect_uri.inspect}")
 
-    if client_config.fetch('allowed_redirect_uris', []).find { |uri| uri == redirect_uri }.nil?
+    if client_config.fetch('allowed_redirects', []).find { |uri| uri == redirect_uri }.nil?
       rlog.error("[#{request_id}] The redirect URI is not allowed")
       generic_error(t.sso.invalid_redirect_uri(request_id))
     end
@@ -303,7 +294,7 @@ module OAuth2
     # From here on, the redirect URI is usable, if needed
 
     # ----------------------------------------------------------------------------------------------
-    # Verify the client ID
+    # Verify the client ID and secret
 
     client_id = params.fetch('client_id', nil)
 
@@ -311,9 +302,6 @@ module OAuth2
       rlog.error("[#{request_id}] The client ID has changed: got \"#{client_id}\", expected \"#{oidc_state['client_id']}\"")
       return json_error('unauthorized_client', state: state, request_id: request_id)
     end
-
-    # ----------------------------------------------------------------------------------------------
-    # Verify the client secret
 
     external_service = get_external_service(oidc_state['service']['dn'])
     client_secret = params.fetch('client_secret', nil)
@@ -324,17 +312,19 @@ module OAuth2
     end
 
     # ----------------------------------------------------------------------------------------------
-    # (Re)Load the OIDC configuration
+    # Re-verify the client configuration
 
-    begin
-      client_config = YAML.safe_load(File.read('/etc/puavo-web/oauth2.yml'))
-    rescue StandardError => e
-      rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
-      return json_error('server_error', state: state, request_id: request_id)
+    client_config = get_client_configuration_by_id(request_id, client_id, :login)
+
+    if client_config.nil?
+      rlog.error("[#{request_id}] Unknown/invalid client (it existed in stage 1)")
+      return json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
-    # Assume this does not fail, since we've validated everything
-    client_config = client_config['oidc_logins'][client_id].freeze
+    unless client_config['enabled'] == 't'
+      rlog.error("[#{request_id}] This client exists but it has been disabled (it was enabled in stage 1)")
+      return json_error('unauthorized_client', state: state, request_id: request_id)
+    end
 
     # ----------------------------------------------------------------------------------------------
     # Verify the scopes

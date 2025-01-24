@@ -47,37 +47,31 @@ module OAuth2
     end
 
     # ----------------------------------------------------------------------------------------------
-    # (Re)Load the OpenID Connect configuration file
-
-    begin
-      oidc_config = YAML.safe_load(File.read('/etc/puavo-web/oauth2.yml')).freeze
-    rescue StandardError => e
-      rlog.error("[#{request_id}] Can't parse the OIDC configuration file: #{e}")
-      return json_error('unauthorized_client', request_id: request_id)
-    end
-
-    # ----------------------------------------------------------------------------------------------
-    # Verify the client credentials
+    # Authenticate the client
 
     rlog.info("[#{request_id}] Client ID: #{credentials[0].inspect}")
 
-    client_config = oidc_config['oauth_clients'].fetch(credentials[0], nil)
+    client_config = get_client_configuration_by_id(request_id, credentials[0], :token)
 
     if client_config.nil?
       rlog.error("[#{request_id}] Unknown/invalid client")
       return json_error('unauthorized_client', request_id: request_id)
     end
 
-    # The client type can be an external service in Puavo, or a standalone client
-    # which simply exists to facilitate data transfer between systems.
-    client_type = client_config.fetch('type', nil)
+    unless client_config['enabled'] == 't'
+      rlog.error("[#{request_id}] This client exists but it has been disabled")
+      return json_error('unauthorized_client', request_id: request_id)
+    end
 
-    rlog.info("[#{request_id}] Configured client type: #{client_type.inspect}")
+    # How to authenticate this client?
+    client_auth_type = client_config.fetch('client_auth_type', nil)
 
-    case client_type
+    rlog.info("[#{request_id}] Configured client authentication type: #{client_auth_type.inspect}")
+
+    case client_auth_type
       when 'puavo_service'
-        # Find the target service and check the password
-        service_dn = client_config.fetch('puavo_service', nil)
+        # Basic auth against an external service. Find the target service and check the password.
+        service_dn = client_config.fetch('puavo_service_dn', nil)
         external_service = get_external_service(service_dn)
 
         if external_service.nil?
@@ -85,7 +79,6 @@ module OAuth2
           return json_error('unauthorized_client', request_id: request_id)
         end
 
-        # Verify the secret
         unless credentials[1] == external_service.secret
           rlog.error("[#{request_id}] Invalid client secret")
           return json_error('unauthorized_client', request_id: request_id)
@@ -94,11 +87,11 @@ module OAuth2
         rlog.info("[#{request_id}] Client authorized using external service shared secret")
 
       when 'standalone'
-        # A simple password check
-        password = client_config.fetch('password', nil)
+        # A simple password check (basic auth against a database)
+        password = client_config.fetch('client_auth_data', nil)
 
         if password.nil? || password.strip.empty?
-          rlog.error("[#{request_id}] Empty password specified for a standalone client, refusing access")
+          rlog.error("[#{request_id}] Empty password specified in the database for a standalone client, refusing access")
           return json_error('unauthorized_client', request_id: request_id)
         end
 
@@ -110,7 +103,7 @@ module OAuth2
         rlog.info("[#{request_id}] Client authorized using standalone shared secret")
 
       else
-        rlog.error("[#{request_id}] Invalid client type #{client_type.inspect}")
+        rlog.error("[#{request_id}] Invalid client authentication type #{client_auth_type.inspect}")
         return json_error('unauthorized_client', request_id: request_id)
     end
 
@@ -142,13 +135,17 @@ module OAuth2
     custom_claims = {}
 
     # Organisation restriction
-    if client_config.include?('allowed_organisations')
+    if client_config.include?('allowed_organisations') &&
+        !client_config['allowed_organisations'].nil? &&
+        !client_config['allowed_organisations'].empty?
       custom_claims['allowed_organisations'] = Array(client_config['allowed_organisations'])
       rlog.info("[#{request_id}] Token is only allowed in these organisations: #{custom_claims['allowed_organisations'].inspect}")
     end
 
     # Endpoint restriction
-    if client_config.include?('allowed_endpoints')
+    if client_config.include?('allowed_endpoints') &&
+        !client_config['allowed_endpoints'].nil? &&
+        !client_config['allowed_endpoints'].empty?
       custom_claims['allowed_endpoints'] = Array(client_config['allowed_endpoints'])
       rlog.info("[#{request_id}] Token is only allowed in these endpoints: #{custom_claims['allowed_endpoints'].inspect}")
     end
