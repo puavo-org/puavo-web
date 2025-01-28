@@ -63,49 +63,20 @@ module OAuth2
       return json_error('unauthorized_client', request_id: request_id)
     end
 
-    # How to authenticate this client?
-    client_auth_type = client_config.fetch('client_auth_type', nil)
+    # A simple password check (basic auth against a database)
+    password = client_config.fetch('client_auth_data', nil)
 
-    rlog.info("[#{request_id}] Configured client authentication type: #{client_auth_type.inspect}")
-
-    case client_auth_type
-      when 'puavo_service'
-        # Basic auth against an external service. Find the target service and check the password.
-        service_dn = client_config.fetch('puavo_service_dn', nil)
-        external_service = get_external_service(service_dn)
-
-        if external_service.nil?
-          rlog.error("[#{request_id}] Cannot find the external service by DN \"#{service_dn}\"")
-          return json_error('unauthorized_client', request_id: request_id)
-        end
-
-        unless credentials[1] == external_service.secret
-          rlog.error("[#{request_id}] Invalid client secret")
-          return json_error('unauthorized_client', request_id: request_id)
-        end
-
-        rlog.info("[#{request_id}] Client authorized using external service shared secret")
-
-      when 'standalone'
-        # A simple password check (basic auth against a database)
-        password = client_config.fetch('client_auth_data', nil)
-
-        if password.nil? || password.strip.empty?
-          rlog.error("[#{request_id}] Empty password specified in the database for a standalone client, refusing access")
-          return json_error('unauthorized_client', request_id: request_id)
-        end
-
-        unless credentials[1] == password
-          rlog.error("[#{request_id}] Invalid client password")
-          return json_error('unauthorized_client', request_id: request_id)
-        end
-
-        rlog.info("[#{request_id}] Client authorized using standalone shared secret")
-
-      else
-        rlog.error("[#{request_id}] Invalid client authentication type #{client_auth_type.inspect}")
-        return json_error('unauthorized_client', request_id: request_id)
+    if password.nil? || password.strip.empty?
+      rlog.error("[#{request_id}] Empty password specified in the database for a standalone client, refusing access")
+      return json_error('unauthorized_client', request_id: request_id)
     end
+
+    unless credentials[1] == password
+      rlog.error("[#{request_id}] Invalid client password")
+      return json_error('unauthorized_client', request_id: request_id)
+    end
+
+    rlog.info("[#{request_id}] Client authorized")
 
     # ----------------------------------------------------------------------------------------------
     # Validate the scopes. RFC 6479 says these are optional for client credential requests,
