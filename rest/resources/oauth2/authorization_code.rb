@@ -28,10 +28,12 @@ module OAuth2
     # ----------------------------------------------------------------------------------------------
     # Verify the client ID and the target external service
 
+    db = get_oauth2_db
+
     client_id = params.fetch('client_id', nil)
     rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
 
-    client_config = get_client_configuration_by_id(request_id, client_id, :login)
+    client_config = get_client_configuration_by_id(request_id, db, client_id, :login)
 
     if client_config.nil?
       rlog.error("[#{request_id}] Unknown/invalid client")
@@ -176,6 +178,8 @@ module OAuth2
     end
 
     # Unreachable
+  ensure
+    db.close if db
   end
 
   # ------------------------------------------------------------------------------------------------
@@ -327,7 +331,9 @@ module OAuth2
     # ----------------------------------------------------------------------------------------------
     # Re-verify the client configuration
 
-    client_config = get_client_configuration_by_id(request_id, client_id, :login)
+    db = get_oauth2_db
+
+    client_config = get_client_configuration_by_id(request_id, db, client_id, :login)
 
     if client_config.nil?
       rlog.error("[#{request_id}] Unknown/invalid client (it existed in stage 1)")
@@ -455,6 +461,8 @@ module OAuth2
     headers['Pragma'] = 'no-cache'
 
     json(out)
+  ensure
+    db.close if db
   end
 end   # module OAuth2
 end   # module PuavoRest

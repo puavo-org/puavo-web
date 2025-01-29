@@ -15,24 +15,26 @@ module OAuth2
     end
   end
 
+  def get_oauth2_db
+    db_config = CONFIG['oauth2']['client_database']
+
+    PG.connect(hostaddr: db_config['host'],
+               port: db_config['port'],
+               dbname: db_config['database'],
+               user: db_config['user'],
+               password: db_config['password'])
+  end
+
   # Retrieves the client configuration from the database. 'type' must be either
   # :login or :token, depending on the client type.
-  def get_client_configuration_by_id(request_id, client_id, type)
+  def get_client_configuration_by_id(request_id, db, client_id, type)
     # Fetch the entry from the database. There are two tables, one for OpenID Connect
     # login clients, and one for OAuth2 access token clients. They have some identical
     # columns, but ultimately they contain different data.
-    db_config = CONFIG['oauth2']['client_database']
-
-    db = PG.connect(hostaddr: db_config['host'],
-                    port: db_config['port'],
-                    dbname: db_config['database'],
-                    user: db_config['user'],
-                    password: db_config['password'])
 
     # exec_params doesn't support parameterizing the table name
     table = (type == :login) ? 'login_clients' : 'token_clients'
     rows = db.exec_params("SELECT * FROM #{table} WHERE client_id = $1;", [client_id])
-    db.close
 
     return nil if rows.count != 1
 
