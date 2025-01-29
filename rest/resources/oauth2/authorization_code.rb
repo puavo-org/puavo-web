@@ -4,6 +4,7 @@
 # Stage 1 --> username+password forms, MFA, Kerberos --> stage 2 --> Stage 3 (token generation)
 
 require 'securerandom'
+require 'argon2'
 
 require_relative './scopes'
 require_relative './helpers'
@@ -306,10 +307,22 @@ module OAuth2
     external_service = get_external_service(oidc_state['service']['dn'])
     client_secret = params.fetch('client_secret', nil)
 
-    unless client_secret == external_service.secret
-      rlog.error("[#{request_id}] Invalid client secret in the request")
+    if external_service.secret.start_with?('$argon2')
+      # Secure Argon2 hash comparison
+      match = Argon2::Password.verify_password(client_secret, external_service.secret)
+      was_hashed = true
+    else
+      # Insecure plaintext comparison
+      match = client_secret == external_service.secret
+      was_hashed = false
+    end
+
+    unless match
+      rlog.error("[#{request_id}] Invalid client secret in the request (using hashed secret: #{was_hashed})")
       return json_error('unauthorized_client', state: state, request_id: request_id)
     end
+
+    rlog.info("[#{request_id}] Client authenticated (using hashed secret: #{was_hashed})")
 
     # ----------------------------------------------------------------------------------------------
     # Re-verify the client configuration
