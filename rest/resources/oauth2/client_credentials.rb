@@ -145,7 +145,7 @@ module OAuth2
       'puavo_request_id' => request_id,
     }
 
-    rlog.info("[#{request_id}] Issued access token #{token[:jti].inspect}, expires at #{Time.at(token[:expires_at])}")
+    rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect}, expires at #{Time.at(token[:expires_at])}")
 
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'

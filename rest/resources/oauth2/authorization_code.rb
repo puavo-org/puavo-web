@@ -436,7 +436,7 @@ module OAuth2
       return { success: false }
     end
 
-    rlog.info("[#{request_id}] Issued access token #{token[:jti].inspect} for the user, expires at #{Time.at(token[:expires_at])}")
+    rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect} for the user, expires at #{Time.at(token[:expires_at])}")
 
     out = {
       'access_token' => token[:access_token],

@@ -53,7 +53,7 @@ module OAuth2
     {
       success: true,
       access_token: access_token,
-      jti: token_claims['jti'],
+      raw_token: token_claims,
       expires_at: now + expires_in
     }
   end
