@@ -125,8 +125,7 @@ module OAuth2
     # Generate the token. Put it in a JWT and sign the JWT with a private key,
     # so we now have a self-validating token.
 
-    # TODO: Should this be client-configurable?
-    expires_in = 3600
+    expires_in = client_config['expires_in'].to_i
 
     token = build_access_token(request_id,
                                subject: credentials[0],
