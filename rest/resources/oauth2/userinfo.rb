@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 # The OpenID Connect userinfo endpoint
 
 module PuavoRest
 module OAuth2
   def oidc_handle_userinfo
-    oauth2 scopes: ['openid', 'profile'], audience: 'puavo-rest-userinfo'
+    oauth2 scopes: %w[openid profile], audience: 'puavo-rest-userinfo'
     auth :oauth2_token
 
     request_id = make_request_id()
@@ -98,17 +100,17 @@ module OAuth2
           # Just pick the first available address
           if user.email && !user.email.empty?
             out['email'] = user.email[0]
-            out['email_verified'] = false
           else
             out['email'] = nil
-            out['email_verified'] = false
           end
+
+          out['email_verified'] = false
         end
       end
     end
 
-    if scopes.include?('phone')
-      out['phone_number'] = user.telephone_number[0] unless user.telephone_number.empty?
+    if scopes.include?('phone') && !user.telephone_number.empty?
+      out['phone_number'] = user.telephone_number[0]
     end
 
     if scopes.include?('puavo.read.userinfo.schools')
@@ -124,7 +126,7 @@ module OAuth2
           'external_id' => s.external_id,
           'school_code' => s.school_code,
           'oid' => s.school_oid,
-          'primary' => user.primary_school_dn == s.dn,
+          'primary' => user.primary_school_dn == s.dn
         }
 
         school['ldap_dn'] = s.dn if has_ldap
@@ -145,7 +147,7 @@ module OAuth2
           'abbreviation' => g.abbreviation,
           'puavoid' => g.id.to_i,
           'external_id' => g.external_id,
-          'type' => g.type,
+          'type' => g.type
         }
 
         group['ldap_dn'] = g.dn if has_ldap
@@ -160,7 +162,7 @@ module OAuth2
     if scopes.include?('puavo.read.userinfo.organisation')
       org = {
         'name' => organisation.name,
-        'domain' => organisation.domain,
+        'domain' => organisation.domain
       }
 
       org['ldap_dn'] = organisation.dn if has_ldap
@@ -191,10 +193,7 @@ private
 
   # School searches are slow, so cache them
   def get_school(dn, cache)
-    unless cache.include?(dn)
-      cache[dn] = School.by_dn(dn)
-    end
-
+    cache[dn] = School.by_dn(dn) unless cache.include?(dn)
     cache[dn]
   end
 end   # module OAuth2

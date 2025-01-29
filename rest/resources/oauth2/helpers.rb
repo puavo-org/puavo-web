@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # OAuth2 helpers
 
 require 'pg'
@@ -43,7 +45,7 @@ module OAuth2
     # Convert certain columns into arrays
     array_decoder = PG::TextDecoder::Array.new
 
-    ['allowed_redirects', 'allowed_scopes', 'allowed_endpoints', 'allowed_organisations'].each do |key|
+    %w[allowed_redirects allowed_scopes allowed_endpoints allowed_organisations].each do |key|
       next unless client_config.include?(key)
       client_config[key] = array_decoder.decode(client_config[key])
     end
@@ -55,7 +57,7 @@ module OAuth2
   end
 
   # RFC 6749 section 4.1.2.1.
-  def redirect_error(redirect_uri, http_status, error, error_description: nil, error_uri: nil, state: nil, request_id: nil)
+  def redirect_error(redirect_uri, error, error_description: nil, error_uri: nil, state: nil, request_id: nil)
     out = {}
 
     out['error'] = error

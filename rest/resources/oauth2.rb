@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # OpenID Connect SSO system, and OAuth2 client credentials token generation
 
 require_relative '../lib/login/utility'
@@ -13,7 +15,7 @@ module PuavoRest
 module OAuth2
 
 # RFC 9207 issuer identifier
-ISSUER = 'https://auth.opinsys.fi'.freeze
+ISSUER = 'https://auth.opinsys.fi'
 
 class OAuth2Endpoints < PuavoSinatra
   register Sinatra::R18n

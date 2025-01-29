@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # OAuth2 access token generation
 
 require 'securerandom'
@@ -23,16 +25,12 @@ module OAuth2
       'iss' => ISSUER,
       'sub' => subject,
       'aud' => audience,
-      'scopes' => scopes.join(' '),
+      'scopes' => scopes.join(' ')
     }
 
-    if client_id
-      token_claims['client_id'] = client_id
-    end
+    token_claims['client_id'] = client_id if client_id
 
-    if custom_claims && custom_claims.is_a?(Hash)
-      token_claims.merge!(custom_claims)
-    end
+    token_claims.merge!(custom_claims) if custom_claims.is_a?(Hash)
 
     # Load the signing private key. Unlike the public key, this is not kept in memory.
     begin

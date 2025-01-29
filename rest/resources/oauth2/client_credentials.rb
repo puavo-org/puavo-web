@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 # RFC 6749 section 4.4. Client Credentials Grant
-# This generates access tokens for non-interactive machine <-> machine communication
+# This implements OAuth2 access tokens for non-interactive machine <-> machine communication
 
 require 'base64'
 require 'yaml'
 require 'argon2'
 
-require_relative './scopes'
-require_relative './access_token'
-require_relative './helpers'
+require_relative 'scopes'
+require_relative 'access_token'
+require_relative 'helpers'
 
 module PuavoRest
 module OAuth2
@@ -33,8 +35,8 @@ module OAuth2
     end
 
     begin
-      credentials = request.env.fetch('HTTP_AUTHORIZATION', '').split(' ')
-      credentials = Base64::strict_decode64(credentials[1])
+      credentials = request.env.fetch('HTTP_AUTHORIZATION', '').split
+      credentials = Base64.strict_decode64(credentials[1])
       credentials = credentials.split(':')
 
       if credentials.count != 2
@@ -144,7 +146,7 @@ module OAuth2
       'access_token' => token[:access_token],
       'token_type' => 'Bearer',
       'expires_in' => expires_in,
-      'puavo_request_id' => request_id,
+      'puavo_request_id' => request_id
     }
 
     rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect}, expires at #{Time.at(token[:expires_at])}")
@@ -154,7 +156,7 @@ module OAuth2
 
     json(out)
   ensure
-    db.close if db
+    db&.close
   end
 end   # module OAuth2
 end   # module PuavoRest

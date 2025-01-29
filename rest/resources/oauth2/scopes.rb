@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # OAuth2 scopes
 
 require 'set'
@@ -6,7 +8,7 @@ module PuavoRest
 module OAuth2
   # Allowed built-in scopes for OpenID Connect logins (not used with client credentials).
   # These scopes are also valid for the OIDC userinfo endpoint, but nowhere else ATM.
-  BUILTIN_LOGIN_SCOPES = %w(
+  BUILTIN_LOGIN_SCOPES = %w[
     openid
     profile
     email
@@ -17,18 +19,18 @@ module OAuth2
     puavo.read.userinfo.ldap
     puavo.read.userinfo.admin
     puavo.read.userinfo.security
-  ).to_set.freeze
+  ].to_set.freeze
 
   # Allowed built-in OAuth 2 access token scopes, for client credential requests.
   # At the moment, we have scopes only for the puavo-rest V4 API. Possible scopes
   # for other systems remain TBD.
-  BUILTIN_PUAVO_OAUTH2_SCOPES = %w(
+  BUILTIN_PUAVO_OAUTH2_SCOPES = %w[
     puavo.read.organisation
     puavo.read.schools
     puavo.read.groups
     puavo.read.users
     puavo.read.devices
-  ).to_set.freeze
+  ].to_set.freeze
 
   # Parses a string containing scopes separated by spaces, and removes the scopes that
   # aren't allowed for this client and also the invalid scopes.
@@ -38,7 +40,7 @@ module OAuth2
                    client_config,
                    require_openid: true)
     rlog.info("[#{request_id}] Raw incoming scopes: #{raw_scopes.inspect}")
-    scopes = raw_scopes.split(' ').to_set
+    scopes = raw_scopes.split.to_set
 
     if require_openid && !scopes.include?('openid')
       rlog.error("[#{request_id}] No \"openid\" found in scopes")

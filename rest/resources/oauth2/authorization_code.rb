@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # RFC 6749 section 4.1. Authorization Code Grant
 # This implements OpenID Connect for interactive user logins
 
@@ -6,17 +8,16 @@
 require 'securerandom'
 require 'argon2'
 
-require_relative './scopes'
-require_relative './helpers'
-require_relative './access_token'
+require_relative 'scopes'
+require_relative 'helpers'
+require_relative 'access_token'
 
 module PuavoRest
 module OAuth2
   # ------------------------------------------------------------------------------------------------
-  # Stage 1: Authorization Code Grant
-  # This starts an interactive browser-based authorization that uses redirects.
+  # Stage 1: Authorization Request (RFC 6749 section 4.1.1.)
 
-  # RFC 6749 section 4.1.1.
+  # This starts an interactive browser-based authorization that uses redirects
   def oidc_stage1_authorization_request
     request_id = make_request_id
 
@@ -84,7 +85,7 @@ module OAuth2
 
     unless response_type == 'code'
       rlog.error("[#{request_id}] Invalid response type #{response_type.inspect} (expected \"code\")")
-      return redirect_error(redirect_uri, 400, 'invalid_request', state: params.fetch('state', nil), request_id: request_id)
+      return redirect_error(redirect_uri, 'invalid_request', state: params.fetch('state', nil), request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -96,7 +97,7 @@ module OAuth2
                           client_config)
 
     unless scopes[:success]
-      return redirect_error(redirect_uri, 400, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
+      return redirect_error(redirect_uri, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -118,7 +119,7 @@ module OAuth2
       # until the initial JWT/access token has been generated)
       'service' => nil,
       'organisation' => nil,
-      'user' => nil,
+      'user' => nil
     }
 
     if params.include?('nonce')
@@ -179,11 +180,11 @@ module OAuth2
 
     # Unreachable
   ensure
-    db.close if db
+    db&.close
   end
 
   # ------------------------------------------------------------------------------------------------
-  # Stage 2: Generate the authorization response (RFC 6749 section 4.1.2.)
+  # Stage 2: Authorization Response (RFC 6749 section 4.1.2.)
 
   # We get here from the login/MFA form, or directly from stage 1 if an SSO session existed
   # or Kerberos authentication succeeded. In any case, it's a browser redirect.
@@ -211,7 +212,7 @@ module OAuth2
     session_create(login_key, login_data, {
       'service' => login_data['service'],
       'organisation' => login_data['organisation'],
-      'user' => login_data['user'],
+      'user' => login_data['user']
     })
 
     # Generate the session code and stash everything in Redis
@@ -243,7 +244,7 @@ module OAuth2
   end
 
   # ------------------------------------------------------------------------------------------------
-  # Stage 3: Access token request (RFC 6749 section 4.1.3.)
+  # Stage 3: Access Token Request (RFC 6749 section 4.1.3.)
 
   # Generate ID and access tokens for the client
   def oidc_stage3_access_token_request(temp_request_id)
@@ -273,7 +274,7 @@ module OAuth2
     begin
       oidc_state = JSON.parse(oidc_state)
     rescue StandardError => e
-      rlog.error("[#{temp_request_id}] Unable to parse the JSON in OIDC state \"#{code}\"")
+      rlog.error("[#{temp_request_id}] Unable to parse the JSON in OIDC state \"#{code}\": #{e}")
       return json_error('server_error', request_id: temp_request_id)
     end
 
@@ -372,7 +373,7 @@ module OAuth2
       'iat' => now,
       'nbf' => now,
       'exp' => now + expires_in,
-      'auth_time' => oidc_state['auth_time'],
+      'auth_time' => oidc_state['auth_time']
     }
 
     if oidc_state.include?('nonce')
@@ -449,7 +450,7 @@ module OAuth2
       'token_type' => 'Bearer',
       'expires_in' => expires_in,
       'id_token' => JWT.encode(payload, private_key, 'ES256', { typ: 'at+jwt' }),
-      'puavo_request_id' => request_id,
+      'puavo_request_id' => request_id
     }
 
     if oidc_state['scopes_changed']
@@ -462,7 +463,7 @@ module OAuth2
 
     json(out)
   ensure
-    db.close if db
+    db&.close
   end
 end   # module OAuth2
 end   # module PuavoRest
