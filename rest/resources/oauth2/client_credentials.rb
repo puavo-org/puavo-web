@@ -3,6 +3,7 @@
 
 require 'base64'
 require 'yaml'
+require 'argon2'
 
 require_relative './scopes'
 require_relative './access_token'
@@ -63,15 +64,14 @@ module OAuth2
       return json_error('unauthorized_client', request_id: request_id)
     end
 
-    # A simple password check (basic auth against a database)
-    password = client_config.fetch('client_auth_data', nil)
+    hashed_password = client_config.fetch('client_password', nil)
 
-    if password.nil? || password.strip.empty?
-      rlog.error("[#{request_id}] Empty password specified in the database for a standalone client, refusing access")
+    if hashed_password.nil? || hashed_password.strip.empty?
+      rlog.error("[#{request_id}] Empty hashed password specified in the database for a token client, refusing access")
       return json_error('unauthorized_client', request_id: request_id)
     end
 
-    unless credentials[1] == password
+    unless Argon2::Password.verify_password(credentials[1], hashed_password)
       rlog.error("[#{request_id}] Invalid client password")
       return json_error('unauthorized_client', request_id: request_id)
     end
