@@ -304,5 +304,34 @@ class Organisations < PuavoSinatra
     end
   end
 
+  # Retrieves a list of all organisations in the database
+  get '/v4/organisations_list' do
+    auth :basic_auth, :kerberos, :server_auth
+
+    topdomain = File.read('/etc/puavo/topdomain').strip
+
+    # "dc=edu,dc=XXXXX,dc=YY"
+    matcher = /^dc=edu,dc=(.*),dc=(.*$)/.freeze
+    organisations = []
+
+    Organisation.connection.search('', LDAP::LDAP_SCOPE_BASE, '(objectClass=*)', ['namingContexts']) do |entry|
+      organisations = (entry['namingContexts'] || []).collect do |dn|
+        match = matcher.match(dn)
+
+        match ? {
+          name: match[1],
+          domain: "#{match[1]}.#{topdomain}",
+          dn: dn,
+        } : nil
+      end.compact
+    end;
+
+    return 200, json({
+      status: 'ok',
+      error: nil,
+      data: organisations
+    })
+  end
+
 end
 end
