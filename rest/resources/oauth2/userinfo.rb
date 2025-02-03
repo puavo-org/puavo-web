@@ -74,7 +74,7 @@ module OAuth2
       out['preferred_username'] = user.username
       out['updated_at'] = updated_at unless updated_at.nil?
       out['locale'] = user.locale
-      out['timezone'] = user.timezone
+      out['zoneinfo'] = user.timezone
 
       # Puavo-specific claims
       out['puavo.uuid'] = user.uuid
