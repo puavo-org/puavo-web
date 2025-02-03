@@ -20,6 +20,11 @@ module Puavo
       # Argh, there must be a better way to do this!
       case @parameters['field']
         when 'image'
+          if value && value.end_with?('.img')
+            # Strip the .img extension
+            value = value[0..-5]
+          end
+
           if object.puavoDeviceImage != value
             object.puavoDeviceImage = value
             changed = true

@@ -160,7 +160,7 @@ constructor(container, settings)
 
     // Pagination state
     this.paging = {
-        rowsPerPage: DEFAULT_ROWS_PER_PAGE,         // -1 = "show all at once"
+        rowsPerPage: settings.defaultRowsPerPage ?? DEFAULT_ROWS_PER_PAGE,
         numPages: 0,
         currentPage: 0,
         firstRowIndex: 0,     // used to compute table row numbers during selections and mass operations
