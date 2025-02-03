@@ -182,7 +182,6 @@ module OAuth2
 
     if scopes.include?('puavo.read.userinfo.security')
       out['puavo.mfa_enabled'] = user.mfa_enabled == true
-      out['puavo.opinsys_admin'] = nil    # TODO: Future placeholder (for now)
     end
 
     school_cache = nil
