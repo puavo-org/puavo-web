@@ -243,5 +243,66 @@ class Organisations < PuavoSinatra
     json Organisation.by_domain(params[:domain])
   end
 
+  # -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  # EXPERIMENTAL V4 API
+
+  # Use at your own risk. Currently read-only.
+
+  USER_TO_LDAP = {
+    'abbreviation'    => 'cn',
+    'active_services' => 'puavoActiveService',
+    'created'         => 'createTimestamp',   # LDAP operational attribute
+    'description'     => 'description',
+    'dn'              => 'dn',
+    'modified'        => 'modifyTimestamp',   # LDAP operational attribute
+    'name'            => 'o',
+    'notes'           => 'puavoNotes',
+    'owners'          => 'owner',
+    'puavoconf'       => 'puavoConf',
+    'timezone'        => 'puavoTimezone',
+  }
+
+  LDAP_TO_USER = {
+    'cn'                  => { name: 'abbreviation' },
+    'createTimestamp'     => { name: 'created', type: :ldap_timestamp },
+    'description'         => { name: 'description' },
+    'dn'                  => { name: 'dn' },
+    'modifyTimestamp'     => { name: 'modified', type: :ldap_timestamp },
+    'o'                   => { name: 'name' },
+    'owner'               => { name: 'owners' },
+    'puavoActiveService'  => { name: 'active_services' },
+    'puavoConf'           => { name: 'puavoconf', type: :json },
+    'puavoNotes'          => { name: 'notes' },
+    'puavoTimezone'       => { name: 'timezone' },
+  }
+
+  # GET /v4/organisation?fields=...
+  get '/v4/organisation' do
+    auth :basic_auth, :kerberos, :server_auth
+
+    v4_do_operation do
+      user_fields = v4_get_fields(params).to_set
+      ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
+
+      # Organisation.raw_filter() exists, but I can't get it to work
+      raw = nil
+
+      Organisation.connection.search(Organisation.current.dn, LDAP::LDAP_SCOPE_BASE,
+                                     '(objectClass=*)', ldap_attrs) do |entry|
+        raw = [entry.to_hash]
+      end
+
+      out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
+      out = v4_ensure_is_array(out, 'active_services', 'owners')
+
+      return 200, json({
+        status: 'ok',
+        error: nil,
+        data: out,
+      })
+    end
+  end
+
 end
 end
