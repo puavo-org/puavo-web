@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
             massOperationsEndpoint: "<%= groups_mass_operations_path %>",
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
+            defaultRowsPerPage: -1,     // show all groups by default
             dynamicData: "/get_all_groups",
         }
     );
