@@ -36,6 +36,7 @@ def define_basic(env)
       :puavoLocale               => 'en_US.UTF-8',
       :puavoSchool               => env.school.dn,
       :puavoEduPersonPrimarySchool => env.school.dn,
+      :puavoTeacherPermissions   => [ 'set_student_password' ],
       :sn                        => 'Snape',
       :telephoneNumber           => '234567',
       :uid                       => 'severus.snape')
@@ -141,8 +142,8 @@ def define_basic(env)
       :uid => "gilderoy.lockhart",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "teacher",
-      :puavoTeacherPermissions   => [])
+      :puavoTeacherPermissions   => [ 'set_student_password' ],
+      :puavoEduPersonAffiliation => "teacher")
     config.dn = teacher2.dn
   end
 
