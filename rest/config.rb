@@ -84,6 +84,7 @@ if ENV['RACK_ENV'] == 'test' then
       'token_key' => {
         'private_file' => '/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem',
         'public_file' => '/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem',
+        'creation_time' => '20250115T095034Z',
       },
       'client_database' => {
         'host' => '127.0.0.1',
