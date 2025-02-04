@@ -15,7 +15,7 @@ env.validate 'User password' do
                                              LDAPTestEnvException },
     lambda { student.cannot_set_password_for owner, LDAPTestEnvException },
 
-    # teacher password change permissions
+    # teacher with password change permissions to student accounts
     lambda { teacher.can_set_password_for    teacher },
     lambda { teacher.can_set_password_for    student },
     lambda { teacher.cannot_set_password_for other_school_student,
@@ -27,6 +27,10 @@ env.validate 'User password' do
     lambda { teacher.cannot_set_password_for other_school_admin,
                                              LDAPTestEnvException },
     lambda { teacher.cannot_set_password_for owner, LDAPTestEnvException },
+
+    # teacher without password change permissions to student accounts
+    lambda { teacher2.can_set_password_for teacher2 },
+    lambda { teacher2.cannot_set_password_for student, LDAPTestEnvException },
 
     # admin password change permissions
     lambda { admin.can_set_password_for admin   },
