@@ -6,9 +6,11 @@ Feature: Manage passwords
   Background:
     Given a new school and group with names "School 1", "Class 4" on the "example" organisation
     And the following users:
-    | givenName | sn     | uid   | password    | school_admin | puavoEduPersonAffiliation | mail             |
-    | Pavel     | Taylor | pavel | pavelsecret | true         | admin                     | pavel@foobar.com |
-    | Ben       | Mabey  | ben   | bensecret   | false        | student                   | ben@foobar.com   |
+    | givenName | sn     | uid      | password    | school_admin | puavoEduPersonAffiliation | mail             |
+    | Pavel     | Taylor | pavel    | pavelsecret | true         | admin                     | pavel@foobar.com |
+    | Ben       | Mabey  | ben      | bensecret   | false        | student                   | ben@foobar.com   |
+    | Tea       | Cher   | teacher1 | trustno1    | false        | teacher                   |                  |
+    | Tea       | Cher   | teacher2 | trustno1    | false        | teacher                   |                  |
     And I am on the password change page
 
   Scenario: Empty own password change form should not crash
@@ -167,3 +169,27 @@ Feature: Manage passwords
     And I fill in "Re-enter new password" with "barfoo"
     And I press "Reset password"
     Then I should see "Password doesn't match the confirmation"
+
+  # Teacher permission tests
+  Scenario: Normal teachers cannot change student passwords
+    When I fill in "login[uid]" with "teacher1"
+    And I fill in "Password" with "trustno1"
+    And I fill in "user[uid]" with "ben"
+    And I fill in "user[new_password]" with "newbensecret"
+    And I fill in "Confirm new password" with "newbensecret"
+    And I wait 11 seconds
+    And I press "Change password"
+    Then I should see "You do not have a permission to change student passwords"
+    And I should not see "Password changed successfully!"
+
+  Scenario: Teachers who have been granted the studen password changing right can change student passwords
+    Given teacher "teacher2" has these permissions: "set_student_password"
+    When I fill in "login[uid]" with "teacher2"
+    And I fill in "Password" with "trustno1"
+    And I fill in "user[uid]" with "ben"
+    And I fill in "user[new_password]" with "newbensecret"
+    And I fill in "Confirm new password" with "newbensecret"
+    And I wait 11 seconds
+    And I press "Change password"
+    Then I should see "Password changed successfully!"
+    And I should not see "You do not have a permission to change student passwords"
