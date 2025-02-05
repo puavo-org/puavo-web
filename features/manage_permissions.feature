@@ -2,10 +2,12 @@ Feature: Manage admin permissions
   Background:
     Given a new school and group with names "School 1", "Class 4" on the "example" organisation
     And the following users:
-      | givenName | sn     | uid        | password | school_admin | puavoEduPersonAffiliation |
-      | Test      | User   | testuser   | password | false        | testuser                  |
-      | Test      | Admin  | testadmin  | password | true         | admin                     |
-      | Test2     | Admin2 | testadmin2 | password | true         | admin                     |
+      | givenName | sn      | uid          | password | school_admin | puavoEduPersonAffiliation |
+      | Test      | User    | testuser     | password | false        | testuser                  |
+      | Test      | Admin   | testadmin    | password | true         | admin                     |
+      | Test2     | Admin2  | testadmin2   | password | true         | admin                     |
+      | Tea       | Cher    | teacher1     | password | false        | teacher                   |
+      | Admin     | Teacher | adminteacher | password | false        | admin,teacher             |
 
   Scenario: Owners can edit admin permissions
     Given I am logged in as "cucumber" with password "cucumber"
@@ -55,7 +57,7 @@ Feature: Manage admin permissions
     And I am on the edit admin permissions page with "testadmin"
     When I check "create_users"
     And I press "Update"
-    Then I should see "Permissions updated"
+    Then I should see "Admin permissions updated"
     Then I should see "Admin permissions can create users"
     Given I am logged in as "testadmin" with password "password"
     When I am on the show user page with "testadmin"
@@ -72,7 +74,7 @@ Feature: Manage admin permissions
     And I am on the edit admin permissions page with "testadmin"
     When I check "delete_users"
     And I press "Update"
-    Then I should see "Permissions updated"
+    Then I should see "Admin permissions updated"
     Then I should see "Admin permissions can delete users"
     Given I am logged in as "testadmin" with password "password"
     When I am on the show user page with "testadmin"
@@ -87,7 +89,7 @@ Feature: Manage admin permissions
     And I am on the edit admin permissions page with "testadmin"
     When I check "import_users"
     And I press "Update"
-    Then I should see "Permissions updated"
+    Then I should see "Admin permissions updated"
     Then I should see "Admin permissions user mass import tool"
     Given I am logged in as "testadmin" with password "password"
     When I am on the show user page with "testadmin"
@@ -108,7 +110,7 @@ Feature: Manage admin permissions
     When I check "delete_users"
     When I check "import_users"
     And I press "Update"
-    Then I should see "Permissions updated"
+    Then I should see "Admin permissions updated"
     Then I should see "Admin permissions can create users, can delete users, user mass import tool"
     Given I am logged in as "testadmin" with password "password"
     When I am on the show user page with "testadmin"
@@ -130,7 +132,7 @@ Feature: Manage admin permissions
     When I check "delete_users"
     When I check "import_users"
     And I press "Update"
-    Then I should see "Permissions updated"
+    Then I should see "Admin permissions updated"
     Then I should see "Admin permissions can create users, can delete users, user mass import tool"
     # Take them away
     Then I am on the edit user page with "testadmin"
@@ -147,3 +149,23 @@ Feature: Manage admin permissions
     And I press "Update"
     Then I should see "Edit admin permissions..."
     Then I should not see "Admin permissions can create users, can delete users, user mass import tool"
+
+  Scenario: Teacher permissions button is not visible if the user is not a teacher
+    Given I am logged in as "cucumber" with password "cucumber"
+    And I am on the show user page with "testadmin"
+    Then I should see "Edit admin permissions..."
+    And I should not see "Edit teacher permissions..."
+
+  # Admins who are also teachers can change student passwords without
+  # puavoTeacherPermissions having set_student_password
+  Scenario: Teacher permissions button is not visible if the user is both admin and teacher
+    Given I am logged in as "cucumber" with password "cucumber"
+    And I am on the show user page with "adminteacher"
+    Then I should see "Edit admin permissions..."
+    And I should not see "Edit teacher permissions..."
+
+  Scenario: Teacher permissions button is visible if the user is a teacher
+    Given I am logged in as "cucumber" with password "cucumber"
+    And I am on the show user page with "teacher1"
+    Then I should not see "Edit admin permissions..."
+    And I should see "Edit teacher permissions..."
