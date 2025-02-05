@@ -341,16 +341,32 @@ class UsersController < ApplicationController
       end
     end
 
-    # What actions have been granted for this admin?
+    # What extra permissions have been granted for this user?
     @admin_permissions = []
+    @teacher_permissions = []
+
+    @is_admin = false
+    @is_teacher = false
 
     unless @user_is_owner
-      if Array(@user.puavoEduPersonAffiliation || []).include?('admin')
+      roles = Array(@user.puavoEduPersonAffiliation || [])
+
+      if roles.include?('admin')
         User::ADMIN_PERMISSIONS.each do |permission|
           if @user.has_admin_permission?(permission)
             @admin_permissions << permission
           end
+
+          @is_admin = true
         end
+      elsif roles.include?('teacher')
+        User::TEACHER_PERMISSIONS.each do |permission|
+          if @user.has_teacher_permission?(permission)
+            @teacher_permissions << permission
+          end
+        end
+
+        @is_teacher = true
       end
     end
 
@@ -1077,6 +1093,47 @@ class UsersController < ApplicationController
     else
       redirect_to(user_path(@school, @user))
     end
+  end
+
+  # GET /:school_id/users/:id/edit_teacher_permissions
+  def edit_teacher_permissions
+    @user = User.find(params[:id])
+
+    unless is_owner?
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to(user_path(@school, @user))
+      return
+    end
+
+    @current_permissions = Array(@user.puavoTeacherPermissions).to_set.freeze
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # POST /:school_id/users/:id/edit_teacher_permissions
+  def save_teacher_permissions
+    @user = User.find(params[:id])
+
+    begin
+      unless is_owner?
+        flash[:alert] = t('flash.you_must_be_an_owner')
+      else
+        # Ensure no incorrect permissions can get through
+        permissions = params.fetch('permissions', []).dup
+
+        @user.puavoTeacherPermissions = permissions.select { |p| User::TEACHER_PERMISSIONS.include?(p.to_sym) }
+        @user.save!
+
+        flash[:notice] = t('flash.user.teacher_permissions_updated')
+      end
+    rescue StandardError => e
+      logger.error("Failed to save the teacher permissions: #{e}")
+      flash[:alert] = t('flash.save_failed')
+    end
+
+    redirect_to(user_path(@school, @user))
   end
 
   def lock

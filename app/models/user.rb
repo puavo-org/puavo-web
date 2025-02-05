@@ -73,6 +73,11 @@ class User < LdapBase
     device_change_school device_mass_change_school device_mass_tag_editor device_mass_change_purchase_information
   ].freeze
 
+  # Valid and known permissions for teachers. Used in has_teacher_permission?(), for example.
+  TEACHER_PERMISSIONS = %i[
+    set_student_password
+  ].freeze
+
   attr_accessor(*@@extra_attributes)
 
   def self.image_size
@@ -639,6 +644,10 @@ class User < LdapBase
     return false if user_permissions.empty?
 
     permissions.all? { |p| User::ADMIN_PERMISSIONS.include?(p) && user_permissions.include?(p.to_s) }
+  end
+
+  def has_teacher_permission?(permission)
+    User::TEACHER_PERMISSIONS.include?(permission) && Array(self.puavoTeacherPermissions).include?(permission.to_s)
   end
 
   private
