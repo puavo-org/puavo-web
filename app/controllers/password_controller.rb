@@ -523,6 +523,16 @@ class PasswordController < ApplicationController
         logger.error("[#{request_id}] User \"#{login_uid}\" is not an admin or a teacher")
         raise UserError, I18n.t('flash.password.go_away')
       end
+
+      if user_roles.include?('teacher') && !user_roles.include?('admin')
+        # Norma teacher, see if they're allowed to change student passwords
+        teacher_permissions = @logged_in_user.puavoTeacherPermissions || []
+
+        unless teacher_permissions.include?('set_student_password')
+          logger.error("[#{request_id}] User \"#{login_uid}\" is a teacher (but not admin), and they don't have the required permission to change student passwords")
+          raise UserError, I18n.t('flash.password.cannot_change_student_passwords')
+        end
+      end
     end
 
     @user = @logged_in_user
