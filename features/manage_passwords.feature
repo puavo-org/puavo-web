@@ -193,3 +193,20 @@ Feature: Manage passwords
     And I press "Change password"
     Then I should see "Password changed successfully!"
     And I should not see "You do not have a permission to change student passwords"
+
+  Scenario: A teacher can change their own password using the own password form
+    Given I am on the own password change page
+    When I fill in "login[uid]" with "teacher1"
+    And I fill in "Current password" with "trustno1"
+    And I fill in "New password" with "anotherpassword"
+    And I fill in "Confirm new password" with "anotherpassword"
+    And I press "Change password"
+    Then I should see "Password changed successfully!"
+
+  Scenario: A teacher can change their own password using the change someone else's password form
+    Given I am on the password change page with changing user teacher1 and changed user teacher1
+    And I fill in "login_password" with "trustno1"
+    And I fill in "user[new_password]" with "newsecret"
+    And I fill in "Confirm new password" with "newsecret"
+    And I press "Change password"
+    Then I should see "Password changed successfully!"
