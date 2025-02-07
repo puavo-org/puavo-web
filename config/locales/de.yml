@@ -46,7 +46,6 @@ de:
       token_lifetime_has_expired: Ihrer Link ist veraltet. Bitte E-Mail-Adresse wieder angeben.
       too_many_attempts: "Man muss zehn Sekunden zwischen Passwortänderungen warten."
       go_away: "Sie dürfen die Passwörter von Anderen nicht verändern, weil Sie keinen Lehrer:in oder Administrator:in sind."
-      cannot_change_student_passwords: "Sie haben keine Berechtigung die Passwörter von Schülern zurückszusetzen"
 
   # Forms and form errors. Many of these have specially formatted names and
   # they're structured in a specific way, because they're accessed by form

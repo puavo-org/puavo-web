@@ -12,11 +12,6 @@ end
 Given(/^the following users:$/) do |users|
   set_ldap_admin_connection
   users.hashes.each do |u|
-    # Allow multiple roles to be specified
-    if u.include?('puavoEduPersonAffiliation')
-      u['puavoEduPersonAffiliation'] = u['puavoEduPersonAffiliation'].split(',')
-    end
-
     groups = nil
     school = nil
     if u['school'] then
@@ -219,16 +214,6 @@ Given(/admin "(.*?)" has these permissions: "(.*?)"/) do |uid, permissions|
   raise "user \"#{uid}\" is not an admin" unless Array(user.puavoEduPersonAffiliation).include?('admin')
 
   user.puavoAdminPermissions = permissions.split(' ')
-  user.save!
-end
-
-Given(/teacher "(.*?)" has these permissions: "(.*?)"/) do |uid, permissions|
-  set_ldap_admin_connection
-  user = User.find(:first, attribute: 'uid', value: uid)
-  raise "can't find user \"#{uid}\"" if user.nil?
-  raise "user \"#{uid}\" is not a teacher" unless Array(user.puavoEduPersonAffiliation).include?('teacher')
-
-  user.puavoTeacherPermissions = permissions.split(' ')
   user.save!
 end
 

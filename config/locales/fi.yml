@@ -640,8 +640,7 @@ fi:
       user_moved_to_school: "Käyttäjä siirretty kouluun \"%{name}\""
       school_moving_failed: "Koulun vaihto epäonnistui"
       sso_session_gone: "Käyttäjän SSO-istunto nollattu (jos sellainen oli olemassa)"
-      admin_permissions_updated: "Ylläpitäjän oikeudet päivitetty"
-      teacher_permissions_updated: "Opettajan oikeudet päivitetty"
+      admin_permissions_updated: "Oikeudet päivitetty"
       not_an_admin: "Ylläpitäjän oikeuksia ei voi muokata, koska käyttäjä ei ole ylläpitäjä"
       reset_email_sent: "Nollaussähköposti lähetetty."
       reset_failed_no_emails: "Käyttäjällä ei ole sähköpostiosoitetta. Lokikoodi: %{request_id}."
@@ -685,7 +684,6 @@ fi:
       token_lifetime_has_expired: "Linkkisi on vanhentunut tai virheellinen. Syötä sähköpostiosoite uudelleen."
       too_many_attempts: "Salasanan vaihtojen välillä on odotettava 10 sekuntia."
       go_away: "Et ole opettaja tai ylläpitäjä, joten et voi vaihtaa muiden salasanoja."
-      cannot_change_student_passwords: "Sinulla ei ole oikeutta vaihtaa oppilaiden salasanoja."
     school:
       school_admin_added: "%{displayName} (%{school_name}) on lisätty koulun ylläpitäjäksi"
       school_admin_removed: "%{displayName} (%{school_name}) ei ole enää ylläpitäjä tässä koulussa"
@@ -1046,7 +1044,6 @@ fi:
       request_password_reset: "Lähetä salasanan nollaus-email"
       reset_sso_session: "Nollaa SSO-istunto"
       edit_admin_permissions: "Muokkaa ylläpitäjän oikeuksia..."
-      edit_teacher_permissions: "Muokkaa opettajan oikeuksia..."
       admin_permissions:
         title: "Ylläpitäjän oikeudet"
         school_edit: "voi muokata koulun tietoja"
@@ -1063,9 +1060,6 @@ fi:
         mass_delete_devices: "voi massapoistaa useita laitteita"
         reset_devices: "voi nollata laitteita"
         mass_reset_devices: "voi massanollata laitteita"
-      teacher_permissions:
-        title: "Opettajan oikeudet"
-        set_student_password: "voi vaihtaa oppilaiden salasanoja"
     new:
       title: "Lisää uusi käyttäjä"
     edit:
@@ -1125,12 +1119,6 @@ fi:
         mass_delete_devices: "Voi massapoistaa useita laitteita (tavallinen laitteiden poisto on myös oltava sallittuna)"
         reset_devices: "Voi asettaa/poistaa laitteiden nollaustilan"
         mass_reset_devices: "Voi massa-asettaa/-poistaa laitteiden nollaustilan (tavallinen nollaustilan asettaminen on myös oltava sallittuna)"
-
-    edit_teacher_permissions:
-      title: "Muokkaaa opettajan oikeuksia"
-      header: "Muokkaa opettajan \"%{name}\" oikeuksia"
-      permissions:
-        set_student_password: "Voi vaihtaa oppilaiden salasanoja"
 
   # New new user mass import/update tool
   new_import:
