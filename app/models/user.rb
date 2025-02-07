@@ -37,6 +37,7 @@ class User < LdapBase
 
   before_destroy :delete_all_associations, :delete_kerberos_principal, :reset_sso_session
 
+  before_create :set_teacher_permissions_for_new_teachers
   after_create :change_password_no_upstream
 
   validate :validate
@@ -371,6 +372,13 @@ class User < LdapBase
 
     # Explode loudly if the primary school DN is invalid
     self.primary_school
+  end
+
+  def set_teacher_permissions_for_new_teachers
+    if Array(self.puavoEduPersonAffiliation).include?('teacher') then
+      self.puavoTeacherPermissions \
+        = Array(LdapOrganisation.current.puavoDefaultTeacherPermissions)
+    end
   end
 
   def change_password_no_upstream

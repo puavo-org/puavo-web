@@ -287,6 +287,10 @@ class User < LdapModel
 
     self.uuid = SecureRandom.uuid
 
+    if self.roles.include?('teacher') then
+      self.teacher_permissions = Organisation.current.default_teacher_permissions
+    end
+
     validate_unique(:uid_number)
     validate_unique(:id)
     assert_validation
