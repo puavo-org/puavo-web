@@ -144,7 +144,8 @@ def define_basic(env)
       :uid => "gilderoy.lockhart",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "teacher")
+      :puavoEduPersonAffiliation => "teacher",
+      :puavoTeacherPermissions   => [])
     config.dn = teacher2.dn
   end
 
