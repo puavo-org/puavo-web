@@ -11,6 +11,14 @@ class User < LdapBase
   include Puavo::Integrations
   include Puavo::Password
 
+  USE_ORGANISATION_DEFAULTS = 'use_organisation_defaults'
+
+  def initialize(attributes={})
+    attributes[:puavoTeacherPermissions] = [ USE_ORGANISATION_DEFAULTS ] \
+      unless attributes.has_key?(:puavoTeacherPermissions)
+    super(attributes)
+  end
+
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
                 :classes => ['top', 'posixAccount', 'inetOrgPerson', 'puavoEduPerson','sambaSamAccount','eduPerson'] )
@@ -37,7 +45,6 @@ class User < LdapBase
 
   before_destroy :delete_all_associations, :delete_kerberos_principal, :reset_sso_session
 
-  before_create :set_teacher_permissions_for_new_teachers
   after_create :change_password_no_upstream
 
   validate :validate
@@ -371,13 +378,6 @@ class User < LdapBase
     self.primary_school
   end
 
-  def set_teacher_permissions_for_new_teachers
-    if Array(self.puavoEduPersonAffiliation).include?('teacher') then
-      self.puavoTeacherPermissions \
-        = Array(LdapOrganisation.current.puavoDefaultTeacherPermissions)
-    end
-  end
-
   def change_password_no_upstream
     change_password(:no_upstream)
   end
@@ -665,6 +665,15 @@ class User < LdapBase
                                     when "false"
                                       false
                                     end
+    end
+
+    if Array(self.puavoEduPersonAffiliation).include?('teacher') then
+      if Array(self.puavoTeacherPermissions).include?(USE_ORGANISATION_DEFAULTS) then
+        self.puavoTeacherPermissions \
+          = Array(LdapOrganisation.current.puavoDefaultTeacherPermissions)
+      end
+    else
+      self.puavoTeacherPermissions = []
     end
   end
 
