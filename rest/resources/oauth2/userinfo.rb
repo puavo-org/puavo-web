@@ -93,6 +93,11 @@ module OAuth2
       out['puavo.external_id'] = user.external_id if user.external_id
       out['puavo.learner_id'] = user.learner_id if user.learner_id
       out['puavo.roles'] = user.roles
+
+      if scopes.include?('puavo.read.userinfo.primus')
+        # External Primus card ID (not always available)
+        out['puavo.primus_card_id'] = external_data.fetch('primus_card_id', nil)
+      end
     end
 
     if scopes.include?('email')
