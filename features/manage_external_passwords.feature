@@ -10,7 +10,8 @@ Feature: Manage external passwords
   and "charlie.agent" (admin) and "david.agent" (student) do not.
 
   Background:
-    Given a new school and group with names "School 1", "Class 1" on the "external" organisation
+    Given an "external" organisation where teachers have permission to change student passwords by default
+    And a new school and group with names "School 1", "Class 1" on the "external" organisation
     And the following users:
     | givenName | sn     | uid           | password      | school_admin | puavoEduPersonAffiliation | mail                | school   |
     | Charlie   | Agent  | charlie.agent | charliesecret | true         | admin                     | charlie@example.com | School 1       |
@@ -87,30 +88,17 @@ Feature: Manage external passwords
     And I should not login with "luke.skywalker" and "secret"
     And I should login with "luke.skywalker" and "newlukesecret"
 
-# XXX test broken after commit
-# https://github.com/puavo-org/puavo-os/commit/5bc77d1f164dc9f5de184b1583d9cb4112f058e1
-# and that is probably okay.
-# External logins sync only teacher and student roles, so "sarah.connor"
-# must be a teacher for this to work (admin will not do).  But the ACL change
-# denies teachers the permission to change student account passwords unless
-# they are specifically given this permission.  But this permission should
-# not be simply given to teachers in external logins either.  Should it be
-# configurable?  But it should also be adjustable manually, as the admin roles
-# are.  Because "Puavo-only" users are unusual, I do not think this test has
-# much value and can be disabled for now.  But I am not removing this either,
-# we may have to return to this later.
-#
-# Scenario: External admin changes password of Puavo-only user
-#   Given I am on the password change page
-#   When I fill in "login[uid]" with "sarah.connor"
-#   And I fill in "Password" with "secret"
-#   And I fill in "user[uid]" with "edward.agent"
-#   And I fill in "user[new_password]" with "newedwardsecret"
-#   And I fill in "Confirm new password" with "newedwardsecret"
-#   And I press "Change password"
-#   Then I should see "Password changed successfully!"
-#   And I should not login with "edward.agent" and "edwardsecret"
-#   And I should login with "edward.agent" and "newedwardsecret"
+  Scenario: External admin changes password of Puavo-only user
+    Given I am on the password change page
+    When I fill in "login[uid]" with "sarah.connor"
+    And I fill in "Password" with "secret"
+    And I fill in "user[uid]" with "edward.agent"
+    And I fill in "user[new_password]" with "newedwardsecret"
+    And I fill in "Confirm new password" with "newedwardsecret"
+    And I press "Change password"
+    Then I should see "Password changed successfully!"
+    And I should not login with "edward.agent" and "edwardsecret"
+    And I should login with "edward.agent" and "newedwardsecret"
 
   Scenario: Puavo-only admin tries to change password of external user
     Given I am on the password change page
