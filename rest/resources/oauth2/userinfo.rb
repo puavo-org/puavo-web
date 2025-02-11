@@ -64,6 +64,8 @@ module OAuth2
     end
 
     external_data = {}
+    mpass_charging_state = nil
+    mpass_charging_school = nil
 
     if user.external_data
       begin
@@ -71,6 +73,13 @@ module OAuth2
       rescue StandardError => e
           rlog.warn("[#{request_id}] Unable to parse user's external data: #{e}")
       end
+    end
+
+    has_mpass = scopes.include?('puavo.read.userinfo.mpassid')
+
+    if has_mpass && external_data.include?('materials_charge')
+      # Parse MPASSid materials charge info
+      mpass_charging_state, mpass_charging_school = external_data['materials_charge'].split(';')
     end
 
     # Include LDAP DNs in the response?
@@ -143,6 +152,10 @@ module OAuth2
           'oid' => s.school_oid,
           'primary' => user.primary_school_dn == s.dn
         }
+
+        if has_mpass && s.school_code == mpass_charging_school
+          school['mpass_learning_materials_charge'] = mpass_charging_state
+        end
 
         school['ldap_dn'] = s.dn if has_ldap
 

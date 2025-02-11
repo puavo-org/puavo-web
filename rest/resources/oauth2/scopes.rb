@@ -20,6 +20,7 @@ module OAuth2
     puavo.read.userinfo.admin
     puavo.read.userinfo.security
     puavo.read.userinfo.primus
+    puavo.read.userinfo.mpassid
   ].to_set.freeze
 
   # Allowed built-in OAuth 2 access token scopes, for client credential requests.
