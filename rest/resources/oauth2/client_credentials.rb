@@ -132,8 +132,8 @@ module OAuth2
     expires_in = client_config['expires_in'].to_i
 
     token = build_access_token(request_id,
-                               subject: credentials[0],
                                client_id: credentials[0],
+                               subject: credentials[0],
                                scopes: scopes[:scopes],
                                expires_in: expires_in,
                                custom_claims: custom_claims)
