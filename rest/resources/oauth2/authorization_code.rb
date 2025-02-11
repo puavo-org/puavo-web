@@ -426,6 +426,7 @@ module OAuth2
       # (These are for the userinfo endpoint; it works because auth() stores the full
       # token in the credentials data and we can dig these up from it.)
       custom_claims: {
+        'allowed_endpoints' => ['/oidc/userinfo'],
         'organisation_domain' => oidc_state['organisation']['domain'],
         'user_dn' => oidc_state['user']['dn']
       }
