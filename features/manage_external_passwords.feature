@@ -10,7 +10,8 @@ Feature: Manage external passwords
   and "charlie.agent" (admin) and "david.agent" (student) do not.
 
   Background:
-    Given a new school and group with names "School 1", "Class 1" on the "external" organisation
+    Given an "external" organisation where teachers have permission to change student passwords by default
+    And a new school and group with names "School 1", "Class 1" on the "external" organisation
     And the following users:
     | givenName | sn     | uid           | password      | school_admin | puavoEduPersonAffiliation | mail                | school   |
     | Charlie   | Agent  | charlie.agent | charliesecret | true         | admin                     | charlie@example.com | School 1       |
