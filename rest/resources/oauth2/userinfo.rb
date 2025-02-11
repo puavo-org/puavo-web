@@ -63,6 +63,16 @@ module OAuth2
       end
     end
 
+    external_data = {}
+
+    if user.external_data
+      begin
+        external_data = JSON.parse(user.external_data)
+      rescue StandardError => e
+          rlog.warn("[#{request_id}] Unable to parse user's external data: #{e}")
+      end
+    end
+
     # Include LDAP DNs in the response?
     has_ldap = scopes.include?('puavo.read.userinfo.ldap')
 
