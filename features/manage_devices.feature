@@ -7,8 +7,9 @@ Feature: Manage devices
       | Pavel     | Taylor | pavel      | secret     | true         | admin                     |
       | Huey      | Duck   | huey       | password   | false        | student                   |
       | Super     | Admin  | superadmin | tXFwIFcJN9 | true         | admin                     |
+      | Super     | Admin  | multiadmin | rWVpsiqjzG | true         | admin                     |
     And I am logged in as "example" organisation owner
-    And admin "superadmin" has these permissions: "create_devices delete_devices"
+    And admin "superadmin" has these permissions: "create_devices delete_devices device_change_school"
     And the following devices:
       | puavoHostname | macAddress        | puavoDeviceType | puavoMountpoint                                                      |
       | fatclient-01  | 33:2d:2b:13:ce:a0 | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
@@ -267,3 +268,42 @@ Feature: Manage devices
     And I should see "can add and register new devices"
     And I should see "can delete devices"
     And I should not see "can mass delete multiple devices"
+
+  # Test that owners can move a device to another school. This works because there is
+  # another school (Administration) in the organisation during this test.
+  Scenario: Quick device school changing test
+    Given I am logged in as "cucumber" with password "cucumber"
+    And I am on the change device school page with "laptop-01"
+    Then I should see:
+      """
+      Move device "laptop-01" to another school
+      """
+    And I should see "Select the new school"
+    When I press "Move device"
+    Then I should see "Device moved to another school"
+    And I should see "Administration" within "header#schoolName"
+
+  Scenario: Admins should not see the "change school" entry in the menu if device school changing has not been permitted
+    Given I am logged in as "pavel" with password "secret"
+    And I am on the show device page with "laptop-01"
+    Then I should not see "Change school..."
+
+  Scenario: Admins cannot even navigate to the device school change page if device school changing has not been permitted
+    Given I am logged in as "pavel" with password "secret"
+    And I am on the change device school page with "laptop-01"
+    Then I should see "You do not have enough rights to access that page."
+    And I should not see:
+      """
+      Move device "laptop-01" to another school
+      """
+
+  Scenario: Ensure the device school change page is accessible when school changes are permitted
+    Given I am logged in as "superadmin" with password "tXFwIFcJN9"
+    And I am on the show device page with "laptop-01"
+    Then I should see "Change school..."
+    When I follow "Change school..."
+    Then I should see "This organisation has no other schools where you could move this device to"
+
+  # But there's one missing important test here: test that an admin actually can move
+  # a device to another school. I cannot figure out how to (easily) create an admin that
+  # is in multiple schools.

@@ -61,6 +61,7 @@ class User < LdapBase
     create_users delete_users mass_delete_users import_users
     create_groups delete_groups mass_delete_groups
     create_devices delete_devices mass_delete_devices reset_devices mass_reset_devices
+    device_change_school device_mass_change_school
   ].freeze
 
   attr_accessor(*@@extra_attributes)

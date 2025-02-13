@@ -696,7 +696,7 @@ en:
     printer:
       updated: Printer was successfully updated
     devices:
-      school_changed: Device school has been changed!
+      school_changed: "Device moved to another school"
       no_other_schools: "This organisation has no other schools where you could move this device to"
 
     # Message codes received from third-party integration subsystems
@@ -1060,6 +1060,8 @@ en:
         mass_delete_devices: "can mass delete multiple devices"
         reset_devices: "can reset devices"
         mass_reset_devices: "can mass reset devices"
+        device_change_school: "can move devices to another school"
+        device_mass_change_school: "can mass move devices to another school"
     new:
       title: New user
     edit:
@@ -1119,6 +1121,8 @@ en:
         mass_delete_devices: "Can mass delete multiple devices (normal device deletion must also be granted)"
         reset_devices: "Can set/clear device reset mode"
         mass_reset_devices: "Can mass set/clear device reset modes (normal reset mode must also be granted)"
+        device_change_school: "Can move devices to another school (requires the user to be an admin in at least two schools)"
+        device_mass_change_school: "Can mass move devices to another school (normal device school changing must also be granted)"
 
   # New new user mass import/update tool
   new_import:
@@ -1644,7 +1648,7 @@ en:
       change_school: Change school...
       copy_basic_info: "Copy basic information to clipboard"
     select_school:
-      title: Device transfer (%{name})
+      title: "Move device \"%{name}\" to another school"
       select_new_school: Select the new school
       submit: Move device
 
