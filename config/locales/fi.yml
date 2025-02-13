@@ -1542,8 +1542,6 @@ fi:
         change_school:
           title: "Vaihda koulua..."
           school_title: "Uusi koulu:"
-          no_other_schools: "Tässä organisaatiossa ei ole muita kouluja mihin voisit siirtää laitteita."
-          no_other_schools_alert: "Muita kouluja ei ole. Toimintoa ei voi suorittaa."
         tags:
           warning: "Tämä työkalu lisää ja poistaa yksittäisiä tageja koskematta muihin tageihin. Jos haluat poistaa tai vaihtaa kaikki tagit kerralla, valitse Operaatio-listasta <em>\"Aseta tietokannan kentän arvo..\"</em> ja sieltä <em>\"Tagit (korvaa kaikki)\"</em>."
           title: "Tagieditori"

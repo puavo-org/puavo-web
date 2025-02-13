@@ -1542,6 +1542,7 @@ class MassDeviceTagsEditor extends ST.MassOperation {
 };
 
 <% unless @is_servers %>
+<% unless @school_list.empty? %>
 // Mass tool: move device to another school
 class MassDeviceChangeSchool extends ST.MassOperation {
     constructor(parent, container)
@@ -1554,22 +1555,16 @@ class MassDeviceChangeSchool extends ST.MassOperation {
     buildInterface()
     {
         const html =
-<% if @school_list.empty? %>
-        `<p class="genericWarning"><%= t('devices.index.mass_operations.change_school.no_other_schools') %></p>`;
-<% else %>
         `<label><%= t('devices.index.mass_operations.change_school.school_title') %><select id="new_school" class="margin-left-5px">
 <% @school_list.each do |s| %>
             <option value="<%= s[0] %>"><%= s[1] %> (<%= s[2] %>)</option>
 <% end%>
         </select></label>`;
-<% end %>
 
         this.container.innerHTML = html;
 
-<% unless @school_list.empty? %>
         this.newSchoolDN = "<%= @school_list.first[0] %>";
         this.newSchoolID = this.idFromDN(this.newSchoolDN);
-<% end %>
 
         this.container.querySelector("#new_school")?.addEventListener("change", e => {
             this.newSchoolDN = e.target.value
@@ -1579,12 +1574,7 @@ class MassDeviceChangeSchool extends ST.MassOperation {
 
     canProceed()
     {
-<% if @school_list.empty? %>
-        window.alert("<%= t('devices.index.mass_operations.change_school.no_other_schools_alert') %>");
-        return false;
-<% else %>
         return true;
-<% end %>
     }
 
     start()
@@ -1623,6 +1613,7 @@ class MassDeviceChangeSchool extends ST.MassOperation {
         return (match === null) ? -1 : parseInt(match[1], 10);
     }
 };
+<% end %>
 
 <% if @permit_device_reset && @permit_device_mass_reset %>
 // Mass operation: set or clear the reset mode
@@ -1733,12 +1724,14 @@ const MASS_OPERATIONS = [
         cls: MassDeviceTagsEditor
     },
 <% unless @is_servers %>
+<% unless @school_list.empty? %>
     {
         operation: "change_school",
         title: "<%= t('devices.index.mass_operations.change_school.title') %>",
         haveSettings: true,
         cls: MassDeviceChangeSchool
     },
+<% end %>
 <% if @permit_device_reset && @permit_device_mass_reset %>
     {
         operation: "reset",
