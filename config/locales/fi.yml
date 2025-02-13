@@ -1107,6 +1107,10 @@ fi:
       user_is_owner: "Tämä käyttäjä on organisaation omistajissa, joten näitä oikeuksia ei käytetä. Omistajilla on aina täydet oikeudet kaikkeen."
       select_all: "Valitse kaikki"
       deselect_all: "Poista kaikki"
+      title_schools: "Koulut"
+      title_users: "Käyttäjät"
+      title_groups: "Ryhmät"
+      title_devices: "Laitteet"
       permissions:
         school_edit: "Voi muokata koulun tietoja (koulun kojetaulu on aina käytettävissä)"
         school_edit_wlan: "Voi muokata koulun langattomia verkkoja"

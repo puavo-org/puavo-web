@@ -1107,6 +1107,10 @@ en:
       user_is_owner: "This user is an organisation owner, so these permissions are not used. Owners always have full access to everything."
       select_all: "Select all"
       deselect_all: "Remove all"
+      title_schools: "Schools"
+      title_users: "Users"
+      title_groups: "Groups"
+      title_devices: "Devices"
       permissions:
         school_edit: "Can edit school information (the school dashboard is always accessible)"
         school_edit_wlan: "Can edit school wireless networks"
