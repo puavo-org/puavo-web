@@ -297,6 +297,7 @@ class Citrix < PuavoSinatra
 
     # Load per-organisation Citrix configuration
     unless CONFIG['citrix'].include?(organisation.domain)
+      # tested
       rlog.error("[#{@request_id}] Citrix licensing is not enabled in this organisation")
       citrix_return('error', error: { puavo: { message: 'citrix_not_active_in_this_organisation' } })
     end
