@@ -255,8 +255,6 @@ class AtriaCortexAPI
       '2' => states_xml
     })
 
-    puts query
-
     result = do_query(query)
     body_s = result.body.to_s
     body = Nokogiri.XML(body_s)
@@ -342,8 +340,6 @@ class Citrix < PuavoSinatra
         rlog.info("[#{@request_id}] Checking if the new user (#{license['username']}) has been created")
         atria_user = atria.get_user(license['username'])
 
-        puts atria_user.to_s
-
         if atria_user == false
           # tested
           rlog.error("[#{@request_id}] New user creation not in progress")
@@ -399,8 +395,6 @@ class Citrix < PuavoSinatra
           rlog.error("[#{@request_id}] Raw body data: #{e}")
           citrix_return('json_parsing_error')
         end
-
-        puts applications.inspect
 
         # Detect changes
         change_these = []
