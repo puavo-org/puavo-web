@@ -2,7 +2,10 @@
   Flash messages and other message/notification/info boxes
 */
 
-@mixin message {
+/* TODO: What's the difference between message_success and message_notice? Merge them. */
+
+/* Common styles */
+.message_success, .message_notice, .message_alert, .message_error {
   font-size: 130%;
   text-align: center;
   padding: 10px;
@@ -10,17 +13,13 @@
   border-radius: 5px;
 }
 
-/* TODO: What's the difference between message_success and message_notice? Merge them. */
-
 .message_success {
-  @include message;
   background: var(--flash-success-back);
   color: var(--flash-success-fore);
   border: 1px solid var(--flash-success-border);
 }
 
 .message_notice {
-  @include message;
   background: var(--flash-notice-back);
   color: var(--flash-notice-fore);
   border: 1px solid var(--flash-notice-border);
@@ -28,33 +27,30 @@
 
 /* TODO: Merge alert and error messages */
 .message_alert, .message_error {
-  @include message;
   background: var(--flash-alert-back);
   color: var(--flash-alert-fore);
   border: 1px solid var(--flash-alert-border);
 }
 
-@mixin genericBox {
+.genericNotice {
   padding: 10px;
   margin: 10px 0;
-}
-
-.genericNotice {
-  @include genericBox;
   color: var(--generic-notice-fore);
   background: var(--generic-notice-back);
   border: 1px solid var(--generic-notice-border);
 }
 
 .genericWarning {
-  @include genericBox;
+  padding: 10px;
+  margin: 10px 0;
   color: var(--generic-warning-fore);
   background: var(--generic-warning-back);
   border: 1px solid var(--generic-warning-border);
 }
 
 .genericError {
-  @include genericBox;
+  padding: 10px;
+  margin: 10px 0;
   color: var(--generic-error-fore);
   background: var(--generic-error-back);
   border: 1px solid var(--generic-error-border);
