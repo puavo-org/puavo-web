@@ -30,118 +30,112 @@ table.shrinkHeadingColumn td {
 .list {
   width: 100%;
   color: var(--list-fore);
+}
 
-  th {
-    background: var(--list-heading-back);
-    color: var(--list-heading-fore);
-    border-top: 1px solid var(--list-heading-border);
-    border-left: 1px solid var(--list-heading-border);
-    border-bottom: 1px solid var(--list-heading-border);
-    padding: 10px;
-    font-size: 100%;
-  }
+.list th {
+  background: var(--list-heading-back);
+  color: var(--list-heading-fore);
+  border-top: 1px solid var(--list-heading-border);
+  border-left: 1px solid var(--list-heading-border);
+  border-bottom: 1px solid var(--list-heading-border);
+  padding: 10px;
+  font-size: 100%;
+}
 
-  tbody > tr:last-child {
-    border-bottom: 1px solid var(--list-heading-border);
-  }
+.list tbody > tr:last-child {
+  border-bottom: 1px solid var(--list-heading-border);
+}
 
-  th:first-of-type {
-    border-left: none;
-  }
+.list th:first-of-type {
+  border-left: none;
+}
 
-  tr {
-    &:nth-child(odd) {
-      background: var(--list-odd-back);
-    }
+.list tr:nth-child(odd) {
+  background: var(--list-odd-back);
+}
 
-    &:nth-child(even) {
-      background: var(--list-even-back);
-    }
+.list tr:nth-child(even) {
+  background: var(--list-even-back);
+}
 
-    &:hover {
-      background: var(--list-row-back-hover);
-    }
-  }
+.list tr:hover {
+  background: var(--list-row-back-hover);
+}
 
-  td {
-    border-left: 1px solid var(--list-row-border);
-  }
+.list td {
+  border-left: 1px solid var(--list-row-border);
+}
 
-  td:first-of-type {
-    border-left: none;
-  }
+.list td:first-of-type {
+  border-left: none;
+}
 
-  .form {
-    margin-top: 20px;
-    float: left;
-  }
+.list .form {
+  margin-top: 20px;
+  float: left;
+}
 
-  input[type="text"] {
-    width: 15em;
-  }
+.list input[type="text"] {
+  width: 15em;
+}
 
-  input[type="submit"] {
-    paddin: 0;
-    margin: 0;
-    width: auto;
-    height: auto;
-    float: right;
-  }
+.list input[type="submit"] {
+  paddin: 0;
+  margin: 0;
+  width: auto;
+  height: auto;
+  float: right;
+}
 
-  @media #{$screen-breakpoint-one} {
-    /* Minimize lists */
+.list .boolean {    /* Boolean column checkmarks */
+  text-align: center;
+  display: block;
+  font-size: 200%;
+}
+
+@media #{$screen-breakpoint-one} {
+  /* Minimize lists */
+  .list {
     width: 100%;
-
-    .thead, th {
-      display: none;
-    }
-
-    tbody > tr:last-child {
-      border-bottom: none;
-    }
-
-    tr {
-      display: block;
-      padding: 2%;
-      border-bottom: 1px solid var(--list-row-border);
-    }
-
-    td {
-      display: block;
-      padding: 2px;
-      border: none;
-    }
-
-    td:first-of-type {
-      font-size: 120%;
-      padding: 6px 2px;
-    }
-
-    td[data-title]:before {
-      content: attr(data-title) ":\00A0";
-      font-weight: bold;
-    }
-
-    .tableActions {
-      display: inline-block;
-
-      .btn {
-        font-size: 90%;
-        padding: 2px 10px;
-      }
-    }
   }
 
-  .boolean {    /* Boolean column checkmarks */
-    text-align: center;
-    display: block;
-    font-size: 200%;
+  .list .thead, th {
+    display: none;
+  }
 
-    @media #{$screen-breakpoint-one} {
-      display: inline;
-      text-align: left;
-      font-size: 100%;
-    }
+  .list tbody > tr:last-child {
+    border-bottom: none;
+  }
+
+  .list tr {
+    display: block;
+    padding: 2%;
+    border-bottom: 1px solid var(--list-row-border);
+  }
+
+  .list td {
+    display: block;
+    padding: 2px;
+    border: none;
+  }
+
+  .list td:first-of-type {
+    font-size: 120%;
+    padding: 6px 2px;
+  }
+
+  .list td[data-title]:before {
+    content: attr(data-title) ":\00A0";
+    font-weight: bold;
+  }
+
+  .list .tableActions {
+    display: inline-block;
+  }
+
+  .list .tableActions .btn {
+    font-size: 90%;
+    padding: 2px 10px;
   }
 }
 
@@ -742,7 +736,6 @@ div.popup div#presets p.help {
   padding: 0;
   max-width: 40em;
 }
-
 
 /*
 ----------------------------------------------------------------------------------------------------
