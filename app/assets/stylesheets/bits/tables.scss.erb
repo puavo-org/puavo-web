@@ -758,72 +758,69 @@ where filtering and mass tools aren't needed.
    and a flexbox is the only way to do that even somewhat reliably. */
 .sortHeader {
   cursor: pointer;
-
-  &:hover {
-    background: var(--list-sortable-column-hover);
-  }
-
-  /* The container DIV */
-  div {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-
-    /*
-      What JavaScript taketh, CSS giveth. What a mess...
-      https://css-tricks.com/slightly-careful-sub-elements-clickable-things/
-    */
-    pointer-events: none;
-
-    /* The child spans */
-    .title {
-      display: inline;
-    }
-
-    .arrow {
-      display: inline;
-      margin-left: auto;    /* right-align the arrow */
-    }
-  }
 }
 
-/* Setup the sort direction arrows */
-/* TODO: The arrows should be changed in the JavaScript code, not here. */
-@mixin sortCommon($padding) {
+.sortHeader:hover {
+  background: var(--list-sortable-column-hover);
+}
+
+  /* The container DIV */
+.sortHeader div {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+
+  /*
+    What JavaScript taketh, CSS giveth. What a mess...
+    https://css-tricks.com/slightly-careful-sub-elements-clickable-things/
+  */
+  pointer-events: none;
+}
+
+/* The child spans */
+.sortHeader div .title {
+  display: inline;
+}
+
+.sortHeader div .arrow {
+  display: inline;
+  margin-left: auto;    /* right-align the arrow */
+
+  /* Common styles for all arrow DIVs. Note that each style has its own left padding (see below). */
   font-family: puavo-icons;
   font-size: 120%;
   font-weight: normal;
-  padding-left: $padding;
   padding-right: 10px;
-};
+}
 
+/* Setup the sort direction arrows */
 .orderAscending, .orderDescending {
   background: var(--list-sortable-column-hover) !important;
 }
 
 .orderNone .arrow:after {
-  @include sortCommon(10px);
+  padding-left: 10px;
   content: "\f0dc";       /* up arrow, down arrow */
 }
 
 .typeString.orderAscending .arrow:after {
-  @include sortCommon(5px);
+  padding-left: 5px;
   content: " \f15d";      /* A -> Z */
 }
 
 .typeString.orderDescending .arrow:after {
-  @include sortCommon(5px);
+  padding-left: 5px;
   content: " \f15e";      /* Z -> A */
 }
 
 .typeNumeric.orderAscending .arrow:after {
-  @include sortCommon(6px);
+  padding-left: 6px;
   content: " \f162";      /* 1 -> 9 */
 }
 
 .typeNumeric.orderDescending .arrow:after {
-  @include sortCommon(6px);
+  padding-left: 6px;
   content: " \f163";      /* 9 -> 1 */
 }
 
