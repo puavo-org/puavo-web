@@ -44,26 +44,47 @@
   z-index: 9999;
   font-size: 80%;
   box-shadow: 0 0 10px var(--default-box-shadow);
+}
 
-  .resultsContainer {
-    max-height: 350px;
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+.searchResultsBox .resultsContainer {
+  max-height: 350px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-  .searchResult { }
+.searchResultsBox .searchResult { }
 
-  .searchResult header {
-    font-size: 100%;
-    font-weight: bold;
-    background: var(--list-heading-back);
-    color: var(--list-heading-fore);
-    padding: 5px 10px;
-  }
+.searchResultsBox .searchResult header {
+  font-size: 100%;
+  font-weight: bold;
+  background: var(--list-heading-back);
+  color: var(--list-heading-fore);
+  padding: 5px 10px;
+}
 
-  @media #{-screen-breakpoint-one} {
+.searchResultsBox p {
+  padding: 0;
+  margin: 0;
+  color: var(--search-no-results);
+}
+
+.searchResultsBox table {
+  border-spacing: 0;
+  margin: 0px;
+  padding: 0px;
+}
+
+.searchResultsBox th {
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  padding: 5px !important;
+}
+
+@media #{$screen-breakpoint-one} {
+  .searchResultsBox  {
     padding: 0;
     margin: 0;
     left: 0 !important;
@@ -71,34 +92,13 @@
     font-size: 90%;
   }
 
-  p {
+  .searchResultsBox .search_result .list tr {
     padding: 0;
-    margin: 0;
-    color: var(--search-no-results);
   }
 
-  table {
-    border-spacing: 0;
-    margin: 0px;
-    padding: 0px;
-  }
-
-  th {
-    white-space: nowrap;
-    position: sticky;
-    top: 0;
-    padding: 5px !important;
-  }
-
-  @media #{$screen-breakpoint-one} {
-    .search_result .list tr {
-      padding: 0;
-    }
-
-    .search_result .list td:first-of-type {
-      font-size: 110% !important;
-      font-weight: bold;
-    }
+  .searchResultsBox .search_result .list td:first-of-type {
+    font-size: 110% !important;
+    font-weight: bold;
   }
 }
 
@@ -106,74 +106,72 @@
   Extended search form
 */
 
-#extendedSearchForm {
-  #searchTerms {
-    width: 100%;
-    padding: 5px;
-  }
+#extendedSearchForm #searchTerms {
+  width: 100%;
+  padding: 5px;
+}
 
-  table {
-    width: 100%;
-  }
+#extendedSearchForm table {
+  width: 100%;
+}
 
-  tr:nth-child(odd) {
-    background: var(--form-odd-back);
-  }
+#extendedSearchForm tr:nth-child(odd) {
+  background: var(--form-odd-back);
+}
 
-  tr:nth-child(even) {
-    background: var(--form-even-back);
-  }
+#extendedSearchForm tr:nth-child(even) {
+  background: var(--form-even-back);
+}
 
-  .buttonRow {  /* copy-pasted from form.scss! */
-    th, td {
-      background: var(--form-button-row-back) !important;
-      text-align: center;
-    }
-  }
+/* copy-pasted from form.scss! */
+#extendedSearchForm .buttonRow th,
+#extendedSearchForm .buttonRow td {
+  background: var(--form-button-row-back) !important;
+  text-align: center;
+}
 
-  th {
-    font-size: 100%;
-  }
+#extendedSearchForm th {
+  font-size: 100%;
+}
 
-  th, td {
-  }
+#extendedSearchForm th, td {
+}
 
-  label {
-    white-space: nowrap;
-  }
+#extendedSearchForm label {
+  white-space: nowrap;
+}
 
-  select {
-    width: 100%;
-  }
+#extendedSearchForm select {
+  width: 100%;
+}
 
-  .termSettings {
-    display: none;
-  }
+#extendedSearchForm .termSettings {
+  display: none;
+}
 
-  .indent {
-    margin-left: 1em;
-  }
+#extendedSearchForm .indent {
+  margin-left: 1em;
+}
 
-  fieldset {
-    margin-bottom: 0;
-  }
+#extendedSearchForm fieldset {
+  margin-bottom: 0;
+}
 
-  legend {
-    /* the form is much smaller than other forms and the huge fieldset legends used
-       elsewhere look hideous */
-    border: none;
-    font-weight: normal;
-    font-size: 100%;
-  }
+#extendedSearchForm legend {
+  /* the form is much smaller than other forms and the huge fieldset legends used
+     elsewhere look hideous */
+  border: none;
+  font-weight: normal;
+  font-size: 100%;
+}
 
-  p {
-    padding: 0;
-    margin: 0;
-  }
+#extendedSearchForm p {
+  padding: 0;
+  margin: 0;
+}
 
-  input[type="button"] {
-    padding: 5px 50px;
-  }
+#extendedSearchForm input[type="button"] {
+  padding: 5px 50px;
 }
 
 #extendedSearchResultsTitle {
@@ -183,40 +181,38 @@
   padding: 5px 10px;
 }
 
-#extendedSearchResultsContainer {
-  .searchError {
-    color: var(--extendedsearch-error);
-    padding: 0;
-    margin: 0;
-  }
+#extendedSearchResultsContainer .searchError {
+  color: var(--extendedsearch-error);
+  padding: 0;
+  margin: 0;
+}
 
-  .noResults {
-    color: var(--extendedsearch-no-results);
-    padding: 0;
-    margin: 0;
-  }
+#extendedSearchResultsContainer .noResults {
+  color: var(--extendedsearch-no-results);
+  padding: 0;
+  margin: 0;
+}
 
-  .list th.matched {
-    /* The search term header column */
-    border-right: 1px solid var(--extendedsearch-results-divider) !important;
-  }
+#extendedSearchResultsContainer .list th.matched {
+  /* The search term header column */
+  border-right: 1px solid var(--extendedsearch-results-divider) !important;
+}
 
-  .term, .matched {
-    /* Force minimum width */
-    width: 1px;
-    white-space: nowrap;
-  }
+#extendedSearchResultsContainer .term, .matched {
+  /* Force minimum width */
+  width: 1px;
+  white-space: nowrap;
+}
 
-  .term {
-  }
+#extendedSearchResultsContainer .term {
+}
 
-  .matched {
-    border-right: 1px solid var(--extendedsearch-results-divider);
-  }
+#extendedSearchResultsContainer .matched {
+  border-right: 1px solid var(--extendedsearch-results-divider);
+}
 
-  .noMatches {
-    color: var(--extendedsearch-no-matches);
-  }
+#extendedSearchResultsContainer .noMatches {
+  color: var(--extendedsearch-no-matches);
 }
 
 @media #{$screen-breakpoint-one} {

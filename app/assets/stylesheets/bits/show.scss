@@ -10,56 +10,58 @@
   margin: 5px;
   padding: 0;
   box-shadow: 3px 3px 0 var(--contentbox-shadow);
+}
 
-  header {
-    background: var(--contentbox-header-back);
-    color: var(--contentbox-header-fore);
-    padding: 5px 10px;
-    margin: 0;
-    font-size: 130%;
-    border-top: 1px solid var(--contentbox-border);
-    border-left: 1px solid var(--contentbox-border);
-    border-right: 1px solid var(--contentbox-border);
-    font-weight: bold;
-  }
+.contentBox header {
+  background: var(--contentbox-header-back);
+  color: var(--contentbox-header-fore);
+  padding: 5px 10px;
+  margin: 0;
+  font-size: 130%;
+  border-top: 1px solid var(--contentbox-border);
+  border-left: 1px solid var(--contentbox-border);
+  border-right: 1px solid var(--contentbox-border);
+  font-weight: bold;
+}
 
-  .contents {
-    padding: 5px;
-    background: var(--contentbox-contents-back);
-    color: var(--contentbox-contents-fore);
-    border-left: 1px solid var(--contentbox-border);
-    border-right: 1px solid var(--contentbox-border);
-    border-bottom: 1px solid var(--contentbox-border);
-  }
+.contentBox .contents {
+  padding: 5px;
+  background: var(--contentbox-contents-back);
+  color: var(--contentbox-contents-fore);
+  border-left: 1px solid var(--contentbox-border);
+  border-right: 1px solid var(--contentbox-border);
+  border-bottom: 1px solid var(--contentbox-border);
+}
 
-  table {
-    width: 100%;
-  }
+.contentBox table {
+  width: 100%;
+}
 
-  tr:nth-child(odd) {
-    background: var(--contentbox-table-odd-back);
-  }
+.contentBox tr:nth-child(odd) {
+  background: var(--contentbox-table-odd-back);
+}
 
-  tr:nth-child(even) {
-    background: var(--contentbox-table-even-back);
-  }
+.contentBox tr:nth-child(even) {
+  background: var(--contentbox-table-even-back);
+}
 
-  h3 {
-    margin: 0 0 10px 0;
-    padding: 5px;
-    font-weight: bold;
-    background: var(--contentbox-subheader-back);
-    color: var(--contentbox-subheader-fore);
-    border: none;
-  }
+.contentBox h3 {
+  margin: 0 0 10px 0;
+  padding: 5px;
+  font-weight: bold;
+  background: var(--contentbox-subheader-back);
+  color: var(--contentbox-subheader-fore);
+  border: none;
+}
 
-  @media #{$screen-breakpoint-one} {
+.contentBox p.empty {
+  margin: 10px;
+}
+
+@media #{$screen-breakpoint-one} {
+  .contentBox {
     width: 100%;
     margin: 5px 0;
-  }
-
-  p.empty {
-    margin: 10px;
   }
 }
 
@@ -80,11 +82,11 @@
   border-bottom: 1px solid var(--contentbox-multiline-item-border);
   padding-bottom: 10px;
   margin: 5px;
+}
 
-  ul {
-    /* Harmonize with .value's */
-    padding-left: 20px;
-  }
+.multilineItem ul {
+  /* Harmonize with .value's */
+  padding-left: 20px;
 }
 
 .multilineItem:last-of-type {
@@ -119,8 +121,10 @@
 /* Prevent word wrapping, used on user email and phone number displays */
 .noWrap {
   white-space: no-wrap;
+}
 
-  @media #{$screen-breakpoint-one} {
+@media #{$screen-breakpoint-one} {
+  .noWrap {
     /* narrow pages are unreadable otherwise */
     white-space: normal;
   }
@@ -146,141 +150,140 @@
   flex-flow: row wrap;
   margin-bottom: 20px;
   padding: 0;
+}
 
-  .basicInfoImage {
-    img {
-      max-width: 220px;
-      padding: var(--basic-info-thumbnail-padding);
-      border: 1px solid var(--basic-info-borders);
-    }
+.basicInfo .basicInfoImage {
+  /* Explicit size, to prevent the page from jumping once the image has been loaded */
+  width: calc(220px + var(--basic-info-thumbnail-padding) * 2);
+  height: calc(220px + var(--basic-info-thumbnail-padding) * 2);
+  text-align: center;
+}
 
-    /* Explicit size, to prevent the page from jumping once the image has been loaded */
-    width: calc(220px + var(--basic-info-thumbnail-padding) * 2);
-    height: calc(220px + var(--basic-info-thumbnail-padding) * 2);
+.basicInfo .basicInfoImage img {
+  max-width: 220px;
+  padding: var(--basic-info-thumbnail-padding);
+  border: 1px solid var(--basic-info-borders);
+}
 
-    text-align: center;
+.basicInfo .basicInfoDetails {
+  flex: 2;
+  width: 75%;
+  padding-left: 15px;
+}
+
+.basicInfo .basicInfoDetails h1 {
+  border-bottom: 1px solid var(--basic-info-borders);
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.basicInfo .basicInfoDetails .infoNotice {
+  color: var(--basic-info-notice);
+  padding: 0 0 0 10px;
+  margin: 0;
+}
+
+.basicInfo .basicInfoDetails .infoWarn {
+  color: var(--basic-info-warn);
+  padding: 0 0 0 10px;
+  margin: 0;
+}
+
+.basicInfo .basicInfoDetails .infoError {
+  color: var(--basic-info-error);
+  padding: 0 0 0 10px;
+  margin: 0;
+}
+
+.basicInfo .basicInfoDetails .infoTitle {
+  font-weight: bold;
+  padding: 0 0 0 10px;
+  margin: 10px 0 0 0;
+}
+
+.basicInfo .basicInfoDetails .infoValue {
+  padding: 0 0 0 20px;
+  margin: 0 0 10px 0;
+}
+
+.basicInfo .basicInfoDetails ul.infoValue {
+  padding: 0 0 0 20px;
+  margin: 0 0 10px 0;
+  list-style-type: none;
+}
+
+.basicInfo .basicInfoDetails .puavoConf {
+  margin-top: 5px;
+  margin-left: 25px;
+}
+
+@media #{$screen-breakpoint-one} {
+  .basicInfo .basicInfoImage {
+    width: 138px;
   }
 
-  .basicInfoDetails {
-    flex: 2;
-    width: 75%;
-    padding-left: 15px;
+  .basicInfo .basicInfoImage img {
+    max-width: 128px;
+    padding: 0;
+    border: none;
+  }
+}
 
-    h1 {
-      border-bottom: 1px solid var(--basic-info-borders);
-      padding: 0;
-      margin: 0 0 10px 0;
-    }
-
-    .infoNotice {
-      color: var(--basic-info-notice);
-      padding: 0 0 0 10px;
-      margin: 0;
-    }
-
-    .infoWarn {
-      color: var(--basic-info-warn);
-      padding: 0 0 0 10px;
-      margin: 0;
-    }
-
-    .infoError {
-      color: var(--basic-info-error);
-      padding: 0 0 0 10px;
-      margin: 0;
-    }
-
-    .infoTitle {
-      font-weight: bold;
-      padding: 0 0 0 10px;
-      margin: 10px 0 0 0;
-    }
-
-    .infoValue {
-      padding: 0 0 0 20px;
-      margin: 0 0 10px 0;
-    }
-
-    ul.infoValue {
-      padding: 0 0 0 20px;
-      margin: 0 0 10px 0;
-      list-style-type: none;
-    }
-
-    .puavoConf {
-      margin-top: 5px;
-      margin-left: 25px;
-    }
+@media #{$screen-breakpoint-two} {
+  .basicInfo .basicInfoImage {
+    width: 78px;
   }
 
-  @media #{$screen-breakpoint-one} {
-    .basicInfoImage {
-      img {
-        max-width: 128px;
-        padding: 0;
-        border: none;
-      }
-
-      width: 138px;
-    }
-  }
-
-  @media #{$screen-breakpoint-two} {
-    .basicInfoImage {
-      img {
-        max-width: 64px;
-        padding: 0;
-        border: none;
-      }
-
-      width: 78px;
-    }
+  .basicInfo .basicInfoImage img {
+    max-width: 64px;
+    padding: 0;
+    border: none;
   }
 }
 
 /* Puavo-conf tables in various places */
 .puavoConf {
   border: 1px solid var(--puavoconf-border);
-
-  tr:nth-child(odd) {
-    background: var(--puavoconf-odd-back);
-  }
-
-  tr:nth-child(even) {
-    background: var(--puavoconf-even-back);
-  }
-
-  th {
-    font-size: 100%;
-  }
-
-  td {
-    width: 100%;
-  }
-
-  table.values th {
-    padding: 0;
-  }
-
-  table.values td {
-    /* Hack: try to align the multiple values so they look as if the nested table does not exist
-    (visual consistency) */
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-left: 12px;
-  }
-
-  /* Source level colors */
-  th.source_org { color: var(--puavoconf-source-organisation); }
-  th.source_sch { color: var(--puavoconf-source-school); }
-  th.source_dev { color: var(--puavoconf-source-device); }
-
-  /* Various override indicator statuses */
-  tr.overridden:nth-child(odd) td { text-decoration: line-through; color: #888; }
-  tr.overridden:nth-child(even) td { text-decoration: line-through; color: #888; }
-  tr.overriddenAll:nth-child(odd) { background: var(--puavoconf-overridden-odd-back); }
-  tr.overriddenAll:nth-child(even) { background: var(--puavoconf-overridden-even-back); }
 }
+
+.puavoConf tr:nth-child(odd) {
+  background: var(--puavoconf-odd-back);
+}
+
+.puavoConf tr:nth-child(even) {
+  background: var(--puavoconf-even-back);
+}
+
+.puavoConf th {
+  font-size: 100%;
+}
+
+.puavoConf td {
+  width: 100%;
+}
+
+.puavoConf table.values th {
+  padding: 0;
+}
+
+.puavoConf table.values td {
+  /* Hack: try to align the multiple values so they look as if the nested table does not exist
+  (visual consistency) */
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 12px;
+}
+
+/* Source level colors */
+.puavoConf th.source_org { color: var(--puavoconf-source-organisation); }
+.puavoConf th.source_sch { color: var(--puavoconf-source-school); }
+.puavoConf th.source_dev { color: var(--puavoconf-source-device); }
+
+/* Various override indicator statuses */
+.puavoConf tr.overridden:nth-child(odd) td { text-decoration: line-through; color: #888; }
+.puavoConf tr.overridden:nth-child(even) td { text-decoration: line-through; color: #888; }
+.puavoConf tr.overriddenAll:nth-child(odd) { background: var(--puavoconf-overridden-odd-back); }
+.puavoConf tr.overriddenAll:nth-child(even) { background: var(--puavoconf-overridden-even-back); }
 
 /* Puavo-conf table color keys */
 div.basicInfoDetails div.pcColorKey {

@@ -22,8 +22,10 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   font-size: 250%;
   border-bottom: 1px solid var(--hx-border);
+}
 
-  @media #{$screen-breakpoint-one} {
+@media #{$screen-breakpoint-one} {
+  h1 {
     font-size: 200%;
   }
 }
@@ -32,8 +34,10 @@ h2 {
   margin-top: 25px;
   font-size: 200%;
   border-bottom: 1px dashed var(--hx-border);
+}
 
-  @media #{$screen-breakpoint-one} {
+@media #{$screen-breakpoint-one} {
+  h2 {
     font-size: 170%;
   }
 }
@@ -66,8 +70,8 @@ hr {
   visibility: hidden;
 }
 
-abbr {
-  @media #{$screen-breakpoint-one} {
+@media #{$screen-breakpoint-one} {
+  abbr {
     /* cannot be hovered, hide the underline */
     text-decoration: none;
   }
@@ -75,8 +79,10 @@ abbr {
 
 abbr[title]:after {
   content: "";
+}
 
-  @media #{$screen-breakpoint-one} {
+@media #{$screen-breakpoint-one} {
+  abbr[title] {
     /* Can't hover over abbreviations on mobile, so display their contents */
     content: " (" attr(title) ")";
   }
