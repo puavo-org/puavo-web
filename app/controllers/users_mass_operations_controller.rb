@@ -223,6 +223,12 @@ class UsersMassOperationsController < MassOperationsController
           changed = true
         end
 
+      when 'notes'
+        if user.puavoNotes
+          user.puavoNotes = nil
+          changed = true
+        end
+
       else
         return [false, "unknown column \"#{column}\""]
     end
