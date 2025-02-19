@@ -626,8 +626,13 @@ class User < LdapBase
     db.del("user:#{self.id}")
   end
 
-  def has_admin_permission?(permission)
-    User::ADMIN_PERMISSIONS.include?(permission) && Array(self.puavoAdminPermissions).include?(permission.to_s)
+  def has_admin_permission?(*permissions)
+    return false if permissions.nil? || permissions.empty?
+
+    user_permissions = Array(self.puavoAdminPermissions)
+    return false if user_permissions.empty?
+
+    permissions.all? { |p| User::ADMIN_PERMISSIONS.include?(p) && user_permissions.include?(p.to_s) }
   end
 
   private
