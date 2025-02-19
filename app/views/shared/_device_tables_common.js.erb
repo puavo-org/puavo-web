@@ -966,7 +966,9 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
             { title: "<%= t('devices.index.mass_operations.set_field.kernel_args') %>", key: "kernelargs", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.kernel_version') %>", key: "kernelversion", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.puavoconf_replace') %>", key: "puavoconf", type: "json" },
+<% if @permit_device_mass_tag_editor %>
             { title: "<%= t('devices.index.mass_operations.set_field.tags_replace') %>", key: "tags", type: "s" },
+<% end %>
             { title: "<%= t('devices.index.mass_operations.set_field.manufacturer') %>", key: "manufacturer", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.model') %>", key: "model", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.serial') %>", key: "serial", type: "s" },
@@ -1479,6 +1481,7 @@ class MassDevicePuavoconfEditor extends ST.MassOperation {
     }
 };
 
+<% if @permit_device_mass_tag_editor %>
 // Mass tags editor
 class MassDeviceTagsEditor extends ST.MassOperation {
     constructor(parent, container)
@@ -1542,6 +1545,7 @@ class MassDeviceTagsEditor extends ST.MassOperation {
         return { state: "ready" };
     }
 };
+<% end %>
 
 <% unless @is_servers %>
 <% unless @school_list.empty? %>
@@ -1721,12 +1725,14 @@ const MASS_OPERATIONS = [
         haveSettings: true,
         cls: MassDevicePuavoconfEditor
     },
+<% if @permit_device_mass_tag_editor %>
     {
         operation: "tags_edit",
         title: "<%= t('devices.index.mass_operations.tags.title') %>",
         haveSettings: true,
         cls: MassDeviceTagsEditor
     },
+<% end %>
 <% unless @is_servers %>
 <% unless @school_list.empty? %>
     {

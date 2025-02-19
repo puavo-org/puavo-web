@@ -1066,6 +1066,7 @@ fi:
         mass_reset_devices: "voi massanollata laitteita"
         device_change_school: "voi siirtää laitteen koulusta toiseen"
         device_mass_change_school: "voi massasiirtää laitteita koulusta toiseen"
+        device_mass_tag_editor: "voi massamuokata laitteiden tageja"
         device_mass_change_purchase_information: "voi massamuokata laitteiden hankintatietoja"
     new:
       title: "Lisää uusi käyttäjä"
@@ -1135,6 +1136,7 @@ fi:
         mass_reset_devices: "Voi massa-asettaa/-poistaa laitteiden nollaustilan (tavallinen nollaustilan asettaminen on myös oltava sallittuna)"
         device_change_school: "Voi siirtää laitteita koulusta toiseen (edellyttää että käyttäjä on ylläpitäjänä vähintään kahdessa koulussa)"
         device_mass_change_school: "Voi massasiirtää laitteita koulusta toiseen (tavallinen laitteen koulunvaihto on myös oltava sallittuna)"
+        device_mass_tag_editor: "Voi massamuokata laitteiden tageja"
         device_mass_change_purchase_information: "Voi massamuokata laitteiden hankintatietoja"
 
   # New new user mass import/update tool

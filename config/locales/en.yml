@@ -1066,6 +1066,7 @@ en:
         mass_reset_devices: "can mass reset devices"
         device_change_school: "can move devices to another school"
         device_mass_change_school: "can mass move devices to another school"
+        device_mass_tag_editor: "can mass edit device tags"
         device_mass_change_purchase_information: "can mass edit device purchase information"
     new:
       title: New user
@@ -1135,6 +1136,7 @@ en:
         mass_reset_devices: "Can mass set/clear device reset modes (normal reset mode must also be granted)"
         device_change_school: "Can move devices to another school (requires the user to be an admin in at least two schools)"
         device_mass_change_school: "Can mass move devices to another school (normal device school changing must also be granted)"
+        device_mass_tag_editor: "Can mass edit device tags"
         device_mass_change_purchase_information: "Can mass edit device purchase information"
 
   # New new user mass import/update tool
