@@ -990,6 +990,7 @@ en:
         clear_column:
           title: "Clear column contents..."
           column_title: "Column:"
+          warning: "CAUTION: This is a rarely used tool. Do not use this unless you fully understand what this does and what this is used for."
         username_list:
           title: "Create username list"
           description: "List name or a short explanation (optional)"

@@ -990,6 +990,7 @@ fi:
         clear_column:
           title: "Tyhjennä sarakkeen sisältö..."
           column_title: "Sarake:"
+          warning: "VAROITUS: Tämä on harvoin käytetty työkalu. Älä käytä tätä jollet ymmärrä täsmälleen mitä tämä tekee ja mihin tätä käytetään."
         username_list:
           title: "Luo käyttäjätunnuslista"
           description: "Listan nimi tai lyhyt kuvaus (valinnainen)"
