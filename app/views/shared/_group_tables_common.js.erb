@@ -163,6 +163,7 @@ class MassGroupDeletion extends ST.MassOperation {
 };
 <% end %>
 
+<% if @permit_mass_group_change_type %>
 // Mass operation: set type
 class MassGroupSetType extends ST.MassOperation {
     constructor(parent, container)
@@ -216,16 +217,19 @@ class MassGroupSetType extends ST.MassOperation {
         return { state: "ready" };
     }
 };
+<% end %>
 
 // JavaScript class fields support is so poor that I can't really
 // define titles, IDs and other things in classes, they must be here
 const MASS_OPERATIONS = [
+<% if @permit_mass_group_change_type %>
     {
         operation: "set_type",
         title: "<%= t('groups.index.mass_operations.set_type.title') %>",
         haveSettings: true,
         cls: MassGroupSetType
     },
+<% end %>
     {
         operation: "remove_members",
         title: "<%= t('link.remove_all_members_from_group') %>",
