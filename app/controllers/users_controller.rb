@@ -87,6 +87,7 @@ class UsersController < ApplicationController
     @permit_user_creation = @is_owner || current_user.has_admin_permission?(:create_users)
     @permit_user_deletion = @is_owner || current_user.has_admin_permission?(:delete_users)
     @permit_mass_user_deletion = @is_owner || (@permit_user_deletion && current_user.has_admin_permission?(:mass_delete_users))
+    @permit_mass_column_clear = @is_owner || current_user.has_admin_permission?(:users_mass_clear_column_contents)
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
 

@@ -589,6 +589,7 @@ class MassUserMarkForDeletion extends ST.MassOperation {
     }
 };
 
+<% if @permit_mass_column_clear %>
 // Mass operation: clear column (ie. set a specific database attribute to null for all selected users)
 class MassUserClearColumn extends ST.MassOperation {
     constructor(parent, container)
@@ -644,6 +645,7 @@ class MassUserClearColumn extends ST.MassOperation {
         return { state: "ready" };
     }
 };
+<% end %>
 
 <% unless @is_organisation %>
 // Create a new username list from selection
@@ -809,12 +811,14 @@ const MASS_OPERATIONS = [
         cls: MassUserMarkForDeletion
     },
 
+<% if @permit_mass_column_clear %>
     {
         operation: "clear_column",
         title: "<%= t('users.index.mass_operations.clear_column.title') %>",
         haveSettings: true,
         cls: MassUserClearColumn
     },
+<% end %>
 
 <% unless @is_organisation %>
     {
