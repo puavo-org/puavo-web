@@ -58,7 +58,7 @@
   margin: 10px;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   .contentBox {
     width: 100%;
     margin: 5px 0;
@@ -123,7 +123,7 @@
   white-space: no-wrap;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   .noWrap {
     /* narrow pages are unreadable otherwise */
     white-space: normal;
@@ -217,7 +217,7 @@
   margin-left: 25px;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   .basicInfo .basicInfoImage {
     width: 138px;
   }
@@ -229,7 +229,7 @@
   }
 }
 
-@media #{$screen-breakpoint-two} {
+@media screen and (max-width: 480px) {
   .basicInfo .basicInfoImage {
     width: 78px;
   }

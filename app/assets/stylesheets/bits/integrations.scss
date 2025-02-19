@@ -122,7 +122,7 @@
   display: inline;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   .integrations {
     padding-left: 5px;
   }
@@ -162,7 +162,7 @@
   white-space: nowrap;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   .nextUpdates .at {
     white-space: nowrap;
   }

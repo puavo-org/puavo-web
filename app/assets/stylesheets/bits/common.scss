@@ -42,7 +42,7 @@
   margin-top: 40px;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   #pageContainer {
     margin: 0;
   }
@@ -63,7 +63,7 @@
   overflow-wrap: break-word;  /* force splitting of long organisation names */
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   #schoolHeader {
     margin: 0;
   }
@@ -98,7 +98,7 @@
   line-height: 1;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   #content {
     padding: 10px 5px;
     border: none;
@@ -223,7 +223,7 @@ footer {
   padding: 1em;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   footer {
     font-size: 60%;
   }

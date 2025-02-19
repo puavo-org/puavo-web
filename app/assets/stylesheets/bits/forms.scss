@@ -7,7 +7,7 @@
   max-width: 1300px;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   .formContainer {
     max-width: unset;
   }
@@ -108,7 +108,7 @@ legend {
   margin: 0 5px 0 0;    /* push labels away from the input box */
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   .editForm input[type="checkbox"],
   .editForm input[type="radio"] {
     /* The label gets collapsed, so push the element away from the
@@ -210,7 +210,7 @@ input[type="submit"]:hover {
   border: 2px solid var(--form-error-fore);
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   /* Turn form tables into what looks like lists of table rows, just like
      non-form tables of things. */
   .editForm {

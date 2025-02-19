@@ -24,7 +24,7 @@ h1 {
   border-bottom: 1px solid var(--hx-border);
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   h1 {
     font-size: 200%;
   }
@@ -36,7 +36,7 @@ h2 {
   border-bottom: 1px dashed var(--hx-border);
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   h2 {
     font-size: 170%;
   }
@@ -70,7 +70,7 @@ hr {
   visibility: hidden;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   abbr {
     /* cannot be hovered, hide the underline */
     text-decoration: none;
@@ -81,7 +81,7 @@ abbr[title]:after {
   content: "";
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   abbr[title] {
     /* Can't hover over abbreviations on mobile, so display their contents */
     content: " (" attr(title) ")";

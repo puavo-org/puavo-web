@@ -211,7 +211,7 @@
   text-transform: none;
 }
 
-@media #{$screen-breakpoint-two} {
+@media screen and (max-width: 480px) {
   #topbar nav .schoolLinks {
     /* These items take too much space on small mobile views */
     display: none;
@@ -246,7 +246,7 @@
   height: 14px;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   #topbar {
     /* don't cover any content */
     position: relative;

@@ -27,7 +27,7 @@
   padding: 7px 10px !important;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   .toolsContainer .btn {
     padding: 5px 10px !important;
   }
@@ -53,7 +53,7 @@
   z-index: 2;
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   .dropdown {
     margin-right: 13px;
   }
