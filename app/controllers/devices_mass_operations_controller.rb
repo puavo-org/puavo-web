@@ -62,7 +62,7 @@ class DevicesMassOperationsController < MassOperationsController
     end
 
     if data.include?('warranty_end_date')
-      old_date = device.puavoPurchaseDate ? device.puavoWarrantyEndDate.strftime('%Y-%m-%d') : nil
+      old_date = device.puavoWarrantyEndDate ? device.puavoWarrantyEndDate.strftime('%Y-%m-%d') : nil
       new_date = @parameters['warranty_end_date']
 
       if old_date != new_date
@@ -89,6 +89,9 @@ class DevicesMassOperationsController < MassOperationsController
     device.save! if changed
 
     return [true, nil]
+  rescue StandardError => e
+    logger.info "[#{@request_id}] Mass operation failed: #{e}"
+    return [false, nil]
   end
 
   def _change_school(device_id)
