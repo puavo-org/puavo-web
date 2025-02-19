@@ -62,6 +62,7 @@ class DevicesController < ApplicationController
     @permit_device_mass_deletion = @is_owner || (@permit_device_deletion && current_user.has_admin_permission?(:mass_delete_devices))
     @permit_device_reset = @is_owner || current_user.has_admin_permission?(:reset_devices)
     @permit_device_mass_reset = @is_owner || current_user.has_admin_permission?(:mass_reset_devices)
+    @permit_device_mass_edit_purchase_info = @is_owner || current_user.has_admin_permission?(:device_mass_change_purchase_information)
 
     permit_device_mass_school_change = @is_owner ||
       (current_user.has_admin_permission?(:device_change_school) &&

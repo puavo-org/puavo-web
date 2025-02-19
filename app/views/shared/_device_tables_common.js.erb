@@ -1202,6 +1202,7 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
 };
 
 <% unless @is_servers %>
+<% if @permit_device_mass_edit_purchase_info %>
 // Mass operation: edit purchase and warranty information
 class MassDevicePurchaseInfo extends ST.MassOperation {
     constructor(parent, container)
@@ -1387,6 +1388,7 @@ class MassDevicePurchaseInfo extends ST.MassOperation {
         };
     }
 };
+<% end %>
 <% end %>
 
 // Mass operation: puavo-conf editing. Not as pretty as the interactive puavo-conf editor, but I can't cram it in this space.
@@ -1704,12 +1706,14 @@ const MASS_OPERATIONS = [
         cls: MassDeviceSetFieldValue
     },
 <% unless @is_servers %>
+<% if @permit_device_mass_edit_purchase_info %>
     {
         operation: "purchase_info",
         title: "<%= t('devices.index.mass_operations.purchase_info.title') %>",
         haveSettings: true,
         cls: MassDevicePurchaseInfo
     },
+<% end %>
 <% end %>
     {
         operation: "puavoconf_edit",
