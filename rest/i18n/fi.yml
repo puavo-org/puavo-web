@@ -20,12 +20,6 @@ sso:
   organisation_help: "Käyttäjätunnus tulee syöttää muodossa <em>käyttäjätunnus</em>@<em>organisaatio</em>.opinsys.fi. Käyttäjätunnus on sama kuin Opinsys-tietokoneille kirjautuessasi. Organisaatio-osa tulee koulusi kaupungin/kunnan mukaan. Se kirjoitetaan pienellä, sekä siitä tulee poistaa tarkkeet ja aksentit. Esimerkiksi, jos olet Jyväskylästä ja Opinsys-tunnuksesi on matti.meikalainen, on organisaatio-osa <em>jyvaskyla</em> ja kirjaudut tunnuksella <em>matti.meikalainen@jyvaskyla.opinsys.fi</em>."
   service_not_activated: Tämä palvelu ei ole aktivoitu. Voit pyytää koulusi pääkäyttäjää aktivoimaan sen.
   support_info: Ongelmatapauksissa voit olla yhteydessä puhelimitse Opinsysin tukeen <a href="tel:+358144591624">014 4591 624</a>.
-eltern_sso:
-  title: "Welcome!"
-  header: "Login by entering your username or email address, and password below."
-  username_placeholder: "Username or email address"
-  missing_organisation: "Invalid or missing organisation name. Unable to render the SSO login form."
-  contact_support: "Please contact Opinsys support for assistance."
 password_management:
   subject: "Salasanan vaihto"
   hello: "Hei"

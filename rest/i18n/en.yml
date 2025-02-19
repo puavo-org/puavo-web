@@ -20,12 +20,6 @@ sso:
   organisation_help: "The username must be provided in the form of <em>username</em>@<em>organisation</em>.opinsys.fi.</p><p>The username is the same you use when logging to Opinsys desktops. The organisation part comes from the city/municipality of your school. It's lower case and all diacritics and accents must be removed. For example, if you are from Jyväskylä and your Opinsys username is matti.meikalainen, the organisation part is <em>jyvaskyla</em> which means you login with <em>matti.meikalainen@jyvaskyla.opinsys.fi</em>."
   service_not_activated: This service is not activated. You may ask your school's administrator to activate it.
   support_info: If you have issues with logging in, you can call Opinsys support at <a href="tel:+358144591624">+358 14 4591 624</a>.
-eltern_sso:
-  title: "Welcome!"
-  header: "Login by entering your username or email address, and password below."
-  username_placeholder: "Username or email address"
-  missing_organisation: "Invalid or missing organisation name. Unable to render the SSO login form."
-  contact_support: "Please contact Opinsys support for assistance."
 password_management:
   subject: "Reset your password"
   hello: "Hello"
