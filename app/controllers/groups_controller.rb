@@ -60,7 +60,7 @@ class GroupsController < ApplicationController
     @permit_group_creation = @is_owner || current_user.has_admin_permission?(:create_groups)
     @permit_group_deletion = @is_owner || current_user.has_admin_permission?(:delete_groups)
     @permit_mass_group_deletion = @is_owner || (@permit_group_deletion && current_user.has_admin_permission?(:mass_delete_groups))
-    @permit_mass_group_change_type = @is_owner || (current_user.has_admin_permission?(:group_mass_change_type))
+    @permit_mass_group_change_type = @is_owner || current_user.has_admin_permission?(:group_mass_change_type)
 
     respond_to do |format|
       format.html # index.html.erb
