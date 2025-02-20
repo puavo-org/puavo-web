@@ -662,7 +662,7 @@ class Devices < PuavoSinatra
     potential_devices = Device.raw_filter(
       "ou=Devices,ou=Hosts,#{base}",
       '(&(objectclass=*)(&(puavoDeviceType=laptop)(puavoConf=*)))',
-      ['puavoId', 'puavoHostname', 'puavoSchool', 'puavoConf']
+      ['puavoId', 'puavoHostname', 'puavoDisplayName', 'puavoSchool', 'puavoConf']
     )
 
     # Do further filtering. Our LDAP schema does not make "puavoConf"
@@ -703,6 +703,7 @@ class Devices < PuavoSinatra
         exam_servers << {
           device_id: dev['puavoId'][0].to_i,
           device_hostname: dev['puavoHostname'][0],
+          device_display_name: dev.include?('puavoDisplayName') ? dev['puavoDisplayName'][0].force_encoding('utf-8') : nil,
           school_id: school_cache[school_dn].id.to_i,
           school_abbr: school_cache[school_dn].abbreviation,
           school_name: school_cache[school_dn].name,
