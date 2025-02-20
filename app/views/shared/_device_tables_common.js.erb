@@ -291,6 +291,12 @@ const COLUMN_DEFINITIONS = {
         transform: entry => doStorage(entry.df_imageoverlays),
     },
 
+    display_name: {
+        key: "display_name",
+        title: "<%= t('columns.devices.display_name') %>",
+        type: ST.ColumnType.STRING,
+    },
+
     hd: {
         key: "hd",
         title: "<%= t('columns.devices.hwinfo_hd_size') %>",
@@ -691,6 +697,7 @@ const COLUMN_ORDER = [
 <% end %>
     "id",
     "hn",
+    "display_name",
 <% if !@is_organisation || @is_servers %>
     "hw_time",
 <% end %>

@@ -24,6 +24,7 @@ class Device < Host
   ldap_map :puavoPrinterQueue,             :printer_queue_dns,        LdapConverters::ArrayValue
   ldap_map :puavoSchool,                   :school_dn
   ldap_map :serialNumber,                  :serial_number
+  ldap_map :puavoDisplayName,              :display_name
 
   ldap_map :puavoMenuData,                 :puavomenu_data
   skip_serialize :puavomenu_data
@@ -738,6 +739,7 @@ class Devices < PuavoSinatra
     'current_image'           => 'puavoDeviceCurrentImage',
     'default_printer'         => 'puavoDefaultPrinter',
     'description'             => 'description',
+    'display_name'            => 'puavoDisplayName',
     'dn'                      => 'dn',
     'hostname'                => 'puavoHostname',
     'hw_info'                 => 'puavoDeviceHWInfo',
@@ -802,6 +804,7 @@ class Devices < PuavoSinatra
     'puavoDeviceType'               => { name: 'type' },
     'puavoDeviceXrandr'             => { name: 'xrandr' },
     'puavoDeviceXserver'            => { name: 'xserver' },
+    'puavoDisplayName'              => { name: 'display_name' },
     'puavoHostname'                 => { name: 'hostname' },
     'puavoId'                       => { name: 'id', type: :integer },
     'puavoImageSeriesSourceURL'     => { name: 'image_series_url' },

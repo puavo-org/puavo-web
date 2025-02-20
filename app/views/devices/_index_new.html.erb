@@ -21,7 +21,7 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 
 <%= render :partial => 'shared/device_tables_common', formats: [:js] %>
 
-const DEFAULT_COLUMNS = ["hn", "type", "tags", "mac", "mfer", "model", "serial", "image", "current_image"];
+const DEFAULT_COLUMNS = ["hn", "display_name", "type", "tags", "mac", "mfer", "model", "serial", "image", "current_image"];
 const DEFAULT_SORTING = { column: "hn", dir: ST.SortOrder.ASCENDING };
 
 document.addEventListener("DOMContentLoaded", function() {

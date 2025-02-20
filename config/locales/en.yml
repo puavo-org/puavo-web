@@ -277,6 +277,7 @@ en:
 
     devices:
       hostname: "Hostname"
+      display_name: "Human-readable name"
       type: "Type"
       tags: "Tags"
       manufacturer: "Manufacturer"
@@ -2108,6 +2109,7 @@ en:
       device:
         dn: DN
         puavoHostname: Hostname
+        puavoDisplayName: "Human-readable name"
         puavoDeviceType: Device type
         macAddress: MAC address(es)
         ipHostNumber: IP address

@@ -277,6 +277,7 @@ fi:
 
     devices:
       hostname: "Verkkonimi"
+      display_name: "Ihmisen luettava nimi"
       type: "Tyyppi"
       tags: "Tagit"
       manufacturer: "Valmistaja"
@@ -2108,6 +2109,7 @@ fi:
       device:
         dn: DN
         puavoHostname: Verkkonimi
+        puavoDisplayName: "Ihmisen luettava nimi"
         puavoDeviceType: Laitteen tyyppi
         macAddress: MAC-osoite
         ipHostNumber: IP-osoite

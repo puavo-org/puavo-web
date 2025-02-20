@@ -16,16 +16,21 @@ Feature: Manage devices
       | fatclient-02  | a0:4e:68:94:a1:7b | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
       | laptop-01     | a0:4e:68:94:a1:7c | laptop          | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
       | thin-01       | 11:22:33:aa:bb:cc | thinclient      | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
+      | other-01      | 00:00:00:00:00:00 | other           | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
 
   Scenario: Add new printer to Puavo
     Given I am on the new printer device page
     When I fill in "Hostname" with "testprinter01"
     And I press "Create"
     Then I should see "Device was successfully created."
+    And I should not see "Human-readable name"
+    When I follow "Edit..."
+    Then I should not see "Human-readable name"
 
   Scenario: Edit fatclient configuration
     Given I am on the devices list page
     And I press "Edit..." on the "fatclient-01" row
+    Then I should not see "Human-readable name"
     When I fill in "Default input audio device" with "usb://input-audio-device"
     And I fill in "Default output audio device" with "usb://output-audio-device"
     And I fill in "Description" with "An example device"
@@ -64,10 +69,12 @@ Feature: Manage devices
     | puavo.autopilot.enabled     | false |
     | puavo.guestlogin.enabled    | false |
     | puavo.xbacklight.brightness | 55    |
+    And I should not see "Human-readable name"
 
   Scenario: Edit laptop configuration
     Given I am on the devices list page
     And I press "Edit..." on the "laptop-01" row
+    Then I should see "Human-readable name"
     When I choose "device_puavoAutomaticImageUpdates_true"
     And I choose "device_puavoPersonallyAdministered_true"
     And I press "Update"
@@ -307,3 +314,55 @@ Feature: Manage devices
   # But there's one missing important test here: test that an admin actually can move
   # a device to another school. I cannot figure out how to (easily) create an admin that
   # is in multiple schools.
+
+  Scenario: Only laptops have human-readable names
+    Given I am logged in as "pavel" with password "secret"
+    # Fatclient
+    When I am on the devices list page
+    Then I press "fatclient-01" on the "fatclient-01" row
+    And I should not see "Human-readable name"
+    When I follow "Edit..."
+    Then I should not see "Human-readable name"
+    # Thinclient
+    When I am on the devices list page
+    Then I press "thin-01" on the "thin-01" row
+    And I should not see "Human-readable name"
+    When I follow "Edit..."
+    Then I should not see "Human-readable name"
+    # Other device
+    When I am on the devices list page
+    Then I press "other-01" on the "other-01" row
+    And I should not see "Human-readable name"
+    When I follow "Edit..."
+    Then I should not see "Human-readable name"
+    # Laptop
+    When I am on the devices list page
+    Then I press "laptop-01" on the "laptop-01" row
+    # This test is not very good, since human-readable names are hidden even
+    # for laptops until the name is specified
+    And I should not see "Human-readable name"
+    When I follow "Edit..."
+    Then I should see "Human-readable name"
+
+  Scenario: Edit and check laptop's human-readable name
+    Given I am logged in as "pavel" with password "secret"
+    # Set
+    And I am on the show device page with "laptop-01"
+    Then I should not see "Human-readable name"
+    When I follow "Edit..."
+    And I fill in "Human-readable name" with "test name"
+    And I press "Update"
+    Then I should see "Human-readable name"
+    And I should see "test name"
+    # Update
+    When I follow "Edit..."
+    And I fill in "Human-readable name" with "another name"
+    And I press "Update"
+    Then I should see "Human-readable name"
+    And I should see "another name"
+    # Clear
+    When I follow "Edit..."
+    And I fill in "Human-readable name" with ""
+    And I press "Update"
+    Then I should not see "Human-readable name"
+    And I should not see "test name"

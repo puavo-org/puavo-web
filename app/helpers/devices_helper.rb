@@ -52,6 +52,7 @@ module DevicesHelper
     return [
       'puavoId',
       'puavoHostname',
+      'puavoDisplayName',
       'puavoDeviceType',
       'puavoDeviceImage',
       'puavoDeviceCurrentImage',
@@ -135,6 +136,10 @@ module DevicesHelper
     out[:id] = dev['puavoId'][0].to_i
 
     out[:hn] = dev['puavoHostname'][0]
+
+    if dev.include?('puavoDisplayName')
+      out[:display_name] = dev['puavoDisplayName'][0]
+    end
 
     out[:type] = dev['puavoDeviceType'][0]
 

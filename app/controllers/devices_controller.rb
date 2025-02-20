@@ -636,6 +636,7 @@ class DevicesController < ApplicationController
       :host_certificate_request,  # ...device registration
       :puavoDeviceType,
       :puavoHostname,
+      :puavoDisplayName,
       :puavoTag,
       :puavoConf,
       :puavoDeviceStatus,
