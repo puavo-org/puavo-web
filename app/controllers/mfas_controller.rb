@@ -76,7 +76,6 @@ class MfasController < ApplicationController
         result[:success] = true
         result[:keyid] = data['data']['keyid']
         result[:secret] = secret
-        puts stdout
         result[:qr] = 'data:image/svg+xml;base64,' + Base64.encode64(stdout)
       end
     end
