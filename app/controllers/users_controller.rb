@@ -501,6 +501,8 @@ class UsersController < ApplicationController
           update_user_groups(@user, params[:groups])
         end
 
+        flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))
+
         format.html { redirect_to( user_path(@school, @user) ) }
         format.json { render :json => nil }
       rescue UserError => e

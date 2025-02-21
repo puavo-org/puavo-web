@@ -95,6 +95,7 @@ Feature: Manage users
     And the memberUid should include "ben" on the "School 1" school
     And the member should include "ben" on the "School 1" school
     And the memberUid should include "ben" on the "Domain Users" samba group
+    And I should see "User was successfully created."
     When I follow "Edit..."
     Then I am on the edit user page with "ben"
     When I follow "Cancel"
