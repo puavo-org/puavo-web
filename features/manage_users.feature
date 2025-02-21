@@ -581,3 +581,51 @@ Feature: Manage users
 #    And I am logged in as "gerry" with password "secret"
 #    And I get on the show user JSON page with "pavel"
 #    Then I should see "You are not allowed to access this action."
+
+  # Admin trying to create a user with a duplicate username in another school
+  # (that they cannot access) should not raise any constraint violation errors
+  Scenario: Duplicate username in another school 1
+    Given a new school and group with names "School 2", "Class 5" on the "example" organisation
+    And the following users:
+      | givenName | sn     | uid    | password | school_admin | puavoEduPersonAffiliation |
+      | Donald    | Duck   | donald | 313      | true         | admin                     |
+
+    And admin "donald" has these permissions: "create_users"
+    Given I am logged in as "donald" with password "313"
+
+    # This will succeed, as the username is unique
+    And I am on the new user page
+    When I fill in the following:
+    | Given name | Testi  |
+    | Surname    | Tunnus |
+    | Username   | testi  |
+    And I check "Test user"
+    And I press "Create"
+    Then I should see "User was successfully created."
+
+    # This will fail, because the username is already used in school "School 1"
+    Given I am on the new user page
+    When I fill in the following:
+    | Given name | Testi  |
+    | Surname    | Tunnus |
+    | Username   | pavel  |
+    And I check "Test user"
+    And I press "Create"
+    Then I should see "Failed to create the user!"
+    And I should see "Username has already been taken"
+
+  # Like above, but this time we're editing an existing user
+  Scenario: Duplicate username in another school 2
+    Given a new school and group with names "School 2", "Class 5" on the "example" organisation
+    And the following users:
+      | givenName | sn     | uid    | password | school_admin | puavoEduPersonAffiliation |
+      | Donald    | Duck   | donald | 313      | true         | admin                     |
+      | Another   | User   | another|          | false        | student                   |
+
+    Given I am logged in as "donald" with password "313"
+    And I am on the show user page with "another"
+    When I follow "Edit..."
+    And I fill in "Username" with "pavel"
+    And I press "Update"
+    Then I should see "User cannot be saved!"
+    And I should see "Username has already been taken"

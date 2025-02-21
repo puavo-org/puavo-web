@@ -509,6 +509,25 @@ class UsersController < ApplicationController
         logger.info "Create user, Exception: " + e.to_s
         get_group_list
         error_message_and_render(format, 'new', e.message)
+      rescue ActiveLdap::LdapError::ConstraintViolation => cve
+        message = cve.to_s
+
+        # The message looke like "non-unique attributes found with (|(uid=XXX))"
+        # where "XXX" is the username.
+        if message.include?('non-unique attributes found with') && message.include?('(uid=')
+          # This username is a duplicate, but the other user is in a school the current
+          # user (probably an admin) cannot access, so we cannot format a proper error
+          # message automatically. Perhaps this could be fixed by creatively using LDAP
+          # ACLs, I don't know. For now, we need this hack.
+
+          @user.errors.add :uid, I18n.t('activeldap.errors.messages.taken',
+                                          attribute: I18n.t('activeldap.attributes.user.uid'))
+
+          get_group_list
+          error_message_and_render(format, 'new', I18n.t('flash.user.create_failed'))
+        else
+          raise
+        end
       end
     end
   end
@@ -638,6 +657,19 @@ class UsersController < ApplicationController
       rescue UserError => e
         get_group_list
         error_message_and_render(format, 'edit',  e.message)
+      rescue ActiveLdap::LdapError::ConstraintViolation => cve
+        message = cve.to_s
+
+        # See the exception handling in user creation for explanation
+        if message.include?('non-unique attributes found with') && message.include?('(uid=')
+          @user.errors.add :uid, I18n.t('activeldap.errors.messages.taken',
+                                          attribute: I18n.t('activeldap.attributes.user.uid'))
+
+          get_group_list
+          error_message_and_render(format, 'edit', I18n.t('flash.user.save_failed'))
+        else
+          raise
+        end
       end
     end
   end
