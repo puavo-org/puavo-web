@@ -24,6 +24,7 @@
 
 // Stylesheets
 //= link application.css
+//= link public_forms.css
 //= link password_forms.css
 //= link profile_editor.css
 //= link mfa.css
