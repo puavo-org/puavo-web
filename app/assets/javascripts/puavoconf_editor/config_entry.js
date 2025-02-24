@@ -19,7 +19,7 @@ export class ConfigEntry {
 
     createEditor(container)
     {
-        throw new Error("Your derived class did not override ConfigEmtry::createEditor()!");
+        throw new Error("Your derived class did not override ConfigEntry::createEditor()!");
     }
 
     createDetails(params)
