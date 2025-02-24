@@ -24,7 +24,7 @@ export class ConfigJSON extends ConfigEntry {
     {
         let input = create("textarea", { cls: "json", inputValue: this.value });
 
-        input.rows = 2;
+        input.rows = 5;
 
         this.input = input;
         this.validate();
