@@ -19,6 +19,7 @@ const PC_STRINGS = {
         "target_category": "Category",
         "target_menu": "Menu",
         "target_program": "Program",
+        "choices_title": "Predefined possible choices:",
     },
 
     "fi": {
@@ -34,6 +35,7 @@ const PC_STRINGS = {
         "target_category": "Kategoria",
         "target_menu": "Valikko",
         "target_program": "Ohjelma",
+        "choices_title": "Ennalta määritellyt mahdolliset valinnat:",
     }
 };
 
@@ -112,12 +114,13 @@ class ConfigEntry {
 };
 
 class ConfigString extends ConfigEntry {
-    constructor(parent, key, value)
+    constructor(parent, key, value, choices)
     {
         super(parent);
 
         this.key = key;
         this.value = value;
+        this.choices = choices;
     }
 
     createEditor(container)
@@ -126,10 +129,50 @@ class ConfigString extends ConfigEntry {
 
         input.addEventListener("input", event => this.onChange(event));
         container.appendChild(input);
+
+        if (this.choices) {
+            const select = create("select", { id: `${this.id}-choices` });
+
+            for (const choice of this.choices)
+                select.appendChild(create("option", { id: choice, text: choice }));
+
+            // Pre-select the current value if it is a valid choice
+            if (this.choices.includes(this.value))
+                select.value = this.value;
+            else select.value = null;
+
+            select.addEventListener("change", event => this.onChangeChoice(event));
+
+            // Create a label too
+            const label = create("label", { text: translate(this.language, "choices_title") });
+
+            label.htmlFor = `${this.id}-choices`;
+            container.appendChild(label);
+
+            container.appendChild(select);
+        }
     }
 
     onChange(event)
     {
+        this.value = event.target.value;
+
+        if (this.choices) {
+            // Change the select to reflect the typed-in value, if it's a valid choice
+            const select = event.target.parentNode.querySelector("select");
+
+            if (this.choices.includes(this.value))
+                select.value = this.value;
+            else select.value = null;
+        }
+
+        this.valueChanged();
+    }
+
+    onChangeChoice(event)
+    {
+        // Reflect the change in the input box
+        event.target.parentNode.querySelector("input").value = event.target.value;
         this.value = event.target.value;
         this.valueChanged();
     }
@@ -739,15 +782,17 @@ export class PuavoConfEditor {
     createEntry(key, value)
     {
         let entry = null,
-            type = null;
+            type = null,
+            definition = null;
 
         // Find the type and a possible default value for this entry
         if (key in this.definitions) {
-            type = this.definitions[key].typehint;
+            definition = this.definitions[key];
+            type = definition.typehint;
 
             if (value === null || value === undefined) {
-                if ("default" in this.definitions[key])
-                    value = this.definitions[key]["default"]
+                if ("default" in definition)
+                    value = definition["default"]
             }
         }
 
@@ -759,8 +804,11 @@ export class PuavoConfEditor {
         // are just plain strings.
         switch (type) {
             case "string":
-            default:
-                return new ConfigString(this, key, value);
+            default: {
+                const choices = (definition && "choices" in definition) ? definition.choices : null;
+
+                return new ConfigString(this, key, value, choices);
+            }
 
             case "json":
                 return new ConfigJSON(this, key, value);
