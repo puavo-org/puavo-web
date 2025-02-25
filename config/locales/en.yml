@@ -370,6 +370,39 @@ en:
         abbr: "D"
         full: "A device-level setting"
 
+  puavoconf_editor:
+    # Can't use quotes in these, as they get written in the HTML and used as-is,
+    # and the quotes will get screwed up.
+    already_exists: "Key $(name) already exists"
+    accept_new: "Create a new key $(name) by pressing Enter or Tab"
+    new_placeholder: "Type in the name of the new key to be added..."
+    show_raw: "Show editable JSON"
+    delete_item: "Delete this key"
+    editors:
+      string:
+        choices_label: "Predefined choices (you can type in a custom value in the box above)"
+      json:
+        invalid_json: "Invalid JSON, will cause problems at runtime"
+      puavomenu_tags:
+        input_title: "The raw filter string. You can edit this directly, or use the table below if you want a mouse-driven interface."
+        action:
+          title: "What action does the filter do?"
+          show: "Show"
+          hide: "Hide"
+        namespace:
+          title: "What kind of object the filter targets? The default is tag."
+          tag: "Tag"
+          category: "Category"
+          menu: "Menu"
+          progam: "Program"
+        target:
+          title: "Name (identifier) of the targeted object"
+        buttons:
+          add: "Add a new filter after this"
+          delete: "Delete this filter"
+          move_up: "Move this filter up"
+          move_down: "Move this filter down"
+
   # Quick search
   search:
     search_result:

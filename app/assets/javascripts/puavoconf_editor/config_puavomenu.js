@@ -2,8 +2,7 @@
 
 // A special editor for Puavomenu tags (ie. filter strings)
 
-import { create } from "../common/dom.js";
-import { translate } from "./main.js";
+import { create, getTemplate } from "../common/dom.js";
 import { ConfigEntry } from "./config_entry.js";
 
 export class ConfigPuavomenuTags extends ConfigEntry {
@@ -21,20 +20,24 @@ export class ConfigPuavomenuTags extends ConfigEntry {
 
     createEditor(container)
     {
-        let input = create("input", { inputType: "text", inputValue: this.value });
+        const template = getTemplate("puavoconfPuavomenuInput");
+        const input = template.querySelector("input");
 
-        input.addEventListener("input", event => this.onChange(event));
-        container.appendChild(input);
+        input.value = this.value;
+        input.addEventListener("input", event => this.onChangeInput(event));
+
+        container.appendChild(template);
 
         this.container = container;
 
         this.load();
         this.createDetails();
         this.explain();
+
         container.appendChild(this.details);
     }
 
-    onChange(event)
+    onChangeInput(event)
     {
         this.value = event.target.value;
         this.load();
@@ -155,8 +158,9 @@ export class ConfigPuavomenuTags extends ConfigEntry {
     {
         if (this.value === null || this.value.trim().length == 0 || this.tags.length == 0) {
             // Provide a new tag button
-            this.details.innerHTML = `<button type="button" class="margin-top-10px margin-left-10px">+</button>`;
-            this.details.querySelector("button").addEventListener("click", () => {
+            const template = getTemplate("puavoconfPuavomenuNew");
+
+            template.querySelector("button").addEventListener("click", () => {
                 this.tags.splice(0, 0, {
                     valid: true,
                     action: "show",
@@ -168,26 +172,28 @@ export class ConfigPuavomenuTags extends ConfigEntry {
                 this.explain();
             });
 
+            this.details.innerText = "";
+            this.details.appendChild(template);
             return;
         }
 
-        let html = `<table class="width-50p margin-top-10px margin-left-10px"><tbody>`;
-
-        for (let i = 0; i < this.tags.length; i++)
-            html += this._createRow(i);
-
-        html += "</tbody></table>";
-        this.details.innerHTML = html;
-
-        const rows = this.details.querySelectorAll("table tbody tr");
+        // Build the table
+        const table = getTemplate("puavoconfPuavomenuExplanation"),
+              tbody = table.querySelector("tbody");
 
         for (let i = 0; i < this.tags.length; i++) {
             const tag = this.tags[i],
-                  row = rows[i];
+                  row = getTemplate("puavoconfPuavomenuExplanationRow"),
+                  tr = row.querySelector("tr");
 
             const action = row.querySelector("#action"),
                   namespace = row.querySelector("#namespace"),
                   target = row.querySelector("#target");
+
+            tr.dataset.index = i;
+
+            if (!tag.valid)
+                tr.classList.add("invalid");
 
             action.value = tag.action;
             namespace.value = tag.namespace;
@@ -195,21 +201,22 @@ export class ConfigPuavomenuTags extends ConfigEntry {
             if (tag.target)
                 target.value = tag.target;
 
-            if (!tag.valid)
-                row.classList.add("invalid");
-
             action.addEventListener("change", (e) => this.onChangeAction(e));
             namespace.addEventListener("change", (e) => this.onChangeNamespace(e));
             target.addEventListener("input", (e) => this.onChangeTarget(e));
 
             row.querySelector("button#add").addEventListener("click", (e) => this.onAddTag(e));
             row.querySelector("button#delete").addEventListener("click", (e) => this.onDeleteTag(e));
-
             row.querySelector("button#up").disabled = (this.tags.length > 0 && i == 0);
             row.querySelector("button#up").addEventListener("click", (e) => this.onMoveTagUp(e));
             row.querySelector("button#down").disabled = (this.tags.length > 0 && i == this.tags.length - 1);
             row.querySelector("button#down").addEventListener("click", (e) => this.onMoveTagDown(e));
+
+            tbody.appendChild(row);
         }
+
+        this.details.innerText = null;
+        this.details.appendChild(table);
     }
 
     revalidateTag(index)
@@ -300,41 +307,6 @@ export class ConfigPuavomenuTags extends ConfigEntry {
 
         this.save();
         this.explain();
-    }
-
-    _createRow(index)
-    {
-        let html =
-`<tr data-index="${index}">
-    <td>
-        <select id="action">
-            <option value="show">${translate(this.language, "action_show")}</option>
-            <option value="hide">${translate(this.language, "action_hide")}</option>
-        </select>
-    </td>
-
-    <td>
-        <select id="namespace">
-            <option value="tag">${translate(this.language, "target_tag")}</option>
-            <option value="category">${translate(this.language, "target_category")}</option>
-            <option value="menu">${translate(this.language, "target_menu")}</option>
-            <option value="program">${translate(this.language, "target_program")}</option>
-        </select>
-    </td>
-
-    <td>
-        <input id="target" type="text" size="20" maxlength="100" pattern="[a-zA-Z0-9\-_\.]+">
-    </td>
-
-    <td class="width-0 nowrap">
-        <button id="add" type="button">+</button>
-        <button id="delete" type="button">-</button>
-        <button id="up" type="button">↑</button>
-        <button id="down" type="button">↓</button>
-    </td>
-</tr>`;
-
-        return html;
     }
 
     _getIndex(node)

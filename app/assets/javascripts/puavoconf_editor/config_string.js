@@ -2,8 +2,7 @@
 
 // String editor
 
-import { create } from "../common/dom.js";
-import { translate } from "./main.js";
+import { create, getTemplate } from "../common/dom.js";
 import { ConfigEntry } from "./config_entry.js";
 
 export class ConfigString extends ConfigEntry {
@@ -18,13 +17,22 @@ export class ConfigString extends ConfigEntry {
 
     createEditor(container)
     {
-        let input = create("input", { inputType: "text", inputValue: this.value });
+        const template = getTemplate("puavoconfString");
+        const input = template.querySelector("input");
 
-        input.addEventListener("input", event => this.onChange(event));
-        container.appendChild(input);
+        input.id = this.id;
+        input.addEventListener("input", e => this.onChange(e));
+        input.value = this.value;
 
-        if (this.choices) {
-            const select = create("select", { id: `${this.id}-choices` });
+        if (!this.choices) {
+            template.querySelector("label").remove();
+            template.querySelector("select").remove();
+        } else {
+            // Setup the predefined choices
+            const select = template.querySelector("select");
+
+            select.id = `${this.id}-choices`;
+            template.querySelector("label").htmlFor = `${this.id}-choices`;
 
             for (const choice of this.choices)
                 select.appendChild(create("option", { id: choice, text: choice }));
@@ -34,16 +42,10 @@ export class ConfigString extends ConfigEntry {
                 select.value = this.value;
             else select.value = null;
 
-            select.addEventListener("change", event => this.onChangeChoice(event));
-
-            // Create a label too
-            const label = create("label", { text: translate(this.language, "choices_title") });
-
-            label.htmlFor = `${this.id}-choices`;
-            container.appendChild(label);
-
-            container.appendChild(select);
+            select.addEventListener("change", e => this.onChangeChoice(e));
         }
+
+        container.appendChild(template);
     }
 
     onChange(event)

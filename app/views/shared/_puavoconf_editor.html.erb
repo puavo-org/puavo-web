@@ -6,9 +6,12 @@
 <script>
 const PUAVOCONF_DEFINITIONS = <%= get_puavoconf_definitions() %>;
 
+const outer = document.querySelector("td.pceContainer");
+
 new PCE.Editor({
     prefix: "puavoconf1",
-    container: document.getElementById("puavoConfEditor"),
+    outer: outer,
+    storage: outer.querySelector("textarea"),
     definitions: PUAVOCONF_DEFINITIONS,
     language: I18n.locale,
 });

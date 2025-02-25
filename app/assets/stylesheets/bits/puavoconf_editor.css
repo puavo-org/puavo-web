@@ -6,7 +6,7 @@ The interactive PuavoConf editor
   border: 1px solid var(--pce-error-border);
 }
 
-.pcEditorWrapper {
+.puavoConfEditor {
   display: flex;
   flex-direction: column;
   gap: 5px;

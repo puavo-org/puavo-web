@@ -2,66 +2,13 @@
 
 // Interactive PuavoConf editor v2.1
 
-import { create } from "../common/dom.js";
+import { create, getTemplate } from "../common/dom.js";
 
 import { ConfigEntry } from "./config_entry.js";
 import { ConfigBoolean } from "./config_boolean.js";
 import { ConfigString } from "./config_string.js";
 import { ConfigJSON } from "./config_json.js";
 import { ConfigPuavomenuTags } from "./config_puavomenu.js";
-
-// Translations
-const PC_STRINGS = {
-    "en": {
-        "new_placeholder": "Type in the name of the new key to be added...",
-        "already_exists": "Key \"$(key)\" already exists",
-        "accept_existing": "Create this key by pressing Enter or Tab",
-        "accept_new": "Create a new key named \"$(key)\" by pressing Enter or Tab",
-        "delete": "Delete this key",
-        "show_raw": "Show editable JSON",
-        "action_show": "Show",
-        "action_hide": "Hide",
-        "target_tag": "Tag",
-        "target_category": "Category",
-        "target_menu": "Menu",
-        "target_program": "Program",
-        "choices_title": "Predefined possible choices:",
-    },
-
-    "fi": {
-        "new_placeholder": "Kirjoita uuden lisättävän avaimen nimi...",
-        "already_exists": "Avain \"$(key)\" on jo käytössä",
-        "accept_existing": "Lisää tämä avain painamalla Enter tai Tab",
-        "accept_new": "Luo uusi avain \"$(key)\" painamalla Enter tai Tab",
-        "delete": "Poista tämä avain",
-        "show_raw": "Näytä muokattava JSON",
-        "action_show": "Näytä",
-        "action_hide": "Piilota",
-        "target_tag": "Tagi",
-        "target_category": "Kategoria",
-        "target_menu": "Valikko",
-        "target_program": "Ohjelma",
-        "choices_title": "Ennalta määritellyt mahdolliset valinnat:",
-    }
-};
-
-export function translate(language, id, params={})
-{
-    if (!(language in PC_STRINGS))
-        return `(Unknown string "${language}.${id}")`;
-
-    const strings = PC_STRINGS[language];
-
-    if (!(id in strings))
-        return `(Unknown string "${language}.${id}")`;
-
-    let s = strings[id].slice();
-
-    for (const p in params)
-        s = s.replace(`$(${p})`, params[p]);
-
-    return s;
-}
 
 // Generates random strings for radio button IDs
 export function randomID(length=10)
@@ -80,51 +27,49 @@ export function randomID(length=10)
     return output;
 }
 
+function initError(outer, message)
+{
+    outer.prepend(create("p", { cls: "genericError", text: msg }));
+}
+
 export class PuavoConfEditor {
     constructor(params)
     {
+        // Verify the required parameters
+        if (!params.outer) {
+            console.warn("PuavoConfEditor::ctor(): params.outer is NULL or invalid, editor not created");
+            return;
+        }
+
         if (!params.prefix) {
-            console.warn("PuavoConfEditor::ctor(): params.prefix does not exist, editor not created");
+            initError(params.outer, "PuavoConfEditor::ctor(): no editor prefix specified, editor not created");
+            return;
+        }
+
+        if (!params.storage) {
+            initError(params.outer, "PuavoConfEditor::ctor(): missing storage textarea element, editor not created");
             return;
         }
 
         this.prefix = params.prefix;
-
-        if (!params.container) {
-            console.warn("PuavoConfEditor::ctor(): params.container is missing/invalid, editor not created");
-            return;
-        }
+        this.storage = params.storage;
+        this.language = params.language || "en";
 
         if (params.definitions)
             this.definitions = params.definitions;
         else this.definitions = {};
 
-        this.language = params.language || "en";
-
-        this.container = params.container;
-
-        this.storage = this.container.getElementsByTagName("textarea")[0];
-
-        if (!this.storage) {
-            this.container.innerHTML = "PuavoConfEditor::ctor(): missing storage textarea element, editor not created";
-            return;
-        }
-
         // Create the user interface
-        this.container.innerHTML =
-`<div class="pcEditorWrapper">
-<table class="pcTable"></table>
-<input class="new" type="text" maxlength="100" placeholder="${translate(this.language, "new_placeholder")}">
-<div class="raw">
-    <input type="checkbox" id="${this.prefix}-showRaw">
-    <label for="${this.prefix}-showRaw">${translate(this.language, "show_raw")}</label>
-</div>
-</div>`;
+        const template = getTemplate("puavoconfEditor");
 
-        // Move the storage textarea inside the DIV
+        this.container = template.querySelector("div.puavoConfEditor");
+        params.outer.prepend(template);
+
         this.storage.style.display = "none";
-        this.storage.addEventListener("input", () => this.rawEdited());
-        this.container.querySelector("div.pcEditorWrapper").appendChild(this.storage);
+
+        this.container.querySelector(`div.raw input`).addEventListener("click", e => {
+            this.storage.style.display = e.target.checked ? "initial" : "none";
+        });
 
         // UI handles
         this.table = this.container.querySelector("table.pcTable");
@@ -141,10 +86,6 @@ export class PuavoConfEditor {
             // be done reliably in JavaScript... 250 milliseconds is long enough
             // for a mouse click, but it's dangerously short.
             setTimeout(() => { this.hideSuggestions() }, 250);
-        });
-
-        this.container.querySelector(`div.raw input`).addEventListener("click", e => {
-            this.storage.style.display = e.target.checked ? "initial" : "none";
         });
 
         // Suggestions list
@@ -275,12 +216,12 @@ export class PuavoConfEditor {
 
     buildTable()
     {
-        let tbody = document.createElement("tbody");
+        const tbody = document.createElement("tbody");
 
-        for (let entry of this.entries)
+        for (const entry of this.entries)
             tbody.appendChild(this._createEntryRow(entry));
 
-        this.table.innerHTML = "";
+        this.table.innerText = "";
         this.table.appendChild(tbody);
     }
 
@@ -345,32 +286,20 @@ export class PuavoConfEditor {
 
     _createEntryRow(entry)
     {
-        let buttons = create("td", { cls: "buttons" }),
-            key = create("td", { cls: "key", text: entry.key }),
-            value = create("td", { cls: "value" });
+        const template = getTemplate("puavoconfEntry");
 
-        let deleteButton = create("button", { cls: "delete", text: "✖" });
+        const tr = template.querySelector("tr");
 
-        deleteButton.type = "button";
-        deleteButton.title = translate(this.language, "delete");
-        deleteButton.addEventListener("click", e => this.deleteRow(e));
-        buttons.appendChild(deleteButton);
+        tr.id = entry.id;
+        tr.dataset.key = entry.key;
 
-        // Editor container DIV
-        let form = create("div", { cls: "editor" });
+        template.querySelector("td.key").innerText = entry.key;
+        template.querySelector("button").addEventListener("click", e => this.deleteRow(e));
 
-        entry.createEditor(form);
-        value.appendChild(form);
+        // Create the editor inside the row container DIV
+        entry.createEditor(template.querySelector("td.value div"));
 
-        let row = create("tr", { id: entry.id });
-
-        row.dataset.key = entry.key;
-
-        row.appendChild(buttons);
-        row.appendChild(key);
-        row.appendChild(value);
-
-        return row;
+        return template;
     }
 
     // Handles special keys in the entry name input box
@@ -534,6 +463,8 @@ export class PuavoConfEditor {
 
     buildSuggestions()
     {
+        const translations = getTemplate("puavoconfTranslations");
+
         const needle = this.newInput.value.trim();
         const showAll = needle.length == 0;
         let existing = new Set();
@@ -552,14 +483,14 @@ export class PuavoConfEditor {
         }
 
         this.suggestionsList.sort();
-        this.suggestions.innerHTML = "";
+        this.suggestions.innerText = "";
 
         if (this.suggestionsList.length == 0) {
             // This is a completely new entry, we have no definition for it
             const duplicate = existing.has(needle);
 
             let newEntry = create("div", {
-                text: translate(this.language, duplicate ? "already_exists" : "accept_new", { "key": needle }),
+                text: translations.querySelector("div#" + (duplicate ? "already_exists" : "accept_new")).innerText.replace("$(name)", `"${needle}"`),
                 cls: duplicate ? "error" : "new"
             });
 

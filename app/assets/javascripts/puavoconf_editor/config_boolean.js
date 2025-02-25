@@ -2,7 +2,7 @@
 
 // Boolean editor
 
-import { create } from "../common/dom.js";
+import { create, getTemplate } from "../common/dom.js";
 import { ConfigEntry } from "./config_entry.js";
 
 export class ConfigBoolean extends ConfigEntry {
@@ -21,24 +21,22 @@ export class ConfigBoolean extends ConfigEntry {
 
     createEditor(container)
     {
-        const tID = `true-${this.id}`,
-              fID = `false-${this.id}`;
+        const template = getTemplate("puavoconfBoolean"),
+              items = template.querySelectorAll("label"),
+              rbTrue = items[0].querySelector("input"),
+              rbFalse = items[1].querySelector("input");
 
-        container.innerHTML =
-            `<input type="radio" id="${tID}" name="${this.id}"><label for="${tID}">True</label>` +
-            `<input type="radio" id="${fID}" name="${this.id}"><label for="${fID}">False</label>`;
+        // Setup unique IDs and events
+        items[0].id = `${this.id}-true`;
+        items[1].id = `${this.id}-false`;
+        rbTrue.name = this.id;
+        rbTrue.checked = (this.value == true);
+        rbTrue.addEventListener("click", e => { this.value = true; this.valueChanged(); });
+        rbFalse.name = this.id;
+        rbFalse.checked = (this.value == false);
+        rbFalse.addEventListener("click", e => { this.value = false; this.valueChanged(); });
 
-        container.querySelector(`#${tID}`).checked = (this.value == true);
-        container.querySelector(`#${tID}`).addEventListener("click", () => {
-            this.value = true;
-            this.valueChanged();
-        });
-
-        container.querySelector(`#${fID}`).checked = (this.value == false);
-        container.querySelector(`#${fID}`).addEventListener("click", () => {
-            this.value = false;
-            this.valueChanged();
-        });
+        container.appendChild(template);
     }
 
     getValue()

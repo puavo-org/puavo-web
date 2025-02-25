@@ -370,6 +370,39 @@ fi:
         abbr: "L"
         full: "Laitetason asetus"
 
+  puavoconf_editor:
+    # Can't use quotes in these, as they get written in the HTML and used as-is,
+    # and the quotes will get screwed up.
+    already_exists: "Avain $(name) on jo käytössä"
+    accept_new: "Luo uusi avain $(name) painamalla Enter tai Tab"
+    new_placeholder: "Kirjoita uuden lisättävän avaimen nimi..."
+    show_raw: "Näytä muokattava JSON"
+    delete_item: "Poista tämä avain"
+    editors:
+      string:
+        choices_label: "Valmiit vaihtoehdot (voit kirjoittaa muunkin arvon ylläolevaan laatikkoon)"
+      json:
+        invalid_json: "Virheellinen JSON, aiheuttaa ongelmia käytön aikana"
+      puavomenu_tags:
+        input_title: "Raaka suodatinteksti. Voit muokata tätä suoraan, tai käyttää allaolevaan taulukkoa, jos haluat hiirikäyttöisen käyttöliittymän."
+        action:
+          title: "Minkä toiminnon tämä suodatin tekee?"
+          show: "Näytä"
+          hide: "Piilota"
+        namespace:
+          title: "Minkä tyyppiseen objektiin tämä suodatin kohdistetaan? Oletus on tagi."
+          tag: "Tagi"
+          category: "Kategoria"
+          menu: "Valikko"
+          progam: "Ohjelma"
+        target:
+          title: "Kohdeobjektin nimi (tunniste)"
+        buttons:
+          add: "Lisää uusi suodatin tämän jälkeen"
+          delete: "Poista tämä suodatin"
+          move_up: "Siirrä tätä suodatinta ylemmäksi"
+          move_down: "Siirrä tätä suodatinta alemmaksi"
+
   # Quick search
   search:
     search_result:

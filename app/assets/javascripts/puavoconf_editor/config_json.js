@@ -2,7 +2,7 @@
 
 // JSON editor
 
-import { create } from "../common/dom.js";
+import { create, getTemplate } from "../common/dom.js";
 import { ConfigEntry } from "./config_entry.js";
 
 export class ConfigJSON extends ConfigEntry {
@@ -13,6 +13,7 @@ export class ConfigJSON extends ConfigEntry {
         this.key = key;
         this.value = value;
         this.input = null;
+        this.message = null;
 
         // a JSON puavoconf value can be empty, even if the JSON spec
         // does not allow that
@@ -22,15 +23,18 @@ export class ConfigJSON extends ConfigEntry {
 
     createEditor(container)
     {
-        let input = create("textarea", { cls: "json", inputValue: this.value });
+        const template = getTemplate("puavoconfJSON"),
+              textarea = template.querySelector("textarea");
 
-        input.rows = 5;
+        textarea.id = this.id;
+        textarea.value = this.value;
+        textarea.addEventListener("input", event => this.onChange(event));
 
-        this.input = input;
+        this.input = textarea;
+        this.message = template.querySelector("p");
+        container.appendChild(template);
+
         this.validate();
-
-        input.addEventListener("input", event => this.onChange(event));
-        container.appendChild(input);
     }
 
     onChange(event)
@@ -46,8 +50,10 @@ export class ConfigJSON extends ConfigEntry {
         try {
             JSON.parse(this.value);
             this.input.classList.remove("invalid");
+            this.message.classList.add("hidden");
         } catch (e) {
             this.input.classList.add("invalid");
+            this.message.classList.remove("hidden");
         }
     }
 };
