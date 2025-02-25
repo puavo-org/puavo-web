@@ -57,6 +57,7 @@ The interactive PuavoConf editor
 }
 
 .pcTable div.editor {
+  margin-left: 10px;
 }
 
 .pcTable div.editor table tr {
@@ -85,11 +86,12 @@ The interactive PuavoConf editor
 }
 
 .pcTable div.editor div.details table {
+  margin-left: 10px !important;
   width: auto !important;
 }
 
 .pcTable div.editor div.details table td {
-  padding: 3px;
+  padding: 0 2px !important;
 }
 
 .pcTable div.editor div.details select {

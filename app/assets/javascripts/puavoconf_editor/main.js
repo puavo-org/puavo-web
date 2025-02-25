@@ -572,7 +572,7 @@ export class PuavoConfEditor {
 
         this.suggestions.style.top = `${location.bottom + window.scrollY}px`;
         this.suggestions.style.left = `${location.left + window.scrollX + 25}px`;
-        this.suggestions.style.width = `${location.width-25}px`;
+        this.suggestions.style.width = `${location.width - 25}px`;
         this.suggestions.style.visibility = "visible";
     }
 }

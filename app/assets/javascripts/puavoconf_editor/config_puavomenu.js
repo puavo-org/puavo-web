@@ -45,6 +45,7 @@ export class ConfigPuavomenuTags extends ConfigEntry {
         this.valueChanged();
     }
 
+    // Parses the input string into an array of tag actions
     load()
     {
         const TAG_SPLITTER = /,|;|\ /,
@@ -91,7 +92,7 @@ export class ConfigPuavomenuTags extends ConfigEntry {
                     namespace = "program";
                     break;
 
-                case undefined:     // unmatched regexp group ends up here too
+                case undefined:         // treat unmatched regexp groups as plain tags
                 default:
                     namespace = "tag";
                     break;
@@ -154,6 +155,8 @@ export class ConfigPuavomenuTags extends ConfigEntry {
         this.valueChanged(fullRebuild);
     }
 
+    // "Explains" a set of filters. Creates a table that contains a separate row for every
+    // filter element, providing a mouse-usable UI for editing them.
     explain()
     {
         if (this.value === null || this.value.trim().length == 0 || this.tags.length == 0) {
@@ -259,6 +262,7 @@ export class ConfigPuavomenuTags extends ConfigEntry {
 
     onAddTag(e)
     {
+        // Insert the new tag after the clicked one, not at the end
         this.tags.splice(this._getIndex(e.target) + 1, 0, {
             valid: true,
             action: "show",
@@ -284,13 +288,7 @@ export class ConfigPuavomenuTags extends ConfigEntry {
         if (index == 0 || this.tags.length == 1)
             return;
 
-        const t = this.tags[index - 1];
-
-        this.tags[index - 1] = this.tags[index];
-        this.tags[index] = t;
-
-        this.save();
-        this.explain();
+        this._swapTags(index, index - 1);
     }
 
     onMoveTagDown(e)
@@ -300,10 +298,12 @@ export class ConfigPuavomenuTags extends ConfigEntry {
         if (index == this.tags.length - 1 || this.tags.length == 1)
             return;
 
-        const t = this.tags[index + 1];
+        this._swapTags(index, index + 1);
+    }
 
-        this.tags[index + 1] = this.tags[index];
-        this.tags[index] = t;
+    _swapTags(a, b)
+    {
+        [this.tags[a], this.tags[b]] = [this.tags[b], this.tags[a]];
 
         this.save();
         this.explain();
@@ -311,7 +311,7 @@ export class ConfigPuavomenuTags extends ConfigEntry {
 
     _getIndex(node)
     {
-        return parseInt(node.parentNode.parentNode.dataset.index, 10);
+        return parseInt(node.closest("tr").dataset.index, 10);
     }
 
     _isValidTag(tag)
