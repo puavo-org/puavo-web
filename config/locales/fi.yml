@@ -1376,6 +1376,12 @@ fi:
       school: "Kouluntason Puavomenu koululle %{name}"
       device: "Laitetason Puavomenu laitteelle \"%{name}\""
 
+    errors:
+      # Must double escape these to prevent actual newlines in JavaScript strings
+      save_confirm: "Valikkodatassa on virheitä tai muita ongelmia. Ne olisi korjattava ennenkuin jatkat, koska tallennuksen yhteydessä virheelliset kohdat poistetaan. Haluatko varmasti jatkaa?"
+      save_failed: "Tallennus epäonnistui.\\n\\nKatso lisätiedot selaimen konsolista, ja yritä sitten uudelleen. Jos ongelma toistuu, ota yhteys tukeen."
+      save_failed_message: "Tallennus epäonnistui.\\n\\n\\t%{message}\\n\\nKatso lisätiedot selaimen konsolista, ja yritä sitten uudelleen. Jos ongelma toistuu, ota yhteys tukeen."
+
     tools:
       find_unused: "Etsi käyttämättömät valikot ja ohjelmat"
       search: "Etsi kohdetta"
@@ -1480,10 +1486,14 @@ fi:
 
       unused:
         help: "Näihin valikoihin ja ohjelmiin ei viitata missään. Voit poistaa ne pysyvästi ruksaamalla halutut ja painamalla \"Poista valitut\" -nappia."
+        no_unused_entries: "Kaikki valikot ja ohjelmat ovat käytössä."
         select_all: "Valitse kaikki"
         remove_selected: "Poista valitut"
         target: "Kohde"
         type: "Tyyppi"
+        unused_title: "ei käytetty"
+        type_menu: "Valikko"
+        type_program: "Ohjelma"
 
       rename:
         category: "Syötä uusi tunniste tälle kategorialle"

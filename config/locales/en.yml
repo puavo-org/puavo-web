@@ -1376,6 +1376,12 @@ en:
       school: "School-level Puavomenu for school %{name}"
       device: "Device-level Puavomenu for device \"%{name}\""
 
+    errors:
+      # Must double escape these to prevent actual newlines in JavaScript strings
+      save_confirm: "The menu data has errors or other problems. They should be fixed before you continue, because saving can remove invalid entries. Are you sure you want to continue?"
+      save_failed: "Saving failed.\\n\\nPlease see the extra details in the console, and then try again. If the problem persists, please contact support."
+      save_failed_message: "Saving failed.\\n\\n\\t%{message}\\n\\nPlease see the extra details in the console, and then try again. If the problem persists, please contact support."
+
     tools:
       find_unused: "Find unused menus and programs"
       search: "Search"
@@ -1480,10 +1486,14 @@ en:
 
       unused:
         help: "These menus and programs are not referenced anywhere. You can permanently remove them by checking the ones that aren't needed and by clicking the \"Remove selected\" button."
+        no_unused_entries: "All menus and programs are in use."
         select_all: "Select all"
         remove_selected: "Remove selected"
         target: "Target"
         type: "Type"
+        unused_title: "not used"
+        type_menu: "Program"
+        type_program: "Menu"
 
       rename:
         category: "Enter a new ID for this category"

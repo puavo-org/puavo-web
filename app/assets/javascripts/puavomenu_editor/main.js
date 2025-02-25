@@ -1341,7 +1341,7 @@ export class PuavomenuEditor {
         }
 
         if (numUnused == 0) {
-            window.alert(_tr("errors.no_unused_entries"));
+            window.alert(_tr("unused.no_unused_entries"));
             return;
         }
 

@@ -16,7 +16,6 @@
 
 // Puavomenu Editor
 //= link bundles/puavomenu_editor.js
-//= link i18n/puavomenu_editor.js
 
 // Miscellaneous
 //= link password_validator.js
