@@ -6,6 +6,7 @@
 <script>
 const PUAVOCONF_DEFINITIONS = <%= get_puavoconf_definitions() %>;
 
+// The outer container for the editor + storage textarea
 const outer = document.querySelector("td.pceContainer");
 
 new PCE.Editor({
