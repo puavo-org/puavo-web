@@ -15,14 +15,15 @@ ESBUILD = node_modules/.bin/esbuild
 # --minify is not enabled by default, because source maps are broken (some
 # component (Sprockets?) insists they're in public/assets, which isn't true,
 # but I can't find a way to change that).
-ESBUILD_FLAGS = --bundle --charset=utf8 --target=es2020 #--minify #--sourcemap
-JS_OUTPUT = app/assets/javascripts/bundles
-JS_INPUT = \
+ESBUILD_FLAGS = --bundle --charset=utf8 --target=es2020 --external:*.png --external:*.svg --external:*.gif #--minify #--sourcemap
+ES_OUTPUT = app/assets/bundles
+ES_INPUT = \
 	app/assets/javascripts/modal_popup.js \
 	app/assets/javascripts/supertable3.js \
 	app/assets/javascripts/puavoconf_editor.js \
 	app/assets/javascripts/import_tool.js \
-	app/assets/javascripts/puavomenu_editor.js
+	app/assets/javascripts/puavomenu_editor.js \
+	app/assets/stylesheets/application_bundle.css
 
 build: config-to-example
 	git rev-parse HEAD > GIT_COMMIT
@@ -57,10 +58,10 @@ js-clean:
 	rm -rf app/assets/javascripts/bundles/*
 
 js-server:
-	$(ESBUILD) $(ESBUILD_FLAGS) --watch --outdir=$(JS_OUTPUT) $(JS_INPUT)
+	$(ESBUILD) $(ESBUILD_FLAGS) --watch --outdir=$(ES_OUTPUT) $(ES_INPUT)
 
 js:
-	$(ESBUILD) $(ESBUILD_FLAGS) --minify --outdir=$(JS_OUTPUT) $(JS_INPUT)
+	$(ESBUILD) $(ESBUILD_FLAGS) --minify --outdir=$(ES_OUTPUT) $(ES_INPUT)
 
 clean-deb:
 	rm -f ../puavo-*.tar.gz ../puavo-*.deb ../puavo-*.dsc ../puavo-*.changes

@@ -1,26 +1,26 @@
 //= link application.js
 
 // Modal popups
-//= link bundles/modal_popup.js
+//= link javascripts/modal_popup.js
 
 // Supertable
-//= link bundles/supertable3.js
+//= link javascripts/supertable3.js
 //= link supertable3_worker.js
 
 // User mass import/update
-//= link bundles/import_tool.js
+//= link javascripts/import_tool.js
 //= link csv_parser.js
 //= link import_worker.js
 
 // Puavomenu Editor
-//= link bundles/puavomenu_editor.js
+//= link javascripts/puavomenu_editor.js
 
 // Miscellaneous
 //= link password_validator.js
-//= link bundles/puavoconf_editor.js
+//= link javascripts/puavoconf_editor.js
 
 // Stylesheets
-//= link application.css
+//= link stylesheets/application_bundle.css
 //= link public_forms.css
 //= link password_forms.css
 //= link profile_editor.css

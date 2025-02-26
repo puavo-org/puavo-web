@@ -29,7 +29,6 @@ gem "gettext"
 gem "redis"
 gem "redis-client"
 gem "redis-namespace"
-gem "sassc-rails"
 gem "jquery-rails"
 gem "parse-cron"
 gem 'webrick'               # Rails needs this but it isn't marked as a dependency?

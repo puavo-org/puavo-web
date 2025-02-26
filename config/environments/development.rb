@@ -65,9 +65,6 @@ Rails.application.configure do
   #config.file_watcher = ActiveSupport::EventedFileUpdateChecker
   # TODO: install the "listen" gem. Maybe?
 
-  # Disable useless and excessive debug commentary in stylesheets
-  config.sass.line_comments = false
-
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
 end
