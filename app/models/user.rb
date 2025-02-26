@@ -587,8 +587,6 @@ class User < LdapBase
   end
 
   def teaching_group=(group_id)
-    puts "Setting the teaching group to #{group_id}"
-
     groups.each do |g|
       next unless g.puavoEduGroupType == 'teaching group'
       next unless g.id == group_id
