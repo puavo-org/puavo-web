@@ -2,7 +2,7 @@
 
 /*
 Puavo Mass User Import III
-Version 1.0.1
+Version 1.0.2
 */
 
 import { create, getTemplate, toggleClass } from "../common/dom.js";
@@ -376,7 +376,7 @@ CSV_PARSER_WORKER.onmessage = e => {
 
     console.log(`preprocessParserOutput(): the widest row has ${maxColumns} columns`);
 
-    // Padd all rows (including the header) to have the same number of columns as the widest row
+    // Pad all rows (including the header) to have the same number of columns as the widest row
     while (headers.length < maxColumns)
         headers.push("");       // empty means "skip this column"
 
@@ -1638,6 +1638,8 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
             last = values[lastCol].toLowerCase();
 
         if (firstFirstNameOnly) {
+            // If the user has multiple first names, use only the *first* first name,
+            // not all of them
             const space = first.indexOf(" ");
 
             if (space != -1)
@@ -1647,11 +1649,10 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
         first = dropDiacritics(first, alternateUmlauts);
         last = dropDiacritics(last, alternateUmlauts);
 
-        const username = `${first}.${last}`;
-
         if (first.length == 0 || last.length == 0) {
-            console.error(`Can't generate username for "${columns[firstCol]} ${columns[lastCol]}"`);
-            unconvertable.push([i + NUM_ROW_HEADERS, columns[firstCol], columns[lastCol]]);
+            // First or last name contains only characters that cannot be used in the username
+            console.error(`Can't generate username for "${values[firstCol]} ${values[lastCol]}"`);
+            unconvertable.push([rowNum + NUM_ROW_HEADERS, values[firstCol], values[lastCol]]);
             continue;
         }
 
@@ -1659,6 +1660,8 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
             continue;
 
         let tableCell = tableRows[rowNum].children[state.targetColumn.index + NUM_ROW_HEADERS];
+
+        const username = `${first}.${last}`;
 
         values[state.targetColumn.index] = username;
         tableCell.innerText = username;
