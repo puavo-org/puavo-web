@@ -394,7 +394,7 @@ fi:
           tag: "Tagi"
           category: "Kategoria"
           menu: "Valikko"
-          progam: "Ohjelma"
+          program: "Ohjelma"
         target:
           title: "Kohdeobjektin nimi (tunniste)"
         buttons:

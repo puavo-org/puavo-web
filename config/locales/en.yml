@@ -394,7 +394,7 @@ en:
           tag: "Tag"
           category: "Category"
           menu: "Menu"
-          progam: "Program"
+          program: "Program"
         target:
           title: "Name (identifier) of the targeted object"
         buttons:
