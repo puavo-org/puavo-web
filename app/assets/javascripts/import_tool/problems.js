@@ -17,7 +17,7 @@ import { create, getTemplate } from "../common/dom.js";
 const FIRST_N = 10;
 
 // Try to detect problems and potential errors/warnings in the table data
-export function doDetectProblems(data, container, commonPasswords, localizedColumnTitles, automaticEmails, selectRows, updateOnly)
+export function doDetectProblems(data, container, commonPasswords, automaticEmails, selectRows, updateOnly)
 {
     const firstCol = data.findColumn("first"),
           lastCol = data.findColumn("last"),
@@ -39,18 +39,18 @@ export function doDetectProblems(data, container, commonPasswords, localizedColu
     let counts = {};
 
     // Check for duplicate columns
-    for (const i of data.headers) {
-        if (i === null || i === undefined || i == "")
+    for (const header of data.headers) {
+        if (header === null || header === undefined || header == "")
             continue;
 
-        if (i in counts)
-            counts[i]++;
-        else counts[i] = 1;
+        if (header in counts)
+            counts[header]++;
+        else counts[header] = 1;
     }
 
-    for (const i of Object.keys(counts))
-        if (counts[i] > 1)
-            data.errors.push(`${_tr("errors.multiple_columns", { title: localizedColumnTitles[i] })}`);
+    for (const columnID of Object.keys(counts))
+        if (counts[columnID] > 1)
+            data.errors.push(`${_tr("errors.multiple_columns", { title: _tr("columns." + columnID) })}`);
 
     if (updateOnly) {
         // In update-only mode, you need the username column, but everything else is optional
@@ -70,9 +70,9 @@ export function doDetectProblems(data, container, commonPasswords, localizedColu
             data.warnings.push(_tr("errors.no_role_mass_change"));
     } else {
         // Check for missing required columns
-        for (const r of REQUIRED_COLUMNS_NEW)
-            if (!(r in counts))
-                data.errors.push(`${_tr("errors.required_column_missing", { title: localizedColumnTitles[r] })}`);
+        for (const columnID of REQUIRED_COLUMNS_NEW)
+            if (!(columnID in counts))
+                data.errors.push(`${_tr("errors.required_column_missing", { title: _tr("columns." + columnID) })}`);
 
         // These columns are not required, but they can cause unwanted behavior, especially if you're
         // importing new users

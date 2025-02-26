@@ -1206,6 +1206,14 @@ en:
     tab: "Tab (\\t)"
     preview: "Preview"
 
+    parser:
+      title: "Reading settings"
+      infer: "infer column types from first row identifiers"
+      trim: "trim leading and trailing whitespace"
+      commas: "separated by commas"
+      semicolons: "separated by semicolons"
+      tabs: "separated by tabs"
+
     # The import tab
     import_tab: "2. Import data"
 
@@ -1298,6 +1306,8 @@ en:
       fill: "Fill"
       reload_groups: "Reload groups"
       overwrite_existing: "Overwrite existing values"
+      reload_groups: "Reload groups"
+      reloading: "Reloading..."
 
     tools:
       download_template:
@@ -1356,12 +1366,104 @@ en:
         list_title: "List name or short description (optional)"
         create_list: "Create list"
 
+    status:
+      no_data_to_display: "(No data to display)"
+      fetching_current_users: "Fetching a list of current users from the server..."
+      comparing_data: "Comparing data..."
+      synchronising: "Doing the operation..."
+      complete: "Complete"
+      aborted: "The operation was aborted"
+      stopping: "Stopping the operation, please wait until the current batch has been processed..."
+      stopping_impatient: "Calm down, the operation will stop in any second now!"
+      stopped: "The operation was stopped"
+      success: "success"
+      partial_success: "partial success"
+      failed: "failed"
+      total_rows: "rows total"
+      selected_rows: "rows selected"
+      importing_rows: "Importing rows"
+      table_messages: "Messages"
+
+    messages:
+      already_in_school: "Already in school %{schools}"
+
     problems:
       errors_title: "These problems have to be fixed before the import process can begin:"
       warnings_title: "These don't prevent the import process, but you should take a look at them and ensure they don't cause problems later on:"
 
     errors:
       unknown_group: "Unknown/invalid group"
+
+    alerts:
+      already_imported: "You already have imported some of the table data. Are you sure you want to overwrite it?"
+      no_file: "Select a file to be imported, or switch to manual input."
+      no_selected_rows: "There are no selected rows."
+      no_matching_rows: "The table has no rows matching your selection."
+      delete_everything: "Are you sure you want to remove ALL rows? You have to read the source data again if you want to continue after this."
+      delete_selected_rows: "Are you sure you want to remove %{count} rows?"
+      cant_remove_rows_after_stopping: "Unfortunately table rows cannot be deleted if you have stopped the import. You have to finish the operation or start from the beginning."
+      delete_column: "Are you sure you want to delete this column?"
+      resume_previous: "The previous import was stopped. Do you want to resume it?"
+      need_one_first_name: "You need exactly one first name column for this"
+      need_one_last_name: "You need exactly one last name column for this"
+      need_one_raw_group: "You need exactly one raw group column for this"
+      no_groups: "There are no groups. Try reloading the groups list first."
+      could_not_generate_all_usernames: "Found one or more rows that had empty or missing first/last name. No username was generated for these rows."
+      unconvertible_characters: "Found %{count} names that did not have any letters that could be used to generate a username with."
+      first_five: "Here are the first five names:"
+      unconvertible_name: "Row %{row}: first name \\\"%{first}\\\", last name \\\"%{last}\\\""
+      could_not_parse_all_groups: "Found one or more rows that had empty or missing raw group data. No groups were parsed for these rows."
+      same_password: "Giving the same password to multiple users is a severe security hazard. Are you sure you want to do this?"
+      too_short_password: "The password must be at least %{length} characters long"
+      check_something: "You need to select at least something for the new passwords"
+      no_data_to_import: "The table has no rows suitable for the selected update method."
+      fix_errors_first: "You need to fix the errors first."
+      cant_parse_server_response: "The reply sent by the server cannot be interpreted. Details have been logged in the console.\\n\\nTry again and if the problem persists, note the message in the console and contact the technical support of Opinsys."
+      data_retrieval_failed_unknown: "Data retrieval from the server failed for some unknown reason."
+      data_retrieval_failed_known: "Data retrieval from the server failed:"
+      too_short_uid: "The username must be at least 3 characters long."
+      invalid_uid: "The username is not valid."
+      no_data_for_the_pdf: "The table does not have a column for usernames or passwords."
+      still_no_data_for_the_pdf: "The table does not have any users whose password could be listed in a PDF."
+      empty_rows_skipped: "The table has rows with missing username and/or password. These rows will be excluded from the generated PDF. \\n\\nDo you want to continue?"
+      no_failed_rows: "There are no failed rows"
+      no_duplicate_uids: "There are no duplicate usernames."
+      passwords_out_of_sync: "The table contains passwords that have not been imported yet. Thus the generated PDF won't contain passwords that are actually in use. You should import the data first.\\n\\nAre you sure you want to continue?"
+      list_created: "List created"
+      list_missing_users: "List not created. The following users do not exist on the server:"
+      list_failed: "List not created. Unknown error:"
+      list_not_found: "The list could not be found on the server. Maybe it has been downloaded or deleted? Try reloading the page."
+      list_missing_users: "The list was not created. The table contains %{count} users who could not be found. They might have been deleted, or they could be in a school you do not have access to:"
+      list_loading_failed: "List loading failed:"
+      download_template_nothing_selected: "Please select at least one column."
+      server_sent_invalid_filename: "The server sent an invalid filename for the generated PDF. You will have to rename the file yourself."
+      pdf_generation_failed: "PDF generation failed:\\n\\n%{message}\\n\\nThe server log might contain more information."
+
+    errors:
+      multiple_columns: "Multiple \\\"%{title}\\\" columns"
+      required_column_missing: "A required column \\\"%{title}\\\" is missing"
+      need_uid_column_in_update_mode: "The username column is required in the update only -mode."
+      need_something_to_update_in_update_mode: "In the update only -mode, you need at least one column (in addition to the username column) that contains data you want to update"
+      empty_first: "%{count} row(s) with an empty first name"
+      empty_last: "%{count} row(s) with an empty last name"
+      empty_uid: "%{count} row(s) with an empty username"
+      duplicate_uid: "%{count} row(s) with duplicate usernames (indicated with red borders). First %{first_n} are: %{values}."
+      invalid_uid: "%{count} row(s) with invalid username (indicated with red borders). First %{first_n} are: %{values}."
+      short_uid: "%{count} row(s) with usernames that are less than 3 characters long (indicated with red borders). First %{first_n} are: %{values}."
+      missing_role: "%{count} row(s) with missing or invalid role (indicated with red borders)"
+      no_role_mass_change: "The roles of existing users cannot be mass changed, so the Role column is useless and it will be always ignored"
+      duplicate_eid: "%{count} row(s) with a duplicate external ID (indicated with red borders). First %{first_n} are: %{values}."
+      eid_already_in_use: "%{count} row(s) with an external ID that is already used by someone else (indicated with red borders). First %{first_n} are: %{values}."
+      invalid_email: "%{count} row(s) with an invalid email address (indicated with red borders). First %{first_n} are: %{values}."
+      duplicate_email: "%{count} row(s) with a duplicate email address (indicated with red borders). First %{first_n} are: %{values}."
+      email_already_in_use: "%{count} row(s) with an email address that is already used by someone else (indicated with red borders). First %{first_n} are: %{values}."
+      automatic_emails: "Automatic email address generation is enabled in this school, so the email address column must be removed"
+      invalid_phone: "%{count} row(s) with an invalid phone number (indicated with red borders). First %{first_n} are: %{values}."
+      duplicate_phone: "%{count} rows(s) with a duplicate telephone number (indicated with red borders). First %{first_n} are: %{values}."
+      phone_already_in_use: "%{count} rows(s) with a telephone number that is already used by someone else (indicated with red borders). First %{first_n} are: %{values}."
+      common_password: "%{count} row(s) with a common, poor-quality password"
+      no_group_column: "No group column (new users are usually added to a teaching group when their accounts are created)"
+      no_password_column: "No password column (here it's easy to set passwords for new users)"
 
     pdf:
       no_group: "(No group at all)"

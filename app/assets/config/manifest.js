@@ -10,7 +10,6 @@
 
 // User mass import/update
 //= link bundles/import_tool.js
-//= link i18n/import_tool.js
 //= link csv_parser.js
 //= link import_worker.js
 
