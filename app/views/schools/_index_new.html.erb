@@ -6,7 +6,6 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 
 <%= javascript_include_tag 'bundles/modal_popup' %>
 <%= javascript_include_tag 'bundles/supertable3' %>
-<%= javascript_include_tag 'i18n/supertable3' %>
 <% end %>
 
 <div id="schoolsTitle"><h1><%= LdapOrganisation.current.o %></h1></div>
@@ -30,6 +29,8 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 <% content_for :post_load_javascript do %>
 <script>
 "use strict;"
+
+<%= render partial: 'shared/supertable_translations', formats: [:js] %>
 
 // Possible integrations, in order they're listed and with tooltips
 const INTEGRATION_TYPES = [
@@ -730,7 +731,7 @@ function* synthesizeData(raw)
     }
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     modalPopup.setupGlobalEvents();
 
     GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(

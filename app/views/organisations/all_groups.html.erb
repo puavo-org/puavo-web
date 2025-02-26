@@ -8,7 +8,6 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 
 <%= javascript_include_tag 'bundles/modal_popup' %>
 <%= javascript_include_tag 'bundles/supertable3' %>
-<%= javascript_include_tag 'i18n/supertable3' %>
 <% end %>
 
 <% @is_organisation = true %>
@@ -22,12 +21,13 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 <script>
 "use strict;"
 
-<%= render :partial => 'shared/group_tables_common', formats: [:js] %>
+<%= render partial: 'shared/supertable_translations', formats: [:js] %>
+<%= render partial: 'shared/group_tables_common', formats: [:js] %>
 
 const DEFAULT_COLUMNS = ["school", "name", "abbr", "type", "members_count", "eid", "created", "modified"];
 const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     modalPopup.setupGlobalEvents();
 
     GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(

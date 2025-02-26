@@ -1,0 +1,100 @@
+// Setup extra translation strings for I18n library
+I18n.translations[I18n.locale] = I18n.extend((I18n.translations[I18n.locale] || {}), {
+    column_actions: "<%= t('supertable.column_actions') %>",
+    empty_table: "<%= t('supertable.empty_table') %>",
+    empty: "<%= t('supertable.empty') %>",
+    selected: "<%= t('supertable.selected') %>",
+    see_console_for_details: "<%= t('supertable.see_console_for_details') %>",
+    are_you_sure: "<%= t('general_confirm') %>",
+    network_error: "<%= t('supertable.network_error') %>: ",
+    network_connection_error: "<%= t('supertable.network_connection_error') %>",
+    export_failed: "<%= t('supertable.export_failed') %>",
+
+    status: {
+        visible_rows: "<%= t('supertable.status.visible_rows') %>",
+        filtered_rows: "<%= t('supertable.status.filtered_rows') %>",
+        selected_rows: "<%= t('supertable.status.selected_rows') %>",
+        mass_progress: "<%= raw t('supertable.status.mass_progress') %>",
+        column_stats: "<%= t('supertable.status.column_stats') %>",
+        mass_row_status: "<%= raw t('supertable.status.mass_row_status') %>",
+        pagination: "<%= t('supertable.status.pagination') %> ▼",
+    },
+
+    filtering: {
+        expression_title: "<%= t('supertable.filtering.expression_title') %>",
+        unsaved: "<%= t('supertable.filtering.unsaved') %>",
+        save_json_confirm: "<%= t('general_confirm') %>",
+        error: "<%= t('supertable.filtering.error') %>",
+        warning: "<%= t('supertable.filtering.warning') %>",
+        no_messages: "(<%= t('supertable.filtering.no_messages') %>)",
+        traditional_filter_is_empty: "<%= t('supertable.filtering.traditional_filter_is_empty') %>",
+        row: "<%= t('supertable.filtering.row') %>",
+        column: "<%= t('supertable.filtering.column') %>",
+        message: "<%= t('supertable.filtering.message') %>",
+        preview_prefix: "<%= t('supertable.filtering.preview_prefix') %>",
+        new_traditional_filter: "<%= t('supertable.filtering.new_traditional_filter') %>",
+
+        messages: {
+            column_not_visible: "<%= t('supertable.filtering.messages.column_not_visible') %>",
+            expected_column_name: "<%= t('supertable.filtering.messages.expected_column_name') %>",
+            expected_operator: "<%= t('supertable.filtering.messages.expected_operator') %>",
+            expected_value_rpar: "<%= raw t('supertable.filtering.messages.expected_value_rpar') %>",
+            incompatible_operator: "<%= t('supertable.filtering.messages.incompatible_operator') %>",
+            invalid_operator: "<%= t('supertable.filtering.messages.invalid_operator') %>",
+            invalid_regexp: "<%= t('supertable.filtering.messages.invalid_regexp') %>",
+            invalid_sign: "<%= t('supertable.filtering.messages.invalid_sign') %>",
+            invalid_storage_unit: "<%= t('supertable.filtering.messages.invalid_storage_unit') %>",
+            invalid_time_unit: "<%= t('supertable.filtering.messages.invalid_time_unit') %>",
+            not_a_number: "<%= t('supertable.filtering.messages.not_a_number') %>",
+            missing_time_unit: "<%= t('supertable.filtering.messages.missing_time_unit') %>",
+            syntax_error: "<%= t('supertable.filtering.messages.syntax_error') %>",
+            unbalanced_nesting: "<%= t('supertable.filtering.messages.unbalanced_nesting') %>",
+            unexpected_column_name: "<%= t('supertable.filtering.messages.unexpected_column_name') %>",
+            unexpected_end: "<%= t('supertable.filtering.messages.unexpected_end') %>",
+            unexpected_lpar: "<%= raw t('supertable.filtering.messages.unexpected_lpar') %>",
+            unexpected_negation: "<%= raw t('supertable.filtering.messages.unexpected_rpar') %>",
+            unexpected_rpar: "<%= raw t('supertable.filtering.messages.unexpected_rpar') %>",
+            unknown_column: "<%= t('supertable.filtering.messages.unknown_column') %>",
+            unknown_error: "<%= t('supertable.filtering.messages.unknown_error') %>",
+            unknown_operator: "<%= t('supertable.filtering.messages.unknown_operator') %>",
+            unparseable_time: "<%= t('supertable.filtering.messages.unparseable_time') %>",
+            unterminated_string: "<%= t('supertable.filtering.messages.unterminated_string') %>",
+        },
+
+        pretty: {
+            empty: "<%= t('supertable.filtering.pretty.empty') %>",
+            or: "<%= t('supertable.filtering.pretty.or') %>",
+            nor: "<%= t('supertable.filtering.pretty.nor') %>",
+            interval: "<%= t('supertable.filtering.pretty.interval') %>",
+            not_interval: "<%= t('supertable.filtering.pretty.not_interval') %>",
+        },
+
+        ed: {
+            closed: "<%= t('supertable.filtering.ed.closed') %>",
+            open: "<%= t('supertable.filtering.ed.open') %>",
+            invalid_interval: "<%= t('supertable.filtering.ed.invalid_interval') %>",
+            single: "<%= t('supertable.filtering.ed.single') %>",
+            multiple: "<%= t('supertable.filtering.ed.multiple') %>",
+            one_hit_is_enough: "<%= t('supertable.filtering.ed.one_hit_is_enough') %>",
+            no_hits_allowed: "<%= t('supertable.filtering.ed.no_hits_allowed') %>",
+            regexp: "<%= raw t('supertable.filtering.ed.regexp') %>",
+            no_values: "<%= t('supertable.filtering.ed.no_values') %>",
+
+            bool: {
+                t: "<%= t('supertable.filtering.ed.bool.t') %>",
+                f: "<%= t('supertable.filtering.ed.bool.f') %>",
+            },
+
+            numeric: {
+                nan: "<%= t('supertable.filtering.ed.numeric.nan') %>",
+                negative_storage: "<%= t('supertable.filtering.ed.numeric.negative_storage') %>",
+            },
+
+            time: {
+                invalid: "<%= t('supertable.filtering.ed.time.invalid') %>",
+                help_link: "<%= t('supertable.filtering.ed.time.help_link') %>",
+                help: "<%= raw t('supertable.filtering.ed.time.help') %>",
+            }
+        }
+    }
+});
