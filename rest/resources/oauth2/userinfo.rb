@@ -56,7 +56,7 @@ module OAuth2
 
     # Locked users cannot access any resources
     if user.locked || user.removal_request_time
-      rlog.error("[#{request_id}] The target user (#{user.username}) is locked or marked for deletion")
+      rlog.error("[#{request_id}] The target user #{dn.inspect} is locked or marked for deletion")
       return 'access_denied', nil, nil
     end
 
