@@ -11,6 +11,7 @@ require 'argon2'
 require_relative 'scopes'
 require_relative 'helpers'
 require_relative 'access_token'
+require_relative 'audit'
 
 module PuavoRest
 module OAuth2
@@ -113,6 +114,7 @@ module OAuth2
       'request_id' => request_id,
       'client_id' => client_id,
       'redirect_uri' => redirect_uri,
+      'original_scopes' => params.fetch('scope', ''),   # for auditing
       'scopes' => scopes[:scopes],
       'scopes_changed' => scopes[:changed],     # need to remember this for later responses
       'state' => params.fetch('state', nil),    # the state is merely RECOMMENDED, but not required
@@ -449,6 +451,19 @@ module OAuth2
     rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect} " \
               "for the user, expires at #{Time.at(token[:expires_at])}")
 
+    audit_issued_id_token(request_id, db, client_id: client_id,
+                          raw_requested_scopes: oidc_state['original_scopes'],
+                          issued_scopes: oidc_state['scopes'],
+                          redirect_uri: oidc_state['redirect_uri'],
+                          raw_token: payload,
+                          request: request)
+
+    audit_issued_access_token(request_id, db, client_id: client_id,
+                              raw_requested_scopes: oidc_state['original_scopes'],
+                              raw_token: token[:raw_token],
+                              request: request)
+
+    # Build and return the token data
     out = {
       'access_token' => token[:access_token],
       'token_type' => 'Bearer',

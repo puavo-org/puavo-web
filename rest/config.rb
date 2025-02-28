@@ -93,6 +93,10 @@ if ENV['RACK_ENV'] == 'test' then
         'user' => 'standalone_user',
         'password' => 'standalone_password'
       },
+      'audit' => {
+        'enabled' => false,
+        'ip_logging' => false,
+      }
     },
     "redis" => {
       :db => 1

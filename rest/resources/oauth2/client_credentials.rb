@@ -10,6 +10,7 @@ require 'argon2'
 require_relative 'scopes'
 require_relative 'access_token'
 require_relative 'helpers'
+require_relative 'audit'
 
 module PuavoRest
 module OAuth2
@@ -157,6 +158,11 @@ module OAuth2
 
     rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect}, " \
               "expires at #{Time.at(token[:expires_at])}")
+
+    audit_issued_access_token(request_id, db, client_id: credentials[0],
+                              raw_requested_scopes: params.fetch('scope', ''),
+                              raw_token: token[:raw_token],
+                              request: request)
 
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'

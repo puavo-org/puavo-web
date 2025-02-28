@@ -10,6 +10,8 @@ require 'jwt'
 
 require_relative "./krb5-gssapi"
 
+require_relative '../resources/oauth2/audit'
+
 module PuavoRest
 
 class PuavoSinatra < Sinatra::Base
@@ -162,6 +164,15 @@ class PuavoSinatra < Sinatra::Base
     rescue StandardError => e
       rlog.error("OAuth2 access token validation failed: #{e}")
       rlog.error("Raw incoming token: #{authorization[1]}")
+
+      OAuth2.audit_token_use(status: 'token_validation_failed',
+                             error: e.class.to_s,
+                             organisation: LdapModel.organisation.domain,
+                             audience: @oauth2_params[:audience],
+                             target_endpoint: request.env['sinatra.route'],
+                             raw_token: authorization[1],
+                             request: request)
+
       raise InvalidOAuth2Token, user: 'invalid_token'
     end
 
@@ -180,6 +191,16 @@ class PuavoSinatra < Sinatra::Base
     endpoint_scopes.each do |s|
       unless token_scopes.include?(s)
         rlog.error("Token scopes do not contain the endpoint scopes (#{endpoint_scopes.to_a.inspect})")
+
+        OAuth2.audit_token_use(status: 'insufficient_scopes',
+                               organisation: LdapModel.organisation.domain,
+                               token_id: access_token['jti'],
+                               client_id: access_token['client_id'],
+                               audience: @oauth2_params[:audience],
+                               requested_scopes: access_token['scopes'].split(' '),
+                               target_endpoint: request.env['sinatra.route'],
+                               request: request)
+
         raise InsufficientOAuth2Scope, user: 'insufficient_scope'
       end
     end
@@ -190,6 +211,16 @@ class PuavoSinatra < Sinatra::Base
     if access_token.include?('allowed_endpoints')
       unless access_token['allowed_endpoints'].include?(endpoint)
         rlog.error("This token does not permit calling the #{endpoint} endpoint")
+
+        OAuth2.audit_token_use(status: 'endpoint_not_allowed',
+                               organisation: LdapModel.organisation.domain,
+                               token_id: access_token['jti'],
+                               client_id: access_token['client_id'],
+                               audience: @oauth2_params[:audience],
+                               requested_scopes: access_token['scopes'].split(' '),
+                               target_endpoint: request.env['sinatra.route'],
+                               request: request)
+
         raise Forbidden, user: 'invalid_token'
       end
     end
@@ -261,9 +292,29 @@ class PuavoSinatra < Sinatra::Base
       if access_token.include?('allowed_organisations')
         unless access_token['allowed_organisations'].include?(domain)
           rlog.error("This access token does not permit calling endpoints in organisation #{domain.inspect}")
+
+          OAuth2.audit_token_use(status: 'organisation_not_allowed',
+                                 organisation: domain,
+                                 token_id: access_token['jti'],
+                                 client_id: access_token['client_id'],
+                                 audience: @oauth2_params[:audience],
+                                 requested_scopes: access_token['scopes'].split(' '),
+                                 target_endpoint: request.env['sinatra.route'],
+                                 request: request)
+
           raise Forbidden, user: 'invalid_token'
         end
       end
+
+      # Log the token usage
+      OAuth2.audit_token_use(status: 'success',
+                             organisation: domain,
+                             token_id: access_token['jti'],
+                             client_id: access_token['client_id'],
+                             audience: @oauth2_params[:audience],
+                             requested_scopes: access_token['scopes'].split(' '),
+                             target_endpoint: request.env['sinatra.route'],
+                             request: request)
     end
 
     log_creds = LdapModel.settings[:credentials].dup

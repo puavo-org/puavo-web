@@ -51,7 +51,7 @@ module OAuth2
     {
       success: true,
       access_token: access_token,
-      raw_token: token_claims,
+      raw_token: token_claims,        # some places, like auditing, needs to see the raw data
       expires_at: now + expires_in
     }
   end
