@@ -12,7 +12,8 @@ module OAuth2
 
     access_token = LdapModel.settings[:credentials][:access_token]
 
-    rlog.info("[#{request_id}] Returning userinfo data for user \"#{access_token['user_dn']}\" in organisation \"#{access_token['organisation_domain']}\"")
+    rlog.info("[#{request_id}] Returning userinfo data for user \"#{access_token['user_dn']}\" " \
+              "in organisation \"#{access_token['organisation_domain']}\"")
 
     # Get the user data
     begin
@@ -70,7 +71,9 @@ module OAuth2
     if scopes.include?('profile')
       # Try to extract the modification timestamp from the LDAP operational attributes
       begin
-        extra = User.raw_filter("ou=People,#{organisation['base']}", "(puavoId=#{user.id})", ['modifyTimestamp'])
+        extra = User.raw_filter("ou=People,#{organisation['base']}",
+                                "(puavoId=#{user.id})",
+                                ['modifyTimestamp'])
         updated_at = Time.parse(extra[0]['modifyTimestamp'][0]).to_i
       rescue StandardError => e
         rlog.warn("[#{request_id}] Cannot determine the user's last modification time: #{e}")

@@ -20,7 +20,8 @@ module OAuth2
     content_type = request.env.fetch('CONTENT_TYPE', nil)
 
     unless content_type == 'application/x-www-form-urlencoded'
-      rlog.error("[#{request_id}] Received a client_credentials request with an incorrect Content-Type header (#{content_type.inspect})")
+      rlog.error("[#{request_id}] Received a client_credentials request with an incorrect " \
+                 "Content-Type header (#{content_type.inspect})")
       return json_error('invalid_request', request_id: request_id)
     end
 
@@ -30,7 +31,8 @@ module OAuth2
     # TODO: We need to support other client authorization systems
 
     unless request.env.include?('HTTP_AUTHORIZATION')
-      rlog.error("[#{request_id}] Received a client_credentials request without an HTTP_AUTHORIZATION header")
+      rlog.error("[#{request_id}] Received a client_credentials request without an " \
+                 "HTTP_AUTHORIZATION header")
       return json_error('invalid_request', request_id: request_id)
     end
 
@@ -40,7 +42,8 @@ module OAuth2
       credentials = credentials.split(':')
 
       if credentials.count != 2
-        rlog.error("[#{request_id}] the HTTP_AUTHORIZATION header does not contain a valid client_id:password combo")
+        rlog.error("[#{request_id}] the HTTP_AUTHORIZATION header does not contain a valid " \
+                   "client_id:password combo")
         return json_error('invalid_request', request_id: request_id)
       end
     rescue StandardError => e
@@ -71,7 +74,8 @@ module OAuth2
     hashed_password = client_config.fetch('client_password', nil)
 
     if hashed_password.nil? || hashed_password.strip.empty?
-      rlog.error("[#{request_id}] Empty hashed password specified in the database for a token client, refusing access")
+      rlog.error("[#{request_id}] Empty hashed password specified in the database for a " \
+                 "token client, refusing access")
       return json_error('unauthorized_client', request_id: request_id)
     end
 
@@ -114,7 +118,8 @@ module OAuth2
         !client_config['allowed_organisations'].nil? &&
         !client_config['allowed_organisations'].empty?
       custom_claims['allowed_organisations'] = Array(client_config['allowed_organisations'])
-      rlog.info("[#{request_id}] Token is only allowed in these organisations: #{custom_claims['allowed_organisations'].inspect}")
+      rlog.info("[#{request_id}] Token is only allowed in these organisations: " \
+                "#{custom_claims['allowed_organisations'].inspect}")
     end
 
     # Endpoint restriction
@@ -122,7 +127,8 @@ module OAuth2
         !client_config['allowed_endpoints'].nil? &&
         !client_config['allowed_endpoints'].empty?
       custom_claims['allowed_endpoints'] = Array(client_config['allowed_endpoints'])
-      rlog.info("[#{request_id}] Token is only allowed in these endpoints: #{custom_claims['allowed_endpoints'].inspect}")
+      rlog.info("[#{request_id}] Token is only allowed in these endpoints: " \
+                "#{custom_claims['allowed_endpoints'].inspect}")
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -149,7 +155,8 @@ module OAuth2
       'puavo_request_id' => request_id
     }
 
-    rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect}, expires at #{Time.at(token[:expires_at])}")
+    rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect}, " \
+              "expires at #{Time.at(token[:expires_at])}")
 
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'

@@ -85,7 +85,8 @@ module OAuth2
 
     unless response_type == 'code'
       rlog.error("[#{request_id}] Invalid response type #{response_type.inspect} (expected \"code\")")
-      return redirect_error(redirect_uri, 'invalid_request', state: params.fetch('state', nil), request_id: request_id)
+      return redirect_error(redirect_uri, 'invalid_request', state: params.fetch('state', nil),
+                            request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -97,7 +98,8 @@ module OAuth2
                           client_config)
 
     unless scopes[:success]
-      return redirect_error(redirect_uri, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
+      return redirect_error(redirect_uri, 'invalid_scope', state: params.fetch('state', nil),
+                            request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -135,7 +137,10 @@ module OAuth2
 
     begin
       # Use the same request ID for everything
-      login_data = login_create_data(request_id, external_service, is_trusted: external_service.trusted, next_stage: '/oidc/authorize/response', was_oidc: true)
+      login_data = login_create_data(request_id, external_service,
+                                     is_trusted: external_service.trusted,
+                                     next_stage: '/oidc/authorize/response',
+                                     was_oidc: true)
 
       login_data['original_url'] = request.url.to_s
 
@@ -167,7 +172,9 @@ module OAuth2
       end
 
       # Display the login form (and MFA form if enabled)
-      redirect login_data['was_oidc'] ? "/oidc/login?login_key=#{login_key}" : "/v3/sso/login?login_key=#{login_key}"
+      redirect login_data['was_oidc'] ?
+        "/oidc/login?login_key=#{login_key}" :
+        "/v3/sso/login?login_key=#{login_key}"
     rescue StandardError => e
       # WARNING: This resuce block can only handle exceptions that happen *before* the
       # login form is rendered, because the login form renderer halts and never comes
@@ -194,7 +201,8 @@ module OAuth2
     login_key = params.fetch('login_key', '')
     login_data = login_get_data(login_key, delete_immediately: true)
     request_id = login_data['request_id']
-    rlog.info("[#{request_id}] OpenID Connect authorization request continues, login key is #{login_key.inspect}")
+    rlog.info("[#{request_id}] OpenID Connect authorization request continues, login key " \
+              "is #{login_key.inspect}")
 
     # Copy the OpenID Connect session state from the login data
     oidc_state = login_data['oidc_state']
@@ -293,7 +301,8 @@ module OAuth2
     redirect_uri = params.fetch('redirect_uri', nil)
 
     unless redirect_uri == oidc_state['redirect_uri']
-      rlog.error("[#{request_id}] Mismatching redirect URIs: got \"#{redirect_uri}\", expected \"#{oidc_state['redirect_uri']}\"")
+      rlog.error("[#{request_id}] Mismatching redirect URIs: got \"#{redirect_uri}\", "  \
+                 "expected \"#{oidc_state['redirect_uri']}\"")
       return json_error('invalid_request', request_id: temp_request_id)
     end
 
@@ -305,7 +314,8 @@ module OAuth2
     client_id = params.fetch('client_id', nil)
 
     unless client_id == oidc_state['client_id']
-      rlog.error("[#{request_id}] The client ID has changed: got \"#{client_id}\", expected \"#{oidc_state['client_id']}\"")
+      rlog.error("[#{request_id}] The client ID has changed: got \"#{client_id}\", " \
+                 "expected \"#{oidc_state['client_id']}\"")
       return json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
@@ -436,7 +446,8 @@ module OAuth2
       return { success: false }
     end
 
-    rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect} for the user, expires at #{Time.at(token[:expires_at])}")
+    rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect} " \
+              "for the user, expires at #{Time.at(token[:expires_at])}")
 
     out = {
       'access_token' => token[:access_token],
