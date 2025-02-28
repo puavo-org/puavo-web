@@ -451,14 +451,18 @@ module OAuth2
     rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect} " \
               "for the user, expires at #{Time.at(token[:expires_at])}")
 
-    audit_issued_id_token(request_id, db, client_id: client_id,
+    audit_issued_id_token(request_id, db,
+                          client_id: client_id,
+                          ldap_user_dn: CONFIG['server'][:dn],
                           raw_requested_scopes: oidc_state['original_scopes'],
                           issued_scopes: oidc_state['scopes'],
                           redirect_uri: oidc_state['redirect_uri'],
                           raw_token: payload,
                           request: request)
 
-    audit_issued_access_token(request_id, db, client_id: client_id,
+    audit_issued_access_token(request_id, db,
+                              client_id: client_id,
+                              ldap_user_dn: CONFIG['server'][:dn],
                               raw_requested_scopes: oidc_state['original_scopes'],
                               raw_token: token[:raw_token],
                               request: request)
@@ -481,6 +485,9 @@ module OAuth2
     headers['Pragma'] = 'no-cache'
 
     json(out)
+  rescue StandardError => e
+    rlog.info("[#{request_id}] Unhandled exception: #{e}")
+    return json_error('server_error', state: state, request_id: request_id)
   ensure
     db&.close
   end

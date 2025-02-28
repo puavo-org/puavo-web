@@ -311,6 +311,7 @@ class PuavoSinatra < Sinatra::Base
                              organisation: domain,
                              token_id: access_token['jti'],
                              client_id: access_token['client_id'],
+                             ldap_user_dn: CONFIG['server'][:dn],
                              audience: @oauth2_params[:audience],
                              requested_scopes: access_token['scopes'].split(' '),
                              target_endpoint: request.env['sinatra.route'],

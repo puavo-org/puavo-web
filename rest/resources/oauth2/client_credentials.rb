@@ -159,7 +159,9 @@ module OAuth2
     rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect}, " \
               "expires at #{Time.at(token[:expires_at])}")
 
-    audit_issued_access_token(request_id, db, client_id: credentials[0],
+    audit_issued_access_token(request_id, db,
+                              ldap_user_dn: CONFIG['server'][:dn],
+                              client_id: credentials[0],
                               raw_requested_scopes: params.fetch('scope', ''),
                               raw_token: token[:raw_token],
                               request: request)
