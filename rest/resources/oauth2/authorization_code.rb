@@ -445,7 +445,7 @@ module OAuth2
       private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['token_key']['private_file']))
     rescue StandardError => e
       rlog.error("[#{request_id}] Cannot load the access token signing private key file: #{e}")
-      return { success: false }
+      return json_error('server_error', state: state, request_id: request_id)
     end
 
     rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect} " \
