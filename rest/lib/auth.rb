@@ -252,14 +252,13 @@ class PuavoSinatra < Sinatra::Base
         :user => "Could not create ldap connection. Bad/missing credentials. #{ auth_methods.inspect }"
     end
 
-    # If the authentication was done using an access token and it contains a list
-    # of allowed organisations, verify the domain
     if auth_method == :oauth2_token
-      access_token = access_token = LdapModel.settings[:credentials][:access_token]
+      access_token = LdapModel.settings[:credentials][:access_token]
+      domain = LdapModel.organisation.domain
 
+      # If the authentication was done using an access token and it contains a list
+      # of allowed organisations, verify the domain
       if access_token.include?('allowed_organisations')
-        domain = LdapModel.organisation.domain
-
         unless access_token['allowed_organisations'].include?(domain)
           rlog.error("This access token does not permit calling endpoints in organisation #{domain.inspect}")
           raise Forbidden, user: 'invalid_token'
