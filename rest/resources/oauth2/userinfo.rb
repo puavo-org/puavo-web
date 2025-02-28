@@ -14,38 +14,53 @@ module OAuth2
 
     rlog.info("[#{request_id}] Returning userinfo data for user \"#{access_token['user_dn']}\" in organisation \"#{access_token['organisation_domain']}\"")
 
+    # Get the user data
     begin
-      organisation = Organisation.by_domain(access_token['organisation_domain'])
-      LdapModel.setup(organisation: organisation, credentials: CONFIG['server'])
+      error, organisation, user = get_user_in_domain(request_id: request_id,
+                                                     domain: access_token['organisation_domain'],
+                                                     dn: access_token['user_dn'],
+                                                     ldap_credentials: CONFIG['server'])
 
-      user = PuavoRest::User.by_dn(access_token['user_dn'])
-
-      if user.nil?
-        rlog.error("[#{request_id}] Cannot find user #{access_token['user_dn']}")
-        return json_error('access_denied', request_id: request_id)
-      end
-
-      # Locked users cannot access any resources
-      if user.locked || user.removal_request_time
-        rlog.error("[#{request_id}] The target user (#{user.username}) is locked or marked for deletion")
-        return json_error('access_denied', request_id: request_id)
+      unless error.nil?
+        return json_error(error, request_id: request_id)
       end
     rescue StandardError => e
-      rlog.error("[#{request_id}] Could not log in and retrieve the target user: #{e}")
+      rlog.error("[#{request_id}] Could not retrieve the target user: #{e}")
       return json_error('server_error', request_id: request_id)
     end
 
     begin
       user_data = gather_user_data(request_id, access_token['scopes'], organisation, user)
     rescue StandardError => e
-      rlog.error("[#{request_id}] Could not gather the user data for the token: #{e}")
+      rlog.error("[#{request_id}] Could not gather the user data: #{e}")
       return json_error('server_error', request_id: request_id)
     end
 
+    # Return it
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'
 
     json(user_data)
+  end
+
+  def get_user_in_domain(request_id:, domain:, dn:, ldap_credentials:)
+    organisation = Organisation.by_domain(domain)
+    LdapModel.setup(organisation: organisation, credentials: ldap_credentials)
+
+    user = PuavoRest::User.by_dn(dn)
+
+    if user.nil?
+      rlog.error("[#{request_id}] Cannot find user by DN #{dn.inspect}")
+      return 'access_denied', nil, nil
+    end
+
+    # Locked users cannot access any resources
+    if user.locked || user.removal_request_time
+      rlog.error("[#{request_id}] The target user (#{user.username}) is locked or marked for deletion")
+      return 'access_denied', nil, nil
+    end
+
+    return nil, organisation, user
   end
 
   def gather_user_data(request_id, scopes, organisation, user)

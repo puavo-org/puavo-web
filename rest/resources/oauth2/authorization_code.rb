@@ -382,32 +382,24 @@ module OAuth2
     end
 
     # Collect the user data and append it to the payload
-    # TODO: This code is duplicated in the userinfo endpoint. Merge these.
     begin
-      organisation = Organisation.by_domain(oidc_state['organisation']['domain'])
-      LdapModel.setup(organisation: organisation, credentials: CONFIG['server'])
+      error, organisation, user = get_user_in_domain(request_id: request_id,
+                                                     domain: oidc_state['organisation']['domain'],
+                                                     dn: oidc_state['user']['dn'],
+                                                     ldap_credentials: CONFIG['server'])
 
-      user = PuavoRest::User.by_dn(oidc_state['user']['dn'])
-
-      if user.nil?
-        rlog.error("[#{request_id}] Cannot find the logged-in user (DN=#{oidc_state['user']['dn']})")
-        return json_error('access_denied', state: state, request_id: request_id)
-      end
-
-      # Locked users cannot access any resources
-      if user.locked || user.removal_request_time
-        rlog.error("[#{request_id}] The target user (#{user.username}) is locked or marked for deletion")
-        return json_error('access_denied', state: state, request_id: request_id)
+      unless error.nil?
+        return json_error(error, state: state, request_id: request_id)
       end
     rescue StandardError => e
-      rlog.error("[#{request_id}] Could not log in and retrieve the target user: #{e}")
+      rlog.error("[#{request_id}] Could not retrieve the target user: #{e}")
       return json_error('server_error', state: state, request_id: request_id)
     end
 
     begin
       user_data = gather_user_data(request_id, oidc_state['scopes'], organisation, user)
     rescue StandardError => e
-      rlog.error("[#{request_id}] Could not gather the user data for the token: #{e}")
+      rlog.error("[#{request_id}] Could not gather the user data: #{e}")
       return json_error('server_error', state: state, request_id: request_id)
     end
 
