@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'puavo-icons';
-  src: font-url('puavo-icons.eot');
-  src: font-url('puavo-icons.eot') format('embedded-opentype'),
-       font-url('puavo-icons.woff2') format('woff2'),
-       font-url('puavo-icons.woff') format('woff'),
-       font-url('puavo-icons.ttf') format('truetype'),
-       font-url('puavo-icons.svg') format('svg');
+  src: url('fonts/puavo-icons.eot');
+  src: url('fonts/puavo-icons.eot') format('embedded-opentype'),
+       url('fonts/puavo-icons.woff2') format('woff2'),
+       url('fonts/puavo-icons.woff') format('woff'),
+       url('fonts/puavo-icons.ttf') format('truetype'),
+       url('fonts/puavo-icons.svg') format('svg');
   font-weight: normal;
   font-style: normal;
 }

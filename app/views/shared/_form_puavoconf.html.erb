@@ -1,11 +1,8 @@
 <!-- shared/_form_puavoconf starts -->
 <tr>
   <th><%= f.label :puavoConf %></th>
-  <td>
-    <div id="puavoConfEditor">
-      <div class="pcEdit"></div>
-      <%= f.text_area :puavoConf, cols: 40, rows: 6, spellcheck: false %>
-    </div>
+  <td class="pceContainer">
+    <%= f.text_area :puavoConf, cols: 40, rows: 10, spellcheck: false %>
   </td>
 </tr>
 <!-- shared/_form_puavoconf ends -->

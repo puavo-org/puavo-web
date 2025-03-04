@@ -58,9 +58,11 @@ class User < LdapBase
   # Valid and known permissions for school admins. Used in has_admin_permission?(), for example.
   ADMIN_PERMISSIONS = %i[
     school_edit school_edit_wlan
-    create_users delete_users mass_delete_users import_users
+    create_users delete_users mass_delete_users import_users users_mass_clear_column_contents
     create_groups delete_groups mass_delete_groups
+    group_change_school group_mass_change_type
     create_devices delete_devices mass_delete_devices reset_devices mass_reset_devices
+    device_change_school device_mass_change_school device_mass_tag_editor device_mass_change_purchase_information
   ].freeze
 
   attr_accessor(*@@extra_attributes)
@@ -585,8 +587,6 @@ class User < LdapBase
   end
 
   def teaching_group=(group_id)
-    puts "Setting the teaching group to #{group_id}"
-
     groups.each do |g|
       next unless g.puavoEduGroupType == 'teaching group'
       next unless g.id == group_id
@@ -625,8 +625,13 @@ class User < LdapBase
     db.del("user:#{org}:#{self.id}")
   end
 
-  def has_admin_permission?(permission)
-    User::ADMIN_PERMISSIONS.include?(permission) && Array(self.puavoAdminPermissions).include?(permission.to_s)
+  def has_admin_permission?(*permissions)
+    return false if permissions.nil? || permissions.empty?
+
+    user_permissions = Array(self.puavoAdminPermissions)
+    return false if user_permissions.empty?
+
+    permissions.all? { |p| User::ADMIN_PERMISSIONS.include?(p) && user_permissions.include?(p.to_s) }
   end
 
   private

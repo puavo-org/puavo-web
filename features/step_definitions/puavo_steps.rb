@@ -78,6 +78,12 @@ Given(/^I am on ([^\"]+) with "([^\"]*)"$/) do |page_name, value|
     when /show/
       visit device_path(@school, device)
     end
+  when /the change device school page/
+    device = Device.find_by_hostname(value)
+    visit select_school_device_path(device.puavoSchool, device)
+  when /the change group school page/
+    group = Group.find(:first, attribute: 'displayName', value: value)
+    visit select_new_school_path(group.puavoSchool, group)
   when /school page$/
     @school = School.find( :first, :attribute => "displayName", :value => value )
     visit school_path(@school)

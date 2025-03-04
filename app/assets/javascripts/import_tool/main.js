@@ -2,7 +2,7 @@
 
 /*
 Puavo Mass User Import III
-Version 1.0.1
+Version 1.0.2
 */
 
 import { create, getTemplate, toggleClass } from "../common/dom.js";
@@ -75,10 +75,6 @@ const popup = {
 const state = {
     // Everything in the import tool happens inside this container element
     container: null,
-
-    // Localized strings. Supplied by the user in the initializer.
-    localizedColumnTitles: {},
-    localizedGroupTypes: {},
 
     // Current settings. Call loadDefaultSettings() to load the defaults.
     SETTINGS: {},
@@ -358,6 +354,8 @@ CSV_PARSER_WORKER.onmessage = e => {
 
     // Infer column types
     if (Array.isArray(e.data.headers)) {
+        const knownColumns = new Set(Object.keys(_tr("columns")));
+
         headers = [...e.data.headers];
 
         for (let i = 0; i < headers.length; i++) {
@@ -367,7 +365,7 @@ CSV_PARSER_WORKER.onmessage = e => {
                 headers[i] = INFERRED_NAMES[colName];
 
             // Clear unknown column types, so the column will be skipped
-            if (!(headers[i] in state.localizedColumnTitles))
+            if (!knownColumns.has(headers[i]))
                 headers[i] = "";
         }
     }
@@ -378,7 +376,7 @@ CSV_PARSER_WORKER.onmessage = e => {
 
     console.log(`preprocessParserOutput(): the widest row has ${maxColumns} columns`);
 
-    // Padd all rows (including the header) to have the same number of columns as the widest row
+    // Pad all rows (including the header) to have the same number of columns as the widest row
     while (headers.length < maxColumns)
         headers.push("");       // empty means "skip this column"
 
@@ -657,7 +655,7 @@ function detectProblems(selectRows=false)
         return;
     }
 
-    doDetectProblems(state.importData, state.container, state.commonPasswords, state.localizedColumnTitles, state.automaticEmails, selectRows, state.SETTINGS.import.mode == 2);
+    doDetectProblems(state.importData, state.container, state.commonPasswords, state.automaticEmails, selectRows, state.SETTINGS.import.mode == 2);
 
     toggleClass(output, "hidden", state.importData.errors.length == 0 && state.importData.warnings.length == 0);
 
@@ -690,7 +688,7 @@ function fillGroupSelector(selector, current=null)
 
         o.value = g.abbr;
         o.selected = (current === g.abbr);
-        o.innerText = `${g.name} (${state.localizedGroupTypes[g.type] || "?"})`;
+        o.innerText = g.name + " (" + ((g.type === null) ? "?" : _tr(`group_type.${g.type}`)) + ")";
 
         selector.appendChild(o);
     }
@@ -703,7 +701,7 @@ function onSelectDuplicates(mode)
     const uidCol = state.importData.findColumn("uid");
 
     if (uidCol === -1) {
-        window.alert(_tr("errors.required_column_missing", { title: state.localizedColumnTitles["uid"] }));
+        window.alert(_tr("errors.required_column_missing", { title: _tr("columns.uid") }));
         return;
     }
 
@@ -1640,6 +1638,8 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
             last = values[lastCol].toLowerCase();
 
         if (firstFirstNameOnly) {
+            // If the user has multiple first names, use only the *first* first name,
+            // not all of them
             const space = first.indexOf(" ");
 
             if (space != -1)
@@ -1649,11 +1649,10 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
         first = dropDiacritics(first, alternateUmlauts);
         last = dropDiacritics(last, alternateUmlauts);
 
-        const username = `${first}.${last}`;
-
         if (first.length == 0 || last.length == 0) {
-            console.error(`Can't generate username for "${columns[firstCol]} ${columns[lastCol]}"`);
-            unconvertable.push([i + NUM_ROW_HEADERS, columns[firstCol], columns[lastCol]]);
+            // First or last name contains only characters that cannot be used in the username
+            console.error(`Can't generate username for "${values[firstCol]} ${values[lastCol]}"`);
+            unconvertable.push([rowNum + NUM_ROW_HEADERS, values[firstCol], values[lastCol]]);
             continue;
         }
 
@@ -1661,6 +1660,8 @@ function generateUsernames(alternateUmlauts, firstFirstNameOnly, overwrite)
             continue;
 
         let tableCell = tableRows[rowNum].children[state.targetColumn.index + NUM_ROW_HEADERS];
+
+        const username = `${first}.${last}`;
 
         values[state.targetColumn.index] = username;
         tableCell.innerText = username;
@@ -2240,7 +2241,7 @@ function buildColumnHeader(index, type, isPreview=false)
 
     if (isPreview) {
         if (type != "")
-            tmpl.querySelector("div.colType").innerText = state.localizedColumnTitles[type];
+            tmpl.querySelector("div.colType").innerText = _tr(`columns.${type}`);
     } else {
         if (type != "")
             tmpl.querySelector("select#type").value = type;
@@ -2643,7 +2644,7 @@ function beginImport(mode)
 
     // Verify it anyway, even if detectProblems() should handle it
     if (uidCol === -1) {
-        window.alert(_tr("errors.required_column_missing", { title: state.localizedColumnTitles["uid"] }));
+        window.alert(_tr("errors.required_column_missing", { title: _tr("columns.uid") }));
         return;
     }
 
@@ -2890,7 +2891,7 @@ function onCreateUsernameList(onlySelected, description)
     const uidCol = state.importData.findColumn("uid");
 
     if (uidCol === -1) {
-        window.alert(_tr("errors.required_column_missing", { title: state.localizedColumnTitles["uid"] }));
+        window.alert(_tr("errors.required_column_missing", { title: _tr("columns.uid") }));
         return;
     }
 
@@ -3208,7 +3209,7 @@ function buildInferTable()
     // order, which is perfect for us, because now we can use INFERRED_NAMES to control the
     // order in which the names appear on the table. Set is needed, because the infer table
     // contains also the non-inferred names, and some column types have no inferred names.
-    for (const [k, v] of Object.entries(state.localizedColumnTitles))
+    for (const [k, v] of Object.entries(_tr("columns")))
         keys.set(k, new Set([k]));
 
     // Then add infers
@@ -3218,7 +3219,7 @@ function buildInferTable()
     // Finally build the table
     let html = "";
 
-    for (const [k, v] of Object.entries(state.localizedColumnTitles)) {
+    for (const [k, v] of Object.entries(_tr("columns"))) {
         html += `<tr>`;
         html += `<td><code>${Array.from(keys.get(k)).join(", ")}</code></td>`;
         html += `<td>${v}</td>`;
@@ -3234,8 +3235,6 @@ export function initializeImporter(params)
         state.container = params.container;
 
         // Prepare data
-        state.localizedColumnTitles = params.columnTitles;
-        state.localizedGroupTypes = params.groupTypes;
         state.automaticEmails = params.automaticEmails || false;
         state.commonPasswords = params.commonPasswords || state.commonPasswords;
 

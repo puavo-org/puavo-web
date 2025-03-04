@@ -31,12 +31,6 @@ sso_logout:
   missing_redirect_url: "Missing return redirect URL. Logout cannot proceed.<br>Please contact Opinsys support and give them this code: %1."
   unauthorized_redirect_url: "The supplied redirect URL is not permitted. Logout cannot be processed for security reasons.<br>Please contact Opinsys support and give them this code: %1."
   generic_error: "Unknown logout processing error.<br>Please contact Opinsys support and give them this code: %1."
-eltern_sso:
-  title: "Welcome!"
-  header: "Login by entering your username or email address, and password below."
-  username_placeholder: "Username or email address"
-  missing_organisation: "Invalid or missing organisation name. Unable to render the SSO login form."
-  contact_support: "Please contact Opinsys support for assistance."
 password_management:
   subject: "Reset your password"
   hello: "Hello"

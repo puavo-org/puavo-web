@@ -291,6 +291,12 @@ const COLUMN_DEFINITIONS = {
         transform: entry => doStorage(entry.df_imageoverlays),
     },
 
+    display_name: {
+        key: "display_name",
+        title: "<%= t('columns.devices.display_name') %>",
+        type: ST.ColumnType.STRING,
+    },
+
     hd: {
         key: "hd",
         title: "<%= t('columns.devices.hwinfo_hd_size') %>",
@@ -691,6 +697,7 @@ const COLUMN_ORDER = [
 <% end %>
     "id",
     "hn",
+    "display_name",
 <% if !@is_organisation || @is_servers %>
     "hw_time",
 <% end %>
@@ -966,7 +973,9 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
             { title: "<%= t('devices.index.mass_operations.set_field.kernel_args') %>", key: "kernelargs", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.kernel_version') %>", key: "kernelversion", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.puavoconf_replace') %>", key: "puavoconf", type: "json" },
+<% if @permit_device_mass_tag_editor %>
             { title: "<%= t('devices.index.mass_operations.set_field.tags_replace') %>", key: "tags", type: "s" },
+<% end %>
             { title: "<%= t('devices.index.mass_operations.set_field.manufacturer') %>", key: "manufacturer", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.model') %>", key: "model", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.serial') %>", key: "serial", type: "s" },
@@ -1202,6 +1211,7 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
 };
 
 <% unless @is_servers %>
+<% if @permit_device_mass_edit_purchase_info %>
 // Mass operation: edit purchase and warranty information
 class MassDevicePurchaseInfo extends ST.MassOperation {
     constructor(parent, container)
@@ -1388,6 +1398,7 @@ class MassDevicePurchaseInfo extends ST.MassOperation {
     }
 };
 <% end %>
+<% end %>
 
 // Mass operation: puavo-conf editing. Not as pretty as the interactive puavo-conf editor, but I can't cram it in this space.
 // Or maybe I can? Who knows...
@@ -1477,6 +1488,7 @@ class MassDevicePuavoconfEditor extends ST.MassOperation {
     }
 };
 
+<% if @permit_device_mass_tag_editor %>
 // Mass tags editor
 class MassDeviceTagsEditor extends ST.MassOperation {
     constructor(parent, container)
@@ -1540,8 +1552,10 @@ class MassDeviceTagsEditor extends ST.MassOperation {
         return { state: "ready" };
     }
 };
+<% end %>
 
 <% unless @is_servers %>
+<% unless @school_list.empty? %>
 // Mass tool: move device to another school
 class MassDeviceChangeSchool extends ST.MassOperation {
     constructor(parent, container)
@@ -1554,22 +1568,16 @@ class MassDeviceChangeSchool extends ST.MassOperation {
     buildInterface()
     {
         const html =
-<% if @school_list.empty? %>
-        `<p class="genericWarning"><%= t('devices.index.mass_operations.change_school.no_other_schools') %></p>`;
-<% else %>
         `<label><%= t('devices.index.mass_operations.change_school.school_title') %><select id="new_school" class="margin-left-5px">
 <% @school_list.each do |s| %>
             <option value="<%= s[0] %>"><%= s[1] %> (<%= s[2] %>)</option>
 <% end%>
         </select></label>`;
-<% end %>
 
         this.container.innerHTML = html;
 
-<% unless @school_list.empty? %>
         this.newSchoolDN = "<%= @school_list.first[0] %>";
         this.newSchoolID = this.idFromDN(this.newSchoolDN);
-<% end %>
 
         this.container.querySelector("#new_school")?.addEventListener("change", e => {
             this.newSchoolDN = e.target.value
@@ -1579,12 +1587,7 @@ class MassDeviceChangeSchool extends ST.MassOperation {
 
     canProceed()
     {
-<% if @school_list.empty? %>
-        window.alert("<%= t('devices.index.mass_operations.change_school.no_other_schools_alert') %>");
-        return false;
-<% else %>
         return true;
-<% end %>
     }
 
     start()
@@ -1623,6 +1626,7 @@ class MassDeviceChangeSchool extends ST.MassOperation {
         return (match === null) ? -1 : parseInt(match[1], 10);
     }
 };
+<% end %>
 
 <% if @permit_device_reset && @permit_device_mass_reset %>
 // Mass operation: set or clear the reset mode
@@ -1713,6 +1717,7 @@ const MASS_OPERATIONS = [
         cls: MassDeviceSetFieldValue
     },
 <% unless @is_servers %>
+<% if @permit_device_mass_edit_purchase_info %>
     {
         operation: "purchase_info",
         title: "<%= t('devices.index.mass_operations.purchase_info.title') %>",
@@ -1720,25 +1725,30 @@ const MASS_OPERATIONS = [
         cls: MassDevicePurchaseInfo
     },
 <% end %>
+<% end %>
     {
         operation: "puavoconf_edit",
         title: "<%= t('devices.index.mass_operations.puavoconf.title') %>",
         haveSettings: true,
         cls: MassDevicePuavoconfEditor
     },
+<% if @permit_device_mass_tag_editor %>
     {
         operation: "tags_edit",
         title: "<%= t('devices.index.mass_operations.tags.title') %>",
         haveSettings: true,
         cls: MassDeviceTagsEditor
     },
+<% end %>
 <% unless @is_servers %>
+<% unless @school_list.empty? %>
     {
         operation: "change_school",
         title: "<%= t('devices.index.mass_operations.change_school.title') %>",
         haveSettings: true,
         cls: MassDeviceChangeSchool
     },
+<% end %>
 <% if @permit_device_reset && @permit_device_mass_reset %>
     {
         operation: "reset",

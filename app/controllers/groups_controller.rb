@@ -60,6 +60,7 @@ class GroupsController < ApplicationController
     @permit_group_creation = @is_owner || current_user.has_admin_permission?(:create_groups)
     @permit_group_deletion = @is_owner || current_user.has_admin_permission?(:delete_groups)
     @permit_mass_group_deletion = @is_owner || (@permit_group_deletion && current_user.has_admin_permission?(:mass_delete_groups))
+    @permit_mass_group_change_type = @is_owner || current_user.has_admin_permission?(:group_mass_change_type)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -107,6 +108,7 @@ class GroupsController < ApplicationController
     @is_owner = is_owner?
     @permit_group_creation = @is_owner || current_user.has_admin_permission?(:create_groups)
     @permit_group_deletion = @is_owner || current_user.has_admin_permission?(:delete_groups)
+    @permit_school_change = @is_owner || current_user.has_admin_permission?(:group_change_school)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -345,6 +347,12 @@ class GroupsController < ApplicationController
     @available_schools = School.all.select { |s| s.id != @group.school.id }
 
     unless is_owner?
+      unless current_user.has_admin_permission?(:group_change_school)
+        flash[:alert] = t('flash.you_must_be_an_owner')
+        redirect_to group_path(@school, @group)
+        return
+      end
+
       # School admins can only transfer groups between the schools they're admins in
       # TODO: This is starting to be a recurring pattern. See if this could be moved to
       # its own utility function.
@@ -366,6 +374,12 @@ class GroupsController < ApplicationController
   def change_school
     @group = get_group(params[:id])
     return if @group.nil?
+
+    unless is_owner? ||  current_user.has_admin_permission?(:group_change_school)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to group_path(@school, @group)
+      return
+    end
 
     begin
       school = School.find(params[:school])

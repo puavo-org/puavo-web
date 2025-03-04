@@ -191,10 +191,6 @@ class Root < PuavoSinatra
   use PuavoRest::MySchoolUsers
   use PuavoRest::EmailManagement
 
-  if CONFIG['mfa_management']
-    use PuavoRest::MFAManagement
-  end
-
   if CONFIG["cloud"]
     use PuavoRest::SSO
     use PuavoRest::Certs
@@ -204,7 +200,7 @@ class Root < PuavoSinatra
     use PuavoRest::Password
   end
 
-  if CONFIG["mfa_management"]
+  if CONFIG['mfa_management']
     use PuavoRest::MFAManagement
   end
 

@@ -126,7 +126,7 @@
 
   <tr>
     <th><%= t('activeldap.attributes.dn') %></th>
-    <td><%= h @user.dn %></td>
+    <td><%= h (@user.dn.to_s.split(',').join(',<wbr>')).html_safe %></td>
   </tr>
 
   <tr>

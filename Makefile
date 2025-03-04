@@ -15,14 +15,15 @@ ESBUILD = node_modules/.bin/esbuild
 # --minify is not enabled by default, because source maps are broken (some
 # component (Sprockets?) insists they're in public/assets, which isn't true,
 # but I can't find a way to change that).
-ESBUILD_FLAGS = --bundle --charset=utf8 --target=es2020 #--minify #--sourcemap
-JS_OUTPUT = app/assets/javascripts/bundles
-JS_INPUT = \
+ESBUILD_FLAGS = --bundle --charset=utf8 --target=es2020 --external:*.png --external:*.svg --external:*.gif #--minify #--sourcemap
+ES_OUTPUT = app/assets/bundles
+ES_INPUT = \
 	app/assets/javascripts/modal_popup.js \
 	app/assets/javascripts/supertable3.js \
 	app/assets/javascripts/puavoconf_editor.js \
 	app/assets/javascripts/import_tool.js \
-	app/assets/javascripts/puavomenu_editor.js
+	app/assets/javascripts/puavomenu_editor.js \
+	app/assets/stylesheets/application_bundle.css
 
 build: config-to-example
 	git rev-parse HEAD > GIT_COMMIT
@@ -57,10 +58,10 @@ js-clean:
 	rm -rf app/assets/javascripts/bundles/*
 
 js-server:
-	$(ESBUILD) $(ESBUILD_FLAGS) --watch --outdir=$(JS_OUTPUT) $(JS_INPUT)
+	$(ESBUILD) $(ESBUILD_FLAGS) --watch --outdir=$(ES_OUTPUT) $(ES_INPUT)
 
 js:
-	$(ESBUILD) $(ESBUILD_FLAGS) --minify --outdir=$(JS_OUTPUT) $(JS_INPUT)
+	$(ESBUILD) $(ESBUILD_FLAGS) --minify --outdir=$(ES_OUTPUT) $(ES_INPUT)
 
 clean-deb:
 	rm -f ../puavo-*.tar.gz ../puavo-*.deb ../puavo-*.dsc ../puavo-*.changes
@@ -129,23 +130,34 @@ config-to-system:
 	done
 
 test-rest: config-to-system
+	@printf '===== puavo-rest tests starting at %s\n' "$$(date --iso=seconds) ====="
 	$(MAKE) -C rest test
+	@printf '===== puavo-rest tests finished at %s\n' "$$(date --iso=seconds) ====="
 
 test-acceptance:
+	@printf '===== acceptance test part 1 starting at %s\n' "$$(date --iso=seconds) ====="
 	bundle exec cucumber features/registering_devices.feature
+	@printf '===== acceptance test part 2 starting at %s\n' "$$(date --iso=seconds) ====="
 	bundle exec cucumber --exclude registering_devices
+	@printf '===== acceptance tests finished at %s\n' "$$(date --iso=seconds) ====="
 
 .PHONY: test
 test: config-to-system
+	@printf '===== puavo-web rspec tests starting at %s\n' "$$(date --iso=seconds) ====="
 	bundle exec rspec --format documentation
+	@printf '===== puavo-web ACL tests starting at %s\n' "$$(date --iso=seconds) ====="
 	bundle exec rails runner acl/runner.rb
+	@printf '===== puavo-web forced email tests starting at %s\n' "$$(date --iso=seconds)"
 	AUTOMATIC_EMAIL_ADDRESSES=enabled bundle exec cucumber --color --tags @automatic_email \
 			features/enforced_email_addresses.feature --format=message \
 			--out log/cucumber-tests-automatic-email-addresses.json
+	@printf '===== puavo-web device registration test starting at %s\n' "$$(date --iso=seconds) ====="
 	bundle exec cucumber --color --tags @start_test_server \
 		--format=message --out log/cucumber-tests-TS.json
+	@printf '===== puavo-web main tests starting at %s\n' "$$(date --iso=seconds) ====="
 	bundle exec cucumber --color --tags "not @start_test_server" --tags "not @automatic_email" \
 		--format=message --out log/cucumber-tests-notTS.json
+	@printf '===== puavo-web tests finished at %s\n' "$$(date --iso=seconds) ====="
 
 seed:
 	bundle exec rails runner db/seeds.rb

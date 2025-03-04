@@ -8,6 +8,11 @@
   <div class="basicInfoDetails">
     <h1><%= h device.puavoHostname %> <span class="fqdn">(<%= h @fqdn %> <button id="copyFQDN"><%= t('link.copy') %></button>)</span></h1>
 
+    <% if device.class == Device && device.puavoDeviceType == 'laptop' && device.puavoDisplayName %>
+    <p class="infoTitle"><%= t('activeldap.attributes.device.puavoDisplayName') %></p>
+    <p class="infoValue"><%= h device.puavoDisplayName %></p>
+    <% end %>
+
     <% if controller_name == "devices" %>
     <p class="infoTitle"><%= t('activeldap.attributes.device.puavoDeviceType') %></p>
     <p class="infoValue"><%= Puavo::CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></p>

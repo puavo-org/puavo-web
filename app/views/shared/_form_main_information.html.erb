@@ -11,6 +11,13 @@
     </td>
   </tr>
 
+  <% if f.object.class == Device && f.object.puavoDeviceType == 'laptop' %>
+  <tr>
+    <th><%= f.label :puavoDisplayName %></th>
+    <td><%= f.text_field :puavoDisplayName %></td>
+  </tr>
+  <% end %>
+
   <% if is_device_change_allowed f %>
   <tr>
     <th><%= f.label :puavoDeviceType %></th>

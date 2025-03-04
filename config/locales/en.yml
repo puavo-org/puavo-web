@@ -277,6 +277,7 @@ en:
 
     devices:
       hostname: "Hostname"
+      display_name: "Human-readable name"
       type: "Type"
       tags: "Tags"
       manufacturer: "Manufacturer"
@@ -368,6 +369,39 @@ en:
       dev:
         abbr: "D"
         full: "A device-level setting"
+
+  puavoconf_editor:
+    # Can't use quotes in these, as they get written in the HTML and used as-is,
+    # and the quotes will get screwed up.
+    already_exists: "Key $(name) already exists"
+    accept_new: "Create a new key $(name) by pressing Enter or Tab"
+    new_placeholder: "Type in the name of the new key to be added..."
+    show_raw: "Show editable JSON"
+    delete_item: "Delete this key"
+    editors:
+      string:
+        choices_label: "Predefined choices (you can type in a custom value in the box above)"
+      json:
+        invalid_json: "Invalid JSON, will cause problems at runtime"
+      puavomenu_tags:
+        input_title: "The raw filter string. You can edit this directly, or use the table below if you want a mouse-driven interface."
+        action:
+          title: "What action does the filter do?"
+          show: "Show"
+          hide: "Hide"
+        namespace:
+          title: "What kind of object the filter targets? The default is tag."
+          tag: "Tag"
+          category: "Category"
+          menu: "Menu"
+          program: "Program"
+        target:
+          title: "Name (identifier) of the targeted object"
+        buttons:
+          add: "Add a new filter after this"
+          delete: "Delete this filter"
+          move_up: "Move this filter up"
+          move_down: "Move this filter down"
 
   # Quick search
   search:
@@ -478,6 +512,22 @@ en:
 
   # Common SuperTable elements
   supertable:
+    column_actions: "Actions"
+    empty_table: "Empty table"
+    empty: "(empty)"
+    selected: "(Select)"
+    see_console_for_details: "See the browser console for details."
+    network_error: "Network error"
+    network_connection_error: "Network connection error!"
+    export_failed: "Failed to generate the output file:\\n\\n%{error}\\n\\nSee the browser console for details."
+    status:
+      visible_rows: "%{visible}/%{total} visible"
+      filtered_rows: "%{count} filtered"
+      selected_rows: "%{count} selected"
+      mass_progress: "%{count}/%{total} (<span class=\\\"success\\\">%{success} successfull</span>, <span class=\\\"fail\\\">%{fail} failed</span>)"
+      column_stats: "Selected %{selected}/%{total} columns"
+      mass_row_status: "%{total} total, %{match} matched, %{unmatched} didn't match"
+      pagination: "Page: %{current}/%{total}"
     export:
       top_button: "Export"
       title: "Export the table contents to a file"
@@ -515,6 +565,69 @@ en:
       top_reverse: "Reverse"
       advanced_checkbox: "Advanced filtering"
       presets_button: "Filter presets"
+      expression_title: "Filter string"
+      unsaved: "unsaved"
+      save_json_confirm: "Are you sure?"
+      error: "Error"
+      warning: "Warning"
+      no_messages: "No problems were found in the filter string"
+      traditional_filter_is_empty: "The traditional filter is empty."
+      row: "Row"
+      column: "Column"
+      message: "Message"
+      preview_prefix: "Filter"
+      new_traditional_filter: "New..."
+      messages:
+        column_not_visible: "Column is not visible. Be careful, it can show or hide rows it should not."
+        expected_column_name: "Expected a column name here (unknown column name?)"
+        expected_operator: "Expected a comparison operator here"
+        expected_value_rpar: "Expected a comparison value or ')' here"
+        incompatible_operator: "This operator cannot be used with this column type"
+        invalid_operator: "Invalid comparison operator"
+        invalid_regexp: "Invalid regexp string"
+        invalid_sign: "Invalid sign"
+        invalid_storage_unit: "Invalid storage unit specifier"
+        invalid_time_unit: "Invalid time unit"
+        not_a_number: "Invalid number"
+        missing_time_unit: "Missing time unit, assuming seconds (probably not what you meant)"
+        syntax_error: "Syntax error"
+        unbalanced_nesting: "Unbalanced parenthesis"
+        unexpected_column_name: "Did not expect a column name here"
+        unexpected_end: "Unexpected end of input"
+        unexpected_lpar: "Unexpected ')'"
+        unexpected_negation: "Unexpected '!'"
+        unexpected_rpar: "Unexpected ')'"
+        unknown_column: "Unknown column"
+        unknown_error: "Unknown error :-("
+        unknown_operator: "Unknown operator"
+        unparseable_time: "This string cannot be interpreted as an absolute nor relative time"
+        unterminated_string: "Unterminated string"
+      pretty:
+        empty: "(empty)"
+        or: "or"
+        nor: "nor"
+        interval: "between"
+        not_interval: "not between"
+      ed:
+        closed: "Specify an interval the value must be inside of. The start and end values are included."
+        open: "Specify an interval the value must not be inside of. The start and end values are not included."
+        invalid_interval: "Specify valid minimum and maximum values."
+        single: "This operator accepts only one value."
+        multiple: "You can specify multiple values."
+        one_hit_is_enough: "A single match is enough."
+        no_hits_allowed: "None of the values must match."
+        regexp: "All comparisons are done using regular expressions that ignore character case. Remember that if you're searching for characters that have special meaning in regexps, you must escape (\\\\) them."
+        no_values: "You did not specify any comparison values."
+        bool:
+          t: "Yes"
+          f: "No"
+        numeric:
+          nan: "is not a number."
+          negative_storage: "Negative storage sizes are not permitted."
+        time:
+          invalid: "is neither absolute nor relative time."
+          help_link: "Show instructions on how dates and times are specified"
+          help: "There are two formats available: absolute and relative.\\n\\nAbsolute times are formatted as YYYY-MM-DD HH:MM:SS. The more parts you specify, the more accurate it becomes. Omitted day and month are assumed to be 1, and omitted hours, minutes and seconds are 0. \\\"2025\\\" means \\\"2025-01-01 00:00:00\\\", \\\"2025-09\\\" means \\\"2025-09-01 00:00:00\\\", \\\"2025-09-22 13\\\" means \\\"2025-09-22 13:00:00\\\" and so on. All times are in 24-hour format. The year must be between 2000 and 2050.\\n\\nRelative time specifies the time relatively, in seconds, to the moment when the table is updated. Negative numbers point to the past, positive to the future. After the number comes the unit, they are: \\\"s\\\" (second), \\\"h\\\" (hour), \\\"d\\\" (day), \\\"w\\\" (week), \\\"m\\\" (30-day month), \\\"y\\\" (365-day year). For example, \\\"-2h\\\" means \\\"exactly two hours ago\\\", \\\"-1d\\\" means \\\"exactly 1 day (86400 seconds) ago\\\", and \\\"-8m\\\" means \\\"exactly 8 months ago\\\". In practice, you'll be using negative numbers almost always."
       traditional:
         delete_all: "Delete all filters"
         show_json: "Show the JSON editor"
@@ -612,7 +725,9 @@ en:
       save_failed: User cannot be saved!
       save_failed_organsation_owner_removal: "Save failed: user could not be removed from the organisation owners before the admin role was removed. Try removing the ownership manually."
       save_failed_school_admin_removal: "Save failed: user could not be removed from the school's administrators before the admin role was removed. Try removing the user from the administrators manually."
+      save_failed_unknown_duplicate_attribute: "Save failed: unknown duplicate attribute value (ACLs prevent determining which attribute it is). This username or email address is probably already in use in some other school that you don't have access to."
       create_failed: Failed to create the user!
+      create_failed_unknown_duplicate_attribute: "Failed to create the user: unknown duplicate attribute value (ACLs prevent determining which attribute it is). This user probably exists in some other school that you cannot access; try another username or email address."
       marked_for_deletion: "User has been marked for deletion"
       already_marked_for_deletion: "User already is marked for deletion"
       unmarked_for_deletion: "User is no longer marked for deletion"
@@ -696,7 +811,7 @@ en:
     printer:
       updated: Printer was successfully updated
     devices:
-      school_changed: Device school has been changed!
+      school_changed: "Device moved to another school"
       no_other_schools: "This organisation has no other schools where you could move this device to"
 
     # Message codes received from third-party integration subsystems
@@ -990,6 +1105,7 @@ en:
         clear_column:
           title: "Clear column contents..."
           column_title: "Column:"
+          warning: "CAUTION: This is a rarely used tool. Do not use this unless you fully understand what this does and what this is used for."
         username_list:
           title: "Create username list"
           description: "List name or a short explanation (optional)"
@@ -1051,15 +1167,22 @@ en:
         create_users: "can create users"
         delete_users: "can delete users"
         mass_delete_users: "can mass delete users"
+        users_mass_clear_column_contents: "can mass clear specific user information"
         import_users: "user mass import tool"
         create_groups: "can create groups"
         delete_groups: "can delete groups"
         mass_delete_groups: "can mass delete groups"
+        group_change_school: "can move groups to another school"
+        group_mass_change_type: "can mass change group type"
         create_devices: "can add and register new devices"
         delete_devices: "can delete devices"
         mass_delete_devices: "can mass delete multiple devices"
         reset_devices: "can reset devices"
         mass_reset_devices: "can mass reset devices"
+        device_change_school: "can move devices to another school"
+        device_mass_change_school: "can mass move devices to another school"
+        device_mass_tag_editor: "can mass edit device tags"
+        device_mass_change_purchase_information: "can mass edit device purchase information"
     new:
       title: New user
     edit:
@@ -1104,6 +1227,10 @@ en:
       user_is_owner: "This user is an organisation owner, so these permissions are not used. Owners always have full access to everything."
       select_all: "Select all"
       deselect_all: "Remove all"
+      title_schools: "Schools"
+      title_users: "Users"
+      title_groups: "Groups"
+      title_devices: "Devices"
       permissions:
         school_edit: "Can edit school information (the school dashboard is always accessible)"
         school_edit_wlan: "Can edit school wireless networks"
@@ -1111,14 +1238,21 @@ en:
         delete_users: "Can delete users"
         mass_delete_users: "Can mass delete users (normal user deletion must also be granted, will not work otherwise)"
         import_users: "Can use the users mass import/update tool"
+        users_mass_clear_column_contents: "Can mass clear specific user information (email address, phone number, external ID, personnel number, notes)"
         create_groups: "Can create new groups"
         delete_groups: "Can delete groups"
         mass_delete_groups: "Can mass delete groups (normal group deletion must also be granted)"
+        group_change_school: "Can move groups to another school (requires the user to be an admin in at least two schools)"
+        group_mass_change_type: "Can mass change group types"
         create_devices: "Can add new devices (this also grants laptop registration)"
         delete_devices: "Can delete devices"
         mass_delete_devices: "Can mass delete multiple devices (normal device deletion must also be granted)"
         reset_devices: "Can set/clear device reset mode"
         mass_reset_devices: "Can mass set/clear device reset modes (normal reset mode must also be granted)"
+        device_change_school: "Can move devices to another school (requires the user to be an admin in at least two schools)"
+        device_mass_change_school: "Can mass move devices to another school (normal device school changing must also be granted)"
+        device_mass_tag_editor: "Can mass edit device tags"
+        device_mass_change_purchase_information: "Can mass edit device purchase information"
 
   # New new user mass import/update tool
   new_import:
@@ -1152,6 +1286,14 @@ en:
     semicolon: "Semicolon (;)"
     tab: "Tab (\\t)"
     preview: "Preview"
+
+    parser:
+      title: "Reading settings"
+      infer: "infer column types from first row identifiers"
+      trim: "trim leading and trailing whitespace"
+      commas: "separated by commas"
+      semicolons: "separated by semicolons"
+      tabs: "separated by tabs"
 
     # The import tab
     import_tab: "2. Import data"
@@ -1245,6 +1387,8 @@ en:
       fill: "Fill"
       reload_groups: "Reload groups"
       overwrite_existing: "Overwrite existing values"
+      reload_groups: "Reload groups"
+      reloading: "Reloading..."
 
     tools:
       download_template:
@@ -1303,12 +1447,104 @@ en:
         list_title: "List name or short description (optional)"
         create_list: "Create list"
 
+    status:
+      no_data_to_display: "(No data to display)"
+      fetching_current_users: "Fetching a list of current users from the server..."
+      comparing_data: "Comparing data..."
+      synchronising: "Doing the operation..."
+      complete: "Complete"
+      aborted: "The operation was aborted"
+      stopping: "Stopping the operation, please wait until the current batch has been processed..."
+      stopping_impatient: "Calm down, the operation will stop in any second now!"
+      stopped: "The operation was stopped"
+      success: "success"
+      partial_success: "partial success"
+      failed: "failed"
+      total_rows: "rows total"
+      selected_rows: "rows selected"
+      importing_rows: "Importing rows"
+      table_messages: "Messages"
+
+    messages:
+      already_in_school: "Already in school %{schools}"
+
     problems:
       errors_title: "These problems have to be fixed before the import process can begin:"
       warnings_title: "These don't prevent the import process, but you should take a look at them and ensure they don't cause problems later on:"
 
     errors:
       unknown_group: "Unknown/invalid group"
+
+    alerts:
+      already_imported: "You already have imported some of the table data. Are you sure you want to overwrite it?"
+      no_file: "Select a file to be imported, or switch to manual input."
+      no_selected_rows: "There are no selected rows."
+      no_matching_rows: "The table has no rows matching your selection."
+      delete_everything: "Are you sure you want to remove ALL rows? You have to read the source data again if you want to continue after this."
+      delete_selected_rows: "Are you sure you want to remove %{count} rows?"
+      cant_remove_rows_after_stopping: "Unfortunately table rows cannot be deleted if you have stopped the import. You have to finish the operation or start from the beginning."
+      delete_column: "Are you sure you want to delete this column?"
+      resume_previous: "The previous import was stopped. Do you want to resume it?"
+      need_one_first_name: "You need exactly one first name column for this"
+      need_one_last_name: "You need exactly one last name column for this"
+      need_one_raw_group: "You need exactly one raw group column for this"
+      no_groups: "There are no groups. Try reloading the groups list first."
+      could_not_generate_all_usernames: "Found one or more rows that had empty or missing first/last name. No username was generated for these rows."
+      unconvertible_characters: "Found %{count} names that did not have any letters that could be used to generate a username with."
+      first_five: "Here are the first five names:"
+      unconvertible_name: "Row %{row}: first name \\\"%{first}\\\", last name \\\"%{last}\\\""
+      could_not_parse_all_groups: "Found one or more rows that had empty or missing raw group data. No groups were parsed for these rows."
+      same_password: "Giving the same password to multiple users is a severe security hazard. Are you sure you want to do this?"
+      too_short_password: "The password must be at least %{length} characters long"
+      check_something: "You need to select at least something for the new passwords"
+      no_data_to_import: "The table has no rows suitable for the selected update method."
+      fix_errors_first: "You need to fix the errors first."
+      cant_parse_server_response: "The reply sent by the server cannot be interpreted. Details have been logged in the console.\\n\\nTry again and if the problem persists, note the message in the console and contact the technical support of Opinsys."
+      data_retrieval_failed_unknown: "Data retrieval from the server failed for some unknown reason."
+      data_retrieval_failed_known: "Data retrieval from the server failed:"
+      too_short_uid: "The username must be at least 3 characters long."
+      invalid_uid: "The username is not valid."
+      no_data_for_the_pdf: "The table does not have a column for usernames or passwords."
+      still_no_data_for_the_pdf: "The table does not have any users whose password could be listed in a PDF."
+      empty_rows_skipped: "The table has rows with missing username and/or password. These rows will be excluded from the generated PDF. \\n\\nDo you want to continue?"
+      no_failed_rows: "There are no failed rows"
+      no_duplicate_uids: "There are no duplicate usernames."
+      passwords_out_of_sync: "The table contains passwords that have not been imported yet. Thus the generated PDF won't contain passwords that are actually in use. You should import the data first.\\n\\nAre you sure you want to continue?"
+      list_created: "List created"
+      list_missing_users: "List not created. The following users do not exist on the server:"
+      list_failed: "List not created. Unknown error:"
+      list_not_found: "The list could not be found on the server. Maybe it has been downloaded or deleted? Try reloading the page."
+      list_missing_users: "The list was not created. The table contains %{count} users who could not be found. They might have been deleted, or they could be in a school you do not have access to:"
+      list_loading_failed: "List loading failed:"
+      download_template_nothing_selected: "Please select at least one column."
+      server_sent_invalid_filename: "The server sent an invalid filename for the generated PDF. You will have to rename the file yourself."
+      pdf_generation_failed: "PDF generation failed:\\n\\n%{message}\\n\\nThe server log might contain more information."
+
+    errors:
+      multiple_columns: "Multiple \\\"%{title}\\\" columns"
+      required_column_missing: "A required column \\\"%{title}\\\" is missing"
+      need_uid_column_in_update_mode: "The username column is required in the update only -mode."
+      need_something_to_update_in_update_mode: "In the update only -mode, you need at least one column (in addition to the username column) that contains data you want to update"
+      empty_first: "%{count} row(s) with an empty first name"
+      empty_last: "%{count} row(s) with an empty last name"
+      empty_uid: "%{count} row(s) with an empty username"
+      duplicate_uid: "%{count} row(s) with duplicate usernames (indicated with red borders). First %{first_n} are: %{values}."
+      invalid_uid: "%{count} row(s) with invalid username (indicated with red borders). First %{first_n} are: %{values}."
+      short_uid: "%{count} row(s) with usernames that are less than 3 characters long (indicated with red borders). First %{first_n} are: %{values}."
+      missing_role: "%{count} row(s) with missing or invalid role (indicated with red borders)"
+      no_role_mass_change: "The roles of existing users cannot be mass changed, so the Role column is useless and it will be always ignored"
+      duplicate_eid: "%{count} row(s) with a duplicate external ID (indicated with red borders). First %{first_n} are: %{values}."
+      eid_already_in_use: "%{count} row(s) with an external ID that is already used by someone else (indicated with red borders). First %{first_n} are: %{values}."
+      invalid_email: "%{count} row(s) with an invalid email address (indicated with red borders). First %{first_n} are: %{values}."
+      duplicate_email: "%{count} row(s) with a duplicate email address (indicated with red borders). First %{first_n} are: %{values}."
+      email_already_in_use: "%{count} row(s) with an email address that is already used by someone else (indicated with red borders). First %{first_n} are: %{values}."
+      automatic_emails: "Automatic email address generation is enabled in this school, so the email address column must be removed"
+      invalid_phone: "%{count} row(s) with an invalid phone number (indicated with red borders). First %{first_n} are: %{values}."
+      duplicate_phone: "%{count} rows(s) with a duplicate telephone number (indicated with red borders). First %{first_n} are: %{values}."
+      phone_already_in_use: "%{count} rows(s) with a telephone number that is already used by someone else (indicated with red borders). First %{first_n} are: %{values}."
+      common_password: "%{count} row(s) with a common, poor-quality password"
+      no_group_column: "No group column (new users are usually added to a teaching group when their accounts are created)"
+      no_password_column: "No password column (here it's easy to set passwords for new users)"
 
     pdf:
       no_group: "(No group at all)"
@@ -1322,6 +1558,12 @@ en:
       organisation: "Organisation-level Puavomenu"
       school: "School-level Puavomenu for school %{name}"
       device: "Device-level Puavomenu for device \"%{name}\""
+
+    errors:
+      # Must double escape these to prevent actual newlines in JavaScript strings
+      save_confirm: "The menu data has errors or other problems. They should be fixed before you continue, because saving can remove invalid entries. Are you sure you want to continue?"
+      save_failed: "Saving failed.\\n\\nPlease see the extra details in the console, and then try again. If the problem persists, please contact support."
+      save_failed_message: "Saving failed.\\n\\n\\t%{message}\\n\\nPlease see the extra details in the console, and then try again. If the problem persists, please contact support."
 
     tools:
       find_unused: "Find unused menus and programs"
@@ -1427,10 +1669,14 @@ en:
 
       unused:
         help: "These menus and programs are not referenced anywhere. You can permanently remove them by checking the ones that aren't needed and by clicking the \"Remove selected\" button."
+        no_unused_entries: "All menus and programs are in use."
         select_all: "Select all"
         remove_selected: "Remove selected"
         target: "Target"
         type: "Type"
+        unused_title: "not used"
+        type_menu: "Program"
+        type_program: "Menu"
 
       rename:
         category: "Enter a new ID for this category"
@@ -1542,8 +1788,6 @@ en:
         change_school:
           title: "Change school..."
           school_title: "New school:"
-          no_other_schools: "This organisation has no other schools where you could move devices to."
-          no_other_schools_alert: "There are no other schools. This operation cannot continue."
         puavoconf:
           json_warning: "This tool can add, remove and change <strong>single</strong> PuavoConf values. If you want to replace them all at once and you already have them in JSON format, select <em>\"Set database field value...\"</em> from the Operation list, then select <em>\"PuavoConf (replace all)\"</em>. That tool will let you overwrite all PuavoConf values at once.<br><br>"
           title: "PuavoConf editor..."
@@ -1646,7 +1890,7 @@ en:
       change_school: Change school...
       copy_basic_info: "Copy basic information to clipboard"
     select_school:
-      title: Device transfer (%{name})
+      title: "Move device \"%{name}\" to another school"
       select_new_school: Select the new school
       submit: Move device
 
@@ -2091,6 +2335,7 @@ en:
       device:
         dn: DN
         puavoHostname: Hostname
+        puavoDisplayName: "Human-readable name"
         puavoDeviceType: Device type
         macAddress: MAC address(es)
         ipHostNumber: IP address

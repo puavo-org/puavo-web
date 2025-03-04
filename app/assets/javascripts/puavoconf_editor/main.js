@@ -2,61 +2,16 @@
 
 // Interactive PuavoConf editor v2.1
 
-import { create } from "../common/dom.js";
+import { create, getTemplate } from "../common/dom.js";
 
-// Translations
-const PC_STRINGS = {
-    "en": {
-        "new_placeholder": "Type in the name of the new key to be added...",
-        "already_exists": "Key \"$(key)\" already exists",
-        "accept_existing": "Create this key by pressing Enter or Tab",
-        "accept_new": "Create a new key named \"$(key)\" by pressing Enter or Tab",
-        "delete": "Delete this key",
-        "show_raw": "Show editable JSON",
-        "action_show": "Show",
-        "action_hide": "Hide",
-        "target_tag": "Tag",
-        "target_category": "Category",
-        "target_menu": "Menu",
-        "target_program": "Program",
-    },
-
-    "fi": {
-        "new_placeholder": "Kirjoita uuden lisättävän avaimen nimi...",
-        "already_exists": "Avain \"$(key)\" on jo käytössä",
-        "accept_existing": "Lisää tämä avain painamalla Enter tai Tab",
-        "accept_new": "Luo uusi avain \"$(key)\" painamalla Enter tai Tab",
-        "delete": "Poista tämä avain",
-        "show_raw": "Näytä muokattava JSON",
-        "action_show": "Näytä",
-        "action_hide": "Piilota",
-        "target_tag": "Tagi",
-        "target_category": "Kategoria",
-        "target_menu": "Valikko",
-        "target_program": "Ohjelma",
-    }
-};
-
-function translate(language, id, params={})
-{
-    if (!(language in PC_STRINGS))
-        return `(Unknown string "${language}.${id}")`;
-
-    const strings = PC_STRINGS[language];
-
-    if (!(id in strings))
-        return `(Unknown string "${language}.${id}")`;
-
-    let s = strings[id].slice();
-
-    for (const p in params)
-        s = s.replace(`$(${p})`, params[p]);
-
-    return s;
-}
+import { ConfigEntry } from "./config_entry.js";
+import { ConfigBoolean } from "./config_boolean.js";
+import { ConfigString } from "./config_string.js";
+import { ConfigJSON } from "./config_json.js";
+import { ConfigPuavomenuTags } from "./config_puavomenu.js";
 
 // Generates random strings for radio button IDs
-function randomID(length=10)
+export function randomID(length=10)
 {
     const CHARACTERS = "abcdefghijklmnopqrstuvwxyz0123456789";
     const CHARS_LEN = CHARACTERS.length;
@@ -72,561 +27,49 @@ function randomID(length=10)
     return output;
 }
 
-// Base class for all entries
-class ConfigEntry {
-    constructor(parent)
-    {
-        this.parent = parent;
-        this.language = parent.language;
-        this.key = null;
-        this.value = null;
-        this.details = null;        // optional "details" element below the editor
-        this.id = randomID();
-    }
-
-    createEditor(container)
-    {
-        throw new Error("Your derived class did not override ConfigEmtry::createEditor()!");
-    }
-
-    createDetails(params)
-    {
-        this.details = create("div", { cls: "details" });
-    }
-
-    valueChanged(fullRebuild=false)
-    {
-        // notify the editor
-        if (this.parent && this.key !== null)
-            this.parent.entryHasChanged(this.key, this.value, fullRebuild);
-    }
-
-    getValue()
-    {
-        // JSON allows NULLs, but puavo-conf does not like them
-        if (this.value === null || this.value === undefined)
-            return "";
-
-        return this.value;
-    }
-};
-
-class ConfigString extends ConfigEntry {
-    constructor(parent, key, value)
-    {
-        super(parent);
-
-        this.key = key;
-        this.value = value;
-    }
-
-    createEditor(container)
-    {
-        let input = create("input", { inputType: "text", inputValue: this.value });
-
-        input.addEventListener("input", event => this.onChange(event));
-        container.appendChild(input);
-    }
-
-    onChange(event)
-    {
-        this.value = event.target.value;
-        this.valueChanged();
-    }
-};
-
-class ConfigPuavomenuTags extends ConfigEntry {
-    constructor(parent, key, value)
-    {
-        super(parent);
-
-        this.key = key;
-        this.value = value;
-        this.container = null;
-
-        // Created by calling load()
-        this.tags = [];
-    }
-
-    createEditor(container)
-    {
-        let input = create("input", { inputType: "text", inputValue: this.value });
-
-        input.addEventListener("input", event => this.onChange(event));
-        container.appendChild(input);
-
-        this.container = container;
-
-        this.load();
-        this.createDetails();
-        this.explain();
-        container.appendChild(this.details);
-    }
-
-    onChange(event)
-    {
-        this.value = event.target.value;
-        this.load();
-        this.explain();
-        this.valueChanged();
-    }
-
-    load()
-    {
-        const TAG_SPLITTER = /,|;|\ /,
-              TAG_MATCHER = /^(?<action>(\+|\-))?((?<namespace>c|cat|category|m|menu|p|prog|program|t|tag)\:)?(?<target>[a-zA-Z0-9\-_\.]+)$/;
-
-        this.tags = [];
-
-        for (const tag of (this.value === null ? "" : this.value.trim()).split(TAG_SPLITTER)) {
-            if (tag.trim().length == 0)
-                continue;
-
-            const match = tag.match(TAG_MATCHER);
-
-            if (!match) {
-                // Invalid tag
-                this.tags.push({
-                    valid: false,
-                    action: null,
-                    namespace: null,
-                    target: null
-                });
-
-                continue;
-            }
-
-            const action = (match.groups.action && match.groups.action == "-") ? "hide" : "show";
-            let namespace = undefined;
-
-            switch (match.groups.namespace) {
-                case "c":
-                case "cat":
-                case "category":
-                    namespace = "category";
-                    break;
-
-                case "m":
-                case "menu":
-                    namespace = "menu";
-                    break;
-
-                case "p":
-                case "prog":
-                case "program":
-                    namespace = "program";
-                    break;
-
-                case undefined:     // unmatched regexp group ends up here too
-                default:
-                    namespace = "tag";
-                    break;
-            }
-
-            // Valid tag
-            this.tags.push({
-                valid: true,
-                action: action,
-                namespace: namespace,
-                target: match.groups.target
-            });
-        }
-    }
-
-    save(fullRebuild=false)
-    {
-        let tags = [];
-
-        for (const t of this.tags) {
-            if (!t.valid || !t.target)
-                continue;
-
-            let tag = [];
-
-            if (t.action == "hide")
-                tag.push("-");
-
-            if (t.namespace == "tag") {
-                // Pretty-print plain tag filters ("tag" is the default type)
-                tag.push(t.target);
-            } else {
-                switch (t.namespace) {
-                    case "tag":
-                    default:
-                        tag.push("t:");
-                        break;
-
-                    case "category":
-                        tag.push("c:");
-                        break;
-
-                    case "menu":
-                        tag.push("m:");
-                        break;
-
-                    case "program":
-                        tag.push("p:");
-                        break;
-                }
-
-                tag.push(t.target);
-            }
-
-            tags.push(tag.join(""));
-        }
-
-        this.value = tags.join(" ");
-        this.container.querySelector("input").value = this.value;
-        this.valueChanged(fullRebuild);
-    }
-
-    explain()
-    {
-        if (this.value === null || this.value.trim().length == 0 || this.tags.length == 0) {
-            // Provide a new tag button
-            this.details.innerHTML = `<button type="button" class="margin-top-10px margin-left-10px">+</button>`;
-            this.details.querySelector("button").addEventListener("click", () => {
-                this.tags.splice(0, 0, {
-                    valid: true,
-                    action: "show",
-                    namespace: "tag",
-                    target: "default"
-                });
-
-                this.save();
-                this.explain();
-            });
-
-            return;
-        }
-
-        let html = `<table class="width-50p margin-top-10px margin-left-10px"><tbody>`;
-
-        for (let i = 0; i < this.tags.length; i++)
-            html += this._createRow(i);
-
-        html += "</tbody></table>";
-        this.details.innerHTML = html;
-
-        const rows = this.details.querySelectorAll("table tbody tr");
-
-        for (let i = 0; i < this.tags.length; i++) {
-            const tag = this.tags[i],
-                  row = rows[i];
-
-            const action = row.querySelector("#action"),
-                  namespace = row.querySelector("#namespace"),
-                  target = row.querySelector("#target");
-
-            action.value = tag.action;
-            namespace.value = tag.namespace;
-
-            if (tag.target)
-                target.value = tag.target;
-
-            if (!tag.valid)
-                row.classList.add("invalid");
-
-            action.addEventListener("change", (e) => this.onChangeAction(e));
-            namespace.addEventListener("change", (e) => this.onChangeNamespace(e));
-            target.addEventListener("input", (e) => this.onChangeTarget(e));
-
-            row.querySelector("button#add").addEventListener("click", (e) => this.onAddTag(e));
-            row.querySelector("button#delete").addEventListener("click", (e) => this.onDeleteTag(e));
-
-            row.querySelector("button#up").disabled = (this.tags.length > 0 && i == 0);
-            row.querySelector("button#up").addEventListener("click", (e) => this.onMoveTagUp(e));
-            row.querySelector("button#down").disabled = (this.tags.length > 0 && i == this.tags.length - 1);
-            row.querySelector("button#down").addEventListener("click", (e) => this.onMoveTagDown(e));
-        }
-    }
-
-    revalidateTag(index)
-    {
-        const rows = this.details.querySelectorAll("table tbody tr");
-
-        this.tags[index].valid = this._isValidTag(this.tags[index]);
-
-        if (this.tags[index].valid)
-            rows[index].classList.remove("invalid");
-        else rows[index].classList.add("invalid");
-    }
-
-    onChangeAction(e)
-    {
-        const index = this._getIndex(e.target);
-
-        this.tags[index].action = e.target.value;
-        this.revalidateTag(index);
-        this.save();
-    }
-
-    onChangeNamespace(e)
-    {
-        const index = this._getIndex(e.target);
-
-        this.tags[index].namespace = e.target.value;
-        this.revalidateTag(index);
-        this.save();
-    }
-
-    onChangeTarget(e)
-    {
-        const index = this._getIndex(e.target);
-
-        this.tags[index].target = e.target.value;
-        this.revalidateTag(index);
-        this.save();
-    }
-
-    onAddTag(e)
-    {
-        this.tags.splice(this._getIndex(e.target) + 1, 0, {
-            valid: true,
-            action: "show",
-            namespace: "tag",
-            target: "default"
-        });
-
-        this.save(true);
-        this.explain();
-    }
-
-    onDeleteTag(e)
-    {
-        this.tags.splice(this._getIndex(e.target), 1);
-        this.save(true);
-        this.explain();
-    }
-
-    onMoveTagUp(e)
-    {
-        const index = this._getIndex(e.target);
-
-        if (index == 0 || this.tags.length == 1)
-            return;
-
-        const t = this.tags[index - 1];
-
-        this.tags[index - 1] = this.tags[index];
-        this.tags[index] = t;
-
-        this.save();
-        this.explain();
-    }
-
-    onMoveTagDown(e)
-    {
-        const index = this._getIndex(e.target);
-
-        if (index == this.tags.length - 1 || this.tags.length == 1)
-            return;
-
-        const t = this.tags[index + 1];
-
-        this.tags[index + 1] = this.tags[index];
-        this.tags[index] = t;
-
-        this.save();
-        this.explain();
-    }
-
-    _createRow(index)
-    {
-        let html =
-`<tr data-index="${index}">
-    <td>
-        <select id="action">
-            <option value="show">${translate(this.language, "action_show")}</option>
-            <option value="hide">${translate(this.language, "action_hide")}</option>
-        </select>
-    </td>
-
-    <td>
-        <select id="namespace">
-            <option value="tag">${translate(this.language, "target_tag")}</option>
-            <option value="category">${translate(this.language, "target_category")}</option>
-            <option value="menu">${translate(this.language, "target_menu")}</option>
-            <option value="program">${translate(this.language, "target_program")}</option>
-        </select>
-    </td>
-
-    <td>
-        <input id="target" type="text" size="20" maxlength="100" pattern="[a-zA-Z0-9\-_\.]+">
-    </td>
-
-    <td class="width-0 nowrap">
-        <button id="add" type="button">+</button>
-        <button id="delete" type="button">-</button>
-        <button id="up" type="button">↑</button>
-        <button id="down" type="button">↓</button>
-    </td>
-</tr>`;
-
-        return html;
-    }
-
-    _getIndex(node)
-    {
-        return parseInt(node.parentNode.parentNode.dataset.index, 10);
-    }
-
-    _isValidTag(tag)
-    {
-        if (tag.action === null)
-            return false;
-
-        if (tag.namespace === null)
-            return false;
-
-        if (tag.target === null || tag.target.trim().length == 0)
-            return false;
-
-        // Highlight tags whose target contains unacceptable characters
-        if (tag.target.match(/[^a-zA-Z0-9\-_\.]/))
-            return false;
-
-        return true;
-    }
-};
-
-class ConfigJSON extends ConfigEntry {
-    constructor(parent, key, value)
-    {
-        super(parent);
-
-        this.key = key;
-        this.value = value;
-        this.input = null;
-
-        // a JSON puavoconf value can be empty, even if the JSON spec
-        // does not allow that
-        if (this.value === null || this.value === undefined)
-            this.value = "";
-    }
-
-    createEditor(container)
-    {
-        let input = create("textarea", { cls: "json", inputValue: this.value });
-
-        input.rows = 2;
-
-        this.input = input;
-        this.validate();
-
-        input.addEventListener("input", event => this.onChange(event));
-        container.appendChild(input);
-    }
-
-    onChange(event)
-    {
-        this.value = event.target.value;
-        this.validate();
-        this.valueChanged();
-    }
-
-    validate()
-    {
-        // Highlight invalid JSON
-        try {
-            JSON.parse(this.value);
-            this.input.classList.remove("invalid");
-        } catch (e) {
-            this.input.classList.add("invalid");
-        }
-    }
-};
-
-class ConfigBoolean extends ConfigEntry {
-    constructor(parent, key, value)
-    {
-        super(parent);
-
-        this.key = key;
-
-        // Convert initial "null" values to false, so when a new boolean entry is created,
-        // it defaults to false
-        if (value === true || value === "true")
-            this.value = true;
-        else this.value = false;
-    }
-
-    createEditor(container)
-    {
-        const tID = `true-${this.id}`,
-              fID = `false-${this.id}`;
-
-        container.innerHTML =
-            `<input type="radio" id="${tID}" name="${this.id}"><label for="${tID}">True</label>` +
-            `<input type="radio" id="${fID}" name="${this.id}"><label for="${fID}">False</label>`;
-
-        container.querySelector(`#${tID}`).checked = (this.value == true);
-        container.querySelector(`#${tID}`).addEventListener("click", () => {
-            this.value = true;
-            this.valueChanged();
-        });
-
-        container.querySelector(`#${fID}`).checked = (this.value == false);
-        container.querySelector(`#${fID}`).addEventListener("click", () => {
-            this.value = false;
-            this.valueChanged();
-        });
-    }
-
-    getValue()
-    {
-        if (this.value === null || this.value === undefined)
-            return "false";
-
-        return this.value ? "true" : "false";
-    }
-};
+function initError(outer, message)
+{
+    outer.prepend(create("p", { cls: "genericError", text: msg }));
+}
 
 export class PuavoConfEditor {
     constructor(params)
     {
+        // Verify the required parameters
+        if (!params.outer) {
+            console.warn("PuavoConfEditor::ctor(): params.outer is NULL or invalid, editor not created");
+            return;
+        }
+
         if (!params.prefix) {
-            console.warn("PuavoConfEditor::ctor(): params.prefix does not exist, editor not created");
+            initError(params.outer, "PuavoConfEditor::ctor(): no editor prefix specified, editor not created");
+            return;
+        }
+
+        if (!params.storage) {
+            initError(params.outer, "PuavoConfEditor::ctor(): missing storage textarea element, editor not created");
             return;
         }
 
         this.prefix = params.prefix;
-
-        if (!params.container) {
-            console.warn("PuavoConfEditor::ctor(): params.container is missing/invalid, editor not created");
-            return;
-        }
+        this.storage = params.storage;
+        this.language = params.language || "en";
 
         if (params.definitions)
             this.definitions = params.definitions;
         else this.definitions = {};
 
-        this.language = params.language || "en";
-
-        this.container = params.container;
-
-        this.storage = this.container.getElementsByTagName("textarea")[0];
-
-        if (!this.storage) {
-            this.container.innerHTML = "PuavoConfEditor::ctor(): missing storage textarea element, editor not created";
-            return;
-        }
-
         // Create the user interface
-        this.container.innerHTML =
-`<div class="pcEditorWrapper">
-<table class="pcTable"></table>
-<input class="new" type="text" maxlength="100" placeholder="${translate(this.language, "new_placeholder")}">
-<div class="raw">
-    <input type="checkbox" id="${this.prefix}-showRaw">
-    <label for="${this.prefix}-showRaw">${translate(this.language, "show_raw")}</label>
-</div>
-</div>`;
+        const template = getTemplate("puavoconfEditor");
 
-        // Move the storage textarea inside the DIV
+        this.container = template.querySelector("div.puavoConfEditor");
+        params.outer.prepend(template);
+
         this.storage.style.display = "none";
-        this.storage.addEventListener("input", () => this.rawEdited());
-        this.container.querySelector("div.pcEditorWrapper").appendChild(this.storage);
+
+        this.container.querySelector(`div.raw input`).addEventListener("click", e => {
+            this.storage.style.display = e.target.checked ? "initial" : "none";
+        });
 
         // UI handles
         this.table = this.container.querySelector("table.pcTable");
@@ -643,10 +86,6 @@ export class PuavoConfEditor {
             // be done reliably in JavaScript... 250 milliseconds is long enough
             // for a mouse click, but it's dangerously short.
             setTimeout(() => { this.hideSuggestions() }, 250);
-        });
-
-        this.container.querySelector(`div.raw input`).addEventListener("click", e => {
-            this.storage.style.display = e.target.checked ? "initial" : "none";
         });
 
         // Suggestions list
@@ -739,15 +178,17 @@ export class PuavoConfEditor {
     createEntry(key, value)
     {
         let entry = null,
-            type = null;
+            type = null,
+            definition = null;
 
         // Find the type and a possible default value for this entry
         if (key in this.definitions) {
-            type = this.definitions[key].typehint;
+            definition = this.definitions[key];
+            type = definition.typehint;
 
             if (value === null || value === undefined) {
-                if ("default" in this.definitions[key])
-                    value = this.definitions[key]["default"]
+                if ("default" in definition)
+                    value = definition["default"]
             }
         }
 
@@ -759,8 +200,11 @@ export class PuavoConfEditor {
         // are just plain strings.
         switch (type) {
             case "string":
-            default:
-                return new ConfigString(this, key, value);
+            default: {
+                const choices = (definition && "choices" in definition) ? definition.choices : null;
+
+                return new ConfigString(this, key, value, choices);
+            }
 
             case "json":
                 return new ConfigJSON(this, key, value);
@@ -772,12 +216,12 @@ export class PuavoConfEditor {
 
     buildTable()
     {
-        let tbody = document.createElement("tbody");
+        const tbody = document.createElement("tbody");
 
-        for (let entry of this.entries)
+        for (const entry of this.entries)
             tbody.appendChild(this._createEntryRow(entry));
 
-        this.table.innerHTML = "";
+        this.table.innerText = "";
         this.table.appendChild(tbody);
     }
 
@@ -842,32 +286,20 @@ export class PuavoConfEditor {
 
     _createEntryRow(entry)
     {
-        let buttons = create("td", { cls: "buttons" }),
-            key = create("td", { cls: "key", text: entry.key }),
-            value = create("td", { cls: "value" });
+        const template = getTemplate("puavoconfEntry");
 
-        let deleteButton = create("button", { cls: "delete", text: "✖" });
+        const tr = template.querySelector("tr");
 
-        deleteButton.type = "button";
-        deleteButton.title = translate(this.language, "delete");
-        deleteButton.addEventListener("click", e => this.deleteRow(e));
-        buttons.appendChild(deleteButton);
+        tr.id = entry.id;
+        tr.dataset.key = entry.key;
 
-        // Editor container DIV
-        let form = create("div", { cls: "editor" });
+        template.querySelector("td.key").innerText = entry.key;
+        template.querySelector("button").addEventListener("click", e => this.deleteRow(e));
 
-        entry.createEditor(form);
-        value.appendChild(form);
+        // Create the editor inside the row container DIV
+        entry.createEditor(template.querySelector("td.value div"));
 
-        let row = create("tr", { id: entry.id });
-
-        row.dataset.key = entry.key;
-
-        row.appendChild(buttons);
-        row.appendChild(key);
-        row.appendChild(value);
-
-        return row;
+        return template;
     }
 
     // Handles special keys in the entry name input box
@@ -1031,6 +463,8 @@ export class PuavoConfEditor {
 
     buildSuggestions()
     {
+        const translations = getTemplate("puavoconfTranslations");
+
         const needle = this.newInput.value.trim();
         const showAll = needle.length == 0;
         let existing = new Set();
@@ -1049,14 +483,14 @@ export class PuavoConfEditor {
         }
 
         this.suggestionsList.sort();
-        this.suggestions.innerHTML = "";
+        this.suggestions.innerText = "";
 
         if (this.suggestionsList.length == 0) {
             // This is a completely new entry, we have no definition for it
             const duplicate = existing.has(needle);
 
             let newEntry = create("div", {
-                text: translate(this.language, duplicate ? "already_exists" : "accept_new", { "key": needle }),
+                text: translations.querySelector("div#" + (duplicate ? "already_exists" : "accept_new")).innerText.replace("$(name)", `"${needle}"`),
                 cls: duplicate ? "error" : "new"
             });
 
@@ -1138,7 +572,7 @@ export class PuavoConfEditor {
 
         this.suggestions.style.top = `${location.bottom + window.scrollY}px`;
         this.suggestions.style.left = `${location.left + window.scrollX + 25}px`;
-        this.suggestions.style.width = `${location.width-25}px`;
+        this.suggestions.style.width = `${location.width - 25}px`;
         this.suggestions.style.visibility = "visible";
     }
 }

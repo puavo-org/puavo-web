@@ -364,36 +364,6 @@ div#mfa_invalid_code {
   font-size: 90%;
 }
 
-/* Specials */
-div.domainAutocomplete #headerText { margin: 1em 0 !important; }
-
-div.domainAutocomplete #username { z-index: 1; }
-
-div.domainAutocomplete #wrapper { position: relative; }
-
-div.domainAutocomplete #overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  padding: 0.5em;
-  margin: 0;
-  font-size: 12pt;
-  font-family: var(--font);
-  border: 1px solid transparent;
-  color: transparent;
-  z-index: 2;
-  pointer-events: none;
-}
-
-div.domainAutocomplete #overlay::after {
-  color: #888;
-  font-style: italic;
-  font-size: 12pt;
-  content: attr(data-domain);
-}
-
 @media screen and (max-width: 670px) {
   #container {
     margin: 0 auto;

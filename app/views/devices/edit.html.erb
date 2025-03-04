@@ -14,4 +14,5 @@
 
 </div>
 
-<%= render :partial => 'shared/puavoconf_editor', :locals => { storage: "device_puavoConf" } %>
+<%= render partial: 'shared/puavoconf_editor_templates' %>
+<%= render partial: 'shared/puavoconf_editor', locals: { storage: 'device_puavoConf' } %>

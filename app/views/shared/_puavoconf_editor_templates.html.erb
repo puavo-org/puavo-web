@@ -1,0 +1,88 @@
+<!-- shared/_puavoconf_editor_templates starts -->
+<template id="template_puavoconfEditor">
+    <div class="puavoConfEditor">
+        <table class="pcTable"></table>
+        <input class="new" type="text" maxlength="100" placeholder="<%= t('puavoconf_editor.new_placeholder') %>">
+        <div class="raw">
+            <label><input type="checkbox" id=""><%= t('puavoconf_editor.show_raw') %></label>
+        </div>
+    </div>
+</template>
+
+<template id="template_puavoconfEntry">
+    <tr>
+        <td class="buttons"><button class="delete" type="button" title="<%= t('puavoconf_editor.delete_item') %>">✖</button></td>
+        <td class="key"></td>
+        <td class="value"><div class="editor"></div></td>
+    </tr>
+</template>
+
+<!-- Smuggle some translations into JavaScript code -->
+<template id="template_puavoconfTranslations">
+    <div id="already_exists"><%= t('puavoconf_editor.already_exists') %></div>
+    <div id="accept_new"><%= t('puavoconf_editor.accept_new') %></div>
+</template>
+
+<template id="template_puavoconfString">
+    <input type="text" id="">
+    <label for=""><%= t('puavoconf_editor.editors.string.choices_label') %>:</label>
+    <select id=""></select>
+</template>
+
+<template id="template_puavoconfBoolean">
+    <div class="flex-rows">
+        <label id=""><input type="radio" name="" id="true">True</label>
+        <label id=""><input type="radio" name="" id="false">False</label>
+    </div>
+</template>
+
+<template id="template_puavoconfJSON">
+    <textarea id="" rows="5"></textarea>
+    <p class="genericError" id="invalidJSON"><%= t('puavoconf_editor.editors.json.invalid_json') %></p>
+</template>
+
+<template id="template_puavoconfPuavomenuInput">
+    <input type="text" title="<%= t('puavoconf_editor.editors.puavomenu_tags.input_title') %>">
+</template>
+
+<template id="template_puavoconfPuavomenuNew">
+    <button type="button" class="margin-5px">+</button>
+</template>
+
+<template id="template_puavoconfPuavomenuExplanation">
+    <table class="width-50p margin-top-10px margin-left-10px">
+        <tbody></tbody>
+    </table>
+</template>
+
+<template id="template_puavoconfPuavomenuExplanationRow">
+    <tr>
+        <td>
+            <select id="action" title="<%= t('puavoconf_editor.editors.puavomenu_tags.action.title') %>">
+                <option value="show"><%= t('puavoconf_editor.editors.puavomenu_tags.action.show') %></option>
+                <option value="hide"><%= t('puavoconf_editor.editors.puavomenu_tags.action.hide') %></option>
+            </select>
+        </td>
+
+        <td>
+            <select id="namespace" title="<%= t('puavoconf_editor.editors.puavomenu_tags.namespace.title') %>">
+                <option value="tag"><%= t('puavoconf_editor.editors.puavomenu_tags.namespace.tag') %></option>
+                <option value="category"><%= t('puavoconf_editor.editors.puavomenu_tags.namespace.category') %></option>
+                <option value="menu"><%= t('puavoconf_editor.editors.puavomenu_tags.namespace.menu') %></option>
+                <option value="program"><%= t('puavoconf_editor.editors.puavomenu_tags.namespace.program') %></option>
+            </select>
+        </td>
+
+        <td>
+            <input id="target" type="text" size="20" maxlength="100" pattern="[a-zA-Z0-9\-_\.]+" title="<%= t('puavoconf_editor.editors.puavomenu_tags.target.title') %>">
+        </td>
+
+        <td class="width-0 nowrap">
+            <button id="add" type="button" title="<%= t('puavoconf_editor.editors.puavomenu_tags.buttons.add') %>">+</button>
+            <button id="delete" type="button" title="<%= t('puavoconf_editor.editors.puavomenu_tags.buttons.delete') %>">-</button>
+            <button id="up" type="button" title="<%= t('puavoconf_editor.editors.puavomenu_tags.buttons.move_up') %>">↑</button>
+            <button id="down" type="button" title="<%= t('puavoconf_editor.editors.puavomenu_tags.buttons.move_down') %>">↓</button>
+        </td>
+    </tr>
+</template>
+<!-- shared/_puavoconf_editor_templates ends -->

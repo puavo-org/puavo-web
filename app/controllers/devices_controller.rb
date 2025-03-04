@@ -62,13 +62,22 @@ class DevicesController < ApplicationController
     @permit_device_mass_deletion = @is_owner || (@permit_device_deletion && current_user.has_admin_permission?(:mass_delete_devices))
     @permit_device_reset = @is_owner || current_user.has_admin_permission?(:reset_devices)
     @permit_device_mass_reset = @is_owner || current_user.has_admin_permission?(:mass_reset_devices)
+    @permit_device_mass_edit_purchase_info = @is_owner || current_user.has_admin_permission?(:device_mass_change_purchase_information)
+    @permit_device_mass_tag_editor = @is_owner || current_user.has_admin_permission?(:device_mass_tag_editor)
+    permit_device_mass_school_change = @is_owner || current_user.has_admin_permission?(:device_change_school, :device_mass_change_school)
 
     @device = Device.new
 
     if is_owner?
       @school_list = DevicesHelper.device_school_change_list(true, current_user, @school.dn.to_s)
     else
-      @school_list = DevicesHelper.device_school_change_list(false, current_user, @school.dn.to_s)
+      if permit_device_mass_school_change
+        @school_list = DevicesHelper.device_school_change_list(false, current_user, @school.dn.to_s)
+      else
+        # If the admin has no device mass school change permission,
+        # force the school list to empty. This hides the tool.
+        @school_list = []
+      end
     end
 
     if request.format == 'text/html'
@@ -134,6 +143,7 @@ class DevicesController < ApplicationController
 
     @permit_device_deletion = is_owner? || current_user.has_admin_permission?(:delete_devices)
     @permit_device_reset = is_owner? || current_user.has_admin_permission?(:reset_devices)
+    @permit_device_school_change = is_owner? || current_user.has_admin_permission?(:device_change_school)
 
     @releases = get_releases
 
@@ -475,6 +485,12 @@ class DevicesController < ApplicationController
     @schools = School.all.select{ |s| s.id != @school.id }
 
     unless is_owner?
+      unless current_user.has_admin_permission?(:device_change_school)
+        flash[:alert] = t('flash.you_must_be_an_owner')
+        redirect_to device_path(@school, @device)
+        return
+      end
+
       # School admins can only transfer devices between the schools they're admins in
       schools = Set.new(Array(current_user.puavoAdminOfSchool || []).map { |dn| dn.to_s })
       @schools.delete_if { |s| !schools.include?(s.dn.to_s) }
@@ -497,6 +513,15 @@ class DevicesController < ApplicationController
   # POST /:school_id/devices/:id/change_school
   def change_school
     @device = Device.find(params[:id])
+
+    unless is_owner? || current_user.has_admin_permission?(:device_change_school)
+      # This check must be done before @school is updated below, otherwise
+      # we redirect "back" to the new school
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to device_path(@school, @device)
+      return
+    end
+
     @school = School.find(params[:new_school])
 
     @device.puavoSchool = @school.dn.to_s
@@ -611,6 +636,7 @@ class DevicesController < ApplicationController
       :host_certificate_request,  # ...device registration
       :puavoDeviceType,
       :puavoHostname,
+      :puavoDisplayName,
       :puavoTag,
       :puavoConf,
       :puavoDeviceStatus,

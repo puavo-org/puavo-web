@@ -6,9 +6,8 @@ const SUPERTABLE_WORKER_FILE = "<%= javascript_path 'supertable3_worker' %>";
 let GLOBAL_SUPERTABLE_INSTANCE = null;
 </script>
 
-<%= javascript_include_tag 'bundles/modal_popup' %>
-<%= javascript_include_tag 'bundles/supertable3' %>
-<%= javascript_include_tag 'i18n/supertable3' %>
+<%= javascript_include_tag 'javascripts/modal_popup' %>
+<%= javascript_include_tag 'javascripts/supertable3' %>
 <% end %>
 
 <h1><%= t('.title') %></h1>
@@ -37,6 +36,8 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 <% content_for :post_load_javascript do %>
 <script>
 "use strict";
+
+<%= render partial: 'shared/supertable_translations', formats: [:js] %>
 
 // Localized permission names
 const PERMISSIONS = {

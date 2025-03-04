@@ -29,7 +29,6 @@ gem "gettext"
 gem "redis"
 gem "redis-client"
 gem "redis-namespace"
-gem "sassc-rails"
 gem "jquery-rails"
 gem "parse-cron"
 gem 'webrick'               # Rails needs this but it isn't marked as a dependency?
@@ -38,7 +37,7 @@ group :test do
   gem "capybara"
   gem "colorize"
   gem "cucumber"
-  gem "cucumber-rails", "3.0.1"     # don't install some ancient version from 2013
+  gem "cucumber-rails", "3.1.1"     # don't install some ancient version from 2013
   gem "greenletters"
   gem "rspec"
   gem "rspec-rails"

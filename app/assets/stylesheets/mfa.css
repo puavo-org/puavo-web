@@ -1,9 +1,5 @@
 /* The multi-factor authentication editor */
 
-@import "bits/media_queries";
-@import "bits/composable";
-@import "bits/public_forms";
-
 * {
   box-sizing: border-box;
 }
@@ -122,3 +118,24 @@ section#recovery div#list div.keys {
   letter-spacing: 0.1em;
   padding-left: 1em;
 }
+
+/* A bunch of composable styles, copied from bits/composable.css */
+.flex { display: flex; }
+.flex-columns, .flex-cols { display: flex; flex-direction: rows; }
+.flex-rows { display: flex; flex-direction: column; }
+.flex-vcenter { align-items: center; }
+.flex-vbottom { align-items: flex-end; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-no-wrap { flex-wrap: nowrap; }
+.flex-grow-2 { flex-grow: 2; }
+.flex-align-start { align-self: flex-start; }
+
+.gap-5px { gap: 5px; }
+.gap-10px { gap: 10px; }
+.gap-15px { gap: 15px; }
+.gap-20px { gap: 20px; }
+.gap-1em { gap: 1em; }
+.gap-2em { gap: 2em; }
+
+.margin-top-0 { margin-top: 0; }
+.margin-top-10px { margin-top: 10px; }

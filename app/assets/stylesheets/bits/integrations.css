@@ -1,0 +1,173 @@
+/*
+  External systems integration indicators
+*/
+
+.integrations {
+  display: flex;
+  flex-flow: wrap;
+  list-style-type: none;
+  margin: 0;
+  padding: 0 0 5px 0;
+  line-height: 1;
+  cursor: default;
+  font-size: 80%;
+}
+
+  /* Indicator labels or badges, whatever you want to call them */
+.integrations li {
+  margin: 2px 5px 2px 0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--integrations-border);
+  white-space: nowrap;
+  display: inline;
+}
+
+/* Special spans for adding arrows indicating data flow directions */
+.integrations span {
+  font-family: "puavo-icons";
+  padding: 0 5px;
+}
+
+  /* This system sends data to puavo */
+.integrations .in {
+  background: var(--integrations-in-back);
+  color: var(--integrations-in-fore);
+}
+
+.integrations li span:after {
+  content: "\e829";
+}
+
+/* Puavo sends data to this system */
+.integrations .out {
+  background: var(--integrations-out-back);
+  color: var(--integrations-out-fore);
+}
+
+.integrations .out span:after {
+  content: "\e829";
+}
+
+/* Data flows in both directions between this system and puavo */
+.integrations .inout {
+  background: var(--integrations-inout-back);
+  color: var(--integrations-inout-fore);
+}
+
+.integrations .inout span:after {
+  content: "\e819";
+}
+
+/* This system uses Puavo as an SSO provider */
+.integrations .login {
+  background: var(--integrations-login-back);
+  color: var(--integrations-login-fore);
+}
+
+.integrations .login:before {
+  /* "Abuse" the puavo-icons */
+  content: "\e824";
+  font-family: "puavo-icons";
+  padding-right: 5px;
+}
+
+/* Passwords synchronisation between Puavo and this system */
+.integrations .password {
+  background: var(--integrations-password-back);
+  color: var(--integrations-password-fore);
+}
+
+.integrations .password:before {
+  content: "\e81d";
+  font-family: "puavo-icons";
+  padding-right: 5px;
+}
+
+.integrations .email {
+  background: var(--integrations-email-back);
+  color: var(--integrations-email-fore);
+}
+
+.integrations .email:before {
+  content: "\f0e0";
+  font-family: "puavo-icons";
+  padding-right: 5px;
+}
+
+/* Some other type of integration */
+.integrations .other {
+  background: var(--integrations-other-back);
+  color: var(--integrations-other-fore);
+}
+
+.integrations .other:before {
+  content: "\e821";
+  font-family: "puavo-icons";
+  padding-right: 5px;
+}
+
+/* "Inline" integrations displayed in the school list */
+.inlineIntegrations {
+  display: inline;
+  list-style-type: none;
+  font-size: 90%;
+}
+
+.inlineIntegrations li {
+  padding: 2px 5px;
+  line-height: 2;
+  border: 1px solid var(--integrations-border);
+  white-space: nowrap;
+  display: inline;
+}
+
+@media screen and (max-width: 800px) {
+  .integrations {
+    padding-left: 5px;
+  }
+
+  .integrations li {
+    margin: 2px 2px 2px 0;
+    padding: 5px;
+  }
+
+  .inlineIntegrations {
+    font-size: 70%;
+  }
+}
+
+/* Next synchronisation updates */
+.nextUpdates {
+  margin: 0;
+  padding-left: 5px;
+  list-style-type: none;
+  display: flex;
+  font-size: 80%;
+}
+
+.nextUpdates li {
+  display: inline;
+  padding-right: 1em;
+}
+
+.nextUpdates .system {
+  font-weight: bold;
+}
+
+.nextUpdates .in {
+  font-size: 80%;
+  font-style: italic;
+  color: #888;
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 800px) {
+  .nextUpdates .at {
+    white-space: nowrap;
+  }
+
+  .nextUpdates .in {
+    display: none;
+  }
+}

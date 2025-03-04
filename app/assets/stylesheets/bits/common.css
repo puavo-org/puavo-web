@@ -1,0 +1,284 @@
+/*
+  Custom classes that are used on all/most pages
+*/
+
+/* Font Awesome icon class names are all prefixed with "icon-" */
+[class*=icon] {
+  font-size: 120%;
+}
+
+.iconError {
+  color: rgb(202, 60, 60);
+}
+
+/* A generic missing/unset information indicator for data that isn't
+   always required to be present, but what really should be set */
+.missingData {
+  color: var(--missing-data);
+}
+
+/* Buttons, links and areas that are only visible to organisation owners */
+.ownersOnly {
+  border: 1px dashed var(--owners-only);
+}
+
+.ownersOnlyTop {
+  border: 1px dashed var(--owners-only) !important;
+}
+
+.adminOrOwner {
+  color: var(--admin-owner);
+}
+
+/* Wraps everything on the page below the topmenu */
+#pageWrapper {
+  margin: 0;
+  padding: 0;
+}
+
+/* Actual page contents. Margin cannot be set to pageWrapper, as it
+   can leave a visible crack between the topbar and the page contents. */
+#pageContainer {
+  margin-top: 40px;
+}
+
+@media screen and (max-width: 800px) {
+  #pageContainer {
+    margin: 0;
+  }
+}
+
+/* School name, integrations */
+#schoolHeader {
+  padding: 10px;
+}
+
+#schoolHeader #schoolName {
+  color: var(--body-fore);
+  font-size: 250%;
+  font-weight: bold;
+  font-variant: small-caps;
+  padding: 0;
+  margin: 0;
+  overflow-wrap: break-word;  /* force splitting of long organisation names */
+}
+
+@media screen and (max-width: 800px) {
+  #schoolHeader {
+    margin: 0;
+  }
+
+  #schoolHeader #schoolName {
+    font-size: 200%;
+  }
+}
+
+/* Page contents below the in-page tab bar */
+#content {
+  background: var(--page-content-back);
+  color: var(--page-content-fore);
+  margin: 0;
+  padding: 20px;
+  position: relative;
+  width: 100%;
+  font-size: 80%;
+  flex: 1;
+}
+
+/* Used on the school page to push content down, below the tools */
+#content .dashboard {
+  float: left;
+  margin: 0;
+  width: 100%;
+}
+
+#content h1 {
+  margin: 0 0 10px 0;
+  padding: 0;
+  line-height: 1;
+}
+
+@media screen and (max-width: 800px) {
+  #content {
+    padding: 10px 5px;
+    border: none;
+  }
+}
+
+/*
+  ".searchResultsBox" DIVs are created outside of the <body> element by JavaScript.
+  Those DIVs contain A and .btn elements too.
+*/
+/* A generic link */
+#content a,
+.searchResultsBox a {
+  color: var(--link-fore);
+  background: var(--link-back);
+  font-weight: bold;
+}
+
+#content a:hover,
+.searchResultsBox a:hover {
+  color: var(--link-fore-hover);
+  background: var(--link-back-hover);
+  text-decoration: none;
+}
+
+#content a:focus,
+.searchResultsBox a:focus {
+  color: var(--link-focus-fore);
+  background: var(--link-focus-back);
+}
+
+/* Hyperlinks styled as buttons */
+#content .btn,
+.searchResultsBox .btn {
+  display: inline-block;
+  padding: 4px 12px;
+  margin: 2px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--button-border-hi) var(--button-border-lo) var(--button-border-lo) var(--button-border-hi);
+  background: var(--button-back);
+  color: var(--button-fore);
+  text-decoration: none;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+#content .btn:hover,
+#content .btn:focus,
+.searchResultsBox .btn:hover,
+.searchResultsBox .btn:focus {
+  background: var(--button-back-hover);
+  color: var(--button-fore);
+}
+
+#content .btn:active,
+.searchResultsBox .btn:active {
+  border-color: var(--button-border-lo) var(--button-border-hi) var(--button-border-hi) var(--button-border-lo);
+  background: var(--button-back-hover);
+  color: var(--button-fore-hover);
+}
+
+#content .btn-danger,
+.searchResultsBox .btn-danger {
+  border-color: var(--button-danger-border-hi) var(--button-danger-border-lo) var(--button-danger-border-lo) var(--button-danger-border-hi);
+  background: var(--button-danger-back);
+  color: var(--button-danger-fore);
+}
+
+#content .btn-danger:hover,
+#content .btn-danger:focus,
+.searchResultsBox .btn-danger:hover,
+.searchResultsBox .btn-danger:focus {
+  background: var(--button-danger-back-hover);
+  color: var(--button-danger-fore);
+}
+
+#content .btn-danger:active,
+.searchResultsBox .btn-danger:active {
+  border-color: var(--button-danger-border-lo) var(--button-danger-border-hi) var(--button-danger-border-hi) var(--button-danger-border-lo);
+  background: var(--button-danger-back-hover);
+  color: var(--button-danger-fore);
+}
+
+/* Disabled buttons */
+#content .btn:disabled,
+#content .btn:disabled:hover,
+#content .btn:active:disabled,
+#content .btn:focus:disabled,
+.searchResultsBox .btn:disabled,
+.searchResultsBox .btn:disabled:hover,
+.searchResultsBox .btn:active:disabled,
+.searchResultsBox .btn:focus:disabled {
+  border-color: var(--button-border-hi) var(--button-border-lo) var(--button-border-lo) var(--button-border-hi);
+  color: var(--button-fore-disabled);
+  background: var(--button-back);
+  cursor: not-allowed;
+}
+
+#content .btn-danger:disabled,
+#content .btn-danger:disabled:hover,
+#content .btn-danger:active:disabled,
+#content .btn-danger:focus:disabled,
+.searchResultsBox .btn-danger:disabled,
+.searchResultsBox .btn-danger:disabled:hover,
+.searchResultsBox .btn-danger:active:disabled,
+.searchResultsBox .btn-danger:focus:disabled {
+  border-color: var(--button-danger-border-hi) var(--button-danger-border-lo) var(--button-danger-border-lo) var(--button-danger-border-hi);
+  background: var(--button-danger-back);
+  color: var(--button-danger-fore-disabled);
+  cursor: not-allowed;
+}
+
+/* Server and git commit infos */
+footer {
+  display: block;
+  color: var(--footer-fore);
+  border-top: 1px solid var(--footer-border);
+  text-align: right;
+  font-size: 70%;
+  margin: 0;
+  padding: 1em;
+}
+
+@media screen and (max-width: 800px) {
+  footer {
+    font-size: 60%;
+  }
+}
+
+.unstyledUL {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.margin-0 { margin: 0; }
+.padding-0 { margin: 0; }
+
+/*
+A general-purpose spinner SVG animation. Apply this class to "img" element and set the source
+to /images/spinner.svg. Taken from https://github.com/n3r4zzurr0/svg-spinners; I changed the
+class names.
+*/
+.spinner {
+  transform-origin: center;
+  animation: spinner_animation .75s step-end infinite;
+  width: 24px;
+  height: 24px;
+}
+
+@keyframes spinner_animation {
+  8.3% { transform: rotate(30deg); }
+  16.6% { transform: rotate(60deg); }
+  25% { transform: rotate(90deg); }
+  33.3% { transform: rotate(120deg);}
+  41.6% { transform: rotate(150deg); }
+  50% { transform: rotate(180deg); }
+  58.3% { transform: rotate(210deg); }
+  66.6% { transform: rotate(240deg); }
+  75% { transform: rotate(270deg); }
+  83.3% { transform: rotate(300deg); }
+  91.6% { transform: rotate(330deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#popupBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: block;
+}
+
+div.popup {
+  border: 2px solid var(--popup-border);
+  background: var(--popup-background);
+  padding: 5px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.75);
+  font-size: 80%;
+}

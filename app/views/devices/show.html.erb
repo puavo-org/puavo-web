@@ -25,6 +25,7 @@
   <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more') %></span>
     <div class="dropdown dropRight">
+<% if @permit_device_school_change %>
       <ul>
         <li>
           <%= link_to select_school_device_path(@school, @device) do%>
@@ -32,6 +33,7 @@
           <% end %>
         </li>
       </ul>
+<% end %>
 
       <% if @device.puavoDeviceType == 'laptop' && @pme_enabled %>
       <ul>

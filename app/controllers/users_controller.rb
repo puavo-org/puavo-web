@@ -87,6 +87,7 @@ class UsersController < ApplicationController
     @permit_user_creation = @is_owner || current_user.has_admin_permission?(:create_users)
     @permit_user_deletion = @is_owner || current_user.has_admin_permission?(:delete_users)
     @permit_mass_user_deletion = @is_owner || (@permit_user_deletion && current_user.has_admin_permission?(:mass_delete_users))
+    @permit_mass_column_clear = @is_owner || current_user.has_admin_permission?(:users_mass_clear_column_contents)
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
@@ -500,12 +501,40 @@ class UsersController < ApplicationController
           update_user_groups(@user, params[:groups])
         end
 
+        flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))
+
         format.html { redirect_to( user_path(@school, @user) ) }
         format.json { render :json => nil }
       rescue UserError => e
         logger.info "Create user, Exception: " + e.to_s
         get_group_list
         error_message_and_render(format, 'new', e.message)
+      rescue ActiveLdap::LdapError::ConstraintViolation => cve
+        message = cve.to_s
+
+        # The message looke like "non-unique attributes found with (|(uid=XXX))"
+        # where "XXX" is the username.
+        if message.include?('non-unique attributes found with') && message.include?('(uid=')
+          # This username is a duplicate, but the other user is in a school the current
+          # user (probably an admin) cannot access, so we cannot format a proper error
+          # message automatically. Perhaps this could be fixed by creatively using LDAP
+          # ACLs, I don't know. For now, we need this hack.
+
+          @user.errors.add :uid, I18n.t('activeldap.errors.messages.taken',
+                                          attribute: I18n.t('activeldap.attributes.user.uid'))
+
+          get_group_list
+          error_message_and_render(format, 'new', I18n.t('flash.user.create_failed'))
+        else
+          # We're still dealing with a duplicate value, but due to ACLs, we cannot determine
+          # what attribute causes it. The exception message only contains "Constraint violation"
+          # and nothing else. This problem is very annoying to debug, becuse it does not happen
+          # in puavo-standalone, it can only be tested in production. The error message dislayed
+          # in this case is very vague, because we really do not know what causes the problem.
+          # So this is the best we can do for now.
+          get_group_list
+          error_message_and_render(format, 'new', I18n.t('flash.user.create_failed_unknown_duplicate_attribute'))
+        end
       end
     end
   end
@@ -635,6 +664,20 @@ class UsersController < ApplicationController
       rescue UserError => e
         get_group_list
         error_message_and_render(format, 'edit',  e.message)
+      rescue ActiveLdap::LdapError::ConstraintViolation => cve
+        message = cve.to_s
+
+        # See the exception handling in user creation for explanation
+        if message.include?('non-unique attributes found with') && message.include?('(uid=')
+          @user.errors.add :uid, I18n.t('activeldap.errors.messages.taken',
+                                          attribute: I18n.t('activeldap.attributes.user.uid'))
+
+          get_group_list
+          error_message_and_render(format, 'edit', I18n.t('flash.user.save_failed'))
+        else
+          get_group_list
+          error_message_and_render(format, 'edit', I18n.t('flash.user.save_failed_unknown_duplicate_attribute'))
+        end
       end
     end
   end

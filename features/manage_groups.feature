@@ -10,7 +10,7 @@ Feature: Manage groups
       | Pavel     | Taylor | pavel   | secret   | true         | admin                     |
       | Another   | Admin  | another | secret2  | true         | admin                     |
       | Third     | Admin  | third   | secret3  | true         | admin                     |
-    And admin "pavel" has these permissions: "create_groups delete_groups"
+    And admin "pavel" has these permissions: "create_groups delete_groups group_change_school"
     And admin "third" has these permissions: "create_groups"
     And I am logged in as "pavel" with password "secret"
 
@@ -147,6 +147,31 @@ Feature: Manage groups
     When I get on the members group JSON page with "Class 4"
     Then I should see JSON '[{"user_type":"student", "name":"Joe Bloggs", "uid":"joe", "given_name":"Joe", "surname":"Bloggs"},{"name":"Jane Doe", "user_type":"student", "uid":"jane", "surname":"Doe", "given_name":"Jane"}]'
 
+  Scenario: Admins should not see the "change school" entry in the menu if group school changing has not been permitted
+    Given the following groups:
+    | displayName | cn      |
+    | Class 4A    | class4a |
+    And I am logged in as "another" with password "secret2"
+    And I am on the group page with "Class 4A"
+    Then I should not see "Change schools"
+
+  Scenario: Admins cannot even navigate to the group school change page if group school changing has not been permitted
+    Given the following groups:
+    | displayName | cn      |
+    | Class 4A    | class4a |
+    And I am logged in as "another" with password "secret2"
+    And I am on the change group school page with "Class 4A"
+    Then I should see "You do not have enough rights to access that page."
+
+  Scenario: If group school changing is permitted, then the menu item is also visible
+    Given the following groups:
+    | displayName | cn      |
+    | Class 4A    | class4a |
+    And I am on the group page with "Class 4A"
+    Then I should see "Change school..."
+
+  # FIXME: This actually does test what it says in the title, because the admin has only one
+  # school, so we can't even see the school changing form
   Scenario: Move group to another school (admin)
     Given I am on the new group page
     Then I should see "New group"

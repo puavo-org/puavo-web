@@ -24,6 +24,7 @@ class Device < Host
   ldap_map :puavoPrinterQueue,             :printer_queue_dns,        LdapConverters::ArrayValue
   ldap_map :puavoSchool,                   :school_dn
   ldap_map :serialNumber,                  :serial_number
+  ldap_map :puavoDisplayName,              :display_name
 
   ldap_map :puavoMenuData,                 :puavomenu_data
   skip_serialize :puavomenu_data
@@ -662,7 +663,7 @@ class Devices < PuavoSinatra
     potential_devices = Device.raw_filter(
       "ou=Devices,ou=Hosts,#{base}",
       '(&(objectclass=*)(&(puavoDeviceType=laptop)(puavoConf=*)))',
-      ['puavoId', 'puavoHostname', 'puavoSchool', 'puavoConf']
+      ['puavoId', 'puavoHostname', 'puavoDisplayName', 'puavoSchool', 'puavoConf']
     )
 
     # Do further filtering. Our LDAP schema does not make "puavoConf"
@@ -703,6 +704,7 @@ class Devices < PuavoSinatra
         exam_servers << {
           device_id: dev['puavoId'][0].to_i,
           device_hostname: dev['puavoHostname'][0],
+          device_display_name: dev.include?('puavoDisplayName') ? dev['puavoDisplayName'][0].force_encoding('utf-8') : nil,
           school_id: school_cache[school_dn].id.to_i,
           school_abbr: school_cache[school_dn].abbreviation,
           school_name: school_cache[school_dn].name,
@@ -739,6 +741,7 @@ class Devices < PuavoSinatra
     'current_image'           => 'puavoDeviceCurrentImage',
     'default_printer'         => 'puavoDefaultPrinter',
     'description'             => 'description',
+    'display_name'            => 'puavoDisplayName',
     'dn'                      => 'dn',
     'hostname'                => 'puavoHostname',
     'hw_info'                 => 'puavoDeviceHWInfo',
@@ -803,6 +806,7 @@ class Devices < PuavoSinatra
     'puavoDeviceType'               => { name: 'type' },
     'puavoDeviceXrandr'             => { name: 'xrandr' },
     'puavoDeviceXserver'            => { name: 'xserver' },
+    'puavoDisplayName'              => { name: 'display_name' },
     'puavoHostname'                 => { name: 'hostname' },
     'puavoId'                       => { name: 'id', type: :integer },
     'puavoImageSeriesSourceURL'     => { name: 'image_series_url' },

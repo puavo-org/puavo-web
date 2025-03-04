@@ -6,14 +6,30 @@
 <p class="genericNotice"><%= t('.user_is_owner') %><p>
 <% end %>
 
+<%
+groups = [
+  [ t('.title_schools'), %w[school_edit school_edit_wlan]],
+  [ t('.title_users'), %w[create_users delete_users mass_delete_users import_users users_mass_clear_column_contents]],
+  [ t('.title_groups'), %w[create_groups delete_groups mass_delete_groups group_change_school group_mass_change_type]],
+  [ t('.title_devices'), %w[create_devices delete_devices mass_delete_devices reset_devices mass_reset_devices device_change_school device_mass_change_school device_mass_tag_editor device_mass_change_purchase_information]],
+]
+%>
+
 <%= form_for(@user, url: save_admin_permissions_path, html: { method: :post })  do |f| %>
   <input type="hidden" name="org_admins" value="<%= @org_admins %>">
 
-  <ul class="no-list-bullets margin-0 padding-0" id="permissionsList">
-  <% User::ADMIN_PERMISSIONS.each do |permission| %>
-    <li><label><input type="checkbox" name="permissions[]" id="<%= permission.to_s %>" value="<%= permission.to_s %>" <%= @current_permissions.include?(permission.to_s) ? 'checked' : '' %>><%= t(".permissions.#{permission.to_s}") %></label></li>
+  <div class="flex-rows gap-20px" id="permissionsList">
+  <% groups.each do |g| %>
+    <div>
+      <header><%= g[0] %></header>
+      <div class="flex-rows margin-left-20px">
+      <% g[1].each do |p| %>
+        <div><label><input type="checkbox" name="permissions[]" id="<%= p %>" value="<%= p %>" <%= @current_permissions.include?(p) ? 'checked' : '' %>><%= t(".permissions.#{p}") %></label></div>
+      <% end %>
+      </div>
+    </div>
   <% end %>
-  </ul>
+  </div>
 
   <div class="flex-cols gap-10px margin-top-10px">
     <%= f.submit t('link.update'), class: 'btn' %>
@@ -31,7 +47,7 @@ function selectAll(event, state)
 {
     event.preventDefault();
 
-    for (const cb of document.querySelectorAll("ul#permissionsList input"))
+    for (const cb of document.querySelectorAll("div#permissionsList input"))
         cb.checked = state;
 }
 

@@ -7,9 +7,8 @@
 <% end %>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag 'bundles/modal_popup' %>
-<%= javascript_include_tag 'bundles/puavomenu_editor' %>
-<%= javascript_include_tag 'i18n/puavomenu_editor' %>
+<%= javascript_include_tag 'javascripts/modal_popup' %>
+<%= javascript_include_tag 'javascripts/puavomenu_editor' %>
 <% end %>
 
 <% if @pme_mode == :organisation %>
@@ -569,15 +568,33 @@
 
 const SOURCE = <%= raw JSON.pretty_generate(@menudata) %>;
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     modalPopup.setupGlobalEvents();
+
+    // Setup extra translation strings for I18n library
+    I18n.translations[I18n.locale] = I18n.extend((I18n.translations[I18n.locale] || {}), {
+        confirm_remove: "<%= t('general_confirm') %>",
+
+        errors: {
+            save_confirm: "<%= raw t('puavomenu_editor.errors.save_confirm') %>",
+            save_failed: "<%= raw t('puavomenu_editor.errors.save_failed') %>",
+            save_failed_message: "<%= raw t('puavomenu_editor.errors.save_failed_message') %>",
+        },
+
+        unused: {
+            unused_title: "<%= t('puavomenu_editor.popups.unused.unused_title') %>",
+            no_unused_entries: "<%= t('puavomenu_editor.popups.unused.no_unused_entries') %>",
+            type_menu: "<%= t('puavomenu_editor.popups.unused.type_menu') %>",
+            type_program: "<%= t('puavomenu_editor.popups.unused.type_program') %>",
+        },
+    });
 
     // Note the last parameter is "true". This forces the editor into "restricted" mode.
     // In restricted mode, categories cannot be edited. Perhaps one day we'll allow
     // unrestricted editing of menu data. But for now, you can only edit one category.
     const editor = new PME.PuavomenuEditor(document.querySelector("div#pme"), SOURCE, true);
 
-    document.querySelector("div#content button#main_save").addEventListener("click", (e) => {
+    document.querySelector("div#content button#main_save").addEventListener("click", e => {
         e.preventDefault();
 <% if @pme_mode == :organisation %>
         editor.trySave("<%= organisation_puavomenu_save_path %>", e.target);

@@ -1,170 +1,94 @@
 {
-  "puavo.acpi.wakeup.enabled": {
-    "default": "true"
+  "puavo.admin.autoreboot.enabled": {
+    "default": "false",
+    "description": "Enable automatic reboot",
+    "typehint": "bool"
   },
-  "puavo.admin.logging.master": {
-    "default": ""
+  "puavo.audio.pa.alsa.sink": {
+    "default": "",
+    "description": "The ALSA playback output for Pulseaudio",
+    "typehint": "string"
   },
-  "puavo.admin.logging.policy": {
-    "default": "local-only"
+  "puavo.audio.pa.alsa.source": {
+    "default": "",
+    "description": "The ALSA recording input for Pulseaudio",
+    "typehint": "string"
   },
-  "puavo.autopoweroff.daytime_end_hour": {
-    "default": "16"
+  "puavo.audio.pa.default_sink": {
+    "default": "",
+    "description": "The default Pulseaudio playback device",
+    "typehint": "string"
   },
-  "puavo.autopoweroff.daytime_start_hour": {
-    "default": "7"
+  "puavo.audio.pa.default_source": {
+    "default": "",
+    "description": "The default Pulseaudio recording device",
+    "typehint": "string"
   },
-  "puavo.autopoweroff.enabled": {
-    "default": "false"
+  "puavo.displays.setup": {
+    "choices": [ "all-mirror", "external", "builtin" ],
+    "default": "all-mirror",
+    "description": "The default display setup",
+    "typehint": "string"
   },
-  "puavo.service.puavo-autopoweroff.enabled": {
-    "default": "false"
+  "puavo.graphics.display_server": {
+    "choices": [ "wayland", "xorg" ],
+    "default": "xorg",
+    "description": "The display server to use",
+    "typehint": "string"
   },
-  "puavo.boot.plymouth.theme": {
-    "default": "kites"
+  "puavo.graphics.driver": {
+    "choices": [ "", "nvidia", "nvidia-525", "nvidia-470" ],
+    "default": "",
+    "description": "The display driver to use (leave blank to use the default)",
+    "typehint": "string"
   },
-  "puavo.desktop.background": {
-    "default": ""
+  "puavo.grub.boot_default": {
+    "choices": [ "abitti", "puavo-os", "windows" ],
+    "default": "puavo-os",
+    "description": "The operating system to boot by default",
+    "typehint": "string"
   },
-  "puavo.desktop.dconf.settings": {
-    "default": ""
+  "puavo.wireless.nm.no_autoconnect_networks": {
+    "default": "[]",
+    "description": "A JSON array of network names to which NetworkManager should not automatically connect to",
+    "typehint": "json"
   },
-  "puavo.desktop.environment": {
-    "default": ""
+  "puavo.xsessions.default": {
+    "choices": [
+      "puavo-desktop",
+      "puavo-ers",
+      "puavo-infotv",
+      "puavo-usb-factory",
+      "puavo-user-registration",
+      "puavo-webkiosk"
+    ],
+    "default": "puavo-desktop",
+    "description": "The default desktop session (may also contain any non-Puavo desktop /usr/share/xsessions)",
+    "typehint": "string"
   },
-  "puavo.desktop.keyboard.layout": {
-    "default": "fi,ru,ru,gb"
+  "puavo.puavomenu.tags": {
+    "default": "default",
+    "description": "Control which programs, menus and categories should be visible or hidden in Puavomenu",
+    "typehint": "string"
   },
-  "puavo.desktop.keyboard.variant": {
-    "default": ",,phonetic,dvorak"
+  "puavo.puavomenu.show_my_school_users": {
+    "default": "false",
+    "description": "If true, show a tool to see school user list",
+    "typehint": "bool"
   },
-  "puavo.greeter.userlist.accepted_users": {
-    "default": ""
+  "puavo.www.chromium.config": {
+    "default": "",
+    "description": "Arbitrary configurations for Chromium/Chrome browsers",
+    "typehint": "string"
   },
-  "puavo.image.automatic_updates": {
-    "default": "true"
+  "puavo.www.chromium.extensions": {
+    "default": "",
+    "description": "A space-separated list of Chromium/Chrome extensions to setup",
+    "typehint": "string"
   },
-  "puavo.image.download.ratelimit": {
-    "default": "4m"
-  },
-  "puavo.image.overlay": {
-    "default": ""
-  },
-  "puavo.image.path": {
-    "default": "/ltsp.img"
-  },
-  "puavo.image.preferred": {
-    "default": ""
-  },
-  "puavo.image.series.urls": {
-    "default": "[]"
-  },
-  "puavo.image.servers": {
-    "default": ""
-  },
-  "puavo.kernel.arguments": {
-    "default": ""
-  },
-  "puavo.kernel.modules.blacklist": {
-    "default": ""
-  },
-  "puavo.kernel.modules.load": {
-    "default": ""
-  },
-  "puavo.kernel.version": {
-    "default": ""
-  },
-  "puavo.l10n.locale": {
-    "default": "fi_FI.UTF-8"
-  },
-  "puavo.mounts.by_user_from_bootserver.enabled": {
-    "default": "false"
-  },
-  "puavo.mounts.extramounts": {
-    "default": ""
-  },
-  "puavo.mounts.nethomes.enabled": {
-    "default": "false"
-  },
-  "puavo.pm.display.drrs.enabled": {
-    "default": "true"
-  },
-  "puavo.pm.lidsuspend.enabled": {
-    "default": "false"
-  },
-  "puavo.pm.lidswitchdocked.action": {
-    "default": ""
-  },
-  "puavo.pm.nmi_watchdog.enabled": {
-    "default": "false"
-  },
-  "puavo.pm.sata_alpm.enabled": {
-    "default": "false"
-  },
-  "puavo.pm.suspend.enabled": {
-    "default": "false"
-  },
-  "puavo.pm.usbcore.autosuspend": {
-    "default": ""
-  },
-  "puavo.pm.wireless.enabled": {
-    "default": "false"
-  },
-  "puavo.hosttype": {
-    "default": ""
-  },
-  "puavo.profile.bigtouch": {
-    "default": "false"
-  },
-  "puavo.profile.bootserver": {
-    "default": "false"
-  },
-  "puavo.profile.diskinstaller": {
-    "default": "false"
-  },
-  "puavo.profile.fatclient": {
-    "default": "false"
-  },
-  "puavo.profile.infotv": {
-    "default": "false"
-  },
-  "puavo.profile.laptop": {
-    "default": "false"
-  },
-  "puavo.profile.onlyfree": {
-    "default": "false"
-  },
-  "puavo.profile.personal": {
-    "default": "false"
-  },
-  "puavo.profile.preinstalled": {
-    "default": "false"
-  },
-  "puavo.profile.restricted": {
-    "default": "false"
-  },
-  "puavo.profile.unregistered": {
-    "default": "false"
-  },
-  "puavo.profile.usb-factory": {
-    "default": "false"
-  },
-  "puavo.profile.webkiosk": {
-    "default": "false"
-  },
-  "puavo.profile.wirelessaccesspoint": {
-    "default": "false"
-  },
-  "puavo.profiles.list": {
-    "default": ""
-  },
-  "puavo.time.timezone": {
-    "default": "Europe/Helsinki"
-  },
-  "puavo.xorg.intel_backlight": {
-    "default": "false"
-  },
-  "puavo.xorg.noaccel": {
-    "default": "false"
+  "puavo.xrandr.args": {
+    "default": "[]",
+    "description": "A JSON array of xrandr args to run when setting up monitors, each string is split and run as a separate xrandr-command",
+    "typehint": "json"
   }
 }

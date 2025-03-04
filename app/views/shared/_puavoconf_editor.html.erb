@@ -1,14 +1,18 @@
 <% content_for :javascript do %>
-<%= javascript_include_tag 'bundles/puavoconf_editor' %>
+<%= javascript_include_tag 'javascripts/puavoconf_editor' %>
 <% end %>
 
 <% content_for :post_load_javascript do %>
 <script>
 const PUAVOCONF_DEFINITIONS = <%= get_puavoconf_definitions() %>;
 
+// The outer container for the editor + storage textarea
+const outer = document.querySelector("td.pceContainer");
+
 new PCE.Editor({
     prefix: "puavoconf1",
-    container: document.getElementById("puavoConfEditor"),
+    outer: outer,
+    storage: outer.querySelector("textarea"),
     definitions: PUAVOCONF_DEFINITIONS,
     language: I18n.locale,
 });

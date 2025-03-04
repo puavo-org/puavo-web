@@ -149,4 +149,5 @@
 
 </div>
 
-<%= render :partial => 'shared/puavoconf_editor', :locals => { storage: "ldap_organisation_puavoConf" } %>
+<%= render partial: 'shared/puavoconf_editor_templates' %>
+<%= render partial: 'shared/puavoconf_editor', locals: { storage: 'ldap_organisation_puavoConf' } %>

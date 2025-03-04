@@ -1,0 +1,273 @@
+/*
+  Top bar: search box, organisation/school menus, logout button
+*/
+
+/* Top-level wrapper, for positioning and sizing */
+#topbar {
+  position: fixed;
+  display: relative;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+  padding: 0;
+  margin: 0;
+  background: linear-gradient(var(--base-orange), var(--base-orange-gradient));
+  box-shadow: 0 4px 6px var(--default-box-shadow);
+  min-width: 400px;
+}
+
+/* The navigation block inside the wrapper */
+#topbar nav {
+  display: flex;
+  flex-wrap: wrap;    /* allow multiple rows */
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+  font-size: 80%;
+}
+
+#topbar nav > div {
+  display: inline-block;
+  margin: 0;
+
+  /*
+    Non-zero padding here will break the dropdown menubar entries,
+    as they must be full-height (Fitts' law)
+  */
+  padding: 0;
+}
+
+#topbar nav #left {
+  padding-right: 10px;
+}
+
+#topbar nav #middle {
+  flex-grow: 2;
+  margin: auto;
+}
+
+#topbar nav #middle    div {
+  display: flex;
+  padding: 0;
+  margin: 0;
+}
+
+#topbar nav #middle    #search {
+  display: inline;
+  margin: 0;
+  padding: 5px 30px 5px 10px;
+  border: 1px solid var(--search-topbar-border);
+  border-radius: 4px;
+}
+
+#topbar nav #middle    a#extendedSearchButton {
+  display: inline;
+  align-self: center;
+  padding: 5px 10px;
+  margin-left: 2px;
+  border-radius: 5px;
+  text-decoration: none !important;
+  color: var(--extendedsearch-button-fore);
+}
+
+#topbar nav #middle    a#extendedSearchButton:hover {
+  background: var(--extendedsearch-button-back-hover);
+}
+
+#topbar nav #middle    a#extendedSearchButton:after {
+  content: "\e822";
+  font-family: puavo-icons;
+  font-size: 110%;
+  padding-left: 5px;
+}
+
+#topbar nav #right {
+}
+
+#topbar nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#topbar nav ul.asFlex {
+  display: flex;
+}
+
+#topbar nav li {
+  background: var(--topbar-navlink-back);
+  color: var(--topbar-navlink-fore);
+}
+
+#topbar nav li.asFlex {
+  display: inline;
+}
+
+#topbar nav .menuTitle {
+  font-weight: bold;
+}
+
+#topbar nav .haveTopDropdown,
+#topbar nav .noDropdown {
+  /*
+    Make the dropdown menus and titles big. This padding actually controls the
+    overall height of the entire top menu bar.
+  */
+  padding: 10px;
+}
+
+#topbar nav .haveTopDropdown:after {
+  content: "▼";
+}
+
+#topbar nav .topDropdown {
+  display: none;
+  position: absolute;
+  padding: 3px;
+  max-height: 600px;
+  overflow-y: auto;
+  z-index: 11;              /* topbar is 10 */
+  background: var(--base-orange-gradient);
+  box-shadow: 0 10px 10px var(--default-box-shadow);
+  list-style-type: none;
+  margin: 10px 0 0 -11px;   /* position the dropdown in relation to the parent */
+}
+
+#topbar nav .haveTopDropdown:hover {
+  background: var(--topbar-navlink-back-hover);
+  color: var(--topbar-navlink-fore-hover);
+  cursor: default;
+}
+
+#topbar nav .haveTopDropdown:hover .topDropdown {
+  /* Open the dropdown menu */
+  display: block;
+}
+
+#topbar nav .dropRight {
+  right: 0;
+  left: auto;
+  min-width: 150px;
+}
+
+#topbar nav .schools {
+  min-width: 250px;
+}
+
+#topbar nav .org-separator {
+  padding: 2px 0 0 0;
+  margin: 0 0 2px 0;
+  border-bottom: 1px solid var(--topbar-nav-separators);
+}
+
+#topbar nav .separators li {
+  padding: 4px 0;
+  margin: 0;
+  border-bottom: 1px solid var(--topbar-nav-separators);
+}
+
+#topbar nav .separators li:first-of-type {
+  padding: 0 0 4px 0;
+}
+
+#topbar nav .separators li:last-of-type {
+  padding: 4px 0 0 0;
+  border: none;
+}
+
+#topbar nav ul a {
+  display: block;
+  padding: 5px 10px;
+  color: var(--topbar-navlink-fore);
+  background: var(--topbar-navlink-back);
+  text-decoration: none;
+}
+
+#topbar nav ul a:hover {
+  color: var(--topbar-navlink-fore-hover);
+  background: var(--topbar-navlink-back-hover);
+}
+
+/* The per-school quick link list */
+#topbar nav .schoolTitle {
+  font-weight: bold;
+}
+
+#topbar nav .schoolLinks {
+  margin: 0 20px 0 20px;
+  padding: 0;
+  display: inline-block;
+}
+
+#topbar nav .schoolLinks li {
+  float: left;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+#topbar nav .schoolLinks li a {
+  padding: 2px 5px;
+  text-transform: none;
+}
+
+@media screen and (max-width: 480px) {
+  #topbar nav .schoolLinks {
+    /* These items take too much space on small mobile views */
+    display: none;
+  }
+}
+
+#topbar nav #loggedInName {
+  color: var(--topbar-username-fore);
+}
+
+#topbar nav .logoutButton {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 2px;
+  text-decoration: none;
+  border-radius: 2px;
+
+  /* Reuse "btn-danger" colors */
+  background: var(--button-danger-back);
+  color: var(--button-danger-fore);
+}
+
+#topbar nav .logoutButton:hover,
+#topbar nav .logoutButton:focus {
+  background: var(--button-danger-back-hover);
+  color: var(--button-danger-fore);
+}
+
+#topbar nav svg.flag {
+  width: 32px;
+  height: 14px;
+}
+
+@media screen and (max-width: 800px) {
+  #topbar {
+    /* don't cover any content */
+    position: relative;
+    top: auto;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: 0 4px 6px var(--default-box-shadow);
+  }
+
+  #topbar nav {
+    width: 100%;
+    padding: 0;
+  }
+
+  #topbar #search {
+    flex-grow: 2;
+  }
+
+  /* Reorder the elements. Move the search bar at the top. */
+  #topbar nav > div:nth-child(1) { order: 2; flex-grow: 2; }
+  #topbar nav > div:nth-child(2) { order: 1; flex-basis: 100%;  }
+  #topbar nav > div:nth-child(3) { order: 3; }
+}

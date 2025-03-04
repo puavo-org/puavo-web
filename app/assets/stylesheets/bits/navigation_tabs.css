@@ -84,7 +84,7 @@
   color: var(--tabs-sec-tab-fore-hover);
 }
 
-@media #{$screen-breakpoint-one} {
+@media screen and (max-width: 800px) {
   .first a {
     padding: 1em;
   }

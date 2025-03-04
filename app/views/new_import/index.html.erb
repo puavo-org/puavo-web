@@ -7,8 +7,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
       IMPORT_WORKER_PATH = "<%= javascript_path 'import_worker' %>";
 </script>
 
-<%= javascript_include_tag 'bundles/import_tool' %>
-<%= javascript_include_tag 'i18n/import_tool' %>
+<%= javascript_include_tag 'javascripts/import_tool' %>
 <% end %>
 
 <h1><%= t('new_import.title') %></h1>
@@ -536,34 +535,146 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 <script>
 "use strict;"
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
 
-// The importer JavaScript file is not an ERB template; it has no access to t() and I don't want
-// to duplicate everything in the JS translation file, so I'll pass some of the strings this way.
+// Setup extra translation strings for I18n library
+I18n.translations[I18n.locale] = I18n.extend((I18n.translations[I18n.locale] || {}), {
+    columns: {
+        first: "<%= t('new_import.columns.first') %>",
+        last: "<%= t('new_import.columns.last') %>",
+        uid: "<%= t('new_import.columns.uid') %>",
+        role: "<%= t('new_import.columns.role') %>",
+        password: "<%= t('new_import.columns.password') %>",
+        eid: "<%= t('new_import.columns.eid') %>",
+        group: "<%= t('new_import.columns.group') %>",
+        rawgroup: "<%= t('new_import.columns.rawgroup') %>",
+        licenses: "<%= t('new_import.columns.licenses') %>",
+        phone: "<%= t('new_import.columns.phone') %>",
+        email: "<%= t('new_import.columns.email') %>",
+        pnumber: "<%= t('new_import.columns.pnumber') %>",
+    },
 
-const LOCALIZED_COLUMN_TITLES = {
-    first: "<%= t('new_import.columns.first') %>",
-    last: "<%= t('new_import.columns.last') %>",
-    uid: "<%= t('new_import.columns.uid') %>",
-    role: "<%= t('new_import.columns.role') %>",
-    password: "<%= t('new_import.columns.password') %>",
-    eid: "<%= t('new_import.columns.eid') %>",
-    group: "<%= t('new_import.columns.group') %>",
-    rawgroup: "<%= t('new_import.columns.rawgroup') %>",
-    licenses: "<%= t('new_import.columns.licenses') %>",
-    phone: "<%= t('new_import.columns.phone') %>",
-    email: "<%= t('new_import.columns.email') %>",
-    pnumber: "<%= t('new_import.columns.pnumber') %>",
-};
+    group_type: {
+        "teaching group": "<%= t('group_type.teaching group') %>",
+        "course group": "<%= t('group_type.course group') %>",
+        "year class": "<%= t('group_type.year class') %>",
+        "administrative group": "<%= t('group_type.administrative group') %>",
+        "archive users": "<%= t('group_type.archive users') %>",
+        "other groups": "<%= t('group_type.other groups') %>",
+    },
 
-const LOCALIZED_GROUP_TYPES = {
-    "teaching group": "<%= t('group_type.teaching group') %>",
-    "course group": "<%= t('group_type.course group') %>",
-    "year class": "<%= t('group_type.year class') %>",
-    "administrative group": "<%= t('group_type.administrative group') %>",
-    "archive users": "<%= t('group_type.archive users') %>",
-    "other groups": "<%= t('group_type.other groups') %>",
-};
+    parser: {
+        title: "<%= t('new_import.parser.title') %>",
+        infer: "<%= t('new_import.parser.infer') %>",
+        trim: "<%= t('new_import.parser.trim') %>",
+        commas: "<%= t('new_import.parser.commas') %>",
+        semicolons: "<%= t('new_import.parser.semicolons') %>",
+        tabs: "<%= t('new_import.parser.tabs') %>",
+    },
+
+    buttons: {
+        reload_groups: "<%= t('new_import.buttons.reload_groups') %>",
+        reloading: "<%= t('new_import.buttons.reloading') %>",
+    },
+
+    status: {
+        no_data_to_display: "<%= t('new_import.status.no_data_to_display') %>",
+        fetching_current_users: "<%= t('new_import.status.fetching_current_users') %>",
+        comparing_data: "<%= t('new_import.status.comparing_data') %>",
+        synchronising: "<%= t('new_import.status.synchronising') %>",
+        complete: "<%= t('new_import.status.complete') %>",
+        aborted: "<%= t('new_import.status.aborted') %>",
+        stopping: "<%= t('new_import.status.stopping') %>",
+        stopping_impatient: "<%= t('new_import.status.stopping_impatient') %>",
+        stopped: "<%= t('new_import.status.stopped') %>",
+        success: "<%= t('new_import.status.success') %>",
+        partial_success: "<%= t('new_import.status.partial_success') %>",
+        failed: "<%= t('new_import.status.failed') %>",
+        total_rows: "<%= t('new_import.status.total_rows') %>",
+        selected_rows: "<%= t('new_import.status.selected_rows') %>",
+        importing_rows: "<%= t('new_import.status.importing_rows') %>",
+        table_messages: "<%= t('new_import.status.table_messages') %>",
+    },
+
+    messages: {
+        already_in_school: "<%= t('new_import.messages.already_in_school') %>",
+    },
+
+    alerts: {
+        already_imported: "<%= t('new_import.alerts.already_imported') %>",
+        no_file: "<%= t('new_import.alerts.no_file') %>",
+        no_selected_rows: "<%= t('new_import.alerts.no_selected_rows') %>",
+        no_matching_rows: "<%= t('new_import.alerts.no_matching_rows') %>",
+        delete_everything: "<%= t('new_import.alerts.delete_everything') %>",
+        delete_selected_rows: "<%= t('new_import.alerts.delete_selected_rows') %>",
+        cant_remove_rows_after_stopping: "<%= t('new_import.alerts.cant_remove_rows_after_stopping') %>",
+        delete_column: "<%= t('new_import.alerts.delete_column') %>",
+        are_you_sure: "<%= t('general_confirm') %>",
+        resume_previous: "<%= t('new_import.alerts.resume_previous') %>",
+        need_one_first_name: "<%= t('new_import.alerts.need_one_first_name') %>",
+        need_one_last_name: "<%= t('new_import.alerts.need_one_last_name') %>",
+        need_one_raw_group: "<%= t('new_import.alerts.need_one_raw_group') %>",
+        no_groups: "<%= t('new_import.alerts.no_groups') %>",
+        could_not_generate_all_usernames: "<%= t('new_import.alerts.could_not_generate_all_usernames') %>",
+        unconvertible_characters: "<%= t('new_import.alerts.unconvertible_characters') %>",
+        first_five: "<%= t('new_import.alerts.first_five') %>",
+        unconvertible_name: "<%= raw t('new_import.alerts.unconvertible_name') %>",
+        could_not_parse_all_groups: "<%= t('new_import.alerts.could_not_parse_all_groups') %>",
+        same_password: "<%= t('new_import.alerts.same_password') %>",
+        too_short_password: "<%= t('new_import.alerts.too_short_password') %>",
+        check_something: "<%= t('new_import.alerts.check_something') %>",
+        no_data_to_import: "<%= t('new_import.alerts.no_data_to_import') %>",
+        fix_errors_first: "<%= t('new_import.alerts.fix_errors_first') %>",
+        cant_parse_server_response: "<%= t('new_import.alerts.cant_parse_server_response') %>",
+        data_retrieval_failed_unknown: "<%= t('new_import.alerts.data_retrieval_failed_unknown') %>",
+        data_retrieval_failed_known: "<%= t('new_import.alerts.data_retrieval_failed_known') %>",
+        too_short_uid: "<%= t('new_import.alerts.too_short_uid') %>",
+        invalid_uid: "<%= t('new_import.alerts.invalid_uid') %>",
+        no_data_for_the_pdf: "<%= t('new_import.alerts.no_data_for_the_pdf') %>",
+        still_no_data_for_the_pdf: "<%= t('new_import.alerts.still_no_data_for_the_pdf') %>",
+        empty_rows_skipped: "<%= t('new_import.alerts.empty_rows_skipped') %>",
+        no_failed_rows: "<%= t('new_import.alerts.no_failed_rows') %>",
+        no_selected_rows: "<%= t('new_import.alerts.no_selected_rows') %>",
+        no_duplicate_uids: "<%= t('new_import.alerts.no_duplicate_uids') %>",
+        passwords_out_of_sync: "<%= raw t('new_import.alerts.passwords_out_of_sync') %>",
+        list_created: "<%= t('new_import.alerts.list_created') %>",
+        list_missing_users: "<%= t('new_import.alerts.list_missing_users') %>",
+        list_failed: "<%= t('new_import.alerts.list_failed') %>",
+        list_not_found: "<%= t('new_import.alerts.list_not_found') %>",
+        list_missing_users: "<%= t('new_import.alerts.list_missing_users') %>",
+        list_loading_failed: "<%= t('new_import.alerts.list_loading_failed') %>",
+        download_template_nothing_selected: "<%= t('new_import.alerts.download_template_nothing_selected') %>",
+        server_sent_invalid_filename: "<%= t('new_import.alerts.server_sent_invalid_filename') %>",
+        pdf_generation_failed: "<%= t('new_import.alerts.pdf_generation_failed') %>",
+    },
+
+    errors: {
+        multiple_columns: "<%= raw t('new_import.errors.multiple_columns') %>",
+        required_column_missing: "<%= raw t('new_import.errors.required_column_missing') %>",
+        need_uid_column_in_update_mode: "<%= t('new_import.errors.need_uid_column_in_update_mode') %>",
+        need_something_to_update_in_update_mode: "<%= t('new_import.errors.need_something_to_update_in_update_mode') %>",
+        empty_first: "<%= t('new_import.errors.empty_first') %>",
+        empty_last: "<%= t('new_import.errors.empty_last') %>",
+        empty_uid: "<%= t('new_import.errors.empty_uid') %>",
+        duplicate_uid: "<%= t('new_import.errors.duplicate_uid') %>",
+        invalid_uid: "<%= t('new_import.errors.invalid_uid') %>",
+        short_uid: "<%= t('new_import.errors.short_uid') %>",
+        missing_role: "<%= t('new_import.errors.missing_role') %>",
+        no_role_mass_change: "<%= t('new_import.errors.no_role_mass_change') %>",
+        duplicate_eid: "<%= t('new_import.errors.duplicate_eid') %>",
+        eid_already_in_use: "<%= t('new_import.errors.eid_already_in_use') %>",
+        invalid_email: "<%= t('new_import.errors.invalid_email') %>",
+        duplicate_email: "<%= t('new_import.errors.duplicate_email') %>",
+        email_already_in_use: "<%= t('new_import.errors.email_already_in_use') %>",
+        automatic_emails: "<%= t('new_import.errors.automatic_emails') %>",
+        invalid_phone: "<%= t('new_import.errors.invalid_phone') %>",
+        duplicate_phone: "<%= t('new_import.errors.duplicate_phone') %>",
+        phone_already_in_use: "<%= t('new_import.errors.phone_already_in_use') %>",
+        common_password: "<%= t('new_import.errors.common_password') %>",
+        no_group_column: "<%= t('new_import.errors.no_group_column') %>",
+        no_password_column: "<%= raw t('new_import.errors.no_password_column') %>",
+    },
+});
 
 const INITIAL_GROUPS = <%= raw JSON.pretty_generate(@initial_groups) %>;
 
@@ -571,8 +682,6 @@ const COMMON_PASSWORDS = "<%= raw Puavo::COMMON_PASSWORDS %>";
 
 initializeImporter({
     container: document.getElementById("import"),
-    columnTitles: LOCALIZED_COLUMN_TITLES,
-    groupTypes: LOCALIZED_GROUP_TYPES,
     groups: INITIAL_GROUPS,
     organisationName: "<%= LdapOrganisation.current.cn %>",
     schoolId: <%= @school.id.to_i %>,

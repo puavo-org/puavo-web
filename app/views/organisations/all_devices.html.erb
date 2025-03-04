@@ -6,9 +6,8 @@ const SUPERTABLE_WORKER_FILE = "<%= javascript_path 'supertable3_worker' %>";
 let GLOBAL_SUPERTABLE_INSTANCE = null;
 </script>
 
-<%= javascript_include_tag 'bundles/modal_popup' %>
-<%= javascript_include_tag 'bundles/supertable3' %>
-<%= javascript_include_tag 'i18n/supertable3' %>
+<%= javascript_include_tag 'javascripts/modal_popup' %>
+<%= javascript_include_tag 'javascripts/supertable3' %>
 <% end %>
 
 <% @is_organisation = true %>
@@ -23,12 +22,13 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 <script>
 "use strict;"
 
-<%= render :partial => 'shared/device_tables_common', formats: [:js] %>
+<%= render partial: 'shared/supertable_translations', formats: [:js] %>
+<%= render partial: 'shared/device_tables_common', formats: [:js] %>
 
 const DEFAULT_COLUMNS = ["school", "hw_time", "hn", "type", "tags", "mac", "current_image", "ram", "hd", "cpu"];
 const DEFAULT_SORTING = { column: "hw_time", dir: ST.SortOrder.DESCENDING };
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     modalPopup.setupGlobalEvents();
 
     GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(

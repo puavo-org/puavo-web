@@ -277,6 +277,7 @@ fi:
 
     devices:
       hostname: "Verkkonimi"
+      display_name: "Ihmisen luettava nimi"
       type: "Tyyppi"
       tags: "Tagit"
       manufacturer: "Valmistaja"
@@ -368,6 +369,39 @@ fi:
       dev:
         abbr: "L"
         full: "Laitetason asetus"
+
+  puavoconf_editor:
+    # Can't use quotes in these, as they get written in the HTML and used as-is,
+    # and the quotes will get screwed up.
+    already_exists: "Avain $(name) on jo käytössä"
+    accept_new: "Luo uusi avain $(name) painamalla Enter tai Tab"
+    new_placeholder: "Kirjoita uuden lisättävän avaimen nimi..."
+    show_raw: "Näytä muokattava JSON"
+    delete_item: "Poista tämä avain"
+    editors:
+      string:
+        choices_label: "Valmiit vaihtoehdot (voit kirjoittaa muunkin arvon ylläolevaan laatikkoon)"
+      json:
+        invalid_json: "Virheellinen JSON, aiheuttaa ongelmia käytön aikana"
+      puavomenu_tags:
+        input_title: "Raaka suodatinteksti. Voit muokata tätä suoraan, tai käyttää allaolevaan taulukkoa, jos haluat hiirikäyttöisen käyttöliittymän."
+        action:
+          title: "Minkä toiminnon tämä suodatin tekee?"
+          show: "Näytä"
+          hide: "Piilota"
+        namespace:
+          title: "Minkä tyyppiseen objektiin tämä suodatin kohdistetaan? Oletus on tagi."
+          tag: "Tagi"
+          category: "Kategoria"
+          menu: "Valikko"
+          program: "Ohjelma"
+        target:
+          title: "Kohdeobjektin nimi (tunniste)"
+        buttons:
+          add: "Lisää uusi suodatin tämän jälkeen"
+          delete: "Poista tämä suodatin"
+          move_up: "Siirrä tätä suodatinta ylemmäksi"
+          move_down: "Siirrä tätä suodatinta alemmaksi"
 
   # Quick search
   search:
@@ -478,6 +512,22 @@ fi:
 
   # Common SuperTable elements
   supertable:
+    column_actions: "Toiminnot"
+    empty_table: "Tyhjä taulukko"
+    empty: "(tyhjä)"
+    selected: "(Valitse)"
+    see_console_for_details: "Katso selaimen konsolista lisätietoja."
+    network_error: "Verkkovirhe: "
+    network_connection_error: "Verkkoyhteysongelma!"
+    export_failed: "Ladattavan tiedoston luonti epäonnistui:\\n\\n%{error}\\n\\nKatso selaimen konsolista lisätietoja."
+    status:
+      visible_rows: "%{visible}/%{total} näkyvissä"
+      filtered_rows: "%{count} suodatettu"
+      selected_rows: "%{count} valittu"
+      mass_progress: "%{count}/%{total} (<span class=\\\"success\\\">%{success} onnistui</span>, <span class=\\\"fail\\\">%{fail} epäonnistui</span>)"
+      column_stats: "Valittu %{selected}/%{total} saraketta"
+      mass_row_status: "%{total} riviä, %{match} täsmäsi, %{unmatched} ei täsmännyt"
+      pagination: "Sivu: %{current}/%{total}"
     export:
       top_button: "Lataa"
       title: "Lataa taulukon sisältö tiedostona"
@@ -515,6 +565,69 @@ fi:
       top_reverse: "Käänteinen"
       advanced_checkbox: "Laajennettu suodatin"
       presets_button: "Valmiit suodatinmallit"
+      expression_title: "Suodatinlauseke"
+      unsaved: "tallentamaton"
+      save_json_confirm: "Oletko varma?"
+      error: "Virhe"
+      warning: "Varoitus"
+      no_messages: "Suodatinlausekkeesta ei löytynyt ongelmia"
+      traditional_filter_is_empty: "Perinteinen suodatin on tyhjä."
+      row: "Rivi"
+      column: "Sarake"
+      message: "Viesti"
+      preview_prefix: "Suodatin"
+      new_traditional_filter: "Uusi..."
+      messages:
+        column_not_visible: "Sarake ei ole näkyvissä. Varo, ettei suodatin näytä tai piilota rivejä joita sen ei pitäisi."
+        expected_column_name: "Tässä oletettiin olevan sarakkeen nimi (tuntematon sarake?)"
+        expected_operator: "Tässä oletettiin olevan verailuoperaattori"
+        expected_value_rpar: "Tässä oletettiin olevan joko vertailtava arvo tai ')'"
+        incompatible_operator: "Tätä operaattoria ei voi käyttää tämän saraketyypin kanssa"
+        invalid_operator: "Virheellinen vertailuoperaattori"
+        invalid_regexp: "Virheellinen regexp-jono"
+        invalid_sign: "Virheellinen etumerkki"
+        invalid_storage_unit: "Virheellinen tallennustilan yksikkö"
+        invalid_time_unit: "Virheellinen aikayksikkö"
+        not_a_number: "Virheellinen numero"
+        missing_time_unit: "Puuttuva aikayksikkö, oletetaan sekunneiksi (ei ehkä mitä tarkoitit)"
+        syntax_error: "Syntaksivirhe"
+        unbalanced_nesting: "Sulkeiden määrä ei ole parillinen"
+        unexpected_column_name: "Sarakkeen nimeä ei odotettu tässä kohdassa"
+        unexpected_end: "Syöte päättyi kesken"
+        unexpected_lpar: "Odottamaton ')'"
+        unexpected_negation: "Odottamaton '!'"
+        unexpected_rpar: "Odottamaton ')'"
+        unknown_column: "Tuntematon sarake"
+        unknown_error: "Tuntematon virhe :-("
+        unknown_operator: "Tuntematon operaattori"
+        unparseable_time: "Aikaa ei voida tulkita absoluuttisena eikä suhteellisena aikana"
+        unterminated_string: "Päättämätön tekstijono"
+      pretty:
+        empty: "(tyhjä)"
+        or: "tai"
+        nor: "eikä"
+        interval: "väliltä"
+        not_interval: "ei väliltä"
+      ed:
+        closed: "Määritä väli jonka sisällä arvon on oltava. Alku- ja loppuarvo sisältyvät alueeseen."
+        open: "Määritä väli jonka sisällä arvo ei saa olla. Alku- ja loppuarvo eivät sisälly alueeseen."
+        invalid_interval: "Määritä kunnollinen pienin ja suurin arvo."
+        single: "Valittu vertailu kelpuuttaa vain yhden arvon."
+        multiple: "Voit määrittää useita arvoja."
+        one_hit_is_enough: "Yksikin osuma riittää."
+        no_hits_allowed: "Mikään niistä ei saa osua."
+        regexp: "Kaikki vertailut ovat regexp-vertailuja jotka eivät välitä kirjainkoosta. Muistathan, että jos etsimässäsi tekstissä esiintyy merkkejä jotka tarkoittavat jotain regexp-lauseissa, sinun on eskapoitava (\\\\) ne."
+        no_values: "Et määrittänyt yhtään vertailtavaa arvoa."
+        bool:
+          t: "Kyllä"
+          f: "Ei"
+        numeric:
+          nan: "ei ole numero."
+          negative_storage: "Negatiiviset tallennustilat eivät ole sallittuja."
+        time:
+          invalid: "ei ole absoluuttinen eikä suhteellinen aika."
+          help_link: "Näytä ohje siitä miten ajat määritetään"
+          help: "Käytettävissä on kaksi aikamuotoa: absoluuttinen ja suhteellinen.\\n\\nAbsoluuttinen aika on muotoa VVVV-KK-PP TT:MM:SS. Mitä useamman osan kirjoitat, sitä tarkempi aika on. Poisjätetyt päivä ja kuukausi ovat 1, ja poisjätetyt tunti, minuutti ja sekunti ovat 0. \\\"2021\\\" tarkoittaa \\\"2021-01-01 00:00:00\\\", \\\"2021-09\\\" tarkoittaa \\\"2021-09-01 00:00:00\\\", \\\"2021-09-22 13\\\" tarkoittaa \\\"2021-09-22 13:00:00\\\" ja niin edelleen. Kellonaika on aina 24-tuntinen. Vuosilukujen on oltava väliltä 2000 ja 2050.\\n\\nSuhteellinen aika ilmaisee ajan sekunteina suhteessa hetkeen jolloin taulukko päivitetään. Negatiiviset luvut osoittavat menneisyyteen, positiiviset tulevaisuuteen. Luvun perään kirjoitetaan yksikkö, ne ovat: \\\"s\\\" (sekunti), \\\"h\\\" (tunti), \\\"d\\\" (päivä), \\\"w\\\" (viikko), \\\"m\\\" (30-päiväinen kuukausi), \\\"y\\\" (365-päiväinen vuosi). Esimerkiksi \\\"-2h\\\" tarkoittaa \\\"tasan 2 tuntia sitten\\\", \\\"-1d\\\" tarkoittaa \\\"tasan yksi päivä sitten\\\" (eli -86400 sekuntia) ja \\\"-8m\\\" tarkoittaa \\\"tasan kahdeksan kuukautta sitten\\\". Käytännössä käytät negatiivisia aikoja lähes aina."
       traditional:
         delete_all: "Poista kaikki suodattimet"
         show_json: "Näytä JSON-editori"
@@ -612,7 +725,9 @@ fi:
       save_failed: "Käyttäjää ei voitu tallentaa!"
       save_failed_organsation_owner_removal: "Tallennus epäonnistui: käyttäjää ei voitu poistaa organisaation omistajista ennen ylläpitäjä-roolin poistoa. Yritä poistaa omistajuus ensin käsin."
       save_failed_school_admin_removal: "Tallennus epäonnistui: käyttäjää ei voitu poistaa koulun ylläpitäjistä ennen ylläpitäjä-roolin poistoa. Yritä poistaa käyttäjä koulun ylläpitäjistä ensin."
+      save_failed_unknown_duplicate_attribute: "Tallennus epäonnistui: tuntematon duplikaatti attribuuttiarvo (ACL:t estävät selvittämästä mikä attribuutti on kyseessä). Tämä käyttäjänimi tai sähköpostiosoite on ehkä jo jonkun käytössä jossain toisessa koulussa johon sinulla ei ole pääsyä."
       create_failed: "Käyttäjän lisääminen epäonnistui!"
+      create_failed_unknown_duplicate_attribute: "Käyttäjän luonti epäonnistui: tuntematon duplikaatti attribuuttiarvo (ACL:t estävät selvittämästä mikä attribuutti on kyseessä). Tämä käyttäjä on jo ehkä olemassa jossain toisessa koulussa; kokeile jotain toista käyttäjänimeä tai sähköpostiosoitetta."
       marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
       already_marked_for_deletion: "Käyttäjä on jo merkitty poistettavaksi"
       unmarked_for_deletion: "Käyttäjä ei ole enää merkitty poistettavaksi"
@@ -990,6 +1105,7 @@ fi:
         clear_column:
           title: "Tyhjennä sarakkeen sisältö..."
           column_title: "Sarake:"
+          warning: "VAROITUS: Tämä on harvoin käytetty työkalu. Älä käytä tätä jollet ymmärrä täsmälleen mitä tämä tekee ja mihin tätä käytetään."
         username_list:
           title: "Luo käyttäjätunnuslista"
           description: "Listan nimi tai lyhyt kuvaus (valinnainen)"
@@ -1052,14 +1168,21 @@ fi:
         delete_users: "voi poistaa käyttäjiä"
         mass_delete_users: "voi massapoistaa useita käyttäjiä"
         import_users: "käyttäjien massalisäystyökalu"
+        users_mass_clear_column_contents: "voi massatyhjentää tiettyjä käyttäjien tietoja"
         create_groups: "voi luoda ryhmiä"
         delete_groups: "voi poistaa ryhmiä"
         mass_delete_groups: "voi massapoistaa useita ryhmiä"
+        group_change_school: "voi siirtää ryhmiä koulusta toiseen"
+        group_mass_change_type: "voi massavaihtaa ryhmien tyyppiä"
         create_devices: "voi lisätä ja rekisteröidä uusia laitteita"
         delete_devices: "voi poistaa laitteita"
         mass_delete_devices: "voi massapoistaa useita laitteita"
         reset_devices: "voi nollata laitteita"
         mass_reset_devices: "voi massanollata laitteita"
+        device_change_school: "voi siirtää laitteen koulusta toiseen"
+        device_mass_change_school: "voi massasiirtää laitteita koulusta toiseen"
+        device_mass_tag_editor: "voi massamuokata laitteiden tageja"
+        device_mass_change_purchase_information: "voi massamuokata laitteiden hankintatietoja"
     new:
       title: "Lisää uusi käyttäjä"
     edit:
@@ -1104,6 +1227,10 @@ fi:
       user_is_owner: "Tämä käyttäjä on organisaation omistajissa, joten näitä oikeuksia ei käytetä. Omistajilla on aina täydet oikeudet kaikkeen."
       select_all: "Valitse kaikki"
       deselect_all: "Poista kaikki"
+      title_schools: "Koulut"
+      title_users: "Käyttäjät"
+      title_groups: "Ryhmät"
+      title_devices: "Laitteet"
       permissions:
         school_edit: "Voi muokata koulun tietoja (koulun kojetaulu on aina käytettävissä)"
         school_edit_wlan: "Voi muokata koulun langattomia verkkoja"
@@ -1111,14 +1238,21 @@ fi:
         delete_users: "Voi poistaa käyttäjiä"
         mass_delete_users: "Voi massapoistaa useita käyttäjiä (tavallinen käyttäjien poisto pitää myös olla sallittu, ei toimi muuten)"
         import_users: "Voi käyttää käyttäjien massalisäys/-päivitystyökalua"
+        users_mass_clear_column_contents: "Voi massatyhjentää tiettyjä käyttäjien tietoja (sähköpostiosoite, puhelinnumero, ulkoinen ID, henkilönumero, muistiinpanot)"
         create_groups: "Voi luoda uusia ryhmiä"
         delete_groups: "Voi poistaa ryhmiä"
         mass_delete_groups: "Voi massapoistaa useita ryhmiä (tavallinen ryhmien poisto on myös oltava sallittuna)"
+        group_change_school: "Voi siirtää ryhmiä koulusta toiseen (edellyttää että käyttäjä on ylläpitäjänä vähintään kahdessa koulussa)"
+        group_mass_change_type: "Voi massavaihtaa ryhmien tyyppiä"
         create_devices: "Voi lisätä uusia laitteita (sallii myös kannettavien rekisteröinnin)"
         delete_devices: "Voi poistaa laitteita"
         mass_delete_devices: "Voi massapoistaa useita laitteita (tavallinen laitteiden poisto on myös oltava sallittuna)"
         reset_devices: "Voi asettaa/poistaa laitteiden nollaustilan"
         mass_reset_devices: "Voi massa-asettaa/-poistaa laitteiden nollaustilan (tavallinen nollaustilan asettaminen on myös oltava sallittuna)"
+        device_change_school: "Voi siirtää laitteita koulusta toiseen (edellyttää että käyttäjä on ylläpitäjänä vähintään kahdessa koulussa)"
+        device_mass_change_school: "Voi massasiirtää laitteita koulusta toiseen (tavallinen laitteen koulunvaihto on myös oltava sallittuna)"
+        device_mass_tag_editor: "Voi massamuokata laitteiden tageja"
+        device_mass_change_purchase_information: "Voi massamuokata laitteiden hankintatietoja"
 
   # New new user mass import/update tool
   new_import:
@@ -1152,6 +1286,14 @@ fi:
     semicolon: "Puolipiste (;)"
     tab: "Tab (\\t)"
     preview: "Esikatselu"
+
+    parser:
+      title: "Lukuasetukset"
+      infer: "päättele sarakkeiden tyypit ensimmäisestä rivistä"
+      trim: "poista välilyönnit alusta ja lopusta"
+      commas: "eroteltu pilkuilla"
+      semicolons: "eroteltu puolipisteillä"
+      tabs: "eroteltu tabeilla"
 
     # The import tab
     import_tab: "2. Tuo tiedot"
@@ -1245,6 +1387,8 @@ fi:
       fill: "Täytä"
       reload_groups: "Päivitä ryhmät"
       overwrite_existing: "Ylikirjoita olemassaolevat arvot"
+      reload_groups: "Päivitä ryhmät"
+      reloading: "Päivitetään..."
 
     tools:
       download_template:
@@ -1303,12 +1447,104 @@ fi:
         list_title: "Listan nimi tai lyhyt kuvaus (valinnainen)"
         create_list: "Luo lista"
 
+    status:
+      no_data_to_display: "(Ei näytettävää dataa)"
+      fetching_current_users: "Haetaan palvelimelta lista nykyisistä käyttäjistä..."
+      comparing_data: "Vertaillaan dataa..."
+      synchronising: "Suoritetaan operaatiota..."
+      complete: "Valmis"
+      aborted: "Operaatio keskeytyi"
+      stopping: "Pysäytetään operaatiota, odota kunnes nykyinen sarja valmistuu..."
+      stopping_impatient: "Älä nyt hätäile, operaatio pysähtyy ihan justiinsa!"
+      stopped: "Operaatio pysäytettiin"
+      success: "onnistui"
+      partial_success: "onnistui osittain"
+      failed: "epäonnistui"
+      total_rows: "riviä yhteensä"
+      selected_rows: "riviä valittu"
+      importing_rows: "Tuodaan rivit"
+      table_messages: "Viestit"
+
+    messages:
+        already_in_school: "On jo koulussa %{schools}"
+
     problems:
       errors_title: "Nämä virheet tiedoissa on korjatttava ennenkuin tuontiprosessi voidaan aloittaa:"
       warnings_title: "Nämä eivät estä tuontiprosessia, mutta sinun kannattaa vilkaista niitä ja varmistaa etteivät ne aiheuta ongelmia myöhemmin:"
 
     errors:
       unknown_group: "Tuntematon/virheellinen ryhmä"
+
+    alerts:
+      already_imported: "Sinulla on jo keskeneräistä dataa taulukossa. Oletko varma että haluat ylikirjoittaa sen?"
+      no_file: "Valitse tuotava tiedosto, tai vaihda käsisyötteeseen."
+      no_selected_rows: "Valittuja rivejä ei ole."
+      no_matching_rows: "Taulukossa ei ole valintaasi täsmäävää riviä."
+      delete_everything: "Oletko varma että haluat poistaa KAIKKI rivit? Joudut lukemaan lähdetiedot uudelleen jos haluat jatkaa tämä jälkeen."
+      delete_selected_rows: "Oletko varma, että haluat poistaa %{count} riviä?"
+      cant_remove_rows_after_stopping: "Ikävä kyllä taulukosta ei voi poistaa rivejä jos olet pysäyttänyt tuonnin. Sinun on joko jatkettava nykyinen tuonti loppuun, tai aloitettava alusta."
+      delete_column: "Oletko varma, että haluat poistaa tämän sarakkeen?"
+      resume_previous: "Edellinen tuonti pysäytettiin. Jatketaanko tuontia siitä mihin jäätiin?"
+      need_one_first_name: "Tarvitset tasan yhden etunimi-sarakkeen tätä varten"
+      need_one_last_name: "Tarvitset tasan yhden sukunimi-sarakkeen tätä varten"
+      need_one_raw_group: "Tarvitset tasan yhden käsittelemätön ryhmä -sarakkeen tätä varten"
+      no_groups: "Ryhmiä ei ole. Kokeile päivittää ryhmälista ensin."
+      could_not_generate_all_usernames: "Löydettiin yksi tai useampi rivi joissa oli tyhjä tai puuttuva etu- ja/tai sukunimi. Käyttäjänimiä ei luotu näille riveille."
+      unconvertible_characters: "Löydettiin %{count} nimeä joissa ei ollut yhtään sellaista merkkiä joka säilyisi muunnoksesta."
+      first_five: "Tässä ensimmäiset viisi nimeä:"
+      unconvertible_name: "Rivi %{row}: etunumi \\\"%{first}\\\", sukunimi \\\"%{last}\\\""
+      could_not_parse_all_groups: "Löydettiin yksi tai useampi rivi ilman vastaavaa käsittelemätöntä ryhmätietoa. Näiden rivien ryhmiä ei pystytty tulkitsemaan."
+      same_password: "Saman salasanan asetus usealle käyttäjälle on vakava tietoturvariski. Oletko varma että haluat tehdä tämän?"
+      too_short_password: "Salasanan on oltava vähintään %{length} merkkiä pitkä"
+      check_something: "Valitse edes jotain mitä salasana saa sisältää."
+      no_data_to_import: "Taulukossa ei ole yhtään valittua päivitysmenetelmää vastaavaa riviä."
+      fix_errors_first: "Sinun on ensin korjattava havaitut virheet."
+      cant_parse_server_response: "Palvelimen lähettämää viestiä ei voitu tulkita. Yksityiskohdat on tallennettu selaimen konsoliin.\\n\\nYritä uudelleen ja jos virhe toistuu, ota konsolissa oleva viesti talteen ja ota sitten yhteys Opinsys Oy:n tukeen."
+      data_retrieval_failed_unknown: "Tietojen haku palvelimelta epäonnistui tuntemattomasta syystä."
+      data_retrieval_failed_known: "Tietojen haku palvelimelta epäonnistui:"
+      too_short_uid: "Käyttäjätunnuksen on oltava vähintään 3 merkkiä pitkä."
+      invalid_uid: "Käyttäjätunnus ei ole oikean muotoinen."
+      no_data_for_the_pdf: "Taulukossa ei ole käyttäjätunnus- ja/tai salasanasaraketta."
+      still_no_data_for_the_pdf: "Taulukossa ei ole käyttäjiä joiden salasanan voisi listata PDF-tiedostossa."
+      empty_rows_skipped: "Taulukossa on rivejä joilta puuttuu käyttäjätunnus tai salasana. Nämä rivit jätetään pois luodusta salasanalistasta.\\n\\nHaluatko jatkaa?"
+      no_failed_rows: "Epäonnistuneita rivejä ei ole"
+      no_duplicate_uids: "Duplikaatteja käyttäjätunnuksia ei ole."
+      passwords_out_of_sync: "Taulukossa on salasanoja joita ei ole vielä tuotu. Luotava PDF ei näin ollen sisällä oikeasti käytössä olevia salasanoja. Sinun pitäisi tuoda taulukon tiedot ensin.\\n\\nHaluatko varmasti jatkaa?"
+      list_created: "Lista luotu"
+      list_missing_users: "Listaa ei luotu. Seuraavia käyttäjiä ei löydy palvelimelta:"
+      list_failed: "Listaa ei luotu. Tuntematon virhe:"
+      list_not_found: "Listaa ei löytynyt palvelimelta. Ehkä se on ladattu tai poistettu? Kokeile ladata sivu uudelleen."
+      list_missing_users: "Listaa ei luotu. Taulukko sisältää %{count} käyttäjää joita ei löydy. Heidät on ehkä poistettu, tai he ovat koulussa johon sinulla ei ole pääsyoikeutta:"
+      list_loading_failed: "Listan lataus epäonnistui:"
+      download_template_nothing_selected: "Valitse edes yksi sarake."
+      server_sent_invalid_filename: "Palvelin lähetti PDF-tiedoston virheellisellä tiedostonimellä. Sinun on nimettävä tiedosto uudelleen itse."
+      pdf_generation_failed: "PDF:n luonti epäonnistui:\\n\\n%{message}\\n\\nPalvelimen lokissa voi olla lisätietoa."
+
+    errors:
+      multiple_columns: "Monta \\\"%{title}\\\" -saraketta"
+      required_column_missing: "Vaadittu sarake \\\"%{title}\\\" puuttuu"
+      need_uid_column_in_update_mode: "Päivitys-tilassa tarvitset käyttäjänimisarakkeen"
+      need_something_to_update_in_update_mode: "Päivitys-tilassa tarvitset vähintään yhden ei-käyttäjänimi -sarakkeen jonka sisällön haluat päivittää"
+      empty_first: "%{count} rivi(ä) joissa on tyhjä etunimi"
+      empty_last: "%{count} rivi(ä) joissa on tyhjä sukunimi"
+      empty_uid: "%{count} rivi(ä) joissa on tyhjä käyttäjänimi"
+      duplicate_uid: "%{count} rivi(ä) joilla esiintyy sama käyttäjänimi useaan kertaan (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}."
+      invalid_uid: "%{count} rivi(ä) joilla esiintyy virheellinen tai väärän muotoinen käyttäjänimi (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}."
+      short_uid: "%{count} rivi(ä) joissa on alle 3 merkkiä pitkä käyttäjänimi (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}."
+      missing_role: "%{count} rivi(ä) joissa on puuttuva tai virheellinen rooli (merkitty punaisilla reunoilla)"
+      no_role_mass_change: "Olemassaolevien käyttäjien rooleja ei voi massavaihtaa, joten Rooli-sarake on turha ja se ohitetaan aina"
+      duplicate_eid: "%{count} rivi(ä) joilla esiintyy sama ulkoinen ID useaan kertaan (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}."
+      eid_already_in_use: "%{count} rivi(ä) joilla esiintyy ulkoinen ID joka on jo jollain muulla käyttäjällä (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}."
+      invalid_email: "%{count} rivi(ä) joilla esiintyy virheellinen sähköpostiosoite (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}."
+      duplicate_email: "%{count} rivi(ä) joilla esiintyy sama sähköpostiosoite useaan kertaan (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}."
+      email_already_in_use: "%{count} rivi(ä) joilla esiintyy sähköpostiosoite joka on jo jollain muulla käyttäjällä (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}."
+      automatic_emails: "Automaattinen sähköpostiosoitteiden muodostus on päällä tässä koulussa, joten sähköpostisarake on poistettava"
+      invalid_phone: "%{count} rivi(ä) joilla esiintyy virheellinen puhelinnumero (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}."
+      duplicate_phone: "%{count} rivi(ä) joilla esiintyy sama puhelinnumero useaan kertaan (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}."
+      phone_already_in_use: "%{count} rivi(ä) joilla esiintyy puhelinnumero joka on jo jollain muulla käyttäjällä (merkitty punaisilla reunoilla). Ensimmäiset %{first_n}: %{values}."
+      common_password: "%{count} rivi(ä) joilla esiintyy huonolaatuinen yleisesti käytetty salasana"
+      no_group_column: "Ryhmäsarake puuttuu (uudet käyttäjät yleensä lisätään johonkin opetusryhmään tuonnin aikana)"
+      no_password_column: "Salasanasarake puuttuu (uusille käyttäjille on helppo asettaa tässä salasanat)"
 
     pdf:
       no_group: "(Ei lainkaan ryhmää)"
@@ -1322,6 +1558,12 @@ fi:
       organisation: "Organisaatiotason Puavomenu"
       school: "Kouluntason Puavomenu koululle %{name}"
       device: "Laitetason Puavomenu laitteelle \"%{name}\""
+
+    errors:
+      # Must double escape these to prevent actual newlines in JavaScript strings
+      save_confirm: "Valikkodatassa on virheitä tai muita ongelmia. Ne olisi korjattava ennenkuin jatkat, koska tallennuksen yhteydessä virheelliset kohdat poistetaan. Haluatko varmasti jatkaa?"
+      save_failed: "Tallennus epäonnistui.\\n\\nKatso lisätiedot selaimen konsolista, ja yritä sitten uudelleen. Jos ongelma toistuu, ota yhteys tukeen."
+      save_failed_message: "Tallennus epäonnistui.\\n\\n\\t%{message}\\n\\nKatso lisätiedot selaimen konsolista, ja yritä sitten uudelleen. Jos ongelma toistuu, ota yhteys tukeen."
 
     tools:
       find_unused: "Etsi käyttämättömät valikot ja ohjelmat"
@@ -1427,10 +1669,14 @@ fi:
 
       unused:
         help: "Näihin valikoihin ja ohjelmiin ei viitata missään. Voit poistaa ne pysyvästi ruksaamalla halutut ja painamalla \"Poista valitut\" -nappia."
+        no_unused_entries: "Kaikki valikot ja ohjelmat ovat käytössä."
         select_all: "Valitse kaikki"
         remove_selected: "Poista valitut"
         target: "Kohde"
         type: "Tyyppi"
+        unused_title: "ei käytetty"
+        type_menu: "Valikko"
+        type_program: "Ohjelma"
 
       rename:
         category: "Syötä uusi tunniste tälle kategorialle"
@@ -1542,8 +1788,6 @@ fi:
         change_school:
           title: "Vaihda koulua..."
           school_title: "Uusi koulu:"
-          no_other_schools: "Tässä organisaatiossa ei ole muita kouluja mihin voisit siirtää laitteita."
-          no_other_schools_alert: "Muita kouluja ei ole. Toimintoa ei voi suorittaa."
         tags:
           warning: "Tämä työkalu lisää ja poistaa yksittäisiä tageja koskematta muihin tageihin. Jos haluat poistaa tai vaihtaa kaikki tagit kerralla, valitse Operaatio-listasta <em>\"Aseta tietokannan kentän arvo..\"</em> ja sieltä <em>\"Tagit (korvaa kaikki)\"</em>."
           title: "Tagieditori"
@@ -2091,6 +2335,7 @@ fi:
       device:
         dn: DN
         puavoHostname: Verkkonimi
+        puavoDisplayName: "Ihmisen luettava nimi"
         puavoDeviceType: Laitteen tyyppi
         macAddress: MAC-osoite
         ipHostNumber: IP-osoite

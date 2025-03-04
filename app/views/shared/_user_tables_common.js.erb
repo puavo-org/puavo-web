@@ -589,6 +589,7 @@ class MassUserMarkForDeletion extends ST.MassOperation {
     }
 };
 
+<% if @permit_mass_column_clear %>
 // Mass operation: clear column (ie. set a specific database attribute to null for all selected users)
 class MassUserClearColumn extends ST.MassOperation {
     constructor(parent, container)
@@ -604,6 +605,7 @@ class MassUserClearColumn extends ST.MassOperation {
 <tr>
     <th><%= t('users.index.mass_operations.clear_column.column_title') %></th>
     <td>
+        <p class="genericError"><%= t('users.index.mass_operations.clear_column.warning') %></p>
         <div class="flex-rows">
 <% unless @automatic_email_addresses %>
             <label><input type="radio" name="clear_column" value="email" checked><%= t('columns.users.email') %></label>
@@ -611,6 +613,7 @@ class MassUserClearColumn extends ST.MassOperation {
             <label><input type="radio" name="clear_column" value="telephone"><%= t('columns.users.phone') %></label>
             <label><input type="radio" name="clear_column" value="eid"><%= t('columns.users.eid') %></label>
             <label><input type="radio" name="clear_column" value="pnumber"><%= t('columns.users.pnumber') %></label>
+            <label><input type="radio" name="clear_column" value="notes"><%= t('columns.users.notes') %></label>
         </div>
     </td>
 </tr>
@@ -642,6 +645,7 @@ class MassUserClearColumn extends ST.MassOperation {
         return { state: "ready" };
     }
 };
+<% end %>
 
 <% unless @is_organisation %>
 // Create a new username list from selection
@@ -807,12 +811,14 @@ const MASS_OPERATIONS = [
         cls: MassUserMarkForDeletion
     },
 
+<% if @permit_mass_column_clear %>
     {
         operation: "clear_column",
         title: "<%= t('users.index.mass_operations.clear_column.title') %>",
         haveSettings: true,
         cls: MassUserClearColumn
     },
+<% end %>
 
 <% unless @is_organisation %>
     {

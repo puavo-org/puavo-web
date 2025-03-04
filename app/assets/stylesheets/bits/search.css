@@ -1,0 +1,235 @@
+/*
+  Quick search bar at the top of the page, plus live search boxes on group pages
+*/
+
+/* A common class for all search fields */
+.searchBox {
+  background-image: url("/images/magnifier.png");
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-position: 0.5em center;
+  background-color: var(--search-back);
+  color: var(--search-fore);
+  text-indent: 2em;
+}
+
+/* The quick search box at the top */
+.quickSearch {
+  margin: 4px;
+  z-index: 1;
+}
+
+/* Group members search box */
+.groupMembersSearch {
+  padding: 5px;
+  border: 1px solid var(--form-element-border);
+}
+
+.searchLoading {
+  /*
+    The JavaScript code doing the live search adds this class to the search box when search
+    is in progress, then removes it afterwards.
+  */
+  background-image: url("/images/ajax-loader.gif");
+}
+
+/* Drop-down search result boxes */
+.searchResultsBox {
+  background: var(--search-results-back);
+  border: 1px solid var(--search-results-border);
+  margin: 0;
+  padding: 5px;
+  position: absolute;
+  width: 750px;
+  z-index: 9999;
+  font-size: 80%;
+  box-shadow: 0 0 10px var(--default-box-shadow);
+}
+
+.searchResultsBox .resultsContainer {
+  max-height: 350px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.searchResultsBox .searchResult { }
+
+.searchResultsBox .searchResult header {
+  font-size: 100%;
+  font-weight: bold;
+  background: var(--list-heading-back);
+  color: var(--list-heading-fore);
+  padding: 5px 10px;
+}
+
+.searchResultsBox p {
+  padding: 0;
+  margin: 0;
+  color: var(--search-no-results);
+}
+
+.searchResultsBox table {
+  border-spacing: 0;
+  margin: 0px;
+  padding: 0px;
+}
+
+.searchResultsBox th {
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  padding: 5px !important;
+}
+
+@media screen and (max-width: 800px) {
+  .searchResultsBox  {
+    padding: 0;
+    margin: 0;
+    left: 0 !important;
+    width: 100%;
+    font-size: 90%;
+  }
+
+  .searchResultsBox .search_result .list tr {
+    padding: 0;
+  }
+
+  .searchResultsBox .search_result .list td:first-of-type {
+    font-size: 110% !important;
+    font-weight: bold;
+  }
+}
+
+/*
+  Extended search form
+*/
+
+#extendedSearchForm #searchTerms {
+  width: 100%;
+  padding: 5px;
+}
+
+#extendedSearchForm table {
+  width: 100%;
+}
+
+#extendedSearchForm tr:nth-child(odd) {
+  background: var(--form-odd-back);
+}
+
+#extendedSearchForm tr:nth-child(even) {
+  background: var(--form-even-back);
+}
+
+/* copy-pasted from form.scss! */
+#extendedSearchForm .buttonRow th,
+#extendedSearchForm .buttonRow td {
+  background: var(--form-button-row-back) !important;
+  text-align: center;
+}
+
+#extendedSearchForm th {
+  font-size: 100%;
+}
+
+#extendedSearchForm th, td {
+}
+
+#extendedSearchForm label {
+  white-space: nowrap;
+}
+
+#extendedSearchForm select {
+  width: 100%;
+}
+
+#extendedSearchForm .termSettings {
+  display: none;
+}
+
+#extendedSearchForm .indent {
+  margin-left: 1em;
+}
+
+#extendedSearchForm fieldset {
+  margin-bottom: 0;
+}
+
+#extendedSearchForm legend {
+  /* the form is much smaller than other forms and the huge fieldset legends used
+     elsewhere look hideous */
+  border: none;
+  font-weight: normal;
+  font-size: 100%;
+}
+
+#extendedSearchForm p {
+  padding: 0;
+  margin: 0;
+}
+
+#extendedSearchForm input[type="button"] {
+  padding: 5px 50px;
+}
+
+#extendedSearchResultsTitle {
+  background: var(--extendedsearch-results-back);
+  color: var(--extendedsearch-results-fore);
+  border: none;
+  padding: 5px 10px;
+}
+
+#extendedSearchResultsContainer .searchError {
+  color: var(--extendedsearch-error);
+  padding: 0;
+  margin: 0;
+}
+
+#extendedSearchResultsContainer .noResults {
+  color: var(--extendedsearch-no-results);
+  padding: 0;
+  margin: 0;
+}
+
+#extendedSearchResultsContainer .list th.matched {
+  /* The search term header column */
+  border-right: 1px solid var(--extendedsearch-results-divider) !important;
+}
+
+#extendedSearchResultsContainer .term, .matched {
+  /* Force minimum width */
+  width: 1px;
+  white-space: nowrap;
+}
+
+#extendedSearchResultsContainer .term {
+}
+
+#extendedSearchResultsContainer .matched {
+  border-right: 1px solid var(--extendedsearch-results-divider);
+}
+
+#extendedSearchResultsContainer .noMatches {
+  color: var(--extendedsearch-no-matches);
+}
+
+@media screen and (max-width: 800px) {
+  /* Remove borders, the list is collapsed */
+  #extendedSearchResultsContainer {
+    .list th:first-of-type {
+      border-right: none;
+    }
+
+    .list td:first-of-type {
+      font-weight: bold;
+      border-right: none;
+    }
+  }
+}
+
+.stickyInline {
+  position: sticky;
+  top: 0;
+}
