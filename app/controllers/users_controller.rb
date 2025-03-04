@@ -526,7 +526,14 @@ class UsersController < ApplicationController
           get_group_list
           error_message_and_render(format, 'new', I18n.t('flash.user.create_failed'))
         else
-          raise
+          # We're still dealing with a duplicate value, but due to ACLs, we cannot determine
+          # what attribute causes it. The exception message only contains "Constraint violation"
+          # and nothing else. This problem is very annoying to debug, becuse it does not happen
+          # in puavo-standalone, it can only be tested in production. The error message dislayed
+          # in this case is very vague, because we really do not know what causes the problem.
+          # So this is the best we can do for now.
+          get_group_list
+          error_message_and_render(format, 'new', I18n.t('flash.user.create_failed_unknown_duplicate_attribute'))
         end
       end
     end
@@ -668,7 +675,8 @@ class UsersController < ApplicationController
           get_group_list
           error_message_and_render(format, 'edit', I18n.t('flash.user.save_failed'))
         else
-          raise
+          get_group_list
+          error_message_and_render(format, 'edit', I18n.t('flash.user.save_failed_unknown_duplicate_attribute'))
         end
       end
     end

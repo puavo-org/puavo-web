@@ -725,7 +725,9 @@ en:
       save_failed: User cannot be saved!
       save_failed_organsation_owner_removal: "Save failed: user could not be removed from the organisation owners before the admin role was removed. Try removing the ownership manually."
       save_failed_school_admin_removal: "Save failed: user could not be removed from the school's administrators before the admin role was removed. Try removing the user from the administrators manually."
+      save_failed_unknown_duplicate_attribute: "Save failed: unknown duplicate attribute value (ACLs prevent determining which attribute it is). This username or email address is probably already in use in some other school that you don't have access to."
       create_failed: Failed to create the user!
+      create_failed_unknown_duplicate_attribute: "Failed to create the user: unknown duplicate attribute value (ACLs prevent determining which attribute it is). This user probably exists in some other school that you cannot access; try another username or email address."
       marked_for_deletion: "User has been marked for deletion"
       already_marked_for_deletion: "User already is marked for deletion"
       unmarked_for_deletion: "User is no longer marked for deletion"
