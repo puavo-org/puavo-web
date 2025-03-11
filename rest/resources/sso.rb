@@ -137,9 +137,15 @@ private
 
     begin
       jwt_initialize_login(request_id, login_key, trusted, was_oidc)
-      redirect was_oidc ? "/oidc/login?login_key=#{login_key}" : "/v3/sso/login?login_key=#{login_key}"
+      # we need to pass at least the organisation parameter across this
+      # redirect and maybe something else
+      params_to_pass = params.clone
+      params_to_pass.delete('return_to') # already handled by jwt_initialize_login, no need to pass on
+      params_to_pass['login_key'] = login_key
+      query_string = URI.encode_www_form(params_to_pass)
+      redirect(was_oidc ? "/oidc/login?#{ query_string }" : "/v3/sso/login?#{ query_string }")
     rescue StandardError => e
-      # WARNING: This resuce block can only handle exceptions that happen *before* the
+      # WARNING: This rescue block can only handle exceptions that happen *before* the
       # login form is rendered, because the login form renderer halts and never comes
       # back to this method.
       rlog.error("[#{request_id}] Unhandled exception in the SSO system: #{e}")
