@@ -79,7 +79,7 @@ module PuavoLoginJWT
     external_service = PuavoRest::ExternalService.by_dn(login_data['service']['dn'])
 
     # Generate the JWT hash
-    filtered_user = external_service.filtered_user_hash(user, login_data['user']['username'], login_data['organisation']['name'])
+    filtered_user = external_service.filtered_user_hash(user, login_data['user']['username'], login_data['organisation']['domain'])
     url, user_hash = external_service.generate_login_url(filtered_user, login_data['return_to'])
 
     rlog.info("[#{request_id}] redirecting SSO auth for \"#{ login_data['user']['username'] }\" to #{ url }")
