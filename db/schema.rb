@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120524103807) do
+ActiveRecord::Schema[6.1].define(:version => 20120524103807) do
 
   create_table "authorization_codes", :force => true do |t|
     t.string   "code"
