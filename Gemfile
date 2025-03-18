@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 # gems shared with puavo-rest
-gem "rails", "6.1.7.10"
+gem "rails", '7.0.8.7'
 gem "sprockets"
 gem "sqlite3"
 gem "prawn"
@@ -9,7 +9,8 @@ gem "net-ldap"
 gem "activeldap", :require => "active_ldap"
 gem "rmagick"
 gem "nokogiri"
-gem 'concurrent-ruby', '1.3.4'    # 1.3.5 breaks Rails 6.x
+gem 'concurrent-ruby', '1.3.4'    # 1.3.5 breaks every Rails below 7.1
+gem 'sprockets-rails'
 
 # puavo-web specific gems
 gem "pry"
