@@ -11,6 +11,14 @@ class User < LdapBase
   include Puavo::Integrations
   include Puavo::Password
 
+  USE_ORGANISATION_DEFAULTS = 'use_organisation_defaults'
+
+  def initialize(attributes={})
+    attributes[:puavoTeacherPermissions] = [ USE_ORGANISATION_DEFAULTS ] \
+      unless attributes.has_key?(:puavoTeacherPermissions)
+    super(attributes)
+  end
+
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
                 :classes => ['top', 'posixAccount', 'inetOrgPerson', 'puavoEduPerson','sambaSamAccount','eduPerson'] )
@@ -657,6 +665,15 @@ class User < LdapBase
                                     when "false"
                                       false
                                     end
+    end
+
+    if Array(self.puavoEduPersonAffiliation).include?('teacher') then
+      if Array(self.puavoTeacherPermissions).include?(USE_ORGANISATION_DEFAULTS) then
+        self.puavoTeacherPermissions \
+          = Array(LdapOrganisation.current.puavoDefaultTeacherPermissions)
+      end
+    else
+      self.puavoTeacherPermissions = []
     end
   end
 
