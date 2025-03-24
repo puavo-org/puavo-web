@@ -89,6 +89,10 @@ EOF
               http://localhost:9292/v3/refresh_organisations
           '''
 
+          sh '''
+            sleep 600000
+          '''
+
           // Execute rest tests first as they are more low level
           sh '''
             make test-rest
