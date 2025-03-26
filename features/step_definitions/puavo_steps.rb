@@ -23,6 +23,10 @@ Given(/^an "([^\"]*)" organisation where teachers have permission to change stud
   organisation = LdapOrganisation.current
   organisation.puavoDefaultTeacherPermissions = %w(set_student_password)
   organisation.save!
+  system('curl', '--silent', '--noproxy', 'localhost', '-d', 'foo=bar',
+                 'http://localhost:9292/v3/refresh_organisations',
+         :out => File::NULL) \
+    or raise "could not trigger organisations refresh to puavo-rest"
 end
 
 Given(/^a new ([^\"]*) with names (.*) on the "([^\"]*)" organisation$/) \
