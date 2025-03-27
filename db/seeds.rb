@@ -410,3 +410,19 @@ group.save!
     school.add_admin(user)
   end
 end
+
+##############################
+# Seeds for external.puavo.net
+##############################
+
+authentication = Puavo::Authentication.new
+authentication.configure_ldap_connection({
+    :dn => PUAVO_ETC.ldap_dn,
+    :password => PUAVO_ETC.ldap_password,
+    :organisation_key => "external",
+})
+authentication.authenticate
+
+organisation = LdapOrganisation.current
+organisation.puavoDefaultTeacherPermissions = %w(set_student_password)
+organisation.save!
