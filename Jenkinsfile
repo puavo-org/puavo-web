@@ -101,22 +101,23 @@ EOF
       }
     }
 
-    stage('Upload') {
-      steps {
-        sh '''
-          install -o root -g root -m 644 /etc/jenkins-docker-config/dput.cf \
-            /etc/dput.cf
-          install -o root -g root -m 644 \
-            /etc/jenkins-docker-config/ssh_known_hosts \
-            /etc/ssh/ssh_known_hosts
-          install -d -o root -g root -m 700 ~/.ssh
-          install -o root -g root -m 600 \
-            /etc/jenkins-docker-config/sshkey_puavo_deb_upload \
-            ~/.ssh/id_rsa
-        '''
-
-        sh 'make upload-debs'
-      }
-    }
+// XXX do not do uploads in the "jenkins-debugging"-branch
+//  stage('Upload') {
+//    steps {
+//      sh '''
+//        install -o root -g root -m 644 /etc/jenkins-docker-config/dput.cf \
+//          /etc/dput.cf
+//        install -o root -g root -m 644 \
+//          /etc/jenkins-docker-config/ssh_known_hosts \
+//          /etc/ssh/ssh_known_hosts
+//        install -d -o root -g root -m 700 ~/.ssh
+//        install -o root -g root -m 600 \
+//          /etc/jenkins-docker-config/sshkey_puavo_deb_upload \
+//          ~/.ssh/id_rsa
+//      '''
+//
+//      sh 'make upload-debs'
+//    }
+//  }
   }
 }
