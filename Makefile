@@ -155,7 +155,7 @@ test: config-to-system
 	bundle exec cucumber --color --tags @start_test_server \
 		--format=message --out log/cucumber-tests-TS.json
 	@printf '===== puavo-web main tests starting at %s\n' "$$(date --iso=seconds) ====="
-	bundle exec cucumber --color --tags "not @start_test_server" --tags "not @automatic_email" \
+	strace -ff -o /tmp/test-bundle.log bundle exec cucumber --color --tags "not @start_test_server" --tags "not @automatic_email" \
 		--format=message --out log/cucumber-tests-notTS.json
 	@printf '===== puavo-web tests finished at %s\n' "$$(date --iso=seconds) ====="
 
