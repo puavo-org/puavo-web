@@ -755,7 +755,8 @@ en:
       user_moved_to_school: "User moved to school \"%{name}\""
       school_moving_failed: "School change failed"
       sso_session_gone: "The user's SSO session has been reset (if it existed)"
-      admin_permissions_updated: "Permissions updated"
+      admin_permissions_updated: "Admin permissions updated"
+      teacher_permissions_updated: "Teacher permissions updated"
       not_an_admin: "Cannot edit admin permissions, because the user is not an admin"
       reset_email_sent: "Reset email sent."
       reset_failed_no_emails: "This user does not have an email address. Log code: %{request_id}."
@@ -799,6 +800,7 @@ en:
       token_lifetime_has_expired: "Your link has expired or it's invalid. Please enter your email again."
       too_many_attempts: "You must wait 10 seconds between password change attempts."
       go_away: "You are not a teacher nor an admin. You cannot change other user's passwords."
+      cannot_change_student_passwords: "You do not have a permission to change student passwords."
     school:
       school_admin_added: "%{displayName} (%{school_name}) is now an admin user"
       school_admin_removed: "%{displayName} (%{school_name}) is no longer an admin user in this school"
@@ -1160,6 +1162,7 @@ en:
       request_password_reset: "Send password reset email"
       reset_sso_session: "Reset SSO session"
       edit_admin_permissions: "Edit admin permissions..."
+      edit_teacher_permissions: "Edit teacher permissions..."
       admin_permissions:
         title: "Admin permissions"
         school_edit: "can edit school information"
@@ -1183,6 +1186,9 @@ en:
         device_mass_change_school: "can mass move devices to another school"
         device_mass_tag_editor: "can mass edit device tags"
         device_mass_change_purchase_information: "can mass edit device purchase information"
+      teacher_permissions:
+        title: "Teacher's permissions"
+        set_student_password: "can change student passwords"
     new:
       title: New user
     edit:
@@ -1253,6 +1259,12 @@ en:
         device_mass_change_school: "Can mass move devices to another school (normal device school changing must also be granted)"
         device_mass_tag_editor: "Can mass edit device tags"
         device_mass_change_purchase_information: "Can mass edit device purchase information"
+
+    edit_teacher_permissions:
+      title: "Edit Teacher Permissions"
+      header: "Edit permissions for teacher \"%{name}\""
+      permissions:
+        set_student_password: "Can change student passwords"
 
   # New new user mass import/update tool
   new_import:

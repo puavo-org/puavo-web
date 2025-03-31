@@ -22,6 +22,7 @@ def define_basic(env)
     config.dn = group.dn
   end
 
+  # teacher with student password change permissions
   env.define :teacher do |config|
     test_image = Magick::Image.read("features/support/test.jpg").first.to_blob
     teacher = User.create(
@@ -36,6 +37,7 @@ def define_basic(env)
       :puavoLocale               => 'en_US.UTF-8',
       :puavoSchool               => env.school.dn,
       :puavoEduPersonPrimarySchool => env.school.dn,
+      :puavoTeacherPermissions   => [ 'set_student_password' ],
       :sn                        => 'Snape',
       :telephoneNumber           => '234567',
       :uid                       => 'severus.snape')
@@ -132,6 +134,7 @@ def define_basic(env)
     config.dn = staff.dn
   end
 
+  # teacher without student password change permissions
   env.define :teacher2 do |config|
     teacher2 = User.create(
       :puavoSchool => env.school.dn,

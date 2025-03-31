@@ -18,6 +18,17 @@ Given(/^I am logged in as "([^\"]*)" organisation owner$/) do |organisation_name
   page.should have_content("LDAP services")
 end
 
+Given(/^an "([^\"]*)" organisation where teachers have permission to change student passwords by default$/) do |organisation_name|
+  set_organisation(organisation_name)
+  organisation = LdapOrganisation.current
+  organisation.puavoDefaultTeacherPermissions = %w(set_student_password)
+  organisation.save!
+  system('curl', '--silent', '--noproxy', 'localhost', '-d', 'foo=bar',
+                 'http://localhost:9292/v3/refresh_organisations',
+         :out => File::NULL) \
+    or raise "could not trigger organisations refresh to puavo-rest"
+end
+
 Given(/^a new ([^\"]*) with names (.*) on the "([^\"]*)" organisation$/) \
 do |names_of_the_models, values, organisation|
   set_organisation(organisation)

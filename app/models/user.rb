@@ -11,6 +11,14 @@ class User < LdapBase
   include Puavo::Integrations
   include Puavo::Password
 
+  USE_ORGANISATION_DEFAULTS = 'use_organisation_defaults'
+
+  def initialize(attributes={})
+    attributes[:puavoTeacherPermissions] = [ USE_ORGANISATION_DEFAULTS ] \
+      unless attributes.has_key?(:puavoTeacherPermissions)
+    super(attributes)
+  end
+
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
                 :classes => ['top', 'posixAccount', 'inetOrgPerson', 'puavoEduPerson','sambaSamAccount','eduPerson'] )
@@ -63,6 +71,11 @@ class User < LdapBase
     group_change_school group_mass_change_type
     create_devices delete_devices mass_delete_devices reset_devices mass_reset_devices
     device_change_school device_mass_change_school device_mass_tag_editor device_mass_change_purchase_information
+  ].freeze
+
+  # Valid and known permissions for teachers. Used in has_teacher_permission?(), for example.
+  TEACHER_PERMISSIONS = %i[
+    set_student_password
   ].freeze
 
   attr_accessor(*@@extra_attributes)
@@ -633,6 +646,10 @@ class User < LdapBase
     permissions.all? { |p| User::ADMIN_PERMISSIONS.include?(p) && user_permissions.include?(p.to_s) }
   end
 
+  def has_teacher_permission?(permission)
+    User::TEACHER_PERMISSIONS.include?(permission) && Array(self.puavoTeacherPermissions).include?(permission.to_s)
+  end
+
   private
 
   def set_special_ldap_value
@@ -657,6 +674,15 @@ class User < LdapBase
                                     when "false"
                                       false
                                     end
+    end
+
+    if Array(self.puavoEduPersonAffiliation).include?('teacher') then
+      if Array(self.puavoTeacherPermissions).include?(USE_ORGANISATION_DEFAULTS) then
+        self.puavoTeacherPermissions \
+          = Array(LdapOrganisation.current.puavoDefaultTeacherPermissions)
+      end
+    else
+      self.puavoTeacherPermissions = []
     end
   end
 

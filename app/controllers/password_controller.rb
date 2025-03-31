@@ -514,10 +514,11 @@ class PasswordController < ApplicationController
       return false
     end
 
+    user_roles = Array(@logged_in_user.puavoEdupersonAffiliation || [])
+
     # Don't let non-teachers and non-admins change other people's passwords
     if mode == :other
       wanted_roles = ['admin', 'teacher']
-      user_roles = Array(@logged_in_user.puavoEdupersonAffiliation || [])
 
       unless (user_roles & wanted_roles).any?
         logger.error("[#{request_id}] User \"#{login_uid}\" is not an admin or a teacher")
@@ -542,6 +543,20 @@ class PasswordController < ApplicationController
                         :value     => target_user_username)
     else
       target_user_username = login_uid
+    end
+
+    # Don't let teachers change student password if they're not permitted to do so
+    # It's possible to change your own password using the "change someone else's password" form,
+    # so we must not check the changer against themselves.
+    if mode == :other && login_uid != target_user_username &&
+      user_roles.include?('teacher') && !user_roles.include?('admin')
+
+      teacher_permissions = @logged_in_user.puavoTeacherPermissions || []
+
+      unless teacher_permissions.include?('set_student_password')
+        logger.error("[#{request_id}] User \"#{login_uid}\" is a teacher (but not admin), and they don't have the required permission to change student passwords")
+        raise UserError, I18n.t('flash.password.cannot_change_student_passwords')
+      end
     end
 
     unless @user || external_login_status then

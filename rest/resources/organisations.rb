@@ -31,6 +31,7 @@ class Organisation < LdapModel
   ldap_map :puavoKerberosRealm,          :puavo_kerberos_realm
 
   ldap_map :puavoNotes, :notes, LdapConverters::SingleValue
+  ldap_map :puavoDefaultTeacherPermissions, :default_teacher_permissions, LdapConverters::ArrayValue
 
   ldap_map :puavoMenuData, :puavomenu_data
   skip_serialize :puavomenu_data
