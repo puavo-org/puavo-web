@@ -54,11 +54,11 @@ end
 
   private
 
-  # Create MACAddress object for each device's macAddress etry
+  # Create MacAddress object for each device's macAddress etry
   # dhcpHWAddress == "ethernet <HWaddress>"
   # cn == device.puavoHostname
   def set_mac_addresses
-    exists_mac_addresses = MACAddress.all(:prefix => "puavoId=#{self.puavoId}")
+    exists_mac_addresses = MacAddress.all(:prefix => "puavoId=#{self.puavoId}")
     # Example of dhcpHWAddress: ethernet 00:11:22:33:44:55
     removed_mac_addresses = exists_mac_addresses.map{ |m| m.dhcpHWAddress[/[^ ]+$/] } - Array(self.macAddress)
     added_mac_addresses = Array(self.macAddress) - exists_mac_addresses.map{ |m| m.dhcpHWAddress[/[^ ]+$/] }
@@ -76,15 +76,15 @@ end
     end
 
     added_mac_addresses.each do |mac|
-      new_mac_address = MACAddress.new("dhcpHWAddress=ethernet #{mac},#{self.dn.to_s}")
+      new_mac_address = MacAddress.new("dhcpHWAddress=ethernet #{mac},#{self.dn.to_s}")
       new_mac_address.cn = self.puavoHostname
       new_mac_address.save!
     end
   end
 
-  # Remove MACAddress objects before destroy
+  # Remove MacAddress objects before destroy
   def remove_mac_addresses
-    MACAddress.all(:prefix => "puavoId=#{self.puavoId}").each do |mac_address|
+    MacAddress.all(:prefix => "puavoId=#{self.puavoId}").each do |mac_address|
       mac_address.destroy
     end
   end

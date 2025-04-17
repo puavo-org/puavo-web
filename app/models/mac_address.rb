@@ -1,4 +1,4 @@
-class MACAddress < LdapBase
+class MacAddress < LdapBase
   ldap_mapping( :dn_attribute => "dhcpHWAddress",
                 :prefix => "ou=Devices,ou=Hosts",
                 :classes => ['top', 'dhcpHost'] )

@@ -14,12 +14,13 @@ def run_acl_tests
   if not ARGV.empty?
     ARGV.each do |file|
       puts "Loading #{ file }"
+      # TODO: This is probably broken after Rails 7 upgrade. I have not tested this.
       require "./" + file
     end
   else
-    Dir.glob("#{ TEST_DIR }/*_test.rb").sort.each do |file|
+    Dir.glob(File.join(TEST_DIR, '*_test.rb')).sort.each do |file|
       puts "Loading #{ file }"
-      require "./" + file
+      require file
     end
   end
 
