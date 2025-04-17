@@ -265,6 +265,26 @@ class AtriaCortexAPI
       raise AtriaCortexAPIError.new(code, message)
     end
   end
+
+  def list_application_provisioning_progress(username, rlog)
+    query = prepare_query('lib/citrix/list_application_provisioning_progress.xml', {
+      '0' => @config['customer'],
+      '1' => username,
+      '2' => 'Citrix',
+    })
+
+    result = do_query(query)
+    body_s = result.body.to_s
+    body = Nokogiri.XML(body_s)
+
+    unless body.xpath('//error').empty?
+      code = body.xpath('//error/id').children[0].to_s.to_i
+      message = body.xpath('//error/message').children[0].to_s
+      raise AtriaCortexAPIError.new(code, message)
+    end
+
+    body.xpath('//user/service/status').children[0].to_s
+  end
 end
 
 class Citrix < PuavoSinatra
@@ -417,6 +437,30 @@ class Citrix < PuavoSinatra
         citrix_return('ok')
 
       # --------------------------------------------------------------------------------------------
+      when :list_application_provisioning_progress
+        rlog.info("[#{@request_id}] Getting the current application provisioning progress")
+
+        begin
+          user_service_status = atria.list_application_provisioning_progress(license['username'], rlog)
+          rlog.info("[#{@request_id}] Received application provisioning status '#{ user_service_status }'")
+          case user_service_status
+            when 'Failed'
+              citrix_return('application_provisioning_failed')
+            when 'InProgress'
+              citrix_return('application_provisioning_in_progress')
+            when 'Provisioned'
+              citrix_return('ok')
+            when 'Requested'
+              citrix_return('application_provisioning_requested')
+            else
+              raise "unknown service status: '#{ user_service_status }'"
+          end
+        rescue StandardError => e
+          rlog.error("[#{@request_id}] Error in getting the current application provisioning progress: #{ e.message }")
+          citrix_return('error')
+        end
+
+      # --------------------------------------------------------------------------------------------
       else
         # tested
         citrix_return('error', error: { puavo: { message: 'invalid_phase_id' } })
@@ -459,6 +503,11 @@ class Citrix < PuavoSinatra
   # Phase 4 (optional, depends on phase 3)
   post '/v3/users/:username/citrix/set_app_provisioning' do
     return handle_citrix_phase(:set_app_provisioning)
+  end
+
+  # Phase 4B (optional, depends on phase 3)
+  get '/v3/users/:username/citrix/list_application_provisioning_progress' do
+    return handle_citrix_phase(:list_application_provisioning_progress)
   end
 
   # All-in-one (old, don't call anymore, will be deleted soon-ish)
