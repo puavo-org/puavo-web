@@ -14,8 +14,8 @@
   <div class="flex-cols gap-10px margin-top-10px">
     <%= f.submit t('link.update'), class: 'btn' %>
     <div class="cancel"><%= link_to t('link.cancel'), user_path(@school, @user), class: 'btn' %></div>
-    <a href="#" id="selectAll" class="btn"><%= t('.select_all') %></a>
-    <a href="#" id="deselectAll" class="btn"><%= t('.deselect_all') %></a>
+    <a href="#" id="selectAll" class="btn"><%= t('users.edit_admin_permissions.select_all') %></a>
+    <a href="#" id="deselectAll" class="btn"><%= t('users.edit_admin_permissions.deselect_all') %></a>
   </div>
 <% end %>
 
