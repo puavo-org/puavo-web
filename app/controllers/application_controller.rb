@@ -66,7 +66,7 @@ class ApplicationController < ActionController::Base
       logger.error @error.backtrace.join("\n")
       logger.error '-' * 50
 
-      render :status => 500, :layout => false, :template => "errors/sorry.html.erb"
+      render status: 500, layout: false, template: 'errors/sorry'
     end
   end
 
