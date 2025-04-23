@@ -2223,6 +2223,7 @@ fi:
       puavoMenuDataPreview: "Puavomenun valikkodata (esikatselu)"
       ldap_organisation:
         description: Kuvaus
+        puavoOrganisationOID: "OID"
         puavoNotes: "Muistiinpanot"
         telephoneNumber: Puhelinnumero
         facsimileTelephoneNumber: Faxin numero

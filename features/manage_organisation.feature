@@ -37,6 +37,7 @@ Feature: Manage organisation
     And I follow "Edit..."
     Then I fill in the following:
     | Description                                    | Example Organisation located  in the middle of the Finland |
+    | OID                                            | 1.2.246.562.99.00000000001                                 |
     | Notes                                          | Just an example organisation. Nothing serious.             |
     | Phone number                                   | 123456789                                                  |
     | Fax number                                     | 987654321                                                  |
@@ -75,6 +76,7 @@ Feature: Manage organisation
     Then I should see the following:
     | Example Organisation located  in the middle of the Finland |
     | Just an example organisation. Nothing serious.             |
+    | 1.2.246.562.99.00000000001                                 |
     | 123456789                                                  |
     | 987654321                                                  |
     | Example locality                                           |

@@ -36,6 +36,8 @@ class Organisation < LdapModel
   ldap_map :puavoMenuData, :puavomenu_data
   skip_serialize :puavomenu_data
 
+  ldap_map :puavoOrganisationOID, :oid
+
   def organisation_key
     domain.split(".").first if domain
   end
@@ -163,6 +165,7 @@ class Organisation < LdapModel
       base: self.base,
       name: self.name,
       domain: self.domain,
+      oid: self.oid,
       notes: self.notes,
       preferred_image: self.preferred_image,
       preferred_language: self.preferred_language,
@@ -259,6 +262,7 @@ class Organisations < PuavoSinatra
     'modified'        => 'modifyTimestamp',   # LDAP operational attribute
     'name'            => 'o',
     'notes'           => 'puavoNotes',
+    'oid'             => 'puavoOrganisationOID',
     'owners'          => 'owner',
     'puavoconf'       => 'puavoConf',
     'timezone'        => 'puavoTimezone',
@@ -275,6 +279,7 @@ class Organisations < PuavoSinatra
     'puavoActiveService'  => { name: 'active_services' },
     'puavoConf'           => { name: 'puavoconf', type: :json },
     'puavoNotes'          => { name: 'notes' },
+    'puavoOrganisationOID' => { name: 'oid' },
     'puavoTimezone'       => { name: 'timezone' },
   }
 

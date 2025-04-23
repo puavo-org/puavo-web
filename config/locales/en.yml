@@ -2223,6 +2223,7 @@ en:
       puavoMenuDataPreview: "Puavomenu menu data (preview)"
       ldap_organisation:
         description: Description
+        puavoOrganisationOID: "OID"
         puavoNotes: "Notes"
         telephoneNumber: Phone number
         facsimileTelephoneNumber: Fax number
