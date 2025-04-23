@@ -227,12 +227,6 @@ class ApplicationController < ActionController::Base
 
   end
 
-  # Render generic error page in the current url with a error message
-  def render_error_page(msg="Unkown error")
-    @error_message = msg
-    render :status => 404, :template => "/errors/generic.html.erb"
-  end
-
   # Returns true if the current user is an organisation owner
   def is_owner?
     current_user && Array(LdapOrganisation.current.owner).include?(current_user.dn)
