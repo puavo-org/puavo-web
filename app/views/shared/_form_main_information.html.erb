@@ -18,12 +18,10 @@
   </tr>
   <% end %>
 
-  <% if is_device_change_allowed f %>
   <tr>
     <th><%= f.label :puavoDeviceType %></th>
-    <td><%= device_type f  %></td>
+    <td><%= Puavo::CONFIG['device_types'][f.object.puavoDeviceType]['label'][I18n.locale.to_s] %></td>
   </tr>
-  <% end %>
 
   <tr>
     <th><%= f.label :puavoTag %></th>
