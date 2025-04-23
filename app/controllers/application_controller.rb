@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
     rescue_from Exception do |error|
       @request = request
       @error = error
-      @error_uuid = ('a'..'z').to_a.sample(25).join
+      @error_uuid = SecureRandom.uuid
 
       logger.error '-' * 50
       logger.error "UNHANDLED EXCEPTION (UUID #{@error_uuid})"
