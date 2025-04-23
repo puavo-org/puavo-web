@@ -72,8 +72,8 @@ class ApplicationController < ActionController::Base
 
   def send_404
     respond_to do |format|
-      format.html { render :status => 404, :layout => false, :template => "errors/404.html" }
-      format.all { render :status => 404, text: '404 - not found' }
+      format.html { render status: 404, layout: false, template: 'errors/404' }
+      format.all { render status: 404, text: '404 - not found' }
     end
   end
 
