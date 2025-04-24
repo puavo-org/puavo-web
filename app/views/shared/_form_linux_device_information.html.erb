@@ -50,10 +50,12 @@
     <td><%= f.text_field :puavoPrinterDeviceURI %></td>
   </tr>
 
+  <% unless f.object.classes.include?('puavoServer') %>
   <tr>
     <th><%= f.label :puavoPrinterPPD %></th>
     <td><%= f.file_field :puavoPrinterPPD %></td>
   </tr>
+  <% end %>
 
   <tr>
     <th><%= f.label :puavoDefaultPrinter %></th>
