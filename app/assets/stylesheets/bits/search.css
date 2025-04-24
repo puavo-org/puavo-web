@@ -145,10 +145,6 @@
   width: 100%;
 }
 
-#extendedSearchForm .termSettings {
-  display: none;
-}
-
 #extendedSearchForm .indent {
   margin-left: 1em;
 }

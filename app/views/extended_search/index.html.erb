@@ -71,7 +71,7 @@
         <th><%= t('extended_search.per_term_settings.title') %></th>
         <td>
 
-          <div id="termSettingsUsers" class="termSettings">
+          <div id="termSettingsUsers" class="termSettings hidden">
             <fieldset>
               <legend><%= t('extended_search.per_term_settings.deletion_mark_state.title') %></legend>
 
@@ -99,7 +99,7 @@
             </fieldset>
           </div>
 
-          <div id="termSettingsDevices" class="termSettings">
+          <div id="termSettingsDevices" class="termSettings hidden">
             <fieldset>
               <legend><%= t('extended_search.per_term_settings.device_type.title') %></legend>
 
@@ -120,7 +120,7 @@
             </fieldset>
           </div>
 
-          <div id="noPerTermSettings" class="termSettings">
+          <div id="noPerTermSettings" class="termSettings hidden">
             <p><%= t('extended_search.per_term_settings.no_extra_settings') %></p>
           </div>
         </td>
@@ -158,9 +158,9 @@
 
       <tr class="buttonRow">
         <td colspan="2">
-          <input type="button" id="searchButton" onclick="doSearch()" value="<%= t('extended_search.button_search') %>"/>
-          <input type="button" id="clearResultsButtons" onclick="clearResults()" value="<%= t('extended_search.button_clear_results') %>"/>
-          <input type="button" id="clearTermsButtons" onclick="clearTerms()" value="<%= t('extended_search.button_clear_terms') %>"/>
+          <input type="button" id="searchButton" value="<%= t('extended_search.button_search') %>"/>
+          <input type="button" id="clearResultsButton" value="<%= t('extended_search.button_clear_results') %>"/>
+          <input type="button" id="clearTermsButton" value="<%= t('extended_search.button_clear_terms') %>"/>
         </td>
       </tr>
     </table>
@@ -192,10 +192,10 @@
 
 function getUsersType()
 {
-    if ($("#userTypeMarkedForDeletion").prop("checked"))
+    if (document.querySelector("input#userTypeMarkedForDeletion").checked)
         return "marked_for_deletion";
 
-    if ($("#userTypeNormal").prop("checked"))
+    if (document.querySelector("input#userTypeNormal").checked)
         return "normal";
 
     return "all";
@@ -203,10 +203,10 @@ function getUsersType()
 
 function getUsersLocked()
 {
-    if ($("#lockSet").prop("checked"))
+    if (document.querySelector("input#lockSet").checked)
         return "locked";
 
-    if ($("#lockUnset").prop("checked"))
+    if (document.querySelector("input#lockUnset").checked)
         return "unlocked";
 
     return "ignore";
@@ -214,63 +214,52 @@ function getUsersLocked()
 
 function doSearch()
 {
-    $.post({
-        url: "/extended_search",
-        async: true,
+    const data = {
+        "searchTerms": document.querySelector("textarea#searchTerms").value,
+        "searchTermsType": document.querySelector("select#searchTermsType").value,
+        "schoolLimit": document.querySelector("select#schoolLimit").value,
+        "isRegexp": document.querySelector("input#isRegexp").checked,
+        "isReverse": document.querySelector("input#isReverse").checked,
+        "removeMisses": document.querySelector("input#removeMisses").checked,
 
+        "perTermSettings": {
+              "devices": {
+                  "laptop": document.querySelector("input#deviceTypeLaptop").checked,
+                  "fatclient": document.querySelector("input#deviceTypeFatclient").checked,
+                  "printer": document.querySelector("input#deviceTypePrinter").checked,
+                  "bootserver": document.querySelector("input#deviceTypeBootserver").checked,
+                  "other": document.querySelector("input#deviceTypeOther").checked,
+              },
+
+              "users": {
+                  "type": getUsersType(),
+                  "locked": getUsersLocked(),
+              },
+        },
+    };
+
+    document.querySelector("input#searchButton").disabled = true;
+
+    fetch("/extended_search", {
+        method: "POST",
+        mode: "cors",
         headers: {
             "Content-type": "application/json",
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+            "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content,
         },
+        body: JSON.stringify(data),
+    }).then(response => {
+        if (!response.ok)
+            throw response;
 
-        beforeSend: function(jq, settings) {
-            $("#searchButton").prop("disabled", true);
-        },
-
-        fail: function(data) {
-            console.log('request failed')
-            console.log(data);
-        },
-
-        complete: function(data) {
-            $("#extendedSearchResultsContainer").html(data.responseText);
-            $("#searchButton").prop("disabled", false);
-        },
-
-        data: JSON.stringify({
-            "searchTerms": $("#searchTerms").val(),
-            "searchTermsType": $("#searchTermsType").val(),
-            "schoolLimit": $("#schoolLimit").val(),
-            "isRegexp": $("#isRegexp").prop("checked"),
-            "isReverse": $("#isReverse").prop("checked"),
-            "removeMisses": $("#removeMisses").prop("checked"),
-
-            "perTermSettings": {
-                  "devices": {
-                      "laptop": $("#deviceTypeLaptop").prop("checked"),
-                      "fatclient": $("#deviceTypeFatclient").prop("checked"),
-                      "printer": $("#deviceTypePrinter").prop("checked"),
-                      "bootserver": $("#deviceTypeBootserver").prop("checked"),
-                      "other": $("#deviceTypeOther").prop("checked"),
-                  },
-
-                  "users": {
-                      "type": getUsersType(),
-                      "locked": getUsersLocked(),
-                  },
-            },
-        }),
+        return response.text();
+    }).then(data => {
+        document.querySelector("div#extendedSearchResultsContainer").innerHTML = data;
+    }).catch(error => {
+        console.error(error);
+    }).finally(() => {
+        document.querySelector("input#searchButton").disabled = false;
     });
-}
-
-function clearResults()
-{
-    $("#extendedSearchResultsContainer").empty();
-}
-
-function clearTerms()
-{
-    $("#searchTerms").val("");
 }
 
 // Extra settings for some search term types
@@ -299,45 +288,42 @@ const SEARCH_TERM_SETTINGS = {
 
 function showOrHidePerTermSettings()
 {
-    const currentType = $("#searchTermsType").val();
-
-    console.log(currentType);
-
-      var found = false;
+    const currentType = document.querySelector("select#searchTermsType").value;
+    let found = false;
 
     if (currentType in SEARCH_TERM_SETTINGS) {
-        // have extra settings for this type, show the relevant section
+        // Have extra settings for this type, show the relevant section
         const targetId = SEARCH_TERM_SETTINGS[currentType];
 
-        $(".termSettings").each(function() {
-            if (this.id == targetId) {
-                $(this).show();
+        document.querySelectorAll("div.termSettings").forEach(t => {
+            if (t.id == targetId) {
+                t.classList.remove("hidden");
                 found = true;
-            } else $(this).hide();
+            } else t.classList.add("hidden");
         });
-
-        //$("#perTermSettingsRow").show();
     } else {
-        // no extra settings for this type, hide them all
-        //$("#perTermSettingsRow").hide();
-        $(".termSettings").each(function() {
-            $(this).hide();
-        });
+        // No extra settings for this type, hide them all
+        document.querySelectorAll("div.termSettings").forEach(t => t.classList.add("hidden"));
     }
 
-    if (!found)
-        $("#noPerTermSettings").show();
-    else $("#noPerTermSettings").hide();
+    document.querySelector("div#noPerTermSettings").classList.toggle("hidden", found);
 }
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", () => {
     new Tabs("searchTabs", 0);
 
-    $("#searchTermsType").change(function() {
-        showOrHidePerTermSettings();
-    });
+    document.querySelector("select#searchTermsType")
+        .addEventListener("change", () => showOrHidePerTermSettings());
 
     showOrHidePerTermSettings();
+
+    document.querySelector("input#searchButton").addEventListener("click", () => doSearch());
+
+    document.querySelector("input#clearResultsButton").addEventListener("click", () =>
+        document.querySelector("div#extendedSearchResultsContainer").innerText = null);
+
+    document.querySelector("input#clearTermsButton").addEventListener("click", () =>
+        document.querySelector("textarea#searchTerms").value = null);
 });
 
 </script>
