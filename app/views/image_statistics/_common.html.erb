@@ -3,33 +3,69 @@
 <% else %>
 
 <p>
-  <ul>
-    <li><%= t('image_statistics.total_devices', :total_devices => @stats['total_devices']) %></li>
-    <li><%= t('image_statistics.image_count', :image_count => @stats['images'].count) %></li>
-  </ul>
+    <ul>
+        <li><%= t('image_statistics.total_devices', total_devices: @stats[:total_devices]) %></li>
+        <li><%= t('image_statistics.image_count', image_count: @stats[:images].count) %></li>
+    </ul>
 </p>
 
 <p><a href="#" id="download" class="btn"><%= t('image_statistics.download') %></a></p>
 
-<fieldset><legend><%= t('image_statistics.sorting') %></legend>
-  <form autocomplete="off">
-    <input type="radio" name="sort" id="sortByImage" checked><label for="sortByImage"><%= t('image_statistics.sort_by_image').html_safe %></label><br>
-    <input type="radio" name="sort" id="sortByUsage"><label for="sortByUsage"><%= t('image_statistics.sort_by_usage') %></label>
-  </form>
+<fieldset>
+    <legend><%= t('image_statistics.sorting') %></legend>
+    <form autocomplete="off">
+        <input type="radio" name="sort" id="sortByImage" checked><label for="sortByImage"><%= t('image_statistics.sort_by_image').html_safe %></label><br>
+        <input type="radio" name="sort" id="sortByUsage"><label for="sortByUsage"><%= t('image_statistics.sort_by_usage') %></label>
+    </form>
 </fieldset>
 
 <p><%= t('image_statistics.instructions') %></p>
 
 <div id="output"></div>
 
+<template id="template_imageStats">
+    <table class="imageStats">
+        <thead>
+            <tr>
+                <th><%= t('image_statistics.image_name_column').html_safe %></th>
+                <th colspan="2" class="border"><%= t('image_statistics.usage_column') %></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</template>
+
+<template id="template_statsRow">
+    <tr class="header">
+        <td class="minimize-width">
+            <span class="imageName"></span>
+            <span class="releaseName"></span>
+        </td>
+
+        <td class="minimize-width border usage">XYZ</td>
+
+        <td class="barCol">
+            <div class="barOuter">
+                <div class="barInner" style="">&nbsp;</div>
+            </div>
+        </td>
+    </tr>
+
+    <tr class="deviceListRow hidden">
+        <td colspan="3">
+            <ul></ul>
+        </td>
+    </tr>
+</template>
+
 <script>
 // Raw statistics, generated server-side
-const STATISTICS = <%= raw JSON.pretty_generate(@stats) %>;
+const IMAGES = <%= raw JSON.pretty_generate(@stats[:images]) %>;
 
-const SCHOOLS = STATISTICS['schools'],
-      IMAGES = STATISTICS['images'];
+const SCHOOLS = <%= raw JSON.pretty_generate(@stats[:schools]) %>;
 
-let collator = new Intl.Collator(
+const collator = new Intl.Collator(
     // I guess this is a "neutral" sorting locale, because image names and
     // device hostnames don't have (should not have) anything outside of the
     // basic 7-bit ASCII
@@ -43,23 +79,25 @@ let collator = new Intl.Collator(
 
 const formatter = Intl.NumberFormat("<%= supertable_sorting_locale %>", { style: "percent", minimumFractionDigits: 1 });
 
-function buildTable(images, sorting)
+// Copy-pasted from assets/javascripts/common/dom.js. Can't import it because
+// we're not in a module. Grrr.
+function getTemplate(id)
 {
-    const totalDevices = STATISTICS['total_devices'];
+    return document.querySelector(`template#template_${id}`).content.cloneNode(true);
+}
 
-    let html = "";
+function buildTable(images)
+{
+    const totalDevices = <%= @stats[:total_devices] %>;
 
-    html += `<table class="imageStats">`;
-    html += `<tr><th><%= t('image_statistics.image_name_column').html_safe %></th>`;
-    html += `<th colspan="2" class="border"><%= t('image_statistics.usage_column') %></th></tr>`;
-    html += `<tbody>`;
+    const table = getTemplate("imageStats"),
+          tbody = table.querySelector("tbody");
 
     for (const imageName of images) {
         const image = IMAGES[imageName];
+        const row = getTemplate("statsRow");
 
-        html += `<tr class="header">`;
-        html += `<td class="minimize-width">`;
-
+        // Decide how to colorize this row, based on the image name
         let cls = "other";
 
         if (imageName.includes("stretch"))
@@ -71,49 +109,49 @@ function buildTable(images, sorting)
         else if (imageName.includes("bookworm"))
             cls = "bookworm";
 
-        html += `<span class="release-${cls}">${imageName}</span>`;
+        const imageSpan = row.querySelector("span.imageName"),
+              releaseSpan = row.querySelector("span.releaseName");
+
+        // Image filename
+        imageSpan.classList.add(`release-${cls}`);
+        imageSpan.innerText = imageName;
 
         // Known release names
         if (image.release !== null)
-            html += `<span class="releaseName">${image.release}</span>`;
-
-        html += "</td>";
-
-        const fraction = image.devices.length / totalDevices;
+            releaseSpan.innerText = image.release;
+        else releaseSpan.remove();
 
         // Bar graph
-        html += `<td class="minimize-width border">${image.devices.length}/${totalDevices} (${formatter.format(fraction)})</td>`;
-        html += `<td class="barCol"><div class="barOuter">`;
-        html += `<div class="barInner" style="width: ${fraction * 100.0}%;">&nbsp;</div>`;
-        html += "</div></td>";
-        html += `</tr>`;
+        const fraction = image.devices.length / totalDevices;
+
+        row.querySelector("td.usage").innerText = `${image.devices.length}/${totalDevices} (${formatter.format(fraction)})`;
+        row.querySelector("div.barInner").style.width = `${fraction * 100.0}%`;
 
         // List all devices using this image
-        const sortedDevices = image.devices.sort((a, b) => {
-            return collator.compare(a.name, b.name);
-        });
+        const list = row.querySelector("tr.deviceListRow ul");
 
-        html += `<tr class="deviceListRow" style="display: none;">`;
-        html += `<td colspan="3"><ul>`;
-
-        for (const device of sortedDevices) {
+        for (const device of image.devices.sort((a, b) => collator.compare(a.name, b.name))) {
             const school = SCHOOLS[device.school];
+            const li = document.createElement("li");
 
-            html += `<li><a href="${device.link}">${device.name}</a> (<a href="${school.link}">${school.name}</a>)</li>`;
+            <% if show_school_links %>
+            li.innerHTML = `<a href="${device.link}">${device.name}</a> (<a href="${school.link}">${school.name}</a>)`;
+            <% else %>
+            li.innerHTML = `<a href="${device.link}">${device.name}</a> (${school.name})`;
+            <% end %>
+            list.appendChild(li);
         }
 
-        html += "</ul></tr>";
+        // Setup collapsible header events
+        row.querySelector("tr.header").addEventListener("click", e => e.target.closest("tr").nextElementSibling.classList.toggle("hidden"));
+
+        tbody.appendChild(row);
     }
 
-    html += "</tbody></table>";
+    const output = document.getElementById("output");
 
-    document.getElementById("output").innerHTML = html;
-
-    // Setup collapsible header events
-    // TODO: Is this doable with <details>...</details>?
-    $(".imageStats .header").click(function(event) {
-        $(this).next(".deviceListRow").toggle();
-    });
+    output.innerText = null;
+    output.appendChild(table);
 }
 
 function sortByUsage(raw)
@@ -176,13 +214,17 @@ function download()
 {
     const timestamp = I18n.strftime(new Date(), "%Y-%m-%d-%H-%M-%S")
 
-    const b = new Blob([JSON.stringify(STATISTICS, null, "  ")], { type: "text/json" });
+    const data = {
+        schools: SCHOOLS,
+        images: IMAGES,
+    };
 
-    let a = window.document.createElement("a");
+    const b = new Blob([JSON.stringify(data, null, "  ")], { type: "text/json" });
+
+    const  a = window.document.createElement("a");
+
     a.href = window.URL.createObjectURL(b);
-
     a.download = `<%= LdapOrganisation.current.o %>-images-${timestamp}.json`;
-
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -191,11 +233,10 @@ function download()
 // Initial update
 buildTable(sortByImage(IMAGES));
 
-document.getElementById("sortByImage").onclick = function() { buildTable(sortByImage(IMAGES)) };
-document.getElementById("sortByUsage").onclick = function() { buildTable(sortByUsage(IMAGES)) };
-
+// Setup events
+document.getElementById("sortByImage").addEventListener("click", () => buildTable(sortByImage(IMAGES)));
+document.getElementById("sortByUsage").addEventListener("click", () => buildTable(sortByUsage(IMAGES)));
 document.getElementById("download").addEventListener("click", () => download());
-
 </script>
 
 <% end %>

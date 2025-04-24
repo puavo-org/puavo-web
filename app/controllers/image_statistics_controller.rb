@@ -98,10 +98,9 @@ class ImageStatisticsController < ApplicationController
     end
 
     @stats = {
-      'schools' => schools,
-      'images' => images,
-      'total_devices' => devices.count,
+      schools: schools,
+      images: images,
+      total_devices: devices.count
     }
-
   end
 end
