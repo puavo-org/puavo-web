@@ -307,7 +307,6 @@ fi:
       wifi: "WiFi"
       monitors_xml: "Näyttöasetukset (XML)"
       xrandr: "Xrandr"
-      xserver: "Näyt. ajuri"
       abitti_version: "Abitti-versio"
       df_home: "Vapaana /home (MiB)"
       df_images: "Vapaana /images (MiB)"
@@ -1858,7 +1857,6 @@ fi:
           printer_uri: "Tulostimen laiteosoite"
           default_printer: "Oletustulostin"
           image_source_url: "Levykuvasarjan lähdeosoite"
-          xserver: "Näytönohjaimen ajuri"
           xrandr: "Xrandr-asetukset"
           monitors_xml: "Näyttöasetukset (XML)"
           invalid_json: "Virheellinen JSON-data"
@@ -2375,7 +2373,6 @@ fi:
         puavoSupportContract: "Tukiyhteyshenkilö"
         puavoDefaultPrinter: Oletustulostin
         puavoDeviceMonitorsXML: "Näyttöasetukset (XML)"
-        puavoDeviceXserver: "Näytönohjaimen ajuri"
         puavoDeviceXrandr: Xrandr-asetukset
         puavoDeviceKernelVersion: Kernel-versio
         puavoDeviceKernelArguments: Kernel-parametrit
@@ -2431,7 +2428,6 @@ fi:
         puavoSupportContract: "Tukiyhteyshenkilö"
         puavoDefaultPrinter: Oletustulostin
         puavoDeviceMonitorsXML: "Näyttöasetukset (XML)"
-        puavoDeviceXserver: "Näytöohjaimen ajuri"
         puavoDeviceXrandr: Xrandr-asetukset
         puavoDeviceKernelVersion: Kernel-versio
         puavoDeviceKernelArguments: Kernel-parametrit

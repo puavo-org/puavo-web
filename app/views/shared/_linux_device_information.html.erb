@@ -166,11 +166,6 @@
     </tr>
 
     <tr>
-      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceXserver") %></th>
-      <td><%= h device.puavoDeviceXserver %></td>
-    </tr>
-
-    <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceXrandr") %></th>
       <td><%= safe_join(Array(device.puavoDeviceXrandr), "<br>".html_safe) %></td>
     </tr>

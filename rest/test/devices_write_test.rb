@@ -59,18 +59,6 @@ describe PuavoRest::Devices do
   end
 
   describe "POST /v3/devices/:hostname" do
-    it "can update graphics_driver"  do
-      # XXX Use device dn and pw
-      basic_authorize "cucumber", "cucumber"
-      post "/v3/devices/laptop1", { "graphics_driver" => "foo" }
-      assert_200
-
-      get "/v3/devices/laptop1"
-      assert_200
-      data = JSON.parse last_response.body
-      assert_equal "foo", data["graphics_driver"]
-    end
-
     describe "can modify primary_user attribute" do
       before(:each) do
         # XXX Use device dn and pw

@@ -352,7 +352,6 @@ class ServersController < ApplicationController
         :puavoLatitude,
         :puavoLongitude,
         :puavoDeviceMonitorsXML,
-        :puavoDeviceXserver,
         :puavoDeviceImage,
         :puavoDeviceKernelVersion,
         :puavoDeviceKernelArguments,

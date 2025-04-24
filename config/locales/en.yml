@@ -307,7 +307,6 @@ en:
       wifi: "WiFi"
       monitors_xml: "Display settings (XML)"
       xrandr: "Xrandr"
-      xserver: "Graphics Adapter"
       abitti_version: "Abitti version"
       df_home: "Free /home (MiB)"
       df_images: "Free /images (MiB)"
@@ -1858,7 +1857,6 @@ en:
           printer_uri: "Printer device URI"
           default_printer: "Default printer"
           image_source_url: "Image series source URL"
-          xserver: "Graphic adapter drivers"
           xrandr: "Xrandr settings"
           monitors_xml: "Display settings (XML)"
           invalid_json: "Invalid JSON data"
@@ -2375,7 +2373,6 @@ en:
         puavoSupportContract: Support contract
         puavoDefaultPrinter: Default printer
         puavoDeviceMonitorsXML: "Display settings (XML)"
-        puavoDeviceXserver: Graphic adapter drivers
         puavoDeviceXrandr: Xrandr settings
         puavoDeviceKernelVersion: Kernel version
         puavoDeviceKernelArguments: Kernel arguments
@@ -2431,7 +2428,6 @@ en:
         puavoSupportContract: Support contract
         puavoDefaultPrinter: Default printer
         puavoDeviceMonitorsXML: "Display settings (XML)"
-        puavoDeviceXserver: Graphic adapter drivers
         puavoDeviceXrandr: Xrandr settings
         puavoDeviceKernelVersion: Kernel version
         puavoDeviceKernelArguments: Kernel arguments

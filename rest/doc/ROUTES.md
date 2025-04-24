@@ -77,7 +77,6 @@ Get device information by device hostname.
     {
       "kernel_arguments": "lol",
       "kernel_version": "0.1",
-      "graphics_driver": "nvidia",
       "image": "myimage",
       "dn": "puavoId=10,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
       "puavo_id": "10",
@@ -172,7 +171,6 @@ but are not automatically deleted.
         "puavo_id": "5370",
         "boot_mode": null,
         "xrand_disable": null,
-        "graphics_driver": null,
         "resolution": null
       },
       "user": {

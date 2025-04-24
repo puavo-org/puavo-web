@@ -15,7 +15,6 @@ class Device < Host
   ldap_map :puavoDeviceOnHour,             :daytime_start_hour
   ldap_map :puavoDevicePrimaryUser,        :primary_user_dn
   ldap_map :puavoDeviceXrandr,             :xrandr,                   LdapConverters::ArrayValue
-  ldap_map :puavoDeviceXserver,            :graphics_driver
   ldap_map :puavoMountpoint,               :mountpoints,              LdapConverters::ArrayValue
   ldap_map :puavoNotes,                    :notes,                    LdapConverters::SingleValue
   ldap_map :puavoPersonalDevice,           :personal_device,          LdapConverters::StringBoolean
@@ -353,7 +352,6 @@ class Device < Host
     extend_puavoconf('puavo.printing.default_printer', default_printer_name)
     extend_puavoconf('puavo.printing.device_uri', printer_device_uri)
     extend_puavoconf('puavo.www.homepage',  homepage)
-    extend_puavoconf('puavo.xorg.server',   graphics_driver)
     extend_puavoconf('puavo.xrandr.args', xrandr, handle_xrandr)
 
     #
@@ -530,7 +528,6 @@ class Devices < PuavoSinatra
   #    {
   #      "kernel_arguments": "lol",
   #      "kernel_version": "0.1",
-  #      "graphics_driver": "nvidia",
   #      "image": "myimage",
   #      "dn": "puavoId=10,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
   #      "puavo_id": "10",
@@ -772,7 +769,6 @@ class Devices < PuavoSinatra
     'tags'                    => 'puavoTag',
     'type'                    => 'puavoDeviceType',
     'xrandr'                  => 'puavoDeviceXrandr',
-    'xserver'                 => 'puavoDeviceXserver',
   }
 
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
@@ -804,7 +800,6 @@ class Devices < PuavoSinatra
     'puavoDeviceStatus'             => { name: 'status' },
     'puavoDeviceType'               => { name: 'type' },
     'puavoDeviceXrandr'             => { name: 'xrandr' },
-    'puavoDeviceXserver'            => { name: 'xserver' },
     'puavoDisplayName'              => { name: 'display_name' },
     'puavoHostname'                 => { name: 'hostname' },
     'puavoId'                       => { name: 'id', type: :integer },

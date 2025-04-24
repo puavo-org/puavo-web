@@ -681,12 +681,6 @@ const COLUMN_DEFINITIONS = {
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
-
-    xserver: {
-        key: "xserver",
-        title: "<%= t('columns.devices.xserver') %>",
-        type: ST.ColumnType.STRING,
-    },
 };
 
 // The default order for columns
@@ -745,7 +739,6 @@ const COLUMN_ORDER = [
     "bat_volts",
     "wifi",
     "xrandr",
-    "xserver",
     "monitors_xml",
     "lspci",
     "lsusb",
@@ -1001,7 +994,6 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
             { title: "<%= t('devices.index.mass_operations.set_field.printer_uri') %>", key: "printer_uri", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.default_printer') %>", key: "default_printer", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.image_source_url') %>", key: "image_source_url", type: "image_source_url" },
-            { title: "<%= t('devices.index.mass_operations.set_field.xserver') %>", key: "xserver", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.xrandr') %>", key: "xrandr", type: "xrandr" },
             { title: "<%= t('devices.index.mass_operations.set_field.monitors_xml') %>", key: "monitors_xml", type: "xml" },
         ];

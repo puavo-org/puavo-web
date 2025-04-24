@@ -73,7 +73,6 @@ module DevicesHelper
       'puavoDefaultPrinter',
       'puavoDeviceDefaultAudioSource',
       'puavoDeviceDefaultAudioSink',
-      'puavoDeviceXserver',
       'puavoAllowGuest',
       'puavoPersonallyAdministered',
       'puavoAutomaticImageUpdates',
@@ -284,10 +283,6 @@ module DevicesHelper
 
     if dev.include?('puavoDeviceDefaultAudioSink')
       out[:audio_sink] = dev['puavoDeviceDefaultAudioSink'][0]
-    end
-
-    if dev.include?('puavoDeviceXserver')
-      out[:xserver] = dev['puavoDeviceXserver'][0]
     end
 
     if dev.include?('puavoAllowGuest')

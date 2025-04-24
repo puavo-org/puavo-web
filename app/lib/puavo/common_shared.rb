@@ -218,12 +218,6 @@ module Puavo
             changed = true
           end
 
-        when 'xserver'
-          if value != object.puavoDeviceXserver
-            object.puavoDeviceXserver = value
-            changed = true
-          end
-
         when 'xrandr'
           if value != object.puavoDeviceXrandr
             object.puavoDeviceXrandr = value
