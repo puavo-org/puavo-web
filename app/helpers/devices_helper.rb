@@ -445,6 +445,10 @@ module DevicesHelper
       if info['uptime']
         out[:uptime] = info['uptime']
       end
+
+      if info['puavopkgs']
+        out[:puavopkgs] = info['puavopkgs']
+      end
     rescue => e
       # oh dear
       puts e

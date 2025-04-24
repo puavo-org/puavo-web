@@ -346,6 +346,7 @@ en:
       reset_time: "Reset mode requested at"
       reset_fulfilled: "Reset fulfilled at"
       uptime: "Uptime"
+      puavopkgs: "puavo-pkg package list"
 
     servers:
       available_images: "Available images"

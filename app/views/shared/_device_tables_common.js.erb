@@ -548,6 +548,35 @@ const COLUMN_DEFINITIONS = {
         type: ST.ColumnType.STRING,
     },
 
+    puavopkgs: {
+        key: "puavopkgs",
+        title: "<%= t('columns.devices.puavopkgs') %>",
+        type: ST.ColumnType.STRING,
+        transform: entry => {
+            if (entry.puavopkgs === undefined)
+                return [false, null, null, null];
+
+            let html = `<ul class="margin-0 padding-0 no-list-bullets">`;
+            let text = "";
+
+            for (const [id, pkg] of Object.entries(entry.puavopkgs.installed)) {
+                html += `<li><strong>${id}</strong><ul class="padding-0 padding-left-25px">`;
+                html += `<li><%= t('hwinfo.puavopkg.version') %>: ${pkg.version}</li>`;
+                html += `<li><%= t('hwinfo.puavopkg.package_id') %>: ${pkg["package-id"]}</li>`;
+                html += `<li><%= t('hwinfo.puavopkg.upstream_hash') %>: ${pkg.upstream_pack === null ? "-" : pkg.upstream_pack}</li>`;
+                html += `</ul></li>`
+
+                // Include the hashes and IDs in the plain text string, so the column
+                // is substring-searchable in filters. Not pretty, but it works.
+                text += `${id} ${pkg["package-id"]} ${pkg.upstream_pack}\n`;
+            }
+
+            html += "</ul>";
+
+            return [html, text, text];
+        },
+    },
+
     purchase_date: {
         key: "purchase_date",
         title: "<%= t('columns.devices.purchase_date') %>",
@@ -776,6 +805,7 @@ const COLUMN_ORDER = [
     "ll_uid",
     "ll_time",
     "uptime",
+    "puavopkgs",
     "desc",
     "notes",
 ];

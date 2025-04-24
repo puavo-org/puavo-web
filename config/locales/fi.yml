@@ -346,6 +346,7 @@ fi:
       reset_time: "Nollauspyyntö tehty"
       reset_fulfilled: "Nollauspyyntö täytetty"
       uptime: "Käynnissäoloaika"
+      puavopkgs: "puavo-pkg -pakettilista"
 
     servers:
       available_images: "Tarjolla olevat kuvatiedostot"
