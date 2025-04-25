@@ -9,7 +9,7 @@ describe ExternalFile, :type => :model do
     f.save!
 
     hash = Digest::SHA1.new.update(f.puavoData).to_s
-    ExternalFile.first.puavoDataHash.should == hash
+    expect(ExternalFile.first.puavoDataHash).to eq(hash)
   end
 
   it "can find configured files" do
@@ -24,15 +24,15 @@ describe ExternalFile, :type => :model do
     f.save!
 
     files = ExternalFile.find_configured([{ "name" => "findme.txt" }])
-    files.size.should == 1
-    files.first.cn.should == "findme.txt"
+    expect(files.size).to eq(1)
+    expect(files.first.cn).to eq("findme.txt")
   end
 
   it "can create by cn" do
     name = "newfile.txt"
     f = ExternalFile.find_or_create_by_cn(name)
-    f.cn.should == name
-    f.puavoData.should == nil
+    expect(f.cn).to eq(name)
+    expect(f.puavoData).to eq(nil)
   end
 
   it "can find by cn" do
@@ -43,8 +43,8 @@ describe ExternalFile, :type => :model do
     f.save!
 
     f2 = ExternalFile.find_or_create_by_cn(name)
-    f2.cn.should == name
-    f2.puavoData.should == "lol"
+    expect(f2.cn).to eq(name)
+    expect(f2.puavoData).to eq("lol")
   end
 
   it "can serialize to nice json" do
@@ -57,9 +57,9 @@ describe ExternalFile, :type => :model do
 
     # id sequence is not reseted between test runs. Assert everthing else
     expect(json.keys).to eq(["id", "name", "data_hash"])
-    json["name"].should == "filename.txt"
-    json["data_hash"].should == "403926033d001b5279df37cbbe5287b7c7c267fa"
-    json["id"].class.should == Fixnum
+    expect(json["name"]).to eq("filename.txt")
+    expect(json["data_hash"]).to eq("403926033d001b5279df37cbbe5287b7c7c267fa")
+    expect(json["id"].class).to eq(Fixnum)
   end
 
 
@@ -73,7 +73,7 @@ describe ExternalFile, :type => :model do
       f.save!
 
       saved = ExternalFile.find_or_create_by_cn("image")
-      saved.puavoDataHash.should_not be_nil
+      expect(saved.puavoDataHash).not_to eq(nil)
     end
 
     it "can change files" do
@@ -86,7 +86,7 @@ describe ExternalFile, :type => :model do
       saved = ExternalFile.find_or_create_by_cn("image")
       saved.puavoData = "new data"
       saved.save!
-      saved.puavoDataHash.should_not be_nil
+      expect(saved.puavoDataHash).not_to eq(nil)
     end
   end
 

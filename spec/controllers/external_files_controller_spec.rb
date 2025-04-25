@@ -37,8 +37,8 @@ describe ExternalFilesController, :type => :controller do
       expect(response.status).to eq(200)
       json = JSON.parse(response.body)
 
-      json.size.should == 1
-      json[0]["name"].should == "file.txt"
+      expect(json.size).to eq(1)
+      expect(json[0]["name"]).to eq("file.txt")
     end
 
   end
@@ -55,7 +55,7 @@ describe ExternalFilesController, :type => :controller do
       }, session: valid_session)
 
       Puavo::Test.setup_test_connection
-      ExternalFile.find_by_cn("img.jpg").should_not be_nil
+      expect(ExternalFile.find_by_cn("img.jpg")).not_to eq(nil)
     end
   end
 
@@ -64,7 +64,7 @@ describe ExternalFilesController, :type => :controller do
     it "can fetch saved file" do
       get :get_file, params: { name: "file.txt" }, session: valid_session
       expect(response.status).to eq(200)
-      response.body.should == "data"
+      expect(response.body).to eq("data")
     end
 
     it "responds 404 on non defined files" do
@@ -93,7 +93,7 @@ describe ExternalFilesController, :type => :controller do
       # Doing accessing controller removes the ldap connection for some reason.
       # Restore it...
       Puavo::Test.setup_test_connection
-      ExternalFile.find_by_cn("new.txt").should == nil
+      expect(ExternalFile.find_by_cn("new.txt")).to eq(nil)
     end
 
     it "responds 404 on nonexistent file" do
