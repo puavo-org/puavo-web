@@ -21,19 +21,11 @@
 
 <% unless Array(@server.puavoSchool).empty? %>
 <%= start_box t('servers.school_limit.title'), extraClass="fullWidth" %>
-  <table id="serverSchoolLimitBox">
-    <% @server.forced_schools.each do |status, school| %>
-    <tr>
-      <td>
-      <% if status %>
-        <%= link_to school.displayName, school_path(school)  %>
-      <% else %>
-        <p style="color: red;"><em><%= t('servers.school_limit.missing_school', :school => school) %></em></p>
-      <% end %>
-      </td>
-      </tr>
+  <ul>
+    <% @server.forced_schools.each do |school| %>
+      <li><%= link_to school.displayName, school_path(school)  %></li>
     <% end %>
-    </table>
+  </ul>
 <%= end_box %>
 <% end %>
 

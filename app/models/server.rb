@@ -11,18 +11,16 @@ class Server < DeviceBase
             :foreign_key => 'puavoServer' )
 
   def forced_schools
-    out = []
+    schools = []
 
     Array(puavoSchool).each do |school_dn|
-      # you can't just plow ahead without any error checking!
       begin
-        out << [true, School.find(school_dn)]
-      rescue
-        out << [false, school_dn.to_s]
+        schools << School.find(school_dn)
+      rescue StandardError => e
       end
     end
 
-    out
+    schools.sort { |a, b| a[:displayName].downcase <=> b[:displayName].downcase }
   end
 
   def self.ssha_hash(password)
