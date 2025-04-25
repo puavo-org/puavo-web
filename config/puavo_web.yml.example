@@ -69,7 +69,7 @@ device_types:
   bootserver:
     label:
       en: Boot server
-      fi: Boot palvelin
+      fi: "Boot -palvelin"
     classes: puavoLocalbootDevice
     url: /devices/servers/new.json?device_type=bootserver
     order: 6
