@@ -2317,10 +2317,6 @@ fi:
         preferredLanguage: Kieli
         new_password: Uusi salasana
         new_password_confirmation: Vahvista uusi salasana
-        puavoAllowRemoteAccess: "Sallitaan etäyhteys"
-        puavoAllowRemoteAccess_true: "Kyllä"
-        puavoAllowRemoteAccess_false: Ei
-        puavoAllowRemoteAccess_: Ei
         puavoEduPersonPersonnelNumber: "Henkilönumero"
         image: Kuva
         jpegPhoto: Kuva

@@ -1333,7 +1333,6 @@ class UsersController < ApplicationController
           :sn,
           :uid,
           :puavoLocale,
-          :puavoAllowRemoteAccess,
           :puavoEduPersonPersonnelNumber,
           :image,
           :puavoLocked,

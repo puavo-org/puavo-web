@@ -71,7 +71,6 @@ Feature: Manage users
     And the "Language" select box should contain "German \(Switzerland\)"
     And I select "English (United States)" from "Language"
     # FIXME
-    And I choose "user_puavoAllowRemoteAccess_true"
     And I attach the file at "features/support/test.jpg" to "Image"
     And I select group "Class 4"
     And I press "Create"
@@ -85,7 +84,6 @@ Feature: Manage users
     | +35814123123123                                 |
     | Student                                         |
     | English (United States)                         |
-    | Yes                                             |
     | 556677                                          |
     | 38:58:f6:22:30:ac:3c:91:5f:30:0c:66:43:12:c6:3f |
     | A certified cool guy                            |

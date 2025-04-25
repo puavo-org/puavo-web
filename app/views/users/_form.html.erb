@@ -131,23 +131,6 @@
     </tr>
 
     <tr>
-      <th><%= f.label :puavoAllowRemoteAccess %></th>
-      <td>
-        <%= f.radio_button :puavoAllowRemoteAccess, "true" %>
-        <%= label(:user,
-                  t('activeldap.attributes.user.puavoAllowRemoteAccess_true'),
-                  :for => "user_puavoAllowRemoteAccess_true",
-                  :value => "true") %>
-        <br>
-        <%= f.radio_button :puavoAllowRemoteAccess, "false" %>
-        <%= label(:user,
-                  t('activeldap.attributes.user.puavoAllowRemoteAccess_false'),
-                  :for => "user_puavoAllowRemoteAccess_false",
-                  :value => "false") %>
-      </td>
-    </tr>
-
-    <tr>
       <th><%= f.label :puavoEduPersonPersonnelNumber %></th>
       <td><%= f.text_field :puavoEduPersonPersonnelNumber %></td>
     </tr>

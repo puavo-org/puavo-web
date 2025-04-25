@@ -667,14 +667,6 @@ class User < LdapBase
     end
     self.loginShell = '/bin/bash'
     self.eduPersonPrincipalName = "#{self.uid}@#{LdapOrganisation.current.puavoKerberosRealm}"
-    if self.puavoAllowRemoteAccess.class == String
-      self.puavoAllowRemoteAccess = case self.puavoAllowRemoteAccess
-                                    when "true"
-                                      true
-                                    when "false"
-                                      false
-                                    end
-    end
 
     if Array(self.puavoEduPersonAffiliation).include?('teacher') then
       if Array(self.puavoTeacherPermissions).include?(USE_ORGANISATION_DEFAULTS) then

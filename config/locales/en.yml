@@ -2317,10 +2317,6 @@ en:
         preferredLanguage: Language
         new_password: New password
         new_password_confirmation: Confirm new password
-        puavoAllowRemoteAccess: Allow remote access
-        puavoAllowRemoteAccess_true: "Yes"
-        puavoAllowRemoteAccess_false: "No"
-        puavoAllowRemoteAccess_: "No"
         puavoEduPersonPersonnelNumber: Personnel Number
         image: Image
         jpegPhoto: Image
