@@ -553,8 +553,8 @@ const COLUMN_DEFINITIONS = {
         title: "<%= t('columns.devices.puavopkgs') %>",
         type: ST.ColumnType.STRING,
         transform: entry => {
-            if (entry.puavopkgs === undefined)
-                return [false, null, null, null];
+            if (entry.puavopkgs === undefined || entry.puavopkgs.installed === undefined)
+                return [null, null, null];
 
             let html = `<ul class="margin-0 padding-0 no-list-bullets">`;
             let text = "";
