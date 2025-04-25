@@ -257,7 +257,7 @@ class SSO < PuavoSinatra
       "service_title_override" => nil,
       "return_to" => params['return_to'] || params['return'] || nil,
       "organisation" => @organisation ? @organisation.domain : nil,
-      "display_domain" => request["organisation"],
+      "display_domain" => request['organisation'] ? Rack::Utils.escape_html(request['organisation']) : nil,
       "username_placeholder" => username_placeholder,
       "username" => params["username"],
       "error_message" => @error_message,
