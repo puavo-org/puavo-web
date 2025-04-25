@@ -3,8 +3,9 @@ require_relative "./helper"
 require 'set'
 
 describe PuavoRest::Users do
-
-  IMG_FIXTURE = File.join(File.dirname(__FILE__), "fixtures", "profile.jpg")
+  def get_fixture
+    File.join(File.dirname(__FILE__), 'fixtures', 'profile.jpg')
+  end
 
   before(:each) do
     Puavo::Test.clean_up_ldap
@@ -456,7 +457,7 @@ describe PuavoRest::Users do
         _teacher = User.find(:first,
                              :attribute => 'puavoId',
                              :value     => @teacher.id)
-        _teacher.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
+        _teacher.image = Rack::Test::UploadedFile.new(get_fixture(), 'image/jpeg')
         _teacher.save!
       end
 
@@ -511,7 +512,7 @@ describe PuavoRest::Users do
       _teacher = User.find(:first,
                            :attribute => 'puavoId',
                            :value     => @teacher.id)
-      _teacher.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
+      _teacher.image = Rack::Test::UploadedFile.new(get_fixture(), 'image/jpeg')
       _teacher.save!
 
       basic_authorize "bob", "secret"
