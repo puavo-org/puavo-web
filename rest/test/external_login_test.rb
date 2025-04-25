@@ -63,10 +63,13 @@ describe PuavoRest::ExternalLogin do
   orig_default_host = Rack::Test::DEFAULT_HOST
 
   before(:each) do
+    original_verbosity = $VERBOSE
+    $VERBOSE = nil
     Rack::Test::DEFAULT_HOST = 'external.puavo.net'
     CONFIG = orig_config.dup
     CONFIG['external_login'] \
       = PuavoRest::ExternalLoginTestConfig::get_configuration()
+    $VERBOSE = original_verbosity
 
     Puavo::Test.clean_up_ldap
     Puavo::Test.setup_test_connection('external')
@@ -84,9 +87,12 @@ describe PuavoRest::ExternalLogin do
   end
 
   after do
+    original_verbosity = $VERBOSE
+    $VERBOSE = nil
     CONFIG = orig_config.dup
     Puavo::Test.clean_up_ldap
     Rack::Test::DEFAULT_HOST = orig_default_host
+    $VERBOSE = original_verbosity
   end
 
   describe 'logins with bad credentials fail' do

@@ -58,9 +58,12 @@ describe PuavoRest::SSO do
 
     @user2.save!
 
+    original_verbosity = $VERBOSE
+    $VERBOSE = nil
     @orig_config = CONFIG.dup
     CONFIG.delete("default_organisation_domain")
     CONFIG["bootserver"] = false
+    $VERBOSE = original_verbosity
 
     PuavoRest::Organisation.refresh
 
@@ -78,7 +81,10 @@ describe PuavoRest::SSO do
   end
 
   after do
+    original_verbosity = $VERBOSE
+    $VERBOSE = nil
     CONFIG = @orig_config
+    $VERBOSE = original_verbosity
   end
 
 

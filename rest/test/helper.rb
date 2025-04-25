@@ -85,7 +85,10 @@ Puavo::Test.setup_test_connection
 
 module Rack
   module Test
+    original_verbosity = $VERBOSE
+    $VERBOSE = nil
     DEFAULT_HOST = "example.puavo.net"
+    $VERBOSE = original_verbosity
   end
 end
 

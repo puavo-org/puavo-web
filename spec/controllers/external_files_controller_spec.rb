@@ -5,7 +5,10 @@ describe ExternalFilesController, :type => :controller do
   before(:each) do
     controller.request.host = 'www.example.com'
 
-    # XXX: Prints warnings on every test run
+    # Silence the constant redefinition warning
+    original_verbosity = $VERBOSE
+    $VERBOSE = nil
+
     Puavo::EXTERNAL_FILES = [
       {
         "name"=>"file.txt",
@@ -16,6 +19,9 @@ describe ExternalFilesController, :type => :controller do
         "description" => "Another file for testing"
       }
     ]
+
+    # Restore original warnings
+    $VERBOSE = original_verbosity
 
     f = ExternalFile.new
     f.puavoData = "data"

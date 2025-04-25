@@ -7,8 +7,11 @@ require "open3"
 
 describe PuavoRest::SSO do
   before(:each) do
+    original_verbosity = $VERBOSE
+    $VERBOSE = nil
     @orig_config = CONFIG.dup
     CONFIG["bootserver"] = false
+    $VERBOSE = original_verbosity
 
     PuavoRest::Organisation.refresh
     Puavo::Test.clean_up_ldap
@@ -41,7 +44,10 @@ describe PuavoRest::SSO do
 
   after do
     system('kdestroy')  # remove the ticket obtained with kinit
+    original_verbosity = $VERBOSE
+    $VERBOSE = nil
     CONFIG = @orig_config
+    $VERBOSE = original_verbosity
   end
 
   describe 'get resources using gssapi' do
