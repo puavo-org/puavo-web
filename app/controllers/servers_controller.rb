@@ -200,7 +200,8 @@ class ServersController < ApplicationController
     return if @server.nil?
 
     @server = Server.find(params[:id])
-    @schools = School.all
+    @schools = School.all.sort { |a, b| a[:displayName].downcase <=> b[:displayName].downcase }
+
     @server.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
   end
 
