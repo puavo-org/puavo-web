@@ -46,13 +46,13 @@
   margin: auto;
 }
 
-#topbar nav #middle    div {
+#topbar nav #middle div {
   display: flex;
   padding: 0;
   margin: 0;
 }
 
-#topbar nav #middle    #search {
+#topbar nav #middle #search {
   display: inline;
   margin: 0;
   padding: 5px 30px 5px 10px;
@@ -60,7 +60,7 @@
   border-radius: 4px;
 }
 
-#topbar nav #middle    a#extendedSearchButton {
+#topbar nav #middle a#extendedSearchButton {
   display: inline;
   align-self: center;
   padding: 5px 10px;
@@ -70,11 +70,11 @@
   color: var(--extendedsearch-button-fore);
 }
 
-#topbar nav #middle    a#extendedSearchButton:hover {
+#topbar nav #middle a#extendedSearchButton:hover {
   background: var(--extendedsearch-button-back-hover);
 }
 
-#topbar nav #middle    a#extendedSearchButton:after {
+#topbar nav #middle a#extendedSearchButton:after {
   content: "\e822";
   font-family: puavo-icons;
   font-size: 110%;
