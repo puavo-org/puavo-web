@@ -21,7 +21,7 @@
 
 <% unless Array(@server.puavoSchool).empty? %>
 <%= start_box t('servers.school_limit.title'), extraClass="fullWidth" %>
-  <ul>
+  <ul id="serverSchoolLimitBox">
     <% @server.forced_schools.each do |school| %>
       <li><%= link_to school.displayName, school_path(school)  %></li>
     <% end %>
