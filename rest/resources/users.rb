@@ -39,7 +39,7 @@ class User < LdapModel
   ldap_map :puavoRemovalRequestTime, :removal_request_time,
            LdapConverters::TimeStamp
   ldap_map :eduPersonPrincipalName, :edu_person_principal_name
-  ldap_map :puavoDoNotDelete, :do_not_delete
+  ldap_map :puavoDoNotDelete, :do_not_delete, LdapConverters::StringBoolean
   ldap_map :sambaPwdLastSet, :password_last_set, LdapConverters::Number
   ldap_map :puavoAdminPermissions, :admin_permissions, LdapConverters::ArrayValue
   ldap_map :puavoTeacherPermissions, :teacher_permissions, LdapConverters::ArrayValue
