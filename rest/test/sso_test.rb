@@ -77,7 +77,15 @@ describe PuavoRest::SSO do
     @external_service.puavoServiceTrusted = false
     @external_service.save!
 
-    activate_organisation_services([@external_service.dn.to_s])
+    @external_service2 = ExternalService.new
+    @external_service2.classes = ['top', 'puavoJWTService']
+    @external_service2.cn = 'Service with SSO sessions'
+    @external_service2.puavoServiceDomain = 'session_test.example.com'
+    @external_service2.puavoServiceSecret = 'password'
+    @external_service2.puavoServiceTrusted = false
+    @external_service2.save!
+
+    activate_organisation_services([@external_service.dn.to_s, @external_service2.dn.to_s])
   end
 
   after do
@@ -185,6 +193,113 @@ describe PuavoRest::SSO do
     # Nokogiri "helpfully" unescapes the value for us
     assert_equal css('form input[name="organisation"]').first.attributes['value'].value, '<script>alert("hax!");</script>'
     assert_equal css('form div.row div.col-orgname span').text, '@<script>alert("hax!");</script>'
+  end
+
+  it 'SSO sessions' do
+    # Step 1: Acquire a session key. The service session_test.example.com has been configured
+    # in organisations.yml to have SSO sessions enabled.
+    post '/v3/sso', {
+      'username' => 'bob',
+      'password' => 'secret',
+      'organisation' => 'example.puavo.net',
+      'return_to' => 'https://session_test.example.com'
+    }
+
+    assert_equal last_response.status, 302
+    assert_equal last_response.headers.include?('Location'), true
+    assert_equal last_response.headers.include?('Set-Cookie'), true
+    assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), true
+    session_key = last_response.cookies[PUAVO_SSO_SESSION_KEY][0]
+
+    # Extract and verify the JWT
+    redirect = Addressable::URI.parse(last_response.headers['Location'])
+    jwt = JWT.decode(redirect.query_values['jwt'], @external_service2.puavoServiceSecret)[0]
+
+    assert_equal 'bob', jwt['username']
+    assert_equal 'Bob', jwt['first_name']
+    assert_equal 'Brown', jwt['last_name']
+    assert_equal 'student', jwt['user_type']
+    assert_equal 'bob@example.com', jwt['email']
+    assert_equal 'Example Organisation', jwt['organisation_name']
+    assert_equal 'example.puavo.net', jwt['organisation_domain']
+    assert_equal '/', jwt['external_service_path_prefix']
+    assert_equal @school.puavoId.to_s, jwt['primary_school_id']
+
+    # We'll need this later
+    puavoid = jwt['puavo_id']
+
+    # Step 2: Use the session. Accessing the SSO endpoint with the session cookie set should
+    # automatically redirect to the target URL with a JWT.
+    url = Addressable::URI.parse('/v3/sso')
+    url.query_values = { 'return_to' => 'https://session_test.example.com' }
+    set_cookie "#{PUAVO_SSO_SESSION_KEY}=#{session_key}"
+    get url.to_s, {}, { 'HTTP_HOST' => 'api.puavo.net' }
+
+    assert_equal last_response.status, 302
+    assert_equal last_response.headers.include?('Location'), true
+    assert_equal last_response.headers.include?('Set-Cookie'), false
+    assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+
+    # Extract and verify the JWT again
+    redirect = Addressable::URI.parse(last_response.headers['Location'])
+    jwt = JWT.decode(redirect.query_values['jwt'], @external_service2.puavoServiceSecret)[0]
+
+    assert_equal 'bob', jwt['username']
+    assert_equal 'Bob', jwt['first_name']
+    assert_equal 'Brown', jwt['last_name']
+    assert_equal 'student', jwt['user_type']
+    assert_equal 'bob@example.com', jwt['email']
+    assert_equal 'Example Organisation', jwt['organisation_name']
+    assert_equal 'example.puavo.net', jwt['organisation_domain']
+    assert_equal '/', jwt['external_service_path_prefix']
+    assert_equal @school.puavoId.to_s, jwt['primary_school_id']
+
+    # Step 3: Login to some other domain, it should not have a session cookie
+    post '/v3/sso', {
+      'username' => 'bob',
+      'password' => 'secret',
+      'organisation' => 'example.puavo.net',
+      'return_to' => 'https://test-client-service.example.com'
+    }
+
+    assert_equal last_response.status, 302
+    assert_equal last_response.headers.include?('Location'), true
+    assert_equal last_response.headers.include?('Set-Cookie'), false
+    assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+
+    # Step 4: Fake session will not work
+    url = Addressable::URI.parse('/v3/sso')
+    url.query_values = { 'return_to' => 'https://session_test.example.com' }
+    set_cookie "#{PUAVO_SSO_SESSION_KEY}=foobar"
+    get url.to_s, {}, { 'HTTP_HOST' => 'api.puavo.net' }
+
+    # The response must be the SSO login form
+    assert_equal last_response.status, 401
+    assert_equal last_response.headers.include?('Location'), false
+    assert_equal last_response.headers.include?('Set-Cookie'), false
+    assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+    assert_equal last_response.body.include?('Login to service <span>Service with SSO sessions</span>'), true
+    assert_equal css('form input[name="return_to"]').first.attributes['value'].value, 'https://session_test.example.com'
+
+    # Step 5: Expire the session and then try to use it
+
+    # Manually delete the Redis session entries. We could use Timecop to fool Ruby code
+    # into thinking the session is expired, but we can't trick Redis.
+    REDIS_CONNECTION.del("sso_session:user:#{puavoid}")
+    REDIS_CONNECTION.del("sso_session:data:#{session_key}")
+
+    url = Addressable::URI.parse('/v3/sso')
+    url.query_values = { 'return_to' => 'https://session_test.example.com' }
+    set_cookie "#{PUAVO_SSO_SESSION_KEY}=#{session_key}"      # the session no longer exists
+    get url.to_s, {}, { 'HTTP_HOST' => 'api.puavo.net' }
+
+    # The response must be the SSO login form, since the session login must fail
+    assert_equal last_response.status, 401
+    assert_equal last_response.headers.include?('Location'), false
+    assert_equal last_response.headers.include?('Set-Cookie'), false
+    assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+    assert_equal last_response.body.include?('Login to service <span>Service with SSO sessions</span>'), true
+    assert_equal css('form input[name="return_to"]').first.attributes['value'].value, 'https://session_test.example.com'
   end
 
   describe "successful login redirect" do
