@@ -426,6 +426,7 @@ describe PuavoRest::SSO do
 
         claims = decode_jwt
         assert_equal "example.puavo.net", claims["organisation_domain"]
+        assert_equal last_response.headers.include?('Set-Cookie'), false
       end
 
       it "from post using custom organisation"  do
@@ -438,6 +439,7 @@ describe PuavoRest::SSO do
 
         claims = decode_jwt
         assert_equal "anotherorg.puavo.net", claims["organisation_domain"]
+        assert_equal last_response.headers.include?('Set-Cookie'), false
       end
 
       it "from post using custom organisation in username"  do
@@ -449,6 +451,7 @@ describe PuavoRest::SSO do
 
         claims = decode_jwt
         assert_equal "anotherorg.puavo.net", claims["organisation_domain"]
+        assert_equal last_response.headers.include?('Set-Cookie'), false
       end
 
     end
@@ -496,6 +499,7 @@ describe PuavoRest::SSO do
         css("#error").first.content.include?("Bad username"),
         "Error message missing from #{ last_response.body }"
       )
+      assert_equal last_response.headers.include?('Set-Cookie'), false
     end
 
   end
@@ -622,6 +626,7 @@ describe PuavoRest::SSO do
 
       # The login must fail
       assert_equal 401, last_response.status
+      assert_equal last_response.headers.include?('Set-Cookie'), false
       assert last_response.body.include?('This service requires a verified email address.')
       assert last_response.body.include?('Please edit your user information and confirm an address</a>, then try loggin in again.')
     end
@@ -636,6 +641,7 @@ describe PuavoRest::SSO do
 
       # The login must succeed
       assert_equal 302, last_response.status
+      assert_equal last_response.headers.include?('Set-Cookie'), false
 
       # Verify some basic data in the JWT payload
       redirect = Addressable::URI.parse(last_response.headers['Location'])
@@ -653,6 +659,7 @@ describe PuavoRest::SSO do
 
       # The login must succeed
       assert_equal 302, last_response.status
+      assert_equal last_response.headers.include?('Set-Cookie'), false
 
       # Verify some basic data in the JWT payload
       redirect = Addressable::URI.parse(last_response.headers['Location'])
