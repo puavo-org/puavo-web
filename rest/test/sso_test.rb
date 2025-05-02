@@ -164,6 +164,29 @@ describe PuavoRest::SSO do
     end
   end
 
+  it 'HTML in the domain is properly escaped' do
+    url = Addressable::URI.parse('/v3/sso')
+
+    url.query_values = {
+      'return_to' => 'http://test-client-service.example.com',
+      'organisation' => '<script>alert("hax!");</script>'
+    }
+
+    get url.to_s, {}, {
+      'HTTP_HOST' => 'api.puavo.net'
+    }
+
+    assert_equal last_response.body.include?('<script>alert("hax!");</script>'), false
+
+    # When the organisation is set, it appears twice in the HTML (once in a hidden input field,
+    # and once in a visible text)
+    assert_equal last_response.body.scan('&lt;script&gt;alert(&quot;hax!&quot;);&lt;&#x2F;script&gt;').count, 2
+
+    # Nokogiri "helpfully" unescapes the value for us
+    assert_equal css('form input[name="organisation"]').first.attributes['value'].value, '<script>alert("hax!");</script>'
+    assert_equal css('form div.row div.col-orgname span').text, '@<script>alert("hax!");</script>'
+  end
+
   describe "successful login redirect" do
     before(:each) do
       url = Addressable::URI.parse("/v3/sso")
