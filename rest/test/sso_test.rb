@@ -85,7 +85,15 @@ describe PuavoRest::SSO do
     @external_service2.puavoServiceTrusted = false
     @external_service2.save!
 
-    activate_organisation_services([@external_service.dn.to_s, @external_service2.dn.to_s])
+    @external_service3 = ExternalService.new
+    @external_service3.classes = ['top', 'puavoJWTService']
+    @external_service3.cn = 'Another service with SSO sessions'
+    @external_service3.puavoServiceDomain = 'session_test2.example.com'
+    @external_service3.puavoServiceSecret = 'password2'
+    @external_service3.puavoServiceTrusted = false
+    @external_service3.save!
+
+    activate_organisation_services([@external_service.dn.to_s, @external_service2.dn.to_s, @external_service3.dn.to_s])
   end
 
   after do
@@ -289,6 +297,107 @@ describe PuavoRest::SSO do
       assert_equal 'example.puavo.net', jwt['organisation_domain']
       assert_equal '/', jwt['external_service_path_prefix']
       assert_equal @school.puavoId.to_s, jwt['primary_school_id']
+    end
+
+    it 'sessions must be per-service' do
+      clear_cookies
+
+      # Step 1: Acquire two sessions
+      post '/v3/sso', {
+        'username' => 'bob',
+        'password' => 'secret',
+        'organisation' => 'example.puavo.net',
+        'return_to' => 'https://session_test.example.com'
+      }
+
+      assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), true
+      session_key1 = last_response.cookies[PUAVO_SSO_SESSION_KEY][0]
+
+      clear_cookies
+
+      post '/v3/sso', {
+        'username' => 'bob',
+        'password' => 'secret',
+        'organisation' => 'example.puavo.net',
+        'return_to' => 'https://session_test2.example.com'
+      }
+
+      assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), true
+      session_key2 = last_response.cookies[PUAVO_SSO_SESSION_KEY][0]
+
+      # Step 2: Login to each service with their own sessions
+
+      # service A with service A's session
+      clear_cookies
+      url = Addressable::URI.parse('/v3/sso')
+      url.query_values = { 'return_to' => 'https://session_test.example.com' }
+      set_cookie "#{PUAVO_SSO_SESSION_KEY}=#{session_key1}"
+      get url.to_s, {}, { 'HTTP_HOST' => 'api.puavo.net' }
+      assert_equal last_response.status, 302
+      assert_equal last_response.headers.include?('Location'), true
+      assert_equal last_response.headers.include?('Set-Cookie'), false
+      assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      jwt = JWT.decode(redirect.query_values['jwt'], @external_service2.puavoServiceSecret)[0]
+      assert_equal 'bob', jwt['username']
+      assert_equal 'Bob', jwt['first_name']
+      assert_equal 'Brown', jwt['last_name']
+
+      # service B with service B's session
+      clear_cookies
+      url = Addressable::URI.parse('/v3/sso')
+      url.query_values = { 'return_to' => 'https://session_test2.example.com' }
+      set_cookie "#{PUAVO_SSO_SESSION_KEY}=#{session_key2}"
+      get url.to_s, {}, { 'HTTP_HOST' => 'api.puavo.net' }
+      assert_equal last_response.status, 302
+      assert_equal last_response.headers.include?('Location'), true
+      assert_equal last_response.headers.include?('Set-Cookie'), false
+      assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      jwt = JWT.decode(redirect.query_values['jwt'], @external_service3.puavoServiceSecret)[0]
+      assert_equal 'bob', jwt['username']
+      assert_equal 'Bob', jwt['first_name']
+      assert_equal 'Brown', jwt['last_name']
+
+      # Step 3A: Trying to login to some other service (that has SSO sessions) using the same
+      # session must fail (sessions are user+service -specific, so each service requires its
+      # own session).
+
+      # service A with service B's session
+      clear_cookies
+      url = Addressable::URI.parse('/v3/sso')
+      url.query_values = { 'return_to' => 'https://session_test.example.com' }
+      set_cookie "#{PUAVO_SSO_SESSION_KEY}=#{session_key2}"
+      get url.to_s, {}, { 'HTTP_HOST' => 'api.puavo.net' }
+      assert_equal last_response.status, 401
+      assert_equal last_response.headers.include?('Location'), false
+      assert_equal last_response.headers.include?('Set-Cookie'), false
+      assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+      assert_equal last_response.body.include?('Login to service <span>Service with SSO sessions</span>'), true
+
+      # service B with service A's session
+      clear_cookies
+      url = Addressable::URI.parse('/v3/sso')
+      url.query_values = { 'return_to' => 'https://session_test2.example.com' }
+      set_cookie "#{PUAVO_SSO_SESSION_KEY}=#{session_key1}"
+      get url.to_s, {}, { 'HTTP_HOST' => 'api.puavo.net' }
+      assert_equal last_response.status, 401
+      assert_equal last_response.headers.include?('Location'), false
+      assert_equal last_response.headers.include?('Set-Cookie'), false
+      assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+      assert_equal last_response.body.include?('Login to service <span>Another service with SSO sessions</span>'), true
+
+      # Step 3B: Like above, but using a service that does not have SSO sessions must still fail.
+      clear_cookies
+      url = Addressable::URI.parse('/v3/sso')
+      url.query_values = { 'return_to' => 'https://test-client-service.example.com' }
+      set_cookie "#{PUAVO_SSO_SESSION_KEY}=#{session_key1}"
+      get url.to_s, {}, { 'HTTP_HOST' => 'api.puavo.net' }
+      assert_equal last_response.status, 401
+      assert_equal last_response.headers.include?('Location'), false
+      assert_equal last_response.headers.include?('Set-Cookie'), false
+      assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+      assert_equal last_response.body.include?('Login to service <span>Testing Service</span>'), true
     end
 
     it 'fake session key will fail' do
