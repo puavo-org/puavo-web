@@ -66,7 +66,7 @@ if ENV['RACK_ENV'] == 'test' then
       }
     },
     'mfa_server' => {
-      'server' => 'http://127.0.0.1:8081',
+      'server' => 'http://127.0.0.1:9999',
       'bearer_key' => 'devel'
     },
     'mfa_management' => {
