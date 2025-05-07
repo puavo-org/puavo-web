@@ -458,6 +458,66 @@ describe PuavoRest::SSO do
       assert_equal last_response.body.include?('Login to service <span>Service with SSO sessions</span>'), true
       assert_equal css('form input[name="return_to"]').first.attributes['value'].value, 'https://session_test.example.com'
     end
+
+    it 'session with custom parameters in the return_to URL' do
+      # Step 1: Acquire a session key
+      clear_cookies
+
+      post '/v3/sso', {
+        'username' => 'bob',
+        'password' => 'secret',
+        'organisation' => 'example.puavo.net',
+        'return_to' => 'https://session_test.example.com?foo=bar&baz=quux'
+      }
+
+      assert_equal last_response.status, 302
+      assert_equal last_response.headers.include?('Location'), true
+      assert_equal last_response.headers.include?('Set-Cookie'), true
+      assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), true
+      session_key = last_response.cookies[PUAVO_SSO_SESSION_KEY][0]
+
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+
+      # Must have the custom parameters in the URL
+      assert_equal redirect.query_values.include?('foo'), true
+      assert_equal redirect.query_values['foo'], 'bar'
+      assert_equal redirect.query_values.include?('baz'), true
+      assert_equal redirect.query_values['baz'], 'quux'
+
+      # Quick JWT validation
+      jwt = JWT.decode(redirect.query_values['jwt'], @external_service2.puavoServiceSecret)[0]
+      assert_equal 'bob', jwt['username']
+      assert_equal 'Bob', jwt['first_name']
+      assert_equal 'Brown', jwt['last_name']
+
+      # Step 2: Login to the service again, with different parameters
+      clear_cookies
+      url = Addressable::URI.parse('/v3/sso')
+      url.query_values = { 'return_to' => 'https://session_test.example.com?blurf=mangle' }
+      set_cookie "#{PUAVO_SSO_SESSION_KEY}=#{session_key}"
+      get url.to_s, {}, { 'HTTP_HOST' => 'api.puavo.net' }
+
+      # Validate the redirect. There must be no session cookie.
+      assert_equal last_response.status, 302
+      assert_equal last_response.body, ''
+      assert_equal last_response.headers.include?('Location'), true
+      assert_equal last_response.headers.include?('Set-Cookie'), false
+      assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+
+      # Must have the custom parameters in the URL
+      assert_equal redirect.query_values.include?('foo'), false
+      assert_equal redirect.query_values.include?('baz'), false
+      assert_equal redirect.query_values.include?('blurf'), true
+      assert_equal redirect.query_values['blurf'], 'mangle'
+
+      # Quick JWT validation
+      jwt = JWT.decode(redirect.query_values['jwt'], @external_service2.puavoServiceSecret)[0]
+      assert_equal 'bob', jwt['username']
+      assert_equal 'Bob', jwt['first_name']
+      assert_equal 'Brown', jwt['last_name']
+    end
   end
 
   describe "successful login redirect" do
