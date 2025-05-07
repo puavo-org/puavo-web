@@ -49,8 +49,6 @@ class User < LdapModel
   ldap_map :puavoVerifiedEmail, :verified_email, LdapConverters::ArrayValue
   ldap_map :puavoPrimaryEmail, :primary_email
 
-  # The classic Roles in puavo-web are now deprecated.
-  # puavoEduPersonAffiliation will used as the roles from now on
   ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
 
   ldap_map :puavoUuid, :uuid, LdapConverters::SingleValue
