@@ -41,5 +41,5 @@ mfa:
   token_expired: "Your login attempt has expired. Go to the original login form and try logging in again."
   too_many_attempts: "Too many failed two-factor login attempts. Login halted. Go to the original login form and try logging in again."
   incorrect_code: "Incorrect code"
-  validation_server_error: "Authentication server error. Try logging in again. If the problem persists, please contact support and give them this code: %1."
-  system_error: "Fatal error, login halted. Please contact support and give them this code: %1."
+  validation_server_error: "Authentication server error. Try logging in again. If the problem persists, please contact support and give them this code:<br><code>%1</code>"
+  system_error: "Fatal error, login halted. Please contact support and give them this code:<br><code>%1</code>"

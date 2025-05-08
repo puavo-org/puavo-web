@@ -41,5 +41,5 @@ mfa:
   token_expired: "Kirjautumisyrityksesi on vanhentunut. Mene alkuperäiseen kirjautumislomakkeeseen ja yritä kirjautumista uudelleen."
   too_many_attempts: "Liian monta kaksivaiheista kirjautumisyritystä. Kirjautuminen on keskeytetty. Mene alkuperäiseen kirjautumislomakkeeseen ja yritä kirjautumista uudelleen."
   incorrect_code: "Virheellinen koodi"
-  validation_server_error: "Kirjautumispalvelinvirhe. Yritä kirjautumista uudelleen. Jos ongelma toistuu, ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi: %1."
-  system_error: "Vakava järjestelmävirhe, kirjautuminen on keskeytetty. Ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi: %1."
+  validation_server_error: "Kirjautumispalvelinvirhe. Yritä kirjautumista uudelleen. Jos ongelma toistuu, ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi:<br><code>%1</code>"
+  system_error: "Vakava järjestelmävirhe, kirjautuminen on keskeytetty. Ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi:<br><code>%1</code>"
