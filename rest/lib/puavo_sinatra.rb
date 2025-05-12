@@ -69,5 +69,10 @@ class PuavoSinatra < Sinatra::Base
     end
   end
 
+  # Generates a random request ID
+  def make_request_id
+    'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
+  end
+
 end
 end

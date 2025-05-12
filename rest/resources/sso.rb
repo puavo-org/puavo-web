@@ -72,10 +72,6 @@ class SSO < PuavoSinatra
     end
   end
 
-  def make_request_id
-    'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
-  end
-
   def generic_error(message)
     @login_content = {
       'error_message' => message,
