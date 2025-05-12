@@ -8,6 +8,9 @@ sso:
   no_organisation: No organisation
   organisation_missing: Organisation is missing from the username. Use username@organisation.opinsys.fi format.
   invalid_username: Invalid username
+  return_to_missing: "A required parameter \"return_to\" is missing from the request.<br>Please contact support and give them this code:<br><code>%1</code>"
+  unknown_service: "Unknown client service. Please contact support and give them this code:<br><code>%1</code>"
+  state_mismatch: "Mismatch between trusted service states. Please contact support and give them this code:<br><code>%1</code>"
   verified_address_missing: "This service requires a verified email address. <a href=\"%1\">Please edit your user information and confirm an address</a>, then try loggin in again. If you do not know what any of this means, please contact Opinsys Oy support."
   login: Login
   login_to: Login to service

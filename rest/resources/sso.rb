@@ -83,26 +83,31 @@ class SSO < PuavoSinatra
   end
 
   def respond_auth
+    request_id = make_request_id
+
     if return_to.nil?
-      raise BadInput, :user => "return_to missing"
+      rlog.error("[#{request_id}] There's no 'return_to' or 'return' parameter in the request URL. Unable to determine the target external service.")
+      rlog.error("[#{request_id}] Full original request URL: #{request.url.to_s.inspect}")
+      generic_error(t.sso.return_to_missing(request_id), status: 400)
     end
 
     @external_service = fetch_external_service
 
     if @external_service.nil?
-      raise Unauthorized,
-        :user => "Unknown client service #{ return_to.host }"
+      rlog.error("[#{request_id}] No target external service found by return_to parameter #{return_to.to_s.inspect}")
+      rlog.error("[#{request_id}] Full original request URL: #{request.url.to_s.inspect}")
+      generic_error(t.sso.unknown_service(request_id))
     end
 
-    request_id = make_request_id
     @is_trusted = request.path == '/v3/verified_sso'
 
     rlog.info("[#{request_id}] attempting to log into external service \"#{@external_service.name}\" (#{@external_service.dn.to_s})")
 
     if @external_service.trusted != @is_trusted
       # No mix-and-matching or service types
-      rlog.error("[#{request_id}] trusted service type mismatch (service trusted=#{@external_service.trusted}, URL verified=#{@is_trusted})")
-      raise Unauthorized, user: "Mismatch between trusted service states. Please check the URL you're using to display the login form. Request ID #{request_id}."
+      rlog.error("[#{request_id}] Trusted service type mismatch (service trusted=#{@external_service.trusted}, URL verified=#{@is_trusted})")
+      rlog.error("[#{request_id}] Full original request URL: #{request.url.to_s.inspect}")
+      generic_error(t.sso.state_mismatch(request_id))
     end
 
     # SSO session login?

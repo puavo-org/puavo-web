@@ -803,7 +803,7 @@ describe PuavoRest::SSO do
       get url.to_s
 
       assert_equal 401, last_response.status
-      assert JSON.parse(last_response.body)['error']['message'].include?("Mismatch between trusted service states. Please check the URL you're using to display the login form.")
+      assert_equal last_response.body.include?('Mismatch between trusted service states. Please contact support and give them this code'), true
     end
 
     it "Can access the normal SSO form for the normal service" do
@@ -821,7 +821,7 @@ describe PuavoRest::SSO do
       get url.to_s
 
       assert_equal 401, last_response.status
-      assert JSON.parse(last_response.body)['error']['message'].include?("Mismatch between trusted service states. Please check the URL you're using to display the login form.")
+      assert_equal last_response.body.include?('Mismatch between trusted service states. Please contact support and give them this code'), true
     end
 
     it "Can access the verified SSO form for the verified service" do
