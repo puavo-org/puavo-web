@@ -4,10 +4,14 @@ require "sinatra/cookies"
 
 require_relative "./users"
 
+require_relative '../lib/sso/form_utility.rb'
+
 module PuavoRest
 
 class SSO < PuavoSinatra
   register Sinatra::R18n
+
+  include FormUtility
 
   get '/v3/sso' do
     respond_auth
@@ -333,38 +337,7 @@ class SSO < PuavoSinatra
 
     rlog.info("Final organisation name is \"#{org_name}\"")
 
-    begin
-      # Any per-organisation login screen customisations?
-      customisations = ORGANISATIONS[org_name]['login_screen']
-      customisations = {} unless customisations.class == Hash
-    rescue StandardError => e
-      customisations = {}
-    end
-
-    unless customisations.empty?
-      rlog.info("Organisation \"#{org_name}\" has login screen customisations enabled")
-    end
-
-    # Apply per-customer customisations
-    if customisations.include?('css')
-      @login_content['css'] = customisations['css']
-    end
-
-    if customisations.include?('upper_logos')
-      @login_content['upper_logos'] = customisations['upper_logos']
-    end
-
-    if customisations.include?('header_text')
-      @login_content['header_text'] = customisations['header_text']
-    end
-
-    if customisations.include?('service_title_override')
-      @login_content['service_title_override'] = customisations['service_title_override']
-    end
-
-    if customisations.include?('lower_logos')
-      @login_content['lower_logos'] = customisations['lower_logos']
-    end
+    customise_form(@login_content, org_name)
 
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
   end
