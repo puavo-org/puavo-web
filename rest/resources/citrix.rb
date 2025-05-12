@@ -119,7 +119,7 @@ class AtriaCortexAPI
 
     unless body.xpath('//error').empty?
       code = body.xpath('//error/id').children[0].to_s.to_i
-      return false if code == 16    # "UserNotFound"
+      return nil if code == 16    # "UserNotFound"
 
       message = body.xpath('//error/message').children[0].to_s
       raise AtriaCortexAPIError.new(code, message)
@@ -334,10 +334,16 @@ class Citrix < PuavoSinatra
         rlog.info("[#{@request_id}] Retrieving the user status from Citrix...")
         atria_user = atria.get_user(license['username'])
 
-        if atria_user
-          # tested
-          rlog.info("[#{@request_id}] The user already exists in Citrix")
-          status = 'user_exists'
+        if atria_user then
+          is_enabled = (atria_user.xpath('//user/enabled').children[0].to_s == 'True')
+          if is_enabled then
+            # tested
+            rlog.info("[#{@request_id}] The user already exists in Citrix")
+            status = 'user_exists'
+          else
+            rlog.info("[#{@request_id}] The user exists in Citrix but is disabled")
+            status = 'user_is_disabled'
+          end
         else
           # tested
           rlog.info("[#{@request_id}] The user does not exist in Citrix")
@@ -360,7 +366,7 @@ class Citrix < PuavoSinatra
         rlog.info("[#{@request_id}] Checking if the new user (#{license['username']}) has been created")
         atria_user = atria.get_user(license['username'])
 
-        if atria_user == false
+        if !atria_user then
           # tested
           rlog.error("[#{@request_id}] New user creation not in progress")
           citrix_return('user_creation_not_in_progress')
