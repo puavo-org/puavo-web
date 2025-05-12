@@ -118,11 +118,11 @@ class SSO < PuavoSinatra
     begin
       auth :basic_auth, :from_post, :kerberos
     rescue KerberosError => err
-      return render_form(t.sso.kerberos_error, err)
+      return render_form(error_message: t.sso.kerberos_error, exception: err)
     rescue JSONError => err
       # Pass custom error headers to the response login page
       response.headers.merge!(err.headers)
-      return render_form(t.sso.bad_username_or_pw, err)
+      return render_form(error_message: t.sso.bad_username_or_pw, exception: err)
     end
 
     user = User.current
@@ -140,7 +140,7 @@ class SSO < PuavoSinatra
       include?(@external_service["dn"])
 
     if not (school_allows || organisation_allows)
-      return render_form(t.sso.service_not_activated)
+      return render_form(error_message: t.sso.service_not_activated)
     end
 
     # Block logins from users who don't have a verified email address, if the service is trusted
@@ -150,7 +150,7 @@ class SSO < PuavoSinatra
       if Array(user.verified_email || []).empty?
         rlog.error("[#{request_id}] the current user does NOT have a verified address!")
         org = organisation.domain.split(".")[0]
-        return render_form(t.sso.verified_address_missing("https://#{org}.opinsys.fi/users/profile/edit"), nil, true)
+        return render_form(error_message: t.sso.verified_address_missing("https://#{org}.opinsys.fi/users/profile/edit"), force_error_message: true)
       end
 
       rlog.info("[#{request_id}] the user has a verified email address")
@@ -225,12 +225,12 @@ class SSO < PuavoSinatra
     redirect url
   end
 
-  def render_form(error_message, err=nil, force_error_message=false)
+  def render_form(error_message:, exception: nil, force_error_message: false)
     if env["REQUEST_METHOD"] == "POST" || force_error_message
       @error_message = error_message
 
-      if err
-        rlog.warn("sso error: #{error_message} (err: #{err.inspect})")
+      if exception
+        rlog.warn("sso error: #{error_message} (exception: #{exception.inspect})")
       else
         rlog.warn("sso error: #{error_message}")
       end
@@ -321,12 +321,12 @@ class SSO < PuavoSinatra
     organisation = params['organisation']
 
     if username.include?('@') && organisation then
-      render_form(t.sso.invalid_username)
+      render_form(error_message: t.sso.invalid_username)
     end
 
     if !username.include?('@') && organisation.nil? then
       rlog.error("SSO error: organisation missing from username: #{ username }")
-      render_form(t.sso.organisation_missing)
+      render_form(error_message: t.sso.organisation_missing)
     end
 
     user_org = nil
@@ -335,7 +335,7 @@ class SSO < PuavoSinatra
       username, user_org = username.split('@')
       if Organisation.by_domain(ensure_topdomain(user_org)).nil? then
         rlog.error("SSO error: could not find organisation for domain #{ user_org }")
-        render_form(t.sso.bad_username_or_pw)
+        render_form(error_message: t.sso.bad_username_or_pw)
       end
     end
 
@@ -358,7 +358,7 @@ class SSO < PuavoSinatra
 
       LdapModel.setup(:organisation => org)
     else
-      render_form(t.sso.no_organisation)
+      render_form(error_message: t.sso.no_organisation)
     end
 
     respond_auth
