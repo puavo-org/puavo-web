@@ -72,14 +72,6 @@ class SSO < PuavoSinatra
     end
   end
 
-  def username_placeholder
-    if preferred_organisation
-      t.sso.username
-    else
-      "#{ t.sso.username }@#{ t.sso.organisation }.#{ topdomain }"
-    end
-  end
-
   def generic_error(message)
     @login_content = {
       'error_message' => message,
@@ -262,7 +254,7 @@ class SSO < PuavoSinatra
       "return_to" => params['return_to'] || params['return'] || nil,
       "organisation" => @organisation ? @organisation.domain : nil,
       "display_domain" => request['organisation'] ? Rack::Utils.escape_html(request['organisation']) : nil,
-      "username_placeholder" => username_placeholder,
+      "username_placeholder" => preferred_organisation ? t.sso.username : "#{ t.sso.username }@#{ t.sso.organisation }.#{ topdomain }",
       "username" => params["username"],
       "error_message" => @error_message,
       "need_verified_address" => @external_service.trusted,
