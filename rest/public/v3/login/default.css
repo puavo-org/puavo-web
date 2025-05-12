@@ -189,7 +189,7 @@ body {
 }
 
 #error a {
-  color: #ff0;
+  color: var(--link-foreground);
 }
 
 form {
