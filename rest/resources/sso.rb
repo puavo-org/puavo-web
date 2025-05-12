@@ -72,14 +72,14 @@ class SSO < PuavoSinatra
     end
   end
 
-  def generic_error(message)
+  def generic_error(message, status: 401)
     @login_content = {
       'error_message' => message,
       'technical_support' => t.sso.technical_support,
       'prefix' => '/v3/login',      # make the built-in CSS work
     }
 
-    halt 401, { 'Content-Type' => 'text/html' }, erb(:generic_error, :layout => :layout)
+    halt status, { 'Content-Type' => 'text/html' }, erb(:generic_error, layout: :layout)
   end
 
   def respond_auth
