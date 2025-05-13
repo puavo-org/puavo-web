@@ -153,6 +153,26 @@ class AtriaCortexAPI
     body
   end
 
+  def set_user_state(username, is_enabled)
+    query = prepare_query('lib/citrix/set_user_state.xml', {
+      'customer'   => @config['customer'],
+      'name'       => username,
+      'is_enabled' => (is_enabled ? 'True' : 'False'),
+    })
+
+    result = do_query(query)
+    body_s = result.body.to_s
+    body = Nokogiri.XML(body_s)
+
+    unless body.xpath('//error').empty?
+      code = body.xpath('//error/id').children[0].to_s.to_i
+      message = body.xpath('//error/message').children[0].to_s
+      raise AtriaCortexAPIError.new(code, message)
+    end
+
+    body
+  end
+
   def list_applications(username, rlog)
     query = prepare_query('lib/citrix/list_user_applications.xml', {
       'customer' => @config['customer'],
@@ -400,6 +420,12 @@ class Citrix < PuavoSinatra
         citrix_return('unknown_user_provisioning_status')
 
       # --------------------------------------------------------------------------------------------
+      when :enable_user
+        rlog.info("[#{@request_id}] Enabling user")
+        atria.set_user_state(license['username'], true)
+        citrix_return('ok')
+
+      # --------------------------------------------------------------------------------------------
       when :get_app_provisioning
         # tested
         rlog.info("[#{@request_id}] Getting the application provisioning states")
@@ -499,6 +525,10 @@ class Citrix < PuavoSinatra
   # Phase 2B: Checks the status of the newly-created user
   get '/v3/users/:username/citrix/check_new_user' do
     return handle_citrix_phase(:check_new_user)
+  end
+
+  get '/v3/users/:username/citrix/enable_user' do
+    return handle_citrix_phase(:enable_user)
   end
 
   # Phase 3
