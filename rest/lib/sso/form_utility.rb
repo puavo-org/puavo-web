@@ -1,3 +1,5 @@
+require 'addressable/uri'
+
 module FormUtility
   # Attempts to determine which organisation we're in
   def find_organisation_name()
@@ -99,5 +101,63 @@ module FormUtility
     if customisations.include?('lower_logos')
       content['lower_logos'] = customisations['lower_logos']
     end
+  end
+
+  def return_to
+    # Support "return_to" and "return"
+    if params.include?('return_to')
+      Addressable::URI.parse(params['return_to'])
+    elsif params.include?('return')
+      Addressable::URI.parse(params['return'])
+    else
+      nil
+    end
+  end
+
+  def fetch_external_service
+    url = return_to()
+    url.nil? ? nil : PuavoRest::ExternalService.by_url(url)
+  end
+
+  def generic_error(message, status: 401)
+    @login_content = {
+      'error_message' => message,
+      'technical_support' => t.sso.technical_support,
+      'prefix' => '/v3/login',      # make the built-in CSS work
+    }
+
+    halt status, { 'Content-Type' => 'text/html' }, erb(:generic_error, layout: :layout)
+  end
+
+  def topdomain
+    CONFIG["topdomain"]
+  end
+
+  def ensure_topdomain(org)
+    return if org.nil?
+
+    CONFIG['external_domains']&.each do |k, e|
+      if e.include?(org) then
+        org = k + "." + topdomain
+        break
+      end
+    end
+
+    if !org.end_with?(topdomain)
+      return "#{ org }.#{ topdomain }"
+    end
+
+    org
+  end
+
+  def preferred_organisation
+    [
+      params["organisation"],
+      request.host,
+    ].compact.map do |org|
+      ensure_topdomain(org)
+    end.map do |org|
+      PuavoRest::Organisation.by_domain(org)
+    end.first
   end
 end

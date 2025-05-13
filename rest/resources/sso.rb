@@ -1,4 +1,3 @@
-require "addressable/uri"
 require "sinatra/r18n"
 require "sinatra/cookies"
 
@@ -48,38 +47,6 @@ class SSO < PuavoSinatra
   get '/v3/sso/developers' do
     @body = File.read('doc/SSO_DEVELOPERS.html')
     erb :developers, :layout => :layout
-  end
-
-  def return_to
-    # Support "return_to" and "return"
-    if params.include?('return_to')
-      Addressable::URI.parse(params['return_to'])
-    elsif params.include?('return')
-      Addressable::URI.parse(params['return'])
-    else
-      nil
-    end
-  end
-
-  def fetch_external_service
-    # Support "return_to" and "return"
-    if params.include?('return_to')
-      ExternalService.by_url(params['return_to'])
-    elsif params.include?('return')
-      ExternalService.by_url(params['return'])
-    else
-      nil
-    end
-  end
-
-  def generic_error(message, status: 401)
-    @login_content = {
-      'error_message' => message,
-      'technical_support' => t.sso.technical_support,
-      'prefix' => '/v3/login',      # make the built-in CSS work
-    }
-
-    halt status, { 'Content-Type' => 'text/html' }, erb(:generic_error, layout: :layout)
   end
 
   def respond_auth
@@ -281,38 +248,6 @@ class SSO < PuavoSinatra
     customise_form(@login_content, org_name)
 
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
-  end
-
-  def topdomain
-    CONFIG["topdomain"]
-  end
-
-  def ensure_topdomain(org)
-    return if org.nil?
-
-    CONFIG['external_domains']&.each do |k, e|
-      if e.include?(org) then
-        org = k + "." + topdomain
-        break
-      end
-    end
-
-    if !org.end_with?(topdomain)
-      return "#{ org }.#{ topdomain }"
-    end
-
-    org
-  end
-
-  def preferred_organisation
-    [
-      params["organisation"],
-      request.host,
-    ].compact.map do |org|
-      ensure_topdomain(org)
-    end.map do |org|
-      Organisation.by_domain(org)
-    end.first
   end
 
   def do_sso_post
