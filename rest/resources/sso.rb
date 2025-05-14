@@ -49,9 +49,9 @@ class SSO < PuavoSinatra
     erb :developers, layout: :layout
   end
 
-  def sso_try_login
+  def sso_try_login(request_id: nil)
     # Determine the target external service
-    request_id = make_request_id
+    request_id = make_request_id if request_id.nil?
 
     if return_to.nil?
       rlog.error("[#{request_id}] There's no 'return_to' or 'return' parameter in the request URL. Unable to determine the target external service.")
@@ -88,7 +88,7 @@ class SSO < PuavoSinatra
       auth :basic_auth, :from_post, :kerberos
     rescue KerberosError => err
       # Kerberos authentication failed, present the normal login form
-      return sso_render_form(error_message: t.sso.kerberos_error, exception: err)
+      return sso_render_form(request_id, error_message: t.sso.kerberos_error, exception: err)
     rescue JSONError => err
       # We get here if all the available authentication methods fail. But since the
       # 'force_error_message' parameter of sso_render_form() is false, we won't
@@ -98,7 +98,7 @@ class SSO < PuavoSinatra
       # Pass custom error headers to the response login page
       response.headers.merge!(err.headers)
 
-      return sso_render_form(error_message: t.sso.bad_username_or_pw, exception: err)
+      return sso_render_form(request_id, error_message: t.sso.bad_username_or_pw, exception: err)
     end
 
     # If we get here, the user was authenticated. Either by Kerberos, or by basic auth,
@@ -118,7 +118,7 @@ class SSO < PuavoSinatra
       include?(@external_service["dn"])
 
     if not (school_allows || organisation_allows)
-      return sso_render_form(error_message: t.sso.service_not_activated)
+      return sso_render_form(request_id, error_message: t.sso.service_not_activated)
     end
 
     # Block logins from users who don't have a verified email address, if the service is trusted
@@ -128,7 +128,7 @@ class SSO < PuavoSinatra
       if Array(user.verified_email || []).empty?
         rlog.error("[#{request_id}] the current user does NOT have a verified address!")
         org = organisation.domain.split(".")[0]
-        return sso_render_form(error_message: t.sso.verified_address_missing("https://#{org}.opinsys.fi/users/profile/edit"), force_error_message: true)
+        return sso_render_form(request_id, error_message: t.sso.verified_address_missing("https://#{org}.opinsys.fi/users/profile/edit"), force_error_message: true)
       end
 
       rlog.info("[#{request_id}] the user has a verified email address")
@@ -196,7 +196,7 @@ class SSO < PuavoSinatra
     generic_error(t.sso.system_error(request_id))
   end
 
-  def sso_render_form(error_message:, exception: nil, force_error_message: false)
+  def sso_render_form(request_id, error_message: nil, exception: nil, force_error_message: false)
     if env["REQUEST_METHOD"] == "POST" || force_error_message
       @error_message = error_message
 
@@ -224,6 +224,7 @@ class SSO < PuavoSinatra
       # places. This key tells the form where those resources are.
       "prefix" => "/v3/login",
 
+      'request_id' => request_id,
       "page_title" => t.sso.title,
       "external_service_name" => @external_service["name"],
       "service_title_override" => nil,
@@ -259,11 +260,17 @@ class SSO < PuavoSinatra
 
   # Process the SSO username+password form post
   def sso_handle_form_post
-    request_id = make_request_id
-
     username     = params['username']
     password     = params['password']
     organisation = params['organisation']
+
+    if params.include?('request_id') && !params['request_id'].nil? && !params['request_id'].strip.empty?
+      request_id = params['request_id']
+      rlog.info("[#{request_id}] Processing the submitted SSO form (resuming known login flow)")
+    else
+      request_id = make_request_id
+      rlog.info("[#{request_id}] Processing the submitted SSO form (no request_id in the submission)")
+    end
 
     # Determine the target organisation
     if username.include?('@') && organisation
@@ -282,13 +289,13 @@ class SSO < PuavoSinatra
         username = parts[0]
       else
         rlog.error("[#{request_id}] The domains are different")
-        sso_render_form(error_message: t.sso.invalid_username)
+        sso_render_form(request_id, error_message: t.sso.invalid_username)
       end
     end
 
     if !username.include?('@') && organisation.nil? then
       rlog.error("[#{request_id}] SSO error: organisation missing from username: #{ username }")
-      sso_render_form(error_message: t.sso.organisation_missing)
+      sso_render_form(request_id, error_message: t.sso.organisation_missing)
     end
 
     user_org = nil
@@ -298,7 +305,7 @@ class SSO < PuavoSinatra
 
       if Organisation.by_domain(ensure_topdomain(user_org)).nil? then
         rlog.error("[#{request_id}] SSO error: could not find organisation for domain #{ user_org }")
-        sso_render_form(error_message: t.sso.bad_username_or_pw)
+        sso_render_form(request_id, error_message: t.sso.bad_username_or_pw)
       end
     end
 
@@ -322,11 +329,11 @@ class SSO < PuavoSinatra
       LdapModel.setup(organisation: org)
     else
       # No organisation found, go back to the login form
-      sso_render_form(error_message: t.sso.no_organisation)
+      sso_render_form(request_id, error_message: t.sso.no_organisation)
     end
 
-    # If we get here, everything has failed. Try again.
-    sso_try_login
+    # We have a valid username, password and organisation. Try to log in again.
+    sso_try_login(request_id: request_id)
   rescue StandardError => e
     rlog.error("[#{request_id}] SSO form post processing failed: #{e}")
     generic_error(t.sso.system_error(request_id))
