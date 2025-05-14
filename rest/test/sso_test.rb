@@ -672,6 +672,32 @@ describe PuavoRest::SSO do
         assert_equal last_response.headers.include?('Set-Cookie'), false
       end
 
+      it 'same organisation in the URL and in username must work' do
+        post '/v3/sso', {
+          'username' => 'bob@example.puavo.net',    # intentionally redundant
+          'password' => 'secret',
+          'organisation' => 'example.puavo.net',
+          'return_to' => 'http://test-client-service.example.com/path'
+        }
+
+        assert_equal last_response.status, 302
+
+        claims = decode_jwt
+        assert_equal 'example.puavo.net', claims['organisation_domain']
+        assert_equal last_response.headers.include?('Set-Cookie'), false
+      end
+
+      it 'different organisations in the URL and in username must fail' do
+        post '/v3/sso', {
+          'username' => 'bob@foo.puavo.net',
+          'password' => 'secret',
+          'organisation' => 'example.puavo.net',
+          'return_to' => 'http://test-client-service.example.com/path'
+        }
+
+        assert_equal last_response.status, 401
+        assert_equal last_response.body.include?('Invalid username'), true
+      end
     end
 
     describe "hidden organisation field" do

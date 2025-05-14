@@ -266,8 +266,24 @@ class SSO < PuavoSinatra
     organisation = params['organisation']
 
     # Determine the target organisation
-    if username.include?('@') && organisation then
-      sso_render_form(error_message: t.sso.invalid_username)
+    if username.include?('@') && organisation
+      # This can be happen if the organisation name is pre-set in the custom URL parameters
+      # ("&organisation=foo"), and the username still contains a domain name. The form contains
+      # JavaScript code that removes the domain if it's known, but the form can be submitted
+      # without JavaScript enabled.
+      parts = username.split('@')
+
+      rlog.info("[#{request_id}] The submitted username contains a domain (#{username.inspect}), but we already know what the organisation is (#{organisation.inspect})")
+
+      if parts[1] == organisation
+        # The specified organisation is exactly same as the domain in the username. Just strip
+        # out the domain from the name and move on without an error message.
+        rlog.info("[#{request_id}] It's the same organisation, moving on")
+        username = parts[0]
+      else
+        rlog.error("[#{request_id}] The domains are different")
+        sso_render_form(error_message: t.sso.invalid_username)
+      end
     end
 
     if !username.include?('@') && organisation.nil? then
