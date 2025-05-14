@@ -259,6 +259,8 @@ class SSO < PuavoSinatra
 
   # Process the SSO username+password form post
   def sso_handle_form_post
+    request_id = make_request_id
+
     username     = params['username']
     password     = params['password']
     organisation = params['organisation']
@@ -269,7 +271,7 @@ class SSO < PuavoSinatra
     end
 
     if !username.include?('@') && organisation.nil? then
-      rlog.error("SSO error: organisation missing from username: #{ username }")
+      rlog.error("[#{request_id}] SSO error: organisation missing from username: #{ username }")
       sso_render_form(error_message: t.sso.organisation_missing)
     end
 
@@ -279,7 +281,7 @@ class SSO < PuavoSinatra
       username, user_org = username.split('@')
 
       if Organisation.by_domain(ensure_topdomain(user_org)).nil? then
-        rlog.error("SSO error: could not find organisation for domain #{ user_org }")
+        rlog.error("[#{request_id}] SSO error: could not find organisation for domain #{ user_org }")
         sso_render_form(error_message: t.sso.bad_username_or_pw)
       end
     end
@@ -298,7 +300,7 @@ class SSO < PuavoSinatra
       begin
         ExternalLogin.auth(username, password, org, {})
       rescue StandardError => e
-        rlog.error("SSO external login error: #{ e.message }")
+        rlog.error("[#{request_id}] SSO external login error: #{ e.message }")
       end
 
       LdapModel.setup(organisation: org)
