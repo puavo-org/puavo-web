@@ -139,63 +139,61 @@ class SSO < PuavoSinatra
 
     rlog.info("[#{request_id}] SSO login ok")
 
-    begin
-      if user.mfa_enabled == true
-        # Take a detour first and ask for the MFA code
+    if user.mfa_enabled == true
+      # Take a detour first and ask for the MFA code
 
-        # Unlike SSO session keys, this is not stored in cookies. It briefly appears in the
-        # URL when we redirect the browser to the MFA form, but after that, it's only part of
-        # the form data. No information can leak through it.
-        session_key = SecureRandom.hex(64)
+      # Unlike SSO session keys, this is not stored in cookies. It briefly appears in the
+      # URL when we redirect the browser to the MFA form, but after that, it's only part of
+      # the form data. No information can leak through it.
+      session_key = SecureRandom.hex(64)
 
-        rlog.info("[#{request_id}] the user has MFA enabled, starting MFA login session \"#{session_key}\"")
+      rlog.info("[#{request_id}] the user has MFA enabled, starting MFA login session \"#{session_key}\"")
 
-        mfa_create_session(
-          session_key,
-          user.uuid,
-          {
-            # Needed to validate the code and do the redirect
-            request_id: request_id,
-            user_uuid: user.uuid,
-            user_hash: user_hash,
-            original_url: request.url.to_s,
-            redirect_url: url,
+      mfa_create_session(
+        session_key,
+        user.uuid,
+        {
+          # Needed to validate the code and do the redirect
+          request_id: request_id,
+          user_uuid: user.uuid,
+          user_hash: user_hash,
+          original_url: request.url.to_s,
+          redirect_url: url,
 
-            # Data for the (potential) SSO session (we don't know yet if we have to create it)
-            sso_session: {
-              organisation: user.organisation.organisation_key,
-              service_domain: @external_service.domain,
-              service_dn: @external_service.dn.to_s,
-              user_dn: user.dn.to_s,
-              had_session: had_session
-            }
+          # Data for the (potential) SSO session (we don't know yet if we have to create it)
+          sso_session: {
+            organisation: user.organisation.organisation_key,
+            service_domain: @external_service.domain,
+            service_dn: @external_service.dn.to_s,
+            user_dn: user.dn.to_s,
+            had_session: had_session
           }
-        )
+        }
+      )
 
-        # Redirect the browser to the MFA form
-        mfa_url = URI(request.url)
-        mfa_url.path = '/v3/mfa'
-        mfa_url.query = "token=#{session_key}"
+      # Redirect the browser to the MFA form
+      mfa_url = URI(request.url)
+      mfa_url.path = '/v3/mfa'
+      mfa_url.query = "token=#{session_key}"
 
-        redirect mfa_url
-      else
-        # Normal login
-        session_create(
-          request_id,
-          user.organisation.organisation_key,
-          @external_service.domain,
-          @external_service.dn.to_s,
-          user.dn.to_s,
-          user_hash,
-          had_session
-        )
+      redirect mfa_url
+    else
+      # Normal login
+      session_create(
+        request_id,
+        user.organisation.organisation_key,
+        @external_service.domain,
+        @external_service.dn.to_s,
+        user.dn.to_s,
+        user_hash,
+        had_session
+      )
 
-        do_service_redirect(request_id, user_hash, url)
-      end
-    rescue StandardError => e
-      rlog.error("[#{request_id}] generic login error: #{e}")
-      generic_error("Login system error. Please try again, and if the problem persists, please contact support and give them this code: #{request_id}.")
+      do_service_redirect(request_id, user_hash, url)
     end
+  rescue StandardError => e
+    rlog.error("[#{request_id}] generic login error: #{e}")
+    generic_error(t.sso.system_error(request_id))
   end
 
   def sso_render_form(error_message:, exception: nil, force_error_message: false)

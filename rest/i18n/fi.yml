@@ -12,6 +12,7 @@ sso:
   unknown_service: "Tuntematon palvelu. Ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi:<br><code>%1</code>"
   state_mismatch: "Epäyhteensopimattomuus palvelun luottotilojen välillä. Ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi:<br><code>%1</code>"
   verified_address_missing: "Tämä palvelu vaatii vahvennetun sähköpostiosoitteen. <a href=\"%1\">Ole hyvä, ja vahvista osoitteesi Omien tietojen muokkauksen kautta</a>, ja yritä sitten kirjautumista uudelleen. Jos et tiedä mitä tämä tarkoittaa, ota yhteys Opinsys Oy:n tukeen."
+  system_error: "Järjestelmävirhe, kirjautuminen on keskeytetty. Ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi:<br><code>%1</code>"
   login_to: Kirjaudu palveluun
   login: Kirjaudu
   error: Virhe
