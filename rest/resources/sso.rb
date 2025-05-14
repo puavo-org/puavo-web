@@ -252,6 +252,9 @@ class SSO < PuavoSinatra
     customise_form(@login_content, org_name)
 
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
+  rescue StandardError => e
+    rlog.error("[#{request_id}] SSO form displaying failed: #{e}")
+    generic_error(t.sso.system_error(request_id))
   end
 
   # Process the SSO username+password form post
@@ -306,6 +309,9 @@ class SSO < PuavoSinatra
 
     # If we get here, everything has failed. Try again.
     sso_try_login
+  rescue StandardError => e
+    rlog.error("[#{request_id}] SSO form post processing failed: #{e}")
+    generic_error(t.sso.system_error(request_id))
   end
 
   def do_service_redirect(request_id, user_hash, url)
