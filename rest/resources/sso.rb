@@ -46,7 +46,7 @@ class SSO < PuavoSinatra
 
   get '/v3/sso/developers' do
     @body = File.read('doc/SSO_DEVELOPERS.html')
-    erb :developers, :layout => :layout
+    erb :developers, layout: :layout
   end
 
   def sso_try_login
@@ -108,7 +108,7 @@ class SSO < PuavoSinatra
 
     # Read organisation data manually instead of using the cached one because
     # enabled external services might be updated.
-    organisation = LdapModel.setup(:credentials => CONFIG["server"]) do
+    organisation = LdapModel.setup(credentials: CONFIG["server"]) do
       Organisation.by_dn(LdapModel.organisation["dn"])
     end
 
@@ -251,7 +251,7 @@ class SSO < PuavoSinatra
 
     customise_form(@login_content, org_name)
 
-    halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
+    halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, layout: :layout)
   rescue StandardError => e
     rlog.error("[#{request_id}] SSO form displaying failed: #{e}")
     generic_error(t.sso.system_error(request_id))
@@ -301,7 +301,7 @@ class SSO < PuavoSinatra
         rlog.error("SSO external login error: #{ e.message }")
       end
 
-      LdapModel.setup(:organisation => org)
+      LdapModel.setup(organisation: org)
     else
       # No organisation found, go back to the login form
       sso_render_form(error_message: t.sso.no_organisation)
