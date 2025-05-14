@@ -3,18 +3,18 @@ require "sinatra/cookies"
 
 require_relative "./users"
 
+require_relative '../lib/sso/form_utility'
 require_relative '../lib/sso/sessions'
 require_relative '../lib/sso/mfa'
-require_relative '../lib/sso/form_utility.rb'
 
 module PuavoRest
 
 class SSO < PuavoSinatra
   register Sinatra::R18n
 
-  include Sessions
-  include MFA
   include FormUtility
+  include SSOSessions
+  include MFA
 
   get '/v3/sso' do
     sso_try_login

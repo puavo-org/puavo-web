@@ -1,6 +1,6 @@
 # SSO sessions
 
-module Sessions
+module SSOSessions
   def _session_redis
     Redis::Namespace.new('sso_session', redis: REDIS_CONNECTION)
   end
