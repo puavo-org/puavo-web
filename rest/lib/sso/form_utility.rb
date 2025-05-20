@@ -33,7 +33,7 @@ module FormUtility
       "page_title" => t.sso.title,
       "external_service_name" => @external_service["name"],
       "service_title_override" => nil,
-      "return_to" => params['return_to'] || params['return'] || nil,
+      "return_to" => return_to(),
       "organisation" => @organisation ? @organisation.domain : nil,
       "display_domain" => request['organisation'] ? Rack::Utils.escape_html(request['organisation']) : nil,
       "username_placeholder" => preferred_organisation ? t.sso.username : "#{ t.sso.username }@#{ t.sso.organisation }.#{ topdomain }",
