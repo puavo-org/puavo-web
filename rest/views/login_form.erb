@@ -27,7 +27,7 @@
     <p id="error"><%= @login_content['error_message'] %></p>
     <% end %>
 
-    <form action="" method="post" accept-charset="utf-8">
+    <form action="<%= @login_content['action'] || '' %>" method="post" accept-charset="utf-8">
         <%= token_tag form_authenticity_token %>
         <input type="hidden" name="type" value="<%= @login_content['type'] %>">
         <input type="hidden" name="state_key" value="<%= @login_content['state_key'] %>">
