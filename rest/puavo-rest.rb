@@ -61,5 +61,11 @@ DISTRIBUTED_LOCK = Redlock::Client.new([REDIS_CONNECTION])
 PUAVO_SSO_SESSION_KEY = '_puavo_sso_session'.freeze
 PUAVO_SSO_SESSION_LENGTH = (60 * 60 * 8).freeze       # 8 hours
 
+# Maximum duration of the overall login process, in seconds. The whole
+# login process (username+password, MFA) must complete within this time.
+# This is slightly longer than the MFA time, to give the user time to
+# enter their username and password.
+PUAVO_LOGIN_TIME = (60 * 6).freeze
+
 # MFA
 PUAVO_MFA_LOGIN_TIME = (60 * 5).freeze
