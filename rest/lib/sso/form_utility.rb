@@ -1,7 +1,8 @@
 require 'addressable/uri'
 
 module FormUtility
-  def sso_render_form(request_id, error_message: nil, exception: nil, force_error_message: false)
+  # Displays the SSO username+password login form
+  def sso_render_form(request_id, error_message: nil, exception: nil, force_error_message: false, type: 'jwt', state_key: nil)
     if env["REQUEST_METHOD"] == "POST" || force_error_message
       @error_message = error_message
 
@@ -29,6 +30,8 @@ module FormUtility
       # places. This key tells the form where those resources are.
       "prefix" => "/v3/login",
 
+      'type' => type.to_s,
+      'state_key' => state_key,
       'request_id' => request_id,
       "page_title" => t.sso.title,
       "external_service_name" => @external_service["name"],
@@ -77,6 +80,12 @@ module FormUtility
       rlog.info("[#{request_id}] Processing the submitted SSO form (no request_id in the submission)")
     end
 
+    # Load type and the login state key
+    type = params.fetch('type', 'jwt')
+    state_key = params.fetch('state_key', nil)
+
+    rlog.info("[#{request_id}] State key: #{state_key}")
+
     # Determine the target organisation
     if username.include?('@') && organisation
       # This can be happen if the organisation name is pre-set in the custom URL parameters
@@ -94,13 +103,13 @@ module FormUtility
         username = parts[0]
       else
         rlog.error("[#{request_id}] The domains are different")
-        sso_render_form(request_id, error_message: t.sso.invalid_username)
+        sso_render_form(request_id, error_message: t.sso.invalid_username, type: type, state_key: state_key)
       end
     end
 
     if !username.include?('@') && organisation.nil? then
       rlog.error("[#{request_id}] SSO error: organisation missing from username: #{ username }")
-      sso_render_form(request_id, error_message: t.sso.organisation_missing)
+      sso_render_form(request_id, error_message: t.sso.organisation_missing, type: type, state_key: state_key)
     end
 
     user_org = nil
@@ -110,7 +119,7 @@ module FormUtility
 
       if PuavoRest::Organisation.by_domain(ensure_topdomain(user_org)).nil? then
         rlog.error("[#{request_id}] SSO error: could not find organisation for domain #{ user_org }")
-        sso_render_form(request_id, error_message: t.sso.bad_username_or_pw)
+        sso_render_form(request_id, error_message: t.sso.bad_username_or_pw, type: type, state_key: state_key)
       end
     end
 
@@ -134,11 +143,13 @@ module FormUtility
       LdapModel.setup(organisation: org)
     else
       # No organisation found, go back to the login form
-      sso_render_form(request_id, error_message: t.sso.no_organisation)
+      sso_render_form(request_id, error_message: t.sso.no_organisation, type: type, state_key: state_key)
     end
 
     # We have a valid username, password and organisation. Try to log in again.
-    sso_try_login(request_id: request_id)
+    if type == 'jwt'
+      sso_try_login(request_id: request_id)
+    end
   rescue StandardError => e
     rlog.error("[#{request_id}] SSO form post processing failed: #{e}")
     generic_error(t.sso.system_error(request_id))

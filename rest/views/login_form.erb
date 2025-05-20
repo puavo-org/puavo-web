@@ -29,6 +29,8 @@
 
     <form action="" method="post" accept-charset="utf-8">
         <%= token_tag form_authenticity_token %>
+        <input type="hidden" name="type" value="<%= @login_content['type'] %>">
+        <input type="hidden" name="state_key" value="<%= @login_content['state_key'] %>">
         <input type="hidden" name="return_to" value="<%= @login_content['return_to'] %>">
         <input type="hidden" name="request_id" value="<%= @login_content['request_id'] %>">
         <% if @login_content['display_domain'] %>
