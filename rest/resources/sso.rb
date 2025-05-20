@@ -153,6 +153,8 @@ class SSO < PuavoSinatra
         session_key,
         user.uuid,
         {
+          type: 'jwt',
+
           # Needed to validate the code and do the redirect
           request_id: request_id,
           user_uuid: user.uuid,

@@ -86,7 +86,9 @@ module MFA
           session_data['sso_session']['had_session']
         )
 
-        return do_service_redirect(request_id, session_data['user_hash'], session_data['redirect_url'])
+        if session_data['type'] == 'jwt'
+          return do_service_redirect(request_id, session_data['user_hash'], session_data['redirect_url'])
+        end
       else
         rlog.info("[#{request_id}] MFA server backend error:")
         rlog.info("[#{request_id}]   #{response.inspect}")
