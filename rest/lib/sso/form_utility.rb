@@ -135,7 +135,7 @@ module FormUtility
       # Try external login first.  Does nothing if external login
       # is not configured for this organisation.
       begin
-        ExternalLogin.auth(username, password, org, {})
+        PuavoRest::ExternalLogin.auth(username, password, org, {})
       rescue StandardError => e
         rlog.error("[#{request_id}] SSO external login error: #{ e.message }")
       end
