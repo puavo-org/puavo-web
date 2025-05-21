@@ -122,7 +122,7 @@ module MFA
       'mfa_cancel' => t.mfa.cancel,
     }
 
-    halt 401, { 'Content-Type' => 'text/html' }, erb(:mfa_form, :layout => :layout)
+    halt 401, common_headers(), erb(:mfa_form, :layout => :layout)
   end
 
   def mfa_create_session(key, uuid, data)

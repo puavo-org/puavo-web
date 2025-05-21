@@ -60,7 +60,7 @@ module FormUtility
 
     customise_form(@login_content, org_name)
 
-    halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, layout: :layout)
+    halt 401, common_headers(), erb(:login_form, layout: :layout)
   rescue StandardError => e
     rlog.error("[#{request_id}] SSO form displaying failed: #{e}")
     generic_error(t.sso.system_error(request_id))
@@ -280,7 +280,7 @@ module FormUtility
       'prefix' => '/v3/login',      # make the built-in CSS work
     }
 
-    halt status, { 'Content-Type' => 'text/html' }, erb(:generic_error, layout: :layout)
+    halt status, common_headers(), erb(:generic_error, layout: :layout)
   end
 
   def topdomain
@@ -313,5 +313,15 @@ module FormUtility
     end.map do |org|
       PuavoRest::Organisation.by_domain(org)
     end.first
+  end
+
+  # Returns the HTTP headers that are common for all pages in the login system.
+  # Tries to prevent browsers from caching anything (login pages, error messages, etc.)
+  def common_headers
+    {
+      'Content-Type' => 'text/html',
+      'Cache-Control' => 'no-cache, no-store, must-revalidate',
+      'Expires' => '0',
+    }
   end
 end
