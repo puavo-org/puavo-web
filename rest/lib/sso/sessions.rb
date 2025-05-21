@@ -104,17 +104,6 @@ module SSOSessions
     rlog.info("[#{request_id}] verifying the SSO cookie")
     organisation = session['organisation']
 
-    # Each (user, service) tuple must be unique. You cannot login into service B using service A's session.
-    unless session['original_service'] == @external_service.dn.to_s
-      rlog.error("[#{request_id}] SSO cookie login rejected; the session that exists is for service " \
-                 "\"#{session['original_service']}\", but the user is trying to log into service " \
-                 "\"#{@external_service.dn.to_s}\" (#{@external_service.name})")
-
-      # Return true here to avoid creating another session (ie. "a session already exists,
-      # but we won't use it this time")
-      return [true, nil]
-    end
-
     unless session_enabled?(request_id, organisation, external_service.domain)
       rlog.error("[#{request_id}] SSO cookie login rejected, the target external service domain (" + \
                  @external_service.domain.inspect + ") is not on the list of allowed services")
