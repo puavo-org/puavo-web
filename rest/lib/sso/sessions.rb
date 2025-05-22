@@ -74,7 +74,7 @@ module SSOSessions
     rlog.error("[#{request_id}] could not create an SSO session: #{e}")
   end
 
-  def session_try_login(request_id, external_service)
+  def session_try_login(request_id, external_service, type: 'jwt')
     # ----------------------------------------------------------------------------------------------
     # If the session cookie exists, load its contents from Redis
 
@@ -113,11 +113,13 @@ module SSOSessions
       return [true, nil]
     end
 
-    redirect_url, _ = @external_service.generate_login_url(session['user_hash'], return_to)
     rlog.info("[#{request_id}] SSO cookie login OK")
-    rlog.info("[#{request_id}] redirecting SSO auth for \"#{session['user_hash']['username']}\" to #{redirect_url}")
 
-    return [false, redirect_url]
+    if type == 'jwt'
+      redirect_url, _ = @external_service.generate_login_url(session['user_hash'], return_to)
+      rlog.info("[#{request_id}] redirecting SSO auth for \"#{session['user_hash']['username']}\" to #{redirect_url}")
+      return [false, redirect_url]
+    end
   rescue StandardError => e
     rlog.error("[#{request_id}] SSO session login attempt failed: #{e}")
     return [false, nil]

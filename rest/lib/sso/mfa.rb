@@ -76,17 +76,17 @@ module MFA
 
         mfa_destroy_session(session_key, user_uuid)
 
-        session_create(
-          request_id,
-          session_data['sso_session']['organisation'],
-          session_data['sso_session']['service_domain'],
-          session_data['sso_session']['service_dn'],
-          session_data['sso_session']['user_dn'],
-          session_data['user_hash'],
-          session_data['sso_session']['had_session']
-        )
-
         if session_data['type'] == 'jwt'
+          session_create(
+            request_id,
+            session_data['sso_session']['organisation'],
+            session_data['sso_session']['service_domain'],
+            session_data['sso_session']['service_dn'],
+            session_data['sso_session']['user_dn'],
+            session_data['user_hash'],
+            session_data['sso_session']['had_session']
+          )
+
           return do_service_redirect(request_id, session_data['user_hash'], session_data['redirect_url'])
         end
       else
