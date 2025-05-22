@@ -84,7 +84,7 @@ module FormUtility
     type = params.fetch('type', 'jwt')
     state_key = params.fetch('state_key', nil)
 
-    rlog.info("[#{request_id}] State key: #{state_key}")
+    rlog.info("[#{request_id}] State key: #{state_key.inspect}")
 
     # Determine the target organisation
     if username.include?('@') && organisation
