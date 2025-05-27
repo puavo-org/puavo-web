@@ -56,6 +56,9 @@ module FormUtility
       "text_login_to" => t.sso.login_to
     }
 
+    # We support both GET and POST /oidc/authorize endpoint, so the form POST handler must be changed
+    @login_content['action'] = '/oidc/authorize/post' if type == 'oidc'
+
     org_name = find_organisation_name()
 
     customise_form(@login_content, org_name)
@@ -80,9 +83,14 @@ module FormUtility
       rlog.info("[#{request_id}] Processing the submitted SSO form (no request_id in the submission)")
     end
 
-    # Load type and the login state key
+    # Load type and the login state key. The latter is required only when we're in OpenID Connect mode.
     type = params.fetch('type', 'jwt')
     state_key = params.fetch('state_key', nil)
+
+    if state_key.nil? && type == 'oidc'
+      rlog.info("[#{request_id}] We're in OpenID Connect mode, but no state key was submitted in the form data. Halting.")
+      generic_error(t.sso.system_error(request_id))
+    end
 
     rlog.info("[#{request_id}] State key: #{state_key.inspect}")
 
@@ -149,6 +157,8 @@ module FormUtility
     # We have a valid username, password and organisation. Try to log in again.
     if type == 'jwt'
       sso_try_login(request_id: request_id)
+    else
+      oidc_try_login(request_id: request_id, state_key: state_key)
     end
   rescue StandardError => e
     rlog.error("[#{request_id}] SSO form post processing failed: #{e}")
@@ -263,6 +273,8 @@ module FormUtility
       Addressable::URI.parse(params['return_to'])
     elsif params.include?('return')
       Addressable::URI.parse(params['return'])
+    elsif params.include?('redirect_uri')
+      Addressable::URI.parse(params['redirect_uri'])
     else
       nil
     end

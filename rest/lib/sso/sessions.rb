@@ -119,6 +119,8 @@ module SSOSessions
       redirect_url, _ = @external_service.generate_login_url(session['user_hash'], return_to)
       rlog.info("[#{request_id}] redirecting SSO auth for \"#{session['user_hash']['username']}\" to #{redirect_url}")
       return [false, redirect_url]
+    else
+      return [false, session['user_hash']]
     end
   rescue StandardError => e
     rlog.error("[#{request_id}] SSO session login attempt failed: #{e}")
