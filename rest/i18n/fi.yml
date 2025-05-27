@@ -47,3 +47,7 @@ mfa:
   incorrect_code: "Virheellinen koodi"
   validation_server_error: "Kirjautumispalvelinvirhe. Yritä kirjautumista uudelleen. Jos ongelma toistuu, ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi:<br><code>%1</code>"
   system_error: "Vakava järjestelmävirhe, kirjautuminen on keskeytetty. Ole hyvä ja ota yhteys tukeen ja anna heille tämä koodi:<br><code>%1</code>"
+oauth2:
+  missing_or_invalid_required_parameter: "Pyynnöstä puuttuu vaadittu parametri \"%1\" tai sen sisältö on virheellinen.<br>Ota yhteys tekniseen tukeen ja anna heille tämä koodi:<br><code>%2</code>"
+  invalid_client_id: "Virheellinen asiakastunnus. Kirjautuminen pysäytetty.<br>Ole hyvä ja ota yhteys tekniseen tukeen, ja anna heille tämä koodi<br><code>%1</code>"
+  invalid_redirect_uri: "Virheellinen uudelleenohjausosoite. Kirjautuminen pysäytetty.<br>Ole hyvä ja ota yhteys Opinsysin tukeen, ja anna heille tämä koodi:<br><code>%1</code>"

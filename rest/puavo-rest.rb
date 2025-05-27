@@ -45,6 +45,7 @@ require_relative "./resources/certs"
 require_relative "./resources/external_login"
 require_relative "./resources/bootserver_dns"
 require_relative "./resources/my_school_users"
+require_relative './resources/oauth2/openidconnect'
 
 if CONFIG['mfa_management']
   require_relative './resources/mfa_management'
@@ -69,3 +70,6 @@ PUAVO_LOGIN_TIME = (60 * 6).freeze
 
 # MFA
 PUAVO_MFA_LOGIN_TIME = (60 * 5).freeze
+
+# The OpenID Connect login process must complete within this time
+PUAVO_OIDC_LOGIN_TIME = PUAVO_LOGIN_TIME
