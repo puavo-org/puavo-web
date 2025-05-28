@@ -61,7 +61,7 @@ module FormUtility
 
     org_name = find_organisation_name(request_id)
 
-    customise_form(@login_content, org_name)
+    customise_form(request_id, @login_content, org_name)
 
     halt 401, common_headers(), erb(:login_form, layout: :layout)
   rescue StandardError => e
@@ -232,7 +232,7 @@ module FormUtility
   end
 
   # Applies per-organisation customisations to the content, if any
-  def customise_form(content, org_name)
+  def customise_form(request_id, content, org_name)
     begin
       # Any per-organisation login screen customisations?
       customisations = ORGANISATIONS[org_name]['login_screen']
@@ -242,7 +242,7 @@ module FormUtility
     end
 
     unless customisations.empty?
-      rlog.info("Organisation \"#{org_name}\" has login screen customisations enabled")
+      rlog.info("[#{request_id}] customise_form(): Organisation \"#{org_name}\" has login screen customisations enabled")
     end
 
     # Apply per-customer customisations
