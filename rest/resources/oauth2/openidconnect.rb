@@ -266,8 +266,6 @@ private
     oidc_state = JSON.parse(oidc_state)
     request_id = oidc_state['request_id']   # resume original login flow
 
-    rlog.info("[#{request_id}] oidc_try_login(): state data: #{oidc_state}")
-
     # Determine the target external service
     if return_to.nil?
       purge_oidc_state(state_key)
