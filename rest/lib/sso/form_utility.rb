@@ -59,7 +59,7 @@ module FormUtility
     # We support both GET and POST /oidc/authorize endpoint, so the form POST handler must be changed
     @login_content['action'] = '/oidc/authorize/post' if type == 'oidc'
 
-    org_name = find_organisation_name()
+    org_name = find_organisation_name(request_id)
 
     customise_form(@login_content, org_name)
 
@@ -166,16 +166,16 @@ module FormUtility
   end
 
   # Attempts to determine which organisation we're in
-  def find_organisation_name()
+  def find_organisation_name(request_id)
     org_name = nil
 
-    rlog.info('Trying to figure out the organisation name for this SSO request')
+    rlog.info("[#{request_id}] Trying to figure out the organisation name for this SSO request")
 
     if request['organisation']
       # Find the organisation that matches this request
       req_organisation = request['organisation']
 
-      rlog.info("The request includes organisation name \"#{req_organisation}\"")
+      rlog.info("[#{request_id}] The request includes organisation name \"#{req_organisation}\"")
 
       # If external domains are specified, then try doing a reverse lookup
       # (ie. convert the external domain back into an organisation name)
@@ -184,7 +184,7 @@ module FormUtility
         CONFIG['external_domains'].each do |name, external_list|
           external_list.each do |external|
             if external == req_organisation then
-              rlog.info("Found a reverse mapping from external domain \"#{external}\" " \
+              rlog.info("[#{request_id}] Found a reverse mapping from external domain \"#{external}\" " \
                         "to \"#{name}\", using it instead")
               req_organisation = name
               org_found = true
@@ -198,13 +198,13 @@ module FormUtility
       # Find the organisation
       if ORGANISATIONS.include?(req_organisation)
         # This name probably came from the reverse mapping above
-        rlog.info("Organisation \"#{req_organisation}\" exists, using it")
+        rlog.info("[#{request_id}] Organisation \"#{req_organisation}\" exists, using it")
         org_name = req_organisation
       else
         # Look for LDAP host names
         ORGANISATIONS.each do |name, data|
           if data['host'] == req_organisation
-            rlog.info("Found a configured organisation \"#{name}\"")
+            rlog.info("[#{request_id}] Found a configured organisation \"#{name}\"")
             org_name = name
             break
           end
@@ -212,22 +212,22 @@ module FormUtility
       end
 
       unless org_name
-        rlog.warn("Did not find the request organisation \"#{req_organisation}\" in organisations.yml")
+        rlog.warn("[#{request_id}] Did not find the request organisation \"#{req_organisation}\" in organisations.yml")
       end
 
     else
-      rlog.warn('There is no organisation name in the request')
+      rlog.warn("[#{request_id}] There is no organisation name in the request")
     end
 
     # No organisation? Is this a development/testing environment?
     unless org_name
       if ORGANISATIONS.include?('hogwarts')
-        rlog.info('This appears to be a development environment, using hogwarts')
+        rlog.info("[#{request_id}] This appears to be a development environment, using hogwarts")
         org_name = 'hogwarts'
       end
     end
 
-    rlog.info("Final organisation name is \"#{org_name}\"")
+    rlog.info("[#{request_id}] Final organisation name is \"#{org_name}\"")
     org_name
   end
 
