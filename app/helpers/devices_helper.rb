@@ -250,6 +250,10 @@ module DevicesHelper
       out[:loc_lon] = dev['puavoLongitude'][0]
     end
 
+    if dev.include?('puavoTimezone')
+      out[:tz] = dev['puavoTimezone'][0]
+    end
+
     if dev.include?('puavoDeviceStatus')
       out[:status] = dev['puavoDeviceStatus'][0]
     end

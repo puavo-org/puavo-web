@@ -676,6 +676,13 @@ const COLUMN_DEFINITIONS = {
         type: ST.ColumnType.STRING,
     },
 
+    tz: {
+        key: "tz",
+        title: "<%= t('columns.devices.tz') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.F_NULLABLE,
+    },
+
     uptime: {
         key: "uptime",
         title: "<%= t('columns.devices.uptime') %>",
@@ -784,6 +791,7 @@ const COLUMN_ORDER = [
 <% end %>
     "loc_lat",
     "loc_lon",
+    "tz",
     "default_printer",
     "printer_uri",
     "audio_src",

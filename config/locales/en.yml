@@ -348,6 +348,7 @@ en:
       reset_fulfilled: "Reset fulfilled at"
       uptime: "Uptime"
       puavopkgs: "puavo-pkg packages list"
+      tz: "Timezone"
 
     servers:
       available_images: "Available images"
