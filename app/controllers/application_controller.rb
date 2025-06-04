@@ -241,6 +241,17 @@ class ApplicationController < ActionController::Base
     return true
   end
 
+  # Returns true if this user (username) is an Opinsys employee and they will be
+  # granted extra permissions in some places
+  def opinsys_employee?(name)
+    begin
+      employees = File.read("#{Rails.root}/config/opinsys_employees.txt").split("\n")
+    rescue StandardError => e
+    end
+
+    employees.include?(name)
+  end
+
   def clean_image_name(hash)
     if hash.include?('puavoDeviceImage')
       hash['puavoDeviceImage'].strip!
