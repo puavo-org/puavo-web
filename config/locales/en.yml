@@ -705,6 +705,8 @@ en:
       owner_added: "%{user} is now an owner of this organisation"
       owner_removed: "%{user} is no longer an owner of this organisation"
       cant_remove_self: "You can't remove yourself from the owners. Another owner-level user must remove you from the owners."
+      external_services_updated: "External service activations updated"
+      external_services_update_failed: "External services activation states saving failed"
     group:
       empty_group: "There are no members in this group, nothing was done"
       create_username_list_ok: "A new username list was created from the members in the group \"%{name}\""
@@ -920,6 +922,11 @@ en:
     additional_info: "Additional info..."
     organisation_wide_activation: "This service has been activated on the organisation level for all schools."
     requires_verified_email: "This service requires a verified email address for logging in."
+    you_can_edit_services: "You are an Opinsys employee, so you can activate and deactivate external services in this organisation."
+    edit_services: "Activate services..."
+    edit:
+      title: "Activate and deactivate external services in the organisation"
+      no_external_services_found: "No external services found. This is probably a bug..."
 
   # Organisation/external files
   external_files:

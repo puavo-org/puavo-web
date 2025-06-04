@@ -9,6 +9,13 @@
 
 <p><%= t('external_services.activation') %></p>
 
+<% if !@is_school && @is_opinsys_employee %>
+<div class="genericWarning">
+    <p class="margin-0"><%= t('external_services.you_can_edit_services') %></p>
+    <a href="/users/organisation_external_services/edit" class="btn"><%= t('external_services.edit_services') %></a>
+</div>
+<% end %>
+
 <% if @external_services.empty? %>
 
 <% if @is_school %>

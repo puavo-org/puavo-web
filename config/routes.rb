@@ -41,6 +41,9 @@ Rails.application.routes.draw do
     match '(*url)' => 'rest#proxy', :via => [:get, :post, :put], :format => false
   end
 
+  # Can't get this to work in any other way. Rails' automagic fails here.
+  post '/users/organisation_external_services/update' => 'organisation_external_services#update', :as => 'organisation_external_services_update'
+
   scope :path => "users" do
     resources :ldap_services
     resource :organisation_external_services

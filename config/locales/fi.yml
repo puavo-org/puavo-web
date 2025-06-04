@@ -705,6 +705,8 @@ fi:
       owner_added: "%{user} on lisätty organisaation omistajaksi"
       owner_removed: "%{user} ei ole enää omistajana tässä organisaatiossa"
       cant_remove_self: "Et voi poistaa itseltäsi omistajaoikeuksia. Jonkun muun omistajatason käyttäjän on poistettava sinut omistajista."
+      external_services_updated: "Ulkoisten palveluiden aktivoinnit tallennettu"
+      external_services_update_failed: "Ulkoisten palveluiden aktivointien tallennus ei onnistunut"
     group:
       empty_group: "Ryhmässä ei ole jäseniä, mitään ei tehty"
       create_username_list_ok: "Ryhmän \"%{name}\" jäsenistä luotiin onnistuneesti uusi käyttäjätunnuslista"
@@ -920,6 +922,11 @@ fi:
     additional_info: "Lisätietoja..."
     organisation_wide_activation: "Tämä palvelu on aktivoitu organisaatiotasolla kaikkiin kouluihin."
     requires_verified_email: "Palveluun kirjautuminen vaatii vahvistetun sähköpostiosoitteen."
+    you_can_edit_services: "Opinsysin työntekijänä voit aktivoida ja deaktivoida ulkoisia palveluita tässä organisaatiossa."
+    edit_services: "Aktivoi palveluita..."
+    edit:
+      title: "Aktivoi ja deaktivoi organisaation ulkoisia palveluita"
+      no_external_services_found: "Ulkoisia palveluita ei löydy. Tämä on ehkä bugi..."
 
   # Organisation/external files
   external_files:

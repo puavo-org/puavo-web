@@ -1,0 +1,31 @@
+<% page_title t('titles.organisation'), t('titles.external_services'), t('titles.edit') %>
+
+<h1><%= t('external_services.edit.title') %></h1>
+
+<% if @external_services.empty? %>
+<p class="genericError"><%= t('external_services.edit.no_external_services_found') %></p>
+<div class="cancel"><%= link_to t('link.back'), organisation_external_services_path, class: 'btn' %></div>
+<% else %>
+
+<%= form_tag('/users/organisation_external_services/update', method: :post) do %>
+<ul class="no-list-bullets margin-0 padding-0">
+
+<% @external_services.each do |es| %>
+<li><label><input type="checkbox" id="<%= es[:dn] %>" name="<%= es[:dn] %>" <%= es[:active] ? 'checked' : '' %> autocomplete="off"><%= es[:name] %></label><ul>
+    <li>Domain: <%= es[:domains].join(', ').html_safe %></li>
+    <li><%= t("external_services.email") %>: <%= es[:email] %></li>
+    <li><%= t("external_services.path_prefix") %>: <%= es[:prefix] %></li>
+    <li>DN: <%= es[:dn] %></li>
+    <li><%= t('ldap_create_time') %>: <%= es[:created] %></li>
+</ul></li>
+<% end %>
+
+</ul>
+
+<div class="flex-cols gap-10px margin-top-10px">
+    <%= submit_tag t('link.save'), class: 'btn', autocomplete: 'off' %>
+    <div class="cancel"><%= link_to t('link.back'), organisation_external_services_path, class: 'btn' %></div>
+</div>
+
+<% end %>
+<% end %>
