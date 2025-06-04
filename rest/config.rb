@@ -1,6 +1,7 @@
 require "socket"
 require "yaml"
 require "puavo/etc"
+require 'openssl'
 
 
 fqdn = Addrinfo.getaddrinfo(Socket.gethostname, nil).first.getnameinfo.first
@@ -80,6 +81,24 @@ if ENV['RACK_ENV'] == 'test' then
         'password' => 'password'
       },
     },
+    'oauth2' => {
+      'token_key' => {
+        'private_file' => '/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem',
+        'public_file' => '/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem',
+        'creation_time' => '20250115T095034Z',
+      },
+      'client_database' => {
+        'host' => '127.0.0.1',
+        'port' => 5432,
+        'database' => 'oauth2',
+        'user' => 'standalone_user',
+        'password' => 'standalone_password'
+      },
+      'audit' => {
+        'enabled' => false,
+        'ip_logging' => false,
+      }
+    },
     "redis" => {
       :db => 1
     },
@@ -130,6 +149,18 @@ else
     })
   end
 end
+
+# Load the public OAuth2 JWT validation key. The private key file is loaded only when
+# signing an access token, so that its contents cannot leak through global variables.
+begin
+  public_key = OpenSSL::PKey.read(File.read(CONFIG['oauth2']['token_key']['public_file']))
+rescue StandardError => e
+  puts "ERROR: Cannot load the OAuth2 JWT validation key: #{e}"
+  puts "ERROR: OAuth2 access token validations will always fail and access tokens cannot be used"
+  public_key = nil
+end
+
+OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY = public_key.freeze
 
 # Load organisations.yml if it exists
 begin

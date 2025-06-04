@@ -88,6 +88,10 @@ module MFA
           )
 
           return do_service_redirect(request_id, session_data['user_hash'], session_data['redirect_url'])
+        else
+          # OpenID Connect sessions cannot be created here, because the redirect is
+          # to another endpoint in the server, so setting the cookie won't work.
+          return redirect "/oidc/authorize/mfa_complete?state_key=#{session_data['state_key']}"
         end
       else
         rlog.info("[#{request_id}] MFA server backend error:")

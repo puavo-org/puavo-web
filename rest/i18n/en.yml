@@ -47,3 +47,7 @@ mfa:
   incorrect_code: "Incorrect code"
   validation_server_error: "Authentication server error. Try logging in again. If the problem persists, please contact support and give them this code:<br><code>%1</code>"
   system_error: "Fatal error, login halted. Please contact support and give them this code:<br><code>%1</code>"
+oauth2:
+  missing_or_invalid_required_parameter: "A required parameter \"%1\" is missing from the request or its value is invalid.<br>Please contact technical support and give them this code:<br><code>%2</code>"
+  invalid_client_id: "Invalid client ID. Login halted.<br>Please contact technical support and give them this code:<br><code>%1</code>"
+  invalid_redirect_uri: "Invalid redirect URI. Login halted.<br>Please contact Opinsys support and give them this code:<br><code>%1</code>"

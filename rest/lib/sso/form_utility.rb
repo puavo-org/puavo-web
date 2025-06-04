@@ -56,9 +56,12 @@ module FormUtility
       "text_login_to" => t.sso.login_to
     }
 
-    org_name = find_organisation_name()
+    # We support both GET and POST /oidc/authorize endpoint, so the form POST handler must be changed
+    @login_content['action'] = '/oidc/authorize/post' if type == 'oidc'
 
-    customise_form(@login_content, org_name)
+    org_name = find_organisation_name(request_id)
+
+    customise_form(request_id, @login_content, org_name)
 
     halt 401, common_headers(), erb(:login_form, layout: :layout)
   rescue StandardError => e
@@ -80,9 +83,14 @@ module FormUtility
       rlog.info("[#{request_id}] Processing the submitted SSO form (no request_id in the submission)")
     end
 
-    # Load type and the login state key
+    # Load type and the login state key. The latter is required only when we're in OpenID Connect mode.
     type = params.fetch('type', 'jwt')
     state_key = params.fetch('state_key', nil)
+
+    if state_key.nil? && type == 'oidc'
+      rlog.info("[#{request_id}] We're in OpenID Connect mode, but no state key was submitted in the form data. Halting.")
+      generic_error(t.sso.system_error(request_id))
+    end
 
     rlog.info("[#{request_id}] State key: #{state_key.inspect}")
 
@@ -149,6 +157,8 @@ module FormUtility
     # We have a valid username, password and organisation. Try to log in again.
     if type == 'jwt'
       sso_try_login(request_id: request_id)
+    else
+      oidc_try_login(request_id: request_id, state_key: state_key)
     end
   rescue StandardError => e
     rlog.error("[#{request_id}] SSO form post processing failed: #{e}")
@@ -156,16 +166,16 @@ module FormUtility
   end
 
   # Attempts to determine which organisation we're in
-  def find_organisation_name()
+  def find_organisation_name(request_id)
     org_name = nil
 
-    rlog.info('Trying to figure out the organisation name for this SSO request')
+    rlog.info("[#{request_id}] Trying to figure out the organisation name for this SSO request")
 
     if request['organisation']
       # Find the organisation that matches this request
       req_organisation = request['organisation']
 
-      rlog.info("The request includes organisation name \"#{req_organisation}\"")
+      rlog.info("[#{request_id}] The request includes organisation name \"#{req_organisation}\"")
 
       # If external domains are specified, then try doing a reverse lookup
       # (ie. convert the external domain back into an organisation name)
@@ -174,7 +184,7 @@ module FormUtility
         CONFIG['external_domains'].each do |name, external_list|
           external_list.each do |external|
             if external == req_organisation then
-              rlog.info("Found a reverse mapping from external domain \"#{external}\" " \
+              rlog.info("[#{request_id}] Found a reverse mapping from external domain \"#{external}\" " \
                         "to \"#{name}\", using it instead")
               req_organisation = name
               org_found = true
@@ -188,13 +198,13 @@ module FormUtility
       # Find the organisation
       if ORGANISATIONS.include?(req_organisation)
         # This name probably came from the reverse mapping above
-        rlog.info("Organisation \"#{req_organisation}\" exists, using it")
+        rlog.info("[#{request_id}] Organisation \"#{req_organisation}\" exists, using it")
         org_name = req_organisation
       else
         # Look for LDAP host names
         ORGANISATIONS.each do |name, data|
           if data['host'] == req_organisation
-            rlog.info("Found a configured organisation \"#{name}\"")
+            rlog.info("[#{request_id}] Found a configured organisation \"#{name}\"")
             org_name = name
             break
           end
@@ -202,27 +212,27 @@ module FormUtility
       end
 
       unless org_name
-        rlog.warn("Did not find the request organisation \"#{req_organisation}\" in organisations.yml")
+        rlog.warn("[#{request_id}] Did not find the request organisation \"#{req_organisation}\" in organisations.yml")
       end
 
     else
-      rlog.warn('There is no organisation name in the request')
+      rlog.warn("[#{request_id}] There is no organisation name in the request")
     end
 
     # No organisation? Is this a development/testing environment?
     unless org_name
       if ORGANISATIONS.include?('hogwarts')
-        rlog.info('This appears to be a development environment, using hogwarts')
+        rlog.info("[#{request_id}] This appears to be a development environment, using hogwarts")
         org_name = 'hogwarts'
       end
     end
 
-    rlog.info("Final organisation name is \"#{org_name}\"")
+    rlog.info("[#{request_id}] Final organisation name is \"#{org_name}\"")
     org_name
   end
 
   # Applies per-organisation customisations to the content, if any
-  def customise_form(content, org_name)
+  def customise_form(request_id, content, org_name)
     begin
       # Any per-organisation login screen customisations?
       customisations = ORGANISATIONS[org_name]['login_screen']
@@ -232,7 +242,7 @@ module FormUtility
     end
 
     unless customisations.empty?
-      rlog.info("Organisation \"#{org_name}\" has login screen customisations enabled")
+      rlog.info("[#{request_id}] customise_form(): Organisation \"#{org_name}\" has login screen customisations enabled")
     end
 
     # Apply per-customer customisations
@@ -263,6 +273,8 @@ module FormUtility
       Addressable::URI.parse(params['return_to'])
     elsif params.include?('return')
       Addressable::URI.parse(params['return'])
+    elsif params.include?('redirect_uri')
+      Addressable::URI.parse(params['redirect_uri'])
     else
       nil
     end
