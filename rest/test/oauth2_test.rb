@@ -102,7 +102,7 @@ describe PuavoRest::OAuth2 do
 
       verify_iat: true,
 
-      iss: 'https://auth.opinsys.fi',
+      iss: 'https://api.opinsys.fi',
       verify_iss: true,
 
       aud: audience,
@@ -128,7 +128,7 @@ describe PuavoRest::OAuth2 do
     assert_equal last_response.status, 400
     response = JSON.parse last_response.body
     assert_equal response['error'], 'unsupported_grant_type'
-    assert_equal response['iss'], 'https://auth.opinsys.fi'
+    assert_equal response['iss'], 'https://api.opinsys.fi'
   end
 
   describe 'credentials testing' do
@@ -146,7 +146,7 @@ describe PuavoRest::OAuth2 do
       assert_equal last_response.status, 400
       response = JSON.parse last_response.body
       assert_equal response['error'], 'invalid_request'
-      assert_equal response['iss'], 'https://auth.opinsys.fi'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
     end
 
     it 'wrong client credentials will fail (1)' do
@@ -155,7 +155,7 @@ describe PuavoRest::OAuth2 do
       assert_equal last_response.status, 400
       response = JSON.parse last_response.body
       assert_equal response['error'], 'unauthorized_client'
-      assert_equal response['iss'], 'https://auth.opinsys.fi'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
     end
 
     it 'wrong client credentials will fail (2)' do
@@ -164,7 +164,7 @@ describe PuavoRest::OAuth2 do
       assert_equal last_response.status, 400
       response = JSON.parse last_response.body
       assert_equal response['error'], 'unauthorized_client'
-      assert_equal response['iss'], 'https://auth.opinsys.fi'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
     end
 
     it 'wrong client credentials will fail (3)' do
@@ -173,7 +173,7 @@ describe PuavoRest::OAuth2 do
       assert_equal last_response.status, 400
       response = JSON.parse last_response.body
       assert_equal response['error'], 'unauthorized_client'
-      assert_equal response['iss'], 'https://auth.opinsys.fi'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
     end
   end
 
@@ -250,7 +250,7 @@ describe PuavoRest::OAuth2 do
       assert_equal last_response.status, 400
       response = JSON.parse last_response.body
       assert_equal response['error'], 'invalid_scope'
-      assert_equal response['iss'], 'https://auth.opinsys.fi'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
     end
 
     it 'acquire an access token with smaller scopes' do
@@ -262,7 +262,7 @@ describe PuavoRest::OAuth2 do
       assert_equal response['token_type'], 'Bearer'
 
       access_token = decode_token(response['access_token'])
-      assert_equal access_token['iss'], 'https://auth.opinsys.fi'
+      assert_equal access_token['iss'], 'https://api.opinsys.fi'
       assert_equal access_token['scopes'], 'puavo.read.users'
     end
 
@@ -275,7 +275,7 @@ describe PuavoRest::OAuth2 do
       assert_equal response['token_type'], 'Bearer'
 
       access_token = decode_token(response['access_token'])
-      assert_equal access_token['iss'], 'https://auth.opinsys.fi'
+      assert_equal access_token['iss'], 'https://api.opinsys.fi'
       assert_equal access_token['scopes'], 'puavo.read.users puavo.read.groups'
     end
 
@@ -288,7 +288,7 @@ describe PuavoRest::OAuth2 do
       assert_equal response['token_type'], 'Bearer'
 
       access_token = decode_token(response['access_token'])
-      assert_equal access_token['iss'], 'https://auth.opinsys.fi'
+      assert_equal access_token['iss'], 'https://api.opinsys.fi'
       assert_equal access_token['scopes'], 'puavo.read.users puavo.read.groups'
     end
 
@@ -297,7 +297,7 @@ describe PuavoRest::OAuth2 do
       response = JSON.parse last_response.body
       access_token = response['access_token']
       decoded_token = decode_token(access_token)
-      assert_equal decoded_token['iss'], 'https://auth.opinsys.fi'
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
 
       # We have scopes for devices, so try to access groups
       fetch_data_with_token(access_token, '/v4/groups', 'id,abbreviation,name,type,school_id,member_uid')
@@ -315,7 +315,7 @@ describe PuavoRest::OAuth2 do
     assert_equal response['token_type'], 'Bearer'
 
     access_token = decode_token(response['access_token'])
-    assert_equal access_token['iss'], 'https://auth.opinsys.fi'
+    assert_equal access_token['iss'], 'https://api.opinsys.fi'
     assert_equal access_token['scopes'], 'puavo.read.users puavo.read.groups'
   end
 
@@ -365,7 +365,7 @@ describe PuavoRest::OAuth2 do
       access_token = response['access_token']
       decoded_token = decode_token(access_token)
 
-      assert_equal decoded_token['iss'], 'https://auth.opinsys.fi'
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
 
       fetch_data_with_token(access_token, '/v4/users', 'id,first_names,last_name,username')
 
@@ -393,7 +393,7 @@ describe PuavoRest::OAuth2 do
       access_token = response['access_token']
       decoded_token = decode_token(access_token)
 
-      assert_equal decoded_token['iss'], 'https://auth.opinsys.fi'
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
 
       fetch_data_with_token(access_token, '/v4/groups', 'id,abbreviation,name,type,school_id,member_uid')
 
@@ -419,7 +419,7 @@ describe PuavoRest::OAuth2 do
       response = JSON.parse last_response.body
       access_token = response['access_token']
       decoded_token = decode_token(access_token)
-      assert_equal decoded_token['iss'], 'https://auth.opinsys.fi'
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
 
       fetch_data_with_token(access_token, '/v4/groups', 'id,abbreviation,name,type,school_id,member_uid')
       assert_equal last_response.status, 403    # invalid endpoint
@@ -431,7 +431,7 @@ describe PuavoRest::OAuth2 do
       response = JSON.parse last_response.body
       access_token = response['access_token']
       decoded_token = decode_token(access_token)
-      assert_equal decoded_token['iss'], 'https://auth.opinsys.fi'
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
 
       fetch_data_with_token(access_token, '/v4/groups', 'id,abbreviation,name,type,school_id,member_uid')
       assert_equal last_response.status, 401    # invalid scopes

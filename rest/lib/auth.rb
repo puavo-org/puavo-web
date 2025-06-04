@@ -140,7 +140,7 @@ class PuavoSinatra < Sinatra::Base
         verify_iat: true,
 
         # Verify the issuer
-        iss: 'https://auth.opinsys.fi',
+        iss: 'https://api.opinsys.fi',
         verify_iss: true,
 
         # Is this token even meant for us? RFC 9068 says the audience claim MUST be verified

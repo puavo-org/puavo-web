@@ -27,7 +27,7 @@ module PuavoRest
 module OAuth2
 
 # RFC 9207 issuer identifier
-ISSUER = 'https://auth.opinsys.fi'
+ISSUER = 'https://api.opinsys.fi'
 
 class OpenIDConnect < PuavoSinatra
   register Sinatra::R18n
