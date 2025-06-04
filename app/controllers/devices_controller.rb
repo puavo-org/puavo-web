@@ -666,6 +666,7 @@ class DevicesController < ApplicationController
       :puavoLocationName,
       :puavoLatitude,
       :puavoLongitude,
+      :puavoTimezone,
       :puavoDeviceMonitorsXML,
       :puavoDeviceImage,
       :puavoDeviceBootImage,

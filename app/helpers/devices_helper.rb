@@ -79,6 +79,7 @@ module DevicesHelper
       'puavoPersonalDevice',
       'puavoLatitude',
       'puavoLongitude',
+      'puavoTimezone',
       'puavoDeviceAutoPowerOffMode',
       'puavoDeviceOnHour',
       'puavoDeviceOffHour',

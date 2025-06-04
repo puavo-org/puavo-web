@@ -2407,6 +2407,7 @@ fi:
         puavoPersonallyAdministered: Henkilökohtaisesti ylläpidettävä
         puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
         puavoDeviceHWInfo: Laitteistotiedot päivitetty
+        puavoTimezone: "Aikavyöhyke"
       server:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Verkkonimi
@@ -2445,6 +2446,7 @@ fi:
         puavoDeviceDefaultAudioSource: "Oletusäänilaite (sisään)"
         puavoDeviceDefaultAudioSink: "Oletusäänilaite (ulos)"
         puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
+        puavoTimezone: "Aikavyöhyke"
       printer:
         printerDescription: Tulostimen nimi
         printerInfo: Tulostimen nimi tulostuspalvelimella

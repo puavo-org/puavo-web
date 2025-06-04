@@ -131,6 +131,11 @@
     <th><%= f.label :puavoLongitude %></th>
     <td><%= f.text_field :puavoLongitude %></td>
   </tr>
+
+  <tr>
+    <th><%= f.label :puavoTimezone %></th>
+    <td><%= f.select :puavoTimezone, timezones_for_select(f.object.puavoTimezone) %></td>
+  </tr>
 </table>
 
 <% if (f.object.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (f.object.classes.count + 3) %>

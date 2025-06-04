@@ -366,3 +366,14 @@ Feature: Manage devices
     And I press "Update"
     Then I should not see "Human-readable name"
     And I should not see "test name"
+
+  Scenario: Change device timezone
+    Given I am on the devices list page
+    And I press "Edit..." on the "laptop-01" row
+    And I select "(GMT+01:00) Berlin" from "device[puavoTimezone]"
+    And I press "Update"
+    Then I should see "(GMT+01:00) Berlin"
+    When I follow "Edit..."
+    And I select "(Leave unset)" from "device[puavoTimezone]"
+    And I press "Update"
+    Then I should see "Time zone has not been set"

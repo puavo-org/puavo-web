@@ -2407,6 +2407,7 @@ en:
         puavoPersonallyAdministered: Personally administered
         puavoImageSeriesSourceURL: Image series source URL
         puavoDeviceHWInfo: Hardware info updated
+        puavoTimezone: "Time zone"
       server:
         puavoDeviceType: Device type
         puavoHostname: Hostname
@@ -2445,6 +2446,7 @@ en:
         puavoDeviceDefaultAudioSource: Default input audio device
         puavoDeviceDefaultAudioSink: Default output audio device
         puavoImageSeriesSourceURL: Image series source URL
+        puavoTimezone: "Time zone"
       printer:
         printerDescription: Printer name
         printerInfo: Printer name in CUPS
