@@ -422,6 +422,8 @@ class OrganisationsController < ApplicationController
     @permit_device_mass_deletion = true
     @permit_device_reset = true
     @permit_device_mass_reset = true
+    @permit_device_mass_edit_purchase_info = true
+    @permit_device_mass_tag_editor = true
 
     # List ALL schools, hide nothing
     @school_list = DevicesHelper.device_school_change_list(true, nil, nil)
