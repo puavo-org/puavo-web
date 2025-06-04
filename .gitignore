@@ -74,3 +74,7 @@ puavo-os
 # on a production server, but if you need to do integration stuff on puavo-standalone,
 # the directory's contents must not be committed.
 rest/lib/citrix/
+
+# Login screen customization files
+public/login/
+rest/public/v3/login/
