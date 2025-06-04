@@ -116,6 +116,9 @@ module ApplicationHelper
     options = ActiveSupport::TimeZone.all.map do |zone|
       [zone.to_s, ActiveSupport::TimeZone::MAPPING[zone.name]]
     end
+
+    options.unshift([t('timezone_leave_unset'), nil])
+
     default =  "Europe/Helsinki"
     default = value if value
     options_for_select(options, default)

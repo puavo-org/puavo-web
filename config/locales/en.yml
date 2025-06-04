@@ -225,6 +225,7 @@ en:
 
   old_preferred_language: "Old setting: %{language}"
 
+  timezone_leave_unset: "(Leave unset)"
   timezone_empty: Time zone has not been set
 
   # Column names for various tables. Try to keep these as short as possible to

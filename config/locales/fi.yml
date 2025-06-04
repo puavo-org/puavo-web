@@ -225,6 +225,7 @@ fi:
 
   old_preferred_language: "Vanha asetus: %{language}"
 
+  timezone_leave_unset: "(Ei asetettu)"
   timezone_empty: Aikavyöhykettä ei ole asetettu
 
   # Column names for various tables. Try to keep these as short as possible to
