@@ -119,7 +119,7 @@ module ApplicationHelper
 
     options.unshift([t('timezone_leave_unset'), nil])
 
-    default =  "Europe/Helsinki"
+    default = nil
     default = value if value
     options_for_select(options, default)
   end
