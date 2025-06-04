@@ -768,6 +768,7 @@ class Devices < PuavoSinatra
     'status'                  => 'puavoDeviceStatus',
     'support_contract'        => 'puavoSupportContract',
     'tags'                    => 'puavoTag',
+    'timezone'                => 'puavoTimezone',
     'type'                    => 'puavoDeviceType',
     'xrandr'                  => 'puavoDeviceXrandr',
   }
@@ -808,6 +809,7 @@ class Devices < PuavoSinatra
     'puavoLatitude'                 => { name: 'location_lat' },
     'puavoLocationName'             => { name: 'location_name' },
     'puavoLongitude'                => { name: 'location_lon' },
+    'puavoTimezone'                 => { name: 'timezone' },
     'puavoNotes'                    => { name: 'notes' },
     'puavoPersonalDevice'           => { name: 'personal_device', type: :boolean },
     'puavoPersonallyAdministered'   => { name: 'personally_administered', type: :boolean },
