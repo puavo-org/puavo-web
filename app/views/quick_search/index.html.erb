@@ -55,6 +55,7 @@
       <thead>
         <tr class="stickyInline">
           <th><%= t("activeldap.attributes.device.puavoHostname") %></th>
+          <th><%= t("activeldap.attributes.device.puavoDisplayName") %></th>
           <th><%= t('activeldap.attributes.school.displayName') %></th>
         </tr>
       </thead>
@@ -62,6 +63,7 @@
         <% @devices.each do |d| %>
         <tr>
           <td><a href="<%= d[:link] %>"><%= h d[:name] %></a></td>
+          <td><%= h d[:display_name] %></td>
           <td><%= h @schools_cache[d[:school_id]][:name] %></td>
         </tr>
         <% end %>

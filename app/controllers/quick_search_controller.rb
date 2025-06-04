@@ -76,8 +76,8 @@ class QuickSearchController < ApplicationController
       # Devices search
       Device.search_as_utf8(
         scope: :one,
-        filter: "(puavoHostname=*#{words[0]}*)",
-        attributes: ['puavoId', 'puavoHostname', 'puavoSchool']
+        filter: "(|(puavoHostname=*#{words[0]}*)(puavoDisplayName=*#{words[0]}*))",
+        attributes: ['puavoId', 'puavoHostname', 'puavoSchool', 'puavoDisplayName']
       ).each do |d|
         d = d[1]
 
@@ -92,6 +92,7 @@ class QuickSearchController < ApplicationController
         @devices << {
           id: id,
           name: d['puavoHostname'][0],
+          display_name: d.fetch('puavoDisplayName', [nil])[0],
           school_id: school_id,
           link: "/devices/#{school_id}/devices/#{id}"
         }
