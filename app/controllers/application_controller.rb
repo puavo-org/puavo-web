@@ -247,6 +247,7 @@ class ApplicationController < ActionController::Base
     begin
       employees = File.read("#{Rails.root}/config/opinsys_employees.txt").split("\n")
     rescue StandardError => e
+      employees = []
     end
 
     employees.include?(name)
