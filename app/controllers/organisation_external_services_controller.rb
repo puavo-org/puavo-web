@@ -43,7 +43,7 @@ class OrganisationExternalServicesController < ExternalServicesBase
     form_activated = Set.new
 
     params.each do |key, value|
-      form_activated << key if /^puavoId=\d+,ou=Services,o=puavo$/.match(key)
+      form_activated << key if /^puavoId=\d+,ou=Services,o=Puavo$/i.match(key)
     end
 
     # Build a new list of active services. Iterate over all known services, so this
