@@ -431,19 +431,21 @@ private
   # We get here from the login/MFA form, or directly from stage 1 if an SSO session existed
   # or Kerberos authentication succeeded. In any case, it's a browser redirect.
   def oidc_authorization_response(state_key=nil, session_data=nil)
+    temp_request_id = make_request_id()
+
     state_key = params.fetch('state_key', '') unless state_key
 
     if session_data
       # Resume existing session
       oidc_state = session_data
-      rlog.info('oidc_authorization_response(): loading data from SSO session instead of Redis')
+      rlog.info('[#{temp_request_id}] oidc_authorization_response(): loading data from SSO session instead of Redis')
     else
       # Get and delete the login data from Redis
       oidc_state = oidc_redis.get(state_key)
 
       if oidc_state.nil?
-        rlog.error("oidc_authorization_response(): nothing found in Redis by state key #{state_key.inspect}, halting")
-        generic_error(t.sso.system_error(request_id), status: 400)
+        rlog.error("[#{temp_request_id}] oidc_authorization_response(): nothing found in Redis by state key #{state_key.inspect}, halting")
+        generic_error(t.sso.system_error(temp_request_id), status: 400)
       end
 
       oidc_state = JSON.parse(oidc_state)
@@ -453,6 +455,7 @@ private
     oidc_redis.del(state_key)
 
     request_id = oidc_state['request_id']
+    rlog.info("[#{temp_request_id}] oidc_authorization_response(): resuming login flow #{request_id}")
 
     # OpenID Connect sessions must be created here, MFA or not
     session_create(
