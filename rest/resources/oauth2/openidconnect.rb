@@ -419,7 +419,7 @@ private
       redirect mfa_url
     else
       # Normal login
-      oidc_authorization_response
+      oidc_authorization_response(state_key)
     end
   rescue StandardError => e
     purge_oidc_state(state_key)
