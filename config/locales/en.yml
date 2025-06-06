@@ -1789,6 +1789,7 @@ en:
       select_device_label: Select
       devices: devices
       pending_reset: "A reset has been requested"
+      previous_reset_fulfilled: "Previous reset fulfilment time"
 
       filters:
         uses_stretch: "Uses a Stretch -based image"

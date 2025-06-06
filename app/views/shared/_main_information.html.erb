@@ -62,6 +62,11 @@
     <% end %>
     <% end %>
 
+    <% if @previous_reset_fulfilled %>
+    <p class="infoTitle"><%= t('devices.index.previous_reset_fulfilled') %>:</p>
+    <p class="infoValue"><%= @previous_reset_fulfilled %></p>
+    <% end %>
+
     <% if @reset %>
     <%= render partial: 'shared/reset' %>
     <% end %>

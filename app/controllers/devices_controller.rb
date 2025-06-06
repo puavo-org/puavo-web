@@ -148,9 +148,14 @@ class DevicesController < ApplicationController
     @releases = get_releases
 
     @reset = nil
+    @previous_reset_fulfilled = nil
 
     if @device.puavoDeviceReset
       @reset = JSON.parse(@device.puavoDeviceReset) rescue nil
+
+      if @reset.kind_of?(Hash) && @reset['request-fulfilled']
+        @previous_reset_fulfilled = DateTime.parse(@reset['request-fulfilled']).strftime('%Y-%m-%d %H:%M:%S')
+      end
 
       unless @reset.kind_of?(Hash) && @reset['request-time'] && !@reset['request-fulfilled']
         @reset = nil
