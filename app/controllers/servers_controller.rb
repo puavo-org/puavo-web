@@ -203,6 +203,9 @@ class ServersController < ApplicationController
     @schools = School.all.sort { |a, b| a[:displayName].downcase <=> b[:displayName].downcase }
 
     @server.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
+
+    @releases = get_releases
+    @image_filenames_by_release = DevicesHelper.group_image_filenames_by_release(@releases)
   end
 
   # POST /servers

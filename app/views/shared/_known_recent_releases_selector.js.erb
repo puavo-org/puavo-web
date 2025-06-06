@@ -1,0 +1,30 @@
+<% content_for :post_load_javascript do %>
+<script>
+function selectImageByName(select, name)
+{
+    // Find the index of the item
+    let target = -1;
+
+    Array.from(select.options).forEach((option, index) => {
+        if (option.id === name)
+            target =  index;
+    });
+
+    select.selectedIndex = target;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const edit = document.querySelector("input#<%= edit_field %>"),
+          select = document.querySelector("select#knownRecentReleases");
+
+    if (!select || !edit) {
+        console.warn("Known recent releases selector not activated (required DOM elements not found)");
+        return;
+    }
+
+    edit.addEventListener("input", e => selectImageByName(select, e.target.value));
+    select.addEventListener("change", e => edit.value = select.options[select.selectedIndex].id);
+    selectImageByName(select, edit.value);
+});
+</script>
+<% end %>

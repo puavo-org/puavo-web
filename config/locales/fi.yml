@@ -2089,6 +2089,7 @@ fi:
     add_macAddress: "Lisää uusi MAC-osoite"
     autopoweroff: Automaattisammutus
     img_extension_will_be_stripped: "Tarkennin \".img\" poistetaan automaattisesti nimen lopusta jos se on siellä"
+    known_recent_releases: "Tunnettuja viimeisimpiä julkaisuja"
     add_puavoImageSeriesSourceURL: "Lisää uusi lähdeosoite"
     linux_device_information:
       certificate_status_true: Voimassa

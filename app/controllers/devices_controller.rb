@@ -263,6 +263,8 @@ class DevicesController < ApplicationController
 
     @school_printers = school_printers
 
+    @releases = get_releases
+    @image_filenames_by_release = DevicesHelper.group_image_filenames_by_release(@releases)
   end
 
   # POST /devices

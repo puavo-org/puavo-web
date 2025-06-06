@@ -2089,6 +2089,7 @@ en:
     add_macAddress: Add a new MAC address
     autopoweroff: Automatic power off
     img_extension_will_be_stripped: "The \".img\" extension will be automatically removed from the end of the name if it's there"
+    known_recent_releases: "Known recent releases"
     add_puavoImageSeriesSourceURL: "Add a new image series source URL"
     linux_device_information:
       certificate_status_true: Valid

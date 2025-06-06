@@ -1,0 +1,11 @@
+      <p style="margin-bottom: 0;"><%= t('shared.known_recent_releases') %>:</p>
+
+      <select id="knownRecentReleases">
+        <% @image_filenames_by_release.each do |release, entries| %>
+          <optgroup label="<%= release %>">
+          <% entries.each do |e| %>
+            <option id="<%= e %>"><%= e %> (<%= @releases[e] %>)</option>
+          <% end %>
+          </optgroup>
+        <% end %>
+      </select>

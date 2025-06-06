@@ -16,3 +16,7 @@
 
 <%= render partial: 'shared/puavoconf_editor_templates' %>
 <%= render partial: 'shared/puavoconf_editor', locals: { storage: 'school_puavoConf' } %>
+
+<% if @image_filenames_by_release %>
+<%= render partial: 'shared/known_recent_releases_selector', formats: :js, locals: { edit_field: 'school_puavoDeviceImage' } %>
+<% end %>

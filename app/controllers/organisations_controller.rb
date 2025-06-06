@@ -52,6 +52,9 @@ class OrganisationsController < ApplicationController
 
     @organisation = LdapOrganisation.current
 
+    @releases = get_releases
+    @image_filenames_by_release = DevicesHelper.group_image_filenames_by_release(@releases)
+
     respond_to do |format|
       format.html
     end

@@ -165,6 +165,9 @@ class SchoolsController < ApplicationController
     @school = School.find(params[:id])
     @is_new_school = false
 
+    @releases = get_releases
+    @image_filenames_by_release = DevicesHelper.group_image_filenames_by_release(@releases)
+
     unless is_owner? || current_user.has_admin_permission?(:school_edit)
       flash[:alert] = t('flash.you_must_be_an_owner')
       redirect_to school_path(@school)

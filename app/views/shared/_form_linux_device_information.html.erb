@@ -180,6 +180,9 @@
     <td>
       <%= f.text_field :puavoDeviceImage %>
       <p style="margin: 0;"><%= t('shared.img_extension_will_be_stripped') %></p>
+      <% if @image_filenames_by_release %>
+      <%= render partial: 'shared/known_recent_releases_selector' %>
+      <% end %>
     </td>
   </tr>
   <% end %>
