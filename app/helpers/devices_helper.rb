@@ -500,4 +500,32 @@ module DevicesHelper
       device.save!
     end
   end
+
+  def self.group_image_filenames_by_release(releases)
+    return nil unless Puavo::CONFIG.include?('known_release_groups')
+
+    # Group the filenames by known release names
+    known_release_groups = Puavo::CONFIG.fetch('known_release_groups', {}).freeze
+    by_release = {}
+
+    known_release_groups.keys.each { |name| by_release[name] = [] }
+
+    releases.keys.group_by do |r|
+      known_release_groups.each do |name, display_name|
+        if r.include?("-#{name}-")
+          by_release[name] << r
+          break
+        end
+      end
+    end
+
+    # Ensure the filenames are sorted by the timestamp in the image filename,
+    # then list the 5 most recent images for each release
+    by_release = by_release.transform_values do |entries|
+      entries.sort.reverse.take(5)
+    end
+
+    # Convert the mapping keys into human-readable names
+    by_release.transform_keys { |key| known_release_groups[key] }
+  end
 end
