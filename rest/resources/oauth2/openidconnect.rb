@@ -19,6 +19,7 @@ require_relative '../users'
 require_relative '../../lib/sso/form_utility'
 require_relative '../../lib/sso/sessions'
 require_relative '../../lib/sso/mfa'
+require_relative '../../lib/oauth2_audit'
 
 require_relative './scopes'
 require_relative './utility'
@@ -708,6 +709,22 @@ private
     rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect} " \
               "for the user, expires at #{Time.at(token[:expires_at])}")
 
+    audit_issued_id_token(request_id,
+                          client_id: client_id,
+                          ldap_user_dn: CONFIG['server'][:dn],
+                          raw_requested_scopes: oidc_state['original_scopes'],
+                          issued_scopes: oidc_state['scopes'],
+                          redirect_uri: oidc_state['redirect_uri'],
+                          raw_token: payload,
+                          request: request)
+
+    audit_issued_access_token(request_id,
+                              client_id: client_id,
+                              ldap_user_dn: CONFIG['server'][:dn],
+                              raw_requested_scopes: oidc_state['original_scopes'],
+                              raw_token: token[:raw_token],
+                              request: request)
+
     # Build and return the token data
     out = {
       'access_token' => token[:access_token],
@@ -874,6 +891,13 @@ private
 
     rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect}, " \
               "expires at #{Time.at(token[:expires_at])}")
+
+    audit_issued_access_token(request_id,
+                              ldap_user_dn: CONFIG['server'][:dn],
+                              client_id: credentials[0],
+                              raw_requested_scopes: params.fetch('scope', ''),
+                              raw_token: token[:raw_token],
+                              request: request)
 
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'
