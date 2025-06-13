@@ -6,7 +6,7 @@ class OrganisationExternalServicesController < ExternalServicesBase
     activated = Array(LdapOrganisation.current.puavoActiveService).map { |dn| dn.to_s.downcase }.to_set
     @external_services.reject! { |e| !activated.include?(e[:dn].downcase) }
 
-    @is_opinsys_employee = opinsys_employee?(current_user.uid)
+    @super_owner = super_owner?(current_user.uid)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -14,7 +14,7 @@ class OrganisationExternalServicesController < ExternalServicesBase
   end
 
   def edit
-    unless opinsys_employee?(current_user.uid)
+    unless super_owner?(current_user.uid)
       flash[:alert] = t('flash.you_must_be_an_owner')
       return redirect_to '/'
     end
@@ -32,7 +32,7 @@ class OrganisationExternalServicesController < ExternalServicesBase
 
   # Unfortunately Rails' magic breaks down here...
   def update
-    unless opinsys_employee?(current_user.uid)
+    unless super_owner?(current_user.uid)
       flash[:alert] = t('flash.you_must_be_an_owner')
       return redirect_to '/'
     end

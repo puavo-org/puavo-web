@@ -241,16 +241,19 @@ class ApplicationController < ActionController::Base
     return true
   end
 
-  # Returns true if this user (username) is an Opinsys employee and they will be
-  # granted extra permissions in some places
-  def opinsys_employee?(name)
+  # Returns true if this user (username) is "super owner", ie. an owner user who has
+  # been granted extra permissions. Usually these users are employees of the company
+  # that makes Puavo.
+  def super_owner?(name)
     begin
-      employees = File.read("#{Rails.root}/config/opinsys_employees.txt").split("\n")
+      # The filename is hardcoded, because the puavo-rest server dos already contain
+      # some puavo-web's files, including this file, and it's always in /etc/puavo-web
+      super_owners = File.read('/etc/puavo-web/super_owners.txt').split("\n")
     rescue StandardError => e
-      employees = []
+      super_owners = []
     end
 
-    employees.include?(name)
+    super_owners.include?(name)
   end
 
   def clean_image_name(hash)

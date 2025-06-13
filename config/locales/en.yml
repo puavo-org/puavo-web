@@ -924,7 +924,7 @@ en:
     additional_info: "Additional info..."
     organisation_wide_activation: "This service has been activated on the organisation level for all schools."
     requires_verified_email: "This service requires a verified email address for logging in."
-    you_can_edit_services: "You are an Opinsys employee, so you can activate and deactivate external services in this organisation."
+    you_can_edit_services: "You are a super owner, so you can activate and deactivate external services in this organisation."
     edit_services: "Activate services..."
     edit:
       title: "Activate and deactivate external services in the organisation"

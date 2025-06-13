@@ -924,7 +924,7 @@ fi:
     additional_info: "Lisätietoja..."
     organisation_wide_activation: "Tämä palvelu on aktivoitu organisaatiotasolla kaikkiin kouluihin."
     requires_verified_email: "Palveluun kirjautuminen vaatii vahvistetun sähköpostiosoitteen."
-    you_can_edit_services: "Opinsysin työntekijänä voit aktivoida ja deaktivoida ulkoisia palveluita tässä organisaatiossa."
+    you_can_edit_services: "Olet superomistaja, joten voit aktivoida ja deaktivoida ulkoisia palveluita tässä organisaatiossa."
     edit_services: "Aktivoi palveluita..."
     edit:
       title: "Aktivoi ja deaktivoi organisaation ulkoisia palveluita"
