@@ -311,7 +311,7 @@ private
 
     # Try to log in. Permit multiple different authentication methods.
     begin
-      auth :basic_auth, :from_post, :kerberos
+      auth_method = auth :basic_auth, :from_post, :kerberos
     rescue KerberosError => err
       # Kerberos authentication failed, present the normal login form
       return sso_render_form(request_id, error_message: t.sso.kerberos_error, exception: err, type: 'oidc', state_key: state_key)
@@ -326,6 +326,8 @@ private
 
       return sso_render_form(request_id, error_message: t.sso.bad_username_or_pw, exception: err, type: 'oidc', state_key: state_key)
     end
+
+    auth_method = 'username+password' if auth_method == 'from_post'
 
     # If we get here, the user was authenticated. Either by Kerberos, or by basic auth,
     # or they filled in the username+password form.
@@ -348,6 +350,7 @@ private
       'dn' => user.dn.to_s,
       'puavo_id' => user.id.to_i,
       'uuid' => user.uuid,
+      'auth_method' => auth_method,
     }
 
     oidc_state['organisation'] = {
@@ -663,7 +666,7 @@ private
     end
 
     begin
-      user_data = gather_user_data(request_id, oidc_state['scopes'], organisation, user)
+      user_data = gather_user_data(request_id, oidc_state['scopes'], oidc_state['user']['auth_method'], organisation, user)
     rescue StandardError => e
       rlog.error("[#{request_id}] Could not gather the user data: #{e}")
       return json_error('server_error', state: state, request_id: request_id)
@@ -905,7 +908,7 @@ private
     end
 
     begin
-      user_data = gather_user_data(request_id, access_token['scopes'], organisation, user)
+      user_data = gather_user_data(request_id, access_token['scopes'], nil, organisation, user)
     rescue StandardError => e
       rlog.error("[#{request_id}] Could not gather the user data: #{e}")
       return json_error('server_error', request_id: request_id)
@@ -938,7 +941,7 @@ private
     return nil, organisation, user
   end
 
-  def gather_user_data(request_id, scopes, organisation, user)
+  def gather_user_data(request_id, scopes, auth_method, organisation, user)
     out = {}
     school_cache = {}
 
@@ -1102,6 +1105,7 @@ private
 
     if scopes.include?('puavo.read.userinfo.security')
       out['puavo.mfa_enabled'] = user.mfa_enabled == true
+      out['puavo.authentication_method'] = auth_method || nil
     end
 
     school_cache = nil
