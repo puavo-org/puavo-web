@@ -69,6 +69,21 @@ class PuavoSinatra < Sinatra::Base
     end
   end
 
+  # Returns true if this user (username) is "super owner", ie. an owner user who has
+  # been granted extra permissions. Usually these users are employees of the company
+  # that makes Puavo.
+  def super_owner?(name)
+    begin
+      # The filename is hardcoded, because the puavo-rest server dos already contain
+      # some puavo-web's files, including this file, and it's always in /etc/puavo-web
+      super_owners = File.read('/etc/puavo-web/super_owners.txt').split("\n")
+    rescue StandardError => e
+      super_owners = []
+    end
+
+    super_owners.include?(name)
+  end
+
   # Generates a random request ID
   def make_request_id
     'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
