@@ -997,6 +997,7 @@ private
       out['puavo.external_id'] = user.external_id if user.external_id
       out['puavo.learner_id'] = user.learner_id if user.learner_id
       out['puavo.roles'] = user.roles
+      out['puavo.authenticated_using'] = auth_method || nil
 
       if scopes.include?('puavo.read.userinfo.primus')
         # External Primus card ID (not always available)
@@ -1108,7 +1109,6 @@ private
     if scopes.include?('puavo.read.userinfo.security')
       out['puavo.mfa_enabled'] = user.mfa_enabled == true
       out['puavo.super_owner'] = is_owner && super_owner?(user.username)
-      out['puavo.authentication_method'] = auth_method || nil
     end
 
     school_cache = nil
