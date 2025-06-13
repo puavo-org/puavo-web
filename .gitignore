@@ -29,6 +29,7 @@ config/services.yml
 config/secrets.yml
 config/releases.json
 config/puavoconf_definitions.json
+config/super_owners.txt
 node_modules/
 public/assets/
 vendor/bundle/
