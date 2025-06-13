@@ -1093,8 +1093,10 @@ private
       out['puavo.organisation'] = org
     end
 
+    is_owner = organisation.owner.include?(user.dn)
+
     if scopes.include?('puavo.read.userinfo.admin')
-      out['puavo.is_organisation_owner'] = organisation.owner.include?(user.dn)
+      out['puavo.is_organisation_owner'] = is_owner
 
       if scopes.include?('puavo.read.userinfo.schools')
         out['puavo.admin_in_schools'] = user.admin_of_school_dns.collect do |dn|
@@ -1105,6 +1107,7 @@ private
 
     if scopes.include?('puavo.read.userinfo.security')
       out['puavo.mfa_enabled'] = user.mfa_enabled == true
+      out['puavo.super_owner'] = is_owner && super_owner?(user.username)
       out['puavo.authentication_method'] = auth_method || nil
     end
 
