@@ -14,6 +14,8 @@ class OrganisationExternalServicesController < ExternalServicesBase
   end
 
   def edit
+    return if redirected_nonowner_user?
+
     unless super_owner?(current_user.uid)
       flash[:alert] = t('flash.you_must_be_an_owner')
       return redirect_to '/'
@@ -32,6 +34,8 @@ class OrganisationExternalServicesController < ExternalServicesBase
 
   # Unfortunately Rails' magic breaks down here...
   def update
+    return if redirected_nonowner_user?
+
     unless super_owner?(current_user.uid)
       flash[:alert] = t('flash.you_must_be_an_owner')
       return redirect_to '/'
