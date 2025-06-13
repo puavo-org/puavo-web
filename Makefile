@@ -104,7 +104,7 @@ install: clean-for-install mkdirs config-to-system
 	cp -r rest/public $(INSTALL_DIR)/rest
 
 	for conf_file in ldap.yml organisations.yml puavoconf_definitions.json \
-			 puavo_external_files.yml puavo_web.yml redis.yml \
+			 puavo_external_files.yml puavo_web.yml redis.yml super_owners.txt \
 			 releases.json secrets.yml services.yml unicorn.rb; do \
 	  cp $(RAILS_CONFIG_DIR)/$${conf_file}.example $(CONF_DIR)/$${conf_file}; \
 	done
@@ -116,7 +116,7 @@ install: clean-for-install mkdirs config-to-system
 .PHONY: config-to-example
 config-to-example:
 	for conf_file in ldap.yml organisations.yml puavoconf_definitions.json \
-			 puavo_external_files.yml puavo_web.yml redis.yml \
+			 puavo_external_files.yml puavo_web.yml redis.yml super_owners.txt \
 			 releases.json secrets.yml services.yml unicorn.rb; do \
 	  ln -fns "$${conf_file}.example" "config/$${conf_file}"; \
 	done
@@ -124,7 +124,7 @@ config-to-example:
 .PHONY: config-to-system
 config-to-system:
 	for conf_file in ldap.yml organisations.yml puavoconf_definitions.json \
-			 puavo_external_files.yml puavo_web.yml redis.yml \
+			 puavo_external_files.yml puavo_web.yml redis.yml super_owners.txt \
 			 releases.json secrets.yml services.yml unicorn.rb; do \
 	  ln -fns "/etc/puavo-web/$${conf_file}" "config/$${conf_file}"; \
 	done
