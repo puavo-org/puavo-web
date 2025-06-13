@@ -268,6 +268,8 @@ class PuavoSinatra < Sinatra::Base
     log_creds.delete(:password)
     self.rlog = rlog.merge(:credentials => log_creds)
     rlog.info("authenticated through '#{ auth_method }'")
+
+    auth_method.to_s
   end
 
   def oauth2(**params)
