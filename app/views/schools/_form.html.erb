@@ -88,6 +88,11 @@
   </tr>
 
   <tr>
+    <th><%= f.label :puavoTimezone %></th>
+    <td><%= f.select :puavoTimezone, timezones_for_select(f.object.puavoTimezone) %></td>
+  </tr>
+
+  <tr>
     <th><%= f.label :image %></th>
     <td><%= f.file_field(:image, accept: 'image/*') %></td>
   </tr>

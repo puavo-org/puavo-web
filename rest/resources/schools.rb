@@ -310,6 +310,7 @@ class Schools < PuavoSinatra
     'state'                 => "st",
     'tags'                  => "puavoTag",
     'telephone'             => "telephoneNumber",
+    'timezone'              => 'puavoTimezone',
     'wlan_channel'          => "puavoWlanChannel",
     'wlan_ssid'             => "puavoWlanSSID",
   }
@@ -351,6 +352,7 @@ class Schools < PuavoSinatra
     'puavoSchoolOID'              => { name: 'school_oid' },
     'puavoSchoolHomePageURL'      => { name: 'homepage' },
     'puavoTag'                    => { name: 'tags' },
+    'puavoTimezone'               => { name: 'timezone' },
     'puavoWlanChannel'            => { name: 'wlan_channel' },
     'puavoWlanSSID'               => { name: 'wlan_ssid', type: :json },
     'st'                          => { name: 'state' },

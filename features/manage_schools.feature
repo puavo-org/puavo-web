@@ -420,3 +420,14 @@ Scenario: Set the school code for an existing school
     And I follow "WLAN"
     Then I should not see "You do not have enough rights to access that page."
     And I should see "Default Wireless Access Point setup"
+
+  Scenario: Change school timezone
+    Given I am on the school page with "Greenwich Steiner School"
+    And I follow "Edit..."
+    And I select "(GMT+01:00) Berlin" from "school[puavoTimezone]"
+    And I press "Update"
+    Then I should see "(GMT+01:00) Berlin"
+    When I follow "Edit..."
+    And I select "(Leave unset)" from "school[puavoTimezone]"
+    And I press "Update"
+    Then I should see "Time zone has not been set"

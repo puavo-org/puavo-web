@@ -246,6 +246,7 @@ en:
     schools:
       integrations: "Integrations"
       oid: "OID code"
+      timezone: "Time zone"
 
     users:
       first_names: "First names"
@@ -2300,6 +2301,7 @@ en:
         puavoTag: Tags
         puavoConf: PuavoConf settings
         puavoLocale: Language
+        puavoTimezone: Time zone
         puavoAutomaticImageUpdates: Automatic image updates
         puavoDeviceAutoPowerOffMode: Auto power off mode
         puavoDeviceAutoPowerOffMode_default: Default

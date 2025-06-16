@@ -78,6 +78,11 @@
   </div>
 
   <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoTimezone') %></div>
+    <div class="value"><%= h humanize_timezone(@school.puavoTimezone) %></div>
+  </div>
+
+  <div class="multilineItem">
     <div class="title"><%= t('activeldap.attributes.school.puavoDeviceAutoPowerOffMode') %></div>
     <div class="value">
         <%= h t('puavoDeviceAutoPowerOffMode_' + (@school.puavoDeviceAutoPowerOffMode or 'default'),

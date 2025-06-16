@@ -279,6 +279,13 @@ const COLUMN_DEFINITIONS = {
             return [ST.escapeHTML(e.notes).replaceAll("\r", "").replaceAll("\n", "<br>"), e.notes, e.notes];
         }
     },
+
+    timezone: {
+        key: "timezone",
+        title: "<%= t('columns.schools.timezone') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.F_NULLABLE,
+    },
 };
 
 // The default order for columns
@@ -296,6 +303,7 @@ const COLUMN_ORDER = [
     "num_devices",
     "boot_servers",
     "conf",
+    "timezone",
     "desktop_image",
     "image_series",
     "allow_guest",

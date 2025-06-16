@@ -246,6 +246,7 @@ fi:
     schools:
       integrations: "Integraatiot"
       oid: "OID-koodi"
+      timezone: "Aikavyöhyke"
 
     users:
       first_names: "Etunimet"
@@ -2300,6 +2301,7 @@ fi:
         puavoTag: Tagit
         puavoConf: PuavoConf-asetukset
         puavoLocale: Kieli
+        puavoTimezone: Aikavyöhyke
         puavoAutomaticImageUpdates: Levykuvan automaattinen päivitys
         puavoDeviceAutoPowerOffMode: Automaattisammutuksen tila
         puavoDeviceAutoPowerOffMode_default: Oletus
