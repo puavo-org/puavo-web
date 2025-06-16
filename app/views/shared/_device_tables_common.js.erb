@@ -642,12 +642,14 @@ const COLUMN_DEFINITIONS = {
         key: "reset_time",
         title: "<%= t('columns.devices.reset_time') %>",
         type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     reset_fulfilled: {
         key: "reset_time",
         title: "<%= t('columns.devices.reset_fulfilled') %>",
         type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 <% end %>
 
