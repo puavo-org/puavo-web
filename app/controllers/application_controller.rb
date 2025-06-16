@@ -246,9 +246,7 @@ class ApplicationController < ActionController::Base
   # that makes Puavo.
   def super_owner?(name)
     begin
-      # The filename is hardcoded, because the puavo-rest server dos already contain
-      # some puavo-web's files, including this file, and it's always in /etc/puavo-web
-      super_owners = File.read('/etc/puavo-web/super_owners.txt').split("\n")
+      super_owners = File.read("#{Rails.root}/config/super_owners.txt").split("\n")
     rescue StandardError => e
       logger.warn("ERROR: Can't query the super owner status: #{e}")
       super_owners = []
