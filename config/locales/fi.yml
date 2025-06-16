@@ -246,6 +246,7 @@ fi:
     schools:
       integrations: "Integraatiot"
       oid: "OID-koodi"
+      locale: "Kieli"
       timezone: "Aikavyöhyke"
 
     users:

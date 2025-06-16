@@ -71,6 +71,7 @@ class SchoolsController < ApplicationController
           num_devices: @device_counts[s.dn.to_s],
           boot_servers: bs_names,
           tags: Array(s.puavoTag),
+          locale: s.puavoLocale,
           timezone: s.puavoTimezone,
           conf: s.puavoConf.nil? ? [] : JSON.parse(s.puavoConf).collect { |k, v| "#{k} = #{v}" },
           integrations: get_school_integrations_by_type(@organisation_name, s.id),

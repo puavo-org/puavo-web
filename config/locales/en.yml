@@ -246,6 +246,7 @@ en:
     schools:
       integrations: "Integrations"
       oid: "OID code"
+      locale: "Locale"
       timezone: "Time zone"
 
     users:

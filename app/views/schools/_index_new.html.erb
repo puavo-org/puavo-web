@@ -280,6 +280,13 @@ const COLUMN_DEFINITIONS = {
         }
     },
 
+    locale: {
+        key: "locale",
+        title: "<%= t('columns.schools.locale') %>",
+        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.F_NULLABLE,
+    },
+
     timezone: {
         key: "timezone",
         title: "<%= t('columns.schools.timezone') %>",
@@ -303,6 +310,7 @@ const COLUMN_ORDER = [
     "num_devices",
     "boot_servers",
     "conf",
+    "locale",
     "timezone",
     "desktop_image",
     "image_series",
