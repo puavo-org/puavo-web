@@ -568,7 +568,7 @@ const COLUMN_DEFINITIONS = {
 
                 // Include the hashes and IDs in the plain text string, so the column
                 // is substring-searchable in filters. Not pretty, but it works.
-                text += `${id} ${pkg["package-id"]} ${pkg.upstream_pack}\n`;
+                text += `${id} ${pkg["package-id"]} ${pkg.upstream_pack} `;
             }
 
             html += "</ul>";
