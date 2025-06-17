@@ -156,7 +156,13 @@ private
     service_dn = client_config['puavo_service_dn']
     rlog.info("[#{request_id}] Target external service DN: #{service_dn.inspect}")
 
-    external_service = get_external_service(service_dn)
+    begin
+      # Tested
+      external_service = get_external_service(service_dn)
+    rescue StandardError => e
+      rlog.error("[#{request_id}] Could not get the external service: #{e}")
+      generic_error(t.oauth2.invalid_client_id(request_id))
+    end
 
     if external_service.nil?
       # Tested
@@ -578,7 +584,13 @@ private
       return json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
-    external_service = get_external_service(oidc_state['service']['dn'])
+    begin
+      external_service = get_external_service(oidc_state['service']['dn'])
+    rescue StandardError => e
+      rlog.error("[#{request_id}] Could not get the external service: #{e}")
+      return json_error('unauthorized_client', state: state, request_id: request_id)
+    end
+
     client_secret = params.fetch('client_secret', nil)
 
     if external_service.secret.start_with?('$argon2')
