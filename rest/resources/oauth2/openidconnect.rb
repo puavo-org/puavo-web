@@ -117,7 +117,7 @@ private
         # Tested
         rlog.error("[#{request_id}] A required parameter \"#{k}\" is missing from the request parameters")
         rlog.error("[#{request_id}] Request parameters: #{params.inspect}")
-        generic_error(t.oauth2.missing_or_invalid_required_parameter(k, request_id))
+        generic_error(t.oauth2.missing_or_invalid_required_parameter(k, request_id), status: 400)
       end
 
       v = params.fetch(k, '')
@@ -126,7 +126,7 @@ private
         # Tested
         rlog.error("[#{request_id}] A required parameter \"#{k}\" was specified but it's empty")
         rlog.error("[#{request_id}] Request parameters: #{params.inspect}")
-        generic_error(t.oauth2.missing_or_invalid_required_parameter(k, request_id))
+        generic_error(t.oauth2.missing_or_invalid_required_parameter(k, request_id), status: 400)
       end
     end
 
@@ -143,13 +143,13 @@ private
     if client_config.nil?
       # Tested
       rlog.error("[#{request_id}] No client found by that ID")
-      generic_error(t.oauth2.invalid_client_id(request_id))
+      generic_error(t.oauth2.invalid_client_id(request_id), status: 400)
     end
 
     unless client_config['enabled'] == 't'
       # Tested
       rlog.error("[#{request_id}] The client exists but it has been disabled")
-      generic_error(t.oauth2.invalid_client_id(request_id))
+      generic_error(t.oauth2.invalid_client_id(request_id), status: 400)
     end
 
     # Find the target service
@@ -161,13 +161,13 @@ private
       external_service = get_external_service(service_dn)
     rescue StandardError => e
       rlog.error("[#{request_id}] Could not get the external service: #{e}")
-      generic_error(t.oauth2.invalid_client_id(request_id))
+      generic_error(t.oauth2.invalid_client_id(request_id), status: 400)
     end
 
     if external_service.nil?
       # Tested
       rlog.error("[#{request_id}] No external service found by that DN")
-      generic_error(t.oauth2.invalid_client_id(request_id))
+      generic_error(t.oauth2.invalid_client_id(request_id), status: 400)
     end
 
     rlog.info("[#{request_id}] Target external service name: #{external_service.name.inspect}")
@@ -183,7 +183,7 @@ private
     if client_config.fetch('allowed_redirects', []).find { |uri| uri == redirect_uri }.nil?
       # Tested
       rlog.error("[#{request_id}] This redirect URI is not allowed")
-      generic_error(t.oauth2.invalid_redirect_uri(request_id))
+      generic_error(t.oauth2.invalid_redirect_uri(request_id), status: 400)
     end
 
     rlog.info("[#{request_id}] The redirect URI is valid")
