@@ -529,8 +529,14 @@ private
     # ----------------------------------------------------------------------------------------------
     # Retrive the code and the current state
 
+    code = params.fetch('code', nil)
+
+    if code.nil?
+      rlog.error("[#{temp_request_id}] No \"code\" parameter in the request")
+      return json_error('invalid_request', request_id: temp_request_id)
+    end
+
     begin
-      code = params.fetch('code', nil)
       oidc_state = oidc_redis.get(code)
     rescue StandardError => e
       # Don't log the secret (we know it already, but don't log it)
