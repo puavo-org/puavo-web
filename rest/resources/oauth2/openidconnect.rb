@@ -260,7 +260,7 @@ private
   rescue StandardError => e
     # Tested
     rlog.error("[#{request_id}] #{e}")
-    generic_error(t.sso.system_error(request_id))
+    generic_error(t.sso.system_error(request_id), status: 400)
   end
 
   # 'form_params' exists only when we come from the SSO username+password form; it contains all the parameters
@@ -300,7 +300,7 @@ private
       purge_oidc_state(state_key)
       rlog.error("[#{request_id}] No target external service found by return_to parameter #{return_to.to_s.inspect}")
       rlog.error("[#{request_id}] Full original request URL: #{request.url.to_s.inspect}")
-      generic_error(t.sso.unknown_service(request_id))
+      generic_error(t.sso.unknown_service(request_id), status: 400)
     end
 
     # Verify the trusted service URL status (a trusted service must use a trusted SSO URL)
@@ -313,7 +313,7 @@ private
       purge_oidc_state(state_key)
       rlog.error("[#{request_id}] Trusted service type mismatch (service trusted=#{@external_service.trusted}, URL verified=#{@is_trusted})")
       rlog.error("[#{request_id}] Full original request URL: #{request.url.to_s.inspect}")
-      generic_error(t.sso.state_mismatch(request_id))
+      generic_error(t.sso.state_mismatch(request_id), status: 400)
     end
 
     # SSO session login?
@@ -447,7 +447,7 @@ private
   rescue StandardError => e
     purge_oidc_state(state_key)
     rlog.error("[#{request_id}] generic login error: #{e}")
-    generic_error(t.sso.system_error(request_id))
+    generic_error(t.sso.system_error(request_id), status: 400)
   end
 
   # Stage 2: Authorization Response (RFC 6749 section 4.1.2.)

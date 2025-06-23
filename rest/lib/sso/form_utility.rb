@@ -66,7 +66,7 @@ module FormUtility
     halt 401, common_headers(), erb(:login_form, layout: :layout)
   rescue StandardError => e
     rlog.error("[#{request_id}] SSO form displaying failed: #{e}")
-    generic_error(t.sso.system_error(request_id))
+    generic_error(t.sso.system_error(request_id), status: 400)
   end
 
   # Process the SSO username+password form post
@@ -89,7 +89,7 @@ module FormUtility
 
     if state_key.nil? && type == 'oidc'
       rlog.info("[#{request_id}] We're in OpenID Connect mode, but no state key was submitted in the form data. Halting.")
-      generic_error(t.sso.system_error(request_id))
+      generic_error(t.sso.system_error(request_id), status: 400)
     end
 
     rlog.info("[#{request_id}] State key: #{state_key.inspect}")
@@ -162,7 +162,7 @@ module FormUtility
     end
   rescue StandardError => e
     rlog.error("[#{request_id}] SSO form post processing failed: #{e}")
-    generic_error(t.sso.system_error(request_id))
+    generic_error(t.sso.system_error(request_id), status: 400)
   end
 
   # Attempts to determine which organisation we're in
