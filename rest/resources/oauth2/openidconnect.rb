@@ -589,6 +589,11 @@ private
 
     client_id = params.fetch('client_id', nil)
 
+    if client_id.nil?
+      rlog.error("[#{request_id}] No client_id in the request")
+      return json_error('unauthorized_client', state: state, request_id: request_id)
+    end
+
     unless client_id == oidc_state['client_id']
       rlog.error("[#{request_id}] The client ID has changed: got \"#{client_id}\", " \
                  "expected \"#{oidc_state['client_id']}\"")
