@@ -498,8 +498,12 @@ private
     query = {
       'iss' => ISSUER,      # RFC 9207
       'code' => code,
-      'state' => oidc_state['state']
     }
+
+    unless oidc_state['state'].nil?
+      # Since the state is optional, don't propagate it if's empty
+      query['state'] = oidc_state['state']
+    end
 
     if oidc_state['scopes_changed']
       # RFC 6749 section 4.1.2. does not mention this at all, but section 3.3 says
