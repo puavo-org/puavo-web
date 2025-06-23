@@ -201,8 +201,7 @@ private
     unless response_type == 'code'
       # Tested
       rlog.error("[#{request_id}] Invalid response type #{response_type.inspect} (expected \"code\")")
-      return redirect_error(redirect_uri, 'invalid_request', state: params.fetch('state', nil),
-                            request_id: request_id)
+      redirect_error(redirect_uri, 'invalid_request', state: params.fetch('state', nil), request_id: request_id)
     end
 
     rlog.info("[#{request_id}] The response type is #{response_type.inspect}")
@@ -214,7 +213,7 @@ private
 
     unless scopes.success
       # Tested
-      return redirect_error(redirect_uri, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
+      redirect_error(redirect_uri, 'invalid_scope', state: params.fetch('state', nil), request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -1264,7 +1263,7 @@ private
     uri = URI(redirect_uri)
     uri.query = URI.encode_www_form(out)
 
-    redirect(uri)
+    halt redirect(uri)
   end
 
   # RFC 6749 section 5.2.
