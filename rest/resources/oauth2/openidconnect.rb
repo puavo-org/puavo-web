@@ -263,7 +263,9 @@ private
     generic_error(t.sso.system_error(request_id))
   end
 
-  def oidc_try_login(request_id:, state_key:)
+  # 'form_params' exists only when we come from the SSO username+password form; it contains all the parameters
+  # in the form submission so they can be validated
+  def oidc_try_login(request_id:, state_key:, form_params: nil)
     oidc_state = oidc_redis.get(state_key)
 
     if oidc_state.nil?
@@ -273,6 +275,16 @@ private
 
     oidc_state = JSON.parse(oidc_state)
     request_id = oidc_state['request_id']   # resume original login flow
+
+    if state_key && form_params
+      # We have a form submission, so compare the return_to address in the hidden field with the redirect URI
+      # in the stored state data. They must match.
+      unless form_params['return_to'] == oidc_state['redirect_uri']
+        purge_oidc_state(state_key)
+        rlog.error("[#{request_id}] The submitted form contains different redirect URI (#{form_params['return_to'].inspect}) than in the stored state (#{oidc_state['redirect_uri'].inspect})")
+        generic_error(t.sso.inconsistent_login_state(request_id), status: 400)
+      end
+    end
 
     # Determine the target external service
     if return_to.nil?

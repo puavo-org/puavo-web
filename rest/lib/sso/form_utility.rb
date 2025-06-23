@@ -158,7 +158,7 @@ module FormUtility
     if type == 'jwt'
       sso_try_login(request_id: request_id)
     else
-      oidc_try_login(request_id: request_id, state_key: state_key)
+      oidc_try_login(request_id: request_id, state_key: state_key, form_params: params)
     end
   rescue StandardError => e
     rlog.error("[#{request_id}] SSO form post processing failed: #{e}")
