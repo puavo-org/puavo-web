@@ -75,6 +75,7 @@ class OpenIDConnect < PuavoSinatra
         client_credentials_grant(temp_request_id)
 
       else
+        # RFC 6749 section 5.2.
         rlog.error("[#{temp_request_id}] Unsupported grant type")
         json_error('unsupported_grant_type', request_id: temp_request_id)
     end
