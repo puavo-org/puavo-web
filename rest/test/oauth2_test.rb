@@ -56,6 +56,12 @@ describe PuavoRest::OAuth2 do
         scopes: ['puavo.read.users'],
         endpoints: ['/v4/users', '/v4/groups'],
       },
+      {
+        client_id: 'test_client_disabled',
+        scopes: ['puavo.read.users'],
+        endpoints: ['/v4/users'],
+        enabled: false
+      },
     ].each do |client|
       db.exec_params(
         'INSERT INTO token_clients(client_id, client_password, enabled, allowed_scopes, ' \
@@ -128,6 +134,24 @@ describe PuavoRest::OAuth2 do
     assert_equal last_response.status, 400
     response = JSON.parse last_response.body
     assert_equal response['error'], 'unsupported_grant_type'
+    assert_equal response['iss'], 'https://api.opinsys.fi'
+  end
+
+  it 'trying to use a disabled client must fail' do
+    url = Addressable::URI.parse('/oidc/token')
+
+    url.query_values = {
+      'grant_type' => 'client_credentials',
+      'scope' => 'puavo.read.users',
+    }
+
+    basic_authorize 'test_client_disabled', 'supersecretpassword'
+
+    post url.to_s
+
+    assert_equal last_response.status, 400
+    response = JSON.parse last_response.body
+    assert_equal response['error'], 'unauthorized_client'
     assert_equal response['iss'], 'https://api.opinsys.fi'
   end
 
