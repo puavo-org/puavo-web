@@ -473,6 +473,9 @@ private
       oidc_state = oidc_redis.get(state_key)
 
       if oidc_state.nil?
+        # I could not write a test for this, because the Redis state is checked at least once before
+        # we get here. I think it's possible during Kerberos authentication to get here if the state
+        # gets clobbered.
         rlog.error("[#{temp_request_id}] oidc_authorization_response(): nothing found in Redis by state key #{state_key.inspect}, halting")
         generic_error(t.sso.system_error(temp_request_id), status: 400)
       end
@@ -629,8 +632,10 @@ private
     begin
       external_service = get_external_service(oidc_state['service']['dn'])
     rescue StandardError => e
+      # Tested (manually; I think this can fail only if the service is edited and the DN changes
+      # half-way through someone's login process, not very common)
       rlog.error("[#{request_id}] Could not get the external service: #{e}")
-      return json_error('unauthorized_client', state: state, request_id: request_id)
+      json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
     client_secret = params.fetch('client_secret', nil)
@@ -661,13 +666,15 @@ private
     clients.close
 
     if client_config.nil?
+      # Tested (manually, there are multiple checks for this and they all have to fail)
       rlog.error("[#{request_id}] Unknown/invalid client (it existed in stage 1)")
-      return json_error('unauthorized_client', state: state, request_id: request_id)
+      json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
     unless client_config['enabled'] == 't'
+      # Tested
       rlog.error("[#{request_id}] This client exists but it has been disabled (it was enabled in stage 1)")
-      return json_error('unauthorized_client', state: state, request_id: request_id)
+      json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -723,8 +730,9 @@ private
     begin
       user_data = gather_user_data(request_id, oidc_state['scopes'], oidc_state['user']['auth_method'], organisation, user)
     rescue StandardError => e
+      # Tested (manually)
       rlog.error("[#{request_id}] Could not gather the user data: #{e}")
-      return json_error('server_error', state: state, request_id: request_id)
+      json_error('server_error', state: state, request_id: request_id)
     end
 
     payload.merge!(user_data)
@@ -896,7 +904,9 @@ private
                                  client_config, require_openid: false)
 
     unless scopes.success
-      return json_error('invalid_scope', request_id: request_id)
+      # Can happen only if the "openid" scope is needed but wasn't supplied (see the TODO above)
+      # TODO: Test this
+      json_error('invalid_scope', request_id: request_id)
     end
 
     if scopes.scopes.empty?
