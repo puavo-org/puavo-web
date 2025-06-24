@@ -245,6 +245,7 @@ private
       # The nonce is an optional value used to mitigate replay attacks. It is barely mentioned
       # in RFC 6749, but it is mentioned in the full spec. If specified in the request, we must
       # remember it.
+      # Tested
       oidc_state['nonce'] = params['nonce']
     end
 
@@ -257,7 +258,7 @@ private
 
     oidc_try_login(request_id: request_id, state_key: state_key)
   rescue StandardError => e
-    # Tested
+    # Tested (manually)
     rlog.error("[#{request_id}] #{e}")
     generic_error(t.sso.system_error(request_id), status: 400)
   end
@@ -268,6 +269,7 @@ private
     oidc_state = oidc_redis.get(state_key)
 
     if oidc_state.nil?
+      # Tested
       rlog.error("oidc_try_login(): nothing found in Redis by state key #{state_key.inspect}, halting")
       generic_error(t.sso.system_error(request_id), status: 400)
     end
@@ -279,6 +281,7 @@ private
       # We have a form submission, so compare the return_to address in the hidden field with the redirect URI
       # in the stored state data. They must match.
       unless form_params['return_to'] == oidc_state['redirect_uri']
+        # Tested
         purge_oidc_state(state_key)
         rlog.error("[#{request_id}] The submitted form contains different redirect URI (#{form_params['return_to'].inspect}) than in the stored state (#{oidc_state['redirect_uri'].inspect})")
         generic_error(t.sso.inconsistent_login_state(request_id), status: 400)
@@ -287,6 +290,7 @@ private
 
     # Determine the target external service
     if return_to.nil?
+      # Tested in the SSO tests
       purge_oidc_state(state_key)
       rlog.error("[#{request_id}] There's no 'return_to' or 'return' parameter in the request URL. Unable to determine the target external service.")
       rlog.error("[#{request_id}] Full original request URL: #{request.url.to_s.inspect}")
@@ -296,6 +300,7 @@ private
     @external_service = fetch_external_service
 
     if @external_service.nil?
+      # Tested in the SSO tests
       purge_oidc_state(state_key)
       rlog.error("[#{request_id}] No target external service found by return_to parameter #{return_to.to_s.inspect}")
       rlog.error("[#{request_id}] Full original request URL: #{request.url.to_s.inspect}")
@@ -309,6 +314,7 @@ private
 
     if @external_service.trusted != @is_trusted
       # No mix-and-matching or service types
+      # (Tested in the JWT code but not in OpenID Connect code; we can assume this works too.)
       purge_oidc_state(state_key)
       rlog.error("[#{request_id}] Trusted service type mismatch (service trusted=#{@external_service.trusted}, URL verified=#{@is_trusted})")
       rlog.error("[#{request_id}] Full original request URL: #{request.url.to_s.inspect}")
@@ -444,6 +450,7 @@ private
       oidc_authorization_response(state_key)
     end
   rescue StandardError => e
+    # Tested (manually)
     purge_oidc_state(state_key)
     rlog.error("[#{request_id}] generic login error: #{e}")
     generic_error(t.sso.system_error(request_id), status: 400)
@@ -513,6 +520,7 @@ private
 
     unless oidc_state['state'].nil?
       # Since the state is optional, don't propagate it if's empty
+      # Tested
       query['state'] = oidc_state['state']
     end
 
@@ -522,6 +530,7 @@ private
       # scopes the client specified. The spec is unclear how the scopes should be
       # encoded (array or list). Return them as space-delimited string, because
       # that's how they're originally specified.
+      # Tested
       query['scope'] = oidc_state['scopes'].join(' ')
     end
 
@@ -543,8 +552,9 @@ private
     code = params.fetch('code', nil)
 
     if code.nil?
+      # Tested
       rlog.error("[#{temp_request_id}] No \"code\" parameter in the request")
-      return json_error('invalid_request', request_id: temp_request_id)
+      json_error('invalid_request', request_id: temp_request_id)
     end
 
     begin
@@ -555,12 +565,13 @@ private
 
       rlog.error("[#{temp_request_id}] An attempt to get OIDC state from Redis raised an exception: #{e}")
       rlog.error("[#{temp_request_id}] Request parameters: #{params.inspect}")
-      return json_error('server_error', request_id: temp_request_id)
+      json_error('server_error', request_id: temp_request_id)
     end
 
     if oidc_state.nil?
+      # Tested
       rlog.error("[#{temp_request_id}] No OpenID Connect state found by code \"#{code}\"")
-      return json_error('invalid_request', request_id: temp_request_id)
+      json_error('invalid_request', request_id: temp_request_id)
     end
 
     # Prevent code reuse, even if we cannot parse the state or an error occurrs
@@ -569,8 +580,9 @@ private
     begin
       oidc_state = JSON.parse(oidc_state)
     rescue StandardError => e
+      # Tested (manually)
       rlog.error("[#{temp_request_id}] Unable to parse the JSON in OIDC state \"#{code}\": #{e}")
-      return json_error('server_error', request_id: temp_request_id)
+      json_error('server_error', request_id: temp_request_id)
     end
 
     state = oidc_state['state'].freeze
@@ -588,9 +600,10 @@ private
     redirect_uri = params.fetch('redirect_uri', nil)
 
     unless redirect_uri == oidc_state['redirect_uri']
+      # Tested
       rlog.error("[#{request_id}] Mismatching redirect URIs: got \"#{redirect_uri}\", "  \
                  "expected \"#{oidc_state['redirect_uri']}\"")
-      return json_error('invalid_request', request_id: temp_request_id)
+      json_error('invalid_request', request_id: temp_request_id)
     end
 
     # From here on, the redirect URI is usable, if needed
@@ -601,14 +614,16 @@ private
     client_id = params.fetch('client_id', nil)
 
     if client_id.nil?
+      # Tested
       rlog.error("[#{request_id}] No client_id in the request")
-      return json_error('unauthorized_client', state: state, request_id: request_id)
+      json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
     unless client_id == oidc_state['client_id']
+      # Tested
       rlog.error("[#{request_id}] The client ID has changed: got \"#{client_id}\", " \
                  "expected \"#{oidc_state['client_id']}\"")
-      return json_error('unauthorized_client', state: state, request_id: request_id)
+      json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
     begin
@@ -633,7 +648,7 @@ private
     unless match
       # Tested
       rlog.error("[#{request_id}] Invalid client secret in the request (using hashed secret: #{was_hashed})")
-      return json_error('unauthorized_client', state: state, request_id: request_id)
+      json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
     rlog.info("[#{request_id}] Client authenticated (using hashed secret: #{was_hashed})")
@@ -741,8 +756,9 @@ private
     begin
       private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['token_key']['private_file']))
     rescue StandardError => e
+      # Tested (manually)
       rlog.error("[#{request_id}] Cannot load the access token signing private key file: #{e}")
-      return json_error('server_error', state: state, request_id: request_id)
+      json_error('server_error', state: state, request_id: request_id)
     end
 
     rlog.info("[#{request_id}] Issued access token #{token[:raw_token]['jti'].inspect} " \
@@ -775,6 +791,7 @@ private
 
     if oidc_state['scopes_changed']
       # See the stage 2 handler for explanation
+      # Tested
       out['scopes'] = oidc_state['scopes'].join(' ')
     end
 
@@ -783,8 +800,9 @@ private
 
     json(out)
   rescue StandardError => e
+    # Tested (manually)
     rlog.info("[#{request_id}] Unhandled exception: #{e}")
-    return json_error('server_error', state: state, request_id: request_id)
+    json_error('server_error', state: state, request_id: request_id)
   end
 
   def client_credentials_grant(request_id)
@@ -794,9 +812,11 @@ private
     content_type = request.env.fetch('CONTENT_TYPE', nil)
 
     unless content_type == 'application/x-www-form-urlencoded'
+      # Tested (manually, cannot be automated as the URL library used in the tests does not
+      # permit fiddling with the header)
       rlog.error("[#{request_id}] Received a client_credentials request with an incorrect " \
                  "Content-Type header (#{content_type.inspect})")
-      return json_error('invalid_request', request_id: request_id)
+      json_error('invalid_request', request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -805,9 +825,9 @@ private
     # TODO: We need to support other client authorization systems
 
     unless request.env.include?('HTTP_AUTHORIZATION')
-      rlog.error("[#{request_id}] Received a client_credentials request without an " \
-                 "HTTP_AUTHORIZATION header")
-      return json_error('invalid_request', request_id: request_id)
+      # Tested
+      rlog.error("[#{request_id}] Received a client_credentials request without an HTTP_AUTHORIZATION header")
+      json_error('invalid_request', request_id: request_id)
     end
 
     begin
@@ -816,14 +836,15 @@ private
       credentials = credentials.split(':')
 
       if credentials.count != 2
-        rlog.error("[#{request_id}] the HTTP_AUTHORIZATION header does not contain a valid " \
-                   "client_id:password combo")
-        return json_error('invalid_request', request_id: request_id)
+        # Tested (manually)
+        rlog.error("[#{request_id}] the HTTP_AUTHORIZATION header does not contain a valid client_id:password combo")
+        json_error('invalid_request', request_id: request_id)
       end
     rescue StandardError => e
+      # Tested (manually)
       rlog.error("[#{request_id}] Could not parse the HTTP_AUTHORIZATION header: #{e}")
       rlog.error("[#{request_id}] Raw header: #{request.env['HTTP_AUTHORIZATION'].inspect}")
-      return json_error('invalid_request', request_id: request_id)
+      json_error('invalid_request', request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -836,26 +857,30 @@ private
     clients.close
 
     if client_config.nil?
+      # Tested
       rlog.error("[#{request_id}] Unknown/invalid client")
-      return json_error('unauthorized_client', request_id: request_id)
+      json_error('unauthorized_client', request_id: request_id)
     end
 
     unless client_config['enabled'] == 't'
+      # Tested
       rlog.error("[#{request_id}] This client exists but it has been disabled")
-      return json_error('unauthorized_client', request_id: request_id)
+      json_error('unauthorized_client', request_id: request_id)
     end
 
     hashed_password = client_config.fetch('client_password', nil)
 
     if hashed_password.nil? || hashed_password.strip.empty?
+      # Tested (manually, by intentionally changing the password to an empty string in psql)
       rlog.error("[#{request_id}] Empty hashed password specified in the database for a " \
                  "token client, refusing access")
-      return json_error('unauthorized_client', request_id: request_id)
+      json_error('unauthorized_client', request_id: request_id)
     end
 
     unless Argon2::Password.verify_password(credentials[1], hashed_password)
+      # Tested
       rlog.error("[#{request_id}] Invalid client password")
-      return json_error('unauthorized_client', request_id: request_id)
+      json_error('unauthorized_client', request_id: request_id)
     end
 
     rlog.info("[#{request_id}] Client authorized")
@@ -875,8 +900,9 @@ private
     end
 
     if scopes.scopes.empty?
+      # Tested
       rlog.error("[#{request_id}] The cleaned-up scopes list is completely empty")
-      return json_error('invalid_scope', request_id: request_id)
+      json_error('invalid_scope', request_id: request_id)
     end
 
     # ----------------------------------------------------------------------------------------------
@@ -1212,6 +1238,7 @@ private
     begin
       private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['token_key']['private_file']))
     rescue StandardError => e
+      # Tested (manually)
       rlog.error("[#{request_id}] Cannot load the access token signing private key file: #{e}")
       return { success: false }
     end
