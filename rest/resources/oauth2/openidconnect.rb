@@ -1280,7 +1280,7 @@ private
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'
 
-    return http_status, json(out)
+    halt http_status, json(out)
   rescue StandardError => e
     puts e
   end
