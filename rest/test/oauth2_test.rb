@@ -60,8 +60,8 @@ describe PuavoRest::OAuth2 do
       db.exec_params(
         'INSERT INTO token_clients(client_id, client_password, enabled, allowed_scopes, ' \
         'allowed_endpoints, created, modified, password_changed) VALUES ' \
-        "($1, $2, true, $3, $4, $5, $6, $7)",
-        [client[:client_id], password_hash, array_encoder.encode(client[:scopes]),
+        "($1, $2, $3, $4, $5, $6, $7, $8)",
+        [client[:client_id], password_hash, client.fetch(:enabled, true), array_encoder.encode(client[:scopes]),
         array_encoder.encode(client[:endpoints]), now, now, now]
       )
     end
