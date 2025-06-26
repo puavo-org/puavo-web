@@ -88,6 +88,7 @@ module FormUtility
     state_key = params.fetch('state_key', nil)
 
     if state_key.nil? && type == 'oidc'
+      # Tested
       rlog.info("[#{request_id}] We're in OpenID Connect mode, but no state key was submitted in the form data. Halting.")
       generic_error(t.sso.system_error(request_id), status: 400)
     end
@@ -107,15 +108,18 @@ module FormUtility
       if parts[1] == organisation
         # The specified organisation is exactly same as the domain in the username. Just strip
         # out the domain from the name and move on without an error message.
+        # Tested
         rlog.info("[#{request_id}] It's the same organisation, moving on")
         username = parts[0]
       else
+        # Tested
         rlog.error("[#{request_id}] The domains are different")
         sso_render_form(request_id, error_message: t.sso.invalid_username, type: type, state_key: state_key)
       end
     end
 
     if !username.include?('@') && organisation.nil? then
+      # Tested
       rlog.error("[#{request_id}] SSO error: organisation missing from username: #{ username }")
       sso_render_form(request_id, error_message: t.sso.organisation_missing, type: type, state_key: state_key)
     end
