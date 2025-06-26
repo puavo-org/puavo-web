@@ -690,6 +690,8 @@ private
     # nor any examples. RFC 6749 simply mentions it's possible to specify the scopes
     # again this call but fails to elaborate further.
 
+    # For now, we always proceed with the original scopes and ignore the new scopes.
+
     # ----------------------------------------------------------------------------------------------
     # All good. Build the ID token.
 
