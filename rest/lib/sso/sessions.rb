@@ -19,7 +19,7 @@ module SSOSessions
           return true if domains.include?(test)
         end
       end
-    rescue => e
+    rescue StandardError => e
       rlog.error("[#{request_id}] domain matching failed: #{e}")
     end
 
