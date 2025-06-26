@@ -380,6 +380,7 @@ private
 
     oidc_state['organisation'] = {
       'domain' => organisation.domain,
+      'key' => organisation.organisation_key,
       'name' => organisation.name,
       'dn' => organisation.dn.to_s,
     }
@@ -492,7 +493,7 @@ private
     # OpenID Connect sessions must be created here, MFA or not
     session_create(
       request_id,
-      oidc_state['organisation']['name'],
+      oidc_state['organisation']['key'],
       oidc_state['service']['domain'],
       oidc_state['service']['dn'],
       oidc_state['user']['dn'],
