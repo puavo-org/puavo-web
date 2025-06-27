@@ -481,6 +481,12 @@ private
       oidc_state = session_data
       rlog.info('[#{temp_request_id}] oidc_authorization_response(): loading data from SSO session instead of Redis')
     else
+      if state_key.nil? || state_key.strip.empty?
+        # Tested
+        rlog.error("[#{temp_request_id}] oidc_authorization_response(): no state_key supplied (not in function params, not in request params)")
+        generic_error(t.sso.system_error(temp_request_id), status: 400)
+      end
+
       # Get and delete the login data from Redis
       oidc_state = oidc_redis.get(state_key)
 

@@ -2180,6 +2180,24 @@ describe PuavoRest::OAuth2 do
       mfa_form_path
     end
 
+    it 'calling the MFA completion endpoint directly must fail' do
+      get '/oidc/authorize/mfa_complete'
+      assert_equal last_response.status, 400
+      assert last_response.body.include?('System error, login halted.')
+
+      get '/oidc/authorize/mfa_complete?state_key='
+      assert_equal last_response.status, 400
+      assert last_response.body.include?('System error, login halted.')
+
+      get '/oidc/authorize/mfa_complete?state_key=%20%09%0A%0A'
+      assert_equal last_response.status, 400
+      assert last_response.body.include?('System error, login halted.')
+
+      get '/oidc/authorize/mfa_complete?state_key=foo'
+      assert_equal last_response.status, 400
+      assert last_response.body.include?('System error, login halted.')
+    end
+
     # Performs all the pre-MFA form steps
     def authenticate_user
       get format_uri('/oidc/authorize',
