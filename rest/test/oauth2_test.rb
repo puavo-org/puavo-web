@@ -1,10 +1,11 @@
 # OAuth2 access token tests
 
-require_relative './helper'
-
 require 'addressable/uri'
 require 'argon2'
 require 'jwt'
+
+require_relative 'helper'
+require_relative 'oauth2_helpers'
 
 describe PuavoRest::OAuth2 do
   before(:each) do
@@ -16,13 +17,7 @@ describe PuavoRest::OAuth2 do
   # Sets up the clients used in these tests
   def setup_oauth2_database
     # Use the standalone settings
-    db_config = CONFIG['oauth2']['client_database']
-
-    db = PG.connect(hostaddr: db_config['host'],
-                    port: db_config['port'],
-                    dbname: db_config['database'],
-                    user: db_config['user'],
-                    password: db_config['password'])
+    db = oauth2_client_db()
 
     # Delete...
     db.exec("DELETE FROM token_clients WHERE client_id like 'test_client_%';")
@@ -100,23 +95,6 @@ describe PuavoRest::OAuth2 do
     header 'Authorization', "Bearer #{access_token}"
 
     get url.to_s
-  end
-
-  def decode_token(token, key: OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY, audience: 'puavo-rest-v4')
-    decoded_token = JWT.decode(token, key, true, {
-      algorithm: 'ES256',
-
-      verify_iat: true,
-
-      iss: 'https://api.opinsys.fi',
-      verify_iss: true,
-
-      aud: audience,
-      verify_aud: true,
-    })
-
-    assert_equal decoded_token[1]['typ'], 'at+jwt'
-    decoded_token[0]
   end
 
   it 'ask for something else than client credentials' do
