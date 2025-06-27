@@ -149,6 +149,13 @@ describe PuavoRest::OAuth2 do
           redirects: ['http://temporary3.example.com'],
           scopes: %w[openid profile]
         },
+        {
+          client_id: 'test_login_real',
+          enabled: true,
+          puavo_service_dn: @external_service.dn.to_s,
+          redirects: ['http://temporary.example.com'],
+          scopes: %w[openid profile]
+        },
       ])
     end
 
@@ -174,6 +181,14 @@ describe PuavoRest::OAuth2 do
       get format_uri('/oidc/authorize', client_id: 'test_login_malformed_dn', redirect_uri: 'http://temporary3.example.com', response_type: 'code')
       assert last_response.body.include?('Invalid client ID. Login halted.')
       assert_equal last_response.status, 400
+    end
+
+    it 'malformed client IDs' do
+      ['a', 'aa', 'aaa', 'a' * 33, 'client_!"#%', 'FOOBAR', '{{{{{{', 'öööö', 'foo bar', 'client_❌', '➕➖➗🟰🧮️', 'hölökyn kölökyn'].each do |id|
+        get format_uri('/oidc/authorize', client_id: id, redirect_uri: 'http://temporary.example.com', response_type: 'code', scope: 'openid profile')
+        assert last_response.body.include?('Invalid client ID. Login halted.')
+        assert_equal last_response.status, 400
+      end
     end
   end
 
@@ -487,6 +502,42 @@ describe PuavoRest::OAuth2 do
 
       # This must be nil because the authentication method is only known during the login
       assert_nil userinfo['puavo.authenticated_using']
+    end
+
+    it 'malformed client IDs in the token request' do
+      # Since even one failed token request invalidates the code, we must redo the whole process every time
+      ['a', 'aa', 'aaa', 'a' * 33, 'client_!"#%', 'FOOBAR', '{{{{{{', 'öööö', 'foo bar', 'client_❌', '➕➖➗🟰🧮️', 'hölökyn kölökyn'].each do |id|
+        get format_uri('/oidc/authorize',
+                       client_id: 'test_login_service',
+                       redirect_uri: 'http://service.example.com',
+                       response_type: 'code',
+                       scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups',
+                       extra: { 'state' => 'foo', 'nonce' => 'bar' })
+
+        post '/oidc/authorize/post', {
+          type: 'oidc',
+          request_id: get_named_form_value('request_id'),
+          state_key: get_named_form_value('state_key'),
+          return_to: get_named_form_value('return_to'),
+          username: 'bob.brown@example.puavo.net',
+          password: 'secret',
+        }
+
+        assert last_response.redirect?
+        redirect = Addressable::URI.parse(last_response.headers['Location'])
+        code = redirect.query_values['code']
+
+        post '/oidc/token', {
+          grant_type: 'authorization_code',
+          client_id: id,
+          client_secret: @external_service.puavoServiceSecret,
+          redirect_uri: 'http://service.example.com',
+          code: code
+        }
+
+        error = JSON.parse(last_response.body)
+        assert_equal error['error'], 'unauthorized_client'
+      end
     end
 
     it 'Wrong key must not validate the tokens' do

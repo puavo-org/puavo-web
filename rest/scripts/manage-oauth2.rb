@@ -143,7 +143,7 @@ def generate_password
 end
 
 def valid_client_id?(id)
-  id.match?(/\A[a-z0-9_]+\Z/)
+  id.is_a?(String) && id.length >= 4 && id.length <= 32 && id.match?(/\A[a-z][a-z0-9_-]*\Z/)
 end
 
 # Global database handle
@@ -305,10 +305,10 @@ def format_login_client_id(client)
 end
 
 def rename_login_client(client, existing)
-  puts "#{clr(:hint)}The new ID can only contain lower-case letters a-z, numbers 0-9 and underscores (_).#{clr(:off)}"
+  puts "#{clr(:hint)}The client ID can only contain a-z0-9_- and it must start with a letter. It's length must be between 4 and 32.#{clr(:off)}"
 
   new_id = read_string(
-    'Enter new ID for this client (Ctrl+C to cancel)',
+    'Enter the new client ID (Ctrl+C to cancel)',
     default: client['client_id']
   )
 
@@ -319,23 +319,23 @@ def rename_login_client(client, existing)
 
   if new_id.empty?
     # Can this even happen? "allow_empty" is not used.
-    error('The ID cannot be empty')
+    error('The client ID cannot be empty')
     return false
   end
 
   unless valid_client_id?(new_id)
-    error('The new ID contains invalid characters')
+    error('The client ID is not valid')
     return false
   end
 
   if new_id == client['client_id']
-    print_action('Name not changed')
+    print_action('Client ID not changed')
     return false
   end
 
   # Duplicate name?
   if existing.include?(new_id)
-    error('The new ID is already in use')
+    error('The new client ID is already in use')
     return false
   end
 
@@ -345,7 +345,7 @@ def rename_login_client(client, existing)
   )
 
   client['client_id'] = new_id
-  print_action("Name changed to \"#{new_id}\"")
+  print_action("Client ID changed to \"#{new_id}\"")
   true
 end
 
@@ -568,7 +568,7 @@ def new_login_client
   existing = get_existing_login_clients()
   puts "#{clr(:title)}Creating a new login client. Press Ctrl+C at any time to cancel.#{clr(:off)}"
   puts "#{clr(:hint)}Existing login clients: #{existing.to_a.sort.join(' ')}#{clr(:off)}"
-  puts "#{clr(:hint)}The client ID can only contain lower-case letters a-z, numbers 0-9 and underscores (_).#{clr(:off)}"
+  puts "#{clr(:hint)}The client ID can only contain a-z0-9_- and it must start with a letter. It's length must be between 4 and 32.#{clr(:off)}"
 
   encoder = PG::TextEncoder::Array.new
 
@@ -584,7 +584,7 @@ def new_login_client
     end
 
     unless valid_client_id?(client_id)
-      error('Client ID contains invalid characters')
+      error('The client ID is not valid')
       next
     end
 
@@ -785,7 +785,7 @@ def format_token_client_id(client)
 end
 
 def rename_token_client(client)
-  puts "#{clr(:hint)}The new ID can only contain lower-case letters a-z, numbers 0-9 and underscores (_).#{clr(:off)}"
+  puts "#{clr(:hint)}The client ID can only contain a-z0-9_- and it must start with a letter. It's length must be between 4 and 32.#{clr(:off)}"
 
   new_id = read_string(
     'Enter new ID for this client (Ctrl+C to cancel)',
@@ -804,12 +804,12 @@ def rename_token_client(client)
   end
 
   unless valid_client_id?(new_id)
-    error('The new ID contains invalid characters')
+    error('The client ID is not valid')
     return false
   end
 
   if new_id == client['client_id']
-    print_action('Name not changed')
+    print_action('Client ID not changed')
     return false
   end
 
@@ -827,7 +827,7 @@ def rename_token_client(client)
   )
 
   client['client_id'] = new_id
-  print_action("Name changed to \"#{new_id}\"")
+  print_action("Client ID changed to \"#{new_id}\"")
   true
 end
 
@@ -1134,7 +1134,7 @@ def new_token_client
 
   puts "#{clr(:title)}Creating a new access token client. Press Ctrl+C at any time to cancel.#{clr(:off)}"
   puts "#{clr(:hint)}Existing token clients: #{existing.to_a.sort.join(' ')}#{clr(:off)}" unless existing.empty?
-  puts "#{clr(:hint)}The client ID can only contain lower-case letters a-z, numbers 0-9 and underscores (_).#{clr(:off)}"
+  puts "#{clr(:hint)}The client ID can only contain a-z0-9_- and it must start with a letter. It's length must be between 4 and 32.#{clr(:off)}"
 
   # Client ID (loop until we have a unique ID)
   client_id = nil
@@ -1148,7 +1148,7 @@ def new_token_client
     end
 
     unless valid_client_id?(client_id)
-      error('The new ID contains invalid characters')
+      error('The client ID is not valid')
       next
     end
 

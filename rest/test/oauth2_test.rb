@@ -321,6 +321,15 @@ describe PuavoRest::OAuth2 do
     assert_equal access_token['scopes'], 'puavo.read.users puavo.read.groups'
   end
 
+  it 'acquire a basic access token' do
+    ['a', 'aa', 'aaa', 'a' * 33, 'client_!"#%', 'FOOBAR', '{{{{{{', 'öööö', 'foo bar', 'client_❌', '➕➖➗🟰🧮️', 'hölökyn kölökyn'].each do |id|
+      acquire_token(id, 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
+      assert_equal last_response.status, 400
+      response = JSON.parse(last_response.body)
+      assert_equal response['error'], 'unauthorized_client'
+    end
+  end
+
   describe 'data retrieval with tokens' do
     # Create some test data
     before do

@@ -142,6 +142,12 @@ private
     client_id = params['client_id']
     rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
 
+    unless OAuth2.valid_client_id?(client_id)
+      # Tested
+      rlog.error("[#{request_id}] Malformed client ID")
+      generic_error(t.oauth2.invalid_client_id(request_id), status: 400)
+    end
+
     clients = ClientDatabase.new
     client_config = clients.get_client_by_id(request_id, client_id, :login)
     clients.close
@@ -622,9 +628,17 @@ private
 
     client_id = params.fetch('client_id', nil)
 
+    rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
+
     if client_id.nil?
       # Tested
       rlog.error("[#{request_id}] No client_id in the request")
+      json_error('unauthorized_client', state: state, request_id: request_id)
+    end
+
+    unless OAuth2.valid_client_id?(client_id)
+      # Tested
+      rlog.error("[#{request_id}] Malformed client ID")
       json_error('unauthorized_client', state: state, request_id: request_id)
     end
 
@@ -861,6 +875,12 @@ private
     # Authenticate the client
 
     rlog.info("[#{request_id}] Client ID: #{credentials[0].inspect}")
+
+    unless OAuth2.valid_client_id?(credentials[0])
+      # Tested
+      rlog.error("[#{request_id}] Malformed client ID")
+      json_error('unauthorized_client', request_id: request_id)
+    end
 
     clients = ClientDatabase.new
     client_config = clients.get_client_by_id(request_id, credentials[0], :token)
