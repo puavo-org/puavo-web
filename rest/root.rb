@@ -48,6 +48,22 @@ end
 
 UUID_ALPHABET = ('a'..'z').to_a.freeze
 
+# Returns true if this user (username) is "super owner", ie. an owner user who has
+# been granted extra permissions. Usually these users are employees of the company
+# that makes Puavo.
+def self.super_owner?(name)
+  begin
+    # The filename is hardcoded, because the puavo-rest server dos already contain
+    # some puavo-web's files, including this file, and it's always in /etc/puavo-web
+    super_owners = File.read('/etc/puavo-web/super_owners.txt').split("\n")
+  rescue StandardError => e
+    rlog.error("ERROR: Can't query the super owner status: #{e}")
+    super_owners = []
+  end
+
+  super_owners.include?(name)
+end
+
 class BeforeFilters < PuavoSinatra
   before do
     $rest_log = $rest_log_base.merge({})
