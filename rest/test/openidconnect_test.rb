@@ -476,6 +476,7 @@ describe PuavoRest::OAuth2 do
 
       userinfo = JSON.parse(last_response.body)
 
+      assert_equal userinfo['sub'], @user.uuid
       assert_equal userinfo['given_name'], id_token['given_name']
       assert_equal userinfo['family_name'], id_token['family_name']
       assert_equal userinfo['name'], id_token['name']

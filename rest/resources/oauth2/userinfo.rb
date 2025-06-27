@@ -26,7 +26,8 @@ module Userinfo
         domain: access_token['organisation_domain'],
         user_dn: access_token['user_dn'],
         scopes: access_token['scopes'].split,
-        auth_method: nil
+        auth_method: nil,
+        include_sub: true
       )
 
       json_error(out, request_id: request_id) if out.instance_of?(String)

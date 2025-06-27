@@ -9,7 +9,7 @@ class IDTokenDataGenerator
     @request_id = request_id
   end
 
-  def generate(ldap_credentials:, domain:, user_dn:, scopes:, auth_method: nil)
+  def generate(ldap_credentials:, domain:, user_dn:, scopes:, auth_method: nil, include_sub: false)
     # Get the organisation
     @organisation = Organisation.by_domain(domain)
 
@@ -54,7 +54,7 @@ class IDTokenDataGenerator
 
     # Handler functions for all possible scopes. Use lambdas when additional arguments are needed.
     scope_handlers = {
-      'profile' => -> { handle_profile(auth_method) },
+      'profile' => -> { handle_profile(auth_method, include_sub) },
       'email' => method(:handle_email),
       'phone' => method(:handle_phone),
       'puavo.read.userinfo.schools' => method(:handle_schools),
@@ -86,7 +86,7 @@ class IDTokenDataGenerator
   private
 
   # Standard claim: profile
-  def handle_profile(auth_method)
+  def handle_profile(auth_method, include_sub)
     out = {}
 
     # Try to extract the modification timestamp from the LDAP operational attributes
@@ -101,6 +101,7 @@ class IDTokenDataGenerator
     end
 
     # Standard claims
+    out['sub'] = @user.uuid if include_sub
     out['given_name'] = @user.first_name
     out['family_name'] = @user.last_name
     out['name'] = "#{@user.first_name} #{@user.last_name}"
