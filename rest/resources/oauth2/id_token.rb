@@ -210,7 +210,14 @@ class IDTokenDataGenerator
       }
 
       group['ldap_dn'] = g.dn if @has_ldap
-      group['school_abbreviation'] = get_school(g.school_dn).abbreviation if have_schools
+
+      if have_schools
+        sch = get_school(g.school_dn)
+
+        group['school_abbreviation'] = sch.abbreviation
+        group['school_puavoid'] = sch.id.to_i
+      end
+
       group
     end
 
