@@ -152,12 +152,18 @@ end
 
 # Load the public OAuth2 JWT validation key. The private key file is loaded only when
 # signing an access token, so that its contents cannot leak through global variables.
-begin
-  public_key = OpenSSL::PKey.read(File.read(CONFIG['oauth2']['token_key']['public_file']))
-rescue StandardError => e
-  puts "ERROR: Cannot load the OAuth2 JWT validation key: #{e}"
-  puts "ERROR: OAuth2 access token validations will always fail and access tokens cannot be used"
-  public_key = nil
+public_key = nil
+
+if CONFIG.fetch('oauth2', {}).fetch('token_key', {}).include?('public_file')
+  begin
+    public_key = OpenSSL::PKey.read(File.read(CONFIG['oauth2']['token_key']['public_file']))
+  rescue StandardError => e
+    puts "ERROR: Cannot load the OAuth2 JWT validation key: #{e}"
+    puts "ERROR: OAuth2 access token validations will always fail and access tokens cannot be used"
+    public_key = nil
+  end
+else
+  puts 'WARNING: No OAuth2 key configuration found. OAuth2 access tokens cannot be used.'
 end
 
 OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY = public_key.freeze
