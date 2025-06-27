@@ -779,7 +779,8 @@ private
     )
 
     unless token[:success]
-      return json_error('invalid_request', request_id: request_id)
+      # TODO: Need to test this
+      json_error('invalid_request', request_id: request_id)
     end
 
     # Load the signing private key. Unlike the public key, this is not kept in memory.
@@ -982,7 +983,8 @@ private
     )
 
     unless token[:success]
-      return json_error('invalid_request', request_id: request_id)
+      # TODO: Need to test this
+      json_error('invalid_request', request_id: request_id)
     end
 
     out = {
