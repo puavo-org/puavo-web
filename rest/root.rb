@@ -57,7 +57,7 @@ def self.super_owner?(name)
     # some puavo-web's files, including this file, and it's always in /etc/puavo-web
     super_owners = File.read('/etc/puavo-web/super_owners.txt').split("\n")
   rescue StandardError => e
-    rlog.error("ERROR: Can't query the super owner status: #{e}")
+    $rest_log.error("ERROR: Can't query the super owner status: #{e}")
     super_owners = []
   end
 
