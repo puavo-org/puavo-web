@@ -733,6 +733,7 @@ def list_token_clients
     puts "\tClient ID............: #{row['client_id'].inspect}"
     puts "\tEnabled..............: #{row['enabled'] == 't' ? 'Yes' : 'No'}"
     puts "\tExpires in...........: #{row['expires_in']} seconds"
+    puts "\tAssociated LDAP DN...: #{row['ldap_user_dn'].nil? ? '<Unset>' : row['ldap_user_dn']}"
 
     puts "\tAllowed scopes.......:"
 
@@ -885,6 +886,51 @@ def change_token_client_expires_in_time(client)
 
   client['expires_in'] = new_time
   print_action("\"Expires in\" time changed to #{new_time} seconds")
+  true
+end
+
+def format_token_client_ldap_user_dn(client)
+  if client['ldap_user_dn'].nil?
+    "Set the LDAP user DN (currently unset, the client will not work)"
+  else
+    "Set the LDAP user DN (currently #{client['ldap_user_dn'].inspect})"
+  end
+end
+
+def change_token_client_ldap_user_dn(client)
+  new_dn = read_string(
+    'Enter an LDAP user DN (leave empty to set it to NULL)',
+    allow_empty: true
+  )
+
+  if new_dn == :cancel
+    print_action('Cancelled')
+    return false
+  end
+
+  if new_dn.nil? || new_dn.empty?
+    db.exec_params(
+      'UPDATE token_clients SET ldap_user_dn = NULL, modified = $2 WHERE client_id = $1',
+      [client['client_id'], Time.now.utc]
+    )
+
+    client['ldap_user_dn'] = nil
+    print_action('User DN cleared, the client will not work')
+    return true
+  end
+
+  if new_dn == client['ldap_user_dn']
+    print_action('LDAP user DN not changed')
+    return false
+  end
+
+  db.exec_params(
+    'UPDATE token_clients SET ldap_user_dn = $2, modified = $3 WHERE client_id = $1',
+    [client['client_id'], new_dn, Time.now.utc]
+  )
+
+  client['ldap_user_dn'] = new_dn
+  print_action("LDAP user DN changed to \"#{new_dn}\"")
   true
 end
 
@@ -1093,6 +1139,13 @@ def edit_token_client
   edit_menu << MenuItem.new(:expiration, 't', format_token_client_expires_in_time(client)) do |item|
     if change_token_client_expires_in_time(client)
       item.title = format_token_client_expires_in_time(client)
+    end
+  end
+
+  # LDAP user DN
+  edit_menu << MenuItem.new(:ldap_user_dn, 'l', format_token_client_ldap_user_dn(client)) do |item|
+    if change_token_client_ldap_user_dn(client)
+      item.title = format_token_client_ldap_user_dn(client)
     end
   end
 
