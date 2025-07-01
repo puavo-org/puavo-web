@@ -363,8 +363,6 @@ private
       return sso_render_form(request_id, error_message: t.sso.bad_username_or_pw, exception: err, type: 'oidc', state_key: state_key)
     end
 
-    auth_method = 'username+password' if auth_method == 'from_post'
-
     # If we get here, the user was authenticated. Either by Kerberos, or by basic auth,
     # or they filled in the username+password form.
 
@@ -374,6 +372,25 @@ private
 
     user = PuavoRest::User.current
     primary_school = user.school
+
+    # Figure out the 'amr' claim value
+    amr = []
+
+    case auth_method
+      when 'from_post', 'basic_auth'
+        amr << 'pwd'
+
+      when 'kerberos'
+        # This is a non-standard Opinsys value. RFC 8176 does not list anything usable for Kerberos (and numerous
+        # internet searches have not revealed anything for it), which is kinda odd, give how widespread various
+        # SSO systems are. But that also poses a philosophical dilemma: since the Kerberos ticket is granted
+        # at (desktop) login, and login requires a username and password, does Kerberos then technically count
+        # as "pwd"? I can find references to Kerberos in the "acr" claim values, but nothing for "amr".
+        amr << 'kerberos'
+    end
+
+    # If the MFA attribute is enabled, we *will* ask for the code, so this 'amr' claim value can be set already
+    amr << 'mfa' if user.mfa_enabled
 
     # Read organisation data manually instead of using the cached one because
     # enabled external services might be updated.
@@ -386,7 +403,7 @@ private
       'dn' => user.dn.to_s,
       'puavo_id' => user.id.to_i,
       'uuid' => user.uuid,
-      'auth_method' => auth_method,
+      'amr' => amr
     }
 
     oidc_state['organisation'] = {
@@ -735,6 +752,8 @@ private
       'auth_time' => oidc_state['auth_time']
     }
 
+    payload['amr'] = oidc_state['user']['amr'] unless oidc_state['user']['amr'].empty?
+
     if oidc_state.include?('nonce')
       # If the nonce was present in the original request, send it back
       payload['nonce'] = oidc_state['nonce']
@@ -750,7 +769,6 @@ private
         domain: oidc_state['organisation']['domain'],
         user_dn: oidc_state['user']['dn'],
         scopes: oidc_state['scopes'],
-        auth_method: oidc_state['user']['auth_method']
       )
 
       json_error(user_data, request_id: request_id) if user_data.instance_of?(String)

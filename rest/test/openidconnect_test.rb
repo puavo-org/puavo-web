@@ -458,6 +458,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['iss'], 'https://api.opinsys.fi'
       assert_equal id_token['sub'], @user.uuid
       assert_equal id_token['aud'], 'test_login_service'
+      assert_equal id_token['amr'], ['pwd']
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @user.first_name
       assert_equal id_token['family_name'], @user.last_name
@@ -466,7 +467,6 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['puavo.uuid'], @user.uuid
       assert_equal id_token['puavo.puavoid'], @user.id
       assert_equal id_token['puavo.roles'], ['student']
-      assert_equal id_token['puavo.authenticated_using'], 'username+password'
 
       assert_equal id_token['puavo.schools'].count, 1
       assert_equal id_token['puavo.schools'][0]['name'], 'Gryffindor'
@@ -500,8 +500,9 @@ describe PuavoRest::OAuth2 do
       assert_equal userinfo['puavo.puavoid'], id_token['puavo.puavoid']
       assert_equal userinfo['puavo.roles'], id_token['puavo.roles']
 
-      # This must be nil because the authentication method is only known during the login
-      assert_nil userinfo['puavo.authenticated_using']
+      # These are only known at the login time, so they must be omitted
+      assert_equal userinfo.include?('amr'), false
+      assert_equal userinfo.include?('auth_time'), false
     end
 
     it 'malformed client IDs in the token request' do
@@ -685,6 +686,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['iss'], 'https://api.opinsys.fi'
       assert_equal id_token['sub'], @user.uuid
       assert_equal id_token['aud'], 'test_login_service'
+      assert_equal id_token['amr'], ['pwd']
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @user.first_name
       assert_equal id_token['family_name'], @user.last_name
@@ -693,7 +695,6 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['puavo.uuid'], @user.uuid
       assert_equal id_token['puavo.puavoid'], @user.id
       assert_equal id_token['puavo.roles'], ['student']
-      assert_equal id_token['puavo.authenticated_using'], 'username+password'
       assert_equal id_token['puavo.schools'].count, 1
       assert_equal id_token['puavo.groups'].count, 1
     end
@@ -775,6 +776,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['iss'], 'https://api.opinsys.fi'
       assert_equal id_token['sub'], @user.uuid
       assert_equal id_token['aud'], 'test_login_service'
+      assert_equal id_token['amr'], ['pwd']
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @user.first_name
       assert_equal id_token['family_name'], @user.last_name
@@ -783,7 +785,6 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['puavo.uuid'], @user.uuid
       assert_equal id_token['puavo.puavoid'], @user.id
       assert_equal id_token['puavo.roles'], ['student']
-      assert_equal id_token['puavo.authenticated_using'], 'username+password'
       assert_equal id_token['puavo.schools'].count, 1
       assert_equal id_token['puavo.groups'].count, 1
     end
@@ -1669,9 +1670,11 @@ describe PuavoRest::OAuth2 do
       # Check the ID token contents
       id_token = decode_token(token['id_token'], audience: 'test_login_service')
 
-      %w[given_name family_name name preferred_username puavo.uuid puavo.puavoid puavo.roles puavo.authenticated_using puavo.schools puavo.groups].each do |claim|
+      %w[given_name family_name name preferred_username puavo.uuid puavo.puavoid puavo.roles puavo.schools puavo.groups].each do |claim|
         assert_equal id_token.include?(claim), false
       end
+
+      assert_equal id_token['amr'], ['pwd']
 
       assert_equal id_token.include?('nonce'), true
       assert_equal id_token['nonce'], 'bar'
@@ -1839,6 +1842,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['iss'], 'https://api.opinsys.fi'
       assert_equal id_token['sub'], @user.uuid
       assert_equal id_token['aud'], 'test_login_service_session'
+      assert_equal id_token['amr'], ['pwd']
       assert_equal id_token['nonce'], 'quux'
       assert_equal id_token['given_name'], @user.first_name
       assert_equal id_token['family_name'], @user.last_name
@@ -1847,7 +1851,6 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['puavo.uuid'], @user.uuid
       assert_equal id_token['puavo.puavoid'], @user.id
       assert_equal id_token['puavo.roles'], ['student']
-      assert_equal id_token['puavo.authenticated_using'], 'username+password'
 
       assert_equal id_token['puavo.schools'].count, 1
       assert_equal id_token['puavo.schools'][0]['name'], 'Gryffindor'
@@ -1917,6 +1920,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token2['iss'], 'https://api.opinsys.fi'
       assert_equal id_token2['sub'], @user.uuid
       assert_equal id_token2['aud'], 'test_login_service_session'
+      assert_equal id_token2['amr'], ['pwd']
       assert_equal id_token2['nonce'], 'mangle'
       assert_equal id_token2['given_name'], @user.first_name
       assert_equal id_token2['family_name'], @user.last_name
@@ -1925,7 +1929,6 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token2['puavo.uuid'], @user.uuid
       assert_equal id_token2['puavo.puavoid'], @user.id
       assert_equal id_token2['puavo.roles'], ['student']
-      assert_equal id_token2['puavo.authenticated_using'], 'username+password'
 
       assert_equal id_token2['puavo.schools'].count, 1
       assert_equal id_token2['puavo.schools'][0]['name'], 'Gryffindor'
@@ -2388,6 +2391,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['iss'], 'https://api.opinsys.fi'
       assert_equal id_token['sub'], @mfa_user.uuid
       assert_equal id_token['aud'], 'test_login_service'
+      assert_equal id_token['amr'], ['pwd', 'mfa']
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @mfa_user.first_name
       assert_equal id_token['family_name'], @mfa_user.last_name
@@ -2396,7 +2400,6 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['puavo.uuid'], @mfa_user.uuid
       assert_equal id_token['puavo.puavoid'], @mfa_user.id
       assert_equal id_token['puavo.roles'], ['admin']
-      assert_equal id_token['puavo.authenticated_using'], 'username+password'
 
       assert_equal id_token['puavo.schools'].count, 1
       assert_equal id_token['puavo.schools'][0]['name'], 'Gryffindor'
@@ -2564,6 +2567,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['iss'], 'https://api.opinsys.fi'
       assert_equal id_token['sub'], @mfa_user.uuid
       assert_equal id_token['aud'], 'test_login_service_session'
+      assert_equal id_token['amr'], ['pwd', 'mfa']
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @mfa_user.first_name
       assert_equal id_token['family_name'], @mfa_user.last_name
@@ -2572,7 +2576,6 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['puavo.uuid'], @mfa_user.uuid
       assert_equal id_token['puavo.puavoid'], @mfa_user.id
       assert_equal id_token['puavo.roles'], ['admin']
-      assert_equal id_token['puavo.authenticated_using'], 'username+password'
 
       assert_equal id_token['puavo.schools'].count, 1
       assert_equal id_token['puavo.schools'][0]['name'], 'Gryffindor'

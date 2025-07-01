@@ -29,7 +29,6 @@ module Userinfo
         domain: access_token['organisation_domain'],
         user_dn: access_token['user_dn'],
         scopes: access_token['scopes'].split,
-        auth_method: nil,
         include_sub: true
       )
 

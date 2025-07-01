@@ -9,7 +9,7 @@ class IDTokenDataGenerator
     @request_id = request_id
   end
 
-  def generate(ldap_credentials:, domain:, user_dn:, scopes:, auth_method: nil, include_sub: false)
+  def generate(ldap_credentials:, domain:, user_dn:, scopes:, include_sub: false)
     # Get the organisation
     @organisation = Organisation.by_domain(domain)
 
@@ -54,7 +54,7 @@ class IDTokenDataGenerator
 
     # Handler functions for all possible scopes. Use lambdas when additional arguments are needed.
     scope_handlers = {
-      'profile' => -> { handle_profile(auth_method, include_sub) },
+      'profile' => -> { handle_profile(include_sub) },
       'email' => method(:handle_email),
       'phone' => method(:handle_phone),
       'puavo.read.userinfo.schools' => method(:handle_schools),
@@ -86,7 +86,7 @@ class IDTokenDataGenerator
   private
 
   # Standard claim: profile
-  def handle_profile(auth_method, include_sub)
+  def handle_profile(include_sub)
     out = {}
 
     # Try to extract the modification timestamp from the LDAP operational attributes
@@ -117,7 +117,6 @@ class IDTokenDataGenerator
     out['puavo.external_id'] = @user.external_id if @user.external_id
     out['puavo.learner_id'] = @user.learner_id if @user.learner_id
     out['puavo.roles'] = @user.roles
-    out['puavo.authenticated_using'] = auth_method
 
     if @scopes.include?('puavo.read.userinfo.primus')
       # External Primus card ID (not always available)
