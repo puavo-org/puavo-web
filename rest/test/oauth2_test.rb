@@ -57,13 +57,19 @@ describe PuavoRest::OAuth2 do
         endpoints: ['/v4/users'],
         enabled: false
       },
+      {
+        client_id: 'test_client_wrong_dn',
+        scopes: ['puavo.read.users'],
+        endpoints: ['/v4/users'],
+        ldap_user_dn: 'foobar'
+      },
     ].each do |client|
       db.exec_params(
-        'INSERT INTO token_clients(client_id, client_password, enabled, allowed_scopes, ' \
+        'INSERT INTO token_clients(client_id, client_password, enabled, ldap_user_dn, allowed_scopes, ' \
         'allowed_endpoints, created, modified, password_changed) VALUES ' \
-        "($1, $2, $3, $4, $5, $6, $7, $8)",
-        [client[:client_id], password_hash, client.fetch(:enabled, true), array_encoder.encode(client[:scopes]),
-        array_encoder.encode(client[:endpoints]), now, now, now]
+        "($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+        [client[:client_id], password_hash, client.fetch(:enabled, true), client.fetch(:ldap_user_dn, 'uid=admin,o=puavo'),
+        array_encoder.encode(client[:scopes]), array_encoder.encode(client[:endpoints]), now, now, now]
       )
     end
 
@@ -396,6 +402,23 @@ describe PuavoRest::OAuth2 do
         assert_equal user2['last_name'], user[1]
         assert_equal user2['username'], user[2]
       end
+    end
+
+    it 'token with an invalid LDAP mapping' do
+      acquire_token('test_client_wrong_dn', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
+      response = JSON.parse last_response.body
+      access_token = response['access_token']
+      decoded_token = decode_token(access_token)
+
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
+
+      fetch_data_with_token(access_token, '/v4/users', 'id,first_names,last_name,username')
+
+      # Since no DN with "foobar" exits in the client mappings, the request must fail
+      assert_equal last_response.status, 401
+      response = JSON.parse last_response.body
+      assert_equal response['error']['code'], 'InvalidOAuth2Token'
+      assert_equal response['error']['message'], 'invalid_ldap_user_dn'
     end
 
     it 'retrieve groups data with token authentication' do
