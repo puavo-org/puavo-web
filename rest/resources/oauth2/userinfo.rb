@@ -22,7 +22,10 @@ module Userinfo
                 "in organisation \"#{access_token['organisation_domain']}\"")
 
       out = IDTokenDataGenerator.new(request_id).generate(
-        ldap_credentials: CONFIG['server'],
+        ldap_credentials: {
+          dn: CONFIG['oauth2']['userinfo_dn'],
+          password: CONFIG['oauth2']['ldap_accounts'][CONFIG['oauth2']['userinfo_dn']]
+        },
         domain: access_token['organisation_domain'],
         user_dn: access_token['user_dn'],
         scopes: access_token['scopes'].split,

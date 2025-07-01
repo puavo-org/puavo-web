@@ -743,7 +743,10 @@ private
     # Collect the user data and append it to the payload
     begin
       user_data = IDTokenDataGenerator.new(request_id).generate(
-        ldap_credentials: CONFIG['server'],
+        ldap_credentials: {
+          dn: CONFIG['oauth2']['userinfo_dn'],
+          password: CONFIG['oauth2']['ldap_accounts'][CONFIG['oauth2']['userinfo_dn']]
+        },
         domain: oidc_state['organisation']['domain'],
         user_dn: oidc_state['user']['dn'],
         scopes: oidc_state['scopes'],
@@ -767,6 +770,7 @@ private
       audience: 'puavo-rest-userinfo',      # this token is only usable in the userinfo endpoint
       scopes: oidc_state['scopes'],
       expires_in: expires_in,
+      ldap_user_dn: CONFIG['oauth2']['userinfo_dn'],
 
       # These are hard to determine afterwards, so stash them in the token
       # (These are for the userinfo endpoint; it works because auth() stores the full
@@ -979,7 +983,8 @@ private
       subject: credentials[0],
       scopes: scopes[:scopes],
       expires_in: expires_in,
-      custom_claims: custom_claims
+      custom_claims: custom_claims,
+      ldap_user_dn: client_config['ldap_user_dn']
     )
 
     unless token[:success]
@@ -1016,6 +1021,7 @@ private
                          subject: nil,
                          audience: 'puavo-rest-v4',
                          expires_in: 3600,
+                         ldap_user_dn: nil,
                          custom_claims: nil)
     now = Time.now.utc.to_i
 
@@ -1031,6 +1037,8 @@ private
     }
 
     token_claims['client_id'] = client_id if client_id
+
+    token_claims['ldap_user_dn'] = ldap_user_dn if ldap_user_dn
 
     token_claims.merge!(custom_claims) if custom_claims.is_a?(Hash)
 

@@ -94,6 +94,10 @@ if ENV['RACK_ENV'] == 'test' then
         'user' => 'standalone_user',
         'password' => 'standalone_password'
       },
+      'userinfo_dn' => PUAVO_ETC.ldap_dn,    # used when generating userinfo
+      'ldap_accounts' => {
+        PUAVO_ETC.ldap_dn => PUAVO_ETC.ldap_password,
+      },
       'audit' => {
         'enabled' => false,
         'ip_logging' => false,
