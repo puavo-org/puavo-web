@@ -749,6 +749,7 @@ private
       'iat' => now,
       'nbf' => now,
       'exp' => now + expires_in,
+      'azp' => client_id,         # not sure if we need this
       'auth_time' => oidc_state['auth_time']
     }
 

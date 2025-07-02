@@ -459,6 +459,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['sub'], @user.uuid
       assert_equal id_token['aud'], 'test_login_service'
       assert_equal id_token['amr'], ['pwd']
+      assert_equal id_token['azp'], 'test_login_service'
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @user.first_name
       assert_equal id_token['family_name'], @user.last_name
@@ -687,6 +688,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['sub'], @user.uuid
       assert_equal id_token['aud'], 'test_login_service'
       assert_equal id_token['amr'], ['pwd']
+      assert_equal id_token['azp'], 'test_login_service'
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @user.first_name
       assert_equal id_token['family_name'], @user.last_name
@@ -777,6 +779,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['sub'], @user.uuid
       assert_equal id_token['aud'], 'test_login_service'
       assert_equal id_token['amr'], ['pwd']
+      assert_equal id_token['azp'], 'test_login_service'
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @user.first_name
       assert_equal id_token['family_name'], @user.last_name
@@ -1842,6 +1845,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['iss'], 'https://api.opinsys.fi'
       assert_equal id_token['sub'], @user.uuid
       assert_equal id_token['aud'], 'test_login_service_session'
+      assert_equal id_token['azp'], 'test_login_service_session'
       assert_equal id_token['amr'], ['pwd']
       assert_equal id_token['nonce'], 'quux'
       assert_equal id_token['given_name'], @user.first_name
@@ -1920,6 +1924,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token2['iss'], 'https://api.opinsys.fi'
       assert_equal id_token2['sub'], @user.uuid
       assert_equal id_token2['aud'], 'test_login_service_session'
+      assert_equal id_token2['azp'], 'test_login_service_session'
       assert_equal id_token2['amr'], ['pwd']
       assert_equal id_token2['nonce'], 'mangle'
       assert_equal id_token2['given_name'], @user.first_name
@@ -2391,6 +2396,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['iss'], 'https://api.opinsys.fi'
       assert_equal id_token['sub'], @mfa_user.uuid
       assert_equal id_token['aud'], 'test_login_service'
+      assert_equal id_token['azp'], 'test_login_service'
       assert_equal id_token['amr'], ['pwd', 'mfa']
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @mfa_user.first_name
@@ -2567,6 +2573,7 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['iss'], 'https://api.opinsys.fi'
       assert_equal id_token['sub'], @mfa_user.uuid
       assert_equal id_token['aud'], 'test_login_service_session'
+      assert_equal id_token['azp'], 'test_login_service_session'
       assert_equal id_token['amr'], ['pwd', 'mfa']
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @mfa_user.first_name
