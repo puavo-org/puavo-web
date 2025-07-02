@@ -60,6 +60,19 @@ describe PuavoRest::OAuth2 do
     assert_equal token['expires_in'], expires_in
   end
 
+  # Verifies the standard at_hash claim
+  def check_at_hash(token, id_token)
+    assert token.include?('access_token')
+    assert id_token.include?('at_hash')
+    assert_equal Base64.strict_encode64(Digest::SHA256.digest(token['access_token'])[0..16]), id_token['at_hash']
+  end
+
+  # Verifies the standard c_hash claim
+  def check_c_hash(code, id_token)
+    assert id_token.include?('c_hash')
+    assert_equal Base64.strict_encode64(Digest::SHA256.digest(code)[0..16]), id_token['c_hash']
+  end
+
   describe 'Missing parameters must cause an error' do
     it 'Test missing or empty client_id' do
       # Omitted
@@ -460,6 +473,8 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['aud'], 'test_login_service'
       assert_equal id_token['amr'], ['pwd']
       assert_equal id_token['azp'], 'test_login_service'
+      check_at_hash(token, id_token)
+      check_c_hash(code, id_token)
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @user.first_name
       assert_equal id_token['family_name'], @user.last_name
@@ -503,6 +518,8 @@ describe PuavoRest::OAuth2 do
 
       # These are only known at the login time, so they must be omitted
       assert_equal userinfo.include?('amr'), false
+      assert_equal userinfo.include?('at_hash'), false
+      assert_equal userinfo.include?('c_hash'), false
       assert_equal userinfo.include?('auth_time'), false
     end
 
@@ -689,6 +706,8 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['aud'], 'test_login_service'
       assert_equal id_token['amr'], ['pwd']
       assert_equal id_token['azp'], 'test_login_service'
+      check_at_hash(token, id_token)
+      check_c_hash(code, id_token)
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @user.first_name
       assert_equal id_token['family_name'], @user.last_name
@@ -780,6 +799,8 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['aud'], 'test_login_service'
       assert_equal id_token['amr'], ['pwd']
       assert_equal id_token['azp'], 'test_login_service'
+      check_at_hash(token, id_token)
+      check_c_hash(code, id_token)
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @user.first_name
       assert_equal id_token['family_name'], @user.last_name
@@ -856,6 +877,49 @@ describe PuavoRest::OAuth2 do
       assert last_response.body.include?('Login to service <span>The Service</span>')
       assert get_named_form_value('type') == 'oidc'
       assert_equal css("p#error").text, 'Organisation is missing from the username. Use username@organisation.opinsys.fi format.'
+    end
+
+    it 'at_hash and c_hash tampering tests' do
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups')
+
+      post '/oidc/authorize/post', {
+        type: 'oidc',
+        request_id: get_named_form_value('request_id'),
+        state_key: get_named_form_value('state_key'),
+        organisation: 'example.puavo.net',
+        return_to: get_named_form_value('return_to'),
+        username: 'bob.brown@example.puavo.net',
+        password: 'secret',
+      }
+
+      assert last_response.redirect?
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      code = redirect.query_values['code']
+
+      post '/oidc/token', {
+        grant_type: 'authorization_code',
+        client_id: 'test_login_service',
+        client_secret: @external_service.puavoServiceSecret,
+        redirect_uri: 'http://service.example.com',
+        code: code
+      }
+
+      token = JSON.parse(last_response.body)
+      access_token = decode_token(token['access_token'], audience: 'puavo-rest-userinfo')
+      id_token = decode_token(token['id_token'], audience: 'test_login_service')
+
+      # Intentionally mess with the token and the authorization code
+      token['access_token'] += 'foo'
+      code += 'bar'
+
+      # The hashes must not match
+      # FIXME: Documentation says there should be a "assert_not_equal" method, but it does not exist?
+      assert_equal Base64.strict_encode64(Digest::SHA256.digest(token['access_token'])[0..16]) == id_token['at_hash'], false
+      assert_equal Base64.strict_encode64(Digest::SHA256.digest(code)[0..16]) == id_token['c_hash'], false
     end
 
     it 'Client gets disabled half-way the process' do
@@ -1846,6 +1910,8 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['sub'], @user.uuid
       assert_equal id_token['aud'], 'test_login_service_session'
       assert_equal id_token['azp'], 'test_login_service_session'
+      check_at_hash(token, id_token)
+      check_c_hash(code, id_token)
       assert_equal id_token['amr'], ['pwd']
       assert_equal id_token['nonce'], 'quux'
       assert_equal id_token['given_name'], @user.first_name
@@ -1925,6 +1991,8 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token2['sub'], @user.uuid
       assert_equal id_token2['aud'], 'test_login_service_session'
       assert_equal id_token2['azp'], 'test_login_service_session'
+      check_at_hash(token2, id_token2)
+      check_c_hash(code, id_token2)
       assert_equal id_token2['amr'], ['pwd']
       assert_equal id_token2['nonce'], 'mangle'
       assert_equal id_token2['given_name'], @user.first_name
@@ -2397,6 +2465,8 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['sub'], @mfa_user.uuid
       assert_equal id_token['aud'], 'test_login_service'
       assert_equal id_token['azp'], 'test_login_service'
+      check_at_hash(token, id_token)
+      check_c_hash(code, id_token)
       assert_equal id_token['amr'], ['pwd', 'mfa']
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @mfa_user.first_name
@@ -2574,6 +2644,8 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['sub'], @mfa_user.uuid
       assert_equal id_token['aud'], 'test_login_service_session'
       assert_equal id_token['azp'], 'test_login_service_session'
+      check_at_hash(token, id_token)
+      check_c_hash(code, id_token)
       assert_equal id_token['amr'], ['pwd', 'mfa']
       assert_equal id_token['nonce'], 'bar'
       assert_equal id_token['given_name'], @mfa_user.first_name

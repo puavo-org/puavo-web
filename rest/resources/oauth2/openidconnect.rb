@@ -10,6 +10,7 @@ require 'pg'
 require 'securerandom'
 require 'openssl'
 require 'jwt'
+require 'digest'
 
 require 'base64'
 require 'argon2'
@@ -785,6 +786,12 @@ private
       id_token['nonce'] = oidc_state['nonce']
     end
 
+    # Calculate the access token hash
+    id_token['at_hash'] = base64_half_hash(token[:access_token])
+
+    # Calculate the authorization code hash
+    id_token['c_hash'] = base64_half_hash(code)
+
     # Collect the user data and append it to the ID token
     begin
       user_data = IDTokenDataGenerator.new(request_id).generate(
@@ -1086,6 +1093,14 @@ private
       raw_token: token_claims,        # some places, like auditing, needs to see the raw data
       expires_at: now + expires_in
     }
+  end
+
+  # Returns a base64-encoded "half hash", ie. the first half (16 bytes) of a SHA256 hash of the input data.
+  # This hash format is used in some ID token claims. The client can use them to verify the data has been
+  # tampered with. I'm not sure why they only use half of a hash, but I'm speculating it is done to prevent
+  # length extension attacks (which SHA256 is susceptible to).
+  def base64_half_hash(data)
+    Base64.strict_encode64(Digest::SHA256.digest(data)[0..16])
   end
 
   def get_external_service(dn)
