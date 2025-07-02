@@ -159,7 +159,6 @@ class SSO < PuavoSinatra
           request_id: request_id,
           user_uuid: user.uuid,
           user_hash: user_hash,
-          original_url: request.url.to_s,
           redirect_url: url,
 
           # Data for the (potential) SSO session (we don't know yet if we have to create it)

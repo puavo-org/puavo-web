@@ -32,14 +32,6 @@ module MFA
 
       rlog.info("[#{request_id}] processing the MFA login form for session \"#{session_key}\"")
 
-      if params.include?('cancel')
-        # Cancel the MFA login, return to the original login form
-        rlog.info("[#{request_id}] canceling the login (#{session_data['original_url']})")
-
-        mfa_destroy_session(session_key, user_uuid)
-        return redirect session_data['original_url']
-      end
-
       # Is the code valid? Only the MFA verification server knows that, so ask it.
       mfa_code = params.fetch('mfa_code', nil)
 

@@ -463,7 +463,6 @@ private
           # Needed to validate the code and do the redirect
           request_id: request_id,
           user_uuid: user.uuid,
-          original_url: request.url.to_s,
 
           state_key: state_key,
         }
