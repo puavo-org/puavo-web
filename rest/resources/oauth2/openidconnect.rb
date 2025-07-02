@@ -735,51 +735,11 @@ private
     # For now, we always proceed with the original scopes and ignore the new scopes.
 
     # ----------------------------------------------------------------------------------------------
-    # All good. Build the ID token.
+    # All good. Build the access and ID tokens.
 
     # TODO: Should this be client-configurable?
     expires_in = 3600
     now = Time.now.utc.to_i
-
-    payload = {
-      'iss' => ISSUER,
-      'jti' => SecureRandom.uuid,
-      'sub' => oidc_state['user']['uuid'],
-      'aud' => oidc_state['client_id'],
-      'iat' => now,
-      'nbf' => now,
-      'exp' => now + expires_in,
-      'azp' => client_id,         # not sure if we need this
-      'auth_time' => oidc_state['auth_time']
-    }
-
-    payload['amr'] = oidc_state['user']['amr'] unless oidc_state['user']['amr'].empty?
-
-    if oidc_state.include?('nonce')
-      # If the nonce was present in the original request, send it back
-      payload['nonce'] = oidc_state['nonce']
-    end
-
-    # Collect the user data and append it to the payload
-    begin
-      user_data = IDTokenDataGenerator.new(request_id).generate(
-        ldap_credentials: {
-          dn: CONFIG['oauth2']['userinfo_dn'],
-          password: CONFIG['oauth2']['ldap_accounts'][CONFIG['oauth2']['userinfo_dn']]
-        },
-        domain: oidc_state['organisation']['domain'],
-        user_dn: oidc_state['user']['dn'],
-        scopes: oidc_state['scopes'],
-      )
-
-      json_error(user_data, request_id: request_id) if user_data.instance_of?(String)
-    rescue StandardError => e
-      # Tested (manually)
-      rlog.error("[#{request_id}] Could not gather the user data: #{e}")
-      json_error('server_error', state: state, request_id: request_id)
-    end
-
-    payload.merge!(user_data)
 
     # Build the access token. Currently it's only usable with the userinfo endpoint,
     # as the scope names are different.
@@ -806,6 +766,46 @@ private
       json_error('invalid_request', request_id: request_id)
     end
 
+    id_token = {
+      'iss' => ISSUER,
+      'jti' => SecureRandom.uuid,
+      'sub' => oidc_state['user']['uuid'],
+      'aud' => oidc_state['client_id'],
+      'iat' => now,
+      'nbf' => now,
+      'exp' => now + expires_in,
+      'azp' => client_id,         # not sure if we need this
+      'auth_time' => oidc_state['auth_time']
+    }
+
+    id_token['amr'] = oidc_state['user']['amr'] unless oidc_state['user']['amr'].empty?
+
+    if oidc_state.include?('nonce')
+      # If the nonce was present in the original request, send it back
+      id_token['nonce'] = oidc_state['nonce']
+    end
+
+    # Collect the user data and append it to the ID token
+    begin
+      user_data = IDTokenDataGenerator.new(request_id).generate(
+        ldap_credentials: {
+          dn: CONFIG['oauth2']['userinfo_dn'],
+          password: CONFIG['oauth2']['ldap_accounts'][CONFIG['oauth2']['userinfo_dn']]
+        },
+        domain: oidc_state['organisation']['domain'],
+        user_dn: oidc_state['user']['dn'],
+        scopes: oidc_state['scopes'],
+      )
+
+      json_error(user_data, request_id: request_id) if user_data.instance_of?(String)
+    rescue StandardError => e
+      # Tested (manually)
+      rlog.error("[#{request_id}] Could not gather the user data: #{e}")
+      json_error('server_error', state: state, request_id: request_id)
+    end
+
+    id_token.merge!(user_data)
+
     # Load the signing private key. Unlike the public key, this is not kept in memory.
     begin
       private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['token_key']['private_file']))
@@ -824,7 +824,7 @@ private
                           raw_requested_scopes: oidc_state['original_scopes'],
                           issued_scopes: oidc_state['scopes'],
                           redirect_uri: oidc_state['redirect_uri'],
-                          raw_token: payload,
+                          raw_token: id_token,
                           request: request)
 
     audit_issued_access_token(request_id,
@@ -834,25 +834,27 @@ private
                               raw_token: token[:raw_token],
                               request: request)
 
-    # Build and return the token data
-    out = {
+    # ----------------------------------------------------------------------------------------------
+    # Assemble the final bearer token and return it
+
+    bearer_token = {
       'access_token' => token[:access_token],
       'token_type' => 'Bearer',
       'expires_in' => expires_in,
-      'id_token' => JWT.encode(payload, private_key, 'ES256', { typ: 'at+jwt' }),
+      'id_token' => JWT.encode(id_token, private_key, 'ES256', { typ: 'at+jwt' }),
       'puavo_request_id' => request_id
     }
 
     if oidc_state['scopes_changed']
       # See the stage 2 handler for explanation
       # Tested
-      out['scopes'] = oidc_state['scopes'].join(' ')
+      bearer_token['scopes'] = oidc_state['scopes'].join(' ')
     end
 
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'
 
-    json(out)
+    json(bearer_token)
   rescue StandardError => e
     # Tested (manually)
     rlog.info("[#{request_id}] Unhandled exception: #{e}")
