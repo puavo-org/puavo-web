@@ -524,6 +524,151 @@ describe PuavoRest::OAuth2 do
       assert_equal userinfo.include?('auth_time'), false
     end
 
+    it 'Complete succesfull OpenID Connect login test (without nonce)' do
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups',
+                     extra: { 'state' => 'baz' })
+
+      post '/oidc/authorize/post', {
+        type: 'oidc',
+        request_id: get_named_form_value('request_id'),
+        state_key: get_named_form_value('state_key'),
+        return_to: get_named_form_value('return_to'),
+        username: 'bob.brown@example.puavo.net',
+        password: 'secret',
+      }
+
+      assert last_response.redirect?
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values['state'], 'baz'
+      assert_equal redirect.query_values.include?('nonce'), false
+      code = redirect.query_values['code']
+
+      post '/oidc/token', {
+        grant_type: 'authorization_code',
+        client_id: 'test_login_service',
+        client_secret: @external_service.puavoServiceSecret,
+        redirect_uri: 'http://service.example.com',
+        code: code
+      }
+
+      assert_equal last_response.status, 200
+      token = JSON.parse(last_response.body)
+
+      validate_access_token(token)
+      access_token = decode_token(token['access_token'], audience: 'puavo-rest-userinfo')
+      assert_equal access_token['user_dn'], @user.dn.to_s
+
+      id_token = decode_token(token['id_token'], audience: 'test_login_service')
+      assert_equal id_token['sub'], @user.uuid
+      assert_equal id_token['aud'], 'test_login_service'
+      assert_equal id_token.include?('nonce'), false
+      assert_equal id_token['given_name'], @user.first_name
+      assert_equal id_token['family_name'], @user.last_name
+      assert_equal id_token['preferred_username'], @user.username
+      assert_equal id_token['puavo.uuid'], @user.uuid
+      assert_equal id_token['puavo.puavoid'], @user.id
+    end
+
+    it 'Complete succesfull OpenID Connect login test (without state but with nonce)' do
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups',
+                     extra: { 'nonce' => 'quux' })
+
+      post '/oidc/authorize/post', {
+        type: 'oidc',
+        request_id: get_named_form_value('request_id'),
+        state_key: get_named_form_value('state_key'),
+        return_to: get_named_form_value('return_to'),
+        username: 'bob.brown@example.puavo.net',
+        password: 'secret',
+      }
+
+      assert last_response.redirect?
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values.include?('state'), false
+      code = redirect.query_values['code']
+
+      post '/oidc/token', {
+        grant_type: 'authorization_code',
+        client_id: 'test_login_service',
+        client_secret: @external_service.puavoServiceSecret,
+        redirect_uri: 'http://service.example.com',
+        code: code,
+        nonce: 'quux'
+      }
+
+      assert_equal last_response.status, 200
+      token = JSON.parse(last_response.body)
+
+      validate_access_token(token)
+      access_token = decode_token(token['access_token'], audience: 'puavo-rest-userinfo')
+      assert_equal access_token['user_dn'], @user.dn.to_s
+
+      id_token = decode_token(token['id_token'], audience: 'test_login_service')
+      assert_equal id_token['sub'], @user.uuid
+      assert_equal id_token['aud'], 'test_login_service'
+      assert_equal id_token['nonce'], 'quux'
+      assert_equal id_token['given_name'], @user.first_name
+      assert_equal id_token['family_name'], @user.last_name
+      assert_equal id_token['preferred_username'], @user.username
+      assert_equal id_token['puavo.uuid'], @user.uuid
+      assert_equal id_token['puavo.puavoid'], @user.id
+    end
+
+    it 'Complete succesfull OpenID Connect login test (no state and no nonce)' do
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups')
+
+      post '/oidc/authorize/post', {
+        type: 'oidc',
+        request_id: get_named_form_value('request_id'),
+        state_key: get_named_form_value('state_key'),
+        return_to: get_named_form_value('return_to'),
+        username: 'bob.brown@example.puavo.net',
+        password: 'secret',
+      }
+
+      assert last_response.redirect?
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values.include?('state'), false
+      code = redirect.query_values['code']
+
+      post '/oidc/token', {
+        grant_type: 'authorization_code',
+        client_id: 'test_login_service',
+        client_secret: @external_service.puavoServiceSecret,
+        redirect_uri: 'http://service.example.com',
+        code: code,
+      }
+
+      assert_equal last_response.status, 200
+      token = JSON.parse(last_response.body)
+
+      validate_access_token(token)
+      access_token = decode_token(token['access_token'], audience: 'puavo-rest-userinfo')
+      assert_equal access_token['user_dn'], @user.dn.to_s
+
+      id_token = decode_token(token['id_token'], audience: 'test_login_service')
+      assert_equal id_token['sub'], @user.uuid
+      assert_equal id_token['aud'], 'test_login_service'
+      assert_equal id_token.include?('nonce'), false
+      assert_equal id_token['given_name'], @user.first_name
+      assert_equal id_token['family_name'], @user.last_name
+      assert_equal id_token['preferred_username'], @user.username
+      assert_equal id_token['puavo.uuid'], @user.uuid
+      assert_equal id_token['puavo.puavoid'], @user.id
+    end
+
     it 'malformed client IDs in the token request' do
       # Since even one failed token request invalidates the code, we must redo the whole process every time
       ['a', 'aa', 'aaa', 'a' * 33, 'client_!"#%', 'FOOBAR', '{{{{{{', 'öööö', 'foo bar', 'client_❌', '➕➖➗🟰🧮️', 'hölökyn kölökyn'].each do |id|
