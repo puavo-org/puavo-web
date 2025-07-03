@@ -444,7 +444,8 @@ describe PuavoRest::OAuth2 do
         client_id: 'test_login_service',
         client_secret: @external_service.puavoServiceSecret,
         redirect_uri: 'http://service.example.com',
-        code: code
+        code: code,
+        nonce: 'bar'
       }
 
       assert_equal last_response.status, 200
@@ -551,7 +552,8 @@ describe PuavoRest::OAuth2 do
           client_id: id,
           client_secret: @external_service.puavoServiceSecret,
           redirect_uri: 'http://service.example.com',
-          code: code
+          code: code,
+          nonce: 'bar'
         }
 
         error = JSON.parse(last_response.body)
@@ -598,7 +600,8 @@ describe PuavoRest::OAuth2 do
         client_id: 'test_login_service',
         client_secret: @external_service.puavoServiceSecret,
         redirect_uri: 'http://service.example.com',
-        code: code
+        code: code,
+        nonce: 'bar'
       }
 
       assert_equal last_response.status, 200
@@ -677,7 +680,8 @@ describe PuavoRest::OAuth2 do
         client_id: 'test_login_service',
         client_secret: @external_service.puavoServiceSecret,
         redirect_uri: 'http://service.example.com',
-        code: code
+        code: code,
+        nonce: 'bar'
       }
 
       assert_equal last_response.status, 200
@@ -770,7 +774,8 @@ describe PuavoRest::OAuth2 do
         client_id: 'test_login_service',
         client_secret: @external_service.puavoServiceSecret,
         redirect_uri: 'http://service.example.com',
-        code: code
+        code: code,
+        nonce: 'bar'
       }
 
       assert_equal last_response.status, 200
@@ -922,6 +927,116 @@ describe PuavoRest::OAuth2 do
       assert_equal Base64.strict_encode64(Digest::SHA256.digest(code)[0..16]) == id_token['c_hash'], false
     end
 
+    it 'nonce test (part 1)' do
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups',
+                     extra: { nonce: 'foo' })
+
+      post '/oidc/authorize/post', {
+        type: 'oidc',
+        request_id: get_named_form_value('request_id'),
+        state_key: get_named_form_value('state_key'),
+        organisation: 'example.puavo.net',
+        return_to: get_named_form_value('return_to'),
+        username: 'bob.brown@example.puavo.net',
+        password: 'secret',
+      }
+
+      assert last_response.redirect?
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      code = redirect.query_values['code']
+
+      post '/oidc/token', {
+        grant_type: 'authorization_code',
+        client_id: 'test_login_service',
+        client_secret: @external_service.puavoServiceSecret,
+        redirect_uri: 'http://service.example.com',
+        code: code
+        # No 'nonce' used here. The request must fail because 'nonce' was specified in the original request.
+      }
+
+      assert_equal last_response.status, 400
+      assert_equal last_response.header['Content-Type'], 'application/json'
+      error = JSON.parse(last_response.body)
+      assert_equal error['error'], 'invalid_request'
+    end
+
+    it 'nonce test (part 2)' do
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups')
+
+      post '/oidc/authorize/post', {
+        type: 'oidc',
+        request_id: get_named_form_value('request_id'),
+        state_key: get_named_form_value('state_key'),
+        organisation: 'example.puavo.net',
+        return_to: get_named_form_value('return_to'),
+        username: 'bob.brown@example.puavo.net',
+        password: 'secret',
+      }
+
+      assert last_response.redirect?
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      code = redirect.query_values['code']
+
+      post '/oidc/token', {
+        grant_type: 'authorization_code',
+        client_id: 'test_login_service',
+        client_secret: @external_service.puavoServiceSecret,
+        redirect_uri: 'http://service.example.com',
+        code: code,
+        nonce: 'foo'    # this will fail, because no nonce was specified in the original request
+      }
+
+      assert_equal last_response.status, 400
+      assert_equal last_response.header['Content-Type'], 'application/json'
+      error = JSON.parse(last_response.body)
+      assert_equal error['error'], 'invalid_request'
+    end
+
+    it 'nonce test (part 3)' do
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups',
+                     extra: { nonce: 'foo' })
+
+      post '/oidc/authorize/post', {
+        type: 'oidc',
+        request_id: get_named_form_value('request_id'),
+        state_key: get_named_form_value('state_key'),
+        organisation: 'example.puavo.net',
+        return_to: get_named_form_value('return_to'),
+        username: 'bob.brown@example.puavo.net',
+        password: 'secret',
+      }
+
+      assert last_response.redirect?
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      code = redirect.query_values['code']
+
+      post '/oidc/token', {
+        grant_type: 'authorization_code',
+        client_id: 'test_login_service',
+        client_secret: @external_service.puavoServiceSecret,
+        redirect_uri: 'http://service.example.com',
+        code: code,
+        nonce: 'bar'    # this will fail, because the nonce value has changed
+      }
+
+      assert_equal last_response.status, 400
+      assert_equal last_response.header['Content-Type'], 'application/json'
+      error = JSON.parse(last_response.body)
+      assert_equal error['error'], 'invalid_request'
+    end
+
     it 'Client gets disabled half-way the process' do
       # Step 1: Authorize the user
       get format_uri('/oidc/authorize',
@@ -962,7 +1077,8 @@ describe PuavoRest::OAuth2 do
         client_id: 'test_login_service',
         client_secret: @external_service.puavoServiceSecret,
         redirect_uri: 'http://service.example.com',
-        code: code
+        code: code,
+        nonce: 'bar'
       }
 
       assert_equal last_response.status, 400
@@ -1724,7 +1840,8 @@ describe PuavoRest::OAuth2 do
         client_id: 'test_login_service',
         client_secret: @external_service.puavoServiceSecret,
         redirect_uri: 'http://service.example.com',
-        code: code
+        code: code,
+        nonce: 'bar'
       }
 
       assert_equal last_response.status, 200
@@ -1882,7 +1999,8 @@ describe PuavoRest::OAuth2 do
         client_id: 'test_login_service_session',
         client_secret: @external_service2.puavoServiceSecret,
         redirect_uri: 'http://session_test.example.com',
-        code: code
+        code: code,
+        nonce: 'quux'
       }
 
       assert_equal last_response.status, 200
@@ -1966,7 +2084,8 @@ describe PuavoRest::OAuth2 do
         client_id: 'test_login_service_session',
         client_secret: @external_service2.puavoServiceSecret,
         redirect_uri: 'http://session_test.example.com',
-        code: code
+        code: code,
+        nonce: 'mangle'
       }
 
       assert_equal last_response.status, 200
@@ -2437,7 +2556,8 @@ describe PuavoRest::OAuth2 do
         client_id: 'test_login_service',
         client_secret: @external_service.puavoServiceSecret,
         redirect_uri: 'http://service.example.com',
-        code: code
+        code: code,
+        nonce: 'bar'
       }
 
       assert_equal last_response.status, 200
@@ -2616,7 +2736,8 @@ describe PuavoRest::OAuth2 do
         client_id: 'test_login_service_session',
         client_secret: @external_service2.puavoServiceSecret,
         redirect_uri: 'http://session_test.example.com',
-        code: code
+        code: code,
+        nonce: 'bar'
       }
 
       assert_equal last_response.status, 200
@@ -2696,7 +2817,8 @@ describe PuavoRest::OAuth2 do
         client_id: 'test_login_service_session',
         client_secret: @external_service2.puavoServiceSecret,
         redirect_uri: 'http://session_test.example.com',
-        code: code
+        code: code,
+        nonce: 'mangle'
       }
 
       assert_equal last_response.status, 200

@@ -630,6 +630,31 @@ private
     rlog.info("[#{request_id}] OIDC stage 3 token generation for state \"#{code}\"")
 
     # ----------------------------------------------------------------------------------------------
+    # Verify the nonce
+
+    # If the original authorization request included the nonce value, the same nonce must also be present in
+    # the access token request. Likewise, if the original request did *not* include it, it must *not* be
+    # present in this request either.
+    if oidc_state.include?('nonce') != params.include?('nonce')
+      # Tested
+      rlog.error("[#{request_id}] Mismatch between nonce presence in the authorization request " \
+                 "(#{oidc_state.include?('nonce')}) and access token request (#{params.include?('nonce')})")
+      json_error('invalid_request', request_id: temp_request_id)
+    end
+
+    if oidc_state.include?('nonce')
+      if oidc_state['nonce'] != params['nonce']
+        # Compare the nonce values
+        # Tested
+        rlog.error("[#{request_id}] Nonce mismatch. Authorization request nonce: #{oidc_state['nonce'].inspect}; " \
+                   "access token request nonce: #{params['nonce'].inspect}")
+        json_error('invalid_request', request_id: temp_request_id)
+      else
+        rlog.info("[#{request_id}] Nonce check passed")
+      end
+    end
+
+    # ----------------------------------------------------------------------------------------------
     # Verify the redirect URI
 
     # This has to be the same address where the response was sent at the end of stage 2.
