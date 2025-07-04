@@ -1172,6 +1172,48 @@ describe PuavoRest::OAuth2 do
       assert_equal Base64.strict_encode64(Digest::SHA256.digest(code)[0..16]) == id_token['c_hash'], false
     end
 
+    it 'malformed "code" tests' do
+      # The long hex strings are just random values
+      ['', '           ', 'foobar',
+       'ed1fb2affdc28cd544caf164279420c1d99198c9bcdfcd155f7036cfdd5ab2199c71b4108b1913a6da549c2ef6909f729e8dbbbe4ff257010f1d46d51b49d8e',
+       'a0f6b441eb65e91dfac794cf073cfc61f8811a44aa24413b109b87f6468e310f9a0e74b7e1848669f59a4df3a1b5469f84a2934dc4fdf045b2cf16bb82063002',
+       '07354b98208469b637280a8242766988059e563e5732e2213981d4d3af05f4bb5c33d720592cd4f99ed87f91a309ee1d1cbe8e5f04eded6d8cc4aa986ce14de073696ba1c2610c811a24c8f5d1a3c8fac49294be29c3f48b1c9c9b2eb148e3dc702991cc',
+      ].each do |test_code|
+        get format_uri('/oidc/authorize',
+                       client_id: 'test_login_service',
+                       redirect_uri: 'http://service.example.com',
+                       response_type: 'code',
+                       scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups')
+
+        post '/oidc/authorize/post', {
+          type: 'oidc',
+          request_id: get_named_form_value('request_id'),
+          state_key: get_named_form_value('state_key'),
+          organisation: 'example.puavo.net',
+          return_to: get_named_form_value('return_to'),
+          username: 'bob.brown@example.puavo.net',
+          password: 'secret',
+        }
+
+        assert last_response.redirect?
+        redirect = Addressable::URI.parse(last_response.headers['Location'])
+        code = redirect.query_values['code']
+
+        post '/oidc/token', {
+          grant_type: 'authorization_code',
+          client_id: 'test_login_service',
+          client_secret: @external_service.puavoServiceSecret,
+          redirect_uri: 'http://service.example.com',
+          code: test_code
+        }
+
+        assert_equal last_response.status, 400
+        assert_equal last_response.header['Content-Type'], 'application/json'
+        error = JSON.parse(last_response.body)
+        assert_equal error['error'], 'invalid_request'
+      end
+    end
+
     it 'nonce test (part 1)' do
       get format_uri('/oidc/authorize',
                      client_id: 'test_login_service',
