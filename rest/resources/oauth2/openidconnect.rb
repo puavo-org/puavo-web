@@ -1210,7 +1210,9 @@ private
 
     halt http_status, json(out)
   rescue StandardError => e
-    puts e
+    # Tested (manually)
+    $rest_log.error("[#{request_id || '??????????'}] json_error(): could not format the error return: #{e}")
+    halt 500, "fatal server error, please contact support and give them this message, including this code: #{request_id.inspect}"
   end
 
   helpers do
