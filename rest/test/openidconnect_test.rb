@@ -394,6 +394,106 @@ describe PuavoRest::OAuth2 do
       ])
     end
 
+    it 'Empty state values must fail' do
+      # State specified, but without a value
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid',
+                     extra: { 'state' => nil })
+
+      assert_equal last_response.status, 302
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values['error'], 'invalid_request'
+
+      # Empty state string
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid',
+                     extra: { 'state' => '' })
+
+      assert_equal last_response.status, 302
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values['error'], 'invalid_request'
+
+      # Just whitespace
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid',
+                     extra: { 'state' => ' ' })
+
+      assert_equal last_response.status, 302
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values['error'], 'invalid_request'
+
+      # Just whitespace again
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid',
+                     extra: { 'state' => " \n\t \r           " })
+
+      assert_equal last_response.status, 302
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values['error'], 'invalid_request'
+    end
+
+    it 'Empty nonce values must fail' do
+      # Nonce specified, but without a value
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid',
+                     extra: { 'state' => 'foo', 'nonce' => nil })
+
+      assert_equal last_response.status, 302
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values['error'], 'invalid_request'
+
+      # Empty nonce string
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid',
+                     extra: { 'state' => 'foo', 'nonce' => '' })
+
+      assert_equal last_response.status, 302
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values['error'], 'invalid_request'
+
+      # Just whitespace
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid',
+                     extra: { 'state' => 'foo', 'nonce' => ' ' })
+
+      assert_equal last_response.status, 302
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values['error'], 'invalid_request'
+
+      # Just whitespace again
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid',
+                     extra: { 'state' => 'foo', 'nonce' => " \n\t \r           " })
+
+      assert_equal last_response.status, 302
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values['error'], 'invalid_request'
+    end
+
     # Basically a "reference" test. Everything is checked.
     it 'Complete succesfull OpenID Connect login and userinfo test' do
       # Step 1: Authorize the user

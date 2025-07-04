@@ -229,6 +229,31 @@ private
     end
 
     # ----------------------------------------------------------------------------------------------
+    # Verify state and nonce, if specified
+
+    # If the state is specified, it must be a valid non-empty string. In the oidc_state (see below) a nil
+    # "state" means it was omitted from the request, not that it was an empty string.
+    if params.include?('state')
+      if params['state'].nil? || params['state'].strip.empty?
+        # Tested
+        rlog.error("[#{request_id}] State value specified, but it is nil/empty (#{params['state'].inspect})")
+        redirect_error(redirect_uri, 'invalid_request', request_id: request_id)
+      else
+        rlog.info("[#{request_id}] Have state #{params['state'].inspect}")
+      end
+    end
+
+    if params.include?('nonce')
+      if params['nonce'].nil? || params['nonce'].strip.empty?
+        # Tested
+        rlog.error("[#{request_id}] Nonce value specified, but it is nil/empty (#{params['nonce'].inspect})")
+        redirect_error(redirect_uri, 'invalid_request', state: params.fetch('state', nil), request_id: request_id)
+      else
+        rlog.info("[#{request_id}] Have nonce #{params['nonce'].inspect}")
+      end
+    end
+
+    # ----------------------------------------------------------------------------------------------
     # The request is valid. Build a state structure that tracks the process and store it in Redis.
 
     # This structure tracks the user's OpenID Connect authorization session. While separate
