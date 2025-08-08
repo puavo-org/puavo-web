@@ -16,8 +16,6 @@ describe Device, :type => :model do
     @device.puavoDeviceType = "fatclient"
     @device.puavoSchool = @school.dn
     @device.save!
-
-
   end
 
   it "can save mountpoint " do
@@ -30,7 +28,7 @@ describe Device, :type => :model do
     assert_equal "nfs3", Device.first.fs[0]
     assert_equal "10.0.0.1/share", Device.first.path[0]
     assert_equal "/home/share", Device.first.mountpoint[0]
-    assert_equal nil, Device.first.options[0]
+    assert_nil Device.first.options[0]
   end
 
   it "can save mountpoint by json " do
@@ -40,6 +38,6 @@ describe Device, :type => :model do
     assert_equal "nfs4", Device.first.fs[0]
     assert_equal "10.0.0.2/share", Device.first.path[0]
     assert_equal "/home/public/share", Device.first.mountpoint[0]
-    assert_equal nil, Device.first.options[0]
+    assert_nil Device.first.options[0]
   end
 end
