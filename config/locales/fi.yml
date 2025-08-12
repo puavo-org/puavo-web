@@ -1848,15 +1848,6 @@ fi:
         change_school:
           title: "Vaihda koulua..."
           school_title: "Uusi koulu:"
-        tags:
-          warning: "Tämä työkalu lisää ja poistaa yksittäisiä tageja koskematta muihin tageihin. Jos haluat poistaa tai vaihtaa kaikki tagit kerralla, valitse Operaatio-listasta <em>\"Aseta tietokannan kentän arvo..\"</em> ja sieltä <em>\"Tagit (korvaa kaikki)\"</em>."
-          title: "Tagieditori"
-          tag: "Tagit:"
-          action: "Toiminto:"
-          help: "Anna yksi tai useampi tagi välilyönneillä eroteltuna. Ylimääräiset välilyönnit poistetaan automaattisesti (mukaanlukien alusta ja lopusta)."
-          add: "Lisää tagi(t)"
-          remove: "Poista tagi(t)"
-          empty_tag: "Tagikenttä ei saa olla tyhjä"
         puavoconf:
           json_warning: "Tämä työkalu lisää, poistaa ja muokkaa <strong>yksittäisiä</strong> PuavoConf-arvoja. Jos haluat korvata ne kaikki yhdellä kertaa ja ne ovat sinulla valmiina JSON-muodossa, valitse Operaatio-listasta <em>\"Aseta tietokannan kentän arvo...\"</em> ja sieltä <em>\"PuavoConf (korvaa kaikki)\"</em>. Se antaa sinun ylikirjoittaa laitteen kaikki puavoconf -arvot yhdellä kertaa halutuiksi.<br><br>"
           title: "PuavoConf-muokkaus..."
@@ -1871,6 +1862,15 @@ fi:
           type_int: "integer"
           type_bool: "bool"
           empty_key: "Avaimen nimi ei voi olla tyhjä"
+        tags:
+          warning: "Tämä työkalu lisää ja poistaa yksittäisiä tageja koskematta muihin tageihin. Jos haluat poistaa tai vaihtaa kaikki tagit kerralla, valitse Operaatio-listasta <em>\"Aseta tietokannan kentän arvo..\"</em> ja sieltä <em>\"Tagit (korvaa kaikki)\"</em>."
+          title: "Tagieditori"
+          tag: "Tagit:"
+          action: "Toiminto:"
+          help: "Anna yksi tai useampi tagi välilyönneillä eroteltuna. Ylimääräiset välilyönnit poistetaan automaattisesti (mukaanlukien alusta ja lopusta)."
+          add: "Lisää tagi(t)"
+          remove: "Poista tagi(t)"
+          empty_tag: "Tagikenttä ei saa olla tyhjä"
         set_field:
           title: "Aseta tietokannan kentän arvo..."
           field: "Kenttä:"
