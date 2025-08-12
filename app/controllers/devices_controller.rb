@@ -66,6 +66,10 @@ class DevicesController < ApplicationController
     @permit_device_mass_tag_editor = @is_owner || current_user.has_admin_permission?(:device_mass_tag_editor)
     permit_device_mass_school_change = @is_owner || current_user.has_admin_permission?(:device_change_school, :device_mass_change_school)
 
+    @permit_device_mass_edit_expiration_times = @is_owner ||
+      (current_user.has_admin_permission?(:device_edit_expiration_times) &&
+      current_user.has_admin_permission?(:device_mass_edit_expiration_times))
+
     @device = Device.new
 
     if is_owner?
@@ -248,6 +252,9 @@ class DevicesController < ApplicationController
     @device.objectClass_by_device_type = params[:device_type]
     @device.puavoDeviceType = params[:device_type]
 
+    @permit_edit_expiration_times = is_owner? ||
+      current_user.has_admin_permission?(:device_edit_expiration_times)
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @device }
@@ -270,6 +277,9 @@ class DevicesController < ApplicationController
 
     @releases = get_releases
     @image_filenames_by_release = DevicesHelper.group_image_filenames_by_release(@releases)
+
+    @permit_edit_expiration_times = is_owner? ||
+      current_user.has_admin_permission?(:device_edit_expiration_times)
   end
 
   # POST /devices
@@ -289,8 +299,21 @@ class DevicesController < ApplicationController
     handle_date_multiparameter_attribute(dp, "puavoPurchaseDate")
     handle_date_multiparameter_attribute(dp, "puavoWarrantyEndDate")
     dp[:objectClass] = device_objectClass
+
     @device = Device.new(dp)
     @device.puavoSchool = @school.dn
+
+    # Convert the initial expiration time, if specified and the current user is permitted
+    # to edit device expiration times. For more details, see the comments in the users
+    # controller.
+    if is_owner? || current_user.has_admin_permission?(:device_edit_expiration_times)
+      if params.include?(:expirationValue) && !params[:expirationValue].empty?
+        @device.puavoDeviceExpirationTime = Time.at(params[:expirationValue].to_i)
+      end
+    else
+      # Ensure this really stays nil
+      @device.puavoDeviceExpirationTime = nil
+    end
 
     # @device_type_label is used in the form title. It is set correctly on the first time
     # the form is opened, but if the (new) device cannot be saved, the title gets lost.
@@ -365,6 +388,19 @@ class DevicesController < ApplicationController
     dp = device_params
     handle_date_multiparameter_attribute(dp, "puavoPurchaseDate")
     handle_date_multiparameter_attribute(dp, "puavoWarrantyEndDate")
+
+    # Wrangle with the expiration timestamp. See the comments in the users controller for details.
+    if is_owner? || current_user.has_admin_permission?(:device_edit_expiration_times)
+      if params.include?(:expirationValue)
+        unless params[:expirationValue].empty?
+          # Set
+          dp['puavoDeviceExpirationTime'] = Time.at(params[:expirationValue].to_i)
+        else
+          # The expiration time was cleared, or it was never set
+          dp['puavoDeviceExpirationTime'] = nil
+        end
+      end
+    end
 
     # This is so ugly code. I'm sorry.
     failed = false

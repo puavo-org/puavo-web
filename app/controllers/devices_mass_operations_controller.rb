@@ -35,6 +35,9 @@ class DevicesMassOperationsController < MassOperationsController
         when 'delete'
           _delete(id)
 
+        when 'set_expiration_time'
+          _set_expiration_time(id, data)
+
         else
           next false, "Unknown operation \"#{@operation}\""
       end
@@ -141,5 +144,33 @@ class DevicesMassOperationsController < MassOperationsController
     end
 
     return [true, nil]
+  end
+
+  # Mass operation: set or clear device expiration time
+  def _set_expiration_time(id, data)
+    device = Device.find(id)
+    changed = false
+
+    if @parameters['time'].nil?
+      unless device.puavoDeviceExpirationTime.nil?
+        # Clear
+        device.puavoDeviceExpirationTime = nil
+        changed = true
+      end
+    else
+      d = Time.at(@parameters['time'])
+
+      if device.puavoDeviceExpirationTime != d
+        # Set
+        device.puavoDeviceExpirationTime = d
+        changed = true
+      end
+    end
+
+    device.save! if changed
+
+    return [true, nil]
+  rescue StandardError => e
+    return [false, e]
   end
 end

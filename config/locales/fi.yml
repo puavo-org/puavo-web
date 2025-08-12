@@ -372,6 +372,7 @@ fi:
       uptime: "Käynnissäoloaika"
       puavopkgs: "puavo-pkg -pakettilista"
       tz: "Aikavyöhyke"
+      expiration: "Laite vanhenee"
 
     servers:
       available_images: "Tarjolla olevat kuvatiedostot"
@@ -1226,6 +1227,8 @@ fi:
         device_mass_change_school: "voi massasiirtää laitteita koulusta toiseen"
         device_mass_tag_editor: "voi massamuokata laitteiden tageja"
         device_mass_change_purchase_information: "voi massamuokata laitteiden hankintatietoja"
+        device_edit_expiration_times: "voi muokata laitteiden vanhenemisaikoja"
+        device_mass_edit_expiration_times: "voi massamuokata laitteiden vanhenemisaikoja"
       teacher_permissions:
         title: "Opettajan oikeudet"
         set_student_password: "voi vaihtaa oppilaiden salasanoja"
@@ -1301,6 +1304,8 @@ fi:
         device_mass_change_school: "Voi massasiirtää laitteita koulusta toiseen (tavallinen laitteen koulunvaihto on myös oltava sallittuna)"
         device_mass_tag_editor: "Voi massamuokata laitteiden tageja"
         device_mass_change_purchase_information: "Voi massamuokata laitteiden hankintatietoja"
+        device_edit_expiration_times: "Voi muokata laitteiden vanhenemisaikoja"
+        device_mass_edit_expiration_times: "Voi massamuokata laitteiden vanhenemisaikoja"
 
     edit_teacher_permissions:
       title: "Muokkaaa opettajan oikeuksia"
@@ -2446,6 +2451,7 @@ fi:
         puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
         puavoDeviceHWInfo: Laitteistotiedot päivitetty
         puavoTimezone: "Aikavyöhyke"
+        puavoDeviceExpirationTime: "Laitteen vanhenemisaika"
       server:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Verkkonimi

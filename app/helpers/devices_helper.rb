@@ -84,6 +84,7 @@ module DevicesHelper
       'puavoDeviceOnHour',
       'puavoDeviceOffHour',
       'puavoDeviceReset',
+      'puavoDeviceExpirationTime',
       'authTimestamp',      # LDAP operational attribute
       'createTimestamp',    # LDAP operational attribute
       'modifyTimestamp'     # LDAP operational attribute
@@ -324,6 +325,10 @@ module DevicesHelper
         out[:reset_fulfilled] = DateTime.parse(reset['request-fulfilled']).to_i
       rescue
       end
+    end
+
+    if dev['puavoDeviceExpirationTime']
+      out[:expiration] = Puavo::Helpers::convert_ldap_time(dev['puavoDeviceExpirationTime'])
     end
 
     # Parse the hardware information

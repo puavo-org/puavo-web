@@ -20,3 +20,13 @@
 <% if @image_filenames_by_release %>
 <%= render partial: 'shared/known_recent_releases_selector', formats: :js, locals: { edit_field: 'device_puavoDeviceImage' } %>
 <% end %>
+
+<% if @permit_edit_expiration_times && @device && @device.puavoDeviceType != 'bootserver' %>
+<%= render partial: 'shared/expiration_time_editor', locals: {
+        expirationTimeField: "input#device_puavoDeviceExpirationTime",
+        clearExpirationTimeButton: "button#clearExpirationTime",
+        expirationPresetsSelect: "select#setExpirationTime",
+        expirationValue: "input#expirationValue",
+        initialExpirationTime: @device.puavoDeviceExpirationTime.nil? ? nil : @device.puavoDeviceExpirationTime
+    } %>
+<% end %>

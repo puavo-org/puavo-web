@@ -297,6 +297,15 @@ const COLUMN_DEFINITIONS = {
         type: ST.ColumnType.STRING,
     },
 
+<% unless @is_servers %>
+    expiration: {
+        key: "expiration",
+        title: "<%= t('columns.devices.expiration') %>",
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_NULLABLE,
+    },
+<% end %>
+
     hd: {
         key: "hd",
         title: "<%= t('columns.devices.hwinfo_hd_size') %>",
@@ -818,6 +827,9 @@ const COLUMN_ORDER = [
     "puavopkgs",
     "desc",
     "notes",
+<% unless @is_servers %>
+    "expiration",
+<% end %>
 ];
 
 const FILTER_PRESETS = [
@@ -1739,6 +1751,117 @@ class MassDeviceDeletion extends ST.MassOperation {
     }
 };
 <% end %>
+
+<% if @permit_device_mass_edit_expiration_times %>
+const pad = (n, count=2) => n.toString().padStart(count, "0")
+
+// Mass operation: set or clear expiration times. Uses the translation strings from the users page,
+// as the strings are 100% identical and I don't want to duplicate them (even if there are only
+// a few of them).
+class MassSetExpirationTimes extends ST.MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+        this.expirationTime = null;
+    }
+
+    buildInterface()
+    {
+        this.container.innerHTML =
+`<table class="settingsChild">
+<tr>
+    <th><%= t('users.index.mass_operations.set_expiration_times.set_to') %></th>
+    <td>
+        <div class="flex-cols gap-5px">
+            <input type="datetime-local" id="time" autocomplete="off" step="1">
+
+            <button type="button" id="clear"><%= t('expiration_times.clear') %></button>
+
+            <select id="preset" autocomplete="off">
+            <option value="" disabled selected hidden><%= t('expiration_times.presets') %></option>
+            <%= expiration_time_presets %>
+            </select>
+        </div>
+    </td>
+</tr>`;
+
+        this.container.querySelector("input#time").addEventListener("change", e => this.onChangeTime(e));
+        this.container.querySelector("button#clear").addEventListener("click", () => this.onClear());
+        this.container.querySelector("select#preset").addEventListener("change", e => this.onSelectPreset(e));
+    }
+
+    onChangeTime(e)
+    {
+        const d = e.target.value;
+
+        if (d === null) {
+            this.expirationTime = null;
+            return;
+        }
+
+        // Local time -> UTC time
+        const offset = new Date().getTimezoneOffset(),
+              offsetString = `${offset < 0 ? "+" : "-"}${pad(Math.abs(offset) / 60, 2)}:${pad(Math.abs(offset) % 60, 2)}`;
+
+        this.expirationTime = new Date(e.target.value + offsetString);
+        console.log(this.expirationTime);
+    }
+
+    onClear()
+    {
+        this.container.querySelector("input#time").value = null;
+        this.expirationTime = null;
+    }
+
+    onSelectPreset(e)
+    {
+        this.expirationTime = new Date(new Date().getTime() + (parseInt(e.target.value, 10) * 1000));
+        this.setTime(this.expirationTime);
+        e.target.value = "";
+    }
+
+    setTime(date)
+    {
+        this.container.querySelector("input#time").value =
+            pad(date.getFullYear(), 4) + "-" +
+            pad(date.getMonth() + 1) + "-" +
+            pad(date.getDate()) + "T" +
+            pad(date.getHours()) + ":" +
+            pad(date.getMinutes()) + ":" +
+            pad(date.getSeconds());
+    }
+
+    canProceed()
+    {
+        return true;
+    }
+
+    start()
+    {
+        for (const i of this.container.querySelectorAll("input, button, select"))
+            i.disabled = true;
+    }
+
+    finish()
+    {
+        for (const i of this.container.querySelectorAll("input, button, select"))
+            i.disabled = false;
+    }
+
+    getOperationParameters()
+    {
+        return {
+            action: 'set_expiration_time',
+            time: (this.expirationTime === null) ? null : Math.floor(this.expirationTime.getTime() / 1000)
+        };
+    }
+
+    prepareItem(item)
+    {
+        return { state: "ready" };
+    }
+};
+<% end %>
 <% end %>
 
 const MASS_OPERATIONS = [
@@ -1773,6 +1896,14 @@ const MASS_OPERATIONS = [
     },
 <% end %>
 <% unless @is_servers %>
+<% if @permit_device_mass_edit_expiration_times %>
+    {
+        operation: "set_expiration_time",
+        title: "<%= t('users.index.mass_operations.set_expiration_times.title') %>",
+        haveSettings: true,
+        cls: MassSetExpirationTimes
+    },
+<% end %>
 <% unless @school_list.empty? %>
     {
         operation: "change_school",

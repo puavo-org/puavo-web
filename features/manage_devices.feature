@@ -377,3 +377,58 @@ Feature: Manage devices
     And I select "(Leave unset)" from "device[puavoTimezone]"
     And I press "Update"
     Then I should see "Time zone has not been set"
+
+  Scenario: Create a new device with expiration time (and clear it)
+    # Set
+    Given I am on the new other device page
+    When I fill in "Hostname" with "testdevice"
+    And I set the expiration time to 1754900001
+    And I press "Create"
+    Then I should see "Device was successfully created."
+    And I should see "2025-08-11"
+    And I should see ":13:21"
+    # Clear
+    When I follow "Edit..."
+    And I clear the expiration time
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should not see "2025-08-11"
+
+  Scenario: Set and clear an existing devices's expiration time
+    # Create
+    Given I am on the new other device page
+    When I fill in "Hostname" with "testdevice"
+    And I press "Create"
+    Then I should see "Device was successfully created."
+    And I should not see "2025-08-11"
+    # Set
+    When I follow "Edit..."
+    And I set the expiration time to 1754900001
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should see "2025-08-11"
+    And I should see ":13:21"
+    # Clear
+    When I follow "Edit..."
+    And I clear the expiration time
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should not see "2025-08-11"
+
+  # Admin should not be able to edit or clear expiration times if not permitted to do so
+  Scenario: Admin cannot see or clear device expiration times if they're not permitted to do so
+    # Create
+    Given I am on the new other device page
+    When I fill in "Hostname" with "testdevice"
+    And I set the expiration time to 1754900001
+    And I press "Create"
+    # Check
+    Given I am logged in as "superadmin" with password "tXFwIFcJN9"
+    And I am on the show device page with "testdevice"
+    When I follow "Edit..."
+    Then I should not see "Device expires at"
+    # Permit
+    Given admin "superadmin" has these permissions: "device_edit_expiration_times"
+    And I am on the show device page with "testdevice"
+    When I follow "Edit..."
+    Then I should see "Device expires at"

@@ -24,6 +24,7 @@ class Device < Host
   ldap_map :puavoSchool,                   :school_dn
   ldap_map :serialNumber,                  :serial_number
   ldap_map :puavoDisplayName,              :display_name
+  ldap_map :puavoDeviceExpirationTime,     :expiration_time,          LdapConverters::TimeStamp
 
   ldap_map :puavoMenuData,                 :puavomenu_data
   skip_serialize :puavomenu_data
@@ -741,6 +742,7 @@ class Devices < PuavoSinatra
     'display_name'            => 'puavoDisplayName',
     'dn'                      => 'dn',
     'hostname'                => 'puavoHostname',
+    'device_expiration_time'  => 'puavoDeviceExpirationTime',
     'hw_info'                 => 'puavoDeviceHWInfo',
     'id'                      => 'puavoId',
     'image'                   => 'puavoDeviceImage',
@@ -789,6 +791,7 @@ class Devices < PuavoSinatra
     'puavoDeviceCurrentImage'       => { name: 'current_image' },
     'puavoDeviceDefaultAudioSink'   => { name: 'audio_out' },
     'puavoDeviceDefaultAudioSource' => { name: 'audio_in' },
+    'puavoDeviceExpirationTime'     => { name: 'device_expiration_time', type: :ldap_timestamp },
     'puavoDeviceHWInfo'             => { name: 'hw_info' },
     'puavoDeviceImage'              => { name: 'image' },
     'puavoDeviceKernelArguments'    => { name: 'kernel_args' },

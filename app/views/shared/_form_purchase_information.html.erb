@@ -25,5 +25,25 @@
     <th><%= f.label :puavoSupportContract %></th>
     <td><%= f.text_field :puavoSupportContract %></td>
   </tr>
+
+  <% if @permit_edit_expiration_times && (@is_new_device || (@device && @device.puavoDeviceType != 'bootserver')) %>
+  <tr>
+    <th><%= f.label :puavoDeviceExpirationTime %></th>
+    <td>
+        <div class="flex-cols gap-5px">
+          <input type="datetime-local" id="device_puavoDeviceExpirationTime" autocomplete="off" step="1">
+
+          <button type="button" id="clearExpirationTime"><%= t('expiration_times.clear') %></button>
+
+          <select id="setExpirationTime" autocomplete="off">
+              <option value="" disabled selected hidden><%= t('expiration_times.presets') %></option>
+              <%= expiration_time_presets %>
+          </select>
+        </div>
+
+        <input type="hidden" id="expirationValue" name="expirationValue" autocomplete="off" value="<%= @device.puavoDeviceExpirationTime.nil? ? '' : @device.puavoDeviceExpirationTime.to_i %>">
+    </td>
+  </tr>
+  <% end %>
 </table>
 <!-- shared/_form_purchase_information ends -->

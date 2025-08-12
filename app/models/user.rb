@@ -72,6 +72,7 @@ class User < LdapBase
     group_change_school group_mass_change_type
     create_devices delete_devices mass_delete_devices reset_devices mass_reset_devices
     device_change_school device_mass_change_school device_mass_tag_editor device_mass_change_purchase_information
+    device_edit_expiration_times device_mass_edit_expiration_times
   ].freeze
 
   # Valid and known permissions for teachers. Used in has_teacher_permission?(), for example.

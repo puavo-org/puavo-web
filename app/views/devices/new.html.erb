@@ -15,3 +15,13 @@
 </div>
 
 <%= render :partial => 'shared/puavoconf_editor', :locals => { storage: "device_puavoConf" } %>
+
+<% if @permit_edit_expiration_times %>
+<%= render partial: 'shared/expiration_time_editor', locals: {
+        expirationTimeField: "input#device_puavoDeviceExpirationTime",
+        clearExpirationTimeButton: "button#clearExpirationTime",
+        expirationPresetsSelect: "select#setExpirationTime",
+        expirationValue: "input#expirationValue",
+        initialExpirationTime: nil
+    } %>
+<% end %>

@@ -372,6 +372,7 @@ en:
       uptime: "Uptime"
       puavopkgs: "puavo-pkg packages list"
       tz: "Timezone"
+      expiration: "Device expires at"
 
     servers:
       available_images: "Available images"
@@ -1226,6 +1227,8 @@ en:
         device_mass_change_school: "can mass move devices to another school"
         device_mass_tag_editor: "can mass edit device tags"
         device_mass_change_purchase_information: "can mass edit device purchase information"
+        device_edit_expiration_times: "can edit device expiration times"
+        device_mass_edit_expiration_times: "can mass edit device expiration times"
       teacher_permissions:
         title: "Teacher's permissions"
         set_student_password: "can change student passwords"
@@ -1301,6 +1304,8 @@ en:
         device_mass_change_school: "Can mass move devices to another school (normal device school changing must also be granted)"
         device_mass_tag_editor: "Can mass edit device tags"
         device_mass_change_purchase_information: "Can mass edit device purchase information"
+        device_edit_expiration_times: "Can edit device expiration times"
+        device_mass_edit_expiration_times: "Can mass edit device expiration times"
 
     edit_teacher_permissions:
       title: "Edit Teacher Permissions"
@@ -2446,6 +2451,7 @@ en:
         puavoImageSeriesSourceURL: Image series source URL
         puavoDeviceHWInfo: Hardware info updated
         puavoTimezone: "Time zone"
+        puavoDeviceExpirationTime: "Device expires at"
       server:
         puavoDeviceType: Device type
         puavoHostname: Hostname
