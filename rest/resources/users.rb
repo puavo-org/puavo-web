@@ -1177,7 +1177,8 @@ class Users < PuavoSinatra
 
   # Return users in a organisation
   get "/v3/users" do
-    auth :basic_auth, :kerberos
+    oauth2 scopes: ['puavo.read.users']
+    auth :oauth2_token
 
     attrs = nil
     if params["attributes"]
