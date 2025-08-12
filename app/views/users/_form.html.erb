@@ -145,6 +145,26 @@
       <td><%= f.check_box :puavoLocked %></td>
     </tr>
 
+    <% if @permit_edit_expiration_times && !@user.puavoDoNotDelete %>
+    <tr>
+      <th><%= f.label :puavoEduPersonAccountExpirationTime %></th>
+      <td>
+          <div class="flex-cols gap-5px">
+            <input type="datetime-local" id="user_puavoEduPersonAccountExpirationTime" autocomplete="off" step="1">
+
+            <button type="button" id="clearExpirationTime"><%= t('expiration_times.clear') %></button>
+
+            <select id="setExpirationTime" autocomplete="off">
+                <option value="" disabled selected hidden><%= t('expiration_times.presets') %></option>
+                <%= expiration_time_presets %>
+            </select>
+          </div>
+
+          <input type="hidden" id="expirationValue" name="expirationValue" autocomplete="off" value="<%= @user.puavoEduPersonAccountExpirationTime.nil? ? '' : @user.puavoEduPersonAccountExpirationTime.to_i %>">
+      </td>
+    </tr>
+    <% end %>
+
     <% if current_user.organisation_owner? %>
     <tr class="ownersOnly">
       <th><%= f.label :puavoSshPublicKey %></th>
@@ -296,6 +316,16 @@ updateRoles();
 
 <% unless @groups_by_school.empty? %>
 filterGroups();
+<% end %>
+
+<% if @permit_edit_expiration_times && !@user.puavoDoNotDelete %>
+<%= render partial: 'shared/expiration_time_editor', locals: {
+        expirationTimeField: "input#user_puavoEduPersonAccountExpirationTime",
+        clearExpirationTimeButton: "button#clearExpirationTime",
+        expirationPresetsSelect: "select#setExpirationTime",
+        expirationValue: "input#expirationValue",
+        initialExpirationTime: @user.puavoEduPersonAccountExpirationTime.nil? ? nil : @user.puavoEduPersonAccountExpirationTime
+    } %>
 <% end %>
 
 </script>

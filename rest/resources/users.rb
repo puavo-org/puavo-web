@@ -59,6 +59,8 @@ class User < LdapModel
 
   ldap_map :puavoCitrixId, :citrix_id
 
+  ldap_map :puavoEduPersonAccountExpirationTime, :account_expiration_time, LdapConverters::TimeStamp
+
   skip_serialize :external_data
 
   # List of school DNs where the user is school admin
@@ -1389,6 +1391,7 @@ class Users < PuavoSinatra
   # the requested fields are actually returned in the queries.
   USER_TO_LDAP = {
     'admin_school_id'    => 'puavoAdminOfSchool',
+    'account_expiration_time' => 'puavoEduPersonAccountExpirationTime',
     'created'            => 'createTimestamp',  # LDAP operational attribute
     'dn'                 => 'dn',
     'do_not_delete'      => 'puavoDoNotDelete',
@@ -1433,6 +1436,7 @@ class Users < PuavoSinatra
     'puavoEduPersonAffiliation'     => { name: 'role' },
     'puavoEduPersonPersonnelNumber' => { name: 'personnel_number' },
     'puavoEduPersonPrimarySchool'   => { name: 'primary_school_id', type: :id_from_dn },
+    'puavoEduPersonAccountExpirationTime' => { name: 'account_expiration_time', type: :ldap_timestamp },
     'puavoExternalId'               => { name: 'external_id' },
     'puavoExternalData'             => { name: 'external_data', type: :json },
     'puavoId'                       => { name: 'id', type: :integer },

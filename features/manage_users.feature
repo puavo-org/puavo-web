@@ -627,3 +627,76 @@ Feature: Manage users
     And I press "Update"
     Then I should see "User cannot be saved!"
     And I should see "Username has already been taken"
+
+  Scenario: Create a new user with expiration time (and clear it)
+    # Set
+    Given I am on the new user page
+    When I fill in the following:
+    | Surname        | Doe      |
+    | Given name     | Jane     |
+    | Username       | jane.doe |
+    And I check "Student"
+    And I set the expiration time to 1754900001
+    And I press "Create"
+    Then I should see "User was successfully created"
+    And I should see "Jane"
+    And I should see "Doe"
+    And I should see "Account expires at"
+    And I should see "2025-08-11"
+    # I don't dare check the hours. The hours could be anything, depending on the DST state.
+    # The unixtime stamp was chosen so that it's close to noon, but not at noon. The value
+    # displayed on the page is localtime, but the server's timezone could be anything.
+    And I should see ":13:21"
+    # Clear
+    When I follow "Edit..."
+    And I clear the expiration time
+    And I press "Update"
+    Then I should see "User was successfully updated."
+    And I should not see "Account expires at"
+
+  Scenario: Set and clear an existing user's expiration time
+    # Create
+    Given I am on the new user page
+    When I fill in the following:
+    | Surname        | Doe      |
+    | Given name     | Jane     |
+    | Username       | jane.doe |
+    And I check "Student"
+    And I press "Create"
+    Then I should see "User was successfully created"
+    And I should not see "Account expires at"
+    # Set
+    When I follow "Edit..."
+    And I set the expiration time to 1754900001
+    And I press "Update"
+    Then I should see "User was successfully updated."
+    And I should see "Account expires at"
+    And I should see "2025-08-11"
+    And I should see ":13:21"
+    # Clear using the dropdown menu
+    When I follow "Remove the expiration time"
+    Then I should see "Expiration time removed"
+    And I should not see "Account expires at"
+
+  # Admin should not be able to edit or clear expiration times if not permitted to do so
+  Scenario: Admin cannot see or clear user expiration times if they're not permitted to do so
+    Given the following users:
+      | givenName | sn     | uid      | password | school_admin | puavoEduPersonAffiliation |
+      | Donald    | Duck   | donald   | 313      | true         | admin                     |
+      | Doe       | Jane   | jane.doe | secret   | false        | student                   |
+    And I am on the show user page with "jane.doe"
+    When I follow "Edit..."
+    And I set the expiration time to 1754900001
+    And I press "Update"
+    Given I am logged in as "donald" with password "313"
+    And I am on the show user page with "jane.doe"
+    And I should see "Account expires at"
+    And I should not see "Remove the expiration time"
+    When I follow "Edit..."
+    Then I should not see "Account expires at"
+    Given admin "donald" has these permissions: "user_edit_expiration_times"
+    And I am on the show user page with "jane.doe"
+    And I should see "Account expires at"
+    And I should see "Remove the expiration time"
+    When I follow "Edit..."
+    Then I should see "Account expires at"

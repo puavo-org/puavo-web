@@ -28,6 +28,26 @@ en:
     month: "a month ago"
     months: "%{month} months ago"
 
+  expiration_times:
+    clear: "Clear"
+    presets: "Presets..."
+    one_hour: "1 hour from now"
+    six_hours: "6 hours from now"
+    twelve_hours: "12 hours from now"
+    one_day: "1 day from now"
+    two_days: "2 days from now"
+    three_days: "3 days from now"
+    one_week: "1 week from now"
+    two_weeks: "2 weeks from now"
+    three_weeks: "3 weeks from now"
+    one_month: "1 month (30 days) from now"
+    two_months: "2 months (60 days) from now"
+    three_months: "3 months (90 days) from now"
+    six_months: "6 months (180 days) from now"
+    nine_months: "9 months (270 days) from now"
+    one_year: "1 year (365 days) from now"
+    three_years: "3 years (1095 days) from now"
+
   # "Main menu", from which you can log in or access other services in the organisation
   menu:
     index:
@@ -262,6 +282,7 @@ en:
       v_email: "Verified Email"
       p_email: "Primary Email"
       pnumber: "Personnel number"
+      expiration: "Account expires at"
       rrt: "When marked for deletion"
       dnd: "Do not delete?"
       is_locked: "Locked?"
@@ -734,6 +755,7 @@ en:
       save_failed_unknown_duplicate_attribute: "Save failed: unknown duplicate attribute value (ACLs prevent determining which attribute it is). This username or email address is probably already in use in some other school that you don't have access to."
       create_failed: Failed to create the user!
       create_failed_unknown_duplicate_attribute: "Failed to create the user: unknown duplicate attribute value (ACLs prevent determining which attribute it is). This user probably exists in some other school that you cannot access; try another username or email address."
+      expiration_time_removed: "Expiration time removed"
       marked_for_deletion: "User has been marked for deletion"
       already_marked_for_deletion: "User already is marked for deletion"
       unmarked_for_deletion: "User is no longer marked for deletion"
@@ -1135,6 +1157,10 @@ en:
           cant_remove_primary_school: "Can't remove user from their primary school"
           no_available_schools: "Select the target school from the list. The school cannot be the same as the current school. If you can't select anything from the list, it means you have no access to any other schools and you can't run this mass operation."
           no_other_schools: "This organisation has no other schools where you could move users to."
+        set_expiration_times:
+          title: "Set and clear expiration times..."
+          set_to: "Set to:"
+          dnd: "Refusing set expiration time for a non-deletable user"
 
     show:
       system_information: System information
@@ -1164,6 +1190,7 @@ en:
         username: "Username"
       lock: "Lock user"
       unlock: "Unlock user"
+      remove_expiration_time: "Remove the expiration time"
       mark_for_removal: Mark for deletion
       unmark_for_removal: Remove deletion marking
       marked_for_removal: Marked for deletion
@@ -1183,6 +1210,8 @@ en:
         mass_delete_users: "can mass delete users"
         users_mass_clear_column_contents: "can mass clear specific user information"
         import_users: "user mass import tool"
+        user_edit_expiration_times: "can set and clear user account expiration times"
+        user_mass_edit_expiration_times: "can mass set and clear user account expiration times"
         create_groups: "can create groups"
         delete_groups: "can delete groups"
         mass_delete_groups: "can mass delete groups"
@@ -1256,6 +1285,8 @@ en:
         mass_delete_users: "Can mass delete users (normal user deletion must also be granted, will not work otherwise)"
         import_users: "Can use the users mass import/update tool"
         users_mass_clear_column_contents: "Can mass clear specific user information (email address, phone number, external ID, personnel number, notes)"
+        user_edit_expiration_times: "Can set and clear user account expiration times"
+        user_mass_edit_expiration_times: "Can mass set and clear user account expiration times (setting and clearing individual user's expiration times must also be permitted for this to work)"
         create_groups: "Can create new groups"
         delete_groups: "Can delete groups"
         mass_delete_groups: "Can mass delete groups (normal group deletion must also be granted)"
@@ -2326,6 +2357,7 @@ en:
         mail: Email
         telephoneNumber: Telephone number
         puavoEduPersonAffiliation: Role
+        puavoEduPersonAccountExpirationTime: "Account expires at"
         markedForDeletion: Marked for deletion
         roles: Roles
         preferredLanguage: Language

@@ -367,4 +367,37 @@ module ApplicationHelper
   def format_notes(notes)
     notes.nil? ? nil : h(notes).gsub("\r", '').gsub("\n", '<br>').html_safe
   end
+
+  def expiration_time_presets
+    hour = 60 * 60
+    day = hour * 24
+    week = day * 7
+    month = day * 30
+    year = day * 365
+
+    out = []
+
+    [
+      [ hour,       t('expiration_times.one_hour') ],
+      [ hour * 6,   t('expiration_times.six_hours') ],
+      [ hour * 12,  t('expiration_times.twelve_hours') ],
+      [ day,        t('expiration_times.one_day') ],
+      [ day * 2,    t('expiration_times.two_days') ],
+      [ day * 3,    t('expiration_times.three_days') ],
+      [ week,       t('expiration_times.one_week') ],
+      [ week * 2,   t('expiration_times.two_weeks') ],
+      [ week * 3,   t('expiration_times.three_weeks') ],
+      [ month,      t('expiration_times.one_month') ],
+      [ month * 2,  t('expiration_times.two_months') ],
+      [ month * 3,  t('expiration_times.three_months') ],
+      [ month * 6,  t('expiration_times.six_months') ],
+      [ month * 9,  t('expiration_times.nine_months') ],
+      [ year,       t('expiration_times.one_year') ],
+      [ year * 3,   t('expiration_times.three_years') ],
+    ].each do |p|
+      out << "<option value=\"#{p[0]}\">#{p[1]}</option>"
+    end
+
+    out.join("\n").html_safe
+  end
 end

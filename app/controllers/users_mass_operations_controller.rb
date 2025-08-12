@@ -37,6 +37,9 @@ class UsersMassOperationsController < MassOperationsController
         when 'change_school'
           _change_school(id, data)
 
+        when 'set_expiration_time'
+          _set_expiration_time(id, data)
+
         else
           next false, "Unknown operation \"#{@operation}\""
 
@@ -331,6 +334,34 @@ class UsersMassOperationsController < MassOperationsController
           end
         end
     end
+
+    return [true, nil]
+  rescue StandardError => e
+    return [false, e]
+  end
+
+  # Mass operation: set or clear user account expiration time
+  def _set_expiration_time(id, data)
+    user = User.find(id)
+    changed = false
+
+    if @parameters['time'].nil?
+      unless user.puavoEduPersonAccountExpirationTime.nil?
+        # Clear
+        user.puavoEduPersonAccountExpirationTime = nil
+        changed = true
+      end
+    else
+      d = Time.at(@parameters['time'])
+
+      if user.puavoEduPersonAccountExpirationTime != d
+        # Set
+        user.puavoEduPersonAccountExpirationTime = d
+        changed = true
+      end
+    end
+
+    user.save! if changed
 
     return [true, nil]
   rescue StandardError => e

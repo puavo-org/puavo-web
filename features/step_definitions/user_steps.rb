@@ -232,6 +232,16 @@ Given(/teacher "(.*?)" has these permissions: "(.*?)"/) do |uid, permissions|
   user.save!
 end
 
+# This is also used in devices test because the form element ID is the same
+When('I set the expiration time to {int}') do |int|
+  find('input#expirationValue', visible: false).set(int)
+end
+
+# This too
+When('I clear the expiration time') do
+  find('input#expirationValue', visible: false).set(nil)
+end
+
 private
 
 def get_object_by_model_and_key(model, key)

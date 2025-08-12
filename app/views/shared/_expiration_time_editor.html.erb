@@ -1,0 +1,78 @@
+<% content_for :post_load_javascript do %>
+<script>
+let expirationDateField = null,
+    expirationTimeField = null,
+    clearExpirationTimeButton = null,
+    expirationPresetsSelect = null,
+    expirationValue = null;
+
+const pad = (n, count=2) => n.toString().padStart(count, "0")
+
+function updateExpirationValue(date)
+{
+    // This is the value (stored in a hidden field) we actually send back to the server
+    expirationValue.value = date ? Math.floor(date.getTime() / 1000) : "";
+}
+
+function setExpirationTime(date)
+{
+    // I know it's called "datetime-local", but could you please be able to *ingest* an UTC timestamp
+    // and CONVERT IT TO THE LOCAL TIME YOURSELF?
+    expirationTimeField.value =
+        pad(date.getFullYear(), 4) + "-" +
+        pad(date.getMonth() + 1) + "-" +
+        pad(date.getDate()) + "T" +
+        pad(date.getHours()) + ":" +
+        pad(date.getMinutes()) + ":" +
+        pad(date.getSeconds());
+}
+
+function onExpirationTimeChange(e)
+{
+    // Similarly here, even if you edit *local* time, could you please *output* UTC timestamps?
+    // The input returns its value in YYYY-MM-DDTHH:MM:SS format, but it's in local time. Construct
+    // a timezone offset string, append it into the string and construct a new date object from it.
+    // datetime-local has a "valueAsDate" attribute, but it only works in Firefox (I'm finding
+    // some reports that it used to work in Chrom* but it broke and Google doesn't care).
+    const offset = new Date().getTimezoneOffset(),
+          offsetString = `${offset < 0 ? "+" : "-"}${pad(Math.abs(offset) / 60, 2)}:${pad(Math.abs(offset) % 60, 2)}`;
+
+    const expires = new Date(e.target.value + offsetString);
+
+    updateExpirationValue(expires);
+}
+
+function onClearExpirationTime()
+{
+    expirationTimeField.value = null;
+    updateExpirationValue(null);
+}
+
+function onSelectExpirationPreset(e)
+{
+    // Add the preset offset to the current time
+    const expires = new Date(new Date().getTime() + (parseInt(e.target.value, 10) * 1000));
+
+    setExpirationTime(expires);
+    updateExpirationValue(expires);
+    expirationPresetsSelect.value = "";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    expirationTimeField = document.querySelector("<%= expirationTimeField %>");
+    clearExpirationTimeButton = document.querySelector("<%= clearExpirationTimeButton %>");
+    expirationPresetsSelect = document.querySelector("<%= expirationPresetsSelect %>");
+    expirationValue = document.querySelector("<%= expirationValue %>");
+
+    // Setup events
+    expirationTimeField.addEventListener("change", e => onExpirationTimeChange(e));
+    clearExpirationTimeButton.addEventListener("click", () => onClearExpirationTime());
+    expirationPresetsSelect.addEventListener("change", e => onSelectExpirationPreset(e));
+
+    <% if initialExpirationTime %>
+    // The initial value
+    setExpirationTime(new Date("<%= initialExpirationTime.strftime('%Y-%m-%dT%H:%M:%S.%L%z') %>"));
+    <% end %>
+});
+</script>
+<% end %>

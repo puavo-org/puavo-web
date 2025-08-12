@@ -262,6 +262,13 @@
     <td class="noWrap"><%= h @user['modifyTimestamp'] %></td>
   </tr>
 
+  <% if @user.puavoEduPersonAccountExpirationTime %>
+  <tr>
+    <th><%= t('activeldap.attributes.user.puavoEduPersonAccountExpirationTime') %></th>
+    <td class="noWrap"><%= h @user.puavoEduPersonAccountExpirationTime.localtime.strftime('%Y-%m-%d %H:%M:%S') %></td>
+  </tr>
+  <% end %>
+
   <% if @user.puavoRemovalRequestTime %>
   <tr>
     <th><%= t('.marked_for_removal') %></th>
@@ -364,6 +371,16 @@
           <% end %>
         </li>
       </ul>
+
+      <% if @user.puavoEduPersonAccountExpirationTime && @permit_edit_expiration_times %>
+      <ul>
+        <li>
+          <%= link_to remove_expiration_time_path(@school, @user) do %>
+            <i class='icon-flag-empty'></i><%= t('.remove_expiration_time') %>
+          <% end %>
+        </li>
+      </ul>
+      <% end %>
 
       <% if @user.puavoRemovalRequestTime %>
       <ul>

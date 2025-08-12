@@ -27,6 +27,7 @@ module UsersHelper
       'puavoVerifiedEmail',
       'puavoPrimaryEmail',
       'puavoEduPersonPersonnelNumber',
+      'puavoEduPersonAccountExpirationTime',
       'puavoRemovalRequestTime',
       'puavoDoNotDelete',
       'puavoLocked',
@@ -64,6 +65,10 @@ module UsersHelper
 
     if raw['puavoLearnerId']
       out[:learner_id] = raw['puavoLearnerId'][0]
+    end
+
+    if raw['puavoEduPersonAccountExpirationTime']
+      out[:expiration] = Puavo::Helpers::convert_ldap_time(raw['puavoEduPersonAccountExpirationTime'])
     end
 
     if raw['puavoRemovalRequestTime']

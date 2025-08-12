@@ -67,6 +67,7 @@ class User < LdapBase
   ADMIN_PERMISSIONS = %i[
     school_edit school_edit_wlan
     create_users delete_users mass_delete_users import_users users_mass_clear_column_contents
+    user_edit_expiration_times user_mass_edit_expiration_times
     create_groups delete_groups mass_delete_groups
     group_change_school group_mass_change_type
     create_devices delete_devices mass_delete_devices reset_devices mass_reset_devices

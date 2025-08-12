@@ -89,6 +89,10 @@ class UsersController < ApplicationController
     @permit_mass_user_deletion = @is_owner || (@permit_user_deletion && current_user.has_admin_permission?(:mass_delete_users))
     @permit_mass_column_clear = @is_owner || current_user.has_admin_permission?(:users_mass_clear_column_contents)
 
+    @permit_user_mass_edit_expiration_times = @is_owner ||
+      (current_user.has_admin_permission?(:user_edit_expiration_times) &&
+      current_user.has_admin_permission?(:user_mass_edit_expiration_times))
+
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
     # Make a list of all schools in this organisation. Even limited users who can't access all
@@ -327,6 +331,9 @@ class UsersController < ApplicationController
 
     @permit_user_deletion = @viewer_is_an_owner || current_user.has_admin_permission?(:delete_users)
 
+    @permit_edit_expiration_times = @viewer_is_an_owner ||
+      current_user.has_admin_permission?(:user_edit_expiration_times)
+
     # External data fields
     @mpass_materials_charge = nil
 
@@ -450,6 +457,9 @@ class UsersController < ApplicationController
 
     @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
 
+    @permit_edit_expiration_times = current_user.organisation_owner? ||
+      current_user.has_admin_permission?(:user_edit_expiration_times)
+
     @is_new_user = true
     setup_integrations_for_form(@school, true)
 
@@ -470,6 +480,9 @@ class UsersController < ApplicationController
 
     @automatic_email_addresses, @automatic_email_domain = get_automatic_email_addresses
 
+    @permit_edit_expiration_times = current_user.organisation_owner? ||
+      current_user.has_admin_permission?(:user_edit_expiration_times)
+
     @is_new_user = false
     setup_integrations_for_form(@school, false)
 
@@ -486,6 +499,21 @@ class UsersController < ApplicationController
     end
 
     @user = User.new(user_params)
+
+    # Convert the initial expiration time value into a proper timestamp, if its present and the current
+    # user has been permitted to edit it. The expiration time is submitted as a unixtime, so it must be
+    # manually converted. The attribute in the parameters is not puavoEduPersonAccountExpirationTime,
+    # but "expirationTime" due to HTML inputs being so poorly implemented we can't use the value as-is.
+    # This also means we can't "permit" the parameter in user_params(), and Rails' automagic will break.
+    if is_owner? || current_user.has_admin_permission?(:user_edit_expiration_times)
+      if params.include?(:expirationValue) && !params[:expirationValue].empty?
+        @user.puavoEduPersonAccountExpirationTime = Time.at(params[:expirationValue].to_i)
+      end
+    else
+      # Ensure this really stays nil
+      @user.puavoEduPersonAccountExpirationTime = nil
+    end
+
     @groups = @school.groups
 
     # Automatically generate the email address
@@ -660,6 +688,26 @@ class UsersController < ApplicationController
             .map { |e| e.strip }      # remove trailing and leading whitespace
             .reject { |e| e.empty? }  # remove completely empty strings
             .uniq                     # remove duplicates
+        end
+
+        if is_owner? || current_user.has_admin_permission?(:user_edit_expiration_times)
+          # Wrangle with the same problem as in create(). The expiration time is must be separately
+          # converted due to HTML inputs' inability to deal with it.
+          if params.include?(:expirationValue)
+            unless params[:expirationValue].empty?
+              # Set
+              up['puavoEduPersonAccountExpirationTime'] = Time.at(params[:expirationValue].to_i)
+            else
+              # The expiration time was cleared, or it was never set
+              up['puavoEduPersonAccountExpirationTime'] = nil
+            end
+          end
+        end
+
+        # If the user cannot be deleted, their account cannot expire either. Force this to nil.
+        # This is done even if the current user has no permission to edit expiration times.
+        if @user.puavoDoNotDelete
+          up['puavoEduPersonAccountExpirationTime'] = nil
         end
 
         unless @user.update_attributes(up)
@@ -1164,6 +1212,28 @@ class UsersController < ApplicationController
     end
   end
 
+  # Clears the expiration timestamp, if set
+  def remove_expiration_time
+    @user = User.find(params[:id])
+
+    unless is_owner? || current_user.has_admin_permission?(:user_edit_expiration_times)
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to(user_path(@school, @user))
+      return
+    end
+
+    if @user.puavoEduPersonAccountExpirationTime
+      @user.puavoEduPersonAccountExpirationTime = nil
+      @user.save
+    end
+
+    flash[:notice] = t('flash.user.expiration_time_removed')
+
+    respond_to do |format|
+      format.html { redirect_to( user_path(@school, @user) ) }
+    end
+  end
+
   def mark_for_deletion
     @user = User.find(params[:id])
 
@@ -1211,6 +1281,7 @@ class UsersController < ApplicationController
     @user.puavoDoNotDelete = true
     @user.puavoRemovalRequestTime = nil
     @user.puavoLocked = false   # can't be locked if they cannot be deleted
+    @user.puavoEduPersonAccountExpirationTime = nil   # cannot expire either
     @user.save
 
     flash[:notice] = t('flash.user.deletion_prevented')
@@ -1336,6 +1407,7 @@ class UsersController < ApplicationController
           :puavoEduPersonPersonnelNumber,
           :image,
           :puavoLocked,
+          :expirationValue,       # won't actually work as expected, see the comment in create()
           :puavoSshPublicKey,
           :puavoExternalId,
           :puavoNotes,

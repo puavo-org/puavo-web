@@ -28,6 +28,26 @@ fi:
     month: "kuukausi sitten"
     months: "%{month} kuukautta sitten"
 
+  expiration_times:
+    clear: "Nollaa"
+    presets: "Valmiita aikoja..."
+    one_hour: "1 tunnin päästä"
+    six_hours: "6 tunnin päästä"
+    twelve_hours: "12 tunnin päästä"
+    one_day: "1 päivän päästä"
+    two_days: "2 päivän päästä"
+    three_days: "3 päivän päästä"
+    one_week: "1 viikon päästä"
+    two_weeks: "2 viikon päästä"
+    three_weeks: "3 viikon päästä"
+    one_month: "1 kuukauden (30 päivää) päästä"
+    two_months: "2 kuukauden (60 päivää) päästä"
+    three_months: "3 kuukauden (90 päivää) päästä"
+    six_months: "6 kuukauden (180 päivää) päästä"
+    nine_months: "9 kuukauden (270 päivää) päästä"
+    one_year: "1 vuoden (365 päivää) päästä"
+    three_years: "3 vuoden (1095 päivää) päästä"
+
   # "Main menu", from which you can log in or access other services in the organisation
   menu:
     index:
@@ -262,6 +282,7 @@ fi:
       v_email: "Vahvistettu email"
       p_email: "Pää-email"
       pnumber: "Henkilönumero"
+      expiration: "Tunnus vanhenee"
       rrt: "Poistomerkintä tehty"
       dnd: "Poisto estetty?"
       is_locked: "Lukittu?"
@@ -735,6 +756,7 @@ fi:
       create_failed: "Käyttäjän lisääminen epäonnistui!"
       create_failed_unknown_duplicate_attribute: "Käyttäjän luonti epäonnistui: tuntematon duplikaatti attribuuttiarvo (ACL:t estävät selvittämästä mikä attribuutti on kyseessä). Tämä käyttäjä on jo ehkä olemassa jossain toisessa koulussa; kokeile jotain toista käyttäjänimeä tai sähköpostiosoitetta."
       marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
+      expiration_time_removed: "Vanhenemisaika poistettu tunnuksesta"
       already_marked_for_deletion: "Käyttäjä on jo merkitty poistettavaksi"
       unmarked_for_deletion: "Käyttäjä ei ole enää merkitty poistettavaksi"
       not_marked_for_deletion: "Tätä käyttäjää ei ole merkitty poistettavaksi"
@@ -1135,6 +1157,10 @@ fi:
           cant_remove_primary_school: "Käyttäjää ei voi poistaa hänen pääkoulustaan"
           no_available_schools: "Valitse kohdekoulu listalta. Koulu ei voi olla sama kuin nykyinen koulu. Jos listalta ei voi valita yhtään koulua, se tarkoittaa ettei sinulla ole pääsyä muihin kouluihin etkä voi ajaa tätä massatoimintoa."
           no_other_schools: "Tässä organisaatiossa ei ole muita kouluja mihin voisit siirtää käyttäjiä."
+        set_expiration_times:
+          title: "Aseta ja nollaa vanhenemisaikoja..."
+          set_to: "Aseta aikaan:"
+          dnd: "Kieltäydyttiin asettamasta vanhemisaikaa käyttäjälle jota ei voi poistaa"
 
     show:
       system_information: "Järjestelmätietoja"
@@ -1164,6 +1190,7 @@ fi:
         username: "Käyttäjänimi"
       lock: "Lukitse tunnus"
       unlock: "Avaa tunnuksen lukitus"
+      remove_expiration_time: "Poista vanhenemisaika"
       mark_for_removal: Merkitse poistettavaksi
       unmark_for_removal: Poista poistomerkintä
       marked_for_removal: Merkitty poistettavaksi
@@ -1183,6 +1210,8 @@ fi:
         mass_delete_users: "voi massapoistaa useita käyttäjiä"
         import_users: "käyttäjien massalisäystyökalu"
         users_mass_clear_column_contents: "voi massatyhjentää tiettyjä käyttäjien tietoja"
+        user_edit_expiration_times: "voi muokata käyttäjätunnuksien vanhenemisaikoja"
+        user_mass_edit_expiration_times: "voi massamuokata käyttäjätunnuksien vanhenemisaikoja"
         create_groups: "voi luoda ryhmiä"
         delete_groups: "voi poistaa ryhmiä"
         mass_delete_groups: "voi massapoistaa useita ryhmiä"
@@ -1256,6 +1285,8 @@ fi:
         mass_delete_users: "Voi massapoistaa useita käyttäjiä (tavallinen käyttäjien poisto pitää myös olla sallittu, ei toimi muuten)"
         import_users: "Voi käyttää käyttäjien massalisäys/-päivitystyökalua"
         users_mass_clear_column_contents: "Voi massatyhjentää tiettyjä käyttäjien tietoja (sähköpostiosoite, puhelinnumero, ulkoinen ID, henkilönumero, muistiinpanot)"
+        user_edit_expiration_times: "Voi muokata käyttäjätunnuksien vanhenemisaikoja"
+        user_mass_edit_expiration_times: "Voi massamuokata käyttäjätunnuksien vanhenemisaikoja (yksittäisten tunnusten vanhenemisaikojen asetuksen on myös oltava sallittu jotta tämä toimisi)"
         create_groups: "Voi luoda uusia ryhmiä"
         delete_groups: "Voi poistaa ryhmiä"
         mass_delete_groups: "Voi massapoistaa useita ryhmiä (tavallinen ryhmien poisto on myös oltava sallittuna)"
@@ -2326,6 +2357,7 @@ fi:
         mail: "Sähköpostiosoite"
         telephoneNumber: Puhelinnumero
         puavoEduPersonAffiliation: Rooli
+        puavoEduPersonAccountExpirationTime: "Tunnus vanhenee"
         markedForDeletion: Merkitty poistettavaksi
         roles: Roolit
         preferredLanguage: Kieli
