@@ -2616,7 +2616,6 @@ fi:
           qrhelp2: "Kun olet lisännyt koodin sovellukseen, klikkaa \"Seuraava\" tai paina Enter."
         step2_yubikey:
           title: "Vaihe 2/2"
-          help: "Syötä Yubikeyn tuottama avain alla olevaan tekstikenttään (kenttä on jo fokusoitu automaattisesti). Klikkaa sitten \"Vahvista\" tai paina Enter. Jos syöte on oikein, aktivoituu tunnistautuminen heti."
           help: "Kiinnitä Yubikeysi koneeseen ja varmista että se toimii. Paina sitten avaimen päällä olevaa nappia syöttääksesi Yubikeyn tuottama koodi alla olevaan kenttään (kenttä on fokusoitu automaattisesti). Jos syöte on oikein, aktivoituu tunnistautuminen heti. Sinun ei tarvitse painaa \"Vahvista\" -nappia muuta kuin <em>jos</em> Yubikeysi ei simuloi Enterin painallusta koodin lopussa."
         step3_totp:
           title: "Vaihe 3/3"
