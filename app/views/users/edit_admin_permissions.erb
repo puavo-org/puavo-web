@@ -24,7 +24,7 @@ groups = [
       <header><%= g[0] %></header>
       <div class="flex-rows margin-left-20px">
       <% g[1].each do |p| %>
-        <div><label><input type="checkbox" name="permissions[]" id="<%= p %>" value="<%= p %>" <%= @current_permissions.include?(p) ? 'checked' : '' %>><%= t(".permissions.#{p}") %></label></div>
+        <div><label><input type="checkbox" name="permissions[]" id="<%= p %>" value="<%= p %>" <%= @current_permissions.include?(p) ? 'checked' : '' %> autocomplete="off"><%= t(".permissions.#{p}") %></label></div>
       <% end %>
       </div>
     </div>
