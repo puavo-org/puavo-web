@@ -14,7 +14,8 @@
 
 </div>
 
-<%= render :partial => 'shared/puavoconf_editor', :locals => { storage: "device_puavoConf" } %>
+<%= render partial: 'shared/puavoconf_editor_templates' %>
+<%= render partial: 'shared/puavoconf_editor', locals: { storage: "device_puavoConf" } %>
 
 <% if @permit_edit_expiration_times %>
 <%= render partial: 'shared/expiration_time_editor', locals: {
