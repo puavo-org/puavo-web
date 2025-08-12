@@ -528,7 +528,7 @@ class UsersController < ApplicationController
       rescue ActiveLdap::LdapError::ConstraintViolation => cve
         message = cve.to_s
 
-        # The message looke like "non-unique attributes found with (|(uid=XXX))"
+        # The message looks like "non-unique attributes found with (|(uid=XXX))"
         # where "XXX" is the username.
         if message.include?('non-unique attributes found with') && message.include?('(uid=')
           # This username is a duplicate, but the other user is in a school the current
@@ -543,7 +543,7 @@ class UsersController < ApplicationController
           error_message_and_render(format, 'new', I18n.t('flash.user.create_failed'))
         else
           # We're still dealing with a duplicate value, but due to ACLs, we cannot determine
-          # what attribute causes it. The exception message only contains "Constraint violation"
+          # which attribute causes it. The exception message only contains "Constraint violation"
           # and nothing else. This problem is very annoying to debug, becuse it does not happen
           # in puavo-standalone, it can only be tested in production. The error message dislayed
           # in this case is very vague, because we really do not know what causes the problem.
