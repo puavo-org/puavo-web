@@ -1115,6 +1115,7 @@ en:
         short_uids: "Usernames that are 1-5 characters long"
         students_only: "Students only"
         teachers_and_staff_only: "Teachers and staff only"
+        expired_but_not_locked: "Expired but not locked"
 
       mass_operations:
         lock:

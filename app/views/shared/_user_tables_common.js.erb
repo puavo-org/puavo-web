@@ -1063,7 +1063,15 @@ const FILTER_PRESETS = [
             filters: [
                 [1,"uid","=","^[a-z0-9-.]{1,5}$"]
             ],
-        }
+        },
+
+        expired_but_not_locked: {
+            title: "<%= t('users.index.filters.expired_but_not_locked') %>",
+            filters: [
+                [1,"expiration","<",0],
+                [1,"locked","=",0]
+            ],
+        },
     },
 
     // Advanced

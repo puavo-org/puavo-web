@@ -1115,6 +1115,7 @@ fi:
         short_uids: "Käyttäjätunnukset jotka ovat 1-5 merkkiä pitkiä"
         students_only: "Vain oppilaat"
         teachers_and_staff_only: "Vain opettajat ja henkilökunta"
+        expired_but_not_locked: "Vanhentunut mutta ei lukittu"
 
       mass_operations:
         lock:
