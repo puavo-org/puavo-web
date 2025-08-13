@@ -70,6 +70,9 @@ const COLUMN_DEFINITIONS = {
             if (entry.locked)
                 s += `<i class="icon-lock"></i>`;
 
+            if (entry._has_expired)
+                s += `<i class="icon-clock" title="<%= t('users.index.expired_account') %>"></i>`;
+
             if (entry.rrt)
                 s += `</span>`;
 
@@ -362,6 +365,17 @@ const COLUMN_DEFINITIONS = {
         title: "<%= t('columns.users.expiration') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_NULLABLE,
+
+        transform: entry => {
+            const [valid, ts] = ST.convertTimestamp(entry.expiration)
+            let html = "";
+
+            if (valid && entry._has_expired)
+                html = `<span class="invalidData">${ts}</span>`;
+            else html = ts;
+
+            return [html, entry.expiration, entry.expiration];
+        }
     },
 };
 
@@ -1172,6 +1186,8 @@ let GROUPS = {},
 // can use when formatting user tables.
 function* expandUserData(raw)
 {
+    const NOW = new Date();
+
     GROUPS = raw.groups;
     GROUP_MEMBERS = {};
 
@@ -1195,6 +1211,17 @@ function* expandUserData(raw)
 
         if (s2.id in GROUP_MEMBERS)
             s2.groups = GROUP_MEMBERS[s2.id];
+
+        // Inject an account expiration flag into the data, so we don't have to recalculate
+        // it in several places.
+        s2._has_expired = false;
+
+        if (s2.expiration) {
+            const [valid, ts] = ST.convertTimestamp(s2.expiration)
+
+            if (valid && NOW >= new Date(s2.expiration * 1000))
+                s2._has_expired = true;
+        }
 
         yield s2;
     }

@@ -303,6 +303,17 @@ const COLUMN_DEFINITIONS = {
         title: "<%= t('columns.devices.expiration') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_NULLABLE,
+
+        transform: entry => {
+            const [valid, ts] = ST.convertTimestamp(entry.expiration)
+            let html = "";
+
+            if (valid && entry._has_expired)
+                html = `<span class="invalidData">${ts}</span>`;
+            else html = ts;
+
+            return [html, entry.expiration, entry.expiration];
+        }
     },
 <% end %>
 
@@ -331,6 +342,9 @@ const COLUMN_DEFINITIONS = {
 <% unless @is_servers %>
             if (entry.reset_from && !entry.reset_fulfilled)
                 extra = ` <i class="icon-attention iconError" title="<%= t('devices.index.pending_reset') %>"></i>`;
+
+            if (entry._has_expired)
+                extra += `<i class="icon-clock" title="<%= t('devices.index.expired_device') %>"></i>`;
 <% end %>
 
             return [
@@ -1965,3 +1979,26 @@ const MASS_SELECTS = [
     ["hn", "<%= t('columns.devices.hostname') %>"],
     ["id", "<%= t('columns.puavoid') %>"],
 ];
+
+// Preprocesses the device data
+function* preprocessDeviceData(devices)
+{
+    const NOW = new Date();
+
+    for (const [_, d] of Object.entries(devices)) {
+        let d2 = { ...d };
+
+        // Inject a device expiration flag into the data, so we don't have to recalculate
+        // it in several places.
+        d2._has_expired = false;
+
+        if (d2.expiration) {
+            const [valid, ts] = ST.convertTimestamp(d2.expiration)
+
+            if (valid && NOW >= new Date(d2.expiration * 1000))
+                d2._has_expired = true;
+        }
+
+        yield d2;
+    }
+}
