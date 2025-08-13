@@ -263,7 +263,11 @@
   </tr>
 
   <% if @user.puavoEduPersonAccountExpirationTime %>
+  <% if Time.now >= @user.puavoEduPersonAccountExpirationTime %>
+  <tr class="invalidData">
+  <% else %>
   <tr>
+  <% end %>
     <th><%= t('activeldap.attributes.user.puavoEduPersonAccountExpirationTime') %></th>
     <td class="noWrap"><%= h @user.puavoEduPersonAccountExpirationTime.localtime.strftime('%Y-%m-%d %H:%M:%S') %></td>
   </tr>

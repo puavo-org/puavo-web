@@ -27,7 +27,11 @@
     </tr>
 
     <% if device.puavoDeviceType != 'bootserver' %>
+    <% if device.puavoDeviceExpirationTime && Time.now >= device.puavoDeviceExpirationTime %>
+    <tr class="invalidData">
+    <% else %>
     <tr>
+    <% end %>
       <th><%= t('activeldap.attributes.device.puavoDeviceExpirationTime') %></th>
       <td class="noWrap">
         <% unless device.puavoDeviceExpirationTime.nil? %>

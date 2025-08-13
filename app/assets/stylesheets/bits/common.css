@@ -17,6 +17,11 @@
   color: var(--missing-data);
 }
 
+/* A generic "invalid data" class. Ie. the data exists but it's not valid. */
+.invalidData {
+  color: var(--missing-data);
+}
+
 /* Buttons, links and areas that are only visible to organisation owners */
 .ownersOnly {
   border: 1px dashed var(--owners-only);
