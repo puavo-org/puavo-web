@@ -1101,6 +1101,7 @@ en:
       actions: Actions
       users: users
       synchronised_deletions: "User deletions are immediately synchronised to these external systems: %{systems}. All data stored in these systems will be irrevocably deleted! Verify all deletions in advance."
+      expired_account: "This account has expired"
 
       filters:
         marked_3months: "Has been marked for removal for > 90 days"
@@ -1828,6 +1829,7 @@ en:
       devices: devices
       pending_reset: "A reset has been requested"
       previous_reset_fulfilled: "Previous reset fulfilment time"
+      expired_device: "This device has expired"
 
       filters:
         uses_stretch: "Uses a Stretch -based image"

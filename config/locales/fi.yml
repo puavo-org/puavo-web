@@ -1101,6 +1101,7 @@ fi:
       actions: Toiminnot
       users: käyttäjää
       synchronised_deletions: "Käyttäjien poistot synkronoidaan välittömästi seuraaviin ulkoisiin järjestelmiin: %{systems}. Kaikki näihin järjestelmiin tallennetut tiedot poistetaan peruuttamattomasti! Varmista jokainen poisto etukäteen."
+      expired_account: "Tämä tunnus on vanhentunut"
 
       filters:
         marked_3months: "Merkitty poistettavaksi > 90 päivää"
@@ -1828,6 +1829,7 @@ fi:
       devices: laitetta
       pending_reset: "Nollauspyyntö tehty"
       previous_reset_fulfilled: "Edellinen nollauspyyntö täytetty"
+      expired_device: "Tämä laite on vanhentunut"
 
       filters:
         uses_stretch: "Käyttää Stretch-kuvaa"
