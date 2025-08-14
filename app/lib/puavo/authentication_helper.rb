@@ -127,6 +127,19 @@ module Puavo
         return false
       end
 
+      # If we have a human user logging in and their account has expired, force an immediate logout
+      if @authentication.user? &&
+          current_user.puavoEduPersonAccountExpirationTime &&
+          Time.now.utc >= current_user.puavoEduPersonAccountExpirationTime.utc
+
+        logger.error "Account #{current_user.uid.inspect} has expired at #{current_user.puavoEduPersonAccountExpirationTime}, login attempt rejected"
+
+        session.delete :password_plaintext
+        session.delete :uid
+
+        return show_authentication_error 401, t('flash.your_account_has_expired')
+      end
+
       unless @authentication.user?
         # Non-interactive logins cannot have MFA (technically, they could but it would be
         # hideously complicated)

@@ -699,6 +699,7 @@ en:
 
   # Flash messages
   flash:
+    your_account_has_expired: "Your account has expired"
     you_must_be_an_owner: "You do not have enough rights to access that page."
     added: "%{item} was successfully created."
     updated: "%{item} was successfully updated."

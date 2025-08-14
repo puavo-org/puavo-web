@@ -699,6 +699,7 @@ fi:
 
   # Flash messages
   flash:
+    your_account_has_expired: "Tunnuksesi on vanhentunut"
     you_must_be_an_owner: "Sinulla ei ole riittävästi oikeuksia avata pyytämääsi sivua."
     added: "%{item} luotiin onnistuneesti."
     updated: "%{item} päivitettiin onnistuneesti."
