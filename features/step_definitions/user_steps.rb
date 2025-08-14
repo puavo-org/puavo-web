@@ -6,7 +6,9 @@ Given(/^I am logged in as "([^\"]*)" with password "([^\"]*)"$/) do |login, pass
 end
 
 Given(/^I am logged out$/) do
-  visit logout_path
+  # We must issue a DELETE request, not GET, but "visit" only does GETs
+  # See https://stackoverflow.com/a/11605501
+  page.driver.submit :delete, logout_path, {}
 end
 
 Given(/^the following users:$/) do |users|
