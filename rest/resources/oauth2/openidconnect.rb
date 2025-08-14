@@ -286,7 +286,7 @@ private
     if params.include?('nonce')
       # The nonce is an optional value used to mitigate replay attacks. It is barely mentioned
       # in RFC 6749, but it is mentioned in the full spec. If specified in the request, we must
-      # remember it.
+      # remember for the ID token.
       # Tested
       oidc_state['nonce'] = params['nonce']
     end
