@@ -118,8 +118,6 @@ class PuavoSinatra < Sinatra::Base
 
   # OAuth 2 self-validating access token
   def oauth2_token
-    return if OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY.nil?
-
     # If your endpoint supports OAuth2 tokens, you have to specify the parameters for it
     return if @oauth2_params.nil?
 
@@ -132,6 +130,11 @@ class PuavoSinatra < Sinatra::Base
               authorization[0] != 'Bearer' ||
               authorization[1].nil? ||
               authorization[1].strip.empty?
+
+    if OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY.nil?
+      rlog.error('oauth2_token(): have an authorization header that looks like a bearer token, but the OAUth2 token key is nil (configuration error?), refusing to process the header')
+      return
+    end
 
     # Assume it's an OAuth2 bearer token
     rlog.info('oauth2_token(): have an authorization header that looks like a bearer token, checking it')
