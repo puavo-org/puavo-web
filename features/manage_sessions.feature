@@ -43,3 +43,18 @@ Feature: Manage sessions
     When I fill in "Username" with "pavel"
     And I fill in "Password" with ""
     Then I should see "Login failed!"
+
+  Scenario: Expired user account cannot login
+    # Set an expiration time for Pavel's account
+    Given I am logged in as "cucumber" with password "cucumber"
+    And I am on the show user page with "pavel"
+    When I follow "Edit..."
+    And I set the expiration time to 1754900001
+    And I press "Update"
+    # Then try to log in as Pavel
+    Given I am logged out
+    And I am on the login page
+    And I fill in "Username" with "pavel"
+    And I fill in "Password" with "secret"
+    And I press "Login"
+    Then I should see "Your account has expired"
