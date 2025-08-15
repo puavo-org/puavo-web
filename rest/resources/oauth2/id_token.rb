@@ -117,6 +117,7 @@ class IDTokenDataGenerator
     out['puavo.external_id'] = @user.external_id if @user.external_id
     out['puavo.learner_id'] = @user.learner_id if @user.learner_id
     out['puavo.roles'] = @user.roles
+    out['puavo.account_expiration_time'] = @user.account_expiration_time.to_i if @user.account_expiration_time
 
     if @scopes.include?('puavo.read.userinfo.primus')
       # External Primus card ID (not always available)
