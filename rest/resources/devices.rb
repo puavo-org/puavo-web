@@ -24,7 +24,7 @@ class Device < Host
   ldap_map :puavoSchool,                   :school_dn
   ldap_map :serialNumber,                  :serial_number
   ldap_map :puavoDisplayName,              :display_name
-  ldap_map :puavoDeviceExpirationTime,     :expiration_time,          LdapConverters::TimeStamp
+  ldap_map :puavoDeviceExpirationTime,     :device_expiration_time,   LdapConverters::TimeStamp
 
   ldap_map :puavoMenuData,                 :puavomenu_data
   skip_serialize :puavomenu_data
