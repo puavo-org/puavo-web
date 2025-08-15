@@ -1277,4 +1277,32 @@ describe PuavoRest::SSO do
       assert_equal 'Page', jwt['last_name']
     end
   end
+
+  describe 'Expired accounts must fail' do
+    before(:context) do
+      @expired = PuavoRest::User.new(
+        first_name: 'Expired',
+        last_name: 'User',
+        username: 'expired.user',
+        roles: ['student'],
+        password: 'expired',
+        school_dns: [@school.dn.to_s],
+        account_expiration_time: Time.now.utc - 3600
+      )
+
+      @expired.save!
+    end
+
+    it 'expired user account must not be able to log in' do
+      post '/v3/sso', {
+        'username' => 'expired.user',
+        'password' => 'expired',
+        'organisation' => 'example.puavo.net',
+        'return_to' => 'https://session_test.example.com'
+      }
+
+      assert_equal last_response.status, 401
+      assert last_response.body.include?('Your user account has expired.')
+    end
+  end
 end

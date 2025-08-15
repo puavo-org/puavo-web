@@ -404,6 +404,11 @@ private
     user = PuavoRest::User.current
     primary_school = user.school
 
+    # Check for expired accounts
+    if user && user.account_expiration_time && Time.now.utc >= Time.at(user.account_expiration_time)
+      return sso_render_form(request_id, error_message: t.sso.expired_account, exception: err, type: 'oidc', state_key: state_key)
+    end
+
     # Figure out the 'amr' claim value
     amr = []
 

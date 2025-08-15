@@ -3056,4 +3056,65 @@ describe PuavoRest::OAuth2 do
       assert last_response.body.include?('Too many failed two-factor login attempts. Login halted. Go to the original login form and try logging in again.')
     end
   end
+
+  describe 'Expired accounts must fail' do
+    before(:context) do
+      PuavoRest::Organisation.refresh
+
+      @external_service = ExternalService.new
+      @external_service.classes = ['top', 'puavoJWTService']
+      @external_service.cn = 'The Service'
+      @external_service.puavoServiceDomain = 'service.example.com'
+      @external_service.puavoServiceSecret = 'secret'
+      @external_service.puavoServiceTrusted = false
+      @external_service.save!
+
+      activate_organisation_services([@external_service.dn.to_s])
+
+      setup_login_clients([
+        {
+          client_id: 'test_login_service',
+          enabled: true,
+          puavo_service_dn: @external_service.dn.to_s,
+          redirects: ['http://service.example.com'],
+          scopes: %w[openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups]
+        }
+      ])
+
+      @expired = PuavoRest::User.new(
+        first_name: 'Expired',
+        last_name: 'User',
+        username: 'expired.user',
+        roles: ['student'],
+        password: 'expired',
+        school_dns: [@school.dn.to_s],
+        account_expiration_time: Time.now.utc - 3600
+      )
+
+      @expired.save!
+    end
+
+    it 'expired user account must not be able to log in' do
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups')
+
+      assert_equal last_response.status, 401
+      assert last_response.body.include?('Login to service <span>The Service</span>')
+
+      post '/oidc/authorize/post', {
+        type: 'oidc',
+        request_id: get_named_form_value('request_id'),
+        state_key: get_named_form_value('state_key'),
+        return_to: get_named_form_value('return_to'),
+        username: 'expired.user@example.puavo.net',
+        password: 'expired',
+      }
+
+      assert_equal last_response.status, 401
+      assert last_response.body.include?('Your user account has expired.')
+    end
+  end
 end

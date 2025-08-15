@@ -14,6 +14,7 @@ sso:
   verified_address_missing: "This service requires a verified email address. <a href=\"%1\">Please edit your user information and confirm an address</a>, then try loggin in again. If you do not know what any of this means, please contact Opinsys Oy support."
   system_error: "System error, login halted. Please contact support and give them this code:<br><code>%1</code>"
   inconsistent_login_state: "Inconsistency between stored state and form data. Login halted.<br>Please contact support and give them this code:<br><code>%1</code>"
+  expired_account: "Your user account has expired."
   login: Login
   login_to: Login to service
   error: Error

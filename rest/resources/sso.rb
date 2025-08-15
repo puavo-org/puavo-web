@@ -106,6 +106,11 @@ class SSO < PuavoSinatra
     user = User.current
     primary_school = user.school
 
+    # Check for expired accounts
+    if user && user.account_expiration_time && Time.now.utc >= Time.at(user.account_expiration_time)
+      return sso_render_form(request_id, error_message: t.sso.expired_account, exception: err)
+    end
+
     # Read organisation data manually instead of using the cached one because
     # enabled external services might be updated.
     organisation = LdapModel.setup(credentials: CONFIG["server"]) do
