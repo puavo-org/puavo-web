@@ -100,6 +100,7 @@ class Sessions < PuavoSinatra
         'profile_image_link' => user.profile_image_link,
         'edu_person_principal_name' => user.edu_person_principal_name,
         'primary_school_id' => user.school.id.to_i,
+        'account_expiration_time' => user.account_expiration_time,
       }
 
       # puavo-login needs groups and their GID numbers. Convert schools into groups,
