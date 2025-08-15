@@ -699,6 +699,13 @@ class User < LdapModel
     end
   end
 
+  computed_attr :account_expiration_time
+  def account_expiration_time
+    e = get_own(:account_expiration_time)
+    return nil if e.nil?
+    return e.to_time.to_i if e
+  end
+
   def get_request_domain(request_username, request_domain)
     return request_domain if request_domain
 

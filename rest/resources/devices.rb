@@ -228,6 +228,13 @@ class Device < Host
     end
   end
 
+  computed_attr :device_expiration_time
+  def device_expiration_time
+    e = get_own(:device_expiration_time)
+    return nil if e.nil?
+    return e.to_time.to_i if e
+  end
+
   def tags
     school.tags.concat(get_own(:tags)).uniq.sort
   end
