@@ -263,6 +263,48 @@ describe PuavoRest::Users do
     end
   end
 
+  describe "GET /v3/users" do
+    it "lists all users" do
+      basic_authorize "bob", "secret"
+      get "/v3/users"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      alice = data.select do |u|
+        u["username"] == "alice"
+      end.first
+
+      assert(alice)
+      assert_equal("Alice", alice["first_name"])
+      assert_equal("Wonder", alice["last_name"])
+
+      assert(data.select do |u|
+        u["username"] == "bob"
+      end.first)
+    end
+
+    it "lists all users with attribute limit" do
+      basic_authorize "bob", "secret"
+      get "/v3/users?attributes=username,first_name"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      alice = data.select do |u|
+        u["username"] == "alice"
+      end.first
+
+      assert(alice)
+      assert_equal("Alice", alice["first_name"])
+      assert_nil(alice["last_name"])
+
+      assert(data.select do |u|
+        u["username"] == "bob"
+      end.first)
+    end
+
+
+  end
+
   describe "external ID tests" do
     it "can save a user without changing anything" do
       assert @teacher.save!
