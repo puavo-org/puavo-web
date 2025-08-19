@@ -367,3 +367,22 @@ div#mfa_invalid_code {
     border: none;
   }
 }
+
+footer.public {
+  text-align: center;
+  font-size: 75%;
+  color: #888;
+  min-width: 600px;
+  max-width: 800px;
+  margin: 20px auto;
+  padding-top: 10px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+footer > * {
+  padding: 0;
+  margin: 0;
+}

@@ -60,7 +60,7 @@ class MfasController < ApplicationController
       secret = data['data']['totpsecret']
 
       # Generate a TOTP URL...
-      issuer = 'Opinsys'
+      issuer = Puavo::CONFIG.fetch('branding', {}).fetch('manufacturer', {}).fetch('mfa_issuer', '?')
       organisation = LdapOrganisation.current.cn
 
       name = ERB::Util.url_encode(organisation)

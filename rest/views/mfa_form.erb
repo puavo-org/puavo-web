@@ -19,15 +19,13 @@
             </div>
         </fieldset>
     </form>
-
-    <br>
-
-    <div id="lowerLogos" class="logoRow">
-        <a href="https://opinsys.fi" target="_blank" title="Opinsys Oy"><img src="<%= File.join(@login_content['prefix'], "opinsys_logo.svg") %>" alt="Opinsys Oy logo" width="150" height="34"></a>
-    </div>
-
-    <div style="display: block; text-align: center; font-size: 75%;">&copy; Opinsys Oy 2025</div>
 </div>
+
+<footer class="public">
+    <%= manufacturer_logo %>
+    <p><%= copyright_with_year %></p>
+    <p><%= @login_content['technical_support'] %>: <%= technical_support_email %></p>
+</footer>
 
 <script>
 "use strict";

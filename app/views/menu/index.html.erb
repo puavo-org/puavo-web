@@ -15,10 +15,9 @@
   <% end %>
   </ul>
 
+  <% if @login_content['lower_logos'] %>
   <div id="lowerLogos" class="logoRow">
-    <a href="https://opinsys.fi/" target="_blank"><img src="/login/opinsys_logo.svg" alt="Opinsys Oy" title="Opinsys Oy" width="150" height="34"></a>
-    <% if @login_content['lower_logos'] %>
 <%= render 'logorow', logos: @login_content['lower_logos'] %>
-    <% end %>
   </div>
+  <% end %>
 </div>

@@ -189,13 +189,23 @@ main {
     height: 16px;
 }
 
-footer {
-    margin-top: 20px;
-    padding-top: 10px;
-    border-top: 1px solid var(--generic-border-darker);
-    text-align: center;
-    font-size: 75%;
-    color: var(--footer-fore);
+footer.public {
+  text-align: center;
+  font-size: 75%;
+  color: #888;
+  min-width: 600px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-top: 10px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+footer > * {
+  padding: 0;
+  margin: 0;
 }
 
 /* Clumsy media queries. No idea if these actually work on mobile. */

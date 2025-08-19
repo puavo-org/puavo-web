@@ -11,5 +11,10 @@
 </head>
 <body>
 <%= yield %>
+<footer class="public">
+    <%= manufacturer_logo %>
+    <p><%= copyright_with_year %></p>
+    <p><%= debug_footer(reduced: true) %></p>
+</footer>
 </body>
 </html>

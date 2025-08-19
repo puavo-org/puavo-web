@@ -98,7 +98,6 @@
         <% Array(@login_content['lower_logos'] || []).each do |logo| %>
         <a href="<%= logo['href'] %>" target="_blank" title="<%= logo['title'] %>"><img src="<%= File.join(@login_content['prefix'], logo['image']) %>" width="<%= logo['width'] %>" height="<%= logo['height'] %>" alt="<%= logo['alt'] %>" title="<%= logo['title'] %>"></a>
         <% end %>
-        <a href="https://opinsys.fi" target="_blank" title="Opinsys Oy"><img src="<%= File.join(@login_content['prefix'], "opinsys_logo.svg") %>" alt="Opinsys Oy logo" width="150" height="34"></a>
     </div>
 
     <div id="help">
@@ -121,6 +120,11 @@
         </details>
     </div>
 </div>
+
+<footer class="public">
+    <%= manufacturer_logo %>
+    <p><%= copyright_with_year %></p>
+</footer>
 
 <script>
 const TOP_DOMAIN = "<%= @login_content['topdomain'] %>";
