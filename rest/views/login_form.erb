@@ -125,20 +125,18 @@
 <script>
 const TOP_DOMAIN = "<%= @login_content['topdomain'] %>";
 
-(function() {
-    let input = document.getElementById("username");
+document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("username");
 
-    input.addEventListener("blur", function(e) {
+    input.addEventListener("blur", e => {
         const domain = input.value.split("@")[1];
 
         // Append the top-level domain if it's not set
         if (domain && !domain.match(/\./))
             input.value = input.value + "." + TOP_DOMAIN;
     });
-}());
 
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelector("form").addEventListener("submit", (e) => {
+    document.querySelector("form").addEventListener("submit", e => {
         <% if @login_content['display_domain'] %>
         // We're in a "forced domain" mode, so if the username already
         // contains the domain name (any domain), remove it.
