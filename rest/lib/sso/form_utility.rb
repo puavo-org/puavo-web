@@ -17,7 +17,7 @@ module FormUtility
     @organisation = preferred_organisation
 
     if !(browser.linux?)
-      # Kerberos authentication works only on Opinsys desktops with Firefox.
+      # Kerberos authentication works only on Opinsys-OS desktops with Firefox.
       # Disable authentication negotiation on others since it  may cause
       # unwanted basic auth popups (at least Chrome & IE @ Windows).
       response.headers.delete("WWW-Authenticate")
