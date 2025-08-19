@@ -605,7 +605,7 @@ module Puavo
 
       # Should not get here
       raise "WE SHOULD NOT GET HERE. THIS IS A FATAL ERROR. " \
-            "Please contact Opinsys support and give them this request ID: #{request_id}."
+            "Please contact technical support and give them this request ID: #{request_id}."
     end
 
     # Delete the user from external systems. Returns [status, message] tuples;

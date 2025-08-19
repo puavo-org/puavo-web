@@ -65,7 +65,7 @@ class ImageStatisticsController < ApplicationController
     return [] if devices.empty?
 
     # get_releases() is defined in application_helper.rb. It reads the (optional)
-    # releases.json which contains official Opinsys desktop image release names.
+    # releases.json which contains official desktop image release names.
     releases = get_releases()
 
     schools = {}
