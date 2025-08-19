@@ -111,6 +111,25 @@ if ENV['RACK_ENV'] == 'test' then
       :password => PUAVO_ETC.ldap_password
     },
     "puavo_ca" => "http://localhost:8080",
+    'branding' => {
+      'copyright' => '© Opinsys',
+      'copyright_year' => '2025',
+      'copyright_with_year' => '© Opinsys Oy 2025',
+      'manufacturer' => {
+        'generic_name' => 'Opinsys',
+        'url' => 'https://opinsys.fi',
+        'logo' => '/v3/login/opinsys_logo.svg',
+        'alt_text' => 'Opinsys Oy logo',
+        'title' => 'Opinsys Oy',
+        'logo_width' => 150,
+        'logo_height' => 34,
+        'technical_support_email' => 'support@hogwarts.puavo.net',
+        'technical_support_phone' => {
+          'short' => '1234567890',
+          'international' => '+358 1234567890',
+        },
+      }
+    },
   }
 else
   customizations = [
