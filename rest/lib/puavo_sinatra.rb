@@ -74,5 +74,38 @@ class PuavoSinatra < Sinatra::Base
     'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
   end
 
+  def copyright
+    CONFIG.fetch('branding', {}).fetch('copyright', '(Unknown copyright)')
+  end
+
+  def copyright_year
+    CONFIG.fetch('branding', {}).fetch('copyright_year', '(Unknown copyright year)')
+  end
+
+  def copyright_with_year
+    CONFIG.fetch('branding', {}).fetch('copyright_with_year', '(Unknown copyright)')
+  end
+
+  def manufacturer_name
+    CONFIG.fetch('branding', {}).fetch('manufacturer', {}).fetch('name', '?')
+  end
+
+  def manufacturer_logo
+    manufacturer = CONFIG.fetch('branding', {}).fetch('manufacturer', {})
+    return '' if manufacturer.empty?
+
+    "<a href=\"#{manufacturer['url']}\" target=\"_blank\"><img src=\"#{manufacturer['logo']}\" alt=\"#{manufacturer['alt_text']}\" title=\"#{manufacturer['title']}\" width=\"#{manufacturer['logo_width']}\" height=\"#{manufacturer['logo_height']}\"></a>"
+  end
+
+  def technical_support_email
+    CONFIG.fetch('branding', {}).fetch('manufacturer', {}).fetch('technical_support_email', '?')
+  end
+
+  def technical_support_phone(international: false)
+    phone = CONFIG.fetch('branding', {}).fetch('manufacturer', {}).fetch('technical_support_phone', {})
+    return '' if phone.empty?
+
+    phone.fetch(international ? 'international' : 'short', '?')
+  end
 end
 end

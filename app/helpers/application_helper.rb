@@ -400,4 +400,38 @@ module ApplicationHelper
 
     out.join("\n").html_safe
   end
+
+  def copyright
+    Puavo::CONFIG.fetch('branding', {}).fetch('copyright', '(Unknown copyright)')
+  end
+
+  def copyright_year
+    Puavo::CONFIG.fetch('branding', {}).fetch('copyright_year', '(Unknown copyright year)')
+  end
+
+  def copyright_with_year
+    Puavo::CONFIG.fetch('branding', {}).fetch('copyright_with_year', '(Unknown copyright)')
+  end
+
+  def manufacturer_name
+    Puavo::CONFIG.fetch('branding', {}).fetch('manufacturer', {}).fetch('name', '?')
+  end
+
+  def manufacturer_logo
+    manufacturer = Puavo::CONFIG.fetch('branding', {}).fetch('manufacturer', {})
+    return '' if manufacturer.empty?
+
+    "<a href=\"#{manufacturer['url']}\" target=\"_blank\"><img src=\"#{manufacturer['logo']}\" alt=\"#{manufacturer['alt_text']}\" title=\"#{manufacturer['title']}\" width=\"#{manufacturer['logo_width']}\" height=\"#{manufacturer['logo_height']}\"></a>".html_safe
+  end
+
+  def technical_support_email
+    Puavo::CONFIG.fetch('branding', {}).fetch('manufacturer', {}).fetch('technical_support_email', '?')
+  end
+
+  def technical_support_phone(international: false)
+    phone = Puavo::CONFIG.fetch('branding', {}).fetch('manufacturer', {}).fetch('technical_support_phone', {})
+    return '' if phone.empty?
+
+    phone.fetch(international ? 'international' : 'short', '?')
+  end
 end
