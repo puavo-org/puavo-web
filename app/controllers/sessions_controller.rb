@@ -234,6 +234,7 @@ class SessionsController < ApplicationController
       'mfa_help2' => t('sessions.new.mfa.help2'),
       'mfa_continue' => t('sessions.new.mfa.continue'),
       'mfa_cancel' => t('sessions.new.mfa.cancel'),
+      'technical_support' => t('sessions.new.technical_support'),
     }
 
     respond_to do |format|

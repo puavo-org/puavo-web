@@ -116,6 +116,7 @@ module MFA
       'mfa_help2' => t.mfa.help2,
       'mfa_continue' => t.mfa.continue,
       'mfa_cancel' => t.mfa.cancel,
+      'technical_support' => t.sso.technical_support,
     }
 
     halt 401, common_headers(), erb(:mfa_form, :layout => :layout)
