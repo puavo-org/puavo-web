@@ -14,8 +14,12 @@ class User < LdapBase
   USE_ORGANISATION_DEFAULTS = 'use_organisation_defaults'
 
   def initialize(attributes={})
-    attributes[:puavoTeacherPermissions] = [ USE_ORGANISATION_DEFAULTS ] \
-      unless attributes.has_key?(:puavoTeacherPermissions)
+    # ActiveLdap may pass a DN to a model as an argument, so check we have
+    # an attributes hash before adding defaults to teacher permissions.
+    # An alternative way of passing the default would be a nice improvement.
+    if attributes.kind_of?(Hash) && !attributes.has_key?(:puavoTeacherPermissions) then
+      attributes[:puavoTeacherPermissions] = [ USE_ORGANISATION_DEFAULTS ]
+    end
     super(attributes)
   end
 
