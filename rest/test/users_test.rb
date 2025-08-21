@@ -666,4 +666,53 @@ describe PuavoRest::Users do
     end
   end
 
+  describe '/v4/users with machine authentication' do
+    before(:each) do
+      @device = create_device(
+        puavoHostname: 'device',
+        puavoDeviceType: 'laptop',
+        macAddress: "11:22:33:44:55:66",
+        puavoSchool: @school.dn,
+      )
+      @device.save!
+    end
+
+    it 'device-authenticated /v4/users call can only retrieve uid_number attributes' do
+      basic_authorize @device.dn, @device.ldap_password
+      get '/v4/users?fields=id,username,external_id,first_names,last_name'
+
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert_equal data['status'], 'ok'
+
+      # Ensure only "uid_number" attributes are returned, even though we requested other data
+      data['data'].each do |u|
+        assert_equal u.keys.count, 1
+        assert_equal u.keys, ['uid_number']
+      end
+    end
+
+    it 'device authentication will not work with other V4 endpoints' do
+      # Try devices
+      basic_authorize @device.dn, @device.ldap_password
+      get '/v4/devices?fields=id,hostname'
+      assert_equal last_response.status, 401
+
+      # Try groups
+      basic_authorize @device.dn, @device.ldap_password
+      get '/v4/groups?fields=id,name,type,school_id'
+      assert_equal last_response.status, 401
+
+      # Try schools
+      basic_authorize @device.dn, @device.ldap_password
+      get '/v4/schools?fields=id,name,group_prefix,puavoconf'
+      assert_equal last_response.status, 401
+
+      # Try the organisation
+      basic_authorize @device.dn, @device.ldap_password
+      get '/v4/organisation?fields=abbreviation,name,owners'
+      assert_equal last_response.status, 401
+    end
+  end
 end
