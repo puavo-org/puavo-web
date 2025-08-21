@@ -3,9 +3,19 @@
 class GroupsMassOperationsController < MassOperationsController
   include Puavo::GroupsShared
 
+  # These permissions must be specified using strings, not symbols
+  GROUP_PERMISSIONS = {
+    'set_type' => %w[group_mass_change_type],
+    'delete' => %w[delete_groups mass_delete_groups],
+  }.freeze
+
   # POST '/groups_mass_operation'
   def groups_mass_operation
     prepare
+
+    unless permitted?(GROUP_PERMISSIONS)
+      return render json: { ok: false, message: t('supertable.mass.operation_not_permitted'), request_id: @request_id }
+    end
 
     group_cache = {}
 
