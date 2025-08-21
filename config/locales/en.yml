@@ -48,6 +48,17 @@ en:
     one_year: "1 year (365 days) from now"
     three_years: "3 years (1095 days) from now"
 
+  # The production error page
+  production_error:
+    title: "An unexpected error occurred"
+    heading: "Sorry, an unexpected error occurred ☹️"
+    apology: "We apologize for any inconvenience this may have caused. Please contact %{manufacturer} support and give them the following information:"
+    log_identifier: "Log identifier"
+    server_time: "Server time"
+    server_hostname: "Server hostname"
+    request: "Request"
+    copy: "Copy everything to clipboard"
+
   # "Main menu", from which you can log in or access other services in the organisation
   menu:
     index:

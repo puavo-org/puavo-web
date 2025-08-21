@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= I18n.locale %>">
 <head><meta charset="UTF-8">
+<title><%= t('production_error.title') %></title>
 <style>
 body {
     background: #f0eee1;
@@ -25,20 +26,20 @@ button {
     padding: 1em 5em;
 }
 </style>
-<title>An unexpected error occurred</title></head><body>
+</head><body>
 
-<h1>Sorry, an unexpected error occurred ☹️</h1>
+<h1><%= t('production_error.heading') %></h1>
 
-<p>We apologize for any inconvenience this may have caused. Please contact <%= manufacturer_name %> support and give them the following information:</p>
+<p><%= t('production_error.apology', manufacturer: manufacturer_name) %></p>
 
 <div id="details">
-    <p><strong>Log identifier:</strong> <code><%= @error_uuid %></code></p>
-    <p><strong>Server time:</strong> <code><%= Time.now.strftime('%Y-%m-%d %H:%M:%S') %></code></p>
-    <p><strong>Server hostname:</strong> <code><%= Socket.gethostname %></code></p>
-    <p><strong>Request:</strong> <code><%= @request.method %> <%= @request.url %></code></p>
+    <p><strong><%= t('production_error.log_identifier') %>:</strong> <code><%= @error_uuid %></code></p>
+    <p><strong><%= t('production_error.server_time') %>:</strong> <code><%= Time.now.strftime('%Y-%m-%d %H:%M:%S') %></code></p>
+    <p><strong><%= t('production_error.server_hostname') %>:</strong> <code><%= Socket.gethostname %></code></p>
+    <p><strong><%= t('production_error.request') %>:</strong> <code><%= @request.method %> <%= @request.url %></code></p>
 </div>
 
-<button type="button" id="copy">Copy everything to clipboard</button>
+<button type="button" id="copy"><%= t('production_error.copy') %></button>
 
 <%= render partial: 'shared/copy_text', formats: [:js] %>
 

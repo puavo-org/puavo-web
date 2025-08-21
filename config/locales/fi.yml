@@ -48,6 +48,17 @@ fi:
     one_year: "1 vuoden (365 päivää) päästä"
     three_years: "3 vuoden (1095 päivää) päästä"
 
+  # The production error page
+  production_error:
+    title: "Odottamaton virhe"
+    heading: "Pahoittelut, tapahtui odottamaton virhe ☹️"
+    apology: "Pahoittelemme kaikkea tästä mahdollisesti aiheutunutta harmia. Ole hyvä ja ota yhteys %{manufacturer}in tukeen ja anna heille seuraavat tiedot:"
+    log_identifier: "Lokitunniste"
+    server_time: "Palvelimen aika"
+    server_hostname: "Palvelimen nimi"
+    request: "Pyyntö"
+    copy: "Kopioi kaikki leikepöydälle"
+
   # "Main menu", from which you can log in or access other services in the organisation
   menu:
     index:
