@@ -8,6 +8,10 @@ class AdminPermissionsMassOperationsController < MassOperationsController
   def admin_permissions_mass_operation
     prepare
 
+    unless is_owner?
+      return render json: { ok: false, message: t('supertable.mass.operation_not_permitted'), request_id: @request_id }
+    end
+
     list_uids = []
 
     result = process_rows do |id, data|

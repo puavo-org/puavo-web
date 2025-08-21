@@ -7,6 +7,10 @@ class ServersMassOperationsController < MassOperationsController
   def servers_mass_operation
     prepare
 
+    unless is_owner?
+      return render json: { ok: false, message: t('supertable.mass.operation_not_permitted'), request_id: @request_id }
+    end
+
     result = process_rows do |id, data|
       logger.info "[#{@request_id}] Processing item #{id}, item data=#{data.inspect}"
 
