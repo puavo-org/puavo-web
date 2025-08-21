@@ -4,9 +4,20 @@ class UsersMassOperationsController < MassOperationsController
   include Puavo::Integrations
   include Puavo::UsersShared
 
+  # These permissions must be specified using strings, not symbols
+  USER_PERMISSIONS = {
+    'clear_column' => %w[users_mass_clear_column_contents],
+    'delete' => %w[delete_users mass_delete_users],
+    'set_expiration_time' => %w[user_edit_expiration_times user_mass_edit_expiration_times]
+  }.freeze
+
   # POST '/users_mass_operation'
   def users_mass_operation
     prepare
+
+    unless permitted?(USER_PERMISSIONS)
+      return render json: { ok: false, message: t('supertable.mass.operation_not_permitted'), request_id: @request_id }
+    end
 
     list_uids = []
 
