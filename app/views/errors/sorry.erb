@@ -10,11 +10,20 @@ body {
 }
 
 h1 { margin-top: 0; }
+code { font-size: 120%; }
 
-p.header { font-weight: bold; }
+div#details {
+    margin: 1em 0;
+}
 
-pre { font-size: 120%; }
+div > p {
+    padding: 0;
+    margin: 0;
+}
 
+button {
+    padding: 1em 5em;
+}
 </style>
 <title>An unexpected error occurred</title></head><body>
 
@@ -22,19 +31,30 @@ pre { font-size: 120%; }
 
 <p>We apologize for any inconvenience this may have caused. Please contact <%= manufacturer_name %> support and give them the following information:</p>
 
-<p class="header">Log identifier:</p>
-<p><pre><%= @error_uuid %></pre></p>
+<div id="details">
+    <p><strong>Log identifier:</strong> <code><%= @error_uuid %></code></p>
+    <p><strong>Server time:</strong> <code><%= Time.now.strftime('%Y-%m-%d %H:%M:%S') %></code></p>
+    <p><strong>Server hostname:</strong> <code><%= Socket.gethostname %></code></p>
+    <p><strong>Request:</strong> <code><%= @request.method %> <%= @request.url %></code></p>
+</div>
 
-<p class="header">Server:</p>
-<p><pre><%= Socket.gethostname %></pre></p>
+<button type="button" id="copy">Copy everything to clipboard</button>
 
-<p class="header">Request:</p>
-<p><pre><%= @request.method %> <%= @request.url %></pre></p>
+<%= render partial: 'shared/copy_text', formats: [:js] %>
 
-<p class="header">Exception:</p>
-<p><pre><%= @error.class %></pre></p>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector("button#copy").addEventListener("click", () => {
+        let parts = [];
 
-<p class="header">Message:</p>
-<p><pre><%= @error.message %></pre></p>
+        parts.push("Log identifier: <%= @error_uuid %>");
+        parts.push("Server time: <%= Time.now.strftime('%Y-%m-%d %H:%M:%S') %>");
+        parts.push("Server hostname: <%= Socket.gethostname %>");
+        parts.push("Request: <%= @request.method %> <%= @request.url %>");
 
-</body></html>
+        copyTextToClipboard(parts.join("\n") + "\n");
+    });
+});
+</script>
+</body>
+</html>
