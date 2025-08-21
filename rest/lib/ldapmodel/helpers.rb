@@ -52,9 +52,10 @@ PART_COUNTS = {
 PERMIT_MULTIPLE = Set.new(['id']).freeze
 
 # Attempts to detect if the user is high-level enough for this request
-def v4_is_request_allowed?(current)
+def v4_is_request_allowed?(current, allow_device_credentials: false)
   return true if current && current.admin?
   return true if current && current.server_user?
+  return true if allow_device_credentials && current.device?
 
   # uid=<name>,ou=System Accounts,dc=...
   if /^uid=[a-zA-Z0-9_\-]+,ou=System Accounts,dc=edu,dc=/.match(LdapModel.settings[:credentials][:dn])

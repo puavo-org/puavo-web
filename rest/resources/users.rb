@@ -1480,7 +1480,7 @@ class Users < PuavoSinatra
     oauth2 scopes: ['puavo.read.users']
     auth :oauth2_token, :basic_auth, :kerberos
 
-    raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
+    raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current, allow_device_credentials: true)
 
     v4_do_operation do
       # which fields to get?
