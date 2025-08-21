@@ -3,9 +3,23 @@
 class DevicesMassOperationsController < MassOperationsController
   include Puavo::CommonShared
 
+  # These permissions must be specified using strings, not symbols
+  DEVICE_PERMISSIONS = {
+    'delete' => %w[delete_devices mass_delete_devices],
+    'reset' => %w[reset_devices mass_reset_devices],
+    'change_school' => %w[device_change_school device_mass_change_school],
+    'tags_edit' => %w[device_mass_tag_editor],
+    'purchase_info' => %w[device_mass_change_purchase_information],
+    'set_expiration_time' => %w[device_edit_expiration_times device_mass_edit_expiration_times],
+  }.freeze
+
   # POST '/devices_mass_operation'
   def devices_mass_operation
     prepare
+
+    unless permitted?(DEVICE_PERMISSIONS)
+      return render json: { ok: false, message: t('supertable.mass.operation_not_permitted'), request_id: @request_id }
+    end
 
     result = process_rows do |id, data|
       logger.info "[#{@request_id}] Processing item #{id}, item data=#{data.inspect}"
