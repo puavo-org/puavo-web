@@ -687,6 +687,7 @@ en:
       start_button: "Start"
       stop_button: "Stop"
       settings_title: "Operation settings"
+      operation_not_permitted: "You do not have enough admin permissions to run this mass operation"
     paging:
       top_rows_per_page: "How many rows are shown on each page"
       top_first_page: "First page"

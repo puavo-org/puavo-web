@@ -12,10 +12,40 @@ class MassOperationsController < ApplicationController
     @single_shot = data.fetch('singleShot', false)
     @parameters = data['parameters'] || {}
     @rows = data['rows']
+
+    logger.info "[#{@request_id}] Prepared a mass operation; operation=\"#{@operation}\", single shot=#{@single_shot}, parameters=#{@parameters.inspect}, items=#{@rows.count}"
+  end
+
+  def permitted?(permissions_table)
+    # Owners can do anything
+    if is_owner?
+      logger.info "[#{@request_id}] The current user is an organisation owner, skipping admin permissions checks"
+      return true
+    end
+
+    # If there are no permissions listed for this operation, then it is assumed to be permitted for all admins
+    unless permissions_table.include?(@operation)
+      logger.info "[#{@request_id}] No specific admin permission requirements listed for operation #{@operation.inspect}, assuming it is permitted"
+      return true
+    end
+
+    # Check every required permission
+    current_permissions = Array(current_user.puavoAdminPermissions || [])
+
+    permissions_table[@operation].each do |p|
+      unless current_permissions.include?(p)
+        logger.info "[#{@request_id}] Missing required admin permission #{p.inspect}, operation not permitted"
+        return false
+      end
+    end
+
+    # Permitted
+    logger.info "[#{@request_id}] The current user is permitted to do this operation"
+    true
   end
 
   def process_rows(&block)
-    logger.info "[#{@request_id}] Starting a mass operation; operation=\"#{@operation}\", single shot=#{@single_shot}, parameters=#{@parameters.inspect}, items=#{@rows.count}"
+    logger.info "[#{@request_id}] Starting the operation"
     out = []
 
     @rows.each do |row|

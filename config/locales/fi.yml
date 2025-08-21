@@ -687,6 +687,7 @@ fi:
       start_button: "Aloita"
       stop_button: "Pysäytä"
       settings_title: "Operaation asetukset"
+      operation_not_permitted: "Sinulla ei ole riittävästi ylläpitäjän oikeuksia suorittaa tätä massaoperaatiota"
     paging:
       top_rows_per_page: "Montako riviä näytetään per sivu"
       top_first_page: "Ensimmäinen sivu"
