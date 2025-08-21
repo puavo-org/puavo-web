@@ -25,6 +25,21 @@ div > p {
 button {
     padding: 1em 5em;
 }
+
+footer {
+    text-align: center;
+    font-size: 75%;
+    color: #888;
+    min-width: 600px;
+    max-width: 800px;
+    margin: 20px auto;
+    padding-top: 10px;
+}
+
+footer p {
+    margin: 0;
+    padding: 0;
+}
 </style>
 </head><body>
 
@@ -40,6 +55,11 @@ button {
 </div>
 
 <button type="button" id="copy"><%= t('production_error.copy') %></button>
+
+<footer class="public">
+    <%= manufacturer_logo %>
+    <p><%= copyright_with_year %></p>
+</footer>
 
 <%= render partial: 'shared/copy_text', formats: [:js] %>
 
