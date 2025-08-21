@@ -287,6 +287,8 @@ class Organisations < PuavoSinatra
   get '/v4/organisation' do
     auth :basic_auth, :kerberos, :server_auth
 
+    raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
+
     v4_do_operation do
       user_fields = v4_get_fields(params).to_set
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
