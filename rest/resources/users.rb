@@ -1483,8 +1483,14 @@ class Users < PuavoSinatra
     raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current, allow_device_credentials: true)
 
     v4_do_operation do
-      # which fields to get?
-      user_fields = v4_get_fields(params).to_set
+      # Which fields to get? This endpoint allows device credentials, as the old users cleanup
+      # script needs to call this. But since that's an exception, we can hardcode the attribute
+      # list it's allowed to get.
+      if User.current.device?
+        user_fields = ['uid_number'].to_set
+      else
+        user_fields = v4_get_fields(params).to_set
+      end
 
       ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
 
