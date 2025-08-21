@@ -742,6 +742,10 @@ class User < LdapModel
     dn == CONFIG["server"][:dn]
   end
 
+  def device?
+    /^puavoId=(\d+),ou=Devices,ou=Hosts,dc=/.match(dn)
+  end
+
   computed_attr :schools_hash, :schools
   def schools_hash
     # Inject the materials charge value into the schools array, at the correct school
