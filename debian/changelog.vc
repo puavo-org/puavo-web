@@ -1,3 +1,9 @@
+puavo-web (0.33) trixie; urgency=medium
+
+  * Bump version for Trixie.
+
+ -- Puavo Org <dev@opinsys.fi>  Mon, 25 Aug 2025 10:52:43 +0300
+
 puavo-users (0.32) bookworm; urgency=medium
 
   * Bump version for Bookworm.
