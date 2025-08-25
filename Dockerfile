@@ -1,6 +1,6 @@
 # This is from https://hub.docker.com/r/jrei/systemd-debian/~/dockerfile/
 
-FROM debian:bookworm
+FROM debian:trixie
 
 ENV container docker
 ENV LC_ALL C
