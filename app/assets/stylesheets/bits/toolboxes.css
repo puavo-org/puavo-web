@@ -113,3 +113,96 @@
   visibility: visible;
   display: block;
 }
+
+/*
+NEW PAGE TOOLS STYLES
+These will replace the old toolbar styles once all pages have been converted.
+*/
+
+ul.pageTools {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 5px;
+
+  list-style-type: none;
+  margin: 0;
+  margin-bottom: 1em;
+  padding: 0;
+}
+
+ul.pageTools i {
+  /* More room after the icons */
+  margin-right: 5px;
+}
+
+ul.pageTools .btn {
+  /* Only the flexbox's gap separates the toolbar entries */
+  margin: 0 !important;
+}
+
+ul.pageTools span.btn {
+  cursor: default !important;
+}
+
+ul.pageTools .dropdown2 {
+  list-style-type: none;
+  left: auto;
+  margin-top: 0px;
+  min-width: 130px;
+  background: var(--tools-dropdown-back);
+  border: 1px solid var(--tools-dropdown-border);
+  padding: 5px;
+  box-shadow: 0 0 10px var(--default-box-shadow);
+  z-index: 2;
+
+  /* Menu items placement */
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  position: absolute;
+}
+
+/* Right-aligned menu (normally left-aligned) */
+.dropRight2 {
+  right: 0;
+  margin-right: 20px;
+  margin-top: -3px;
+}
+
+/* Make the dropdown visible */
+ul.pageTools li.haveDropdown2:hover .dropdown2 {
+  display: flex;
+}
+
+.haveDropdown2:hover .btn {
+  /* Continue "highlighting" the button when its dropdown is hovered */
+  background: var(--button-back-hover) !important;
+}
+
+ul.pageTools ul.dropdown2 a {
+  text-decoration: none;
+  display: block;
+  padding: 5px 10px;
+  color: var(--tools-dropdown-link-fore) !important;
+  background: transparent !important;
+  white-space: nowrap;
+  font-size: 100%;
+  width: auto;
+  font-weight: normal !important;
+}
+
+ul.pageTools ul.dropdown2 a:hover {
+  background: var(--tools-dropdown-link-back-hover) !important;
+  color: var(--tools-dropdown-link-fore-hover) !important;
+}
+
+ul.pageTools div.dropdown2 a.noIcon {
+  padding-left: 25px;
+}
+
+ul.pageTools ul.dropdown2 li.separator {
+  border-bottom: 1px solid #aaa;
+  display: block;
+  width: 100%;
+}

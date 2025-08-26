@@ -149,6 +149,12 @@ I18n.locale = "<%= I18n.locale %>";
       <% end %>
       <% end %>
 
+      <% if current_user && content_for?(:page_tools) %>
+      <ul class="pageTools">
+      <%= yield :page_tools %>
+      </ul>
+      <% end %>
+
       <% if current_user && content_for?(:tools) %>
       <div class="toolsContainer">
       <%= yield :tools %>

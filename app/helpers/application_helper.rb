@@ -1,3 +1,5 @@
+require 'toolbar'
+
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   include Puavo::Helpers
@@ -438,5 +440,10 @@ module ApplicationHelper
     return '' if phone.empty?
 
     phone.fetch(international ? 'international' : 'short', '?')
+  end
+
+  # Wrapper
+  def toolbar(&block)
+    Toolbar.new.build(&block)
   end
 end
