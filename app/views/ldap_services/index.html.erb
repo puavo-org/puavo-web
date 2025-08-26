@@ -40,14 +40,13 @@
 <% end %>
 </table>
 
-<% content_for :tools do %>
-<ul>
-  <li>
-    <%= link_to new_ldap_service_path, class: 'btn' do%>
-     <i class="icon-plus"></i> <%= t('link.new_ldap_service')%>
-    <% end %>
-  </li>
-</ul>
+<% content_for :page_tools do %>
+<%=
+toolbar do |tb|
+  tb.link t('link.new_ldap_service'),
+          href: new_ldap_service_path,
+          icon: 'plus'
+end %>
 <% end %>
 
 <% content_for :javascript do %>
