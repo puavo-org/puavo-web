@@ -259,39 +259,31 @@
 <!-- Mountpoints -->
 <%= render :partial => 'shared/mountpoint', :locals => { :object => @school } %>
 
-<% content_for :tools do %>
-<ul>
-  <% if @can_edit %>
-  <li>
-    <%= link_to edit_school_path(@school), class: "btn" do %>
-      <i class='icon-pencil'></i><%= t('link.edit') %>
-    <% end %>
-  </li>
-  <% end %>
+<% content_for :page_tools do %>
+<%=
+toolbar do |tb|
+  if @can_edit
+    tb.link t('link.edit'),
+            href: edit_school_path(@school),
+            icon: 'pencil'
+  end
 
-  <% if current_user.organisation_owner? %>
-  <li class="haveDropdown">
-    <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
-    <div class="dropdown dropRight">
-      <ul>
-        <li class="ownersOnly">
-          <%= link_to new_rename_groups_path(@school) do %>
-            <i class='icon-exchange'></i><%= t('link.rename_groups') %>
-          <% end %>
-        </li>
-      </ul>
+  if current_user.organisation_owner?
+    tb.dropdown t('link.more'), right: true do |menu|
+      menu.link t('link.rename_groups'),
+                href: new_rename_groups_path(@school),
+                icon: 'exchange',
+                owners: true
 
-      <ul>
-        <li class="ownersOnly">
-        <%= link_to school_path(@school), data: { confirm: t('general_confirm') }, method: :delete do %>
-          <i class='icon-trash'></i><%= t('link.delete_school') %>
-        <% end %>
-      </li>
-      </ul>
-    </div>
-  </li>
-  <% end %>
-</ul>
+      menu.link t('link.delete_school'),
+                href: school_path(@school),
+                confirm: t('general_confirm'),
+                method: 'delete',
+                icon: 'trash',
+                owners: true
+    end
+  end
+end %>
 <% end %>
 
 </div>
