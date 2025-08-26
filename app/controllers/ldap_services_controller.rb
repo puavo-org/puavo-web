@@ -9,7 +9,7 @@ class LdapServicesController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @ldap_services }
+      format.xml  { render xml: @ldap_services }
     end
   end
 
@@ -22,7 +22,7 @@ class LdapServicesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @ldap_service }
+      format.xml  { render xml: @ldap_service }
     end
   end
 
@@ -32,12 +32,11 @@ class LdapServicesController < ApplicationController
     return if redirected_nonowner_user?
 
     @ldap_service = LdapService.new
-
     @system_groups = SystemGroup.all
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @ldap_service }
+      format.xml  { render xml: @ldap_service }
     end
   end
 
@@ -59,13 +58,12 @@ class LdapServicesController < ApplicationController
 
     respond_to do |format|
       if @ldap_service.save
-        format.html { redirect_to( ldap_service_path(@ldap_service),
-                                   :notice => t('flash.added',
-                                                :item => t('activeldap.models.ldap_service') ) ) }
-        format.xml  { render :xml => @ldap_service, :status => :created, :location => @ldap_service }
+        format.html { redirect_to(ldap_service_path(@ldap_service),
+                                   notice: t('flash.added', item: t('activeldap.models.ldap_service'))) }
+        format.xml  { render xml: @ldap_service, status: :created, location: @ldap_service }
       else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @ldap_service.errors, :status => :unprocessable_entity }
+        format.html { render action: 'new' }
+        format.xml  { render xml: @ldap_service.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -88,13 +86,12 @@ class LdapServicesController < ApplicationController
 
     respond_to do |format|
       if @ldap_service.update_attributes(ldap_service_params)
-        format.html { redirect_to( ldap_service_path(@ldap_service),
-                                   :notice => t('flash.updated',
-                                                :item => t('activeldap.models.ldap_service' ) ) ) }
+        format.html { redirect_to(ldap_service_path(@ldap_service),
+                                  notice: t('flash.updated', item: t('activeldap.models.ldap_service'))) }
         format.xml  { head :ok }
       else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @ldap_service.errors, :status => :unprocessable_entity }
+        format.html { render action: 'edit' }
+        format.xml  { render xml: @ldap_service.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -116,7 +113,8 @@ class LdapServicesController < ApplicationController
   end
 
   private
-    def ldap_service_params
-      return params.require(:ldap_service).permit(:uid, :description, :userPassword, :groups=>[]).to_hash
-    end
+
+  def ldap_service_params
+    params.require(:ldap_service).permit(:uid, :description, :userPassword, :groups=>[]).to_hash
+  end
 end
