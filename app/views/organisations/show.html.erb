@@ -164,13 +164,11 @@
   </table>
 <%= end_box %>
 
-<% content_for :tools do %>
-<ul>
-  <li>
-    <%= link_to edit_organisation_path, class: "btn" do%>
-      <i class="icon-pencil"></i> <%= t('link.edit') %>
-    <% end %>
-  </li>
-</ul>
-
+<% content_for :page_tools do %>
+<%=
+toolbar do |tb|
+  tb.link t('link.edit'),
+          href: edit_organisation_path,
+          icon: 'pencil'
+end %>
 <% end %>
