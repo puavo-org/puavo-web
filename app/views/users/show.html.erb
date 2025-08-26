@@ -284,154 +284,109 @@
 
 <hr>
 
-<% content_for :tools do %>
-<ul>
-  <li>
-    <%= link_to edit_user_path(@school, @user), class: 'btn' do %>
-      <i class='icon-pencil'></i><%=t('link.edit')%>
-    <% end %>
-  </li>
+<% content_for :page_tools do %>
+<%=
+toolbar do |tb|
+  tb.link t('link.edit'),
+          href: edit_user_path(@school, @user),
+          icon: 'pencil'
 
-  <li class="haveDropdown">
-    <span class="btn"><i class='icon-collapse'></i><%= t('link.more') %></span>
-    <div class="dropdown dropRight">
-      <% if current_user.organisation_owner? %>
-       <ul>
-        <li class="ownersOnly">
-           <% if school_has_integration?(@organisation_name, @school.id.to_i, 'primus') %>
-          <%= link_to change_schools_path(@school, @user), data: { confirm: t('.primus_school_change_warning') } do %>
-             <i class='icon-exchange'></i><%= t('.change_school') %>
-           <% end %>
-           <% else %>
-          <%= link_to change_schools_path(@school, @user) do %>
-             <i class='icon-exchange'></i><%= t('.change_school') %>
-           <% end %>
-           <% end %>
-         </li>
-       </ul>
-      <% end %>
+  tb.dropdown t('link.more'), right: true do |menu|
+    if current_user.organisation_owner?
+      menu.link t('.change_school'),
+                href: change_schools_path(@school, @user),
+                icon: 'exchange',
+                confirm: school_has_integration?(@organisation_name, @school.id.to_i, 'primus') ? t('.primus_school_change_warning') : nil,
+                owners: true
 
-      <% unless @user.puavoDoNotDelete %>
-      <% if current_user.organisation_owner? %>
-      <ul>
-        <li class="ownersOnly">
-          <%= link_to prevent_deletion_path(@school, @user), data: { confirm: t('.prevent_removal_confirm') } do %>
-            <i class='icon-block'></i><%= t('.prevent_removal') %>
-          <% end %>
-        </li>
-      </ul>
-      <% end %>
-      <% end %>
+      unless @user.puavoDoNotDelete
+        menu.link t('.prevent_removal'),
+                  href: prevent_deletion_path(@school, @user),
+                  icon: 'block',
+                  confirm: t('.prevent_removal_confirm'),
+                  owners: true
+      end
 
-      <% if current_user.organisation_owner? %>
-      <ul>
-        <% if @is_admin %>
-        <li class="ownersOnly">
-          <%= link_to edit_admin_permissions_path(@school, @user) do %>
-            <i class='icon-sliders'></i><%= t('.edit_admin_permissions') %>
-          <% end %>
-        </li>
-        <% end %>
-        <% if @is_teacher %>
-        <li class="ownersOnly">
-          <%= link_to edit_teacher_permissions_path(@school, @user) do %>
-            <i class='icon-sliders'></i><%= t('.edit_teacher_permissions') %>
-          <% end %>
-        </li>
-        <% end %>
-      </ul>
-      <% end %>
+      menu.separator
 
-      <% if current_user.organisation_owner? && Array(@user.mail || []).count > 0 %>
-      <ul>
-        <li class="ownersOnly">
-          <%= link_to request_password_reset_path(@school, @user) do %>
-            <i class='icon-mail-alt'></i><%= t('.request_password_reset') %>
-          <% end %>
-        </li>
-      </ul>
-      <% end %>
+      if @is_admin
+        menu.link t('.edit_admin_permissions'),
+                  href: edit_admin_permissions_path(@school, @user),
+                  icon: 'sliders',
+                  owners: true
+      end
 
-      <% if @have_sso_sessions %>
-      <ul>
-        <li class="ownersOnly">
-          <%= link_to reset_sso_session_path(@school, @user), data: { confirm: t('general_confirm') } do %>
-            <i class='icon-key'></i><%= t('.reset_sso_session') %>
-          <% end %>
-        </li>
-      </ul>
-      <% end %>
+      if @is_teacher
+        menu.link t('.edit_teacher_permissions'),
+                  href: edit_teacher_permissions_path(@school, @user),
+                  icon: 'sliders',
+                  owners: true
+      end
 
-      <ul>
-        <li>
-          <% if @user.puavoLocked == false || @user.puavoLocked.nil? %>
-          <%= link_to lock_user_path(@school, @user) do %>
-            <i class='icon-lock'></i><%= t('.lock') %>
-          <% end %>
-          <% elsif @user.puavoLocked == true %>
-          <%= link_to unlock_user_path(@school, @user) do %>
-            <i class='icon-lock-open'></i><%= t('.unlock') %>
-          <% end %>
-          <% end %>
-        </li>
-      </ul>
+      if Array(@user.mail || []).count > 0
+        menu.link t('.request_password_reset'),
+                  href: request_password_reset_path(@school, @user),
+                  icon: 'mail-alt',
+                  confirm: t('general_confirm'),
+                  owners: true
 
-      <% if @user.puavoEduPersonAccountExpirationTime && @permit_edit_expiration_times %>
-      <ul>
-        <li>
-          <%= link_to remove_expiration_time_path(@school, @user) do %>
-            <i class='icon-flag-empty'></i><%= t('.remove_expiration_time') %>
-          <% end %>
-        </li>
-      </ul>
-      <% end %>
+        if @have_sso_sessions
+          menu.link t('.reset_sso_session'),
+                    href: reset_sso_session_path(@school, @user),
+                    icon: 'mail-key',
+                    owners: true
+        end
+      end
+    end
 
-      <% if @user.puavoRemovalRequestTime %>
-      <ul>
-        <li>
-          <%= link_to unmark_user_for_deletion_path(@school, @user) do %>
-            <i class='icon-flag-empty'></i><%= t('.unmark_for_removal') %>
-          <% end %>
-        </li>
-      </ul>
-      <% else %>
-      <% if !@own_page && !@user.puavoDoNotDelete %>
-      <ul>
-        <li>
-          <%= link_to mark_user_for_deletion_path(@school, @user) do %>
-            <i class='icon-flag'></i><%= t('.mark_for_removal') %>
-          <% end %>
-        </li>
-      </ul>
-      <% end %>
-      <% end %>
+    menu.separator
 
-      <% if !@own_page && @permit_user_deletion %>
-      <% unless @user.puavoDoNotDelete %>
-      <ul>
-        <li>
-          <%
-          if @user_is_owner || !@admin_in_schools.empty?
-            confirm_msg = t('destroy_confirm_admin', object_name: @user.displayName)
-          else
-            confirm_msg = t('destroy_confirm', object_name: @user.displayName)
-          end
+    if @user.puavoLocked == false || @user.puavoLocked.nil?
+      menu.link t('.lock'),
+                href: lock_user_path(@school, @user),
+                icon: 'lock'
+    elsif @user.puavoLocked == true
+      menu.link t('.unlock'),
+                href: unlock_user_path(@school, @user),
+                icon: 'lock-open'
+    end
 
-          if !@synchronised_deletions.empty? && @synchronised_deletions.include?(@user.primary_school.id.to_i)
-            confirm_msg += "\n\n"
-            confirm_msg += t('users.show.deletion_sync_warning', :systems => @synchronised_deletions[@user.primary_school.id.to_i].join(', '))
-          end
+    if @user.puavoEduPersonAccountExpirationTime && @permit_edit_expiration_times
+      menu.link t('.remove_expiration_time'),
+                href: remove_expiration_time_path(@school, @user),
+                icon: 'flag-empty'
+    end
 
-          %>
-          <%= link_to user_path(@school, @user.puavoId), data: { confirm: confirm_msg }, method: :delete do %>
-            <i class='icon-trash'></i><%= t('link.delete_user') %>
-          <% end %>
-        </li>
-      </ul>
-      <% end %>
-      <% end %>
+    if @user.puavoRemovalRequestTime
+      menu.link t('.unmark_for_removal'),
+                href: unmark_user_for_deletion_path(@school, @user),
+                icon: 'flag-empty'
+    elsif !@own_page && !@user.puavoDoNotDelete
+      menu.link t('.mark_for_removal'),
+                href: mark_user_for_deletion_path(@school, @user),
+                icon: 'flag'
+    end
 
-    </div>
-  </li>
-</ul>
+    menu.separator
+
+    if @permit_user_deletion && !@user.puavoDoNotDelete && !@own_page
+      if @user_is_owner || !@admin_in_schools.empty?
+        confirm_msg = t('destroy_confirm_admin', object_name: @user.displayName)
+      else
+        confirm_msg = t('destroy_confirm', object_name: @user.displayName)
+      end
+
+      if !@synchronised_deletions.empty? && @synchronised_deletions.include?(@user.primary_school.id.to_i)
+        confirm_msg += "\n\n"
+        confirm_msg += t('users.show.deletion_sync_warning', systems: @synchronised_deletions[@user.primary_school.id.to_i].join(', '))
+      end
+
+      menu.link t('link.delete_user'),
+                href: user_path(@school, @user),
+                confirm: confirm_msg,
+                method: 'delete',
+                icon: 'trash'
+    end
+  end
+end %>
 <% end %>
