@@ -39,6 +39,7 @@ Feature: Manage LDAP services
       | uid 3 | description 3 | secretpassword3 | getent |
       | uid 4 | description 4 | secretpassword4 | getent |
     When I delete the 3rd LDAP service
+    Then I should see "LDAP service was successfully removed."
     Then I should see the following LDAP services:
       | Service Identifier | Description   |
       | uid 1              | description 1 |

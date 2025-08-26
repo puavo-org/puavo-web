@@ -107,6 +107,8 @@ class LdapServicesController < ApplicationController
     @ldap_service = LdapService.find(params[:id])
     @ldap_service.destroy
 
+    flash[:notice] = t('flash.destroyed', item: t('activeldap.models.ldap_service'))
+
     respond_to do |format|
       format.html { redirect_to(ldap_services_url) }
       format.xml  { head :ok }
@@ -117,5 +119,4 @@ class LdapServicesController < ApplicationController
     def ldap_service_params
       return params.require(:ldap_service).permit(:uid, :description, :userPassword, :groups=>[]).to_hash
     end
-
 end
