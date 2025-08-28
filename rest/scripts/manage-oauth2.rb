@@ -702,6 +702,31 @@ def delete_login_client
   print_action('Client deleted')
 end
 
+# Deletes the test login clients created during puavo-rest tests
+# (they are not automatically removed afterwards)
+def delete_test_login_clients
+  test_clients = db.exec_params(
+    "SELECT client_id FROM login_clients WHERE client_id LIKE 'test_login_%'"
+  ).collect do |row|
+    row['client_id']
+  end
+
+  if test_clients.empty?
+    print_action('No test clients found')
+    return
+  end
+
+  puts "Have #{test_clients.count} test clients: #{test_clients.inspect}"
+
+  unless read_yesno('Proceed with deletion?', false)
+    print_action('Test clients not deleted')
+    return
+  end
+
+  db.exec("DELETE FROM login_clients WHERE client_id LIKE 'test_login_%'")
+  print_action('Test clients deleted')
+end
+
 def login_clients_menu
   login_menu = Menu.new(:login_clients_menu, 'Main menu > Login clients')
 
@@ -709,6 +734,7 @@ def login_clients_menu
   login_menu << MenuItem.new(:new_login, 'n', 'New client') { new_login_client }
   login_menu << MenuItem.new(:edit_login, 'e', 'Edit client') { edit_login_client }
   login_menu << MenuItem.new(:delete_login, 'd', 'Delete client') { delete_login_client }
+  login_menu << MenuItem.new(:delete_test, 't', 'Delete OAuth2 test clients') { delete_test_login_clients } #unless $prod_mode
   login_menu << MenuItem.new(:back, 'b', 'Go back to the previous menu', go_back: true)
   login_menu << MenuItem.new(:exit, 'x', 'Exit the script') { direct_exit }
 
