@@ -153,6 +153,8 @@ def db
   $db
 end
 
+$prod_mode = false
+
 def decode_pg_timestamp(ts)
   PG::TextDecoder::Timestamp.new.decode(ts)
 end
@@ -1343,7 +1345,7 @@ def token_clients_menu
   menu << MenuItem.new(:new_token, 'n', 'New client') { new_token_client }
   menu << MenuItem.new(:edit_token, 'e', 'Edit client') { edit_token_client }
   menu << MenuItem.new(:delete_token, 'd', 'Delete client') { delete_token_client }
-  menu << MenuItem.new(:delete_test, 't', 'Delete OAuth2 test clients') { delete_test_token_clients }
+  menu << MenuItem.new(:delete_test, 't', 'Delete OAuth2 test clients') { delete_test_token_clients } unless $prod_mode
   menu << MenuItem.new(:back, 'b', 'Go back to the previous menu', go_back: true)
   menu << MenuItem.new(:exit, 'x', 'Exit the script') { direct_exit }
 
@@ -1417,6 +1419,7 @@ end
 
 if args[:prod]
   puts "#{clr(:warning)}Running in PRODUCTION mode, using the real database#{clr(:off)}"
+  $prod_mode = true
 else
   puts 'Running in STANDALONE mode'
 end
