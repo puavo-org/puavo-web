@@ -29,22 +29,22 @@
 <%= end_box %>
 <% end %>
 
-<% content_for :tools do %>
-<ul>
-  <li>
-    <%= link_to edit_server_path(@server), class: 'btn' do %>
-      <i class="icon-pencil"></i><%= t('link.edit') %>
-    <% end %>
-  </li>
+<% content_for :page_tools do %>
+<%=
+toolbar do |tb|
+  tb.link t('link.edit'),
+          href: edit_server_path(@server),
+          icon: 'pencil'
 
-  <% if @server.hostCertificates %>
-  <li>
-    <%= link_to revoke_certificate_server_path(@server),  data: { confirm: t('general_confirm') }, method: :delete, class: 'btn btn-danger' do %>
-      <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
-    <% end %>
-  </li>
-</ul>
-<% end %>
+  if @server.hostCertificates
+    tb.link t('link.set_install_mode'),
+            href: revoke_certificate_server_path(@server),
+            confirm: t('general_confirm'),
+            method: 'delete',
+            danger: true,
+            icon: 'cancel'
+  end
+end %>
 <% end %>
 
 <script>
