@@ -155,12 +155,6 @@ I18n.locale = "<%= I18n.locale %>";
       </ul>
       <% end %>
 
-      <% if current_user && content_for?(:tools) %>
-      <div class="toolsContainer">
-      <%= yield :tools %>
-      </div>
-      <% end %>
-
       <%= yield %>
     </div>
     <footer><%= debug_footer %></footer>
