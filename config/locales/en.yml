@@ -733,7 +733,8 @@ en:
     unknown_device_type: Unknown device type
     set_install_mode: "Certificate removed, device now in install mode"
     set_install_mode_server: "Certificate removed, server now in install mode"
-    clear_reset_mode: "Device is no longer in reset mode"
+    set_reset_mode: "This device is now in reset mode"
+    clear_reset_mode: "This device is no longer in reset mode"
     organisation_ownership_removed: "Admin user organisation ownership was removed."
     organisation_ownership_not_removed: "Admin user organisation ownership could not be removed automatically!"
     user_deletion_prevented: "User cannot be removed"

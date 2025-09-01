@@ -733,7 +733,8 @@ fi:
     unknown_device_type: Tuntematon laitetyyppi
     set_install_mode: "Sertifikaatti poistettu, laite asennustilassa"
     set_install_mode_server: "Sertifikaatti poistettu, palvelin asennustilassa"
-    clear_reset_mode: "Laitteen nollaustila poistettu"
+    set_reset_mode: "Tämä laite on asetettu nollaustilaan"
+    clear_reset_mode: "Tämä laite on poistettu nollaustilasta"
     organisation_ownership_removed: "Admin-käyttäjän organisaation omistajuus poistettiin."
     organisation_ownership_not_removed: "Admin-käyttäjän organisaation omistajuutta ei voitu poistaa automaattisesti!"
     user_deletion_prevented: "Käyttäjän poisto on estetty"

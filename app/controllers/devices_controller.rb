@@ -518,7 +518,7 @@ class DevicesController < ApplicationController
     @device.save!
 
     respond_to do |format|
-      format.html { redirect_to(device_path(@school, @device)) }
+      format.html { redirect_to(device_path(@school, @device), notice: t('flash.set_reset_mode')) }
     end
   end
 
