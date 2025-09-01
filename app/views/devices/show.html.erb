@@ -14,76 +14,65 @@
 
 <hr>
 
-<% content_for :tools do %>
-<ul>
-  <li>
-    <%= link_to edit_device_path(@school, @device), class: 'btn' do %>
-      <i class="icon-pencil"></i><%= t('link.edit') %>
-    <% end %>
-  </li>
+<% content_for :page_tools do %>
+<%=
+toolbar do |tb|
+  tb.link t('link.edit'),
+          href: edit_device_path(@school, @device),
+          icon: 'pencil'
 
-  <li class="haveDropdown">
-    <span class="btn"><i class='icon-collapse'></i><%= t('link.more') %></span>
-    <div class="dropdown dropRight">
-<% if @permit_device_school_change %>
-      <ul>
-        <li>
-          <%= link_to select_school_device_path(@school, @device) do%>
-            <i class="icon-exchange"></i><%= t('.change_school') %>
-          <% end %>
-        </li>
-      </ul>
-<% end %>
+  tb.dropdown t('link.more'), right: true do |menu|
+    if @permit_device_school_change
+      menu.link t('.change_school'),
+                href: select_school_device_path(@school, @device),
+                icon: 'exchange'
+    end
 
-      <% if @device.puavoDeviceType == 'laptop' && @pme_enabled %>
-      <ul>
-        <li>
-          <%= link_to device_puavomenu_path(@school, @device) do%>
-            <i class="icon-list"></i><%= t('layouts.application.puavomenu_editor') %>
-          <% end %>
-        </li>
-      </ul>
-      <% end %>
+    if @device.puavoDeviceType == 'laptop' && @pme_enabled
+      menu.link t('layouts.application.puavomenu_editor'),
+                href: device_puavomenu_path(@school, @device),
+                icon: 'list'
+    end
 
-      <ul>
-<% if @permit_device_reset %>
-        <% if @device.puavoDeviceType == 'laptop' %>
-          <li>
-            <% if @device.has_pending_reset %>
-              <%= link_to clear_reset_mode_device_path(@school, @device), :method => :put do %>
-                <i class="icon-flag-empty"></i><%= t('link.clear_reset_mode') %>
-              <% end %>
-            <% else %>
-              <%= link_to set_reset_mode_device_path(@school, @device),
-                          data: { confirm: t('reset_confirm', object_name: @device.puavoHostname) },
-                          :method => :put do %>
-                <i class="icon-flag"></i><%= t('link.set_reset_mode') %>
-              <% end %>
-            <% end %>
-          </li>
-        <% end %>
-<% end %>
+    menu.separator
 
-<% if @permit_device_deletion %>
-        <li>
-          <% if @device.hostCertificates %>
-            <%= link_to revoke_certificate_device_path(@school, @device), data: { confirm: t('general_confirm') }, :method => :delete do %>
-              <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
-            <% end %>
-          <% end %>
-        </li>
+    if @device.puavoDeviceType == 'laptop' && @permit_device_reset
+      if @device.has_pending_reset
+        menu.link t('link.clear_reset_mode'),
+                  href: clear_reset_mode_device_path(@school, @device),
+                  method: 'put',
+                  icon: 'flag-empty'
+      else
+        menu.link t('link.set_reset_mode'),
+                  href: set_reset_mode_device_path(@school, @device),
+                  confirm: t('reset_confirm', object_name: @device.puavoHostname),
+                  method: 'put',
+                  danger: true,
+                  icon: 'flag'
+      end
+    end
 
-        <li>
-          <%= link_to(device_path(@school, @device), data: { confirm: t('destroy_confirm', object_name: @device.puavoHostname) },
-                      method: :delete) do %>
-            <i class="icon-trash"></i><%= t('link.delete_device') %>
-          <% end %>
-        </li>
-<% end %>
-      </ul>
-    </div>
-  </li>
-</ul>
+    menu.separator
+
+    if @permit_device_deletion
+      if @device.hostCertificates
+        menu.link t('link.set_install_mode'),
+                  href: revoke_certificate_device_path(@school, @device),
+                  confirm: t('general_confirm'),
+                  method: 'delete',
+                  danger: true,
+                  icon: 'cancel'
+      end
+
+      menu.link t('link.delete_device'),
+                href: device_path(@school, @device),
+                confirm: t('destroy_confirm', object_name: @device.puavoHostname),
+                method: 'delete',
+                danger: true,
+                icon: 'trash'
+    end
+  end
+end %>
 <% end %>
 
 <% unless test_environment? %>

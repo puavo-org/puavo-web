@@ -55,17 +55,14 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 <% end %>
 
-<% content_for :tools do %>
-<ul>
-  <% if @permit_device_creation %>
+<% if @permit_device_creation %>
+<% content_for :page_tools do %>
   <li id="addNewDeviceTitle">
-    <%= form_for(@device, :url => new_device_path(@school), html: { method: :get }) do |f| %>
-    <span><%= t('devices.index.add_new_device') %>:</span>
-    <%= select_tag "device_type",
-        options_for_select( @device_types ) %>
-      <%= f.submit t('link.add'), id: "device_submit" %>
+    <%= form_for(@device, url: new_device_path(@school), html: { method: :get }) do |f| %>
+      <span><%= t('devices.index.add_new_device') %>:</span>
+      <%= select_tag 'device_type', options_for_select(@device_types) %>
+      <%= f.submit t('link.add'), id: 'device_submit' %>
     <% end %>
   </li>
-  <% end %>
-</ul>
+<% end %>
 <% end %>
