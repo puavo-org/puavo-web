@@ -763,7 +763,7 @@ class GroupsController < ApplicationController
       end
     end
   rescue StandardError => e
-    puts e
+    logger.error(e)
     render inline: "<p class=\"searchError\">#{t('search.failed')}</p>"
   end
 
