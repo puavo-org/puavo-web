@@ -46,14 +46,13 @@
 
 <% end %>
 
-<% if @permit_group_creation %>
-<% content_for :tools do %>
-<ul>
-  <li>
-    <%= link_to new_group_path(@school), class: 'btn' do %>
-      <i class='icon-plus'></i><%= t('link.new_group') %>
-    <% end %>
-  </li>
-</ul>
-<% end %>
+<% content_for :page_tools do %>
+<%=
+toolbar do |tb|
+  if @permit_group_creation
+    tb.link t('link.new_group'),
+            href: new_group_path(@school),
+            icon: 'plus'
+  end
+end %>
 <% end %>

@@ -141,47 +141,39 @@
   </div>
 <%= end_box %>
 
-<% content_for :tools do %>
-<ul>
-  <li>
-    <%= link_to edit_group_path(@school, @group), class: 'btn' do %>
-      <i class="icon-pencil"></i><%= t('link.edit') %>
-    <% end %>
-  </li>
+<% content_for :page_tools do %>
+<%=
+toolbar do |tb|
+  tb.link t('link.edit'),
+          href: edit_group_path(@school, @group),
+          icon: 'pencil'
 
-  <li class="haveDropdown">
-    <span class="btn"><i class="icon-collapse"></i> <%= t('link.more') %></span>
-    <div class="dropdown dropRight">
-      <ul>
-<% if @permit_group_creation %>
-        <li>
-          <%= link_to new_group_path(@school) do %>
-            <i class="icon-plus"></i><%= t('link.new_group') %>
-          <% end %>
-        </li>
-<% end %>
+  tb.dropdown t('link.more'), right: true do |menu|
+    if @permit_group_creation
+      menu.link t('link.new_group'),
+                href: new_group_path(@school),
+                icon: 'plus'
+    end
 
-<% if @permit_school_change %>
-        <li>
-          <%= link_to select_new_school_path(@school, @group) do %>
-            <i class="icon-exchange"></i><%= t('link.change_school') %>
-          <% end %>
-        </li>
-<% end %>
+    menu.separator
 
-<% if @permit_group_deletion %>
-        <% if @num_hidden == 0 %>
-        <li>
-          <%= link_to group_path(@school, @group), data: { confirm: t('general_confirm') }, method: :delete  do %>
-            <i class="icon-trash"></i><%= t('link.delete_group') %>
-          <% end %>
-        </li>
-        <% end %>
-<% end %>
-      </ul>
-    </div>    <!-- dropdown -->
-  </li>
-</ul>
+    if @permit_school_change
+      menu.link t('link.change_school'),
+                href: select_new_school_path(@school, @group),
+                icon: 'exchange'
+    end
+
+    menu.separator
+
+    if @permit_group_deletion && @num_hidden == 0
+      menu.link t('link.delete_group'),
+                href: group_path(@school, @group),
+                confirm: t('general_confirm'),
+                method: 'delete',
+                icon: 'trash'
+    end
+  end
+end %>
 <% end %>
 
 <hr>
