@@ -6,7 +6,7 @@
   </div>
 </div>
 
-<%= render :partial => 'integration_warnings', :locals => { :school => @school, :group => @group } %>
+<%= render partial: 'integration_warnings', locals: { school: @school, group: @group } %>
 
 <% if !current_user.organisation_owner? && @num_hidden > 0 %>
 <p class="genericWarning"><%= t('.hidden_members_hidden_tools_warning') %></p>

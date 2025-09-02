@@ -2,7 +2,7 @@
 <div class="resultsContainer">
 <table class="list">
   <tr>
-    <th><%= t("activeldap.attributes.user.displayName") %> (<%= t("activeldap.attributes.user.uid") %>)</th>
+    <th><%= t('activeldap.attributes.user.displayName') %> (<%= t('activeldap.attributes.user.uid') %>)</th>
     <th><%= t('activeldap.attributes.school.displayName') %></th>
     <th><%= t('groups.index.actions') %></th>
   </tr>
@@ -16,18 +16,18 @@
       <% end %>
     </td>
     <td data-title="<%= t('activeldap.attributes.school.displayName') %>">
-      <%= h @schools[user["school_id"]] %>
+      <%= h @schools[user['school_id']] %>
     </td>
-    <td id="member_status_<%= @group.puavoId.to_s %>_<%= user["id"].to_s %>">
-      <% if @group.member?(user["id"]) %>
+    <td id="member_status_<%= @group.puavoId.to_s %>_<%= user['id'].to_s %>">
+      <% if @group.member?(user['id']) %>
         <%= t('.member')%>
       <% else %>
         <%= link_to(t('.add_to_group'),
-                    add_user_group_path(:school_id => user["school_id"],
-                    :id => @group.puavoId, :user_id => user["id"]),
+                    add_user_group_path(school_id: user['school_id'],
+                    id: @group.puavoId, user_id: user['id']),
                     remote: true,
                     method: :put,
-                    class: "btn") %>
+                    class: 'btn') %>
       <% end %>
     </td>
   </tr>

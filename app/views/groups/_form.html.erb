@@ -1,17 +1,17 @@
 <p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
 <%= form_for(@group, url: path, html: { method: method } ) do |f| %>
 
-<%= render :partial => 'integration_warnings', :locals => { :school => @school, :group => @group } %>
+<%= render partial: 'integration_warnings', locals: { school: @school, group: @group } %>
 
 <table class="editForm">
   <tr>
     <th class="requiredField"><%= f.label :displayName %></th>
-    <td><%= f.text_field :displayName, :required => 'required', :autofocus => @is_new_group ? true : nil %></td>
+    <td><%= f.text_field :displayName, required: 'required', autofocus: @is_new_group ? true : nil %></td>
   </tr>
 
   <tr>
     <th class="requiredField"><%= f.label :cn %></th>
-    <td><%= f.text_field :cn, :required => 'required' %></td>
+    <td><%= f.text_field :cn, required: 'required' %></td>
   </tr>
 
 <% if current_user.organisation_owner? %>
@@ -34,7 +34,7 @@
   <tr class="buttonRow">
     <td colspan="2">
       <%= f.submit submit_text, class: 'btn' %>
-      <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %></div>
+      <div class="cancel"><%= link_to t('link.cancel'), path, class: 'btn btn-danger' %></div>
     </td>
   </tr>
 </table>

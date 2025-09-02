@@ -13,7 +13,7 @@ class GroupsController < ApplicationController
     @members, @num_hidden = get_and_sort_group_members(@group)
 
     respond_to do |format|
-      format.json  { render :json => @members }
+      format.json  { render json: @members }
     end
   end
 
@@ -36,11 +36,11 @@ class GroupsController < ApplicationController
     end
 
     @groups.sort! do |a, b|
-      a["displayName"].downcase <=> b["displayName"].downcase
+      a['displayName'].downcase <=> b['displayName'].downcase
     end
 
     if params[:memberUid]
-      @groups.delete_if{ |g| !Array(g.memberUid).include?(params[:memberUid]) }
+      @groups.delete_if { |g| !Array(g.memberUid).include?(params[:memberUid]) }
     end
 
     @is_owner = is_owner?
@@ -49,8 +49,8 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @groups }
-      format.json { render :json => @groups }
+      format.xml  { render xml: @groups }
+      format.json { render json: @groups }
     end
   end
 
@@ -70,9 +70,9 @@ class GroupsController < ApplicationController
   # AJAX call
   def get_school_groups_list
     # Get a raw list of groups in this school
-    raw = Group.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
-                               :scope => :one,
-                               :attributes => GroupsHelper.get_group_attributes())
+    raw = Group.search_as_utf8(filter: "(puavoSchool=#{@school.dn})",
+                               scope: :one,
+                               attributes: GroupsHelper.get_group_attributes())
 
     # Convert the raw data into something we can easily parse in JavaScript
     school_id = @school.id.to_i
@@ -89,7 +89,7 @@ class GroupsController < ApplicationController
       groups << group
     end
 
-    render :json => groups
+    render json: groups
   end
 
   # GET /:school_id/groups/1
@@ -98,8 +98,8 @@ class GroupsController < ApplicationController
     @group = get_group(params[:id])
     return if @group.nil?
 
-    # get the creation and modification timestamps from LDAP operational attributes
-    extra = Group.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
+    # Get the group creation and modification timestamps from LDAP operational attributes
+    extra = Group.find(params[:id], attributes: ['createTimestamp', 'modifyTimestamp'])
     @group['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @group['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 
@@ -112,7 +112,7 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @group }
+      format.xml  { render xml: @group }
     end
   end
 
@@ -130,7 +130,7 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @group }
+      format.xml  { render xml: @group }
     end
   end
 
@@ -156,13 +156,13 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       if @group.save
-        flash[:notice] = t('flash.added', :item => t('activeldap.models.group'))
-        format.html { redirect_to( group_path(@school, @group) ) }
-        format.xml  { render :xml => @group, :status => :created, :location => @group }
+        flash[:notice] = t('flash.added', item: t('activeldap.models.group'))
+        format.html { redirect_to(group_path(@school, @group)) }
+        format.xml  { render xml: @group, status: :created, location: @group }
       else
-        flash[:alert] = t('flash.create_failed', :model => t('activeldap.models.group').downcase )
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
+        flash[:alert] = t('flash.create_failed', model: t('activeldap.models.group').downcase)
+        format.html { render action: 'new' }
+        format.xml  { render xml: @group.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -175,13 +175,13 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       if @group.update_attributes(group_params)
-        flash[:notice] = t('flash.updated', :item => t('activeldap.models.group'))
-        format.html { redirect_to( group_path(@school, @group) ) }
+        flash[:notice] = t('flash.updated', item: t('activeldap.models.group'))
+        format.html { redirect_to(group_path(@school, @group)) }
         format.xml  { head :ok }
       else
-        flash[:alert] = t('flash.save_failed', :model => t('activeldap.models.group') )
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
+        flash[:alert] = t('flash.save_failed', model: t('activeldap.models.group'))
+        format.html { render action: 'edit' }
+        format.xml  { render xml: @group.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -200,12 +200,12 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       if @group.destroy
-        flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.group'))
+        flash[:notice] = t('flash.destroyed', item: t('activeldap.models.group'))
         format.html { redirect_to(groups_url) }
         format.xml  { head :ok }
       else
         format.html { redirect_to(groups_url) }
-        format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
+        format.xml  { render xml: @group.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -254,7 +254,7 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       if ok
-        flash[:notice] = t('flash.group.create_username_list_ok', :name => @group.displayName)
+        flash[:notice] = t('flash.group.create_username_list_ok', name: @group.displayName)
         format.html { redirect_to lists_path(@school) }
       else
         flash[:alert] = t('flash.group.create_username_list_failed')
@@ -277,7 +277,7 @@ class GroupsController < ApplicationController
     count = Puavo::GroupsShared::mark_members_for_deletion(@group, true)
 
     respond_to do |format|
-      flash[:notice] = t('flash.group.members_marked', :count => count)
+      flash[:notice] = t('flash.group.members_marked', count: count)
       format.html { redirect_to group_path(@school, @group) }
     end
   end
@@ -296,7 +296,7 @@ class GroupsController < ApplicationController
     count = Puavo::GroupsShared::mark_members_for_deletion(@group, false)
 
     respond_to do |format|
-      flash[:notice] = t('flash.group.members_unmarked', :count => count)
+      flash[:notice] = t('flash.group.members_unmarked', count: count)
       format.html { redirect_to group_path(@school, @group) }
     end
   end
@@ -315,7 +315,7 @@ class GroupsController < ApplicationController
     count = Puavo::GroupsShared::lock_members(@group, true)
 
     respond_to do |format|
-      flash[:notice] = t('flash.group.members_locked', :count => count)
+      flash[:notice] = t('flash.group.members_locked', count: count)
       format.html { redirect_to group_path(@school, @group) }
     end
   end
@@ -334,7 +334,7 @@ class GroupsController < ApplicationController
     count = Puavo::GroupsShared::lock_members(@group, false)
 
     respond_to do |format|
-      flash[:notice] = t('flash.group.members_unlocked', :count => count)
+      flash[:notice] = t('flash.group.members_unlocked', count: count)
       format.html { redirect_to group_path(@school, @group) }
     end
   end
@@ -424,7 +424,7 @@ class GroupsController < ApplicationController
     @members, @num_hidden = get_and_sort_group_members(@group)
 
     respond_to do |format|
-      format.html { render :plain => "OK" }
+      format.html { render plain: 'OK' }
       format.js
     end
   end
@@ -510,7 +510,7 @@ class GroupsController < ApplicationController
 
     # Get groups and their members
     Group.search_as_utf8(
-      filter: "(objectClass=puavoEduGroup)",
+      filter: '(objectClass=puavoEduGroup)',
       attributes: ['puavoId', 'cn', 'displayName', 'puavoSchool', 'puavoEduGroupType', 'member']
     ).each do |dn, raw|
       gid = raw['puavoId'][0].to_i
@@ -559,7 +559,7 @@ class GroupsController < ApplicationController
     @move_groups = []
 
     @school.groups.each do |g|
-      @move_groups << [g.displayName, g.cn, g.id.to_i, g.puavoEduGroupType.nil? ? "(?)" : I18n.t("group_type.#{g.puavoEduGroupType}"), g.members.count]
+      @move_groups << [g.displayName, g.cn, g.id.to_i, g.puavoEduGroupType.nil? ? '(?)' : I18n.t("group_type.#{g.puavoEduGroupType}"), g.members.count]
     end
 
     @move_groups.sort! { |a, b| a[0].downcase <=> b[0].downcase }
@@ -570,7 +570,7 @@ class GroupsController < ApplicationController
                .collect { |o| o.to_s }.to_set
 
     respond_to do |format|
-      format.html { render :action => 'groupless_users' }
+      format.html { render action: 'groupless_users' }
     end
   end
 
@@ -631,7 +631,7 @@ class GroupsController < ApplicationController
         begin
           group = Group.find(params[:group])
         rescue ActiveLdap::EntryNotFound => e
-          flash[:alert] = t('flash.invalid_group_id', :id => params[:group])
+          flash[:alert] = t('flash.invalid_group_id', id: params[:group])
           redirect_to find_groupless_users_path(@school)
           return
         end
@@ -650,7 +650,7 @@ class GroupsController < ApplicationController
     end
 
     respond_to do |format|
-      flash[:notice] = t('groups.groupless_users.done', :count => count)
+      flash[:notice] = t('groups.groupless_users.done', count: count)
       format.html { redirect_to find_groupless_users_path(@school) }
     end
   end
@@ -716,7 +716,7 @@ class GroupsController < ApplicationController
     @members, @num_hidden = get_and_sort_group_members(@group)
 
     respond_to do |format|
-      format.html { render :plain => "OK" }
+      format.html { render plain: 'OK' }
       format.js
     end
   end
@@ -726,12 +726,16 @@ class GroupsController < ApplicationController
 
     words = Net::LDAP::Filter.escape(params[:words])
 
+    # Construct the results using a raw search. It's much, much faster that way.
     @users = User.search_as_utf8(
       scope: :one,
       filter: '(&' + words.split(' ').map { |w| "(|(givenName=*#{w}*)(sn=*#{w}*)(uid=*#{w}*))" }.join + ')',
       attributes: ['puavoId', 'puavoEduPersonPrimarySchool', 'sn', 'givenName', 'uid']
     ).map do |dn, u|
+      # Non-owners might not have access to the user school information, but they can see
+      # the primary school DN. Extract the school's ID from it.
       school_id = u['puavoEduPersonPrimarySchool'][0].match(/^puavoId=([^,]+)/).to_a[1]
+
       name = "#{u['sn'][0]}, #{u['givenName'][0]}"
 
       {
@@ -749,11 +753,12 @@ class GroupsController < ApplicationController
     @owner = current_user.organisation_owner?
     @admin = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
 
-    @schools = Hash.new
-    School.search_as_utf8( :scope => :one,
-                   :attributes => ["puavoId", "displayName"] ).map do |dn, v|
-      @schools[v["puavoId"].first] = v["displayName"].first
-    end
+    @schools = School.search_as_utf8(
+      scope: :one,
+      attributes: ['puavoId', 'displayName']
+    ).collect do |dn, v|
+      [v['puavoId'][0], v['displayName'][0]]
+    end.to_h
 
     respond_to do |format|
       if @users.length == 0

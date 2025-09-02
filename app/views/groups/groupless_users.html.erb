@@ -2,14 +2,14 @@
 
 <h1><%= t('groups.groupless_users.title') %></h1>
 
-<p><%= t('groups.groupless_users.count', :count => @users.count) %></p>
+<p><%= t('groups.groupless_users.count', count: @users.count) %></p>
 
 <% unless @users.empty? %>
 <p class="genericWarning"><%= t('groups.groupless_users.owners_warning') %></p>
 
 <fieldset>
   <legend><%= t('groups.groupless_users.action') %></legend>
-  <%= form_for("", url: process_groupless_users_path) do |f| %>
+  <%= form_for('', url: process_groupless_users_path) do |f| %>
     <div class="flex-rows margin-bottom-10px gap-5px">
       <span><input type="radio" id="lock" name="operation" value="lock"><label for="lock"><%= t('groups.groupless_users.lock') %></label></span>
       <span><input type="radio" id="mark" name="operation" value="mark" checked><label for="mark"><%= t('groups.groupless_users.mark') %></label></span>
