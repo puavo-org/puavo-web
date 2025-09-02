@@ -1301,6 +1301,14 @@ def new_token_client
     organisations = nil
   end
 
+  # Underlying LDAP DN
+  ldap_dn = read_string('LDAP DN used for this token (can be empty, but the client will not work without this)')
+
+  if organisations == :cancel
+    print_action('Cancelled')
+    return
+  end
+
   # Create a random password
   password, hashed_password = generate_password()
   puts("#{clr(:action)}Client password set to\n\n    #{password}\n\nPlease copy-paste it to somewhere safe now, as it cannot be recovered later.#{clr(:off)}")
@@ -1312,9 +1320,9 @@ def new_token_client
 
   db.exec_params(
     'INSERT INTO token_clients (client_id, client_password, enabled, ' \
-    'allowed_scopes, allowed_endpoints, allowed_organisations, created, ' \
-    'modified, password_changed) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-    [client_id, hashed_password, enabled, scopes, endpoints, organisations, now, now, now]
+    'allowed_scopes, allowed_endpoints, allowed_organisations, ldap_user_dn, ' \
+    'created, modified, password_changed) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+    [client_id, hashed_password, enabled, scopes, endpoints, organisations, ldap_dn, now, now, now]
   )
 
   puts "#{clr(:action)}Done!#{clr(:off)}"
