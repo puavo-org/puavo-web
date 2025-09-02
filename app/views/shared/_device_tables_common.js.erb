@@ -1032,7 +1032,9 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
             { title: "<%= t('devices.index.mass_operations.set_field.desktop_image') %>", key: "image", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.kernel_args') %>", key: "kernelargs", type: "s" },
             { title: "<%= t('devices.index.mass_operations.set_field.kernel_version') %>", key: "kernelversion", type: "s" },
+<% if @permit_device_mass_edit_puavoconf %>
             { title: "<%= t('devices.index.mass_operations.set_field.puavoconf_replace') %>", key: "puavoconf", type: "json" },
+<% end %>
 <% if @permit_device_mass_tag_editor %>
             { title: "<%= t('devices.index.mass_operations.set_field.tags_replace') %>", key: "tags", type: "s" },
 <% end %>
@@ -1460,6 +1462,7 @@ class MassDevicePurchaseInfo extends ST.MassOperation {
 <% end %>
 <% end %>
 
+<% if @permit_device_mass_edit_puavoconf %>
 // Mass operation: puavo-conf editing. Not as pretty as the interactive puavo-conf editor, but I can't cram it in this space.
 // Or maybe I can? Who knows...
 class MassDevicePuavoconfEditor extends ST.MassOperation {
@@ -1547,6 +1550,7 @@ class MassDevicePuavoconfEditor extends ST.MassOperation {
         return { state: "ready" };
     }
 };
+<% end %>
 
 <% if @permit_device_mass_tag_editor %>
 // Mass tags editor
@@ -1899,12 +1903,14 @@ const MASS_OPERATIONS = [
     },
 <% end %>
 <% end %>
+<% if @permit_device_mass_edit_puavoconf %>
     {
         operation: "puavoconf_edit",
         title: "<%= t('devices.index.mass_operations.puavoconf.title') %>",
         haveSettings: true,
         cls: MassDevicePuavoconfEditor
     },
+<% end %>
 <% if @permit_device_mass_tag_editor %>
     {
         operation: "tags_edit",

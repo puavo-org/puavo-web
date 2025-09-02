@@ -1246,6 +1246,7 @@ en:
         device_edit_expiration_times: "can edit device expiration times"
         device_mass_edit_expiration_times: "can mass edit device expiration times"
         device_mass_set_db_fields: "can mass change various database fields"
+        device_mass_edit_puavoconf: "can mass edit device puavoconf settings"
       teacher_permissions:
         title: "Teacher's permissions"
         set_student_password: "can change student passwords"
@@ -1324,6 +1325,7 @@ en:
         device_edit_expiration_times: "Can edit device expiration times"
         device_mass_edit_expiration_times: "Can mass edit device expiration times"
         device_mass_set_db_fields: "Can mass change various database fields"
+        device_mass_edit_puavoconf: "Can mass edit device puavoconf settings"
 
     edit_teacher_permissions:
       title: "Edit Teacher Permissions"

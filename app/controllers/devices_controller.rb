@@ -65,6 +65,7 @@ class DevicesController < ApplicationController
     @permit_device_mass_edit_purchase_info = @is_owner || current_user.has_admin_permission?(:device_mass_change_purchase_information)
     @permit_device_mass_tag_editor = @is_owner || current_user.has_admin_permission?(:device_mass_tag_editor)
     @permit_device_mass_set_db_fields = @is_owner || current_user.has_admin_permission?(:device_mass_set_db_fields)
+    @permit_device_mass_edit_puavoconf = @is_owner || current_user.has_admin_permission?(:device_mass_edit_puavoconf)
     permit_device_mass_school_change = @is_owner || current_user.has_admin_permission?(:device_change_school, :device_mass_change_school)
 
     @permit_device_mass_edit_expiration_times = @is_owner ||

@@ -1246,6 +1246,7 @@ fi:
         device_edit_expiration_times: "voi muokata laitteiden vanhenemisaikoja"
         device_mass_edit_expiration_times: "voi massamuokata laitteiden vanhenemisaikoja"
         device_mass_set_db_fields: "voi massamuokata sekalaisia tietokannan kenttiä"
+        device_mass_edit_puavoconf: "voi massamuokata laitteiden puavoconf -asetuksia"
       teacher_permissions:
         title: "Opettajan oikeudet"
         set_student_password: "voi vaihtaa oppilaiden salasanoja"
@@ -1324,6 +1325,7 @@ fi:
         device_edit_expiration_times: "Voi muokata laitteiden vanhenemisaikoja"
         device_mass_edit_expiration_times: "Voi massamuokata laitteiden vanhenemisaikoja"
         device_mass_set_db_fields: "Voi massamuokata sekalaisia tietokannan kenttiä"
+        device_mass_edit_puavoconf: "Voi massamuokata laitteiden puavoconf -asetuksia"
 
     edit_teacher_permissions:
       title: "Muokkaaa opettajan oikeuksia"

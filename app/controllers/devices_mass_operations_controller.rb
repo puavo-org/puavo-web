@@ -12,6 +12,7 @@ class DevicesMassOperationsController < MassOperationsController
     'purchase_info' => %w[device_mass_change_purchase_information],
     'set_expiration_time' => %w[device_edit_expiration_times device_mass_edit_expiration_times],
     'set_field' => %w[device_mass_set_db_fields],
+    'puavoconf_edit' => %w[device_mass_edit_puavoconf],
   }.freeze
 
   # POST '/devices_mass_operation'

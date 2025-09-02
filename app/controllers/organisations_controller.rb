@@ -430,6 +430,7 @@ class OrganisationsController < ApplicationController
     @permit_device_mass_tag_editor = true
     @permit_device_mass_edit_expiration_times = true
     @permit_device_mass_set_db_fields = true
+    @permit_device_mass_edit_puavoconf = true
 
     # List ALL schools, hide nothing
     @school_list = DevicesHelper.device_school_change_list(true, nil, nil)
