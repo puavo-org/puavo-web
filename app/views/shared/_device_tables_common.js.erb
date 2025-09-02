@@ -1020,6 +1020,7 @@ const FILTER_PRESETS = [
     }
 ];
 
+<% if @permit_device_mass_set_db_fields %>
 // Mass operation: set database field value
 class MassDeviceSetFieldValue extends ST.MassOperation {
     constructor(parent, container)
@@ -1267,6 +1268,7 @@ class MassDeviceSetFieldValue extends ST.MassOperation {
         }
     }
 };
+<% end %>
 
 <% unless @is_servers %>
 <% if @permit_device_mass_edit_purchase_info %>
@@ -1879,12 +1881,14 @@ class MassSetExpirationTimes extends ST.MassOperation {
 <% end %>
 
 const MASS_OPERATIONS = [
+<% if @permit_device_mass_set_db_fields %>
     {
         operation: "set_field",
         title: "<%= t('devices.index.mass_operations.set_field.title') %>",
         haveSettings: true,
         cls: MassDeviceSetFieldValue
     },
+<% end %>
 <% unless @is_servers %>
 <% if @permit_device_mass_edit_purchase_info %>
     {

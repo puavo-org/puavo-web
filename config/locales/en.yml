@@ -1245,6 +1245,7 @@ en:
         device_mass_change_purchase_information: "can mass edit device purchase information"
         device_edit_expiration_times: "can edit device expiration times"
         device_mass_edit_expiration_times: "can mass edit device expiration times"
+        device_mass_set_db_fields: "can mass change various database fields"
       teacher_permissions:
         title: "Teacher's permissions"
         set_student_password: "can change student passwords"
@@ -1322,6 +1323,7 @@ en:
         device_mass_change_purchase_information: "Can mass edit device purchase information"
         device_edit_expiration_times: "Can edit device expiration times"
         device_mass_edit_expiration_times: "Can mass edit device expiration times"
+        device_mass_set_db_fields: "Can mass change various database fields"
 
     edit_teacher_permissions:
       title: "Edit Teacher Permissions"
