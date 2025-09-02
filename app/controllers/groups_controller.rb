@@ -773,48 +773,48 @@ class GroupsController < ApplicationController
   end
 
   private
-    def group_params
-      # arrays must be listed last due to some weird syntax thing
-      return params.require(:group).permit(
-        :displayName,
-        :cn,
-        :puavoExternalId,
-        :puavoEduGroupType,
-        :puavoNotes
-      ).to_hash
-    end
 
-    def get_group(id)
+  def group_params
+    params.require(:group).permit(
+      :displayName,
+      :cn,
+      :puavoExternalId,
+      :puavoEduGroupType,
+      :puavoNotes
+    ).to_hash
+  end
+
+  def get_group(id)
+    begin
+      Group.find(id)
+    rescue ActiveLdap::EntryNotFound => e
+      flash[:alert] = t('flash.invalid_group_id', id: id)
+      redirect_to groups_path(@school)
+      nil
+    end
+  end
+
+  def get_and_sort_group_members(group)
+    members = group.members
+    num_hidden = 0
+
+    # Hide members whose school information we cannot access. This can only (maybe?) happen
+    # if you aren't an owner and you're trying to view a group which contains members from
+    # other schools than yours.
+    members.reject! do |m|
       begin
-        return Group.find(id)
-      rescue ActiveLdap::EntryNotFound => e
-        flash[:alert] = t('flash.invalid_group_id', :id => id)
-        redirect_to groups_path(@school)
-        return nil
+        # This is weird. If I check m.school.nil? it returns false, but accessing m.school
+        # immediately afterwards will still fail?
+        m.primary_school.cn
+        false
+      rescue
+        num_hidden += 1
+        true
       end
     end
 
-    def get_and_sort_group_members(group)
-      members = group.members
-      num_hidden = 0
+    members.sort!{ |a, b| ("#{a['givenName']} #{a['sn']}").downcase <=> ("#{a['givenName']} #{a['sn']}").downcase }.reverse
 
-      # Hide members whose school information we cannot access. This can only (maybe?) happen
-      # if you aren't an owner and you're trying to view a group which contains members from
-      # other schools than yours.
-      members.reject! do |m|
-        begin
-          # This is weird. If I check m.school.nil? it returns false, but accessing m.school
-          # immediately afterwards will still fail?
-          m.primary_school.cn
-          false
-        rescue
-          num_hidden += 1
-          true
-        end
-      end
-
-      members.sort!{ |a, b| (a["givenName"] + a["sn"]).downcase <=> (b["givenName"] + b["sn"]).downcase }
-
-      return members, num_hidden
-    end
+    return members, num_hidden
+  end
 end
