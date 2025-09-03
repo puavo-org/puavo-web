@@ -163,7 +163,7 @@ class OrganisationsController < ApplicationController
 
     respond_to do |format|
       if not Array(@user.puavoEduPersonAffiliation).include?('admin')
-        flash[:notice] = t('flash.organisation.wrong_user_type')
+        flash[:alert] = t('flash.organisation.wrong_user_type')
       elsif LdapOrganisation.current.add_owner(@user)
         flash[:notice] = t('flash.organisation.owner_added', user: @user.displayName )
       end
