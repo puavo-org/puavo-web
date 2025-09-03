@@ -523,17 +523,6 @@ class OrganisationsController < ApplicationController
   end
 
   private
-    def find_user_schools(l, schools_cache)
-      l.each do |o|
-        Array(o[:user].puavoSchool).each do |dn|
-          schools_cache[dn] = School.find(dn) unless schools_cache.include?(dn)
-          o[:schools] << schools_cache[dn]
-        end
-
-        # sort the schools alphabetically
-        o[:schools].sort!{ |a, b| a.displayName.downcase <=> b.displayName.downcase }
-      end
-    end
 
     def organisation_params
       o = params.require(:ldap_organisation).permit(
