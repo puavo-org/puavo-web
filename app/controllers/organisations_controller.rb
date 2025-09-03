@@ -7,41 +7,45 @@ class OrganisationsController < ApplicationController
 
   # GET /organisation
   def show
-    # argh, some LDAP tests need to use this :-(
+    # Argh, some LDAP tests need to use this :-(
     if request.format == 'text/html'
       return if redirected_nonowner_user?
     end
 
     @organisation = LdapOrganisation.current
-    @release = nil
 
-    if @organisation.puavoDeviceImage
-      @release = get_releases().fetch(@organisation.puavoDeviceImage, nil)
-    end
-
-    make_puavomenu_preview(@organisation.puavoMenuData)
-
-    @full_puavoconf = list_all_puavoconf_values(LdapOrganisation.current.puavoConf, nil, nil)
-
-    # Dig up the organisation-level timestamps
-    timestamps = LdapBase.search_as_utf8(:filter => "(&(objectClass=puavoEduOrg)(cn=#{@organisation.cn}))",
-                                         :attributes => ["createTimestamp", "modifyTimestamp"])
+    # Retrieve the organisation-level LDAP operational timestamps
+    timestamps = LdapBase.search_as_utf8(
+      filter: "(&(objectClass=puavoEduOrg)(cn=#{@organisation.cn}))",
+      attributes: ['createTimestamp', 'modifyTimestamp']
+    )
 
     @created = convert_timestamp(Time.at(Puavo::Helpers::convert_ldap_time(timestamps[0][1]['createTimestamp'])))
     @modified = convert_timestamp(Time.at(Puavo::Helpers::convert_ldap_time(timestamps[0][1]['modifyTimestamp'])))
+
+    # If the organisation has an image set, we need to display its release name
+    if @organisation.puavoDeviceImage
+      @release = get_releases().fetch(@organisation.puavoDeviceImage, nil)
+    else
+      @release = nil
+    end
+
+    # Puavomenu editor data preview
+    make_puavomenu_preview(@organisation.puavoMenuData)
+    @full_puavoconf = list_all_puavoconf_values(LdapOrganisation.current.puavoConf, nil, nil)
 
     respond_to do |format|
       format.html # show.html.erb
       format.json do
         json = JSON.parse @organisation.to_json
 
-        json[:ldap_host] = current_organisation.value_by_key("ldap_host") || LdapBase.ensure_configuration["host"]
+        json[:ldap_host] = current_organisation.value_by_key('ldap_host') || LdapBase.ensure_configuration['host']
         json[:kerberos_realm] = @organisation.puavoKerberosRealm
         json[:puavo_domain] = @organisation.puavoDomain
         json[:base] = @organisation.base.to_s
-        json[:kerberos_host] = current_organisation.value_by_key("kerberos_host") || LdapBase.ensure_configuration["host"]
+        json[:kerberos_host] = current_organisation.value_by_key('kerberos_host') || LdapBase.ensure_configuration['host']
 
-        render :json => json
+        render json: json
       end
     end
   end
@@ -52,6 +56,7 @@ class OrganisationsController < ApplicationController
 
     @organisation = LdapOrganisation.current
 
+    # Release names and the known releases selector
     @releases = get_releases
     @image_filenames_by_release = DevicesHelper.group_image_filenames_by_release(@releases)
 
@@ -69,9 +74,9 @@ class OrganisationsController < ApplicationController
     respond_to do |format|
       if @organisation.update_attributes(organisation_params)
         flash[:notice] = t('flash.organisation.updated')
-        format.html { redirect_to( organisation_path ) }
+        format.html { redirect_to(organisation_path) }
       else
-        format.html { render :action => "edit" }
+        format.html { render action: 'edit' }
       end
     end
   end
@@ -99,10 +104,10 @@ class OrganisationsController < ApplicationController
     respond_to do |format|
       if @organisation.save
         flash[:notice] = t('flash.wlan_updated')
-        format.html { redirect_to( wlan_organisation_path ) }
+        format.html { redirect_to(wlan_organisation_path) }
       else
-        flash[:alert] = t('flash.wlan_save_failed', :error => @organisation.errors["puavoWlanSSID"].first )
-        format.html { render :action => "wlan" }
+        flash[:alert] = t('flash.wlan_save_failed', error: @organisation.errors['puavoWlanSSID'].first )
+        format.html { render action: 'wlan' }
       end
     end
   end
@@ -160,12 +165,9 @@ class OrganisationsController < ApplicationController
       if not Array(@user.puavoEduPersonAffiliation).include?('admin')
         flash[:notice] = t('flash.organisation.wrong_user_type')
       elsif LdapOrganisation.current.add_owner(@user)
-        flash[:notice] = t('flash.organisation.owner_added',
-                           :user => @user.displayName )
-
-      else
-
+        flash[:notice] = t('flash.organisation.owner_added', user: @user.displayName )
       end
+
       format.html { redirect_to(owners_organisation_path) }
     end
   end
@@ -176,19 +178,18 @@ class OrganisationsController < ApplicationController
 
     @user = User.find(params[:user_id])
 
-    # Users cannot remove themselves from owners. The buttons aren't shown,
+    # An owner cannot remove themselves from the owners (someone else has to do it). The buttons aren't shown,
     # but the URL can still be manipulated.
     if @user.dn.to_s == current_user.dn.to_s
       flash[:alert] = t('flash.organisation.cant_remove_self')
-      redirect_to(owners_organisation_path)
-      return
+      return redirect_to(owners_organisation_path)
     end
 
     respond_to do |format|
       if LdapOrganisation.current.remove_owner(@user)
-        flash[:notice] = t('flash.organisation.owner_removed',
-                           :user => @user.displayName )
+        flash[:notice] = t('flash.organisation.owner_removed', user: @user.displayName)
       end
+
       format.html { redirect_to(owners_organisation_path) }
     end
   end
@@ -197,7 +198,7 @@ class OrganisationsController < ApplicationController
   def all_admins
     return if redirected_nonowner_user?
 
-    # Current organisation owners
+    # Current organisation owner DNs
     owners = Array(LdapOrganisation.current.owner)
       .select { |dn| dn != 'uid=admin,o=puavo' }
       .collect { |dn| dn.to_s }
@@ -313,23 +314,20 @@ class OrganisationsController < ApplicationController
     schools_by_dn = {}
     school_admins = Set.new
 
-    School.search_as_utf8(:filter => '',
-                          :attributes => ['cn', 'displayName', 'puavoId', 'puavoSchoolAdmin']).each do |dn, school|
+    School.search_as_utf8(filter: '', attributes: %w[cn displayName puavoId puavoSchoolAdmin]).each do |dn, school|
       schools_by_dn[dn] = {
         id: school['puavoId'][0].to_i,
         cn: school['cn'][0],
         name: school['displayName'][0].force_encoding('utf-8'),
       }
 
-      Array(school['puavoSchoolAdmin'] || []).each{ |dn| school_admins << dn }
+      Array(school['puavoSchoolAdmin'] || []).each { |dn| school_admins << dn }
     end
 
     krb_auth_times_by_uid = Kerberos.all_auth_times_by_uid
 
     # Get a raw list of all users in all schools
-    raw = User.search_as_utf8(:filter => '(puavoSchool=*)',
-                              :scope => :one,
-                              :attributes => UsersHelper.get_user_attributes())
+    raw = User.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: UsersHelper.get_user_attributes())
 
     # Convert the raw data into something we can easily parse in JavaScript
     users = []
@@ -357,7 +355,11 @@ class OrganisationsController < ApplicationController
     # can get here and they can see everything.
     groups, group_members = GroupsHelper.load_group_member_lists(schools_by_dn, Set.new)
 
-    render json: { users: users, groups: groups, group_members: group_members }
+    render json: {
+      users: users,
+      groups: groups,
+      group_members: group_members
+    }
   end
 
   def all_groups
@@ -381,8 +383,7 @@ class OrganisationsController < ApplicationController
     # doing a raw school search instead of School.all
     schools_by_dn = {}
 
-    School.search_as_utf8(:filter => '',
-                          :attributes => ['cn', 'displayName', 'puavoId']).each do |dn, school|
+    School.search_as_utf8(filter: '', attributes: %w[cn displayName puavoId]).each do |dn, school|
       schools_by_dn[dn] = {
         id: school['puavoId'][0].to_i,
         cn: school['cn'][0],
@@ -391,9 +392,7 @@ class OrganisationsController < ApplicationController
     end
 
     # Get a raw list of all groups in all schools
-    raw = Group.search_as_utf8(:filter => '(puavoSchool=*)',
-                               :scope => :one,
-                               :attributes => GroupsHelper.get_group_attributes())
+    raw = Group.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: GroupsHelper.get_group_attributes())
 
     # Convert the raw data into something we can easily parse in JavaScript
     groups = []
@@ -412,7 +411,7 @@ class OrganisationsController < ApplicationController
       groups << group
     end
 
-    render :json => groups
+    render json: groups
   end
 
   def all_devices
@@ -446,8 +445,7 @@ class OrganisationsController < ApplicationController
     # doing a raw school search instead of School.all
     schools_by_dn = {}
 
-    School.search_as_utf8(:filter => '',
-                          :attributes => ['cn', 'displayName', 'puavoId']).each do |dn, school|
+    School.search_as_utf8(filter: '', attributes: %w[cn displayName puavoId]).each do |dn, school|
       schools_by_dn[dn] = {
         id: school['puavoId'][0].to_i,
         cn: school['cn'][0],
@@ -456,9 +454,7 @@ class OrganisationsController < ApplicationController
     end
 
     # Get a raw list of all devices in all schools
-    raw = Device.search_as_utf8(:filter => "(puavoSchool=*)",
-                                :scope => :one,
-                                :attributes => DevicesHelper.get_device_attributes())
+    raw = Device.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: DevicesHelper.get_device_attributes())
 
     # Known image release names
     releases = get_releases()
@@ -485,7 +481,7 @@ class OrganisationsController < ApplicationController
       devices << device
     end
 
-    render :json => devices
+    render json: devices
   end
 
   def edit_puavomenu

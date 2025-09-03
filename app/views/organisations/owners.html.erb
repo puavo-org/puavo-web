@@ -12,8 +12,7 @@
     <tr>
     <% end %>
       <td>
-        <%= render(:partial => 'shared/owners_and_admins',
-                   :locals => { :user => u, :schools => o[:schools] }) %>
+        <%= render(partial: 'shared/owners_and_admins', locals: { user: u, schools: o[:schools] }) %>
       </td>
       <td>
         <% if @logged_in_user == u.dn.to_s %>
@@ -34,7 +33,9 @@
 <%= start_box t('.available') %>
   <table id="availableAdmins">
     <% if @available_owners.empty? %>
-    <tr><td><%= t('.none_left') %></td></tr>
+    <tr>
+      <td><%= t('.none_left') %></td>
+    </tr>
     <% else %>
     <% Array(@available_owners).each do |o| %>
     <% u = o[:user] %>
@@ -44,8 +45,7 @@
     <tr>
     <% end %>
       <td>
-        <%= render(:partial => 'shared/owners_and_admins',
-                   :locals => { :user => u, :schools => o[:schools] }) %>
+        <%= render(partial: 'shared/owners_and_admins', locals: { user: u, schools: o[:schools] }) %>
       </td>
       <td>
         <%= link_to('◄ ' + t('link.add'),
