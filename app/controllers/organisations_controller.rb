@@ -119,9 +119,7 @@ class OrganisationsController < ApplicationController
     # Make a list of admins who are currently organisation owners
     @current_owners = []
 
-    Array(LdapOrganisation.current.owner).each do |dn|
-      next if dn == 'uid=admin,o=puavo'
-
+    owners_set().each do |dn|
       begin
         u = User.find(dn)
        rescue StandardError => e
@@ -200,11 +198,7 @@ class OrganisationsController < ApplicationController
   def all_admins
     return if redirected_nonowner_user?
 
-    # Current organisation owner DNs
-    owners = Array(LdapOrganisation.current.owner)
-      .select { |dn| dn != 'uid=admin,o=puavo' }
-      .collect { |dn| dn.to_s }
-      .to_set.freeze
+    owners = owners_set()
 
     # Cached list of schools. Cached, because School.find() is excruciatingly slow
     @schools = {}
@@ -300,12 +294,7 @@ class OrganisationsController < ApplicationController
 
   # AJAX call
   def get_all_users
-    # Get a list of organisation owners and school admins
-    organisation_owners = Array(LdapOrganisation.current.owner)
-                          .reject { |dn| dn == 'uid=admin,o=puavo' }
-                          .collect { |o| o.to_s }
-
-    organisation_owners = Array(organisation_owners || []).to_set
+    owners = owners_set()
 
     # Perform the admin search as a raw query. In some organisations, "Schools.all"
     # can be *very* slow (I've seen 4-5 seconds per call) and we don't even need
@@ -338,7 +327,7 @@ class OrganisationsController < ApplicationController
       school = schools_by_dn[usr['puavoEduPersonPrimarySchool'][0]]
 
       # Common attributes
-      user = UsersHelper.convert_raw_user(dn, usr, organisation_owners, school_admins)
+      user = UsersHelper.convert_raw_user(dn, usr, owners, school_admins)
 
       # Special attributes
       user[:link] = "/users/#{school[:id]}/users/#{user[:id]}"
@@ -506,7 +495,7 @@ class OrganisationsController < ApplicationController
 
   def save_puavomenu
     save_menudata do |menudata, response|
-      if !current_user || !Array(LdapOrganisation.current.owner).include?(current_user.dn)
+      if !current_user || owners_set().include?(current_user.dn)
         # Only organisation owners can edit this data
         logger.error("save_organisation: user #{current_user ? current_user.dn.to_s : '?' } is not an organisation owner")
 
