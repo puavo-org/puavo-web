@@ -247,16 +247,9 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  # GET /all_users
   def all_users
     return if redirected_nonowner_user?
-
-    # You can't get here unless you're an owner
-    @is_owner = true
-
-    # Yes, you can
-    @permit_user_deletion = true
-    @permit_mass_user_deletion = true
-    @permit_user_mass_edit_expiration_times = true
 
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
@@ -286,6 +279,12 @@ class OrganisationsController < ApplicationController
     @allowed_destination_schools = @schools_list
 
     @current_user_id = current_user.id
+
+    # You can't get here unless you're an owner
+    @is_owner = true
+    @permit_user_deletion = true
+    @permit_mass_user_deletion = true
+    @permit_user_mass_edit_expiration_times = true
 
     respond_to do |format|
       format.html   # all_users.html.erb
@@ -344,8 +343,6 @@ class OrganisationsController < ApplicationController
 
     # You can't get here unless you're an owner
     @is_owner = true
-
-    # Yes, you can
     @permit_group_deletion = true
     @permit_mass_group_deletion = true
 
@@ -384,10 +381,11 @@ class OrganisationsController < ApplicationController
   def all_devices
     return if redirected_nonowner_user?
 
+    # List ALL schools, hide nothing
+    @school_list = DevicesHelper.device_school_change_list(true, nil, nil)
+
     # You can't get here unless you're an owner
     @is_owner = true
-
-    # Yes, you can
     @permit_device_deletion = true
     @permit_device_mass_deletion = true
     @permit_device_reset = true
@@ -397,9 +395,6 @@ class OrganisationsController < ApplicationController
     @permit_device_mass_edit_expiration_times = true
     @permit_device_mass_set_db_fields = true
     @permit_device_mass_edit_puavoconf = true
-
-    # List ALL schools, hide nothing
-    @school_list = DevicesHelper.device_school_change_list(true, nil, nil)
 
     respond_to do |format|
       format.html   # all_devices.html.erb
