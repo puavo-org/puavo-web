@@ -73,7 +73,7 @@
       <th><%= t("activeldap.attributes.ldap_organisation.puavoLocale") %></th>
       <td>
         <%= h language_by_locale(@organisation.puavoLocale) %><br />
-        <i><%= t("old_preferred_language", :language => @organisation.preferredLanguage) %></i>
+        <i><%= t("old_preferred_language", language: @organisation.preferredLanguage) %></i>
       </td>
     </tr>
 
