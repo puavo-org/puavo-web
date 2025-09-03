@@ -116,42 +116,44 @@ class OrganisationsController < ApplicationController
   def owners
     return if redirected_nonowner_user?
 
-    # List of (admin) users who currently ARE the owners of this organisation
+    # Make a list of admins who are currently organisation owners
     @current_owners = []
-    current_dn = Set.new
 
-    Array(LdapOrganisation.current.owner).each.select do |dn|
-      dn != "uid=admin,o=puavo"
-    end.each do |dn|
+    Array(LdapOrganisation.current.owner).each do |dn|
+      next if dn == 'uid=admin,o=puavo'
+
       begin
-        @current_owners << {
-          user: User.find(dn),
-          schools: [],
-        }
-
-        current_dn << dn
-      rescue
+        u = User.find(dn)
+       rescue StandardError => e
+        # Probably a removed user. LDAP isn't a relational database, so dangling references are possible.
+        next
       end
-    end
 
-    # List of admin users who currently are NOT the owners of this organisation
-    @available_owners = User.find(:all,
-                                  :attribute => 'puavoEduPersonAffiliation',
-                                  :value => 'admin')
-    .delete_if do |u|
-      current_dn.include?(u.dn)
-    end.collect do |u|
-      {
-        user: u,
-        schools: [],
+      user = User.find(dn)
+
+      @current_owners << {
+        user: user,
+        sort_name: "#{user['givenName']} #{user['sn']}".downcase
       }
     end
 
-    schools = {}
+    current_owners_dn = @current_owners.collect { |o| o[:user].dn.to_s }.to_set.freeze
 
-    @current_owners = sort_users(find_user_schools(@current_owners, schools))
-    @available_owners = sort_users(find_user_schools(@available_owners, schools))
+    # Then make a list of admin users who are not organisation owners
+    @available_owners = User.find(:all, attribute: 'puavoEduPersonAffiliation', value: 'admin')
+      .reject { |u| current_owners_dn.include?(u.dn.to_s) }
+      .collect do |user|
+      {
+        user: user,
+        sort_name: "#{user['givenName']} #{user['sn']}".downcase,
+      }
+    end
 
+    # Sort both lists alphabetically by name
+    @current_owners.sort! { |a, b| a[:sort_name] <=> b[:sort_name] }
+    @available_owners.sort! { |a, b| a[:sort_name] <=> b[:sort_name] }
+
+    # We won't display the "remove" button for the currently logged-in user
     @logged_in_user = current_user.dn.to_s
   end
 
@@ -532,13 +534,6 @@ class OrganisationsController < ApplicationController
   end
 
   private
-    def sort_users(l)
-      l.sort! do |a, b|
-        ((a[:user]["givenName"] || "") + (a[:user]["sn"] || "")).downcase <=>
-          ((b[:user]["givenName"] || "") + (b[:user]["sn"] || "")).downcase
-      end
-    end
-
     def find_user_schools(l, schools_cache)
       l.each do |o|
         Array(o[:user].puavoSchool).each do |dn|
