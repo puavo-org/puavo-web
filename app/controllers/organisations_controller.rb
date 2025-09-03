@@ -302,19 +302,15 @@ class OrganisationsController < ApplicationController
 
     krb_auth_times_by_uid = Kerberos.all_auth_times_by_uid
 
-    # Get a raw list of all users in all schools
-    raw = User.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: UsersHelper.get_user_attributes())
-
-    # Convert the raw data into something we can easily parse in JavaScript
-    users = []
-
-    raw.each do |dn, usr|
+    # Get a raw list of all users in all schools and convert it into easily parseable format
+    users = User.search_as_utf8(
+      filter: '(puavoSchool=*)',
+      scope: :one,
+      attributes: UsersHelper.get_user_attributes())
+    .collect do |dn, usr|
       school = schools_by_dn[usr['puavoEduPersonPrimarySchool'][0]]
 
-      # Common attributes
       user = UsersHelper.convert_raw_user(dn, usr, owners, school_admins)
-
-      # Special attributes
       user[:link] = "/users/#{school[:id]}/users/#{user[:id]}"
       user[:school] = [school[:cn], school[:name]]
       user[:school_id] = school[:id]
@@ -324,7 +320,7 @@ class OrganisationsController < ApplicationController
                         .to_date.to_time) rescue nil
       user[:last_kerberos_auth_date] = krb_auth_date if krb_auth_date
 
-      users << user
+      user
     end
 
     # For listing user groups. Use empty set for the accessible schools, because only owners
@@ -355,24 +351,20 @@ class OrganisationsController < ApplicationController
   def get_all_groups
     schools_by_dn = raw_schools_by_dn()
 
-    # Get a raw list of all groups in all schools
-    raw = Group.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: GroupsHelper.get_group_attributes())
-
-    # Convert the raw data into something we can easily parse in JavaScript
-    groups = []
-
-    raw.each do |dn, grp|
+    # Get a raw list of all groups in all schools and convert it into easily parseable format
+    groups = Group.search_as_utf8(
+      filter: '(puavoSchool=*)',
+      scope: :one,
+      attributes: GroupsHelper.get_group_attributes())
+    .collect do |dn, grp|
       school = schools_by_dn[grp['puavoSchool'][0]]
 
-      # Common attributes
       group = GroupsHelper.convert_raw_group(dn, grp)
-
-      # Special attributes
       group[:link] = "/users/#{school[:id]}/groups/#{group[:id]}"
       group[:school] = [school[:cn], school[:name]]
       group[:school_id] = school[:id]
 
-      groups << group
+      group
     end
 
     render json: groups
@@ -405,22 +397,18 @@ class OrganisationsController < ApplicationController
   def get_all_devices
     schools_by_dn = raw_schools_by_dn()
 
-    # Get a raw list of all devices in all schools
-    raw = Device.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: DevicesHelper.get_device_attributes())
-
     # Known image release names
     releases = get_releases()
 
-    # Convert the raw data into something we can easily parse in JavaScript
-    devices = []
-
-    raw.each do |dn, dev|
+    # Get a raw list of all devices in all schools and convert it into easily parseable format
+    devices = Device.search_as_utf8(
+      filter: '(puavoSchool=*)',
+      scope: :one,
+      attributes: DevicesHelper.get_device_attributes())
+    .collect do |dn, dev|
       school = schools_by_dn[dev['puavoSchool'][0]]
 
-      # Common attributes
       device = DevicesHelper.convert_raw_device(dev, releases)
-
-      # Special attributes
       device[:link] = "/devices/#{school[:id]}/devices/#{device[:id]}"
       device[:school] = [school[:cn], school[:name]]
       device[:school_id] = school[:id]
@@ -430,7 +418,7 @@ class OrganisationsController < ApplicationController
         device[:user] = DevicesHelper.format_device_primary_user(device[:user], school[:id])
       end
 
-      devices << device
+      device
     end
 
     render json: devices
@@ -525,7 +513,7 @@ class OrganisationsController < ApplicationController
   # because we don't have School objects anymore, but it's no big deal, we can format URLs by hand. The
   # same pattern repeats in all of these AJAX endpoints in this controller.
   def raw_schools_by_dn
-    School.search_as_utf8(filter: '', attributes: %w[cn displayName puavoId]).to_h do |dn, school|
+    School.search_as_utf8(attributes: %w[cn displayName puavoId]).to_h do |dn, school|
       [dn,
       {
         id: school['puavoId'][0].to_i,
