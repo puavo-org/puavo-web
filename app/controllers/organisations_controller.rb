@@ -524,41 +524,38 @@ class OrganisationsController < ApplicationController
 
   private
 
-    def organisation_params
-      o = params.require(:ldap_organisation).permit(
-        :o,
-        :puavoEduOrgAbbreviation,
-        :description,
-        :puavoOrganisationOID,
-        :puavoNotes,
-        :telephoneNumber,
-        :facsimileTelephoneNumber,
-        :l,
-        :street,
-        :postOfficeBox,
-        :postalAddress,
-        :postalCode,
-        :st,
-        :puavoLocale,
-        :puavoTimezone,
-        :puavoKeyboardLayout,
-        :puavoKeyboardVariant,
-        :puavoAutomaticImageUpdates,
-        :eduOrgHomePageURI,
-        :puavoDeviceAutoPowerOffMode,
-        :puavoDeviceOnHour,
-        :puavoDeviceOffHour,
-        :puavoDeviceImage,
-        :puavoConf,
-        :puavoImageSeriesSourceURL=>[],
-        :puavoBillingInfo=>[]
-      ).to_hash
+  def organisation_params
+    o = params.require(:ldap_organisation).permit(
+      :o,
+      :puavoEduOrgAbbreviation,
+      :description,
+      :puavoOrganisationOID,
+      :puavoNotes,
+      :telephoneNumber,
+      :facsimileTelephoneNumber,
+      :l,
+      :street,
+      :postOfficeBox,
+      :postalAddress,
+      :postalCode,
+      :st,
+      :puavoLocale,
+      :puavoTimezone,
+      :puavoKeyboardLayout,
+      :puavoKeyboardVariant,
+      :puavoAutomaticImageUpdates,
+      :eduOrgHomePageURI,
+      :puavoDeviceAutoPowerOffMode,
+      :puavoDeviceOnHour,
+      :puavoDeviceOffHour,
+      :puavoDeviceImage,
+      :puavoConf,
+      :puavoImageSeriesSourceURL=>[],
+      :puavoBillingInfo=>[]
+    ).to_hash
 
-      clean_image_name(o)
-
-      clear_puavoconf(o)
-
-      return o
-    end
-
+    clean_image_name(o)
+    clear_puavoconf(o)
+    o
+  end
 end
