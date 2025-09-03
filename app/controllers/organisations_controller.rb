@@ -295,25 +295,11 @@ class OrganisationsController < ApplicationController
   # AJAX call
   def get_all_users
     owners = owners_set()
+    schools_by_dn = raw_schools_by_dn()
 
-    # Perform the admin search as a raw query. In some organisations, "Schools.all"
-    # can be *very* slow (I've seen 4-5 seconds per call) and we don't even need
-    # 99% of the data it returns. But this raw search is nearly instantaneous. We'll
-    # lose user_path() because we don't have School objects anymore, but it's no big
-    # deal, we can format URLs by hand. The same pattern repeats in all of these
-    # AJAX endpoints in this controller.
-    schools_by_dn = {}
-    school_admins = Set.new
-
-    School.search_as_utf8(filter: '', attributes: %w[cn displayName puavoId puavoSchoolAdmin]).each do |dn, school|
-      schools_by_dn[dn] = {
-        id: school['puavoId'][0].to_i,
-        cn: school['cn'][0],
-        name: school['displayName'][0].force_encoding('utf-8'),
-      }
-
-      Array(school['puavoSchoolAdmin'] || []).each { |dn| school_admins << dn }
-    end
+    # List all school admins (DNs) in all schools
+    school_admins = School.search_as_utf8(attributes: %w[puavoSchoolAdmin])
+      .collect { |_, s| s['puavoSchoolAdmin'] }.flatten.compact.to_set
 
     krb_auth_times_by_uid = Kerberos.all_auth_times_by_uid
 
@@ -370,17 +356,7 @@ class OrganisationsController < ApplicationController
 
   # AJAX call
   def get_all_groups
-    # See the explanation in get_all_users() if you're wondering why we're
-    # doing a raw school search instead of School.all
-    schools_by_dn = {}
-
-    School.search_as_utf8(filter: '', attributes: %w[cn displayName puavoId]).each do |dn, school|
-      schools_by_dn[dn] = {
-        id: school['puavoId'][0].to_i,
-        cn: school['cn'][0],
-        name: school['displayName'][0],
-      }
-    end
+    schools_by_dn = raw_schools_by_dn()
 
     # Get a raw list of all groups in all schools
     raw = Group.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: GroupsHelper.get_group_attributes())
@@ -432,17 +408,7 @@ class OrganisationsController < ApplicationController
 
   # AJAX call
   def get_all_devices
-    # See the explanation in get_all_users() if you're wondering why we're
-    # doing a raw school search instead of School.all
-    schools_by_dn = {}
-
-    School.search_as_utf8(filter: '', attributes: %w[cn displayName puavoId]).each do |dn, school|
-      schools_by_dn[dn] = {
-        id: school['puavoId'][0].to_i,
-        cn: school['cn'][0],
-        name: school['displayName'][0],
-      }
-    end
+    schools_by_dn = raw_schools_by_dn()
 
     # Get a raw list of all devices in all schools
     raw = Device.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: DevicesHelper.get_device_attributes())
@@ -557,5 +523,20 @@ class OrganisationsController < ApplicationController
     clean_image_name(o)
     clear_puavoconf(o)
     o
+  end
+
+  # In some organisations, "Schools.all" can be *very* slow (I've seen 4-5 seconds per call) and we don't
+  # even need 99% of the data it returns. But this raw search is nearly instantaneous. We'll lose user_path()
+  # because we don't have School objects anymore, but it's no big deal, we can format URLs by hand. The
+  # same pattern repeats in all of these AJAX endpoints in this controller.
+  def raw_schools_by_dn
+    School.search_as_utf8(filter: '', attributes: %w[cn displayName puavoId]).to_h do |dn, school|
+      [dn,
+      {
+        id: school['puavoId'][0].to_i,
+        cn: school['cn'][0],
+        name: school['displayName'][0]
+      }]
+    end
   end
 end
