@@ -227,6 +227,14 @@ class ApplicationController < ActionController::Base
 
   end
 
+  # Returns the current organisation owners in a (frozen) set
+  def owners_set
+    Array(LdapOrganisation.current.owner)
+      .reject { |dn| dn == 'uid=admin,o=puavo' }
+      .map(&:to_s)
+      .to_set.freeze
+  end
+
   # Returns true if the current user is an organisation owner
   def is_owner?
     current_user && Array(LdapOrganisation.current.owner).include?(current_user.dn)
