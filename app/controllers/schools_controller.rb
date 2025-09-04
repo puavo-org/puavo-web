@@ -406,75 +406,75 @@ class SchoolsController < ApplicationController
   end
 
   private
-    def school_params
-      s = params.require(:school).permit(
-        :displayName,
-        :cn,
-        :puavoSchoolCode,
-        :puavoSchoolOID,
-        :puavoNamePrefix,
-        :puavoSchoolHomePageURL,
-        :description,
-        :puavoNotes,
-        :telephoneNumber,
-        :facsimileTelephoneNumber,
-        :l,
-        :street,
-        :postOfficeBox,
-        :postalAddress,
-        :postalCode,
-        :st,
-        :puavoLocale,
-        :puavoTimezone,
-        :image,
-        :puavoExternalId,
-        :puavoAllowGuest,
-        :puavoPersonalDevice,
-        :puavoAutomaticImageUpdates,
-        :puavoDeviceImage,
-        :puavoTag,
-        :puavoConf,
-        :puavoDeviceAutoPowerOffMode,
-        :puavoDeviceOnHour,
-        :puavoDeviceOffHour,
-        :puavoBillingInfo=>[],
-        :puavoImageSeriesSourceURL=>[],
-        :fs=>[],
-        :path=>[],
-        :mountpoint=>[],
-        :options=>[]
-      ).to_hash
+
+  def school_params
+    s = params.require(:school).permit(
+      :displayName,
+      :cn,
+      :puavoSchoolCode,
+      :puavoSchoolOID,
+      :puavoNamePrefix,
+      :puavoSchoolHomePageURL,
+      :description,
+      :puavoNotes,
+      :telephoneNumber,
+      :facsimileTelephoneNumber,
+      :l,
+      :street,
+      :postOfficeBox,
+      :postalAddress,
+      :postalCode,
+      :st,
+      :puavoLocale,
+      :puavoTimezone,
+      :image,
+      :puavoExternalId,
+      :puavoAllowGuest,
+      :puavoPersonalDevice,
+      :puavoAutomaticImageUpdates,
+      :puavoDeviceImage,
+      :puavoTag,
+      :puavoConf,
+      :puavoDeviceAutoPowerOffMode,
+      :puavoDeviceOnHour,
+      :puavoDeviceOffHour,
+      :puavoBillingInfo=>[],
+      :puavoImageSeriesSourceURL=>[],
+      :fs=>[],
+      :path=>[],
+      :mountpoint=>[],
+      :options=>[]
+    ).to_hash
 
 
-      # deduplicate arrays, as LDAP really does not like duplicate entries...
-      s["puavoTag"] = s["puavoTag"].split.uniq.join(' ') if s.key?("puavoTag")
-      s["puavoBillingInfo"].uniq! if s.key?("puavoBillingInfo")
-      s["puavoImageSeriesSourceURL"].uniq! if s.key?("puavoImageSeriesSourceURL")
+    # deduplicate arrays, as LDAP really does not like duplicate entries...
+    s["puavoTag"] = s["puavoTag"].split.uniq.join(' ') if s.key?("puavoTag")
+    s["puavoBillingInfo"].uniq! if s.key?("puavoBillingInfo")
+    s["puavoImageSeriesSourceURL"].uniq! if s.key?("puavoImageSeriesSourceURL")
 
-      clean_image_name(s)
+    clean_image_name(s)
 
-      clear_puavoconf(s)
+    clear_puavoconf(s)
 
-      s['displayName'].strip! if s.include?('displayName')
-      s['cn'].strip! if s.include?('cn')
+    s['displayName'].strip! if s.include?('displayName')
+    s['cn'].strip! if s.include?('cn')
 
-      return s
-    end
+    return s
+  end
 
-    # Allow admins edit WLANs in schools they're admins of, but nowhere else.
-    # No restrictions for owners.
-    def can_edit_wlans?
-      return true if is_owner?
+  # Allow admins edit WLANs in schools they're admins of, but nowhere else.
+  # No restrictions for owners.
+  def can_edit_wlans?
+    return true if is_owner?
 
-      admin_in =  Array(current_user.puavoAdminOfSchool || []).collect { |dn| dn.rdns[0]["puavoId"].to_i }
+    admin_in =  Array(current_user.puavoAdminOfSchool || []).collect { |dn| dn.rdns[0]["puavoId"].to_i }
 
-      return true if admin_in.include?(@school.id.to_i)
+    return true if admin_in.include?(@school.id.to_i)
 
-      return true if current_user.has_admin_permission?(:school_edit_wlan)
+    return true if current_user.has_admin_permission?(:school_edit_wlan)
 
-      flash[:alert] = t('flash.you_must_be_an_owner')
-      redirect_to school_path(current_user.primary_school)
-      return false
-    end
-
+    flash[:alert] = t('flash.you_must_be_an_owner')
+    redirect_to school_path(current_user.primary_school)
+    return false
+  end
 end
