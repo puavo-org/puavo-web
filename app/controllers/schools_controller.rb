@@ -310,14 +310,12 @@ class SchoolsController < ApplicationController
 
     respond_to do |format|
       if not Array(@user.puavoEduPersonAffiliation).include?('admin')
-        # FIXME: change notice type (ERROR)
         flash[:alert] = t('flash.school.wrong_user_type')
         format.html { redirect_to(admins_school_path(@school)) }
       elsif @school.add_admin(@user)
         flash[:notice] = t('flash.school.school_admin_added', displayName: @user.displayName, school_name: @school.displayName)
         format.html { redirect_to(admins_school_path(@school)) }
       else
-        # FIXME: change notice type (ERROR)
         flash[:alert] = t('flash.school.save_failed')
         format.html { redirect_to(admins_school_path(@school)) }
       end
