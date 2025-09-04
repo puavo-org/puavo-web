@@ -263,42 +263,35 @@ class SchoolsController < ApplicationController
   def admins
     return if redirected_nonowner_user?
 
-    # List of (admin) users who currently ARE the owners of this organisation
-    @current_owners = Array(LdapOrganisation.current.owner).each.map { |dn| dn.to_s }.to_set
+    # Highlight organisation owners
+    @current_owners = owners_set()
 
+    # Make a list of users who are currently admins of this school
     @school = School.find(params[:id])
-
-    # Current admin-level users in this schools
     @current_admins = []
-    current_dn = Set.new
 
-    @school.user_school_admins.each do |u|
+    @school.user_school_admins.each do |user|
       @current_admins << {
-        user: u,
-        schools: [],
+        user: user,
+        sort_name: "#{user['givenName']} #{user['sn']}".downcase
       }
-
-      current_dn << u.dn
     end
 
-    # Users who aren't admins yet, but could be
-    @available_admins = User.find(
-      :all,
-      attribute: 'puavoEduPersonAffiliation',
-      value: 'admin')
-    .delete_if do |u|
-      current_dn.include?(u.dn)
-    end.collect do |u|
+    current_admins_dn = @current_admins.collect { |o| o[:user].dn.to_s }.to_set.freeze
+
+    # Then make a list of admin users who aren't yet admining this school
+    @available_admins = User.find(:all, attribute: 'puavoEduPersonAffiliation', value: 'admin')
+      .reject { |u| current_admins_dn.include?(u.dn.to_s) }
+      .collect do |user|
       {
-        user: u,
-        schools: [],
+        user: user,
+        sort_name: "#{user['givenName']} #{user['sn']}".downcase,
       }
     end
 
-    schools = {}
-
-    @current_admins = sort_users(find_user_schools(@current_admins, schools))
-    @available_admins = sort_users(find_user_schools(@available_admins, schools))
+    # Sort both lists alphabetically by name
+    @current_admins.sort! { |a, b| a[:sort_name] <=> b[:sort_name] }
+    @available_admins.sort! { |a, b| a[:sort_name] <=> b[:sort_name] }
 
     respond_to do |format|
       format.html # admins.html.erb
@@ -413,25 +406,6 @@ class SchoolsController < ApplicationController
   end
 
   private
-    def sort_users(l)
-      l.sort! do |a, b|
-        ((a[:user]["givenName"] || "") + (a[:user]["sn"] || "")).downcase <=>
-          ((b[:user]["givenName"] || "") + (b[:user]["sn"] || "")).downcase
-      end
-    end
-
-    def find_user_schools(l, schools_cache)
-      l.each do |o|
-        Array(o[:user].puavoSchool).each do |dn|
-          schools_cache[dn] = School.find(dn) unless schools_cache.include?(dn)
-          o[:schools] << schools_cache[dn]
-        end
-
-        # sort the schools alphabetically
-        o[:schools].sort!{ |a, b| a.displayName.downcase <=> b.displayName.downcase }
-      end
-    end
-
     def school_params
       s = params.require(:school).permit(
         :displayName,
