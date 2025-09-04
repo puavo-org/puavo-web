@@ -24,7 +24,7 @@
   <div class="multilineItem">
     <div class="title"><%= t('activeldap.attributes.school.puavoLocale') %></div>
     <div class="value"><%= h language_by_locale(@school.puavoLocale) %><br>
-    <em><%= t("old_preferred_language", :language => @school.preferredLanguage) %></em>
+    <em><%= t("old_preferred_language", language: @school.preferredLanguage) %></em>
     </div>
   </div>
 
@@ -86,7 +86,7 @@
     <div class="title"><%= t('activeldap.attributes.school.puavoDeviceAutoPowerOffMode') %></div>
     <div class="value">
         <%= h t('puavoDeviceAutoPowerOffMode_' + (@school.puavoDeviceAutoPowerOffMode or 'default'),
-                :scope => "activeldap.attributes.#{ @school.class.human_name }") %>
+                scope: "activeldap.attributes.#{ @school.class.human_name }") %>
     </div>
   </div>
 
@@ -190,7 +190,7 @@
 
 <%= start_box t('.statistics') %>
   <!-- Users statistics -->
-  <h3><%= t('.users') %> <small><%= t('.total_count', :count => @members.count) %></small></h3>
+  <h3><%= t('.users') %> <small><%= t('.total_count', count: @members.count) %></small></h3>
   <table>
     <% User.puavoEduPersonAffiliation_list.each do |type| %>
     <tr>
@@ -202,7 +202,7 @@
 
   <% if @devices_by_type %>
   <!-- Device statistics -->
-  <h3><%= t('.devices') %> <small><%= t('.total_count', :count => @devices_by_type.values.sum) %></small></h3>
+  <h3><%= t('.devices') %> <small><%= t('.total_count', count: @devices_by_type.values.sum) %></small></h3>
   <table>
   <% @devices_by_type.each do |device_type, count| %>
     <tr>
@@ -257,7 +257,7 @@
 <hr>
 
 <!-- Mountpoints -->
-<%= render :partial => 'shared/mountpoint', :locals => { :object => @school } %>
+<%= render partial: 'shared/mountpoint', locals: { object: @school } %>
 
 <% content_for :page_tools do %>
 <%=
