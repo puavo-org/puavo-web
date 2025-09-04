@@ -229,6 +229,7 @@ class SchoolsController < ApplicationController
 
     @school = School.find(params[:id])
 
+    # Is the school empty?
     can_delete = true
 
     if @school.members.count > 0 ||
@@ -238,9 +239,11 @@ class SchoolsController < ApplicationController
       can_delete = false
     end
 
-    # Remove school admins
-    User.find(:all, attribute: 'puavoAdminOfSchool', value: @school.dn).each do |user|
-      @school.remove_admin(user)
+    if can_delete
+      # Remove school admins
+      User.find(:all, attribute: 'puavoAdminOfSchool', value: @school.dn).each do |user|
+        @school.remove_admin(user)
+      end
     end
 
     respond_to do |format|
