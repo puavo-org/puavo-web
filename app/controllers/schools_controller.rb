@@ -446,20 +446,19 @@ class SchoolsController < ApplicationController
       :options=>[]
     ).to_hash
 
+    # Deduplicate arrays (LDAP does not like duplicate entries)
+    s['puavoTag'] = s['puavoTag'].split.uniq.join(' ') if s.include?('puavoTag')
+    s['puavoBillingInfo'].uniq! if s.include?('puavoBillingInfo')
+    s['puavoImageSeriesSourceURL'].uniq! if s.include?('puavoImageSeriesSourceURL')
 
-    # deduplicate arrays, as LDAP really does not like duplicate entries...
-    s["puavoTag"] = s["puavoTag"].split.uniq.join(' ') if s.key?("puavoTag")
-    s["puavoBillingInfo"].uniq! if s.key?("puavoBillingInfo")
-    s["puavoImageSeriesSourceURL"].uniq! if s.key?("puavoImageSeriesSourceURL")
-
-    clean_image_name(s)
-
-    clear_puavoconf(s)
-
+    # Ensure there are no stray whitespaces in these
     s['displayName'].strip! if s.include?('displayName')
     s['cn'].strip! if s.include?('cn')
 
-    return s
+    clean_image_name(s)
+    clear_puavoconf(s)
+
+    s
   end
 
   # Allow admins edit WLANs in schools they're admins of, but nowhere else.
