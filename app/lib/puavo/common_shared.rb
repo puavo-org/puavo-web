@@ -78,7 +78,7 @@ module Puavo
             value = nil
           else
             # Convert the username to a DN
-            user = User.find(:first, :attribute => "uid", :value => value)
+            user = User.find(:first, attribute: 'uid', value: value)
 
             if user.nil?
               return [false, t('devices.index.mass_operations.set_field.unknown_user', { name: value })]
