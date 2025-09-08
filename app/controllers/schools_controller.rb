@@ -341,7 +341,11 @@ class SchoolsController < ApplicationController
   def wlan
     @school = School.find(params[:id])
 
-    return unless can_edit_wlans?
+    unless can_edit_wlans?
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to school_path(current_user.primary_school)
+      return
+    end
 
     respond_to do |format|
       format.html
@@ -352,7 +356,11 @@ class SchoolsController < ApplicationController
   def wlan_update
     @school = School.find(params[:id])
 
-    return unless can_edit_wlans?
+    unless can_edit_wlans?
+      flash[:alert] = t('flash.you_must_be_an_owner')
+      redirect_to school_path(current_user.primary_school)
+      return
+    end
 
     @school.update_wlan_attributes(params)
     @school.puavoWlanChannel = params[:school][:puavoWlanChannel]
@@ -462,19 +470,14 @@ class SchoolsController < ApplicationController
     s
   end
 
-  # Allow admins edit WLANs in schools they're admins of, but nowhere else.
-  # No restrictions for owners.
+  # Checks if the current user can edit school WLANs
   def can_edit_wlans?
     return true if is_owner?
 
-    admin_in =  Array(current_user.puavoAdminOfSchool || []).collect { |dn| dn.rdns[0]["puavoId"].to_i }
+    return false unless current_user.has_admin_permission?(:school_edit_wlan)
 
-    return true if admin_in.include?(@school.id.to_i)
+    return false unless Array(current_user.puavoAdminOfSchool || []).collect { |dn| dn.rdns[0]['puavoId'].to_i }.include?(@school.id.to_i)
 
-    return true if current_user.has_admin_permission?(:school_edit_wlan)
-
-    flash[:alert] = t('flash.you_must_be_an_owner')
-    redirect_to school_path(current_user.primary_school)
-    return false
+    return true
   end
 end

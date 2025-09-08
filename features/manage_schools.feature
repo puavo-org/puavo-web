@@ -414,7 +414,7 @@ Scenario: Set the school code for an existing school
     Given admin "donald" has these permissions: "school_edit_wlan"
     Given I am logged in as "donald" with password "313"
     # Have edit button
-    And I am on the show school page with "Greenwich Steiner School"
+    And I am on the show school page with "Example school 1"
     Then I should see "WLAN"
     # Can edit WLANs
     And I follow "WLAN"
