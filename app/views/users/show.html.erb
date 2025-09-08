@@ -30,7 +30,14 @@
 
     <% unless @admin_permissions.empty? %>
     <p class="infoTitle infoNotice"><%= t('.admin_permissions.title') %></p>
-    <p class="infoValue infoNotice"><%= @admin_permissions.collect { |p| t(".admin_permissions.#{p.to_s}") }.join(', ') %></p>
+    <p class="infoValue infoNotice">
+        <% localized_permissions = @admin_permissions.collect { |p| t(".admin_permissions.#{p.to_s}") } %>
+        <% if localized_permissions.count > 5 %>
+        <%= localized_permissions.take(5).join(', ') %><span id="remainingPermissions" class="hidden">, <%= localized_permissions.last(localized_permissions.count - 5).join(', ') %></span><span id="permissionsEllipsis">… (+<%= localized_permissions.count - 5 %>, <a href="#" id="expandPermissions"><%= t('.show_all_permissions') %></a>)</span>
+        <% else %>
+        <%= localized_permissions.join(', ') %>
+        <% end %>
+    </p>
     <% end %>
 
     <% unless @teacher_permissions.empty? %>
@@ -389,4 +396,17 @@ toolbar do |tb|
     end
   end
 end %>
+<% end %>
+
+<% content_for :post_load_javascript do %>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Expand all admin permissions
+    document.querySelector("a#expandPermissions").addEventListener("click", e => {
+        e.preventDefault();
+        document.querySelector("span#remainingPermissions").classList.remove("hidden");
+        document.querySelector("span#permissionsEllipsis").remove();
+    });
+});
+</script>
 <% end %>

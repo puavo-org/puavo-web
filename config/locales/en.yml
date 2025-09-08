@@ -1218,6 +1218,7 @@ en:
       reset_sso_session: "Reset SSO session"
       edit_admin_permissions: "Edit admin permissions..."
       edit_teacher_permissions: "Edit teacher permissions..."
+      show_all_permissions: "show all permissions"
       admin_permissions:
         title: "Admin permissions"
         school_edit: "can edit school information"
