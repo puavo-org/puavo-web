@@ -116,10 +116,12 @@ class SchoolsController < ApplicationController
       end
     end
 
-    # List members
-    @members = User.search_as_utf8(filter: "(puavoSchool=#{@school.dn})",
-                                   scope: :one,
-                                   attributes: ['puavoEduPersonAffiliation'])
+    # Count school members by type
+    @members_by_type =
+      User.search_as_utf8(filter: "(puavoSchool=#{@school.dn})", scope: :one, attributes: ['puavoEduPersonAffiliation'])
+          .collect { |_, u| u['puavoEduPersonAffiliation'] }
+          .flatten
+          .tally
 
     # Get the creation and modification timestamps from LDAP operational attributes
     extra = School.find(params[:id], attributes: %w[createTimestamp modifyTimestamp])

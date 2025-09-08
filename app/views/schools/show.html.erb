@@ -190,13 +190,15 @@
 
 <%= start_box t('.statistics') %>
   <!-- Users statistics -->
-  <h3><%= t('.users') %> <small><%= t('.total_count', count: @members.count) %></small></h3>
+  <h3><%= t('.users') %> <small><%= t('.total_count', count: @members_by_type.values.sum) %></small></h3>
   <table>
     <% User.puavoEduPersonAffiliation_list.each do |type| %>
+    <% if @members_by_type.include?(type) %>
     <tr>
-      <th><%= t('puavoEduPersonAffiliation_' + type) %></th>
-      <td><%= @members.select{ |m| m.last["puavoEduPersonAffiliation"] == [type]}.count %></td>
+      <th><%= t("puavoEduPersonAffiliation_#{type}") %></th>
+      <td><%= @members_by_type[type] %></td>
     </tr>
+    <% end %>
     <% end %>
   </table>
 
