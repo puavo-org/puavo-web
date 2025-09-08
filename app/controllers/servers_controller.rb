@@ -31,6 +31,8 @@ class ServersController < ApplicationController
     return if redirected_nonowner_user?
 
     @is_owner = is_owner?
+    @permit_device_mass_set_db_fields = true
+    @permit_device_mass_edit_puavoconf = true
 
     @servers = get_servers_list
 
