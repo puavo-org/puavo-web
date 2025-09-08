@@ -1486,7 +1486,7 @@ class Users < PuavoSinatra
       # Which fields to get? This endpoint allows device credentials, as the old users cleanup
       # script needs to call this. But since that's an exception, we can hardcode the attribute
       # list it's allowed to get.
-      if User.current.device?
+      if User.current && User.current.device?
         user_fields = ['uid_number'].to_set
       else
         user_fields = v4_get_fields(params).to_set
