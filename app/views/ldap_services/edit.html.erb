@@ -4,12 +4,12 @@
 
 <h1><%= t('.title', service: @ldap_service.uid) %></h1>
 
-<%= render :partial => 'form',
- :locals => {
-  :path => ldap_service_path(@ldap_service),
-  :submit_text => t('link.update'),
-  :method => :put
-}
+<%= render partial: 'form',
+    locals: {
+      path: ldap_service_path(@ldap_service),
+      submit_text: t('link.update'),
+      method: :put
+    }
 %>
 
 </div>

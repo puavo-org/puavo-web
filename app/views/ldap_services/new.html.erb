@@ -4,12 +4,12 @@
 
 <h1><%= t('.title') %></h1>
 
-<%= render :partial => 'form',
- :locals => {
-  :path => ldap_services_path(),
-  :submit_text => t('link.create'),
-  :method => :post
-}
+<%= render partial: 'form',
+    locals: {
+      path: ldap_services_path(),
+      submit_text: t('link.create'),
+      method: :post
+    }
 %>
 
 </div>
