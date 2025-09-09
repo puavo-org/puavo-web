@@ -25,7 +25,7 @@
       <ul class="no-list-bullets margin-0 padding-0">
       <% @system_groups.each do |g| %>
         <li>
-          <label><input <%= ldap_service_group_checked?(f.object, g) %> id="group_<%= g.cn %>" name="ldap_service[groups][]" type="checkbox" value="<%= g.id %>" /><%= h g.description %></label>
+          <label><input <%= ldap_service_group_checked?(f.object, g) %> id="group_<%= g.cn %>" name="ldap_service[groups][]" type="checkbox" value="<%= g.id %>" /><%= h g.description %> (<%= h g.cn %>)</label>
         </li>
       <% end %>
       </ul>

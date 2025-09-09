@@ -20,7 +20,7 @@
       <ul>
       <% @system_groups.each do |g| %>
         <% if ldap_service.groups.include?(g) %>
-        <li><%= g.description %></li>
+        <li><%= h g.description %> (<%= h g.cn %>)</li>
         <% end %>
       <% end %>
       </ul>
