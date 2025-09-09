@@ -2250,6 +2250,7 @@ fi:
           invalid_license_data: "Virheellinen lisenssidata"
         group:
           invalid_characters: "Lyhenne sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9-)"
+          forbidden_cn: "Tämä lyhenne on varattu järjestelmäryhmän nimi (lyhenteet \"root\", \"sudo\", \"puavo-os\", \"puavo\" ja \"lpadmin\" ovat kiellettyjä). Valitse muu lyhenne."
         school:
           invalid_characters: "%{attribute} sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9-)"
         uniqueness: "%{attribute} on jo käytössä"

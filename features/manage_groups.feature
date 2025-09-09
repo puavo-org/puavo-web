@@ -67,6 +67,26 @@ Feature: Manage groups
     When I press "Create"
     And I should see "Group was successfully created."
 
+  Scenario: Reserved group abbreviations
+    Given I am on the new group page
+    When I fill in "Group name" with "Test"
+    And I fill in "Abbreviation" with "root"
+    When I press "Create"
+    Then I should see "This abbreviation is a reserved system group name"
+    And I should see "Failed to create group!"
+    When I fill in "Abbreviation" with "sudo"
+    And I press "Create"
+    Then I should see "This abbreviation is a reserved system group name"
+    When I fill in "Abbreviation" with "puavo-os"
+    And I press "Create"
+    Then I should see "This abbreviation is a reserved system group name"
+    When I fill in "Abbreviation" with "puavo"
+    And I press "Create"
+    Then I should see "This abbreviation is a reserved system group name"
+    When I fill in "Abbreviation" with "lpadmin"
+    And I press "Create"
+    Then I should see "This abbreviation is a reserved system group name"
+
   Scenario: Edit group information
     Given the following groups:
     | displayName | cn      |

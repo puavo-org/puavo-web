@@ -2250,6 +2250,7 @@ en:
           invalid_license_data: "Invalid license data"
         group:
           invalid_characters: Abbreviation contains invalid characters (allowed characters are a-z0-9-)
+          forbidden_cn: "This abbreviation is a reserved system group name (abbreviations \"root\", \"sudo\", \"puavo-os\", \"puavo\" and \"lpadmin\" are forbidden). Choose another abbreviation."
         school:
           invalid_characters: "%{attribute} contains invalid characters (allowed characters are a-z0-9-)"
         uniqueness: "%{attribute} is already in use"

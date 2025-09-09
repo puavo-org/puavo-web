@@ -107,6 +107,25 @@ describe LdapModel do
     end
   end
 
+  describe 'reserved group abbreviations' do
+    it 'reserved group abbreviations' do
+      # Test all forbidden abbreviations
+      %w[root sudo puavo-os puavo lpadmin].each do |abbr|
+        test = PuavoRest::Group.new(
+          name: 'Foo Group',
+          abbreviation: abbr,
+          school_dn: @school.dn
+        )
+
+        exception = assert_raises BadInput do
+          test.save!
+        end
+
+        assert_equal("group abbreviation \"#{abbr}\" is a reserved system group name and it cannot be used", exception.message)
+      end
+    end
+  end
+
   describe "group abbreviations must be unique" do
     it "updating an existing group must succeed" do
       @group2.name = "foobar"

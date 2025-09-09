@@ -21,6 +21,10 @@ class Group < BaseGroup
       errors.add( :displayName, I18n.t("activeldap.errors.messages.blank",
                                        :attribute => I18n.t("activeldap.attributes.group.displayName")) )
     end
+
+    if %w[root sudo puavo-os puavo lpadmin].include?(self.cn)
+      errors.add(:cn, I18n.t('activeldap.errors.messages.group.forbidden_cn'))
+    end
   end
 
   def to_s

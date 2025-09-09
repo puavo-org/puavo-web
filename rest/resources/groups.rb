@@ -30,6 +30,10 @@ class Group < LdapModel
       raise BadInput, :user => "group abbreviation \"#{self.abbreviation}\" contains invalid characters"
     end
 
+    if %w[root sudo puavo-os puavo lpadmin].include?(self.abbreviation)
+      raise BadInput, user: "group abbreviation \"#{self.abbreviation}\" is a reserved system group name and it cannot be used"
+    end
+
     unless Group.by_attr(:abbreviation, self.abbreviation, :multiple => true).empty?
       raise BadInput, :user => "duplicate group abbreviation \"#{self.abbreviation}\""
     end
