@@ -5,7 +5,7 @@ class LdapServicesController < ApplicationController
     return if redirected_nonowner_user?
 
     @ldap_services = LdapService.all
-    @system_groups = SystemGroup.all
+    @system_groups = system_groups()
 
     respond_to do |format|
       format.html # index.html.erb
@@ -32,7 +32,7 @@ class LdapServicesController < ApplicationController
     return if redirected_nonowner_user?
 
     @ldap_service = LdapService.new
-    @system_groups = SystemGroup.all
+    @system_groups = system_groups()
 
     respond_to do |format|
       format.html # new.html.erb
@@ -45,7 +45,7 @@ class LdapServicesController < ApplicationController
     return if redirected_nonowner_user?
 
     @ldap_service = LdapService.find(params[:id])
-    @system_groups = SystemGroup.all
+    @system_groups = system_groups()
   end
 
   # POST /ldap_services
@@ -54,7 +54,7 @@ class LdapServicesController < ApplicationController
     return if redirected_nonowner_user?
 
     @ldap_service = LdapService.new(ldap_service_params)
-    @system_groups = SystemGroup.all
+    @system_groups = system_groups()
 
     respond_to do |format|
       if @ldap_service.save
@@ -74,7 +74,7 @@ class LdapServicesController < ApplicationController
     return if redirected_nonowner_user?
 
     @ldap_service = LdapService.find(params[:id])
-    @system_groups = SystemGroup.all
+    @system_groups = system_groups()
 
     unless params[:ldap_service].has_key?(:group)
       @ldap_service.groups = []
@@ -116,5 +116,9 @@ class LdapServicesController < ApplicationController
 
   def ldap_service_params
     params.require(:ldap_service).permit(:uid, :description, :userPassword, :groups=>[]).to_hash
+  end
+
+  def system_groups
+    SystemGroup.all.sort { |a, b| a.cn <=> b.cn }
   end
 end
