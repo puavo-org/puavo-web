@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   <li id="addNewDeviceTitle">
     <%= form_for(@device, url: new_device_path(@school), html: { method: :get }) do |f| %>
       <span><%= t('devices.index.add_new_device') %>:</span>
-      <%= select_tag 'device_type', options_for_select(@device_types) %>
+      <%= select_tag 'device_type', options_for_select(@device_types), autocomplete: 'off' %>
       <%= f.submit t('link.add'), id: 'device_submit' %>
     <% end %>
   </li>

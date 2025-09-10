@@ -42,8 +42,7 @@ class DevicesController < ApplicationController
     @permit_device_mass_deletion = false    # JavaScript only, and the legacy index does not have JS
 
     if request.format == 'text/html'
-      @device_types = Host.types('nothing', current_user)["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
-      @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
+      @device_types = list_new_device_types()
     end
 
     respond_to do |format|
@@ -86,11 +85,7 @@ class DevicesController < ApplicationController
       end
     end
 
-    if request.format == 'text/html'
-      # list of new device types
-      @device_types = Host.types('nothing', current_user)["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
-      @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
-    end
+    @device_types = list_new_device_types()
 
     respond_to do |format|
       format.html # index.html.erb
@@ -754,4 +749,13 @@ class DevicesController < ApplicationController
       end
     end
 
+  # Makes a list of possible new device types. Used on device index pages.
+  def list_new_device_types
+    types = Host.types('nothing', current_user)['list']
+      .collect { |k, _| [t("host.types.#{k}"), k] }   # [["Device type 1", "type1"], ["Device ype 2", "type2"], ...]
+      .sort { |a, b| a[1] <=> b[1] }
+
+    # Append the placeholder (the way the select tag is generated, we cannot do this in the view template)
+    [[I18n.t('devices.index.select_device_label'), '']] + types
+  end
 end
