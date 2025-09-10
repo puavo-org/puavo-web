@@ -231,16 +231,18 @@ class Organisations < PuavoSinatra
     require_admin!
   end
 
-  get "/v3/current_organisation" do
-    auth :basic_auth, :kerberos, :server_auth
+  get '/v3/current_organisation' do
+    oauth2 scopes: ['puavo.read.organisation']
+    auth :oauth2_token, :basic_auth, :kerberos, :server_auth
     require_admin_or_not_people!
 
     Organisation.refresh
     json Organisation.current
   end
 
-  get "/v3/organisations/:domain" do
-    auth :basic_auth, :kerberos, :server_auth
+  get '/v3/organisations/:domain' do
+    oauth2 scopes: ['puavo.read.organisation']
+    auth :oauth2_token, :basic_auth, :kerberos, :server_auth
     require_admin_or_not_people!
 
     Organisation.refresh
@@ -285,9 +287,10 @@ class Organisations < PuavoSinatra
 
   # GET /v4/organisation?fields=...
   get '/v4/organisation' do
-    auth :basic_auth, :kerberos, :server_auth
+    oauth2 scopes: ['puavo.read.organisation']
+    auth :oauth2_token, :basic_auth, :kerberos, :server_auth
 
-    raise Unauthorized, :user => nil unless v4_is_request_allowed?(User.current)
+    raise Unauthorized, user: nil unless v4_is_request_allowed?(User.current)
 
     v4_do_operation do
       user_fields = v4_get_fields(params).to_set
