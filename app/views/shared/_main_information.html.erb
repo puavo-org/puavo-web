@@ -15,7 +15,7 @@
 
     <% if controller_name == "devices" %>
     <p class="infoTitle"><%= t('activeldap.attributes.device.puavoDeviceType') %></p>
-    <p class="infoValue"><%= Puavo::CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></p>
+    <p class="infoValue"><%= t("host.types.#{device.puavoDeviceType}") %></p>
     <% end %>
 
     <% unless device.puavoTag.empty? %>

@@ -1843,7 +1843,7 @@ en:
   # Devices editing
   devices:
     index:
-      add_new_device: Add a new device
+      add_new_device: "Add a new device"
       title: List of devices
       select_device_label: Select
       devices: devices
@@ -1951,7 +1951,7 @@ en:
           not_a_laptop: "Only laptops can be set in reset mode"
 
     new:
-      new_device: New device
+      new_device: "New device (%{device_type})"
     edit:
       edit: Edit device
     form:

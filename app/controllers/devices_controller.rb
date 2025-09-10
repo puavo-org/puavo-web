@@ -223,15 +223,14 @@ class DevicesController < ApplicationController
       return
     end
 
-    # validate the device type before doing anything else
-    if !Puavo::CONFIG["device_types"].has_key?(params[:device_type])
+    # Validate the device type before doing anything else
+    unless Puavo::CONFIG['device_types'].include?(params[:device_type])
       flash[:error] = t('flash.unknown_device_type')
-      redirect_to devices_url
-      return
+      return redirect_to devices_url
     end
 
     @device = Device.new
-    @device_type_label = Puavo::CONFIG['device_types'][params[:device_type]]['label'][I18n.locale.to_s]
+    @device_type_label = t("host.types.#{params[:device_type]}")
     @is_new_device = true
 
     # Try to set default value for hostname
@@ -321,11 +320,10 @@ class DevicesController < ApplicationController
     # the form is opened, but if the (new) device cannot be saved, the title gets lost.
     # Re-set it and do some rudimentary error checking.
     begin
-      @device_type_label = Puavo::CONFIG['device_types'][params[:device][:puavoDeviceType]] \
-        ['label'][I18n.locale.to_s]
-    rescue
+      @device_type_label = t("host.types.#{params[:device][:puavoDeviceType]}")
+    rescue StandardError => e
       # I'm pretty sure this cannot happen, but...
-      @device_type_label = "???"
+      @device_type_label = '???'
     end
 
     # None of the device types you can create directory using puavo-web allows you to specify

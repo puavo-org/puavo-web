@@ -1951,7 +1951,7 @@ fi:
           not_a_laptop: "Vain kannettavat voi asettaa nollaustilaan"
 
     new:
-      new_device: Uusi laite (%{device_type})
+      new_device: "Uusi laite (%{device_type})"
     edit:
       edit: Muokkaa laitetta
     form:

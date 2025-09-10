@@ -20,7 +20,7 @@
 
   <tr>
     <th><%= f.label :puavoDeviceType %></th>
-    <td><%= Puavo::CONFIG['device_types'][f.object.puavoDeviceType]['label'][I18n.locale.to_s] %></td>
+    <td><%= @device_type_label %></td>
   </tr>
 
   <tr>
