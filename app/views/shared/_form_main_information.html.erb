@@ -6,7 +6,7 @@
       <% if f.object.hostCertificates %>
       <%= f.object.puavoHostname %>
       <% else %>
-      <%= f.text_field :puavoHostname, :required => 'required', :autofocus => @is_new_device ? true : nil %>
+      <%= f.text_field :puavoHostname, required: 'required', autofocus: @is_new_device ? true : nil %>
       <% end %>
     </td>
   </tr>
@@ -28,7 +28,7 @@
     <td><%= f.text_field :puavoTag %></td>
   </tr>
 
-  <%= render( :partial => 'shared/form_puavoconf', :locals => { :f => f } ) %>
+  <%= render(partial: 'shared/form_puavoconf', locals: { f: f }) %>
 
   <% unless f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
   <tr>

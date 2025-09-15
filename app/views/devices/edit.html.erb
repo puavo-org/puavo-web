@@ -4,12 +4,12 @@
 
 <h1><%= t('.edit') %></h1>
 
-<%= render :partial => 'form',
- :locals => {
-  :path => device_path(@school, @device),
-  :submit_text => t('link.update'),
-  :method => :put
-}
+<%= render partial: 'form',
+    locals: {
+      path: device_path(@school, @device),
+      submit_text: t('link.update'),
+      method: :put
+    }
 %>
 
 </div>

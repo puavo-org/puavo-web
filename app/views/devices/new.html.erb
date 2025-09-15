@@ -2,14 +2,14 @@
 
 <div class="formContainer">
 
-<h1><%= t('.new_device', :device_type => @device_type_label ) %></h1>
+<h1><%= t('.new_device', device_type: @device_type_label ) %></h1>
 
-<%= render :partial => 'form',
- :locals => {
-  :path => devices_path(@school),
-  :submit_text => t('link.create'),
-  :method => :post
-}
+<%= render partial: 'form',
+    locals: {
+      path: devices_path(@school),
+      submit_text: t('link.create'),
+      method: :post
+    }
 %>
 
 </div>

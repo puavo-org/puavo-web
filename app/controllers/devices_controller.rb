@@ -24,14 +24,14 @@ class DevicesController < ApplicationController
     @device = Device.new
 
     if @school
-      @devices = Device.find(:all, :attribute => "puavoSchool", :value => @school.dn)
-      @devices.sort!{ |a, b| a.puavoHostname.downcase <=> b.puavoHostname.downcase }
-    elsif request.format == 'application/json' && params[:version] && params[:version] == "v2"
-      @devices = Device.search_as_utf8( :scope => :one,
-                                :attributes => attributes ).map do |d|
+      @devices = Device.find(:all, attribute: 'puavoSchool', value: @school.dn)
+      @devices.sort! { |a, b| a.puavoHostname.downcase <=> b.puavoHostname.downcase }
+    elsif request.format == 'application/json' && params[:version] && params[:version] == 'v2'
+      @devices = Device.search_as_utf8(scope: :one, attributes: attributes).map do |d|
         d.last
       end
-      @devices = @devices.map{ |d| Device.build_hash_for_to_json(d) }
+
+      @devices = @devices.map { |d| Device.build_hash_for_to_json(d) }
     else
       @devices = Device.find(:all)
     end
@@ -47,8 +47,8 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @devices }
-      format.json  { render :json => @devices }
+      format.xml { render xml: @devices }
+      format.json { render json: @devices }
     end
   end
 
@@ -95,18 +95,17 @@ class DevicesController < ApplicationController
   # AJAX call
   def get_school_devices_list
     # Get a raw list of devices in this school
-    raw = Device.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
-                                :scope => :one,
-                                :attributes => DevicesHelper.get_device_attributes())
+    raw = Device.search_as_utf8(filter: "(puavoSchool=#{@school.dn})",
+                                scope: :one,
+                                attributes: DevicesHelper.get_device_attributes())
 
     # Known image release names
     releases = get_releases()
 
     # Convert the raw data into something we can easily parse in JavaScript
     school_id = @school.id.to_i
-    devices = []
 
-    raw.each do |dn, dev|
+    devices = raw.collect do |dn, dev|
       # Common attributes
       device = DevicesHelper.convert_raw_device(dev, releases)
 
@@ -119,10 +118,10 @@ class DevicesController < ApplicationController
         device[:user] = DevicesHelper.format_device_primary_user(device[:user], school_id)
       end
 
-      devices << device
+      device
     end
 
-    render :json => devices
+    render json: devices
   end
 
   # GET /devices/1
@@ -132,9 +131,9 @@ class DevicesController < ApplicationController
     @device = get_device(params[:id])
     return if @device.nil?
 
-    # get the creation, modification and last authentication timestamps from
-    # LDAP operational attributes
-    extra = Device.find(params[:id], :attributes => ['authTimestamp', 'createTimestamp', 'modifyTimestamp'])
+    # Get extra timestamps from LDAP operational attributes
+    extra = Device.find(params[:id], attributes: %w[authTimestamp createTimestamp modifyTimestamp])
+
     @device['authTimestamp']   = convert_timestamp_pick_date(extra['authTimestamp']) if extra['authTimestamp']
     @device['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @device['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
@@ -169,9 +168,6 @@ class DevicesController < ApplicationController
       end
     end
 
-    # operation: fast-reset, reset
-    # mode: ask_pin
-
     make_puavomenu_preview(@device.puavoMenuData)
 
     @fqdn = "#{@device.puavoHostname}.#{LdapOrganisation.current.puavoDomain}"
@@ -180,8 +176,8 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @device }
-      format.json  { render :json => @device }
+      format.xml { render xml: @device }
+      format.json { render json: @device }
     end
   end
 
@@ -189,22 +185,22 @@ class DevicesController < ApplicationController
   def image
     @device = Device.find(params[:id])
 
-    send_data @device.jpegPhoto, :disposition => 'inline', :type => "image/jpeg"
+    send_data @device.jpegPhoto, disposition: 'inline', type: 'image/jpeg'
   end
 
   # GET /:school_id/devices/:id/raw_hardware_info
   def raw_hardware_info
     device = Device.find(params[:id])
-    data = {}
 
     begin
       data = JSON.parse(device.puavoDeviceHWInfo)
-    rescue => e
+    rescue StandardError => e
+      data = {}
     end
 
     send_data data.to_json,
               type: :json,
-              disposition: "attachment",
+              disposition: 'attachment',
               filename: "#{current_organisation.organisation_key}-#{device.cn}.json"
   end
 
@@ -229,10 +225,10 @@ class DevicesController < ApplicationController
     @is_new_device = true
 
     # Try to set default value for hostname
-    device = Device.find( :all,
-                          :attributes => ["*", "+"],
-                          :attribute => 'creatorsName',
-                          :value => current_user.dn.to_s).max do |a,b|
+    device = Device.find(:all,
+                         attributes: ['*', '+'],
+                         attribute: 'creatorsName',
+                         value: current_user.dn.to_s).max do |a, b|
       a.puavoId.to_i <=> b.puavoId.to_i
     end
 
@@ -242,7 +238,7 @@ class DevicesController < ApplicationController
       # Increase the number (end of hostname)
       @default_puavo_hostname = device.puavoHostname.to_s.sub(/\d+$/, ("%0#{number_length}d" % number))
     else
-      @default_puavo_hostname = ""
+      @default_puavo_hostname = ''
     end
 
     @device.objectClass_by_device_type = params[:device_type]
@@ -253,7 +249,7 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @device }
+      format.xml { render xml: @device }
       format.json
     end
   end
@@ -621,50 +617,63 @@ class DevicesController < ApplicationController
         @school = School.find(params[:school_id])
       rescue ActiveLdap::EntryNotFound
         flash[:error] = t('flash.invalid_school_id')
-        redirect_to "/"
+        redirect_to '/'
       end
     end
   end
 
+  # List of attributes used in the legacy devices index page
   def attributes
-    [ "description",
-      "ipHostNumber",
-      "jpegPhoto",
-      "macAddress",
-      "puavoDefaultPrinter",
-      "puavoDeviceAutoPowerOffMode",
-      "puavoDeviceBootMode",
-      "puavoDeviceManufacturer",
-      "puavoDeviceModel",
-      "puavoLatitude",
-      "puavoLocationName",
-      "puavoLongitude",
-      "puavoPurchaseDate",
-      "puavoPurchaseLocation",
-      "puavoPurchaseURL",
-      "puavoSupportContract",
-      "puavoTag",
-      "puavoConf",
-      "puavoWarrantyEndDate",
-      "serialNumber",
-      "puavoSchool",
-      "puavoHostname" ]
+    %w[
+      description
+      ipHostNumber
+      jpegPhoto
+      macAddress
+      puavoDefaultPrinter
+      puavoDeviceAutoPowerOffMode
+      puavoDeviceBootMode
+      puavoDeviceManufacturer
+      puavoDeviceModel
+      puavoLatitude
+      puavoLocationName
+      puavoLongitude
+      puavoPurchaseDate
+      puavoPurchaseLocation
+      puavoPurchaseURL
+      puavoSupportContract
+      puavoTag
+      puavoConf
+      puavoWarrantyEndDate
+      serialNumber
+      puavoSchool
+      puavoHostname
+    ]
   end
 
+  # Makes a list of printers in the current school. Used on device creation/editing forms.
   def school_printers
     school_printers = []
+
     @school.printers.each do |printer|
       has_printer = @device.has_printer?(printer)
       input_disabled = false
+
       if @school.has_printer?(printer)
         input_disabled = true
         has_printer = true
       end
-      school_printers.push({ :has_printer => has_printer,
-                             :input_disabled => input_disabled,
-                             :object => printer })
+
+      school_printers << {
+        has_printer: has_printer,
+        input_disabled: input_disabled,
+        object: printer,
+        name: printer.printerDescription.downcase
+      }
     end
-    return school_printers
+
+    school_printers.sort! { |a, b| a[:name] <=> b[:name] }
+
+    school_printers
   end
 
   def device_params
@@ -726,28 +735,27 @@ class DevicesController < ApplicationController
       :mountpoint=>[],
       :options=>[]).to_hash
 
-    # deduplicate arrays, as LDAP really does not like duplicate entries...
-    p["puavoTag"] = p["puavoTag"].split.uniq.join(' ') if p.key?("puavoTag")
-    p["macAddress"].uniq! if p.key?("macAddress")
-    p["puavoDeviceXrandr"].uniq! if p.key?("puavoDeviceXrandr")
-    p["puavoImageSeriesSourceURL"].uniq! if p.key?("puavoImageSeriesSourceURL")
+    # Deduplicate arrays, as LDAP really does not like duplicate entries...
+    p['puavoTag'] = p['puavoTag'].split.uniq.join(' ') if p.include?('puavoTag')
+    p['macAddress'].uniq! if p.include?('macAddress')
+    p['puavoDeviceXrandr'].uniq! if p.include?('puavoDeviceXrandr')
+    p['puavoImageSeriesSourceURL'].uniq! if p.include?('puavoImageSeriesSourceURL')
 
     clean_image_name(p)
-
     clear_puavoconf(p)
 
-    return p
+    p
   end
 
-    def get_device(id)
-      begin
-        return Device.find(id)
-      rescue ActiveLdap::EntryNotFound => e
-        flash[:alert] = t('flash.invalid_device_id', :id => id)
-        redirect_to devices_path(@school)
-        return nil
-      end
+  def get_device(id)
+    begin
+      return Device.find(id)
+    rescue ActiveLdap::EntryNotFound => e
+      flash[:alert] = t('flash.invalid_device_id', id: id)
+      redirect_to devices_path(@school)
+      return nil
     end
+  end
 
   # Makes a list of possible new device types. Used on device index pages.
   def list_new_device_types

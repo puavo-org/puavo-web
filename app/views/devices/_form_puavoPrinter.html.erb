@@ -1,10 +1,10 @@
 <!-- devices/_form_puavoPrinter starts -->
-<%= form_for(@device, :url => path, :html => { :method => method }) do |f| %>
+<%= form_for(@device, url: path, html: { method: method }) do |f| %>
   <%= f.error_messages %>
   <p>
     <%= f.label :puavoDeviceType %>: <%= t("host.types.#{@device.puavoDeviceType}") %>
     <%= f.hidden_field :puavoDeviceType %>
-    <%= f.hidden_field :classes, :value => Puavo::CONFIG["device_types"][@device.puavoDeviceType]["classes"] %>
+    <%= f.hidden_field :classes, value: Puavo::CONFIG['device_types'][@device.puavoDeviceType]['classes'] %>
   </p>
 
   <p>
