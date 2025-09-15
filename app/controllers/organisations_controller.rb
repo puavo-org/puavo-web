@@ -295,11 +295,7 @@ class OrganisationsController < ApplicationController
   def get_all_users
     owners = owners_set()
     schools_by_dn = raw_schools_by_dn()
-
-    # List all school admins (DNs) in all schools
-    school_admins = School.search_as_utf8(attributes: %w[puavoSchoolAdmin])
-      .collect { |_, s| s['puavoSchoolAdmin'] }.flatten.compact.to_set
-
+    school_admins = list_school_admins().values.map(&:to_a).flatten.to_set
     krb_auth_times_by_uid = Kerberos.all_auth_times_by_uid
 
     # Get a raw list of all users in all schools and convert it into easily parseable format
