@@ -227,6 +227,17 @@ class ApplicationController < ActionController::Base
 
   end
 
+  # Makes a list of schools and their admin users (DNs). The return value is formatted as follows:
+  # {
+  #   "school dn 1" => Set { ... },
+  #   "school dn 2" => Set { ... }
+  # }
+  def list_school_admins
+    School.search_as_utf8(attributes: ['puavoSchoolAdmin'])
+          .collect { |s| [s[0], s[1].fetch('puavoSchoolAdmin', []).to_set] }
+          .to_h.freeze
+  end
+
   # Returns the current organisation owners in a (frozen) set
   def owners_set
     Array(LdapOrganisation.current.owner)
