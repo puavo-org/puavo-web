@@ -614,6 +614,7 @@ class UsersController < ApplicationController
           # This user used to be an admin. If they were a school admin or an organisation owner
           # we must remove them from those lists.
 
+          # Remove from owners
           if owners_set().include?(@user.dn.to_s)
             begin
               LdapOrganisation.current.remove_owner(@user)
@@ -623,31 +624,14 @@ class UsersController < ApplicationController
             end
           end
 
-          # Remove the user from school admins. Turns out you can be an admin on multiple schools,
-          # so have to loop.
-          School.all.each do |s|
-            school_admins = s.user_school_admins
+          # Remove from school admins
+          list_school_admins().each do |school_dn, admins|
+            next unless admins.include?(@user.dn.to_s)
 
-            if school_admins && school_admins.include?(@user)
-              # Copy-pasted and modified from school.rb, method remove_school_admin()
-              # There's no standalone method for this (or I can't find it)
-              begin
-                if Array(@user.puavoAdminOfSchool).count < 2
-                  SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
-                end
-
-                begin
-                  s.ldap_modify_operation(:delete, [{"puavoSchoolAdmin" => [@user.dn.to_s]}])
-                rescue ActiveLdap::LdapError::NoSuchAttribute
-                end
-
-                begin
-                  @user.ldap_modify_operation(:delete, [{"puavoAdminOfSchool" => [s.dn.to_s]}])
-                rescue ActiveLdap::LdapError::NoSuchAttribute
-                end
-              rescue StandardError => e
-                raise UserError, I18n.t('flash.user.save_failed_school_admin_removal')
-              end
+            begin
+              School.find(school_dn).remove_admin(@user)
+            rescue StandardError => e
+              raise UserError, I18n.t('flash.user.save_failed_school_admin_removal')
             end
           end
 
