@@ -1994,6 +1994,7 @@ en:
       projector: Projector
       webcam: Webcam
       other: Other
+      wirelessaccesspoint: "Wireless access point"
 
   # Device hardware info
   hwinfo:

@@ -1994,6 +1994,7 @@ fi:
       projector: Projektori
       webcam: Webcam
       other: Muu
+      wirelessaccesspoint: "Langaton tukiasema"
 
   # Device hardware info
   hwinfo:
