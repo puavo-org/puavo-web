@@ -763,6 +763,18 @@ class UsersController < ApplicationController
             #flash[:notice] = t('flash.organisation_ownership_removed')
           end
         end
+
+        # Remove from school admins
+        list_school_admins().each do |school_dn, admins|
+          next unless admins.include?(@user.dn.to_s)
+
+          begin
+            School.find(school_dn).find(school_dn).remove_admin(@user)
+          rescue StandardError => e
+            flash[:alert] = I18n.t('flash.user.delete_admin_removal_failed')
+            return redirect_to(user_path(@school, @user))
+          end
+        end
       end
 
       # LDAP is not a relational database, so if this user was the primary user of any devices,
