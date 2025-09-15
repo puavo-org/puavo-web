@@ -138,12 +138,7 @@ class UsersController < ApplicationController
   # AJAX call
   def get_school_users_list
     # Get lists of organisation owners and school admins (DNs)
-    organisation_owners = Array(LdapOrganisation.current.owner)
-                          .reject { |dn| dn == 'uid=admin,o=puavo' }
-                          .collect { |o| o.to_s }
-
-    organisation_owners = Array(organisation_owners || []).to_set
-
+    organisation_owners = owners_set()
     school_admins = Array(@school.user_school_admins || []).collect { |a| a.dn.to_s }.to_set
 
     schools_by_dn = {}
@@ -251,9 +246,9 @@ class UsersController < ApplicationController
     end
 
     # Is the user an organisation owner?
-    organisation_owners = Array(LdapOrganisation.current.owner).each.select { |dn| dn != "uid=admin,o=puavo" } || []
-    @user_is_owner = organisation_owners.include?(@user.dn)
+    @user_is_owner = owners_set().include?(@user.dn.to_s)
 
+    # Is the viewer an organisation owner?
     @viewer_is_an_owner = is_owner?
     viewer_is_admin_in = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
 
@@ -619,10 +614,7 @@ class UsersController < ApplicationController
           # This user used to be an admin. If they were a school admin or an organisation owner
           # we must remove them from those lists.
 
-          # Copy-pasted from the "destroy" method below
-          organisation_owners = Array(LdapOrganisation.current.owner).each.select { |dn| dn != "uid=admin,o=puavo" }
-
-          if organisation_owners && organisation_owners.include?(@user.dn)
+          if owners_set().include?(@user.dn.to_s)
             begin
               LdapOrganisation.current.remove_owner(@user)
             rescue StandardError => e
@@ -776,12 +768,10 @@ class UsersController < ApplicationController
       end
 
       if @user.puavoEduPersonAffiliation && @user.puavoEduPersonAffiliation.include?('admin')
-        # if an admin user is also an organisation owner, remove the ownership
+        # If an admin user is also an organisation owner, remove the ownership
         # automatically before deletion
-        owners = Array(LdapOrganisation.current.owner).each.select { |dn| dn != "uid=admin,o=puavo" }.map{ |o| o.to_s }
-
-        if owners && owners.include?(@user.dn.to_s)
-          if !LdapOrganisation.current.remove_owner(@user)
+        if owners_set().include?(@user.dn.to_s)
+          unless LdapOrganisation.current.remove_owner(@user)
             flash[:alert] = t('flash.organisation_ownership_not_removed')
           else
             # TODO: Show a flash message when ownership is removed. First we need to
@@ -1105,7 +1095,7 @@ class UsersController < ApplicationController
 
     @current_permissions = Array(@user.puavoAdminPermissions).to_set.freeze
 
-    @user_is_owner = Array(LdapOrganisation.current.owner).include?(@user.dn)
+    @user_is_owner = owners_set().include?(@user.dn.to_s)
 
     # If we come here from the "all organisation admins" page, we'll return there
     @org_admins = params.fetch('org_admins', '') == '1'

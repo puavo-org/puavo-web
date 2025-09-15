@@ -564,10 +564,7 @@ class GroupsController < ApplicationController
 
     @move_groups.sort! { |a, b| a[0].downcase <=> b[0].downcase }
 
-    # A set of organisation owners' DNs
-    @owners = Array(LdapOrganisation.current.owner)
-               .reject { |dn| dn == 'uid=admin,o=puavo' }
-               .collect { |o| o.to_s }.to_set
+    @owners = owners_set()
 
     respond_to do |format|
       format.html { render action: 'groupless_users' }
@@ -582,11 +579,7 @@ class GroupsController < ApplicationController
       return
     end
 
-    # A set of organisation owners' DNs
-    owners = Array(LdapOrganisation.current.owner)
-              .reject { |dn| dn == 'uid=admin,o=puavo' }
-              .collect { |o| o.to_s }.to_set
-
+    owners = owners_set()
     now = Time.now.utc
     count = 0
 

@@ -74,10 +74,6 @@ class UsersMassOperationsController < MassOperationsController
 
   private
 
-  def _user_is_owner(user)
-    Array(LdapOrganisation.current.owner).include?(user.dn)
-  end
-
   # Mass operation: delete user
   def _delete(user_id, data)
     user = User.find(user_id)
@@ -89,7 +85,7 @@ class UsersMassOperationsController < MassOperationsController
       return false, t('users.index.mass_operations.delete.cant_delete_yourself')
     end
 
-    if Array(user.puavoEduPersonAffiliation).include?('admin') && _user_is_owner(user)
+    if Array(user.puavoEduPersonAffiliation).include?('admin') && owners_set().include?(user.dn.to_s)
       return false, t('users.index.mass_operations.delete.cant_delete_owners')
     end
 
@@ -132,7 +128,7 @@ class UsersMassOperationsController < MassOperationsController
     lock = @parameters['lock']
     changed = false
 
-    if Array(user.puavoEduPersonAffiliation).include?('admin') && _user_is_owner(user)
+    if Array(user.puavoEduPersonAffiliation).include?('admin') && owners_set().include?(user.dn.to_s)
       return false, t('users.index.mass_operations.lock.cant_lock_owners')
     end
 
@@ -160,7 +156,7 @@ class UsersMassOperationsController < MassOperationsController
     user = User.find(user_id)
     changed = false
 
-    if Array(user.puavoEduPersonAffiliation).include?('admin') && _user_is_owner(user)
+    if Array(user.puavoEduPersonAffiliation).include?('admin') && owners_set().include?(user.dn.to_s)
       return false, t('users.index.mass_operations.mark.cant_mark_owners')
     end
 
