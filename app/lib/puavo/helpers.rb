@@ -47,6 +47,39 @@ module Puavo
       return [automatic.fetch('enabled', false), automatic.fetch('domain', nil)]
     end
 
+    def get_yml_organisation
+      @yml_organisation ||= Puavo::Organisation.find(LdapOrganisation.current.cn)
+      @yml_organisation
+    end
+
+    def get_organisation_intl_timezone
+      org = LdapOrganisation.current
+
+      # If the organisation has a configured timezone, use it
+      return org.puavoTimezone if org.puavoTimezone
+
+      # Is there a timezone specified for this organisation in organisations.yml?
+      yml_timezone = get_yml_organisation.value_by_key('intl_timezone')
+      return yml_timezone if yml_timezone
+
+      # Use the default
+      'Europe/Helsinki'
+    end
+
+    def get_organisation_intl_locale
+      org = LdapOrganisation.current
+
+      # If the organisation has a configured locale, use it
+      return org.puavoLocale.gsub('_', '-').gsub('.UTF-8', '') if org.puavoLocale
+
+      # Look up the locale from organisations.yml
+      yml_timezone = get_yml_organisation.value_by_key('intl_locale')
+      return yml_timezone if yml_timezone
+
+      # Use the default
+      'fi-FI'
+    end
+
     # Converts LDAP operational timestamp attribute (received with search_as_utf8() call)
     # to unixtime. Expects the timestamp to be nil or a single-element array. Used in
     # users, groups and devices controllers when retrieving data with AJAX calls.
