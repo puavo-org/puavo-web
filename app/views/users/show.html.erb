@@ -367,7 +367,7 @@ toolbar do |tb|
 
     menu.separator
 
-    if @user.puavoLocked == false || @user.puavoLocked.nil?
+    if (@user.puavoLocked == false || @user.puavoLocked.nil?) && !@is_own_page
       menu.link t('.lock'),
                 href: lock_user_path(@school, @user),
                 icon: 'lock'
