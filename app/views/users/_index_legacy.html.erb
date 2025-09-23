@@ -6,7 +6,6 @@
     <th><%= sortable_list_column_header(t('activeldap.attributes.user.uid')) %></th>
     <th><%= sortable_list_column_header(t('activeldap.attributes.user.puavoExternalId')) %></th>
     <th><%= sortable_list_column_header(t('activeldap.attributes.user.puavoEduPersonAffiliation')) %></th>
-    <th><%= sortable_list_column_header(t('users.show.marked_for_removal')) %></th>
     <th><%= t('users.index.actions') %></th>
   </tr>
 <% @users.each do |user| %>
@@ -18,7 +17,6 @@
     <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%= h user["uid"] %></td>
     <td data-title="t('activeldap.attributes.user.puavoExternalId') %>"><%= h user["puavoExternalId"] %></td>
     <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>"><%=h t('puavoEduPersonAffiliation_' + user["puavoEduPersonAffiliation"].to_s) %></td>
-    <td data-title="<%= t('activeldap.attributes.user.markedForDeletion') %>" data-sort-key="<%= user["puavoExactRemovalTimeRaw"] %>"><abbr title="<%= user["puavoExactRemovalTime"] %>"><%= user["puavoFuzzyRemovalTime"] %></abbr></td>
     <td data-title="<%= t('users.index.actions')%>" class="tableActions">
       <%= link_to edit_user_path(@school, user["puavoId"]), class: "btn" do%>
         <i class='icon-pencil'></i><%= t('link.edit') %>

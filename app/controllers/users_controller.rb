@@ -52,19 +52,6 @@ class UsersController < ApplicationController
 
     if request.format == 'application/json'
       @users = @users.map{ |u| User.build_hash_for_to_json(u) }
-    else
-      now = Time.now.utc
-
-      @users.each do |u|
-        next if u["puavoRemovalRequestTime"].nil?
-
-        # The timestamp is a Net::BER::BerIdentifiedString, convert it into
-        # an actual UTC timestamp
-        timestamp = Time.strptime(u["puavoRemovalRequestTime"], '%Y%m%d%H%M%S%z')
-        u["puavoExactRemovalTimeRaw"] = timestamp.to_i
-        u["puavoExactRemovalTime"] = convert_timestamp(timestamp)
-        u["puavoFuzzyRemovalTime"] = fuzzy_time(now - timestamp)
-      end
     end
 
     # These have to be set, because there are tests for the admin rights
