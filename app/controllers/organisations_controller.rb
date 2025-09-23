@@ -18,10 +18,10 @@ class OrganisationsController < ApplicationController
     timestamps = LdapBase.search_as_utf8(
       filter: "(&(objectClass=puavoEduOrg)(cn=#{@organisation.cn}))",
       attributes: ['createTimestamp', 'modifyTimestamp']
-    )
+    )[0][1]
 
-    @created = convert_timestamp(Time.at(Puavo::Helpers::convert_ldap_time(timestamps[0][1]['createTimestamp'])))
-    @modified = convert_timestamp(Time.at(Puavo::Helpers::convert_ldap_time(timestamps[0][1]['modifyTimestamp'])))
+    @created = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['createTimestamp'])
+    @modified = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['modifyTimestamp'])
 
     # If the organisation has an image set, we need to display its release name
     if @organisation.puavoDeviceImage

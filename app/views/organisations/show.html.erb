@@ -126,12 +126,12 @@
 
     <tr>
       <th><%= t('ldap_create_time') %></th>
-      <td class="noWrap"><%= h @created %></td>
+      <td class="noWrap"><%= utc_timestamp_for_localization(@created) %></td>
     </tr>
 
     <tr>
       <th><%= t('ldap_modify_time')  %></th>
-      <td class="noWrap"><%= h @modified %></td>
+      <td class="noWrap"><%= utc_timestamp_for_localization(@modified) %></td>
     </tr>
 
     <tr>
