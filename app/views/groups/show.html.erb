@@ -52,12 +52,12 @@
 
     <tr>
       <th><%= t('ldap_create_time') %></th>
-      <td><%= @group['createTimestamp'] %></td>
+      <td><%= utc_timestamp_for_localization(@created) %></td>
     </tr>
 
     <tr>
       <th><%= t('ldap_modify_time') %></th>
-      <td><%= @group['modifyTimestamp'] %></td>
+      <td><%= utc_timestamp_for_localization(@modified) %></td>
     </tr>
 
     <% if @group.puavoExternalData %>

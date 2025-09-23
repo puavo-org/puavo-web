@@ -98,10 +98,14 @@ class GroupsController < ApplicationController
     @group = get_group(params[:id])
     return if @group.nil?
 
-    # Get the group creation and modification timestamps from LDAP operational attributes
-    extra = Group.find(params[:id], attributes: ['createTimestamp', 'modifyTimestamp'])
-    @group['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
-    @group['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
+    # Get extra timestamps from LDAP operational attributes
+    timestamps = Group.search_as_utf8(
+      filter: "(puavoId=#{@group.id})",
+      attributes: %w[createTimestamp modifyTimestamp]
+    )[0][1]
+
+    @created = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['createTimestamp'])
+    @modified = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['modifyTimestamp'])
 
     @members, @num_hidden = get_and_sort_group_members(@group)
 
@@ -504,7 +508,7 @@ class GroupsController < ApplicationController
       }
 
       if raw.include?('puavoRemovalRequestTime') && raw['puavoRemovalRequestTime']
-        users[uid][:marked] = Puavo::Helpers::convert_ldap_time(raw['puavoRemovalRequestTime'])
+        users[uid][:marked] = Puavo::Helpers.ldap_time_string_to_unixtime(raw['puavoRemovalRequestTime'])
       end
     end
 

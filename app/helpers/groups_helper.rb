@@ -41,11 +41,11 @@ module GroupsHelper
     out[:members_count] = raw.include?('memberUid') ? raw['memberUid'].count : 0
 
     if raw.include?('createTimestamp')
-      out[:created] = Puavo::Helpers::convert_ldap_time(raw['createTimestamp'])
+      out[:created] = Puavo::Helpers.ldap_time_string_to_unixtime(raw['createTimestamp'])
     end
 
     if raw.include?('modifyTimestamp')
-      out[:modified] = Puavo::Helpers::convert_ldap_time(raw['modifyTimestamp'])
+      out[:modified] = Puavo::Helpers.ldap_time_string_to_unixtime(raw['modifyTimestamp'])
     end
 
     return out
