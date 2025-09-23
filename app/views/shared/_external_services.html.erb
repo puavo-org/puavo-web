@@ -68,7 +68,7 @@
 
   <tr>
     <th><%= t('ldap_create_time') %></th>
-    <td><%= es[:created] %></td>
+    <td><%= utc_timestamp_for_localization(es[:created]) %></td>
   </tr>
 </table>
 <% end %>

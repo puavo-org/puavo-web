@@ -16,7 +16,7 @@
     <li><%= t("external_services.email") %>: <%= es[:email] %></li>
     <li><%= t("external_services.path_prefix") %>: <%= es[:prefix] %></li>
     <li>DN: <%= es[:dn] %></li>
-    <li><%= t('ldap_create_time') %>: <%= es[:created] %></li>
+    <li><%= t('ldap_create_time') %>: <%= utc_timestamp_for_localization(es[:created]) %></li>
 </ul></li>
 <% end %>
 

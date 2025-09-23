@@ -14,7 +14,7 @@ class ExternalServicesBase < ApplicationController
         domains: Array(e.puavoServiceDomain),
         email: e.mail,
         prefix: e.puavoServicePathPrefix,
-        created: created['createTimestamp'] ? Time.at(created['createTimestamp']).localtime.strftime('%Y-%m-%d %H:%M:%S') : nil,
+        created: created['createTimestamp'],
         trusted: e.puavoServiceTrusted,
       }
     end
