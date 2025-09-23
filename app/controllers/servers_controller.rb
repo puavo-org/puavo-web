@@ -135,12 +135,15 @@ class ServersController < ApplicationController
     @server.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @server.get_ca_certificate(current_organisation.organisation_key)
 
-    # get the creation, modification and last authentication timestamps from
-    # LDAP operational attributes
-    extra = Server.find(params[:id], :attributes => ['authTimestamp', 'createTimestamp', 'modifyTimestamp'])
-    @server['authTimestamp']   = convert_timestamp_pick_date(extra['authTimestamp']) if extra['authTimestamp']
-    @server['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
-    @server['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
+    # Get extra timestamps from LDAP operational attributes
+    timestamps = Server.search_as_utf8(
+      filter: "(puavoId=#{@server.id})",
+      attributes: %w[createTimestamp modifyTimestamp authTimestamp]
+    )[0][1]
+
+    @authenticated = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['authTimestamp']) if timestamps['authTimestamp']
+    @created = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['createTimestamp'])
+    @modified = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['modifyTimestamp'])
 
     @releases = get_releases
 

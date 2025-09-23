@@ -2111,7 +2111,7 @@ fi:
       upstream_hash: "Upstream hash"
     logins:
       title: "Laitteelle kirjautumiset"
-      last_login: "Viimeisin kirjautuja: %{username}, %{at}."
+      last_login: "Viimeisin kirjautuja"
     uptime:
       title: "Käynnissäoloaika"
 

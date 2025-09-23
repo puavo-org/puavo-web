@@ -2111,7 +2111,7 @@ en:
       upstream_hash: "Upstream hash"
     logins:
       title: "Logins to the device"
-      last_login: "Last user to log in: %{username}, %{at}."
+      last_login: "Last logged-in user"
     uptime:
       title: "Uptime"
 

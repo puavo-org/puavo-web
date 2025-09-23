@@ -103,17 +103,17 @@
 
     <tr>
       <th><%= t('last_ldap_auth_date') %></th>
-      <td><%= h device['authTimestamp'] %></td>
+      <td><%= utc_date_for_localization(@authenticated) %></td>
     </tr>
 
     <tr>
       <th><%= t('ldap_create_time') %></th>
-      <td><%= h device['createTimestamp'] %></td>
+      <td><%= utc_timestamp_for_localization(@created) %></td>
     </tr>
 
     <tr>
       <th><%= t('ldap_modify_time') %></th>
-      <td><%= h device['modifyTimestamp'] %></td>
+      <td><%= utc_timestamp_for_localization(@modified) %></td>
     </tr>
 
     <tr>

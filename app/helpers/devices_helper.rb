@@ -159,15 +159,15 @@ module DevicesHelper
     end
 
     if dev.include?('authTimestamp')
-      out[:last_auth_time] = Puavo::Helpers::convert_ldap_time_pick_date(dev['authTimestamp'])
+      out[:last_auth_time] = Puavo::Helpers.ldap_time_string_to_unixtime(dev['authTimestamp'])
     end
 
     if dev.include?('createTimestamp')
-      out[:created] = Puavo::Helpers::convert_ldap_time(dev['createTimestamp'])
+      out[:created] = Puavo::Helpers.ldap_time_string_to_unixtime(dev['createTimestamp'])
     end
 
     if dev.include?('modifyTimestamp')
-      out[:modified] = Puavo::Helpers::convert_ldap_time(dev['modifyTimestamp'])
+      out[:modified] = Puavo::Helpers.ldap_time_string_to_unixtime(dev['modifyTimestamp'])
     end
 
     if dev.include?('description')
@@ -216,11 +216,11 @@ module DevicesHelper
     end
 
     if dev.include?('puavoPurchaseDate')
-      out[:purchase_date] = Puavo::Helpers::convert_ldap_time(dev['puavoPurchaseDate'])
+      out[:purchase_date] = Puavo::Helpers.ldap_time_string_to_unixtime(dev['puavoPurchaseDate'])
     end
 
     if dev.include?('puavoWarrantyEndDate')
-      out[:purchase_warranty] = Puavo::Helpers::convert_ldap_time(dev['puavoWarrantyEndDate'])
+      out[:purchase_warranty] = Puavo::Helpers.ldap_time_string_to_unixtime(dev['puavoWarrantyEndDate'])
     end
 
     if dev.include?('puavoPurchaseLocation')
@@ -328,7 +328,7 @@ module DevicesHelper
     end
 
     if dev['puavoDeviceExpirationTime']
-      out[:expiration] = Puavo::Helpers::convert_ldap_time(dev['puavoDeviceExpirationTime'])
+      out[:expiration] = Puavo::Helpers.ldap_time_string_to_unixtime(dev['puavoDeviceExpirationTime'])
     end
 
     # Parse the hardware information

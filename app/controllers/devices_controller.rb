@@ -131,11 +131,14 @@ class DevicesController < ApplicationController
     return if @device.nil?
 
     # Get extra timestamps from LDAP operational attributes
-    extra = Device.find(params[:id], attributes: %w[authTimestamp createTimestamp modifyTimestamp])
+    timestamps = Device.search_as_utf8(
+      filter: "(puavoId=#{@device.id})",
+      attributes: %w[createTimestamp modifyTimestamp authTimestamp]
+    )[0][1]
 
-    @device['authTimestamp']   = convert_timestamp_pick_date(extra['authTimestamp']) if extra['authTimestamp']
-    @device['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
-    @device['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
+    @authenticated = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['authTimestamp']) if timestamps['authTimestamp']
+    @created = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['createTimestamp'])
+    @modified = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['modifyTimestamp'])
 
     @device.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @device.get_ca_certificate(current_organisation.organisation_key)
@@ -153,16 +156,16 @@ class DevicesController < ApplicationController
       @reset = JSON.parse(@device.puavoDeviceReset) rescue nil
 
       if @reset.kind_of?(Hash) && @reset['request-fulfilled']
-        @previous_reset_fulfilled = DateTime.parse(@reset['request-fulfilled']).strftime('%Y-%m-%d %H:%M:%S')
+        @previous_reset_fulfilled = DateTime.parse(@reset['request-fulfilled'])
       end
 
       unless @reset.kind_of?(Hash) && @reset['request-time'] && !@reset['request-fulfilled']
         @reset = nil
       else
-        @reset['request-time'] = DateTime.parse(@reset['request-time']).strftime('%Y-%m-%d %H:%M:%S')
+        @reset['request-time'] = DateTime.parse(@reset['request-time'])
 
         if @reset['request-fulfilled']
-          @reset['request-fulfilled'] = DateTime.parse(@reset['request-time']).strftime('%Y-%m-%d %H:%M:%S')
+          @reset['request-fulfilled'] = DateTime.parse(@reset['request-time'])
         end
       end
     end

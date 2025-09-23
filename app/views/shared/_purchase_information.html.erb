@@ -35,7 +35,7 @@
       <th><%= t('activeldap.attributes.device.puavoDeviceExpirationTime') %></th>
       <td class="noWrap">
         <% unless device.puavoDeviceExpirationTime.nil? %>
-        <%= h(device.puavoDeviceExpirationTime.localtime.strftime('%Y-%m-%d %H:%M:%S')) %>
+        <%= utc_timestamp_for_localization(device.puavoDeviceExpirationTime) %>
         <% end %>
       </td>
     </tr>

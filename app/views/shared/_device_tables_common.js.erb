@@ -23,7 +23,7 @@ function doImage(image)
 
 function doTimestamp(value)
 {
-    const ts = ST.convertTimestamp(value, true);
+    const ts = ST.convertTimestamp(value, true, ST.dateFormatter);
 
     return [
         ts[0] === true ? ts[1] : "?",
@@ -305,7 +305,7 @@ const COLUMN_DEFINITIONS = {
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_NULLABLE,
 
         transform: entry => {
-            const [valid, ts] = ST.convertTimestamp(entry.expiration)
+            const [valid, ts] = ST.convertTimestamp(entry.expiration, false, ST.timestampFormatter);
             let html = "";
 
             if (valid && entry._has_expired)
@@ -2003,7 +2003,7 @@ function* preprocessDeviceData(devices)
         d2._has_expired = false;
 
         if (d2.expiration) {
-            const [valid, ts] = ST.convertTimestamp(d2.expiration)
+            const [valid, ts] = ST.convertTimestamp(d2.expiration);
 
             if (valid && NOW >= new Date(d2.expiration * 1000))
                 d2._has_expired = true;

@@ -2,7 +2,7 @@
     <div class="deviceReset">
     <header><%= t('devices.reset.title') %></header>
     <ul>
-      <li><%= t('devices.reset.at') %>: <%= @reset['request-time'] %></li>
+      <li><%= t('devices.reset.at') %>: <%= utc_timestamp_for_localization(@reset['request-time']) %></li>
       <li><%= t('devices.reset.from') %>: <%= @reset['from'] %></li>
       <li><%= t('devices.reset.pin') %>: <code><%= @reset['pin'] %></code></li>
     </ul>
