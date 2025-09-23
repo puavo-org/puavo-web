@@ -16,6 +16,38 @@
 //= require jquery.liveSearch
 //= require i18n
 
+// Finds all abbr elements with "timestamp" class, and converts them to localized localtime strings
+function localizeTimestamps()
+{
+    const intlDataset = document.documentElement.dataset;
+
+    const dateFormatter = Intl.DateTimeFormat(intlDataset.intlLocale, {
+        weekday: "short",
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        timeZone: intlDataset.intlTimezone
+    });
+
+    const fullFormatter = Intl.DateTimeFormat(intlDataset.intlLocale, {
+        weekday: "short",
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: false,
+        timeZone: intlDataset.intlTimezone
+    });
+
+    for (const e of document.querySelectorAll("div#pageContainer abbr.timestamp")) {
+        e.innerText = e.classList.contains("dateonly") ?
+            dateFormatter.format(new Date(`${e.textContent} 12:00:00Z`)) :
+            fullFormatter.format(new Date(e.textContent));
+    }
+}
+
 window.jQuery(document).ready(function($) {
   "use strict";
 
@@ -66,4 +98,5 @@ window.jQuery(document).ready(function($) {
     }, 0);
   });
 
+  localizeTimestamps();
 });

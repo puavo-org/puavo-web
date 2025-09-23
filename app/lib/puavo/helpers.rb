@@ -80,6 +80,21 @@ module Puavo
       'fi-FI'
     end
 
+    # Takes an LDAP timestamp (a single-element array containing a string usually formatted as
+    # "YYYYMMDDHHMMSSZ" or "YYYYMMDDHHMMSS+offset") and returns it as a UTC Time object
+    def self.ldap_time_string_to_utc_time(t)
+      t ? Time.strptime(t[0], '%Y%m%d%H%M%S%z').utc : nil
+    rescue
+      nil
+    end
+
+    # Like above, but returns a Unixtime stamp
+    def self.ldap_time_string_to_unixtime(t)
+      t ? ldap_time_string_to_utc_time(t).to_i : nil
+    rescue
+      nil
+    end
+
     # Converts LDAP operational timestamp attribute (received with search_as_utf8() call)
     # to unixtime. Expects the timestamp to be nil or a single-element array. Used in
     # users, groups and devices controllers when retrieving data with AJAX calls.

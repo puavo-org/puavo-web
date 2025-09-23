@@ -419,4 +419,16 @@ module ApplicationHelper
   def toolbar(&block)
     Toolbar.new.build(&block)
   end
+
+  # Outputs the timestamp in a format the JavaScript internationalization code can find and convert
+  def utc_timestamp_for_localization(t)
+    return nil if t.nil?
+    "<abbr class=\"timestamp\" title=\"#{t.utc.iso8601}\">#{t.utc.iso8601}</abbr>".html_safe
+  end
+
+  # Like above, but only outputs the date, omitting time completely
+  def utc_date_for_localization(t)
+    return nil if t.nil?
+    "<abbr class=\"timestamp dateonly\" title=\"#{t.utc.strftime('%Y-%m-%d')}\">#{t.utc.strftime('%Y-%m-%d')}</abbr>".html_safe
+  end
 end
