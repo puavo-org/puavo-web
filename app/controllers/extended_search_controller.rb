@@ -299,7 +299,7 @@ class ExtendedSearchController < ApplicationController
       :do_not_delete => u.include?('puavoDoNotDelete') && u['puavoDoNotDelete'][0] == "TRUE",
       :marked_for_deletion => u.include?('puavoRemovalRequestTime'),
       :school => cache_school(u['puavoSchool']),
-      :exact_removal_time => u.include?('puavoRemovalRequestTime') ? convert_timestamp(Time.strptime(u['puavoRemovalRequestTime'][0], '%Y%m%d%H%M%S%z')) : nil,
+      :exact_removal_time => u.include?('puavoRemovalRequestTime') ? Puavo::Helpers.ldap_time_string_to_utc_time(u['puavoRemovalRequestTime']) : nil,
     }
   end
 

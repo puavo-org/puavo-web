@@ -41,7 +41,7 @@
     </td>
     <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%= h user[:uid] %></td>
     <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>"><%= list_user_roles(user[:affiliation]) %></td>
-    <td data-title="<%= t('activeldap.attributes.user.markedForDeletion') %>"><%= user[:exact_removal_time] %></td>
+    <td data-title="<%= t('activeldap.attributes.user.markedForDeletion') %>"><%= utc_timestamp_for_localization(user[:exact_removal_time]) %></td>
     <td data-title="<%= t('activeldap.attributes.school.displayName')%>">
       <% if user[:school] %>
       <%= link_to "#{user[:school].displayName}", school_path(user[:school]) %>

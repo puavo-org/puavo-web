@@ -259,6 +259,7 @@ function doSearch()
         console.error(error);
     }).finally(() => {
         document.querySelector("input#searchButton").disabled = false;
+        localizeTimestamps();   // defined in application.js
     });
 }
 
