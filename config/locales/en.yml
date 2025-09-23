@@ -16,18 +16,6 @@ en:
     - November
     - December
 
-  fuzzy_time:
-    just_now: "just now"
-    less_than_minute: "less than a minute ago"
-    minute: "a minute ago"
-    minutes: "%{m} minutes ago"
-    hour: "an hour ago"
-    hours: "%{h} hours ago"
-    day: "a day ago"
-    days: "%{d} days ago"
-    month: "a month ago"
-    months: "%{month} months ago"
-
   expiration_times:
     clear: "Clear"
     presets: "Presets..."

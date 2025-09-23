@@ -16,18 +16,6 @@ fi:
     - Marraskuu
     - Joulukuu
 
-  fuzzy_time:
-    just_now: "juuri nyt"
-    less_than_minute: "alle minuutti sitten"
-    minute: "minuutti sitten"
-    minutes: "%{m} minuuttia sitten"
-    hour: "tunti sitten"
-    hours: "%{h} tuntia sitten"
-    day: "päivä sitten"
-    days: "%{d} päivää sitten"
-    month: "kuukausi sitten"
-    months: "%{month} kuukautta sitten"
-
   expiration_times:
     clear: "Nollaa"
     presets: "Valmiita aikoja..."

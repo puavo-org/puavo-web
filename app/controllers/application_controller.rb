@@ -122,30 +122,6 @@ class ApplicationController < ActionController::Base
 
   end
 
-  # Fuzzy timestamps, used when listing users who are marked for later deletion
-  def fuzzy_time(seconds)
-    if seconds < 5.0
-      return t('fuzzy_time.just_now')
-    elsif seconds < 60.0
-      return t('fuzzy_time.less_than_minute')
-    elsif seconds < 3600.0
-      m = (seconds / 60.0).to_i
-      return (m == 1) ? t('fuzzy_time.minute') : t('fuzzy_time.minutes', :m => m)
-    elsif seconds < 86400.0
-      h = (seconds / 3600.0).to_i
-      return (h == 1) ? t('fuzzy_time.hour') : t('fuzzy_time.hours', :h => h)
-    else
-      d = (seconds / 86400.0).to_i
-
-      if d < 30
-        return (d == 1) ? t('fuzzy_time.day') : t('fuzzy_time.days', :d => d)
-      else
-        month = (d / 30).to_i
-        return (month == 1) ? t('fuzzy_time.month') : t('fuzzy_time.months', :month => month)
-      end
-    end
-  end
-
   # Converts LDAP operational created/modified timestamps to localtime (server time)
   def convert_timestamp(t)
     t.localtime.strftime('%Y-%m-%d %H:%M:%S') rescue '?'
