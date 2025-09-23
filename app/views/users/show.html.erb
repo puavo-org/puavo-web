@@ -402,7 +402,7 @@ end %>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     // Expand all admin permissions
-    document.querySelector("a#expandPermissions").addEventListener("click", e => {
+    document.querySelector("a#expandPermissions")?.addEventListener("click", e => {
         e.preventDefault();
         document.querySelector("span#remainingPermissions").classList.remove("hidden");
         document.querySelector("span#permissionsEllipsis").remove();
