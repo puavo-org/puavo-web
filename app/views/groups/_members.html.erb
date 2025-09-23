@@ -32,12 +32,10 @@
 
     <td>
       <%= link_to(t('.remove'),
-                    remove_user_group_path(school_id: pri_school.id,
-                                           id: @group.puavoId,
-                                           :user_id => member.puavoId),
-                    remote: true,
-                    method: :put,
-                    class: "btn nowrap") %>
+                  remove_user_group_path(school_id: pri_school.id, id: @group.puavoId, user_id: member.puavoId),
+                  remote: true,
+                  method: :put,
+                  class: 'btn nowrap') %>
     </td>
   </tr>
   <% end %>
