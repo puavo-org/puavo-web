@@ -83,6 +83,13 @@ const COLUMN_DEFINITIONS = {
     },
 <% end %>
 
+    last_auth_time: {
+        key: "last_auth_time",
+        title: "<%= t('last_ldap_auth_date') %>",
+        type: ST.ColumnType.UNIXTIME,
+        transform: entry => doTimestamp(entry.last_auth_time),
+    },
+
     audio_sink: {
         key: "audio_sink",
         title: "<%= t('columns.devices.audio_sink') %>",
@@ -837,6 +844,7 @@ const COLUMN_ORDER = [
 <% end %>
     "ll_uid",
     "ll_time",
+    "last_auth_time",
     "uptime",
     "puavopkgs",
     "desc",
