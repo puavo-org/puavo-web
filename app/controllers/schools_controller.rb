@@ -121,10 +121,14 @@ class SchoolsController < ApplicationController
           .flatten
           .tally
 
-    # Get the creation and modification timestamps from LDAP operational attributes
-    extra = School.find(params[:id], attributes: %w[createTimestamp modifyTimestamp])
-    @school['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
-    @school['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
+    # Get extra timestamps from LDAP operational attributes
+    timestamps = School.search_as_utf8(
+      filter: "(puavoId=#{@school.id})",
+      attributes: %w[createTimestamp modifyTimestamp]
+    )[0][1]
+
+    @created = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['createTimestamp'])
+    @modified = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['modifyTimestamp'])
 
     # Known image release names
     @releases = get_releases
