@@ -262,22 +262,22 @@
 
   <tr>
     <th><%= t('last_kerberos_auth_date') %></th>
-    <td class="noWrap"><%= h @user.kerberos_last_successful_auth %></td>
+    <td class="noWrap"><%= utc_date_for_localization(@user.kerberos_last_successful_auth) %></td>
   </tr>
 
   <tr>
     <th><%= t('last_ldap_auth_date') %></th>
-    <td class="noWrap"><%= h @user['authTimestamp'] %></td>
+    <td class="noWrap"><%= utc_timestamp_for_localization(@authenticated) %></td>
   </tr>
 
   <tr>
     <th><%= t('ldap_create_time') %></th>
-    <td class="noWrap"><%= h @user['createTimestamp'] %></td>
+    <td class="noWrap"><%= utc_timestamp_for_localization(@created) %></td>
   </tr>
 
   <tr>
     <th><%= t('ldap_modify_time')  %></th>
-    <td class="noWrap"><%= h @user['modifyTimestamp'] %></td>
+    <td class="noWrap"><%= utc_timestamp_for_localization(@modified) %></td>
   </tr>
 
   <% if @user.puavoEduPersonAccountExpirationTime %>
@@ -287,14 +287,14 @@
   <tr>
   <% end %>
     <th><%= t('activeldap.attributes.user.puavoEduPersonAccountExpirationTime') %></th>
-    <td class="noWrap"><%= h @user.puavoEduPersonAccountExpirationTime.localtime.strftime('%Y-%m-%d %H:%M:%S') %></td>
+    <td class="noWrap"><%= utc_timestamp_for_localization(@user.puavoEduPersonAccountExpirationTime) %></td>
   </tr>
   <% end %>
 
   <% if @user.puavoRemovalRequestTime %>
   <tr>
     <th><%= t('.marked_for_removal') %></th>
-    <td class="userMarkedForDeletion noWrap"><%= h @user.puavoRemovalRequestTime %></td>
+    <td class="userMarkedForDeletion noWrap"><%= utc_timestamp_for_localization(@user.puavoRemovalRequestTime) %></td>
   </tr>
   <% end %>
 </table>

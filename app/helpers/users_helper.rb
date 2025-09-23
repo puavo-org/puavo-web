@@ -68,11 +68,11 @@ module UsersHelper
     end
 
     if raw['puavoEduPersonAccountExpirationTime']
-      out[:expiration] = Puavo::Helpers::convert_ldap_time(raw['puavoEduPersonAccountExpirationTime'])
+      out[:expiration] = Puavo::Helpers.ldap_time_string_to_unixtime(raw['puavoEduPersonAccountExpirationTime'])
     end
 
     if raw['puavoRemovalRequestTime']
-      out[:rrt] = Puavo::Helpers::convert_ldap_time(raw['puavoRemovalRequestTime'])
+      out[:rrt] = Puavo::Helpers.ldap_time_string_to_unixtime(raw['puavoRemovalRequestTime'])
     end
 
     if raw['puavoDoNotDelete']
@@ -121,15 +121,15 @@ module UsersHelper
     end
 
     if raw.include?('authTimestamp')
-      out[:last_ldap_auth_date] = Puavo::Helpers::convert_ldap_time_pick_date(raw['authTimestamp'])
+      out[:last_ldap_auth_date] = Puavo::Helpers.ldap_time_string_to_unixtime(raw['authTimestamp'])
     end
 
     if raw.include?('createTimestamp')
-      out[:created] = Puavo::Helpers::convert_ldap_time(raw['createTimestamp'])
+      out[:created] = Puavo::Helpers.ldap_time_string_to_unixtime(raw['createTimestamp'])
     end
 
     if raw.include?('modifyTimestamp')
-      out[:modified] = Puavo::Helpers::convert_ldap_time(raw['modifyTimestamp'])
+      out[:modified] = Puavo::Helpers.ldap_time_string_to_unixtime(raw['modifyTimestamp'])
     end
 
     if raw.include?('puavoLicenses')

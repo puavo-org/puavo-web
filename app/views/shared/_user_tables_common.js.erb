@@ -175,12 +175,12 @@ const COLUMN_DEFINITIONS = {
             if (entry.rrt === undefined || entry.rrt === null || entry.rrt === 0)
                 return ["", 0];
 
-            const [valid, t] = ST.convertTimestamp(entry.rrt);
+            const [valid, ts] = ST.convertTimestamp(entry.rrt, false, ST.timestampFormatter);
 
             if (!valid)
                 return ["?", 0];
 
-            return [t, entry.rrt];
+            return [ts, entry.rrt];
         },
         alias: ["removal_request_time"],
     },
@@ -367,7 +367,7 @@ const COLUMN_DEFINITIONS = {
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_NULLABLE,
 
         transform: entry => {
-            const [valid, ts] = ST.convertTimestamp(entry.expiration)
+            const [valid, ts] = ST.convertTimestamp(entry.expiration, false, ST.timestampFormatter);
             let html = "";
 
             if (valid && entry._has_expired)
@@ -1225,7 +1225,7 @@ function* expandUserData(raw)
         s2._has_expired = false;
 
         if (s2.expiration) {
-            const [valid, ts] = ST.convertTimestamp(s2.expiration)
+            const [valid, ts] = ST.convertTimestamp(s2.expiration);
 
             if (valid && NOW >= new Date(s2.expiration * 1000))
                 s2._has_expired = true;
