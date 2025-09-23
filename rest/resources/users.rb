@@ -43,22 +43,15 @@ class User < LdapModel
   ldap_map :sambaPwdLastSet, :password_last_set, LdapConverters::Number
   ldap_map :puavoAdminPermissions, :admin_permissions, LdapConverters::ArrayValue
   ldap_map :puavoTeacherPermissions, :teacher_permissions, LdapConverters::ArrayValue
-
   ldap_map :puavoLearnerId, :learner_id
-
   ldap_map :puavoVerifiedEmail, :verified_email, LdapConverters::ArrayValue
   ldap_map :puavoPrimaryEmail, :primary_email
-
   ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
-
   ldap_map :puavoUuid, :uuid, LdapConverters::SingleValue
   ldap_map :puavoMFAEnabled, :mfa_enabled, LdapConverters::StringBoolean
   ldap_map :puavoNotes, :notes, LdapConverters::SingleValue
-
   ldap_map :puavoLicenses, :licenses
-
   ldap_map :puavoCitrixId, :citrix_id
-
   ldap_map :puavoEduPersonAccountExpirationTime, :account_expiration_time, LdapConverters::TimeStamp
 
   skip_serialize :external_data
