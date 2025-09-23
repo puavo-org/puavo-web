@@ -1,0 +1,5 @@
+#!/bin/sh
+export RACK_ENV=production
+export DEBUG=1
+cd /var/app/puavo-rest
+bundle exec ruby scripts/manage-oauth2.rb "$@"
