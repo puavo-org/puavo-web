@@ -19,12 +19,23 @@
     <% end %>
 
     <% unless @admin_in_schools.empty? %>
-    <% @admin_in_schools.each do |s| %>
+    <% @admin_in_schools.take(5).each do |s| %>
     <% if s[:valid] %>
     <p class="infoNotice"><%= t('.user_is_a_school_admin', school_name: s[:name]) %></p>
     <% else %>
     <p class="infoError"><%= t('.user_is_a_school_admin_error', school_dn: s[:dn]) %></p>
     <% end %>
+    <% end %>
+    <% if @admin_in_schools.count > 5 %>
+    <p class="infoNotice" id="schoolsEllipsis">…(+<%= @admin_in_schools.count - 5 %>, <a href="#" id="expandSchools"><%= t('.show_all_schools') %></a>)</p><div id="remainingSchools" class="hidden">
+    <% @admin_in_schools[5..].each do |s| %>
+    <% if s[:valid] %>
+    <p class="infoNotice"><%= t('.user_is_a_school_admin', school_name: s[:name]) %></p>
+    <% else %>
+    <p class="infoError"><%= t('.user_is_a_school_admin_error', school_dn: s[:dn]) %></p>
+    <% end %>
+    <% end %>
+    </div>
     <% end %>
     <% end %>
 
@@ -401,6 +412,13 @@ end %>
 <% content_for :post_load_javascript do %>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+    // Expand all schools
+    document.querySelector("a#expandSchools")?.addEventListener("click", e => {
+        e.preventDefault();
+        document.querySelector("div#remainingSchools").classList.remove("hidden");
+        document.querySelector("p#schoolsEllipsis").remove();
+    });
+
     // Expand all admin permissions
     document.querySelector("a#expandPermissions")?.addEventListener("click", e => {
         e.preventDefault();

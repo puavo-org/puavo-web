@@ -1224,6 +1224,7 @@ fi:
       reset_sso_session: "Nollaa SSO-istunto"
       edit_admin_permissions: "Muokkaa ylläpitäjän oikeuksia..."
       edit_teacher_permissions: "Muokkaa opettajan oikeuksia..."
+      show_all_schools: "näytä kaikki koulut"
       show_all_permissions: "näytä kaikki oikeudet"
       admin_permissions:
         title: "Ylläpitäjän oikeudet"
