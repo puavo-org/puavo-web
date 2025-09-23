@@ -13,8 +13,8 @@
   <div class="flex-rows gap-5px usernameListEntry">
     <!-- Upper: list metadata -->
     <p class="margin-0 padding-0">
-      <strong><%= t(".created") %>:</strong> <span><%= I18n.l(Time.at(list.created_at), format: '%Y-%m-%d %H:%M:%S') %></span><br>
-      <strong><%= t(".expires") %>:</strong> <span><%= I18n.l(Time.at(list.created_at + (60 * 60 * 24 * 30 * 6)), format: '%Y-%m-%d %H:%M:%S') %></span><br>
+      <strong><%= t(".created") %>:</strong> <%= utc_timestamp_for_localization(Time.at(list.created_at).utc) %><br>
+      <strong><%= t(".expires") %>:</strong> <%= utc_timestamp_for_localization(Time.at(list.created_at + (60 * 60 * 24 * 30 * 6)).utc) %><br>
       <strong><%= t(".created_by") %>:</strong> <%= list.creator %><br>
       <strong><%= t(".description") %>:</strong> <%= list.description %><br>
       <strong><%= t(".users_count_title") %>:</strong> <span><%= list.users.count %></span>
