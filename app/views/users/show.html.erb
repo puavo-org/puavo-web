@@ -237,11 +237,11 @@
       <table>
         <tr>
           <th><%= t('.user_citrix_license.created') %></th>
-          <td><%= @citrix_license.include?('created') ? Time.parse(@citrix_license['created']).localtime.strftime('%Y-%m-%d %H:%M:%S') : '?' %></td>
+          <td><%= @citrix_license.include?('created') ? utc_timestamp_for_localization(Time.parse(@citrix_license['created']).utc) : '?' %></td>
         </tr>
         <tr>
           <th><%= t('.user_citrix_license.last_used') %></th>
-          <td><%= @citrix_license.include?('last_used') ? Time.parse(@citrix_license['last_used']).localtime.strftime('%Y-%m-%d %H:%M:%S') : '?' %></td>
+          <td><%= @citrix_license.include?('last_used') ? utc_timestamp_for_localization(Time.parse(@citrix_license['last_used']).utc) : '?' %></td>
         </tr>
         <tr>
           <th><%= t('.user_citrix_license.first_name') %></th>
