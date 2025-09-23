@@ -27,7 +27,7 @@
       <% if integration_names.include?(name) %>
       <li>
         <span class="system"><%= integration_names[name] %></span>:
-        <span class="at"><%= upd[:at].strftime("%d.%m.%Y %H:%M") %></span>
+        <span class="at"><%= utc_timestamp_for_localization(upd[:at]) %></span>
         <span class="in"><%= upd[:in] %></span>
       </li>
       <% end %>
