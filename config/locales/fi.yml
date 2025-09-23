@@ -953,6 +953,8 @@ fi:
     activation: "Tämä sivu vain listaa aktivoidut palvelut. Tietoturvasyistä johtuen ulkoisia palveluita voivat luoda, muokata ja aktivoida vain Opinsysin työntekijät. "
     no_services_organisation: "Ulkoisia palveluita ei ole aktivoitu tässä organisaatiossa"
     no_services_school: "Ulkoisia palveluita ei ole aktivoitu tässä koulussa"
+    is_active: "Aktiivinen?"
+    service_title: "Palvelun nimi"
     email: "Ylläpitäjän sähköpostiosoite"
     path_prefix: "Polun etuliite"
     additional_info: "Lisätietoja..."

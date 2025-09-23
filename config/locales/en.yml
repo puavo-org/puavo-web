@@ -953,6 +953,8 @@ en:
     activation: "This page only lists the activated services. Due to security reasons, only Opinsys employees can create, edit and activate external services."
     no_services_organisation: "No external services have been activated for this organisation"
     no_services_school: "No external services have been activated for this school"
+    is_active: "Is active?"
+    service_title: "Service name"
     email: "Maintainer Email"
     path_prefix: "Path prefix"
     additional_info: "Additional info..."

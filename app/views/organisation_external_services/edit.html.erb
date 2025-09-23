@@ -8,19 +8,32 @@
 <% else %>
 
 <%= form_tag('/users/organisation_external_services/update', method: :post) do %>
-<ul class="no-list-bullets margin-0 padding-0">
-
+<table class="list">
+    <thead>
+        <tr>
+            <th class="minimize-width"><%= t('external_services.is_active') %></th>
+            <th><%= t('external_services.service_title') %></th>
+            <th>Domain</th>
+            <th><%= t('external_services.email') %></th>
+            <th><%= t('external_services.path_prefix') %></th>
+            <th class="minimize-width">DN</th>
+            <th class="minimize-width nowrap"><%= t('ldap_create_time') %></th>
+        </tr>
+    </thead>
+    <tbody>
 <% @external_services.each do |es| %>
-<li><label><input type="checkbox" id="<%= es[:dn] %>" name="<%= es[:dn] %>" <%= es[:active] ? 'checked' : '' %> autocomplete="off"><%= es[:name] %></label><ul>
-    <li>Domain: <%= es[:domains].join(', ').html_safe %></li>
-    <li><%= t("external_services.email") %>: <%= es[:email] %></li>
-    <li><%= t("external_services.path_prefix") %>: <%= es[:prefix] %></li>
-    <li>DN: <%= es[:dn] %></li>
-    <li><%= t('ldap_create_time') %>: <%= utc_timestamp_for_localization(es[:created]) %></li>
-</ul></li>
+        <tr>
+            <td class="minimize-width nowrap"><input type="checkbox" id="<%= es[:dn] %>" style="display: block; width: 100%;" name="<%= es[:dn] %>" <%= es[:active] ? 'checked' : '' %> autocomplete="off"></td>
+            <td><%= es[:name] %></td>
+            <td><%= es[:domains].join('<br>').html_safe %></td>
+            <td><%= es[:email] %></td>
+            <td><%= es[:prefix] %></td>
+            <td class="minimize-width nowrap"><%= es[:dn] %></td>
+            <td class="minimize-width nowrap"><%= utc_timestamp_for_localization(es[:created]) %></td>
+        </tr>
 <% end %>
-
-</ul>
+    </tbody>
+</table>
 
 <div class="flex-cols gap-10px margin-top-10px">
     <%= submit_tag t('link.save'), class: 'btn', autocomplete: 'off' %>
