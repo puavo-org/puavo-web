@@ -19,7 +19,7 @@ import { escapeHTML } from "./common/utils.js";
 
 import { convertTimestamp } from "./supertable3/table/utils.js";
 
-import { SuperTable } from "./supertable3/table/main.js";
+import { SuperTable, ST_DATE_FORMATTER, ST_TIMESTAMP_FORMATTER } from "./supertable3/table/main.js";
 
 globalThis.ST = {
     ColumnType: ColumnType,
@@ -36,4 +36,7 @@ globalThis.ST = {
     MassOperation: MassOperation,
 
     SuperTable: SuperTable,
+
+    dateFormatter: ST_DATE_FORMATTER,
+    timestampFormatter: ST_TIMESTAMP_FORMATTER
 };

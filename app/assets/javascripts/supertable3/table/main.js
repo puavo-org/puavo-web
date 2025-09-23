@@ -51,6 +51,27 @@ MASS_WORKER.onmessage = e => {
     GLOBAL_SUPERTABLE_INSTANCE.onWorkerMessage(e);
 };
 
+// These formatters are exported into the public namespace
+export const ST_DATE_FORMATTER = Intl.DateTimeFormat(document.documentElement.dataset.intlLocale, {
+    weekday: "short",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    timeZone: document.documentElement.dataset.intlTimezone
+});
+
+export const ST_TIMESTAMP_FORMATTER = Intl.DateTimeFormat(document.documentElement.dataset.intlLocale, {
+    weekday: "short",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: false,
+    timeZone: document.documentElement.dataset.intlTimezone
+});
+
 export class SuperTable {
 
 constructor(container, settings)

@@ -1,11 +1,13 @@
 // Data transforms, high-level filtering, and sorting utility
 
 import { ColumnFlag, ColumnType, SortOrder, INDEX_EXISTS, INDEX_DISPLAYABLE, INDEX_FILTERABLE, INDEX_SORTABLE } from "./constants.js";
-import { escapeHTML } from "../../common/utils.js";
+import { escapeHTML, pad } from "../../common/utils.js";
 import { convertTimestamp } from "./utils.js";
 
 import { compareRowValue } from "../filters/interpreter/comparisons.js";
 import { evaluateFilter } from "../filters/interpreter/evaluator.js";
+
+import { ST_TIMESTAMP_FORMATTER, ST_DATE_FORMATTER } from "./main.js";
 
 // Default values for different column types. Used to substitute missing values for sorting.
 const DEFAULT_VALUES = {
@@ -29,7 +31,9 @@ function _transformValue(raw, key, coldef, defVal)
     }
 
     // Apply a built-in transformation
-    let value = raw[key];
+    let value = raw[key],
+        date = null,
+        skipHTMLEscape = false;
 
     switch (coldef.type) {
         case ColumnType.BOOL:
@@ -43,9 +47,13 @@ function _transformValue(raw, key, coldef, defVal)
             break;
 
         case ColumnType.UNIXTIME:
-            let dateOnly = (coldef.flags & ColumnFlag.F_DATEONLY);
-            [, value] = convertTimestamp(value, dateOnly);
+        {
+            const dateOnly = coldef.flags & ColumnFlag.F_DATEONLY;
+
+            [, value, date] = convertTimestamp(value, dateOnly, dateOnly ? ST_DATE_FORMATTER : ST_TIMESTAMP_FORMATTER);
+            skipHTMLEscape = true;  // the output is valid HTML, no need to escape it
             break;
+        }
 
         default:
             break;
@@ -59,7 +67,7 @@ function _transformValue(raw, key, coldef, defVal)
         displayable = value.map(i => escapeHTML(i)).join("<br>");
         sortable = value.join();
     } else {
-        displayable = escapeHTML(value);
+        displayable = skipHTMLEscape ? value : escapeHTML(value);
         sortable = raw[key];
     }
 
