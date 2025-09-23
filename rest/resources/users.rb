@@ -53,6 +53,8 @@ class User < LdapModel
   ldap_map :puavoLicenses, :licenses
   ldap_map :puavoCitrixId, :citrix_id
   ldap_map :puavoEduPersonAccountExpirationTime, :account_expiration_time, LdapConverters::TimeStamp
+  ldap_map :userPassword, :ldap_password_hash, LdapConverters::SingleValue
+  ldap_map :sambaNTPassword, :samba_nt_password_hash, LdapConverters::SingleValue
 
   skip_serialize :external_data
 
