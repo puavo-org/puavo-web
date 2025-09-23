@@ -241,9 +241,26 @@
   color: var(--button-danger-fore);
 }
 
-#topbar nav svg.flag {
-  width: 32px;
-  height: 14px;
+/* Hack the language selector button to look "nice" */
+#topbar .languageDropdown {
+  padding: 0 !important;
+}
+
+#topbar .languageDropdown img {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  top: 6px;
+}
+
+#topbar .languageDropdown::after {
+  position: relative;
+  top: -3px;
+}
+
+#topbar .languageDropdown ul {
+  margin-left: 0 !important;
+  margin-top: 6px !important;
 }
 
 @media screen and (max-width: 800px) {

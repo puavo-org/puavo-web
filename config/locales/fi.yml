@@ -224,7 +224,12 @@ fi:
   actions: Toiminnot
   missing_data: "(Puuttuu/ei asetettu)"
   default_select_value: Valitse
-  language_selector_title: "Valitse käyttöliittymän kieli. Valinta muistetaan kunnes kirjaudut ulos, tai istunto vanhenee."
+
+  # The top bar language selector menu
+  language_selector:
+    hover: "Valitse käyttöliittymän kieli. Valinta muistetaan kunnes kirjaudut ulos, tai istunto vanhenee."
+    en: "Englanti (English)"
+    fi: "Suomi (Finnish)"
 
   puavoEduPersonAffiliation_teacher: Opettaja
   puavoEduPersonAffiliation_staff: "Henkilökunta"

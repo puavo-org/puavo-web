@@ -310,33 +310,6 @@ module ApplicationHelper
     return defs.html_safe
   end
 
-  def topbar_language_selector
-    html = ""
-
-    # What's the current language?
-    if session && session.include?(:user_locale) &&
-        Rails.configuration.available_ui_locales.include?(session[:user_locale].to_s)
-      current = session[:user_locale]
-    else
-      current = current_organisation.locale
-    end
-
-    # This isn't a template, so img_tag and such aren't available. Fortunately this works.
-    prefix = "/images/language_flags.svg"
-
-    html += "<li class=\"asFlex haveTopDropdown\" title=\"#{I18n.t('language_selector_title')}\"><svg class=\"flag current\"><use xlink:href=\"#{prefix}##{current}\"></use></svg>\n"
-    html += "<ul class=\"topDropdown\">\n"
-
-    Rails.configuration.available_ui_locales.each do |l|
-      next if l == current
-      html += "<li><a href=\"/change_language?lang=#{l}\"><svg class=\"flag\"><use xlink:href=\"#{prefix}##{l}\"></use></svg></a></li>\n"
-    end
-
-    html += "</ul></li>\n"
-
-    return html.html_safe
-  end
-
   def format_uptime(seconds)
     return '?' unless seconds.is_a?(Integer)
 

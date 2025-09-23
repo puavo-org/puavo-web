@@ -102,7 +102,14 @@ I18n.locale = "<%= I18n.locale %>";
     <div id="right">
       <ul class="asFlex">
         <% if show_language_selector? %>
-        <%= topbar_language_selector %>
+        <li class="asFlex haveTopDropdown languageDropdown" title="<%= I18n.t('language_selector.hover') %>">
+            <img src="/images/language-icon-smaller.svg">
+            <ul class="topDropdown">
+                <% Rails.configuration.available_ui_locales.each do |l| %>
+                  <li><a href="/change_language?lang=<%= l %>"><%= h t("language_selector.#{l}") %></a></li>
+                <% end %>
+            </ul>
+        </li>
         <% end %>
 
         <li class="asFlex haveTopDropdown"><span class="menuTitle" id="loggedInName"><%= h current_user.displayName %></span>
