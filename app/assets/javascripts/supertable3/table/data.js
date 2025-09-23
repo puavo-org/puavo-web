@@ -210,7 +210,6 @@ export function sortRows(columnDefinitions, sortBy, collator, data, indexes)
     } catch (e) {
         console.error("Unable to sort the table:");
         console.log(e);
-        return indexes;
     }
 
     return indexes;
