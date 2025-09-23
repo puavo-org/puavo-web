@@ -176,6 +176,7 @@ en:
     group_members_mass_edit: "Members mass edit"
     copy: "Copy"
     copy_to_clipboard: "Copy to clipboard"
+    setup_mfa: "Two-factor authentication..."
 
   # Main application layout
   layouts:
@@ -2576,6 +2577,13 @@ en:
       title: "Your Information"
       licenses: "User account's license codes"
 
+      mfa:
+        title: "Two-factor authentication"
+        status_title: "Your two-factor authentication status"
+        status_enabled: "enabled"
+        status_disabled: "not enabled"
+        edit: "Edit two-factor authentication settings"
+
       emails:
         automatic_notice: "Automatic email addresses are enabled in your organisation. You can't edit the address, but you can verify it if it hasn't been verified yet."
         help: "You can set up yourself one or more email addresses. After saving the profile, you can return to this form and send a verification message to an address. This message is used to verify that the address is really yours and you can access it. Some services require at least one verified address. The first address you verify is also made your <strong>primary address</strong> that is used when contacting you and in places where only one address can be used."
@@ -2631,7 +2639,10 @@ en:
   # The MFA editor
   mfas:
     show:
+      title: "Two-factor authentication settings"
       logged_as: "You're logged in as <strong>%{first_name} %{last_name}</strong> (<strong>%{username}</strong>) in organisation <strong>%{organisation}</strong>"
+      back_profile: "Return to your profile"
+      back_puavo: "Return to user editing"
 
       new:
         title: "Add a new two-factor authentication"

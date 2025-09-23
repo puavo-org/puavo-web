@@ -26,6 +26,12 @@ class MfasController < ApplicationController
       @authenticators = get_authenticators(@user.puavoUuid)
     end
 
+    # Append a "return to" link if we know where the user came from. For example, if the user's coming
+    # from the profile editor, without this link they won't be able to go back there.
+    if params.include?('return_to') && %w[profile puavo].include?(params['return_to'])
+      @return_to = params['return_to']
+    end
+
     respond_to do |format|
       format.html
     end

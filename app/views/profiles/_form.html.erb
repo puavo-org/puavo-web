@@ -7,6 +7,14 @@
       <h2><%= current_user.primary_school.displayName %></h2>
     </header>
 
+    <% if (Array(current_user.puavoEduPersonAffiliation || []) & %w[admin teacher staff]).any? %>
+    <section id="mfa">
+    <%= f.label t('profiles.edit.mfa.title'), nil, class: 'label' %>
+    <p class="<%= current_user.puavoMFAEnabled ? 'hasMFA' : 'noMFA' %>"><%= t('profiles.edit.mfa.status_title') %>: <strong><%= t("profiles.edit.mfa.status_#{current_user.puavoMFAEnabled ? 'enabled' : 'disabled'}") %></strong></p>
+    <p><a id="gotoMFA" href="/users/mfa?return_to=profile"><%= t('profiles.edit.mfa.edit') %>...</a></p>
+    </section>
+    <% end %>
+
     <% if current_user.puavoLicenses %>
       <% begin %>
         <% licenses=JSON.parse(current_user.puavoLicenses) %>

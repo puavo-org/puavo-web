@@ -113,6 +113,9 @@ input[type="text"] {
   cursor: not-allowed;
 }
 
+/* MFA status. These look OK on both light and dark themes. */
+p.hasMFA { color: rgb(40, 192, 40); }
+p.noMFA { color: rgb(255, 40, 40); }
 
 /*
 -----------------------------------------------------------------------------------------------------

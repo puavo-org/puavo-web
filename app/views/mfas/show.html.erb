@@ -1,9 +1,19 @@
+<h1 class="margin-top-0"><%= t('.title') %></h1>
+
 <% if @missing_uuid %>
 <p class="message_alert"><%= t('mfas.server.errors.missing_required_data', request_id: @request_id) %>
 <% else %>
 <% if @authenticators.nil? %>
 <p class="message_alert"><%= t('mfas.server.errors.mfa_server_not_responding', request_id: @request_id) %>
 <% else %>
+
+<% if @return_to %>
+<% if @return_to == 'profile' %>
+<p><a href="/users/profile/edit"><%= t('.back_profile') %></a></p>
+<% elsif @return_to == 'puavo' %>
+<p><a href="/users/<%= current_user.primary_school.puavoid %>/users/<%= current_user.puavoid %>"><%= t('.back_puavo') %></a></p>
+<% end %>
+<% end %>
 
 <p class="margin-top-0"><%= t('.logged_as', first_name: @user.givenName, last_name: @user.sn, username: @user.uid, organisation: @organisation.cn).html_safe %>.</p>
 

@@ -176,6 +176,7 @@ fi:
     group_members_mass_edit: "Jäsenten massamuokkaus"
     copy: "Kopioi"
     copy_to_clipboard: "Kopioi leikepöydälle"
+    setup_mfa: "Kaksivaiheinen kirjautuminen..."
 
   # Main application layout
   layouts:
@@ -2576,6 +2577,13 @@ fi:
       title: "Omat tiedot"
       licenses: "Käyttäjätunnuksen lisenssikoodit"
 
+      mfa:
+        title: "Kaksivaiheinen kirjautuminen"
+        status_title: "Kaksivaiheisen kirjautumisesi tila"
+        status_enabled: "päällä"
+        status_disabled: "pois päältä"
+        edit: "Muokkaa kaksivaiheisen kirjautumisen asetuksia"
+
       emails:
         automatic_notice: "Organisaatiossasi on käytössä automaattiset sähköpostiosoitteet. Et voi muokata osoitetta, mutta voit vahvistaa sen jos sitä ei ole vielä vahvistettu."
         help: "Voit antaa itsellesi yhden tai useamman osoitteen. Kun olet tallentanut osoitteen, voit palata lomakkeeseen ja lähettää siihen vahvistusviestin jolla todistat, että osoite todellakin on käytössäsi. Jotkut palvelut vaativat vähintään yhden vahvistetun osoitteen. Ensimmäisestä vahvistetusta osoitteesta tehdään <strong>pääosoite</strong>, jota käytetään viestinnässä ja paikoissa joihin voidaan välittää vain yksi osoite."
@@ -2631,7 +2639,10 @@ fi:
   # The MFA editor
   mfas:
     show:
+      title: "Kaksivaiheisen kirjautumisen asetukset"
       logged_as: "Olet kirjautuneena nimellä <strong>%{first_name} %{last_name}</strong> (<strong>%{username}</strong>) organisaatiossa <strong>%{organisation}</strong>"
+      back_profile: "Palaa takaisin profiilisi muokkaukseen"
+      back_puavo: "Palaa takaisin käyttäjän muokkaukseen"
 
       new:
         title: "Lisää uusi kaksivaiheinen tunnistautuminen"

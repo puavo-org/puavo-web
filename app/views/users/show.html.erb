@@ -310,6 +310,14 @@ toolbar do |tb|
           icon: 'pencil'
 
   tb.dropdown t('link.more'), right: true do |menu|
+    if @is_own_page
+      menu.link t('link.setup_mfa'),
+                href: mfa_path(return_to: 'puavo'),
+                icon: 'key'
+
+      menu.separator
+    end
+
     if current_user.organisation_owner?
       menu.link t('.change_school'),
                 href: change_schools_path(@school, @user),

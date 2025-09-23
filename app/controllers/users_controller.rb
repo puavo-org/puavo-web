@@ -252,6 +252,9 @@ class UsersController < ApplicationController
     @viewer_is_an_owner = is_owner?
     viewer_is_admin_in = Array(current_user.puavoAdminOfSchool || []).map(&:to_s).to_set
 
+    # Is the user viewing their own page?
+    @is_own_page = @user.dn.to_s == current_user.dn.to_s
+
     # List schools where this user is an admin in
     @admin_in_schools = []
 

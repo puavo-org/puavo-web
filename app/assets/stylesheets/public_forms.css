@@ -218,3 +218,14 @@ footer {
   text-align: center;
   font-size: 80%;
 }
+
+/* Plain link colors */
+a {
+  color: var(--link-foreground);
+}
+
+a:hover,
+a:active,
+a:focus {
+  color: var(--link-foreground-hover);
+}
