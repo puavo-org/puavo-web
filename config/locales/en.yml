@@ -825,7 +825,7 @@ en:
       successful: "Password changed successfully!"
       failed: "Password change failed. Unfortunately no extra information is available. Please contact support."
       failed_code: "Password change failed. Unfortunately no extra information is available. Please contact support and give them this code: %{code}."
-      failed_details: "Password change failed: %{details}. Please contact support and give them this code: %{code}."
+      failed_details: "Password change failed: %{details}. If the problem persists, please contact support and give them this code: %{code}."
       invalid_external_login: "Invalid external login password or username (%{uid})"
       incomplete_form: You did not fill in all the required form fields.
       invalid_login: Invalid password or username (%{uid})
@@ -861,7 +861,7 @@ en:
       unknown_operation: "Unknown operation"
       bad_request: "Bad request sent to the synchronisation server"
       unauthorized: "The server's address is not on the list of allowed servers"
-      server_error: "Synchronisation server errror"
+      server_error: "Synchronisation server errror. Try a stronger password"
       malformed_reply: "Malformed reply"
       configuration_error: "Configuration error"
       incomplete_request: "An incomplete request was sent to the synchronisation server"
