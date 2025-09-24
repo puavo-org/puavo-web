@@ -72,7 +72,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
                 <%
                 parts = [
                     "#{created_by}: #{l.creator}",
-                    "#{created_at}: #{Time.at(l.created_at).strftime('%Y-%m-%d %H:%M:%S')}",
+                    "#{created_at}: ||",
                     "#{members}: #{l.users.count}"
                 ]
 
@@ -80,7 +80,7 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
                     parts << "#{description}: \"#{l.description}\""
                 end
                 %>
-                <option value="<%= l.uuid %>"><%= parts.join('; ') %></option>
+                <option value="<%= l.uuid %>" data-created="<%= Time.at(l.created_at).iso8601 %>"><%= parts.join('; ') %></option>
                 <% end %>
             </select>
             <br><button id="loadUNL" class="margin-top-5px"><%=t('new_import.unl_load') %></button>
@@ -535,7 +535,31 @@ const CSV_PARSER_PATH = "<%= javascript_path 'csv_parser' %>",
 <script>
 "use strict;"
 
+// Localize the timestamps in the username list select. The "localizeTimestamps" method in application.js
+// does not work with the select, because the options are not "abbr" elements.
+function fixUNLTimestamps()
+{
+    const intlDataset = document.documentElement.dataset;
+
+    const timeFormatter = Intl.DateTimeFormat(intlDataset.intlLocale, {
+        weekday: "short",
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: false,
+        timeZone: intlDataset.intlTimezone
+    });
+
+    for (const o of document.querySelectorAll("section#page1 div#unl select option"))
+        o.innerText = o.innerText.replace("||", timeFormatter.format(new Date(o.dataset.created)));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+
+fixUNLTimestamps();
 
 // Setup extra translation strings for I18n library
 I18n.translations[I18n.locale] = I18n.extend((I18n.translations[I18n.locale] || {}), {
