@@ -955,6 +955,7 @@ en:
     no_services_school: "No external services have been activated for this school"
     is_active: "Is active?"
     service_title: "Service name"
+    service_description: "Description"
     email: "Maintainer Email"
     path_prefix: "Path prefix"
     additional_info: "Additional info..."

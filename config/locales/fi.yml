@@ -955,6 +955,7 @@ fi:
     no_services_school: "Ulkoisia palveluita ei ole aktivoitu tässä koulussa"
     is_active: "Aktiivinen?"
     service_title: "Palvelun nimi"
+    service_description: "Kuvaus"
     email: "Ylläpitäjän sähköpostiosoite"
     path_prefix: "Polun etuliite"
     additional_info: "Lisätietoja..."

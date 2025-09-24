@@ -13,6 +13,7 @@
         <tr>
             <th class="minimize-width"><%= t('external_services.is_active') %></th>
             <th><%= t('external_services.service_title') %></th>
+            <th><%= t('external_services.service_description') %></th>
             <th>Domain</th>
             <th><%= t('external_services.email') %></th>
             <th><%= t('external_services.path_prefix') %></th>
@@ -25,6 +26,7 @@
         <tr>
             <td class="minimize-width nowrap"><input type="checkbox" id="<%= es[:dn] %>" style="display: block; width: 100%;" name="<%= es[:dn] %>" <%= es[:active] ? 'checked' : '' %> autocomplete="off"></td>
             <td><%= es[:name] %></td>
+            <td><%= es[:description] %></td>
             <td><%= es[:domains].join('<br>').html_safe %></td>
             <td><%= es[:email] %></td>
             <td><%= es[:prefix] %></td>
