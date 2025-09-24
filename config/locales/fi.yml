@@ -954,6 +954,7 @@ fi:
     no_services_organisation: "Ulkoisia palveluita ei ole aktivoitu tässä organisaatiossa"
     no_services_school: "Ulkoisia palveluita ei ole aktivoitu tässä koulussa"
     is_active: "Aktiivinen?"
+    services_count: "Yhteensä %{count} palvelua"
     service_title: "Palvelun nimi"
     service_description: "Kuvaus"
     email: "Ylläpitäjän sähköpostiosoite"

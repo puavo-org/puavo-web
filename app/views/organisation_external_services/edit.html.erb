@@ -6,6 +6,7 @@
 <p class="genericError"><%= t('external_services.edit.no_external_services_found') %></p>
 <div class="cancel"><%= link_to t('link.back'), organisation_external_services_path, class: 'btn' %></div>
 <% else %>
+<p><%= t('external_services.services_count', count: @external_services.count) %></p>
 
 <%= form_tag('/users/organisation_external_services/update', method: :post) do %>
 <table class="list">
