@@ -170,7 +170,7 @@ const COLUMN_DEFINITIONS = {
         key: "rrt",
         title: "<%= t('columns.users.rrt') %>",
         type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.F_NULLABLE,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_NULLABLE,
         transform: entry => {
             if (entry.rrt === undefined || entry.rrt === null || entry.rrt === 0)
                 return ["", 0];
