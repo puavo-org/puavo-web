@@ -374,12 +374,18 @@ class MfasController < ApplicationController
   # Only one place has a write access to puavoMFAEnabled attribute, so call it and ask
   # for a favor
   def set_mfa_state(user, state)
+    mfa_url = URI::HTTP.build(
+      host: Puavo::CONFIG['mfa_management']['host'],
+      port: Puavo::CONFIG['mfa_management']['port'],
+      path: '/v3/mfa/change_state'
+    )
+
     auth = Puavo::CONFIG.fetch('mfa_management', {}).fetch('auth', {})
 
     response = HTTP
       .basic_auth(user: auth['username'], pass: auth['password'])
       .headers(host: LdapOrganisation.current.puavoDomain)
-      .post(mfa_management_host + '/v3/mfa/change_state', json: {
+      .post(mfa_url, json: {
         request_id: @request_id,
         user_dn: user.dn.to_s,
         user_uuid: user.puavoUuid,

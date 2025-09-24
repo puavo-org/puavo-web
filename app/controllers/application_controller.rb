@@ -139,12 +139,6 @@ class ApplicationController < ActionController::Base
     URI::HTTP.build(host: mgmt['host'], port: mgmt['port']).to_s
   end
 
-  def mfa_management_host
-    mgmt = Puavo::CONFIG['mfa_management']
-
-    URI::HTTP.build(host: mgmt['host'], port: mgmt['port']).to_s
-  end
-
   private
 
   def get_organisation
