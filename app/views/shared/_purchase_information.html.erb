@@ -3,12 +3,12 @@
   <table>
     <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoPurchaseDate") %></th>
-      <td><%= device.puavoPurchaseDate ? device.puavoPurchaseDate.strftime('%Y-%m-%d') : '' %></td>
+      <td><% if device.puavoPurchaseDate %><abbr class="messedUpDate"><%= device.puavoPurchaseDate.strftime('%Y-%m-%d') %></abbr><% end %></td>
     </tr>
 
     <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoWarrantyEndDate") %></th>
-      <td><%= device.puavoWarrantyEndDate ? device.puavoWarrantyEndDate.strftime('%Y-%m-%d') : '' %></td>
+      <td><% if device.puavoWarrantyEndDate %><abbr class="messedUpDate"><%= device.puavoWarrantyEndDate.strftime('%Y-%m-%d') %></abbr><% end %></td>
     </tr>
 
     <tr>
@@ -42,4 +42,27 @@
     <% end %>
   </table>
 <%= end_box %>
+
+<% content_for :post_load_javascript do %>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const intlDataset = document.documentElement.dataset;
+
+    const formatter = Intl.DateTimeFormat(intlDataset.intlLocale, {
+        weekday: "short",
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        timeZone: intlDataset.intlTimezone
+    });
+
+    for (const e of document.querySelectorAll("abbr.messedUpDate")) {
+        const newDate = formatter.format(new Date(`${e.textContent}T12:00:00Z`));
+
+        e.title = e.textContent;
+        e.textContent = newDate;
+    }
+});
+</script>
+<% end %>
 <!-- shared/_purchase_information ends -->
