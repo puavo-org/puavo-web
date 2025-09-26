@@ -315,7 +315,9 @@ class Organisations < PuavoSinatra
     end
   end
 
-  # Retrieves a list of all organisations in the database
+  # Retrieves a list of all organisations in the database. Most users don't have enough rights to call
+  # this endpoint. Even organisation owners aren't privileged enough. You need to use one of the LDAP
+  # "super accounts", like uid=puavo,o=puavo or uid=admin,o=puavo.
   get '/v4/organisations_list' do
     auth :basic_auth, :kerberos, :server_auth
 
