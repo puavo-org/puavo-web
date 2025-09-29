@@ -229,7 +229,7 @@ class UsersController < ApplicationController
     @modified = Puavo::Helpers.ldap_time_string_to_utc_time(timestamps['modifyTimestamp'])
 
     @user.kerberos_last_successful_auth \
-      = @user.kerberos_last_successful_auth_utc ? Puavo::Helpers.ldap_time_string_to_utc_time(@user.kerberos_last_successful_auth_utc) : nil
+      = @user.kerberos_last_successful_auth_utc ? @user.kerberos_last_successful_auth_utc : nil
 
     # Is the user an organisation owner?
     @user_is_owner = owners_set().include?(@user.dn.to_s)
