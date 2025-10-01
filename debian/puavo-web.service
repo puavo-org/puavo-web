@@ -11,6 +11,9 @@ User=puavo
 Group=puavo
 WorkingDirectory=/var/app/puavo-web
 Environment="RAILS_ENV=production"
+# This secret key is only used in development and testing, even if the development server
+# is run in production mode. The actual production servers use a different key.
+Environment="SECRET_KEY_BASE=54686973206973206120646576656c6f706d656e74207365727665722c20796f752073696c6c792e20204e6f206a75696379207365637265747320686572652e"
 ExecStart=/bin/sh -c "bundle exec unicorn_rails -c ./config/unicorn.rb"
 Restart=on-abnormal
 RestartSec=30s
