@@ -5,7 +5,7 @@ require "rails"
 
 # Pick the frameworks you want:
 require "active_model/railtie"
-# require "active_job/railtie"
+require "active_job/railtie"
 # require "active_record/railtie"
 # require "active_storage/engine"
 require "action_controller/railtie"
@@ -40,7 +40,20 @@ end
 module PuavoUsers
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.0
+    config.load_defaults 7.1
+
+    # The documentation says this is discouraged, but without it, the autoloader
+    # won't find any files in app/lib, no matter what, and the program crashes at
+    # startup (it can't load "puavo/authentication" in config/initializers/puavo.rb).
+    # I've tried adding the relevant paths to config.autoload_paths and even
+    # config.eager_load_paths, but to no avail. Any changes to config.autoload_paths
+    # appears to be ignored.
+    config.add_autoload_paths_to_load_path = true
+
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w(assets tasks))
 
     # Configuration for the application, engines, and railties goes here.
     #
