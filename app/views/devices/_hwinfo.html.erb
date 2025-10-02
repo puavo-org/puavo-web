@@ -509,7 +509,7 @@ end
     <% if last['uid'].nil? || last['timestamp'].nil? %>
     <p><%= t('hwinfo.logins.last_login', username: '?', at: '?') %></p>
     <% else %>
-    <p><%= t('hwinfo.logins.last_login') %>: <%= last['uid'] %>, <%= utc_timestamp_for_localization(Time.parse(last['timestamp'])) %></p>
+    <p><%= t('hwinfo.logins.last_login') %>: <%= last['uid'] %>, <%= (last['timestamp'] == '-') ? '?' : utc_timestamp_for_localization(Time.parse(last['timestamp'])) %></p>
     <% end %>
   </td>
 </tr>
