@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
             filterPresets: FILTER_PRESETS,
             defaultRowsPerPage: -1,     // show all devices by default
             dynamicData: "/get_all_devices",
+            preFilterFunction: preprocessDeviceData,
         }
     );
 });
