@@ -20,6 +20,9 @@ dpkg --force-confold -i ../puavo-rest_*.deb ../puavo-web-core_*.deb \
 set -eu
 apt-get install -f -y --force-yes
 
+# Ensure the unit file changes are applied
+systemctl daemon-reload
+
 service puavo-web stop || true
 service puavo-rest stop || true
 
