@@ -1,5 +1,6 @@
 class EmailVerificationsController < ApplicationController
   include Puavo::Integrations
+  include Puavo::Email
 
   # I don't know 100% if this works:
   skip_before_action :find_school, :require_login, :require_puavo_authorization
@@ -97,8 +98,8 @@ class EmailVerificationsController < ApplicationController
       begin
         logger.info("[#{request_id}] Marking address \"#{data['email']}\" as verified for user \"#{data['dn']}\" (#{data['uid']}) in organisation \"#{data['organisation']}\"")
 
-        verify_url = email_management_host + '/email_verification/verify'
-        logger.info("[#{request_id}] Sending request to \"#{email_management_host}\"")
+        verify_url = Puavo::Email::email_management_host(path: '/email_verification/verify')
+        logger.info("[#{request_id}] Sending request to \"#{Puavo::Email::email_management_host}\"")
 
         rest_response = HTTP
           .headers(host: data['organisation'])

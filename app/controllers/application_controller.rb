@@ -15,8 +15,7 @@ class ApplicationController < ActionController::Base
                  :show_authentication_error, :store_location,
                  :redirect_back_or_default, :organisation_key_from_host,
                  :set_initial_locale, :remove_ldap_connection, :theme,
-                 :school_list, :list_all_puavoconf_values, :rack_mount_point,
-                 :email_management_host )
+                 :school_list, :list_all_puavoconf_values, :rack_mount_point )
 
   # Raise an exception if the CSRF check fails. Ignore JSON and XML
   # requests, as they're used in scripts and tests and protecting
@@ -119,11 +118,6 @@ class ApplicationController < ActionController::Base
         object_params[attribute] = Time.local(year.to_i, month.to_i, day.to_i)
     end
 
-  end
-
-  def email_management_host
-    mgmt = Puavo::CONFIG['email_management']
-    URI::HTTP.build(host: mgmt['host'], port: mgmt['port']).to_s
   end
 
   private

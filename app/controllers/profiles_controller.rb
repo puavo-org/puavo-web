@@ -1,5 +1,6 @@
 class ProfilesController < ApplicationController
   include Puavo::Integrations
+  include Puavo::Email
 
   skip_before_action :require_puavo_authorization
 
@@ -66,8 +67,8 @@ class ProfilesController < ApplicationController
       redis_token = SecureRandom.hex(64)
       logger.info("[#{request_id}] Redis token: \"#{redis_token}\"")
 
-      verify_url = email_management_host + '/email_verification/send'
-      logger.info("[#{request_id}] Requesting \"#{email_management_host}\" to send the verification email")
+      verify_url = Puavo::Email::email_management_host(path: '/email_verification/send')
+      logger.info("[#{request_id}] Requesting \"#{Puavo::Email::email_management_host}\" to send the verification email")
 
       rest_response = HTTP
         .headers(host: LdapOrganisation.current.puavoDomain)
@@ -140,8 +141,8 @@ class ProfilesController < ApplicationController
       if current_addresses != new_addresses.to_set
         # There are changes in the addresses, send a save request to the verification server.
         # Normal user accounts do not have write access to these fields.
-        change_url = email_management_host + '/email_verification/change_addresses'
-        logger.info("[#{@request_id}] Email addresses have changed, requesting \"#{email_management_host}\" to change them")
+        change_url = Puavo::Email::email_management_host(path: '/email_verification/change_addresses')
+        logger.info("[#{@request_id}] Email addresses have changed, requesting \"#{Puavo::Email::email_management_host}\" to change them")
 
         rest_response = HTTP
           .headers(host: LdapOrganisation.current.puavoDomain)
