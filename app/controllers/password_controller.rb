@@ -155,7 +155,7 @@ class PasswordController < ApplicationController
       logger.info("[#{request_id}] A password reset for user \"#{params[:forgot][:email]}\" has been requested")
       log_request_env(request, request_id)
 
-      ret = Puavo::Password::send_password_reset_mail(logger, LdapOrganisation.first.puavoDomain, password_management_host, locale, request_id, params[:forgot][:email])
+      ret = Puavo::Password::send_password_reset_mail(logger, LdapOrganisation.first.puavoDomain, Puavo::Password::password_management_host, locale, request_id, params[:forgot][:email])
 
       if ret != :ok
         logger.error("[#{request_id}] Password reset failed, return code is \"#{ret.to_s}\"")
@@ -292,10 +292,10 @@ class PasswordController < ApplicationController
       end
     end
 
-    change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
+    change_password_url = Puavo::Password::password_management_host(path: "/password/change/#{ params[:jwt] }")
 
     logger.info("[#{request_id}] Resetting the password, see the password reset host logs at " \
-                "#{password_management_host} for details")
+                "#{Puavo::Password::password_management_host} for details")
 
     rest_response = HTTP.headers(host: current_organisation_domain, 'Accept-Language': locale)
                                  .put(change_password_url, json: {

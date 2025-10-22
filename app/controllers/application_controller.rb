@@ -16,8 +16,7 @@ class ApplicationController < ActionController::Base
                  :redirect_back_or_default, :organisation_key_from_host,
                  :set_initial_locale, :remove_ldap_connection, :theme,
                  :school_list, :list_all_puavoconf_values, :rack_mount_point,
-                 :password_management_host, :email_management_host,
-                 :mfa_management_host )
+                 :email_management_host )
 
   # Raise an exception if the CSRF check fails. Ignore JSON and XML
   # requests, as they're used in scripts and tests and protecting
@@ -122,20 +121,8 @@ class ApplicationController < ActionController::Base
 
   end
 
-  def password_management_host
-    url = "http://" +
-      Puavo::CONFIG["password_management"]["host"]
-
-    if Puavo::CONFIG["password_management"]["port"]
-      url += ":" + Puavo::CONFIG["password_management"]["port"].to_s
-    end
-
-    return url
-  end
-
   def email_management_host
     mgmt = Puavo::CONFIG['email_management']
-
     URI::HTTP.build(host: mgmt['host'], port: mgmt['port']).to_s
   end
 

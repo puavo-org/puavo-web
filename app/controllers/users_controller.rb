@@ -808,7 +808,7 @@ class UsersController < ApplicationController
 
       begin
         logger.info("[#{request_id}] Sending a password reset email for user \"#{@user.uid}\" (#{@user.dn.to_s}) to address \"#{address}\"")
-        ret = Puavo::Password::send_password_reset_mail(logger, LdapOrganisation.first.puavoDomain, password_management_host, locale, request_id, address)
+        ret = Puavo::Password::send_password_reset_mail(logger, LdapOrganisation.first.puavoDomain, Puavo::Password::password_management_host, locale, request_id, address)
 
         case ret
           when :ok

@@ -50,6 +50,12 @@ module Puavo
       return errors
     end
 
+    def self.password_management_host(path: nil)
+      url = URI(Puavo::CONFIG['password_management']['host'])
+      url.path = path if path
+      url.to_s
+    end
+
     # Sends a password reset email to the requested address. Determines the user automatically.
     def self.send_password_reset_mail(logger, domain, management_host, locale, request_id, address)
       user = User.find(:first, :attribute => "mail", :value => address.strip)
