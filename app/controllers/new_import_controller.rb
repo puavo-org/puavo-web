@@ -159,7 +159,6 @@ class NewImportController < ApplicationController
         end
 
         # The user exists in some other school(s), list their names
-        warn ">>> user=#{ user.inspect }"
         ids = user[:schools].map { |sid| schoolnames_by_id.fetch(sid, '???') }
         response[:states] << [2, ids]
       end
@@ -284,8 +283,8 @@ class NewImportController < ApplicationController
 
     begin
       data = JSON.parse(request.body.read.to_s)
-    rescue => e
-      puts e
+    rescue StandardError => e
+      logger.error(e)
 
       response[:ok] = false
       response[:error] = e.to_s
@@ -445,9 +444,8 @@ class NewImportController < ApplicationController
       filename = "#{current_organisation.organisation_key}_#{@school.cn}_#{filename_timestamp}.pdf"
 
       send_data(pdf.render, filename: filename, type: 'application/pdf', disposition: 'attachment')
-    rescue => e
-      puts e
-      puts e.backtrace.join("\n")
+    rescue StandardError => e
+      logger.error(e)
 
       # Send back an error message
       response = {
@@ -514,10 +512,8 @@ class NewImportController < ApplicationController
       end
 
       user.save!
-    rescue => e
-      puts "-"*50
-      puts e
-      puts "-"*50
+    rescue StandardError => e
+      logger.error(e)
       return [:failed, e.to_s, []]
     end
 
@@ -548,10 +544,8 @@ class NewImportController < ApplicationController
         end
 
         user.save!
-      rescue => e
-        puts "-"*50
-        puts e
-        puts "-"*50
+      rescue StandardError => e
+        logger.error(e)
         failed << [attr, column_to_index[attr], e.to_s]
       end
     end
@@ -572,7 +566,8 @@ class NewImportController < ApplicationController
         # This has its own internal error handling. If the user is already in the group,
         # nothing happens. We simply don't have to worry.
         group.add_user(user)
-      rescue => e
+      rescue StandardError => e
+        logger.error(e)
         failed << [key, column_to_index[key], e.to_s]
         next
       end
@@ -593,9 +588,7 @@ class NewImportController < ApplicationController
     begin
       user = User.find(puavo_id)
     rescue ActiveLdap::EntryNotFound => e
-      puts "-"*50
-      puts e
-      puts "-"*50
+      logger.error(e)
       return [:failed, e.to_s, []]
     end
 
@@ -623,63 +616,48 @@ class NewImportController < ApplicationController
           next
         end
 
-        #puts "|#{key}| = |#{value.inspect}|"
-
         case key
           when 'first'
             if !value.nil? && user.givenName != value
-              puts "  -> First name changed from |#{user.givenName}| to |#{value}|"
               user.givenName = value
               something_changed = true
             end
 
           when 'last'
             if !value.nil? && user.sn != value
-              puts "  -> Last name changed from |#{user.sn}| to |#{value}|"
               user.sn = value
               something_changed = true
             end
 
           when 'password'
             if !value.nil?
-              puts "  -> Setting new password"
               user.new_password = value
               something_changed = true
             end
 
           when 'pnumber'
             if !value.nil? && user.puavoEduPersonPersonnelNumber != value
-              puts "  -> Personnel number changed from |#{user.puavoEduPersonPersonnelNumber}| to |#{value}|"
               user.puavoEduPersonPersonnelNumber = value
               something_changed = true
             end
 
           when 'licenses'
             if !value.nil? && user.puavoLicenses != value
-              puts "  -> User licenses changed from |#{user.puavoLicenses}| to |#{value}|"
               user.puavoLicenses = value
               something_changed = true
             end
         end
       end
 
-      puts "something_changed: #{something_changed}  have_unique: #{have_unique}  have_groups: #{have_groups}"
-
       if !something_changed && !have_unique && !have_groups
-        puts "  -> nothing to save or change, moving on"
         return [:ok, nil, []]
       end
 
       if something_changed
-        puts "  -> simple attributes changed, saving"
-
         begin
           user.save!
-        rescue => e
-          puts "  -> simple save failed!"
-          puts "-"*50
-          puts e
-          puts "-"*50
+        rescue StandardError => e
+          logger.error(e)
           return [:failed, e.to_s, []]
         end
       end
@@ -690,14 +668,10 @@ class NewImportController < ApplicationController
       end
 
       # Process the unique attributes one-by-one, while ignoring duplicates
-      puts "  -> simple save done, processing unique values next"
       failed = []
 
       UNIQUE_ATTRS.each do |attr|
         next unless attributes.include?(attr)
-
-        #puts "|#{attr}| = |#{attributes[attr].inspect}|"
-
         next if attributes[attr].nil?
 
         user = User.find(:first, attribute: 'uid', value: attributes['uid'])
@@ -715,19 +689,13 @@ class NewImportController < ApplicationController
 
         begin
           user.save!
-        rescue => e
-          puts "-"*50
-          puts e
-          puts "-"*50
+        rescue StandardError => e
+          logger.error(e)
           failed << [attr, column_to_index[attr], e.to_s]
         end
       end
 
-      puts "  -> unique values done"
-
       if have_groups
-        puts "  -> processing groups"
-
         attributes.each do |key, value|
           next unless key == 'group'
           next if value.nil? || value.empty?
@@ -743,7 +711,8 @@ class NewImportController < ApplicationController
             # This has its own internal error handling. If the user is already in the group,
             # nothing happens. We simply don't have to worry.
             group.add_user(user)
-          rescue => e
+          rescue StandardError => e
+            logger.error(e)
             failed << [key, column_to_index[key], e.to_s]
             next
           end
@@ -752,18 +721,14 @@ class NewImportController < ApplicationController
 
       if failed.empty?
         # All unique attributes really were unique
-        puts "  -> all unique/group values were good"
         return [:ok, nil, []]
       else
         # Some of the new values were not unique
-        puts "  -> some unique/group values failed"
         return [:partial_ok, nil, failed]
       end
-    rescue => e   # main user update
-      puts "-"*50
-      puts e
-      puts "-"*50
-      return [:partial_ok, e, []]
+    rescue StandardError => e
+      logger.error(e)
+      return [:failed, e, []]
     end
   end
 end
