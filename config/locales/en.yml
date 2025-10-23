@@ -219,6 +219,7 @@ en:
     hover: "Select the user interface language. Your choice is remembered until you log out, or your session expires."
     en: "English (Englanti)"
     fi: "Finnish (Suomi)"
+    de: "German (Deutsch)"
 
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff

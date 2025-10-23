@@ -219,6 +219,7 @@ fi:
     hover: "Valitse käyttöliittymän kieli. Valinta muistetaan kunnes kirjaudut ulos, tai istunto vanhenee."
     en: "Englanti (English)"
     fi: "Suomi (Finnish)"
+    de: "Saksa (Deutsch)"
 
   puavoEduPersonAffiliation_teacher: Opettaja
   puavoEduPersonAffiliation_staff: "Henkilökunta"

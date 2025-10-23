@@ -1,186 +1,2703 @@
-# Partial German translations for Puavo. Password and user profile forms only.
-
 de:
-  language_fi_FI: "Finnisch"
-  language_en_US: "Englisch (Vereinigte Staaten Amerika)"
-  language_sv_FI: "Schwedisch (Finnland)"
-  language_de_DE: "Deutsch (Deutschland)"
-  language_de_CH: "Deutsch (Schweiz)"
-  language_fr_CH: "Französisch (Schweiz)"
-  language_default: "Vorgabe"
+  # Month names used by Rails' date_select control
+  date:
+    month_names:
+    -
+    - Januar
+    - Februar
+    - März
+    - April
+    - Mai
+    - Juni
+    - Juli
+    - August
+    - September
+    - Oktober
+    - November
+    - Dezember
+
+  expiration_times:
+    clear: "Löschen"
+    presets: "Voreinstellungen..."
+    one_hour: "In 1 Stunde"
+    six_hours: "In 6 Stunden"
+    twelve_hours: "In 12 Stunden"
+    one_day: "In 1 Tag"
+    two_days: "In 2 Tagen"
+    three_days: "In 3 Tagen"
+    one_week: "In 1 Woche"
+    two_weeks: "In 2 Wochen"
+    three_weeks: "In 3 Wochen"
+    one_month: "In 1 Monat (30 Tage)"
+    two_months: "In 2 Monaten (60 Tage)"
+    three_months: "In 3 Monaten (90 Tage)"
+    six_months: "In 6 Monaten (180 Tage)"
+    nine_months: "In 9 Monaten (270 Tage)"
+    one_year: "In 1 Jahr (365 Tage)"
+    three_years: "In 3 Jahren (1095 Tage)"
+
+  # The production error page
+  production_error:
+    title: "Ein unerwarteter Fehler ist aufgetreten"
+    heading: "Entschuldigung, ein unerwarteter Fehler ist aufgetreten ☹️"
+    apology: "Wir entschuldigen uns für die entstandenen Unannehmlichkeiten. Bitte kontaktieren Sie den %{manufacturer}-Support und geben Sie die folgenden Informationen an:"
+    log_identifier: "Protokollkennung"
+    server_time: "Serverzeit"
+    server_hostname: "Server-Hostname"
+    request: "Anfrage"
+    copy: "Alles in die Zwischenablage kopieren"
 
   # "Main menu", from which you can log in or access other services in the organisation
   menu:
     index:
-      service_link_name_puavo: "Puavo - Nutzer- und Geräteverwaltung"
+      service_link_name_puavo: "Puavo - Benutzer- und Geräteverwaltung"
       service_link_name_infotv: "Info-TV"
       service_link_name_change_password: "Passwort ändern"
-
-  # Main application layout
-  layouts:
-    sessions:
-      title: "Opinsys-Authentifizierung"
-
-  # Hyperlinks and buttons
-  link:
-    change_password: "Setze neues Passwort"
-    update: "Aktualisieren"
-    continue: "Fortsetzen"
-
-  # Flash messages
-  flash:
-    password:
-      successful: "Die Passwortänderung war erfolgreich!"
-      failed: "Die Passwortänderung war nicht erfolgreich. Leider sind keine zusätzliche Informationen verfügbar. Bitte Support kontaktieren."
-      failed_code: "Die Passwortänderung war nicht erfolgreich. Leider sind keine zusätzliche Informationen verfügbar. Bitte Support kontaktieren und diesen Kode abgeben: %{code}."
-      failed_details: "Die Passwortänderung war nicht erfolgreich: %{details}. Bitte Support kontaktieren und diesen Kode abgeben: %{code}."
-      invalid_external_login: "Das Passwort oder das Benutzerkonto zu einem externen Dienst (%{uid}) ist unrichtig"
-      incomplete_form: "Nicht alle der benötigten Formularfelder wurden ausgefüllt."
-      invalid_login: "Das Benutzerkonto (%{uid}) oder das Passwort ist unrichtig"
-      confirmation_failed: "Das neue Passwort stimmt nicht mit der Passwortbestätigung"
-      invalid_user: "Ein Benutzerkonto (%{uid}) gibt nicht"
-      extlogin_password_changed_but_puavo_failed: "Die Passwortänderung war erfolgreich, aber nicht zu allen Diensten. Bitte Support kontaktieren wenn nötig."
-      connection_failed: Leider ist etwas schief gelaufen. Bitte später wieder versuchen.
-      can_not_change_password: "Die Passwortänderung war aus irgendeinem Grund nicht erfolgreich. Bitte später wieder versuchen! Logkode: %{code}."
-      can_not_change_upstream_password: "Die Passwortänderung zur Quellendienst war aus irgendeinem Grund nicht erfolgreich. Bitte später wieder versuchen!"
-      token_lifetime_has_expired: Ihrer Link ist veraltet. Bitte E-Mail-Adresse wieder angeben.
-      too_many_attempts: "Man muss zehn Sekunden zwischen Passwortänderungen warten."
-      go_away: "Sie dürfen die Passwörter von Anderen nicht verändern, weil Sie keinen Lehrer:in oder Administrator:in sind."
-      cannot_change_student_passwords: "Sie haben keine Berechtigung die Passwörter von Schülern zurückszusetzen"
-
-  # Forms and form errors. Many of these have specially formatted names and
-  # they're structured in a specific way, because they're accessed by form
-  # helper methods and those interpolate the key from field names/IDs.
-  activeldap:
-    attributes:
-      user:
-        uid: "Benutzername"
-        new_password: "Neues Passwort"
-        new_password_confirmation: "Bestätigen Sie das neue Passwort"
-        mail: "Email"
-        telephoneNumber: "Telefonnummer"
-        jpegPhoto: "Bild"
-        puavoLocale: "Sprache"
-    errors:
-      messages:
-        username_validation:
-          leading_whitespace: "Der Anfang des Benutzernamens enthält Leerzeichen"
-          trailing_whitespace: "Das Ende des Benutzernamens enthält Leerzeichen"
-          domain: "Nach dem Benutzernamen kein @-Zeichen und Domain eintippen, bitte"
-          uppercase: "Bitte keine großen Buchstaben im Benutzernamen verwenden"
-          invalid_characters: "Der Benutzername enthält Zeichen die nicht zugelassen sind"
-        password_validation:
-          too_short: "Das Passwort ist zu kurz"
-          too_long: "Das Passwort ist zu lang"
-          cant_start_or_end_in_whitespace: "Das Passwort darf nicht mit Leerzeichen beginnen oder enden"
-          ascii_only: "Das Password darf nur Buchstaben A-Z und a-z, Nummern und einige übliche Sonderzeichen enthalten"
-          not_complex_enough: "Das Passwort ist zu einfach (enthält nicht alle angeforderte Zeichen)"
-          contains_name: "Das Passwort darf nicht Ihren Vornamen, Familiennamen, oder Benutzernamen enthalten"
-          common: "Dieses Passwort ist schwach und häufig verwendet"
-
-  # Password forms
-  # (There are more password-related messages in the flash messages section)
-  password:
-    current_password_too_old: "Gemäss der Sicherheitsrichtlinien der Organisation ist das Passwort zu alt und muss erneuert werden."
-    attempts_are_logged_own: "Die Passwortänderungsversuche werden protokolliert."
-    attempts_are_logged_other: "Dieses Formulär ist nur für Lehrer:innen und Administrator:innen geeignet. Die Passwortänderungen und Passwortänderungsversuche werden mit Benutzerkontos, IP-Adressen und Zeitstempeln protokolliert."
-    invalid: "Das neue Passwort erfüllt nicht die Anforderungen"
-    edit:
-      title: "Das Passwort eines Anderen änderen"
-      head: "Um das Passwort eines Anderen zu ändern, tragen Sie Ihren Benutzernamen und Ihr Passwort ein, dann den Benuzternamen und das neue Passwort des Benutzers, dessen Passwort neu gesetzt werden soll. Sie benötigen genügend Rechte um das Passwort eines anderen Benutzers zu ändern."
-      changing_user: "Ändernder Benutzer"
-      changed_user: "Zu ändernden Benutzer"
-      password: "Passwort"
-      link_own_password: "Das eigene Passwort änderen"
-      domain_or: " oder "
-    own:
-      title: "Das eigene Passwort ändern"
-      password: "Aktuelles Passwort"
-      link_other_password: "Passwort eines Anderen ändern"
-    forgot:
-      title: Reset your password
-      description: "Please enter your email address and we'll send you a link that allows you to set your new password."
-    reset:
-      title: Reset your password
-      password: Enter new password
-      password_confirmation: Re-enter new password
-      description: Please enter your new password
-      submit: Reset password
-    successfully:
-      send_token: "We've sent you an email that will let you reset your password. The link will expire soon, so please open it as quickly as you can.<br><br>If you do not receive the email, please contact Opinsys support and give them this code: %{request_id}."
-      update: Your password has been successfully reset!
-
-  # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
-  profiles:
-    edit:
-      title: "Eigene Information"
-
-      emails:
-        automatic_notice: "In Ihre Organisation werden automatische E-Mail-Adressen eingesetzt. Sie können die Adresse nicht verändern, aber Sie können die bestätigen, falls dies noch nicht gemacht worden ist."
-        help: "Sie können sich eine oder mehrere Adressen geben. Wenn Sie die Adresse gespeichert haben, können Sie zurück zu diesem Formular zurückkehren und eine Bestätigungs-E-Mail schicken um zu beweisen, dass die Adresse in Ihrem Gebrauch ist. Einige Dienstleistungen erfordern mindestens eine bestätigte E-Mail-Adresse. Die erste bestätigte E-Mail wird die <strong>Hauptadresse</strong>. Diese wird später in der Kommunikation verwendet, sowie in Stellen wo nur eine Adresse geliefert werden kann."
-        verified_address: "Bestätigt"
-        primary_address: "Hauptadresse"
-        verify_button: "Bestätigungs-E-Mail schicken"
-        verify_title: "Bestätigungs-E-Mail an diese Adresse schicken. Die Nachricht enthält einen Link, den Sie öffnen müssen."
-        verification_sent: "Bestätigungs-E-Mail geschickt"
-        delete_button: "Entfernen"
-        delete_title: "Diese Adresse entfernen, wenn diese Seite gespeichert wird."
-        undo_deletion_button: "Entfernung rückgängig machen"
-        undo_deletion_title: "Diese Adresse nicht entfernen"
-        new_placeholder: "Die neue Adresse hier eingeben."
-        new_button: "Hinzufügen"
-        new_title: "Die neue Adresse in die Tabelle eingeben. Bitte speichern Sie das Formular!"
-
-        errors:
-          invalid: "Die Adresse gilt nicht"
-          already_in_use: "Diese Adresse wird schon von Ihnen verwendet."
-          unknown: "Unbekannter Fehler"
-          already_verified: "Diese Adresse ist schon bestätigt worden."
-          verification_not_sent: "Bestätigungs-E-Mail konnte nicht geschickt werden. Bitte neu versuchen.\n\nFalls Sie mit dem Helpdesk kontakt aufnehmen bitte diesen Kode weitergeben.: %{code}."
-          verification_rate_limit: "Bitte eine Minute zwischen den Bestätigungswünschen warten."
-
-        delete:
-          base: "Sind Sie sicher, dass Sie die Adresse {address} entfernen wollen?"
-          verified_primary: "Die Adresse ist bestätigt und ist jetzt die Hauptadresse!"
-          verified: "Die Adresse ist bestätigt."
-          breakage: "Wenn Sie keine andere bestätigte E-Mail-Adressen haben, manche Log-Ins können scheitern bis Sie eine andere Adresse bestätigen!"
-
-      remove_photo_on_save: "Das Bild beim speichern entfernen."
-
-    failed:
-      email: "Speicherung der Veränderungen der E-Mail-Adressen"
-      phone: "Einstellung der Telefonnummer"
-      locale: "Einstellung der Sprache"
-      photo_save: "Speicherung des Profilbildes"
-    show:
-      partially_failed_code: "Alle von Ihnen angegebenen Angaben konnten nicht gespeichert werden. Die Speicherung der folgenden Daten war nicht erfolgreich: %{failed}. Sie können neu versuchen. Falls Sie sich mit dem Helpdesk Kontakt aufnehmen, bitte den folgenden Kode angeben: \"%{request_id}\"."
-      updated: "Ihren Informationen sind erfolgreich aktualisiert."
-      go_back: "Zurück zur Veränderung der eigenen Daten"
-
-  # Email address verification
-  email_verifications:
-    title: "E-Mail-Adresse bestätigen"
-    expired_token: "Dieser Link ist fehlaktig oder veraltet. Bitte bitten Sie eine neue Bestätigungsnachricht durch Veränderung des Profils. Wenn Sie sich mit dem Helpdesk Kontakt aufnehmen wollen bitte den folgenden Kode wiedergeben: %{code}."
-    verification_failed: "Die Adresse konnte wegen eines internen Fehlers nicht verifiziert werden. Bitte mit dem Helpdesk Kontakt aufnehmen und diesen Kode wiedergeben:  %{code}."
-    verification_complete: "Die Adresse ist bestätigt. Sie können dieses Fenster oder diesen Tab schließen."
-    verify_message1: "Durch klicken von diesem Knopf bestätigen Sie, dass die Adresse"
-    verify_message2: " funktionierend ist,  und Sie haben dazu einen Zugang. Wenn Sie die Adresse nicht bestätigen wollen, bitte das Fenster oder den Tab schließen. "
-    verify_button: "Diese Adresse bestätigen"
-
-  users:
-    edit:
-      automatic_email: "E-Mail (automatisch)"
+      service_link_name_forgot_password: "Ich habe mein Passwort vergessen"
 
   # Login screen
   sessions:
     new:
       external_service_name: Puavo
-      login_to: Einloggen in den Service
+      login_to: Anmelden
       password: Passwort
-      username_help: "Der Benutzername ist derselbe den Sie für die Anmeldung an Opinsys-Computern verwenden."
-      organisation_help: "Der Benutzername muss in folgender Form angeben werden:  <em>benutzername</em>@<em>organisation</em>.opinsys.fi. Der Benutzername ist derselbe den Sie für die Anmeldung an Opinsys-Computern verwenden. Die Organisation entspricht der Stadt / Gemeinde in der sich Ihrer Schule befindet. Der Benutzername besteht nur aus Kleinbuchstaben und alle diakritische Zeichen sowie Akzente müssen entfernt werden.  Wenn Sie beispielsweise aus dem Harz kommen und Ihr Opinsys-Benutzername ’max.mustermann’ lautet, ist die Organisation <em>’harz’</em>. Somit melden Sie sich mit der Benutzerkennung <em>’max.mustermann@harz.opinsys.fi’</em> an."
+      username_help: Verwenden Sie denselben Benutzernamen, den Sie auch bei der Anmeldung an Puavo-Desktops verwenden.
+      organisation_help: "Der Benutzername muss im Format <i>Benutzername</i>@<i>Organisation</i>.opinsys.fi angegeben werden. Der Benutzername-Teil ist derselbe, den Sie bei der Anmeldung an Puavo-Desktops verwenden. Der Organisationsteil leitet sich von der Stadt/Gemeinde Ihrer Schule ab. Er wird kleingeschrieben und alle nationalen Buchstaben müssen entfernt werden. Wenn Sie zum Beispiel aus Harz kommen und Ihr Puavo-Benutzername michael.mueller ist, lautet der Organisationsteil <i>harz</i>, was bedeutet, dass Sie sich mit <i>michael.mueller@harz.opinsys.fi</i> anmelden."
       developers: Entwickler
-      developers_info: "Lesen Sie <a href=\"/v3/sso/developers\" target=\"_blank\">dieses</a> Dokument, wenn Sie Interesse an der Implementierung der Opinsys-Authentifizierung haben."
+      developers_info: "Lesen Sie <a href=https://api.opinsys.fi/v3/sso/developers target=_blank>dieses</a> Dokument, wenn Sie an der Implementierung der Puavo-Authentifizierung interessiert sind."
       username_placeholder: Benutzername
-      login: Einloggen
-      help: Hinweis
+      login: Anmelden
+      help: Hilfe
+      technical_support: "Technischer Support"
+      mfa:
+        help: "Die Zwei-Faktor-Authentifizierung wurde für Ihr Konto aktiviert. Bitte geben Sie den einmaligen Authentifizierungscode oder einen der Wiederherstellungscodes ein und drücken Sie dann die Eingabetaste oder klicken Sie auf \"Weiter\"."
+        help2: "Sie müssen den Code innerhalb von fünf Minuten eingeben, sonst läuft die Anmeldung ab.<br>Fünf falsche Versuche beenden den Anmeldevorgang ebenfalls."
+        incorrect_code: "Falscher Code"
+        continue: "Weiter"
+        cancel: "Abbrechen"
+        errors:
+          no_session: "Ungültige Sitzungsdaten. Sie können diese Seite nicht direkt mit Ihrem Browser aufrufen. Gehen Sie stattdessen zum ursprünglichen Anmeldeformular und versuchen Sie es erneut."
+          expired: "Ihr Anmeldeversuch ist abgelaufen. Gehen Sie zum ursprünglichen Anmeldeformular und versuchen Sie es erneut."
+          too_many_attempts: "Zu viele fehlgeschlagene Anmeldeversuche mit Multi-Faktor. Anmeldung gestoppt. Gehen Sie zum ursprünglichen Anmeldeformular und versuchen Sie es erneut."
+          mfa_server_error: "Fehler des Authentifizierungsservers. Versuchen Sie, sich erneut anzumelden. Wenn das Problem weiterhin besteht, wenden Sie sich bitte an den Support und geben Sie diesen Code an: %{request_id}."
+          fatal_error: "Fataler Fehler, Anmeldung gestoppt. Bitte wenden Sie sich an den Support und geben Sie diesen Code an: %{request_id}."
+
+  # Page title breadcrumbs
+  titles:
+    users: "Benutzer"
+    new_users_groups: "Gruppen des neuen Benutzers"
+    users_import: "Benutzer importieren"
+    users_lists: "Benutzernamenlisten"
+    groups_rename: "Gruppen-Massenumbenennung"
+    groups: "Gruppen"
+    groupless_users: "Benutzer ohne Gruppe"
+    devices: "Geräte"
+    schools: "Schulen"
+    organisation: "Organisation"
+    edit: "Bearbeiten"
+    new: "Neu"
+    owners: "Besitzer"
+    admins: "Admins"
+    ldap_services: "LDAP-Dienste"
+    external_services: "Externe Dienste"
+    external_files: "Externe Dateien"
+    all_devices: "Alle Geräte in der Organisation"
+    all_images: "Alle in dieser Organisation verwendeten Desktop-Images"
+    school_images: "Alle in dieser Schule verwendeten Desktop-Images"
+    all_users: "Alle Benutzer in der Organisation"
+    all_groups: "Alle Gruppen in der Organisation"
+    servers: "Server"
+    printers: "Drucker"
+    wlan: "Drahtlosnetzwerke"
+    change_school: "Schule wechseln"
+    printer_permissions: "Druckberechtigungen"
+    all_users_marked_for_deletion: "Benutzer in der Organisation, die zum Löschen markiert sind"
+    extended_search: "Erweiterte Suche"
+    group_members_mass_edit: "Massenbearbeitung von Mitgliedern"
+    puavomenu_editor: "Puavomenu-Editor"
+
+  # Hyperlinks and buttons
+  link:
+    save: Speichern
+    more: Weitere Aktionen
+    edit: Bearbeiten...
+    cancel: "Abbrechen"
+    destroy: Entfernen
+    back: "Zurück"
+    delete_school: "Schule löschen"
+    new_group: Neue Gruppe...
+    delete_group: "Gruppe entfernen"
+    find_groupless_users: "Benutzer ohne Gruppe"
+    create_username_list_from_group: "Neue Benutzernamenliste aus Mitgliedern erstellen"
+    get_members_as_csv: "Mitgliederliste als CSV herunterladen"
+    remove_all_members_from_group: "Alle Mitglieder aus der Gruppe entfernen"
+    mark_group_members_for_deletion: "Alle Mitglieder zum späteren Löschen markieren"
+    unmark_group_members_deletion: "Löschmarkierung von allen Mitgliedern entfernen"
+    lock_all_group_members: "Alle Mitglieder sperren"
+    unlock_all_group_members: "Alle Mitglieder entsperren"
+    update: Aktualisieren
+    create: Erstellen
+    users: Benutzer
+    groups: Gruppen
+    lists: Benutzernamenlisten
+    add: Hinzufügen
+    remove: Entfernen
+    move: "Verschieben"
+    new_user: Neuer Benutzer...
+    delete_user: "Benutzer löschen"
+    continue: Weiter
+    change_password: Passwort ändern
+    new_school: Neue Schule...
+    new_ldap_service: Neu...
+    rename_groups: Gruppen umbenennen...
+    devices: Geräteliste
+    image_statistics: Image-Statistiken
+    delete_device: "Gerät löschen"
+    set_install_mode: "Zertifikat entfernen und Gerät in den Installationsmodus versetzen"
+    set_install_mode_server: "Zertifikat entfernen und Server in den Installationsmodus versetzen"
+    set_reset_mode: "Gerät in den Reset-Modus versetzen"
+    clear_reset_mode: "Reset-Modus vom Gerät aufheben"
+    printer_permissions: Druckberechtigungen
+    show_printer_permissions: Druckberechtigungen auflisten...
+    change_school: "Schule wechseln..."
+    new_import: "Benutzer importieren und aktualisieren"
+    group_members_mass_edit: "Massenbearbeitung von Mitgliedern"
+    copy: "Kopieren"
+    copy_to_clipboard: "In die Zwischenablage kopieren"
+    setup_mfa: "Zwei-Faktor-Authentifizierung..."
+
+  # Main application layout
+  layouts:
+    application:
+      schools: Schulen
+      school: Schule
+      index: Startseite
+      logout: Abmelden
+      users: Benutzer
+      groups: Gruppen
+      tools: Werkzeuge
+      devices: Geräte
+      servers: Server
+      ldap_services: LDAP-Dienste
+      external_files: Externe Dateien
+      all_devices: "Alle Geräte"
+      all_images: "Alle Desktop-Images"
+      all_users: "Alle Benutzer"
+      all_groups: "Alle Gruppen"
+      puavomenu_editor: "Puavomenu-Editor"
+      wlan: Drahtlosnetzwerke
+      about: Über
+      printers: Drucker
+      search_placeholder: Schnellsuche
+      search_title: Benutzer-, Gruppen- und Gerätesuche nach Name
+      extended_search_title: Erweiterte Suche. Suchen Sie mit mehreren Namen gleichzeitig, wählen Sie, welche Felder durchsucht werden und wie sie abgeglichen werden.
+      owners: Besitzer
+      all_admins: "Alle Admins"
+      your_account: Ihr Konto
+    forms:
+      required_field: "* = Pflichtfeld"
+    sessions:
+      title: Puavo Authentifizierung
+
+  # Various uncategorized strings
+  general_confirm: Sind Sie sicher?
+  reset_confirm: Sind Sie sicher, dass Sie das Gerät (%{object_name}) in den Reset-Modus versetzen möchten? Im Reset-Modus kann das Gerät nicht verwendet werden, bis die Benutzerdaten entfernt und das Gerät auf die Werkseinstellungen zurückgesetzt wurde.
+  destroy_confirm: Sind Sie sicher? (%{object_name})?
+  destroy_confirm_admin: "Dieser Benutzer ist ein Besitzer und/oder ein Schul-Admin. Sind Sie sicher?"
+  destroy_generic_sync_warning: "Löschungen werden möglicherweise mit einem oder mehreren externen Systemen synchronisiert.\nMöchten Sie wirklich fortfahren?"
+  destroy_exact_sync_warning: "Der Benutzer wird auch aus diesen externen Systemen entfernt:\n\n\tSYSTEM_NAMES_HERE\n\nBitte überprüfen Sie, ob dies Ihre Absicht ist."
+  last_kerberos_auth_date: Letztes Anmeldedatum (Kerberos)
+  last_ldap_auth_date: Letztes Anmeldedatum (LDAP)
+  ldap_create_time: Erstellt (LDAP)
+  ldap_modify_time: Geändert (LDAP)
+  actions: Aktionen
+  missing_data: "(Fehlend/nicht gesetzt)"
+  default_select_value: Auswählen
+
+  # The top bar language selector menu
+  language_selector:
+    hover: "Wählen Sie die Sprache der Benutzeroberfläche. Ihre Wahl wird gespeichert, bis Sie sich abmelden oder Ihre Sitzung abläuft."
+    en: "Englisch (English)"
+    fi: "Finnisch (Suomi)"
+    de: "Deutsch (Deutsch)"
+
+  puavoEduPersonAffiliation_teacher: Lehrer
+  puavoEduPersonAffiliation_staff: Mitarbeiter
+  puavoEduPersonAffiliation_student: Schüler
+  puavoEduPersonAffiliation_visitor: Besucher
+  puavoEduPersonAffiliation_parent: Elternteil
+  puavoEduPersonAffiliation_admin: Admin
+  puavoEduPersonAffiliation_testuser: Testbenutzer
+  school_admin_role: "Schul-Admin"
+  organisation_owner_role: "Organisationsbesitzer"
+  unknown_role: "(Unbekannt)"
+
+  language_fi_FI: Finnisch
+  language_en_US: Englisch (Vereinigte Staaten)
+  language_sv_FI: Schwedisch (Finnland)
+  language_de_DE: Deutsch (Deutschland)
+  language_de_CH: Deutsch (Schweiz)
+  language_fr_CH: Französisch (Schweiz)
+  language_uk_UA: Ukrainisch
+  language_default: Standard
+
+  group_type:
+    teaching group: Lerngruppe
+    course group: Kursgruppe
+    year class: Jahrgangsklasse
+    administrative group: Verwaltungsgruppe
+    archive users: Archivbenutzer
+    other groups: Andere Gruppen
+
+  old_preferred_language: "Alte Einstellung: %{language}"
+
+  timezone_leave_unset: "(Nicht gesetzt lassen)"
+  timezone_empty: Zeitzone wurde nicht festgelegt
+
+  # Column names for various tables. Try to keep these as short as possible to
+  # prevent tables from getting unnecessarily wide.
+  columns:
+    puavoid: "PuavoID"
+    created: "Erstellt"
+    modified: "Geändert"
+    puavoconf: "PuavoConf"
+    school: "Schule"
+    primary_school: "Stammschule"
+    tags: "Tags"
+    description: "Beschreibung"
+    notes: "Notizen"
+    last_kerberos_auth_date: "Letztes Login (Kerberos)"
+    last_ldap_auth_date: "Letztes Login (LDAP)"
+
+    schools:
+      integrations: "Integrationen"
+      oid: "OID-Code"
+      locale: "Locale"
+      timezone: "Zeitzone"
+
+    users:
+      first_names: "Vornamen"
+      last_name: "Nachname"
+      full_name: "Name"
+      uid: "Benutzername"
+      eid: "Externe ID"
+      learner_id: "Lerner-ID"
+      role: "Rolle"
+      phone: "Telefon"
+      email: "E-Mail"
+      v_email: "Verifizierte E-Mail"
+      p_email: "Primäre E-Mail"
+      pnumber: "Personalnummer"
+      expiration: "Konto läuft ab am"
+      rrt: "Bei Markierung zum Löschen"
+      dnd: "Nicht löschen?"
+      is_locked: "Gesperrt?"
+      other_schools: "Andere Schulen"
+      licenses: "Lizenzen"
+      devices: "Geräte des Benutzers"
+      groups: "Gruppen des Benutzers"
+
+    groups:
+      name: "Name"
+      type: "Typ"
+      abbreviation: "Kürzel"
+      eid: "Externe ID"
+      members_count: "Mitglieder"
+      member_groups: "Gruppen (Name (Kürzel, Typ) [Schule])"
+
+    devices:
+      hostname: "Hostname"
+      display_name: "Lesbarer Name"
+      type: "Typ"
+      tags: "Tags"
+      manufacturer: "Hersteller"
+      model: "Modell"
+      serial: "Seriennummer"
+      mac: "MAC"
+      description: "Beschreibung"
+      image: "Image"
+      current_image: "Aktuelles Image"
+      image_series: "Image-Serien-URL"
+      kernel_args: "Kernel-Argumente"
+      kernel_version: "Kernel-Version"
+      primary_user: "Hauptbenutzer"
+      hwinfo_time: "Hardware-Info empfangen am"
+      hwinfo_ram_size: "RAM (MiB)"
+      hwinfo_hd_size: "Festplatte (MiB)"
+      hwinfo_is_ssd: "SSD?"
+      cpu: "Prozessor"
+      bios_vendor: "BIOS-Hersteller"
+      bios_version: "BIOS-Version"
+      bios_date: "BIOS-Datum"
+      bat_vendor: "Akku-Hersteller"
+      bat_serial: "Akku-Seriennummer"
+      bat_cap: "Akkukapazität (%)"
+      bat_pcnt: "Akkustand (%)"
+      bat_volts: "Akkuspannung (V)"
+      wifi: "WLAN"
+      monitors_xml: "Anzeigeeinstellungen (XML)"
+      xrandr: "Xrandr"
+      abitti_version: "Abitti-Version"
+      df_home: "Frei /home (MiB)"
+      df_images: "Frei /images (MiB)"
+      df_state: "Frei /state (MiB)"
+      df_tmp: "Frei /tmp (MiB)"
+      df_imageoverlays: "Frei /imageoverlays (MiB)"
+      have_smart: "SMART-Infos?"
+      has_windows_license: "Hat Windows-Lizenz"
+      windows_installed: "Windows installiert?"
+      purchase_date: "Kaufdatum"
+      purchase_warranty: "Garantie endet"
+      purchase_loc: "Kaufort"
+      purchase_url: "Kauf-URL"
+      purchase_support: "Supportvertrag"
+      last_login_uid: "Zuletzt eingeloggter Benutzer"
+      last_login_time: "Letzter Login"
+      location: "Standort"
+      loc_lat: "Breitengrad"
+      loc_lon: "Längengrad"
+      lspci: "lspci-Werte"
+      lsusb: "lsusb"
+      status: "Status"
+      printer_uri: "Drucker-URI"
+      default_printer: "Standarddrucker"
+      audio_src: "Audioeingang"
+      audio_sink: "Audioausgang"
+      allow_guest: "Gast-Login?"
+      personal_admin: "Persönlich verwaltet?"
+      personal_device: "Persönliches Gerät?"
+      auto_updates: "Automatische Updates?"
+      autopower_mode: "Autom. Abschaltmodus"
+      autopower_on: "Tagesbeginn"
+      autopower_off: "Tagesende"
+      reset_from: "Reset angefordert von"
+      reset_operation: "Reset-Vorgang"
+      reset_pin: "Reset-PIN"
+      reset_time: "Reset angefordert am"
+      reset_fulfilled: "Reset ausgeführt am"
+      uptime: "Betriebszeit"
+      puavopkgs: "Liste der puavo-pkg-Pakete"
+      tz: "Zeitzone"
+      expiration: "Gerät läuft ab am"
+
+    servers:
+      available_images: "Verfügbare Images"
+      schools: "Schulbeschränkungen?"
+
+  puavoconf_table:
+    show:
+      directly_set: "Nur direkt gesetzt (Standard)"
+      effective: "Vererbte Einstellungen (\"effektiv\")"
+      effective_overrides: "Vererbte Einstellungen mit höheren Ebenen"
+      all: "Alle Einstellungen auf allen Ebenen"
+    color_key: "Farben: <span class=\"source_org\">Organisationsebene</span>, <span class=\"source_sch\">Schulebene</span>, <span class=\"source_dev\">Geräteebene</span>, <span class=\"overridden\">eine Einstellung, die auf einer niedrigeren Ebene überschrieben wird</span>."
+    titles:
+      org:
+        abbr: "O"
+        full: "Eine Einstellung auf Organisationsebene"
+      sch:
+        abbr: "S"
+        full: "Eine Einstellung auf Schulebene"
+      dev:
+        abbr: "G"
+        full: "Eine Einstellung auf Geräteebene"
+
+  puavoconf_editor:
+    # Can't use quotes in these, as they get written in the HTML and used as-is,
+    # and the quotes will get screwed up.
+    already_exists: "Schlüssel $(name) existiert bereits"
+    accept_new: "Erstellen Sie einen neuen Schlüssel $(name) durch Drücken von Enter oder Tab"
+    new_placeholder: "Geben Sie den Namen des neuen Schlüssels ein, der hinzugefügt werden soll..."
+    show_raw: "Bearbeitbares JSON anzeigen"
+    delete_item: "Diesen Schlüssel löschen"
+    editors:
+      string:
+        choices_label: "Vordefinierte Auswahl (Sie können einen benutzerdefinierten Wert in das obige Feld eingeben)"
+      json:
+        invalid_json: "Ungültiges JSON, wird zur Laufzeit Probleme verursachen"
+      puavomenu_tags:
+        input_title: "Die rohe Filterzeichenfolge. Sie können dies direkt bearbeiten oder die untere Tabelle für eine mausgesteuerte Oberfläche verwenden."
+        action:
+          title: "Welche Aktion führt der Filter aus?"
+          show: "Anzeigen"
+          hide: "Verbergen"
+        namespace:
+          title: "Auf welche Art von Objekt zielt der Filter? Standard ist Tag."
+          tag: "Tag"
+          category: "Kategorie"
+          menu: "Menü"
+          program: "Programm"
+        target:
+          title: "Name (Bezeichner) des Zielobjekts"
+        buttons:
+          add: "Einen neuen Filter nach diesem hinzufügen"
+          delete: "Diesen Filter löschen"
+          move_up: "Diesen Filter nach oben verschieben"
+          move_down: "Diesen Filter nach unten verschieben"
+
+  # Quick search
+  search:
+    search_result:
+      title_user: Benutzer
+      title_group: Gruppen
+      title_device: Geräte
+      title_server: "Bootserver"
+    no_matches: "(Keine Treffer)"
+    failed: "(Suche fehlgeschlagen!)"
+
+  # Extended search
+  extended_search:
+    title: "Erweiterte Suche"
+
+    tabs:
+      search: "Suche"
+      help: "Anleitungen und Tipps"
+
+    search_box_instructions: "Geben Sie einen oder mehrere Suchbegriffe ein, einen pro Zeile. Führende und nachgestellte Leerzeichen werden automatisch entfernt. Leere Zeilen und Zeilen, die mit # beginnen, werden ignoriert."
+
+    terms_title: "Suchbegriffstyp:"
+
+    per_term_settings:
+      title: "Zusätzliche Einstellungen für diesen Begriffstyp"
+      no_extra_settings: "(Keine zusätzlichen Einstellungen)"
+      deletion_mark_state:
+        title: "Status der Kontolöschung"
+        is_marked: "Ist zum späteren Löschen markiert"
+        is_unmarked: "Nicht zum späteren Löschen markiert"
+        dont_care: "(Ignorieren)"
+      lock_state:
+        title: "Kontosperrung"
+        is_locked: "Konto ist gesperrt"
+        is_unlocked: "Konto ist nicht gesperrt"
+        dont_care: "(Ignorieren)"
+      device_type:
+        title: "Ergebnisse nach Gerätetyp einschränken"
+        laptop: "Laptop"
+        fatclient: "Fatclient"
+        printer: "Drucker"
+        bootserver: "Bootserver"
+        other: "(Alles andere)"
+
+    term_names:
+      users:
+        title: "Benutzer"
+        puavoid: "Benutzer: Puavo-ID"
+        uid: "Benutzer: Benutzername"
+        name_lastfirst: "Benutzer: Nachname Vorname / Nachname, Vorname (kein Regexp)"
+        name_firstlast: "Benutzer: Vorname Nachname / Vorname, Nachname (kein Regexp)"
+        externalid: "Benutzer: Externe ID"
+        email: "Benutzer: E-Mail"
+        phone: "Benutzer: Telefonnummer"
+      groups:
+        title: "Gruppen"
+        puavoid: "Gruppen: Puavo-ID"
+        name: "Gruppen: Name"
+        abbreviation: "Gruppen: Kürzel"
+        externalid: "Gruppen: Externe ID"
+      devices:
+        title: "Geräte"
+        puavoid: "Geräte: Puavo-ID"
+        hostname: "Geräte: Hostname"
+        image: "Geräte: Desktop-Image (immer Regexp)"
+        current_image: "Geräte: Aktuelles Desktop-Image (immer Regexp)"
+        mac: "Geräte: MAC-Adresse"
+        tags: "Geräte: Tags"
+        monitors_xml: "Geräte: Anzeigeeinstellungen XML (immer Regexp)"
+        xrandr: "Geräte: Xrandr-Einstellungen (immer Regexp)"
+        kernel_params: "Geräte: Kernel-Argumente (immer Regexp)"
+        kernel_version: "Geräte: Kernel-Version (immer Regexp)"
+        manufacturer: "Geräte: Hersteller"
+        model: "Geräte: Modell"
+        serial_number: "Geräte: Seriennummer"
+
+    school_limit_title: "Schulbeschränkung:"
+    school_limit_all: "(Alle Schulen)"
+
+    more_settings:
+      title: "Sucheinstellungen"
+      regexp_title: "Begriffe sind Regexp-Strings (erlaubt Teiltreffer, siehe Hilfe)"
+      reverse_title: "Umgekehrte Suche (nur Suchbegriffe werden umgekehrt abgeglichen, nicht begriffsspezifische Zusatzeinstellungen)"
+      remove_misses_title: "Begriffe, die keine Treffer ergaben, nicht in den Ergebnissen auflisten"
+
+    button_search: "Suchen"
+    button_clear_results: "Ergebnisse löschen"
+    button_clear_terms: "Suchbegriffe löschen"
+
+    results_title: "Ergebnisse"
+    results:
+      search_term_title: "Suchbegriff"
+      matched_string: "Übereinstimmender Text"
+      no_term_hits: "(Keine Treffer)"
+      no_results: "(Keine Ergebnisse)"
+      statistics: "%{total} Treffer insgesamt. %{num_terms} Suchbegriff(e); %{num_hits} Treffer, %{num_misses} Fehltreffer. Die Suche dauerte %{elapsed} Sekunden."
+
+    errors:
+      unknown_school: "(Unbekannte Schule)"
+
+    controller:
+      invalid_search_data: "Ungültige Suchparameter: fehlende Suchbegriffe oder Suchbegriffstyp"
+      search_terms_cleanup_failed: "Bereinigung der Suchbegriffe fehlgeschlagen"
+      no_search_terms: "Keine Suchbegriffe"
+      school_limit_failed: "Analyse der Schulbeschränkung fehlgeschlagen"
+      invalid_regexp: "Ungültiger Regexp "
+      unknown_search_term_type: "Unbekannter Suchbegriffstyp "
+
+  # Common SuperTable elements
+  supertable:
+    column_actions: "Aktionen"
+    empty_table: "Leere Tabelle"
+    empty: "(leer)"
+    selected: "(Auswählen)"
+    see_console_for_details: "Details finden Sie in der Browser-Konsole."
+    network_error: "Netzwerkfehler"
+    network_connection_error: "Netzwerkverbindungsfehler!"
+    export_failed: "Die Ausgabedatei konnte nicht generiert werden:\\n\\n%{error}\\n\\nDetails finden Sie in der Browser-Konsole."
+    status:
+      visible_rows: "%{visible}/%{total} sichtbar"
+      filtered_rows: "%{count} gefiltert"
+      selected_rows: "%{count} ausgewählt"
+      mass_progress: "%{count}/%{total} (<span class=\\\"success\\\">%{success} erfolgreich</span>, <span class=\\\"fail\\\">%{fail} fehlgeschlagen</span>)"
+      column_stats: "%{selected}/%{total} Spalten ausgewählt"
+      mass_row_status: "%{total} insgesamt, %{match} übereinstimmend, %{unmatched} nicht übereinstimmend"
+      pagination: "Seite: %{current}/%{total}"
+    export:
+      top_button: "Exportieren"
+      title: "Tabelleninhalt in eine Datei exportieren"
+      settings: "Einstellungen"
+      only_selected_rows_checkbox: "Nur ausgewählte Zeilen"
+      only_selected_rows_title: "Wenn aktiviert, werden nur die aktuell ausgewählten Zeilen exportiert. Dies hat keine Auswirkung, wenn die aktuelle Tabelle keine Zeilenauswahl erlaubt."
+      only_visible_rows_checkbox: "Nur nach Filterung sichtbare Zeilen"
+      only_visible_rows_title: "Wenn aktiviert, werden nur die nach der Filterung sichtbaren Zeilen exportiert. Andernfalls werden alle Zeilen exportiert."
+      only_visible_cols_checkbox: "Nur sichtbare Spalten"
+      only_visible_cols_title: "Wenn aktiviert, werden nur die aktuell ausgewählten Spalten exportiert. Andernfalls werden alle Spalten exportiert."
+    rows:
+      top_button: "Zeilen"
+      whole_table_title: "Ganze Tabelle"
+      select_all: "Alle Zeilen auswählen"
+      deselect_all: "Alle Zeilen abwählen"
+      invert_selection: "Auswahl umkehren"
+      deselect_successfull: "Erfolgreich verarbeitete Zeilen abwählen"
+      specific_rows_title: "Nur bestimmte Zeilen"
+      explanation: "Geben Sie einen oder mehrere Namen, Kürzel, IDs oder andere eindeutige Bezeichner ein. Wählen Sie dann deren Typ und drücken Sie \"Auswählen\" oder \"Abwählen\". Zeilen, die nicht übereinstimmten, werden <span class=\"unmatchedRow\">andersfarbig</span> dargestellt. Sie können sie bearbeiten und die Auswahl erneut durchführen. Duplikate und leere Zeilen werden entfernt."
+      type: "Typ"
+      select: "Auswählen"
+      deselect: "Abwählen"
+    columns:
+      top_button: "Spalten"
+      explanation: "Sie können die Spalten neu anordnen, indem Sie ihre Kopfzeilen mit der Maus ziehen. Klick = sortieren, Ziehen = neu anordnen."
+      search_placeholder: "Suchen"
+      save: "Speichern"
+      default_columns: "Standards"
+      select_all: "Alle auswählen"
+      deselect_all: "Alle abwählen"
+      default_order: "Spalten in Standardreihenfolge sortieren"
+    filtering:
+      top_button: "Filtereditor"
+      top_enabled: "Filterung aktivieren"
+      top_reverse: "Umkehren"
+      advanced_checkbox: "Erweiterte Filterung"
+      presets_button: "Filtervoreinstellungen"
+      expression_title: "Filterzeichenfolge"
+      unsaved: "ungespeichert"
+      save_json_confirm: "Sind Sie sicher?"
+      error: "Fehler"
+      warning: "Warnung"
+      no_messages: "Keine Probleme in der Filterzeichenfolge gefunden"
+      traditional_filter_is_empty: "Der traditionelle Filter ist leer."
+      row: "Zeile"
+      column: "Spalte"
+      message: "Nachricht"
+      preview_prefix: "Filter"
+      new_traditional_filter: "Neu..."
+      messages:
+        column_not_visible: "Spalte ist nicht sichtbar. Vorsicht, sie kann Zeilen anzeigen oder verbergen, die sie nicht sollte."
+        expected_column_name: "Hier wurde ein Spaltenname erwartet (unbekannter Spaltenname?)"
+        expected_operator: "Hier wurde ein Vergleichsoperator erwartet"
+        expected_value_rpar: "Hier wurde ein Vergleichswert oder ')' erwartet"
+        incompatible_operator: "Dieser Operator kann nicht mit diesem Spaltentyp verwendet werden"
+        invalid_operator: "Ungültiger Vergleichsoperator"
+        invalid_regexp: "Ungültige Regexp-Zeichenfolge"
+        invalid_sign: "Ungültiges Vorzeichen"
+        invalid_storage_unit: "Ungültiger Speichereinheitenspezifizierer"
+        invalid_time_unit: "Ungültige Zeiteinheit"
+        not_a_number: "Ungültige Zahl"
+        missing_time_unit: "Fehlende Zeiteinheit, es werden Sekunden angenommen (wahrscheinlich nicht das, was Sie meinten)"
+        syntax_error: "Syntaxfehler"
+        unbalanced_nesting: "Unausgeglichene Klammern"
+        unexpected_column_name: "Hier wurde kein Spaltenname erwartet"
+        unexpected_end: "Unerwartetes Ende der Eingabe"
+        unexpected_lpar: "Unerwartetes ')'"
+        unexpected_negation: "Unerwartetes '!'"
+        unexpected_rpar: "Unerwartetes ')'"
+        unknown_column: "Unbekannte Spalte"
+        unknown_error: "Unbekannter Fehler :-("
+        unknown_operator: "Unbekannter Operator"
+        unparseable_time: "Diese Zeichenfolge kann weder als absolute noch als relative Zeit interpretiert werden"
+        unterminated_string: "Nicht abgeschlossene Zeichenfolge"
+      pretty:
+        empty: "(leer)"
+        or: "oder"
+        nor: "noch"
+        interval: "zwischen"
+        not_interval: "nicht zwischen"
+      ed:
+        closed: "Geben Sie ein Intervall an, in dem der Wert liegen muss. Die Start- und Endwerte sind enthalten."
+        open: "Geben Sie ein Intervall an, in dem der Wert nicht liegen darf. Die Start- und Endwerte sind nicht enthalten."
+        invalid_interval: "Geben Sie gültige Minimal- und Maximalwerte an."
+        single: "Dieser Operator akzeptiert nur einen Wert."
+        multiple: "Sie können mehrere Werte angeben."
+        one_hit_is_enough: "Ein einzelner Treffer reicht aus."
+        no_hits_allowed: "Keiner der Werte darf übereinstimmen."
+        regexp: "Alle Vergleiche erfolgen mit regulären Ausdrücken, die die Groß-/Kleinschreibung ignorieren. Denken Sie daran, dass Sie Zeichen, die in Regexps eine besondere Bedeutung haben, mit einem Backslash (\\\\) escapen müssen."
+        no_values: "Sie haben keine Vergleichswerte angegeben."
+        bool:
+          t: "Ja"
+          f: "Nein"
+        numeric:
+          nan: "ist keine Zahl."
+          negative_storage: "Negative Speichergrößen sind nicht zulässig."
+        time:
+          invalid: "ist weder eine absolute noch eine relative Zeit."
+          help_link: "Anleitung zur Angabe von Daten und Zeiten anzeigen"
+          help: "Es sind zwei Formate verfügbar: absolut und relativ.\\n\\nAbsolute Zeiten werden als JJJJ-MM-TT HH:MM:SS formatiert. Je mehr Teile Sie angeben, desto genauer wird es. Weggelassene Tage und Monate werden als 1 angenommen, und weggelassene Stunden, Minuten und Sekunden als 0. \\\"2025\\\" bedeutet \\\"2025-01-01 00:00:00\\\", \\\"2025-09\\\" bedeutet \\\"2025-09-01 00:00:00\\\", \\\"2025-09-22 13\\\" bedeutet \\\"2025-09-22 13:00:00\\\" und so weiter. Alle Zeiten sind im 24-Stunden-Format. Das Jahr muss zwischen 2000 und 2050 liegen.\\n\\nRelative Zeit gibt die Zeit relativ zum Zeitpunkt der Tabellenaktualisierung in Sekunden an. Negative Zahlen zeigen in die Vergangenheit, positive in die Zukunft. Nach der Zahl kommt die Einheit, diese sind: \\\"s\\\" (Sekunde), \\\"h\\\" (Stunde), \\\"d\\\" (Tag), \\\"w\\\" (Woche), \\\"m\\\" (30-Tage-Monat), \\\"y\\\" (365-Tage-Jahr). Zum Beispiel bedeutet \\\"-2h\\\" \\\"genau vor zwei Stunden\\\", \\\"-1d\\\" bedeutet \\\"genau vor 1 Tag (86400 Sekunden)\\\", und \\\"-8m\\\" bedeutet \\\"genau vor 8 Monaten\\\". In der Praxis werden Sie fast immer negative Zahlen verwenden."
+      traditional:
+        delete_all: "Alle Filter löschen"
+        show_json: "Den JSON-Editor anzeigen"
+        hide_json: "Den JSON-Editor ausblenden"
+        save_json: "Den JSON-Filter speichern"
+        filter:
+          is_active: "Ist dieser Filter aktiv?"
+          click_to_edit: "Zum Bearbeiten klicken..."
+          delete: "Löschen"
+        editor:
+          column: "Zielspalte"
+          operator: "Vergleichsoperator"
+          save: "Speichern"
+      advanced:
+        expression_title: "Filterausdruck"
+        expression_placeholder: "Geben Sie hier den Filterausdruck ein"
+        save: "Speichern"
+        clear: "Löschen"
+        convert_traditional: "Traditionellen Filter kopieren und konvertieren"
+        messages_title: "Kompilierungsnachrichten"
+      presets:
+        traditional_help: "Laden Sie eine Filtervoreinstellung, indem Sie auf ihren Namen in der Liste unten klicken. Sie können wählen, ob der neue Filter den bestehenden ersetzen soll oder ob sein Inhalt am Ende angefügt werden soll. Auf diese Weise können Sie große Filter durch Kombination kleinerer Teile erstellen."
+        advanced_help: "Die untere Tabelle listet vorgefertigte Filtervorlagen auf. Klicken Sie auf den Titel der Vorlage, um sie in das Filtertextfeld zu kopieren. Sie können auswählen, ob die Vorlage die vorhandene Filterzeichenfolge ersetzt oder ob sie lediglich am Ende angefügt wird. Da Sie Klammern und logische Operatoren (&&, || und !) zur Gruppierung verwenden können, können Sie die eingefügte Vorlage automatisch von Klammern umgeben lassen. Auf diese Weise können Sie mehrere Ausdrücke zusammensetzen und komplexe Filter erstellen. Sie können den Filterausdruck auch direkt aus der Tabelle auswählen und kopieren, wenn keine der Einfügemethoden Ihren Bedürfnissen entspricht."
+        append: "Am Ende anfügen, nicht ersetzen"
+        parenthesis: "Den Ausdruck in Klammern setzen"
+        name: "Name"
+        contents: "Voreingestellter Inhalt"
+    mass:
+      top_button: "Massenwerkzeuge"
+      operation_title: "Operation"
+      start_button: "Start"
+      stop_button: "Stopp"
+      settings_title: "Operationseinstellungen"
+      operation_not_permitted: "Sie haben nicht genügend Admin-Berechtigungen, um diese Massenoperation auszuführen"
+    paging:
+      top_rows_per_page: "Wie viele Zeilen pro Seite angezeigt werden"
+      top_first_page: "Erste Seite"
+      top_previous_page: "Vorherige Seite"
+      top_jump_to_page_placeholder: "Seite: -/- ▼"
+      top_jump_to_page: "Zur Seite springen..."
+      top_next_page: "Nächste Seite"
+      top_last_page: "Letzte Seite"
+      popup_title: "Direkt zur Seite springen:"
+
+  # Flash messages
+  flash:
+    your_account_has_expired: "Ihr Konto ist abgelaufen"
+    you_must_be_an_owner: "Sie haben nicht genügend Rechte, um auf diese Seite zuzugreifen."
+    added: "%{item} wurde erfolgreich erstellt."
+    updated: "%{item} wurde erfolgreich aktualisiert."
+    destroyed: "%{item} wurde erfolgreich entfernt."
+    create_failed: Erstellen von %{model} fehlgeschlagen!
+    save_failed: "%{model} kann nicht gespeichert werden!"
+    wlan_updated: WLAN-Einstellungen erfolgreich aktualisiert
+    wlan_save_failed: "WLAN-Einstellungen konnten nicht gespeichert werden: %{error}"
+    device_created: "Gerät wurde erfolgreich erstellt."
+    device_updated: "Gerät wurde erfolgreich aktualisiert."
+    server_created: "Server wurde erfolgreich erstellt."
+    server_updated: "Server wurde erfolgreich aktualisiert."
+    printer_permissions_updated: "Druckberechtigungen aktualisiert."
+    invalid_school_id: "Die Schul-ID ist ungültig."
+    invalid_user_id: "Die Benutzer-ID %{id} ist ungültig."
+    invalid_group_id: "Die Gruppen-ID %{id} ist ungültig."
+    invalid_server_id: "Die Server-ID %{id} ist ungültig."
+    invalid_device_id: "Die Geräte-ID %{id} ist ungültig."
+    unknown_device_type: Unbekannter Gerätetyp
+    set_install_mode: "Zertifikat entfernt, Gerät jetzt im Installationsmodus"
+    set_install_mode_server: "Zertifikat entfernt, Server jetzt im Installationsmodus"
+    set_reset_mode: "Dieses Gerät befindet sich jetzt im Reset-Modus"
+    clear_reset_mode: "Dieses Gerät befindet sich nicht mehr im Reset-Modus"
+    organisation_ownership_removed: "Organisationsbesitz des Admin-Benutzers wurde entfernt."
+    organisation_ownership_not_removed: "Organisationsbesitz des Admin-Benutzers konnte nicht automatisch entfernt werden!"
+    user_deletion_prevented: "Benutzer kann nicht entfernt werden"
+    device_primary_user_removal_failed: "Der Hauptbenutzer eines Geräts konnte nicht gelöscht werden. Der Benutzer wurde nicht gelöscht. Sie können versuchen, den Benutzer erneut zu löschen; wenn dies fehlschlägt, entfernen Sie den Benutzer manuell von seinen Geräten und versuchen Sie es erneut."
+    organisation:
+      updated: "Organisation wurde erfolgreich aktualisiert."
+      wrong_user_type: Organisationsbesitzer-Zugriffsrechte können nur hinzugefügt werden, wenn der Benutzertyp Admin ist
+      owner_added: "%{user} ist jetzt ein Besitzer dieser Organisation"
+      owner_removed: "%{user} ist kein Besitzer dieser Organisation mehr"
+      cant_remove_self: "Sie können sich nicht selbst von den Besitzern entfernen. Ein anderer Benutzer auf Besitzerebene muss Sie von den Besitzern entfernen."
+      external_services_updated: "Aktivierungen externer Dienste aktualisiert"
+      external_services_update_failed: "Speichern der Aktivierungszustände externer Dienste fehlgeschlagen"
+    group:
+      empty_group: "Es gibt keine Mitglieder in dieser Gruppe, es wurde nichts getan"
+      create_username_list_ok: "Eine neue Benutzernamenliste wurde aus den Mitgliedern der Gruppe \"%{name}\" erstellt"
+      create_username_list_failed: "Konnte keine neue Benutzernamenliste erstellen"
+      members_marked: "%{count} Benutzer zum Löschen markiert"
+      members_unmarked: "%{count} Benutzer von der Löschung ausgenommen"
+      members_locked: "%{count} Benutzer gesperrt"
+      members_unlocked: "%{count} Benutzer entsperrt"
+      groupless_marked: "%{ok} Benutzer zum Löschen markiert, %{failed} konnten nicht markiert werden"
+      group_emptied_ok: "Alle Mitglieder aus der Gruppe entfernt"
+      group_emptied_failed: "Nicht alle Mitglieder konnten entfernt werden"
+      no_other_available_schools: "Diese Gruppe kann nicht in eine andere Schule verschoben werden, da keine anderen geeigneten Schulen vorhanden sind"
+      school_changed: "Gruppe in Schule \"%{new_school}\" verschoben"
+    rename_groups:
+      abbreviation_already_in_use: "Dieses Kürzel wird bereits verwendet!"
+      complete: "%{count} Gruppe(n) umbenannt."
+    user:
+      save_failed: Benutzer kann nicht gespeichert werden!
+      save_failed_organsation_owner_removal: "Speichern fehlgeschlagen: Benutzer konnte nicht von den Organisationsbesitzern entfernt werden, bevor die Admin-Rolle entfernt wurde. Versuchen Sie, den Besitz manuell zu entfernen."
+      save_failed_school_admin_removal: "Speichern fehlgeschlagen: Benutzer konnte nicht von den Schuladministratoren entfernt werden, bevor die Admin-Rolle entfernt wurde. Versuchen Sie, den Benutzer manuell von den Administratoren zu entfernen."
+      save_failed_unknown_duplicate_attribute: "Speichern fehlgeschlagen: unbekannter doppelter Attributwert (ACLs verhindern die Bestimmung, um welches Attribut es sich handelt). Dieser Benutzername oder diese E-Mail-Adresse wird wahrscheinlich bereits in einer anderen Schule verwendet, auf die Sie keinen Zugriff haben."
+      create_failed: Erstellen des Benutzers fehlgeschlagen!
+      create_failed_unknown_duplicate_attribute: "Erstellen des Benutzers fehlgeschlagen: unbekannter doppelter Attributwert (ACLs verhindern die Bestimmung, um welches Attribut es sich handelt). Dieser Benutzer existiert wahrscheinlich in einer anderen Schule, auf die Sie nicht zugreifen können; versuchen Sie einen anderen Benutzernamen oder eine andere E-Mail-Adresse."
+      delete_admin_removal_failed: "Löschen fehlgeschlagen: Der Benutzer konnte vor dem Löschen nicht von den Schul-Admins entfernt werden."
+      expiration_time_removed: "Ablaufzeit entfernt"
+      marked_for_deletion: "Benutzer wurde zum Löschen markiert"
+      already_marked_for_deletion: "Benutzer ist bereits zum Löschen markiert"
+      unmarked_for_deletion: "Benutzer ist nicht mehr zum Löschen markiert"
+      not_marked_for_deletion: "Dieser Benutzer wurde nicht zum Löschen markiert"
+      deletion_prevented: "Löschen des Benutzers wurde verhindert."
+      marked_users_deleted: "%{succeed} Benutzer entfernt"
+      marked_users_deleted_with_fail: "%{succeed} Benutzer entfernt, %{failed} nicht entfernt"
+      marked_users_locked: "%{succeed} Benutzer gesperrt"
+      marked_users_locked_with_fail: "%{succeed} Benutzer gesperrt, %{failed} nicht gesperrt"
+      marked_users_locked_none: "Es gab keine ungesperrten Benutzer"
+      you_cant_lock_yourself: "Sie können Ihr eigenes Konto nicht sperren"
+      locked: "Konto gesperrt"
+      unlocked: "Konto entsperrt"
+      cant_mark_yourself_for_deletion: "Sie können sich nicht selbst zum Löschen markieren"
+      cant_delete_yourself: "Sie können sich nicht selbst löschen"
+      added_to_school: "Benutzer zur Schule \"%{name}\" hinzugefügt"
+      school_adding_failed: "Benutzer konnte der Schule nicht hinzugefügt werden!"
+      removed_from_school: "Benutzer aus der Schule \"%{name}\" entfernt"
+      school_removing_failed: "Benutzer konnte nicht aus der Schule entfernt werden!"
+      primary_school_changed: "Stammschule auf \"%{name}\" gesetzt"
+      primary_school_change_failed: "Stammschule konnte nicht geändert werden!"
+      cannot_remove_primary_school: "Sie können einen Benutzer nicht aus seiner Stammschule entfernen!"
+      invalid_primary_school: "Der Benutzer ist kein Mitglied der Schule \"%{name}\" und kann daher nicht zu seiner Stammschule gemacht werden."
+      primary_school_added_and_changed: "Benutzer in die neue Stammschule \"%{name}\" verschoben."
+      user_moved_to_school: "Benutzer in die Schule \"%{name}\" verschoben"
+      school_moving_failed: "Schulwechsel fehlgeschlagen"
+      sso_session_gone: "Die SSO-Sitzung des Benutzers wurde zurückgesetzt (falls sie existierte)"
+      admin_permissions_updated: "Admin-Berechtigungen aktualisiert"
+      teacher_permissions_updated: "Lehrerberechtigungen aktualisiert"
+      not_an_admin: "Admin-Berechtigungen können nicht bearbeitet werden, da der Benutzer kein Admin ist"
+      reset_email_sent: "Reset-E-Mail gesendet."
+      reset_failed_no_emails: "Dieser Benutzer hat keine E-Mail-Adresse. Protokollcode: %{request_id}."
+      reset_failed_user_not_found: "Kein Benutzer mit dieser E-Mail-Adresse gefunden. Protokollcode: %{request_id}."
+      reset_failed_link_already_sent: "Dieser Benutzer hat bereits eine aktive Reset-Anfrage. Protokollcode: %{request_id}."
+      reset_failed_link_sending_failed: "E-Mail-Versand fehlgeschlagen. Protokollcode: %{request_id}."
+      reset_failed_puavo_rest_call_failed: "puavo-rest-Aufruf fehlgeschlagen. Protokollcode: %{request_id}."
+      reset_failed_generic: "Reset-E-Mail konnte nicht gesendet werden. Protokollcode: %{request_id}."
+
+      # messages generated by synchronous actions
+      synchronous_actions:
+        deletion:
+          part1: "Benutzerlöschung abgebrochen; der Benutzer konnte nicht aus dem System %{system} gelöscht werden, Grund: %{reason}."
+          part2: "(Entfernung war in folgenden Systemen erfolgreich: %{ok_systems}.)"
+          part3: "Sie können es später erneut versuchen. Für weitere Informationen wenden Sie sich bitte an den Puavo-Support und geben Sie diesen Code an: %{code}."
+
+    puavomenu_editor:
+      saved: "Gespeichert"
+      cleared: "Menüdaten wurden entfernt"
+
+    password_set_failed: Passwortänderung fehlgeschlagen! Versuchen Sie es erneut!
+    session:
+      login_successful: Anmeldung erfolgreich!
+      failed: Anmeldung fehlgeschlagen!
+      logout_successful: Abmeldung erfolgreich!
+      invalid_language: "Ungültiger oder fehlender Sprachcode. Sprache der Benutzeroberfläche nicht geändert."
+    password:
+      successful: "Passwort erfolgreich geändert!"
+      failed: "Passwortänderung fehlgeschlagen. Leider sind keine weiteren Informationen verfügbar. Bitte wenden Sie sich an den Support."
+      failed_code: "Passwortänderung fehlgeschlagen. Leider sind keine weiteren Informationen verfügbar. Bitte wenden Sie sich an den Support und geben Sie diesen Code an: %{code}."
+      failed_details: "Passwortänderung fehlgeschlagen: %{details}. Wenn das Problem weiterhin besteht, wenden Sie sich bitte an den Support und geben Sie diesen Code an: %{code}."
+      invalid_external_login: "Ungültiges externes Anmeldepasswort oder Benutzername (%{uid})"
+      incomplete_form: Sie haben nicht alle erforderlichen Formularfelder ausgefüllt.
+      invalid_login: Ungültiges Passwort oder Benutzername (%{uid})
+      confirmation_failed: "Passwort stimmt nicht mit der Bestätigung überein"
+      invalid_user: Benutzer (%{uid}) existiert nicht
+      extlogin_password_changed_but_puavo_failed: "Passwortänderung war erfolgreich, aber nicht für alle Dienste. Wenden Sie sich bei Problemen an den Support."
+      connection_failed: "Entschuldigung, aber etwas ist schiefgegangen. Bitte versuchen Sie es in einem Moment erneut. Wenn es immer noch fehlschlägt, wenden Sie sich bitte an den Puavo-Support."
+      can_not_change_password: "Passwort konnte nicht geändert werden. Bitte versuchen Sie es in einem Moment erneut. Wenn es immer noch fehlschlägt, wenden Sie sich bitte an den Puavo-Support und geben Sie diesen Code an: %{code}."
+      can_not_change_upstream_password: "Passwort kann nicht für den Upstream-Dienst geändert werden. Bitte versuchen Sie es in einem Moment erneut. Wenn es immer noch fehlschlägt, wenden Sie sich bitte an den Puavo-Support."
+      token_lifetime_has_expired: "Ihr Link ist abgelaufen oder ungültig. Bitte geben Sie Ihre E-Mail-Adresse erneut ein."
+      too_many_attempts: "Sie müssen 10 Sekunden zwischen den Versuchen zur Passwortänderung warten."
+      go_away: "Sie sind weder Lehrer noch Admin. Sie können keine Passwörter anderer Benutzer ändern."
+      cannot_change_student_passwords: "Sie haben keine Berechtigung, Schülerpasswörter zu ändern."
+    school:
+      school_admin_added: "%{displayName} (%{school_name}) ist jetzt ein Admin-Benutzer"
+      school_admin_removed: "%{displayName} (%{school_name}) ist kein Admin-Benutzer mehr in dieser Schule"
+      wrong_user_type: Schulverwaltungs-Zugriffsrechte können nur hinzugefügt werden, wenn der Benutzertyp Admin ist
+      save_failed: Speichern der Zugriffsrechte fehlgeschlagen
+      destroyed_failed: Die Schule wurde nicht entfernt. Ihre Benutzer, Gruppen, Geräte und Boot-Server müssen zuerst entfernt werden.
+      no_groups: Diese Schule hat keine Gruppen, die umbenannt werden könnten.
+      wlan_updated: WLAN-Einstellungen erfolgreich aktualisiert
+      wlan_save_failed: WLAN-Einstellungen konnten nicht gespeichert werden!
+    printer:
+      updated: Drucker wurde erfolgreich aktualisiert
+    devices:
+      school_changed: "Gerät in eine andere Schule verschoben"
+      no_other_schools: "Diese Organisation hat keine anderen Schulen, in die Sie dieses Gerät verschieben könnten"
+
+    # Message codes received from third-party integration subsystems
+    integrations:
+      unknown_version: "Falsche Protokollversion"
+      unknown_system: "Unbekanntes System"
+      unknown_operation: "Unbekannte Operation"
+      bad_request: "Schlechte Anfrage an den Synchronisationsserver gesendet"
+      unauthorized: "Die Adresse des Servers steht nicht auf der Liste der erlaubten Server"
+      server_error: "Synchronisationsserver-Fehler. Versuchen Sie ein stärkeres Passwort"
+      malformed_reply: "Fehlerhafte Antwort"
+      configuration_error: "Konfigurationsfehler"
+      incomplete_request: "Eine unvollständige Anfrage wurde an den Synchronisationsserver gesendet"
+      remote_server_did_not_respond: "Der entfernte Server hat auf Anfragen nicht geantwortet"
+      remote_server_refused: "Der entfernte Server verweigerte die Zusammenarbeit"
+      bad_credentials: "Schlechte Anmeldeinformationen"
+      rate_limit: "Ratenlimit erreicht"
+      remote_server_error: "Fehler des entfernten Servers"
+      network_error: "Netzwerkkonnektivitätsfehler"
+      unknown_error: "Unbekannter Fehler"
+      unmet_password_requirements: "Anforderungen an Passwortlänge/-komplexität wurden nicht erfüllt"
+      reused_password: "Wiederverwendetes Passwort wurde abgelehnt"
+
+  # Organisations
+  organisations:
+    show:
+      title: Informationen über die Organisation
+      find_all_users_marked_for_deletion: "Alle Benutzer finden, die zum Löschen markiert sind"
+    edit:
+      title: Organisation bearbeiten
+      add_puavo_billing_info: Neue Rechnungsinformation hinzufügen
+    owners:
+      title: Organisationsbesitzer
+      current: "Aktuelle Besitzer"
+      available: "Organisationsbesitz gewähren"
+      none_left: "(Alle Benutzer auf Admin-Ebene sind bereits Organisationsbesitzer)"
+      cant_remove_yourself: "(Sie können Ihre eigenen Besitzerrechte nicht entfernen)"
+    all_admins:
+      title: "Alle Admin-Benutzer in der Organisation und ihre Berechtigungen"
+
+      columns:
+        name: "Name (Benutzername)"
+        permissions: "Berechtigungen"
+        owner: "Besitzer?"
+        admin_in: "Admin in Schulen"
+
+      invalid_admin_school: "Dieser Benutzer ist Admin in einer Schule, in der er kein Mitglied ist"
+
+      edit: "Berechtigungen bearbeiten..."
+
+      set_permissions: "Berechtigungen festlegen"
+      grant_permissions: "Berechtigungen gewähren"
+      revoke_permissions: "Berechtigungen entziehen"
+
+      set_permissions_title: "Berechtigungen genau auf diese festlegen:"
+      grant_permissions_title: "Zu gewährende Berechtigungen auswählen:"
+      revoke_permissions_title: "Zu entziehende Berechtigungen auswählen:"
+
+    all_users:
+      sync_deletion_1: "<strong>WARNUNG:</strong> Die folgenden Schulen haben synchronisierte Benutzerlöschungen für verschiedene externe Systeme aktiviert:"
+      sync_deletion_2: "Führen Sie Benutzerlöschungen (entweder einzeln oder in Massen) in den oben genannten Schulen sehr sorgfältig durch. Sie könnten am Ende mehr löschen, als Sie beabsichtigt haben, zum Beispiel Benutzer-E-Mail-Konten mit ihren Inhalten!"
+
+  # LDAP services
+  ldap_services:
+    index:
+      actions: Aktionen
+      title: LDAP-Dienste
+      infobox: LDAP-Dienst
+    new:
+      title: Neuer LDAP-Dienst
+    edit:
+      title: LDAP-Dienst "%{service}" bearbeiten
+
+  # Boot servers
+  servers:
+    index:
+      title: Liste der Server
+    edit:
+      title: Servereinstellungen bearbeiten
+    form:
+      automounts: Automounts
+      add_puavoExport: Neuen Pfad hinzufügen
+    show:
+      automounts: Automounts
+      no_automounts: "(Keine Automounts)"
+    school_limit:
+      title: Schulbeschränkung
+      boot_description: "Schulen, die dieser Boot-Server bedienen wird:"
+      ltsp_description: "Dieser LTSP-Server wird nur diese Schulen bedienen:"
+      ltsp_description_edit: Wenn keine ausgewählt ist, wird er alle Schulen in der Organisation bedienen.
+      missing_school: "Unbekannte Schule \"%{school}\", bitte kontaktieren Sie den Puavo-Support!"
+
+  # External services (organisation and school)
+  external_services:
+    title: "Externe Dienste"
+    title_organisation: "Für diese Organisation aktivierte externe Dienste"
+    title_school: "Für diese Schule aktivierte externe Dienste"
+    description: "Externe Dienste sind Systeme, die Anmeldungen mit Puavo-Anmeldeinformationen unterstützen. Sobald der Benutzer authentifiziert wurde, werden sein Name, Benutzername, Rollen, Schulinformationen und Organisationsinformationen an den Dienst übergeben."
+    activation: "Diese Seite listet nur die aktivierten Dienste auf. Aus Sicherheitsgründen können nur Puavo-Mitarbeiter externe Dienste erstellen, bearbeiten und aktivieren."
+    no_services_organisation: "Für diese Organisation wurden keine externen Dienste aktiviert"
+    no_services_school: "Für diese Schule wurden keine externen Dienste aktiviert"
+    is_active: "Ist aktiv?"
+    services_count: "%{count} Dienste insgesamt"
+    service_title: "Dienstname"
+    service_description: "Beschreibung"
+    email: "Wartungs-E-Mail"
+    path_prefix: "Pfadpräfix"
+    additional_info: "Zusätzliche Informationen..."
+    organisation_wide_activation: "Dieser Dienst wurde auf Organisationsebene für alle Schulen aktiviert."
+    requires_verified_email: "Dieser Dienst erfordert eine verifizierte E-Mail-Adresse für die Anmeldung."
+    you_can_edit_services: "Sie sind ein Super-Besitzer, daher können Sie externe Dienste in dieser Organisation aktivieren und deaktivieren."
+    edit_services: "Dienste aktivieren..."
+    edit:
+      title: "Externe Dienste in der Organisation aktivieren und deaktivieren"
+      no_external_services_found: "Keine externen Dienste gefunden. Dies ist wahrscheinlich ein Fehler..."
+
+  # Organisation/external files
+  external_files:
+    title: Externe Dateien
+    description: Benutzerdefinierte Dateien für Puavo-Desktops.
+    no_file: "(keine Datei)"
+    columns:
+        name: Name
+        size: Größe
+        checksum: Prüfsumme
+        description: Beschreibung
+        actions: Aktionen
+    buttons:
+        download: Herunterladen
+        delete: Löschen
+        master_save: Änderungen speichern
+    file_not_found: Die angeforderte Datei konnte nicht gefunden werden
+    changes_saved: Änderungen gespeichert
+    changes_failed: Die Änderungen konnten nicht gespeichert werden!
+
+  # Organisation/printers (sorted by boot server)
+  printers:
+    index:
+      server_title: "Server:"
+
+  # Printer permissions editing
+  printing_permissions_list:
+    title: Druckberechtigungen für
+    available_at_schools: Verfügbar an Schulen
+    not_available_at_schools: An keiner Schule verfügbar
+    by_schools: Nach Schule
+    by_wireless: Nach Schulen als drahtlos
+    by_groups: Nach Gruppen
+    by_devices: Nach Geräten
+    where: in
+    none: "(Keine Einschränkungen)"
+
+  # Printer permissions (accessed through school devices)
+  printer_permissions:
+    no_printers_html: "Diese Schule hat keine Drucker. Als Schul-Admin möchten Sie vielleicht einige %{href} für diese Schule einrichten."
+    bootserver_ref: "Boot-Server"
+    no_printers_nonowner: "Für diese Schule sind keine Drucker über einen Boot-Server definiert. Administratoren mit Besitzerrechten auf Organisationsebene können Drucker hinzufügen."
+    index:
+      edit_permissions: Berechtigungen bearbeiten...
+      bootserver: Boot-Server
+    edit:
+      title: Drucker-Nutzungsberechtigungen
+      global: Global
+      active_for_all_users: Drucken auf allen Systemgeräten erlaubt
+      active_for_wireless: Drucken auf allen Systemgeräten und auch anderen Geräten (z.B. Tablets, Telefone, etc.) erlaubt
+      active_advanced: Erweitert
+      groups: Drucker-Nutzungsberechtigungen nach Gruppe
+      devices: Drucker-Nutzungsberechtigungen nach Gerät
+      device_header_text: "Drucker ist für diese Geräte erlaubt:"
+      device_footer_text: "Drucker für Geräte werden auf der Geräte-Bearbeitungsseite festgelegt."
+      filter: "Name/Kürzel Regexp-Filter"
+      select_all: "Alle sichtbaren Gruppen auswählen"
+      deselect_all: "Alle sichtbaren Gruppen abwählen"
+      help: "Die Filterung funktioniert mit Regexp-Klauseln. Wenn die Klausel ungültig ist, werden die Ränder des Eingabefelds rot gezeichnet und die Filterung wird nicht durchgeführt. Sie können Massenbereichsauswahlen durchführen, indem Sie die Umschalttaste gedrückt halten, während Sie auf die <strong>Kontrollkästchen</strong> klicken (dies ist wichtig!). Alles zwischen dem zuvor angeklickten Element und dem zuletzt angeklickten Element wird auf denselben Zustand wie das vorherige Element gesetzt. Zeilen, die durch den Filter ausgeblendet sind, werden bei Massenauswahlen ignoriert."
+
+  # Organisation and school desktop image statistics
+  image_statistics:
+    explanation_organisation: "Diese Seite enthält Nutzungsstatistiken für Desktop-Images. Sie wurden aus den Hardware-Informationen gesammelt, die von den Geräten in dieser Organisation gesendet wurden."
+    explanation_school: "Diese Seite enthält Nutzungsstatistiken für Desktop-Images. Sie wurden aus den Hardware-Informationen gesammelt, die von den Geräten in dieser Schule gesendet wurden."
+    total_devices: "Insgesamt haben %{total_devices} Geräte ihre Hardware-Informationen gesendet"
+    image_count: "Es sind %{image_count} verschiedene Desktop-Images im Einsatz"
+    instructions: "Klicken Sie auf Image-Namen, um eine Liste der Geräte anzuzeigen, die dieses Image verwenden."
+    no_images: "Von keinem Gerät wurden Hardware-Informationen empfangen"
+    sorting: "Sortierung"
+    download: "Die Rohdaten im JSON-Format herunterladen..."
+    sort_by_image: "Image-Basisname (<span class=\"release-bookworm\">Bookworm</span>, <span class=\"release-bullseye\">Bullseye</span>, <span class=\"release-buster\">Buster</span>, <span class=\"release-stretch\">Stretch</span>, andere) und Veröffentlichungszeitstempel (neueste zuerst)"
+    sort_by_usage: "Anzahl der Geräte, die das Image verwenden"
+    image_name_column: "Image-Name (<span class=\"releaseName\">Release-Name</span>, falls bekannt)"
+    usage_column: "Geräteanzahl / Gesamtgeräte (%)"
+
+  # Schools editing
+  schools:
+    integrations:
+      in: "System sendet Daten an Puavo"
+      out: "Daten werden von Puavo an dieses System gesendet"
+      inout: "Sendet Daten an Puavo und empfängt Daten von Puavo"
+      password: "Passwörter werden von Puavo an dieses System synchronisiert"
+      login: "Anmeldung an diesem System mit einem Puavo-Konto"
+      email: "Automatische E-Mail-Adressen"
+      other: "Andere Integration"
+    index:
+      actions: Aktionen
+      members: "Mitglieder"
+      groups: "Gruppen"
+      devices: "Geräte"
+    edit:
+      title: Schule bearbeiten
+    new:
+      title: Neue Schule
+    menu:
+      dashboard: Dashboard
+      admins: Admins
+      wlan: WLAN
+    admins:
+      title: "Schuladministratoren"
+      current: "Aktuelle Administratoren"
+      available: "Administratorrechte hinzufügen"
+      no_admins: "(Keine Administratoren)"
+      none_left: "(Alle Benutzer mit der Administratorrolle sind bereits Schuladministratoren.)"
+    show:
+      contacts: Kontaktinformationen
+      devices: Geräte
+      users: Benutzer
+      statistics: Statistiken
+      admin_users: Admin-Benutzer
+      no_admin_users: "(Keine Admin-Benutzer)"
+      name: Name
+      phone: Telefonnummer
+      mail: E-Mail
+      billing_info: Rechnungsinformationen
+      no_billing_info: "(Keine Rechnungsinformationen)"
+      system_information: Systeminformationen
+      total_count: "(%{count} insgesamt)"
+      info: "Allgemeine Informationen"
+    form:
+      add_puavo_billing_info: Neue Rechnungsinformation hinzufügen
+
+  # Group mass rename
+  rename_groups:
+    title: "Massenumbenennung von Gruppen"
+    no_groups_to_rename: "In dieser Schule wurden keine Gruppen gefunden, die den Suchkriterien entsprechen"
+    school_grades: "Klassennummern in dieser Schule"
+    all_grades: "Alle Klassen"
+    found: "gefunden"
+    not_found: "nicht gefunden"
+    grades_title: "Die Klassennummern in den Gruppennamen"
+    grades_match: "stimmen überein"
+    grades_no_match: "stimmen nicht überein"
+    old_name: "Alter Name"
+    new_name: "Neuer Name"
+    abbreviation: "Gruppenkürzel"
+    name: "Gruppenname"
+    will_create_new_groups: "Die folgenden Gruppen werden nach der Umbenennung erstellt"
+    abbreviation_already_in_use: "WARNUNG: Eines oder mehrere der Kürzel sind bereits in Gebrauch!"
+    submit: "Änderungen übernehmen"
+
+  # Users editing
+  users:
+    index:
+      actions: Aktionen
+      users: Benutzer
+      synchronised_deletions: "Benutzerlöschungen werden sofort mit diesen externen Systemen synchronisiert: %{systems}. Alle in diesen Systemen gespeicherten Daten werden unwiderruflich gelöscht! Überprüfen Sie alle Löschungen im Voraus."
+      expired_account: "Dieses Konto ist abgelaufen"
+
+      filters:
+        marked_3months: "Seit > 90 Tagen zur Entfernung markiert"
+        marked_6months: "Seit > 180 Tagen zur Entfernung markiert"
+        marked_9months: "Seit > 270 Tagen zur Entfernung markiert"
+        marked_12months: "Seit > 365 Tagen zur Entfernung markiert"
+        smoketest_users: "Smoketest-Benutzer, die nicht entfernt wurden"
+        marked_for_deletion: "Ist zum Löschen markiert"
+        marked_for_deletion_not_locked: "Ist zum Löschen markiert, aber nicht gesperrt"
+        locked_users: "Gesperrte Benutzer"
+        short_uids: "Benutzernamen, die 1-5 Zeichen lang sind"
+        students_only: "Nur Schüler"
+        teachers_and_staff_only: "Nur Lehrer und Mitarbeiter"
+        expired_but_not_locked: "Abgelaufen, aber nicht gesperrt"
+
+      mass_operations:
+        lock:
+          title: "Kontosperrung..."
+          action: "Aktion:"
+          lock: "Sperren (falls noch nicht gesperrt)"
+          unlock: "Entsperren (falls gesperrt)"
+          cant_lock_yourself: "Sie können sich nicht selbst sperren"
+          cant_lock_owners: "Sie können Organisationsbesitzer nicht massenhaft sperren"
+        mark:
+          title: "Konto zum Löschen markieren..."
+          action: "Aktion:"
+          mark: "Zum Löschen markieren, falls noch nicht markiert"
+          mark_force: "Löschung erzwingen und Zeitstempel auf jetzt zurücksetzen (d.h. \"immer markieren\")"
+          unmark: "Markierung aufheben"
+          cant_mark_yourself: "Sie können sich nicht selbst zum Löschen markieren"
+          cant_mark_owners: "Sie können Organisationsbesitzer nicht massenhaft zum Löschen markieren"
+        delete:
+          title: "Kontoentfernung"
+          deletion_prevented: "Benutzerlöschung wurde verhindert"
+          not_marked_for_deletion: "Benutzer wurde nicht zum Löschen markiert"
+          marked_too_recently: "Benutzer wurde vor weniger als einer Woche zum Löschen markiert"
+          cant_delete_yourself: "Sie können sich nicht selbst löschen"
+          cant_delete_owners: "Sie können Organisationsbesitzer nicht massenhaft löschen"
+        clear_column:
+          title: "Spalteninhalt löschen..."
+          column_title: "Spalte:"
+          warning: "VORSICHT: Dies ist ein selten verwendetes Werkzeug. Verwenden Sie es nicht, es sei denn, Sie verstehen vollständig, was es tut und wofür es verwendet wird."
+        username_list:
+          title: "Benutzernamenliste erstellen"
+          description: "Listenname oder eine kurze Erklärung (optional)"
+        change_school:
+          title: "Schule wechseln..."
+          automation_warning: "Wenn in der Quell- und/oder Zielschule Integrationen von Drittanbietern aktiviert sind, stellen Sie im Voraus sicher, dass dieser Vorgang diese nicht stört und dass sie nicht versuchen, diese Änderungen \"rückgängig\" zu machen."
+          operation: "Aktion:"
+          operation_move: "Die Stammschule des Benutzers zur Zielschule ändern"
+          operation_move_keep: "Die aktuelle Stammschule in den anderen Schulen beibehalten"
+          operation_remove_prev_groups: "Aus allen Gruppen der vorherigen Stammschule entfernen"
+          operation_add: "Zur Zielschule hinzufügen"
+          operation_remove: "Von der Zielschule entfernen (wird fehlschlagen, wenn die Schule die primäre/einzige Schule des Benutzers ist)"
+          target_school: "Zielschule:"
+          cant_remove_primary_school: "Benutzer kann nicht von seiner Stammschule entfernt werden"
+          no_available_schools: "Wählen Sie die Zielschule aus der Liste. Die Schule kann nicht dieselbe wie die aktuelle sein. Wenn Sie nichts aus der Liste auswählen können, bedeutet das, dass Sie keinen Zugriff auf andere Schulen haben und diese Massenoperation nicht ausführen können."
+          no_other_schools: "Diese Organisation hat keine anderen Schulen, in die Sie Benutzer verschieben könnten."
+        set_expiration_times:
+          title: "Ablaufzeiten festlegen und löschen..."
+          set_to: "Setzen auf:"
+          dnd: "Das Setzen der Ablaufzeit für einen nicht löschbaren Benutzer wird verweigert"
+
+    show:
+      system_information: Systeminformationen
+      contact_information: Kontaktinformationen
+      groups_by_schools: "Gruppen nach Schulen"
+      change_school: Schulen wechseln...
+      primus_school_change_warning: "In dieser Schule ist die Primus-Integration aktiviert. Das Verschieben eines Benutzers in eine andere Schule kann die Integration stören.\n\nMöchten Sie wirklich fortfahren?"
+      mfa_enabled: "Dieser Benutzer hat die Multifaktor-Authentifizierung aktiviert."
+      user_is_an_organisation_owner: "Der Benutzer ist ein Besitzer dieser Organisation"
+      user_is_a_school_admin: "Dieser Benutzer ist ein Administrator der Schule \"%{school_name}\""
+      user_is_a_school_admin_error: "Ungültiger Schuladministrator-Verweis \"%{school_dn}\""
+      schools: "Schulen"
+      primary_school: "(Stammschule)"
+      verified_email: "verifiziert"
+      primary_email: "primäre Adresse"
+      user_is_locked: Benutzer ist gesperrt
+      user_is_marked_for_deletion: "Dieser Benutzer wurde zum Löschen markiert"
+      user_deletion_prevented: "Dieser Benutzer kann nicht gelöscht werden"
+      user_devices: Benutzergeräte
+      user_licenses: "Lizenzen"
+      user_citrix_license:
+        title: "Citrix-Lizenz"
+        created: "Erstellt"
+        last_used: "Zuletzt verwendet"
+        first_name: "Vorname"
+        last_name: "Nachname"
+        username: "Benutzername"
+      lock: "Benutzer sperren"
+      unlock: "Benutzer entsperren"
+      remove_expiration_time: "Die Ablaufzeit entfernen"
+      mark_for_removal: Zum Löschen markieren
+      unmark_for_removal: Löschmarkierung entfernen
+      marked_for_removal: Zum Löschen markiert
+      prevent_removal: Löschen verhindern
+      prevent_removal_confirm: "Sind Sie sicher?\n\nDie Verhinderung der Benutzerlöschung ist für wichtige und kritische Konten gedacht, die für den Systembetrieb erforderlich sind.\nSie müssen sich an den Puavo-Support wenden, wenn Sie diese Aktion rückgängig machen möchten, da die Web-Benutzeroberfläche dies\nabsichtlich nicht zulässt!"
+      deletion_sync_warning: "Der Benutzer wird auch aus diesen externen Systemen entfernt:\n\n\t%{systems}\n\nBitte überprüfen Sie, ob dies Ihre Absicht ist."
+      request_password_reset: "Passwort-Reset-E-Mail senden"
+      reset_sso_session: "SSO-Sitzung zurücksetzen"
+      edit_admin_permissions: "Admin-Berechtigungen bearbeiten..."
+      edit_teacher_permissions: "Lehrerberechtigungen bearbeiten..."
+      show_all_schools: "alle Schulen anzeigen"
+      show_all_permissions: "alle Berechtigungen anzeigen"
+      admin_permissions:
+        title: "Admin-Berechtigungen"
+        school_edit: "kann Schulinformationen bearbeiten"
+        school_edit_wlan: "kann drahtlose Netzwerke der Schule bearbeiten"
+        create_users: "kann Benutzer erstellen"
+        delete_users: "kann Benutzer löschen"
+        mass_delete_users: "kann Benutzer massenhaft löschen"
+        users_mass_clear_column_contents: "kann bestimmte Benutzerinformationen massenhaft löschen"
+        import_users: "Benutzer-Massenimport-Tool"
+        user_edit_expiration_times: "kann Ablaufzeiten von Benutzerkonten festlegen und löschen"
+        user_mass_edit_expiration_times: "kann Ablaufzeiten von Benutzerkonten massenhaft festlegen und löschen"
+        create_groups: "kann Gruppen erstellen"
+        delete_groups: "kann Gruppen löschen"
+        mass_delete_groups: "kann Gruppen massenhaft löschen"
+        group_change_school: "kann Gruppen in eine andere Schule verschieben"
+        group_mass_change_type: "kann Gruppentyp massenhaft ändern"
+        create_devices: "kann neue Geräte hinzufügen und registrieren"
+        delete_devices: "kann Geräte löschen"
+        mass_delete_devices: "kann mehrere Geräte massenhaft löschen"
+        reset_devices: "kann Geräte zurücksetzen"
+        mass_reset_devices: "kann Geräte massenhaft zurücksetzen"
+        device_change_school: "kann Geräte in eine andere Schule verschieben"
+        device_mass_change_school: "kann Geräte massenhaft in eine andere Schule verschieben"
+        device_mass_tag_editor: "kann Geräte-Tags massenhaft bearbeiten"
+        device_mass_change_purchase_information: "kann Geräte-Kaufinformationen massenhaft bearbeiten"
+        device_edit_expiration_times: "kann Geräte-Ablaufzeiten bearbeiten"
+        device_mass_edit_expiration_times: "kann Geräte-Ablaufzeiten massenhaft bearbeiten"
+        device_mass_set_db_fields: "kann verschiedene Datenbankfelder massenhaft ändern"
+        device_mass_edit_puavoconf: "kann Geräte-Puavoconf-Einstellungen massenhaft bearbeiten"
+      teacher_permissions:
+        title: "Lehrerberechtigungen"
+        set_student_password: "kann Schülerpasswörter ändern"
+    new:
+      title: Neuer Benutzer
+    edit:
+      title: Benutzer bearbeiten
+      automatic_email: "E-Mail (automatisch)"
+      have_verified_addresses: "Dieser Benutzer hat verifizierte E-Mail-Adressen. Sie können nicht bearbeitet oder entfernt werden."
+    form:
+      add_email: Weitere E-Mail hinzufügen
+      add_telephone_number: Weitere Telefonnummer hinzufügen
+      primus_warning_new: "In dieser Schule ist die Primus-Integration aktiviert. Das Geben einer externen ID an den neuen Benutzer kann das Synchronisationssystem stören und dazu führen, dass Benutzer zum späteren Löschen markiert werden, auch wenn sie es nicht sollten!"
+      primus_warning_edit: "In dieser Schule ist die Primus-Integration aktiviert. Änderungen an den Namen, E-Mail-Adressen oder Telefonnummern bestehender Benutzer können bei der nächsten Synchronisation rückgängig gemacht werden. Das Ändern oder Hinzufügen der externen ID kann das Synchronisationssystem stören und dazu führen, dass Benutzer zum späteren Löschen markiert werden, auch wenn sie es nicht sollten!"
+      gsuite_duplicate_prevention: "Die G Suite-Integration ist aktiviert. Wenn Sie ein neues Konto für einen Benutzer erstellen, der bereits ein Google-Konto hat, wenden Sie sich bitte an den Support, damit das neue Puavo-Konto mit dem bestehenden Google-Konto verbunden werden kann. Auf diese Weise wird die Benutzersynchronisation nicht unterbrochen und Versuche zur Erstellung doppelter Konten werden verhindert."
+      password_sync_new: "In dieser Schule wird die Passwortsynchronisation verwendet. Sie können das Passwort für den neuen Benutzer nicht festlegen, bevor der Benutzer mit externen Systemen synchronisiert wurde. Der Synchronisationsplan ist oben auf der Seite aufgeführt; warten Sie, bis alle Synchronisationen mindestens einmal ausgeführt wurden, und legen Sie dann das Passwort fest."
+      password_sync_edit: "In dieser Schule wird die Passwortsynchronisation verwendet. Bevor Sie das Passwort ändern, stellen Sie bitte sicher, dass der Benutzer mit externen Systemen synchronisiert wurde. Andernfalls wird das Passwort in Puavo geändert, aber nicht in diesen Systemen, was zu einer unvollständigen Änderung führt. Wenn Sie einen Benutzer bearbeiten, der nicht an der Synchronisation teilnimmt, können Sie diese Benachrichtigung ignorieren (das System weiß nicht, welche Benutzer tatsächlich synchronisiert werden)."
+      conflicting_roles: "Seien Sie vorsichtig, wenn Sie einem Schüler eine Lehrer-/Mitarbeiterrolle zuweisen. Diese Kombination ist zwar möglich, funktioniert aber nicht unbedingt korrekt mit Integrationen, zum Beispiel."
+      group_search_placeholder: "Gruppen nach Namen suchen..."
+      no_group_search_hits: "Keine Treffer"
+      no_groups: "Keine Gruppen"
+      members: "Mitglieder"
+
+    change_schools:
+      title: "Schulen von Benutzer \"%{name}\" ändern"
+      header: "Ändern Sie die Schulen des Benutzers \"%{name}\""
+      sync_warning: "Seien Sie vorsichtig, wenn Sie einen Benutzer bearbeiten, dessen Konto von den Primus- oder AD-Integrationssystemen verwaltet wird. Änderungen, die Sie hier an den Schulen vornehmen, können bei der nächsten Synchronisation teilweise oder vollständig rückgängig gemacht werden. Denken Sie auch daran, dass Systeme, die Daten von Puavo erhalten und sie weiter in andere Systeme synchronisieren, diese Änderungen an Orte weitergeben können, an die sie nicht gehören. Überprüfen Sie im Voraus, dass die Änderungen, die Sie hier vornehmen, genau das sind, was getan werden muss, und dass sie für diesen Benutzer durchgeführt werden können. Das Entfernen eines Benutzers aus einer Schule entfernt ihn auch aus den Administratoren dieser Schule."
+      instant_save_warning: "Bitte beachten Sie, dass alle Änderungen sofort gespeichert werden. Das Hinzufügen oder Entfernen mehrerer Schulen muss nacheinander erfolgen. Ein Werkzeug zur Massenbearbeitung der Schulen mehrerer Benutzer gleichzeitig steht Organisationsbesitzern an anderer Stelle zur Verfügung."
+      current_title: "Aktuelle Schulen (%{count})"
+      available_title: "Verfügbare Schulen (%{count})"
+      primary_school: "Stammschule"
+      is_school_admin: "Schul-Admin"
+      add_to_this_school: "Zu dieser Schule hinzufügen"
+      remove_from_this_school: "Von dieser Schule entfernen"
+      swap_primary_school: "Als Stammschule festlegen"
+      add_as_primary_school: "Hinzufügen und als Stammschule festlegen"
+      move_to_school: "In diese Schule verschieben"
+      cant_remove_from_primary_school_one: "Sie können den Benutzer nicht aus seiner Stammschule entfernen,<br>aber Sie können ihn in eine andere Schule verschieben."
+      cant_remove_from_primary_school_multiple: "Sie können den Benutzer nicht aus seiner Stammschule entfernen."
+      back: "Zurück"
+
+    edit_admin_permissions:
+      title: "Admin-Berechtigungen bearbeiten"
+      header: "Admin-Berechtigungen für \"%{name}\" bearbeiten"
+      user_is_owner: "Dieser Benutzer ist ein Organisationsbesitzer, daher werden diese Berechtigungen nicht verwendet. Besitzer haben immer vollen Zugriff auf alles."
+      select_all: "Alle auswählen"
+      deselect_all: "Alle entfernen"
+      title_schools: "Schulen"
+      title_users: "Benutzer"
+      title_groups: "Gruppen"
+      title_devices: "Geräte"
+      permissions:
+        school_edit: "Kann Schulinformationen bearbeiten (das Schul-Dashboard ist immer zugänglich)"
+        school_edit_wlan: "Kann drahtlose Netzwerke der Schule bearbeiten"
+        create_users: "Kann Benutzer erstellen"
+        delete_users: "Kann Benutzer löschen"
+        mass_delete_users: "Kann Benutzer massenhaft löschen (normale Benutzerlöschung muss ebenfalls gewährt sein, funktioniert sonst nicht)"
+        import_users: "Kann das Massenimport-/Update-Tool für Benutzer verwenden"
+        users_mass_clear_column_contents: "Kann bestimmte Benutzerinformationen massenhaft löschen (E-Mail-Adresse, Telefonnummer, externe ID, Personalnummer, Notizen)"
+        user_edit_expiration_times: "Kann Ablaufzeiten von Benutzerkonten festlegen und löschen"
+        user_mass_edit_expiration_times: "Kann Ablaufzeiten von Benutzerkonten massenhaft festlegen und löschen (das Festlegen und Löschen einzelner Benutzerablaufzeiten muss ebenfalls erlaubt sein, damit dies funktioniert)"
+        create_groups: "Kann neue Gruppen erstellen"
+        delete_groups: "Kann Gruppen löschen"
+        mass_delete_groups: "Kann Gruppen massenhaft löschen (normale Gruppenlöschung muss ebenfalls gewährt sein)"
+        group_change_school: "Kann Gruppen in eine andere Schule verschieben (erfordert, dass der Benutzer in mindestens zwei Schulen Admin ist)"
+        group_mass_change_type: "Kann Gruppentypen massenhaft ändern"
+        create_devices: "Kann neue Geräte hinzufügen (dies gewährt auch die Laptop-Registrierung)"
+        delete_devices: "Kann Geräte löschen"
+        mass_delete_devices: "Kann mehrere Geräte massenhaft löschen (normale Geräteentfernung muss ebenfalls gewährt sein)"
+        reset_devices: "Kann Geräte-Reset-Modus setzen/löschen"
+        mass_reset_devices: "Kann Geräte-Reset-Modi massenhaft setzen/löschen (normaler Reset-Modus muss ebenfalls gewährt sein)"
+        device_change_school: "Kann Geräte in eine andere Schule verschieben (erfordert, dass der Benutzer in mindestens zwei Schulen Admin ist)"
+        device_mass_change_school: "Kann Geräte massenhaft in eine andere Schule verschieben (normale Geräteschuländerung muss ebenfalls gewährt sein)"
+        device_mass_tag_editor: "Kann Geräte-Tags massenhaft bearbeiten"
+        device_mass_change_purchase_information: "Kann Geräte-Kaufinformationen massenhaft bearbeiten"
+        device_edit_expiration_times: "Kann Geräte-Ablaufzeiten bearbeiten"
+        device_mass_edit_expiration_times: "Kann Geräte-Ablaufzeiten massenhaft bearbeiten"
+        device_mass_set_db_fields: "Kann verschiedene Datenbankfelder massenhaft ändern"
+        device_mass_edit_puavoconf: "Kann Geräte-Puavoconf-Einstellungen massenhaft bearbeiten"
+
+    edit_teacher_permissions:
+      title: "Lehrerberechtigungen bearbeiten"
+      header: "Berechtigungen für Lehrer \"%{name}\" bearbeiten"
+      permissions:
+        set_student_password: "Kann Schülerpasswörter ändern"
+
+  # New new user mass import/update tool
+  new_import:
+    title: "Massenimport und -aktualisierung von Benutzern"
+
+    cant_create_users: "Sie können keine neuen Benutzer erstellen, daher wurde die Aktualisierungsmethode (siehe unten) auf die Aktualisierung bestehender Benutzer beschränkt."
+
+    # The source tab
+    source_tab: "1. Datenquelle auswählen"
+    source_help: "Sie können eine manuelle Eingabe, einen Dateiupload oder eine zuvor erstellte Benutzernamenliste als Datenquelle auswählen. Beachten Sie die Lese-Einstellungen unten; das System kann die meisten CSV-Varianten lesen. Darunter befindet sich die Vorschau-Tabelle, die die ersten fünf Zeilen der eingehenden Daten anzeigt. Die Vorschau wird bei jeder Änderung der manuellen Eingabe oder der Lese-Einstellungen automatisch neu erstellt. Sie können damit überprüfen, ob die Daten korrekt gelesen werden. Wenn die Zeilen in Ordnung aussehen, klicken Sie auf die Schaltfläche \"Alle Daten lesen und zur Importphase übergehen\" unter der Tabelle, um zur eigentlichen Importphase zu gelangen. Sie können jederzeit zu diesem Bildschirm zurückkehren, wenn Sie die Quelle oder die Lese-Einstellungen ändern müssen."
+    manual_title: "Manuelle Eingabe"
+    upload_title: "Eine Datei hochladen"
+    unl_title: "Benutzernamenliste"
+    manual_help: "Die importierten Daten eingeben:"
+    upload_help: "Eine UTF-8-codierte CSV- oder TSV-Datei hochladen:"
+    unl_no_lists: "Es gibt keine ungeladenen Benutzernamenlisten."
+    unl_help: "<strong>Wählen Sie die Benutzernamenliste aus dem Feld unten aus und klicken Sie auf \"Listenmitglieder laden\". Das Laden der Liste hier löscht sie nicht, im Gegensatz zu dem, was auf der Seite <em>Benutzernamenlisten</em> passiert.</strong> Wenn die Liste geladen werden kann, erscheinen die Namen darauf im Feld unten. Wenn Sie das Ableiten von Spaltentypen in den Lese-Einstellungen aktiviert haben, wird \"uid\" am Anfang eingefügt (da die Spalte Benutzernamen enthält). Das Textfeld funktioniert ansonsten wie die manuelle Eingabe; Sie können seinen Inhalt frei bearbeiten, und die Vorschau wird live aktualisiert."
+    unl_created_by: "Erstellt von"
+    unl_created_at: "erstellt am"
+    unl_members: "Mitglieder"
+    unl_description: "Beschreibung"
+    unl_load: "Listenmitglieder laden"
+    infer_columns: "Spaltentypen aus den Kopfzeilen der ersten Zeile ableiten"
+    infer_explanation: "Wenn die erste Zeile Kopfzeilen enthält, die in der linken Spalte der Tabelle unten aufgeführt sind, wird der Spaltentyp aus der rechten Spalte übernommen. Wenn die Kopfzeile nicht in der Tabelle ist, wird die Spalte übersprungen."
+    infer_left: "Kopfzeile"
+    infer_right: "Abgeleiteter Spaltentyp"
+    trim: "Führende und nachfolgende Leerzeichen aus Werten entfernen"
+    separator: "Trennzeichen"
+    separator_help: "Hinweis: Wenn Sie Daten direkt aus LibreOffice Calc in das manuelle Eingabefeld kopieren und einfügen, setzen Sie dies auf Tab."
+    comma: "Komma (,)"
+    semicolon: "Semikolon (;)"
+    tab: "Tabulator (\\t)"
+    preview: "Vorschau"
+
+    parser:
+      title: "Lese-Einstellungen"
+      infer: "Spaltentypen aus den Bezeichnern der ersten Zeile ableiten"
+      trim: "führende und nachfolgende Leerzeichen trimmen"
+      commas: "durch Kommas getrennt"
+      semicolons: "durch Semikolons getrennt"
+      tabs: "durch Tabulatoren getrennt"
+
+    # The import tab
+    import_tab: "2. Daten importieren"
+
+    no_data: "Keine Zeilen zum Anzeigen. Haben Sie die Datenquelle im ersten Tab ausgewählt?"
+
+    need_to_import_first: "Diese funktionieren, nachdem der Import abgeschlossen ist"
+
+    mode:
+      label: "Aktualisierungsmethode"
+      create_new_update_existing: "Neue Benutzer hinzufügen, bestehende aktualisieren"
+      create_new_skip_existing: "Neue Benutzer hinzufügen, bestehende überspringen (Standard)"
+      skip_new_update_existing: "Neue Benutzer überspringen, bestehende aktualisieren"
+
+    table:
+      select_row: "Diese Zeile auswählen"
+      row_state: "Status"
+
+      legend:
+        idle: "Die Zeile wird nicht verarbeitet"
+        processing: "Die Zeile wird gerade verarbeitet"
+        success: "Die Zeile war ein voller Erfolg"
+        partial_success: "Die Zeile war ein Teilerfolg"
+        failed: "Die Zeile ist komplett fehlgeschlagen"
+
+    column_title: "Spaltentyp"
+    column_tools: "Spaltenwerkzeuge"
+
+    columns:
+      skip: "(Spalte überspringen)"
+      first: "Vorname"
+      last: "Nachname"
+      uid: "Benutzername"
+      role: "Rolle"
+      password: "Passwort"
+      eid: "Externe ID"
+      group: "Gruppe"
+      rawgroup: "Rohe Gruppe"
+      licenses: "Lizenzen"
+      phone: "Telefonnummer"
+      email: "E-Mail-Adresse"
+      pnumber: "Personalnummer"
+
+    menu:
+      fill_column: "Spalte füllen..."
+      fill_selection: "Ausgewählte Zellen füllen..."
+      set_role: "Rolle festlegen..."
+      generate_usernames: "Benutzernamen generieren..."
+      fix_usernames: "Doppelte Benutzernamen korrigieren..."
+      parse_groups: "Gruppen parsen..."
+      generate_passwords: "Passwörter generieren..."
+      add_to_group: "Zu Gruppe hinzufügen..."
+      clear_column: "Spalte leeren"
+      clear_selection: "Ausgewählte Spalten leeren"
+      insert_column: "Neue Spalte einfügen nach"
+      delete_column: "Spalte entfernen"
+
+    buttons:
+      download_template: "Eine Vorlage herunterladen"
+      download_template_file: "Herunterladen"
+      read_data: "Alle Daten lesen und zur Importphase übergehen"
+      show_infers: "Ableitungen anzeigen..."
+      select_existing_uids: "Bestehende Benutzer auswählen"
+      everyone: "Jeder"
+      everyone_in_this_school: "Jeder in dieser Schule"
+      everyone_in_other_schools: "Jeder in einer anderen Schule"
+      select_rows: "Zeilen auswählen"
+      select_all: "Alle Zeilen auswählen"
+      deselect_all: "Alle Zeilen abwählen"
+      invert_selection: "Auswahl umkehren"
+      select_unprocessed_rows: "Unverarbeitete Zeilen auswählen"
+      select_successfull_rows: "Erfolgreiche Zeilen auswählen"
+      select_partially_successfull_rows: "Teilweise erfolgreiche Zeilen auswählen"
+      select_failed_rows: "Fehlgeschlagene Zeilen auswählen"
+      export: "Exportieren"
+      export_pdf_with_passwords: "PDF mit Passwörtern"
+      username_list: "Benutzernamenliste"
+      analyze: "Analysieren"
+      compare_attributes: "Nicht-Benutzernamen-Attribute mit Serverdaten vergleichen"
+      begin: "Alle Zeilen importieren"
+      begin_selected: "Ausgewählte Zeilen importieren"
+      stop: "Import stoppen"
+      begin_failed: "Fehlgeschlagene Zeilen erneut importieren"
+      delete_selected_rows: "Ausgewählte Zeilen löschen"
+      save: "Speichern (Enter)"
+      cancel: "Abbrechen (Esc)"
+      close: "Schließen (Esc)"
+      set: "Setzen"
+      generate: "Generieren"
+      add: "Hinzufügen"
+      fill: "Füllen"
+      reload_groups: "Gruppen neu laden"
+      overwrite_existing: "Bestehende Werte überschreiben"
+      reloading: "Wird neu geladen..."
+
+    tools:
+      download_template:
+        title: "Sie können eine CSV/TSV-Datei herunterladen, die Kopfzeilen für die unten ausgewählten Spalten enthält. Denken Sie daran, auch das Trennzeichen auszuwählen."
+        columns: "Spalten auswählen"
+
+      set_role:
+        title: "Benutzerrollen festlegen"
+        help: "Wählen Sie die Rolle aus (nur eine kann ausgewählt werden):"
+
+      set_group:
+        title: "Zu Gruppe hinzufügen"
+        help: "Den Benutzer zu dieser Gruppe hinzufügen:"
+
+      generate_usernames:
+        title: "Benutzernamen generieren"
+        help: "Vor- und Nachnamen werden kleingeschrieben und mit einem Punkt verkettet. Dann werden diakritische Zeichen entfernt. ß wird immer in \"ss\" umgewandelt, aber Sie können unten wählen, wie die Buchstaben Ä, Ö und Ü umgewandelt werden:"
+        first_first_name_only: "Nur den ersten Vornamen verwenden"
+        first_first_name_only_help: "Wenn der Benutzer mehrere Vornamen hat (durch Leerzeichen getrennt), verwenden Sie nur den ersten davon, um den Benutzernamen zu generieren (ab dem ersten Leerzeichen abschneiden)."
+
+      fix_usernames:
+        title: "Doppelte Benutzernamen korrigieren"
+        help: "Dieses Werkzeug fügt den ersten Buchstaben des zweiten Vornamens zum Benutzernamen hinzu, wenn der Benutzer mehrere Namen hat. Nur doppelte Namen werden verarbeitet."
+        preview: "Vorschau:"
+        uid_change: "Benutzernamenänderung"
+
+      parse_groups:
+        title: "Gruppen parsen"
+        help: "Die Gruppenspalte wird gefüllt, indem die Werte in der Spalte \"Rohe Gruppe\" mit dieser Konvertierungstabelle interpretiert werden:"
+
+      generate_passwords:
+        title: "Passwörter generieren"
+        fixed: "Hiermit füllen"
+        random: "Mit zufälligen Passwörtern füllen"
+        uppercase: "Großbuchstaben einschließen (A-Z)"
+        lowercase: "Kleinbuchstaben einschließen (a-z)"
+        numbers: "Zahlen einschließen (0-9)"
+        punct: "Satzzeichen einschließen (.,;:@£$+?#%&=\"/\\{}[]())"
+        length: "Länge"
+
+      fill:
+        title_column: "Spalte füllen"
+        title_selection: "Ausgewählte Zellen füllen"
+        help_column: "Die ganze Spalte mit diesem Wert füllen"
+        help_selection: "Die ausgewählten Zellen mit diesem Wert füllen"
+
+      export:
+        target: "Was exportieren?"
+        all_rows: "Alle Zeilen"
+        selected_rows: "Nur ausgewählte Zeilen"
+        unselected_rows: "Nur nicht ausgewählte Zeilen"
+        pdf_warning: "PDFs enthalten nur Benutzer, die tatsächlich existieren."
+
+      username_list:
+        selection_only: "Nur ausgewählte Zeilen"
+        list_title: "Listenname oder kurze Beschreibung (optional)"
+        create_list: "Liste erstellen"
+
+    status:
+      no_data_to_display: "(Keine Daten zum Anzeigen)"
+      fetching_current_users: "Liste der aktuellen Benutzer vom Server wird abgerufen..."
+      comparing_data: "Daten werden verglichen..."
+      synchronising: "Operation wird ausgeführt..."
+      complete: "Abgeschlossen"
+      aborted: "Die Operation wurde abgebrochen"
+      stopping: "Operation wird gestoppt, bitte warten Sie, bis der aktuelle Stapel verarbeitet wurde..."
+      stopping_impatient: "Beruhigen Sie sich, die Operation wird in jeder Sekunde gestoppt!"
+      stopped: "Die Operation wurde gestoppt"
+      success: "erfolgreich"
+      partial_success: "teilweise erfolgreich"
+      failed: "fehlgeschlagen"
+      total_rows: "Zeilen insgesamt"
+      selected_rows: "Zeilen ausgewählt"
+      importing_rows: "Zeilen werden importiert"
+      table_messages: "Nachrichten"
+
+    messages:
+      already_in_school: "Bereits in Schule %{schools}"
+
+    problems:
+      errors_title: "Diese Probleme müssen behoben werden, bevor der Importvorgang beginnen kann:"
+      warnings_title: "Diese verhindern den Importvorgang nicht, aber Sie sollten sie sich ansehen und sicherstellen, dass sie später keine Probleme verursachen:"
+
+    errors:
+      unknown_group: "Unbekannte/ungültige Gruppe"
+
+    alerts:
+      already_imported: "Sie haben bereits einige der Tabellendaten importiert. Sind Sie sicher, dass Sie sie überschreiben möchten?"
+      no_file: "Wählen Sie eine zu importierende Datei aus oder wechseln Sie zur manuellen Eingabe."
+      no_selected_rows: "Es sind keine Zeilen ausgewählt."
+      no_matching_rows: "Die Tabelle hat keine Zeilen, die Ihrer Auswahl entsprechen."
+      delete_everything: "Sind Sie sicher, dass Sie ALLE Zeilen entfernen möchten? Sie müssen die Quelldaten erneut lesen, wenn Sie danach fortfahren möchten."
+      delete_selected_rows: "Sind Sie sicher, dass Sie %{count} Zeilen entfernen möchten?"
+      cant_remove_rows_after_stopping: "Leider können Tabellenzeilen nicht gelöscht werden, wenn Sie den Import gestoppt haben. Sie müssen die Operation abschließen oder von vorne beginnen."
+      delete_column: "Sind Sie sicher, dass Sie diese Spalte löschen möchten?"
+      resume_previous: "Der vorherige Import wurde gestoppt. Möchten Sie ihn fortsetzen?"
+      need_one_first_name: "Sie benötigen genau eine Vornamenspalte dafür"
+      need_one_last_name: "Sie benötigen genau eine Nachnamenspalte dafür"
+      need_one_raw_group: "Sie benötigen genau eine rohe Gruppenspalte dafür"
+      no_groups: "Es gibt keine Gruppen. Versuchen Sie zuerst, die Gruppenliste neu zu laden."
+      could_not_generate_all_usernames: "Eine oder mehrere Zeilen mit leerem oder fehlendem Vor-/Nachnamen gefunden. Für diese Zeilen wurde kein Benutzername generiert."
+      unconvertible_characters: "%{count} Namen gefunden, die keine Buchstaben hatten, die zur Generierung eines Benutzernamens verwendet werden konnten."
+      first_five: "Hier sind die ersten fünf Namen:"
+      unconvertible_name: "Zeile %{row}: Vorname \\\"%{first}\\\", Nachname \\\"%{last}\\\""
+      could_not_parse_all_groups: "Eine oder mehrere Zeilen mit leeren oder fehlenden rohen Gruppendaten gefunden. Für diese Zeilen wurden keine Gruppen geparst."
+      same_password: "Das gleiche Passwort für mehrere Benutzer zu vergeben, ist ein schwerwiegendes Sicherheitsrisiko. Sind Sie sicher, dass Sie das tun möchten?"
+      too_short_password: "Das Passwort muss mindestens %{length} Zeichen lang sein"
+      check_something: "Sie müssen mindestens etwas für die neuen Passwörter auswählen"
+      no_data_to_import: "Die Tabelle hat keine Zeilen, die für die ausgewählte Aktualisierungsmethode geeignet sind."
+      fix_errors_first: "Sie müssen zuerst die Fehler beheben."
+      cant_parse_server_response: "Die vom Server gesendete Antwort kann nicht interpretiert werden. Details wurden in der Konsole protokolliert.\\n\\nVersuchen Sie es erneut und wenn das Problem weiterhin besteht, notieren Sie die Nachricht in der Konsole und wenden Sie sich an den technischen Support von Puavo."
+      data_retrieval_failed_unknown: "Datenabruf vom Server aus unbekanntem Grund fehlgeschlagen."
+      data_retrieval_failed_known: "Datenabruf vom Server fehlgeschlagen:"
+      too_short_uid: "Der Benutzername muss mindestens 3 Zeichen lang sein."
+      invalid_uid: "Der Benutzername ist ungültig."
+      no_data_for_the_pdf: "Die Tabelle hat keine Spalte für Benutzernamen oder Passwörter."
+      still_no_data_for_the_pdf: "Die Tabelle hat keine Benutzer, deren Passwort in einem PDF aufgelistet werden könnte."
+      empty_rows_skipped: "Die Tabelle enthält Zeilen mit fehlendem Benutzernamen und/oder Passwort. Diese Zeilen werden von der generierten PDF ausgeschlossen. \\n\\nMöchten Sie fortfahren?"
+      no_failed_rows: "Es gibt keine fehlgeschlagenen Zeilen"
+      no_duplicate_uids: "Es gibt keine doppelten Benutzernamen."
+      passwords_out_of_sync: "Die Tabelle enthält Passwörter, die noch nicht importiert wurden. Daher enthält die generierte PDF keine Passwörter, die tatsächlich verwendet werden. Sie sollten die Daten zuerst importieren.\\n\\nSind Sie sicher, dass Sie fortfahren möchten?"
+      list_created: "Liste erstellt"
+      list_missing_users: "Liste nicht erstellt. Die folgenden Benutzer existieren nicht auf dem Server:"
+      list_failed: "Liste nicht erstellt. Unbekannter Fehler:"
+      list_not_found: "Die Liste konnte auf dem Server nicht gefunden werden. Vielleicht wurde sie heruntergeladen oder gelöscht? Versuchen Sie, die Seite neu zu laden."
+      list_missing_users: "Die Liste wurde nicht erstellt. Die Tabelle enthält %{count} Benutzer, die nicht gefunden werden konnten. Sie könnten gelöscht worden sein oder sich in einer Schule befinden, auf die Sie keinen Zugriff haben:"
+      list_loading_failed: "Laden der Liste fehlgeschlagen:"
+      download_template_nothing_selected: "Bitte wählen Sie mindestens eine Spalte aus."
+      server_sent_invalid_filename: "Der Server hat einen ungültigen Dateinamen für die generierte PDF gesendet. Sie müssen die Datei selbst umbenennen."
+      pdf_generation_failed: "PDF-Generierung fehlgeschlagen:\\n\\n%{message}\\n\\nDas Serverprotokoll enthält möglicherweise weitere Informationen."
+
+    errors:
+      multiple_columns: "Mehrere \\\"%{title}\\\" Spalten"
+      required_column_missing: "Eine erforderliche Spalte \\\"%{title}\\\" fehlt"
+      need_uid_column_in_update_mode: "Die Benutzernamenspalte ist im Nur-Update-Modus erforderlich."
+      need_something_to_update_in_update_mode: "Im Nur-Update-Modus benötigen Sie mindestens eine Spalte (zusätzlich zur Benutzernamenspalte), die Daten enthält, die Sie aktualisieren möchten"
+      empty_first: "%{count} Zeile(n) mit leerem Vornamen"
+      empty_last: "%{count} Zeile(n) mit leerem Nachnamen"
+      empty_uid: "%{count} Zeile(n) mit leerem Benutzernamen"
+      duplicate_uid: "%{count} Zeile(n) mit doppelten Benutzernamen (mit roten Rändern gekennzeichnet). Die ersten %{first_n} sind: %{values}."
+      invalid_uid: "%{count} Zeile(n) mit ungültigem Benutzernamen (mit roten Rändern gekennzeichnet). Die ersten %{first_n} sind: %{values}."
+      short_uid: "%{count} Zeile(n) mit Benutzernamen, die weniger als 3 Zeichen lang sind (mit roten Rändern gekennzeichnet). Die ersten %{first_n} sind: %{values}."
+      missing_role: "%{count} Zeile(n) mit fehlender oder ungültiger Rolle (mit roten Rändern gekennzeichnet)"
+      no_role_mass_change: "Die Rollen bestehender Benutzer können nicht massenhaft geändert werden, daher ist die Rollenspalte nutzlos und wird immer ignoriert"
+      duplicate_eid: "%{count} Zeile(n) mit doppelter externer ID (mit roten Rändern gekennzeichnet). Die ersten %{first_n} sind: %{values}."
+      eid_already_in_use: "%{count} Zeile(n) mit einer externen ID, die bereits von jemand anderem verwendet wird (mit roten Rändern gekennzeichnet). Die ersten %{first_n} sind: %{values}."
+      invalid_email: "%{count} Zeile(n) mit ungültiger E-Mail-Adresse (mit roten Rändern gekennzeichnet). Die ersten %{first_n} sind: %{values}."
+      duplicate_email: "%{count} Zeile(n) mit doppelter E-Mail-Adresse (mit roten Rändern gekennzeichnet). Die ersten %{first_n} sind: %{values}."
+      email_already_in_use: "%{count} Zeile(n) mit einer E-Mail-Adresse, die bereits von jemand anderem verwendet wird (mit roten Rändern gekennzeichnet). Die ersten %{first_n} sind: %{values}."
+      automatic_emails: "Die automatische E-Mail-Adressgenerierung ist in dieser Schule aktiviert, daher muss die E-Mail-Adressspalte entfernt werden"
+      invalid_phone: "%{count} Zeile(n) mit ungültiger Telefonnummer (mit roten Rändern gekennzeichnet). Die ersten %{first_n} sind: %{values}."
+      duplicate_phone: "%{count} Zeile(n) mit doppelter Telefonnummer (mit roten Rändern gekennzeichnet). Die ersten %{first_n} sind: %{values}."
+      phone_already_in_use: "%{count} Zeile(n) mit einer Telefonnummer, die bereits von jemand anderem verwendet wird (mit roten Rändern gekennzeichnet). Die ersten %{first_n} sind: %{values}."
+      common_password: "%{count} Zeile(n) mit einem allgemeinen, schwachen Passwort"
+      no_group_column: "Keine Gruppenspalte (neue Benutzer werden normalerweise beim Erstellen ihrer Konten zu einer Lerngruppe hinzugefügt)"
+      no_password_column: "Keine Passwortspalte (hier ist es einfach, Passwörter für neue Benutzer festzulegen)"
+
+    pdf:
+      no_group: "(Keine Gruppe)"
+      no_users: "(Keine Benutzer)"
+      page: "Seite"
+      end: "Ende"
+
+  # Interactive Puavomenu editor
+  puavomenu_editor:
+    page_title:
+      organisation: "Puavomenu auf Organisationsebene"
+      school: "Puavomenu auf Schulebene für Schule %{name}"
+      device: "Puavomenu auf Geräteebene für Gerät \"%{name}\""
+
+    errors:
+      # Must double escape these to prevent actual newlines in JavaScript strings
+      save_confirm: "Die Menüdaten enthalten Fehler oder andere Probleme. Sie sollten behoben werden, bevor Sie fortfahren, da das Speichern ungültige Einträge entfernen kann. Möchten Sie wirklich fortfahren?"
+      save_failed: "Speichern fehlgeschlagen.\\n\\nBitte sehen Sie sich die zusätzlichen Details in der Konsole an und versuchen Sie es erneut. Wenn das Problem weiterhin besteht, wenden Sie sich bitte an den Support."
+      save_failed_message: "Speichern fehlgeschlagen.\\n\\n\\t%{message}\\n\\nBitte sehen Sie sich die zusätzlichen Details in der Konsole an und versuchen Sie es erneut. Wenn das Problem weiterhin besteht, wenden Sie sich bitte an den Support."
+
+    tools:
+      find_unused: "Unbenutzte Menüs und Programme finden"
+      search: "Suchen"
+      json_editor: "JSON-Editor"
+      confirm_menu_removal: "Entfernen des Menüs aus einer Kategorie bestätigen"
+      confirm_program_removal: "Entfernen des Programms aus einem Menü oder einer Kategorie bestätigen"
+
+    preview:
+      title: "Vorschau"
+      categories_title: "Kategorien"
+      menus_title: "Menüs"
+      programs_title: "Programme"
+      exit_menu_title: "Zurück zur Hauptebene"
+      remove_entry: "Aus der Liste entfernen"
+      new_entry: "Ein neues hinzufügen"
+
+    editor:
+      title: "Elementbearbeitung"
+      select_something: "Wählen Sie etwas aus, um es zu bearbeiten."
+      external_menu: "Dies ist ein externes Menü. Es (und sein Inhalt) ist in einer anderen Menüdatenquelle definiert, und deshalb können Sie es nicht bearbeiten oder öffnen. Sie können es normal in Kategorien verwenden und seine Position ändern."
+      external_program: "Dies ist ein externes Programm. Es ist in einer anderen Menüdatenquelle definiert, und deshalb können Sie es nicht bearbeiten. Sie können es trotzdem normal zu Kategorien und Menüs hinzufügen und seine Position ändern."
+      help: "Hilfe"
+      placeholder: "(Leer/Standard)"
+
+      change_id: "Den Bezeichner ändern"
+      change_program_id: "Den Bezeichner oder Dateinamen ändern"
+
+      lang:
+        fi: "Finnisch"
+        en: "Englisch"
+        sv: "Schwedisch"
+        de: "Deutsch"
+
+      catid:
+        title: "Eindeutiger Bezeichner für die Kategorie"
+
+      menuid:
+        title: "Eindeutiger Bezeichner für das Menü"
+
+      progid:
+        title_desktop: ".desktop Dateiname"
+        title: "Eindeutiger Bezeichner für das Programm"
+
+      progtype:
+        title: "Programmtyp"
+        desktop: "Desktop"
+        custom: "Benutzerdefiniert"
+        weblink: "Weblink"
+
+      name:
+        title: "Name"
+        single: "Ein einziger Name für alle Sprachen"
+        multi: "Übersetzter Name für verschiedene Sprachen"
+        required_error: "Der Name ist erforderlich"
+        multiple_warning: "Mehrere Namen angegeben, nur der ausgewählte wird gespeichert"
+
+      description:
+        title: "Beschreibung"
+        single: "Eine einzige Beschreibung für alle Sprachen"
+        multi: "Übersetzte Beschreibung für verschiedene Sprachen"
+        multiple_warning: "Mehrere Beschreibungen angegeben, nur die ausgewählte wird gespeichert"
+
+      position:
+        title: "Kategorieposition"
+
+      icon:
+        title: "Symbol"
+        missing_error: "Das Symbol ist für Menüs obligatorisch"
+        missing_warning: "Das Standardsymbol ist hässlich, Sie sollten hier etwas angeben"
+
+      keywords:
+        title: "Schlüsselwörter"
+
+      command:
+        title: "Befehl"
+        missing_error: "Der Befehl ist erforderlich"
+
+      url:
+        title: "Die zu öffnende URL"
+        missing_error: "Die URL ist erforderlich"
+
+      visibility:
+        title: "Sichtbarkeit"
+        tags: "Programm-Tags"
+        no_tags_warning: "Ein Programm ohne Tags ist immer verborgen, es sei denn, es wird auf andere Weise explizit sichtbar gemacht"
+        condition: "Bedingung"
+        no_condition: "(Keine)"
+        reverse_condition: "Bedingung umkehren"
+        hidden_by_default: "Standardmäßig verborgen"
+
+    popups:
+      new_entry:
+        menu_title: "Ein Menü hinzufügen"
+        program_title: "Ein Programm hinzufügen"
+        unique_id_placeholder: "Eindeutige ID"
+        external_title: "Dies ist ein externes Menü oder Programm"
+        external_help: "Die Daten für dieses Menü oder Programm stammen von woanders, nicht aus den aktuellen Menüdaten"
+        add_new_button: "Ein neues hinzufügen"
+        add_existing: "Ein bestehendes hinzufügen"
+        search_placeholder: "Suchen"
+
+      unused:
+        help: "Diese Menüs und Programme werden nirgendwo referenziert. Sie können sie dauerhaft entfernen, indem Sie die nicht benötigten ankreuzen und auf die Schaltfläche \"Ausgewählte entfernen\" klicken."
+        no_unused_entries: "Alle Menüs und Programme sind in Gebrauch."
+        select_all: "Alle auswählen"
+        remove_selected: "Ausgewählte entfernen"
+        target: "Ziel"
+        type: "Typ"
+        unused_title: "nicht verwendet"
+        type_menu: "Programm"
+        type_program: "Menü"
+
+      rename:
+        category: "Geben Sie eine neue ID für diese Kategorie ein"
+        menu: "Geben Sie eine neue ID für dieses Menü ein"
+        program: "Geben Sie eine neue ID oder einen Dateinamen für dieses Programm ein"
+        rename: "Ändern"
+
+      search:
+        title: "Eine ID oder ein Teil davon"
+        results: "Ergebnisse"
+        no_results: "Keine Ergebnisse"
+
+      json:
+        help: "Die aktuellen Menüdaten als reines JSON sind unten aufgeführt. Sie können sie direkt bearbeiten oder in einen externen Editor kopieren (der bevorzugte Weg). Drücken Sie die \"Speichern\"-Taste, um Ihre Änderungen zu speichern."
+        save_warning: "WARNUNG: Wenn die aktuellen Menüdaten Fehler oder ungültige Einträge enthalten, werden diese beim Speichern des JSON zerstört!"
+        invalid_json: "Ungültige JSON-Daten, bitte überprüfen Sie die Syntax"
+
+    invalid_character: "Ungültiges Zeichen"
+    already_used: "Diese ID wird bereits verwendet"
+
+  # Groups editing
+  groups:
+    index:
+      actions: Aktionen
+      groups: Gruppen
+      externally_maintained: "Die Gruppe wird von einem externen Integrationsskript verwaltet. Nicht bearbeiten."
+      mass_operations:
+        add:
+          title: "Zu Gruppen hinzufügen..."
+          help: "Die ausgewählten Benutzer zu diesen Gruppen hinzufügen, wenn sie noch nicht darin sind:"
+        remove:
+          title: "Aus Gruppen entfernen..."
+          help: "Die ausgewählten Benutzer aus diesen Gruppen entfernen, wenn sie darin sind:"
+        set_type:
+          title: "Typ festlegen..."
+
+        search_placeholder: "Suchen..."
+        reload: "Gruppenliste neu laden"
+        select_something: "Bitte wählen Sie mindestens eine Gruppe aus."
+        network_error: "Netzwerkverbindungsfehler. Details finden Sie in der Konsole."
+        invalid_response: "Die Antwort des Servers konnte nicht interpretiert werden. Details finden Sie in der Konsole."
+    show:
+      title: Gruppeninformationen
+      members: "Gruppenmitglieder"
+      description: "Benutzer zu dieser Gruppe hinzufügen:"
+      placeholder_for_search: Name des Benutzers
+      hidden_members_hidden_tools_warning: "Diese Gruppe enthält Mitglieder aus anderen Schulen, auf die Sie keinen Zugriff haben. Die Massenwerkzeuge für Mitglieder werden sie nicht berühren, und Benutzernamenlisten und CSV-Dateien, die aus dieser Gruppe generiert werden, werden sie nicht enthalten."
+      group_username_list_confirm: "Sind Sie sicher, dass Sie eine neue Benutzernamenliste aus den Mitgliedern dieser Gruppe erstellen möchten?"
+      external_data: "Externe Daten"
+    new:
+      title: Neue Gruppe
+    edit:
+      title: Gruppe bearbeiten
+      course_group_warning: "Diese Gruppe wird von einem externen Primus-Synchronisationsskript verwaltet. Ihre Änderungen gehen höchstwahrscheinlich verloren. Ändern Sie niemals die externe ID der Gruppe!"
+      year_class_warning: "Diese Gruppe wird von einem externen Primus-Synchronisationsskript verwaltet. Änderungen, die Sie an der Gruppe oder ihrer Mitgliederliste vornehmen, werden rückgängig gemacht. Ändern Sie niemals das Kürzel der Gruppe!"
+    members:
+      title: "Aktuelle Mitglieder (%{count})"
+      hidden_from_you: "+%{count} versteckte Mitglieder aus anderen Schulen, auf die Sie keinen Zugriff haben"
+      empty_group: "Diese Gruppe hat noch keine Mitglieder"
+      remove: "Aus Gruppe entfernen"
+      actions: "Mitgliederaktionen"
+    user_search:
+      member: Mitglied
+      add_to_group: Zu Gruppe hinzufügen
+    change_school:
+      title: "Gruppe \"%{group}\" in eine andere Schule verschieben"
+      warning: "Dieses Werkzeug verschiebt nur die Gruppe in eine andere Schule. Die Gruppenmitglieder werden nicht verschoben. Wenn Sie die Mitglieder massenhaft in eine andere Schule verschieben möchten, kopieren Sie die Benutzernamen der Mitglieder in den Schul-Massen-Editor in den Benutzertabellen."
+      integrations_warning: "Wenn die Zielschule eine Integration (Primus) hat, die Gruppen verwaltet, stellen Sie im Voraus sicher, dass die Gruppe, die Sie verschieben, ihren Betrieb nicht stört. Bestimmte Gruppentypen (Kursgruppe, Jahrgangsklasse usw.) können versehentlich von der Integration verwaltet werden und unerwünschte Dinge verursachen."
+      destination_school: "Zielschule:"
+    groupless_users:
+      title: "Benutzer ohne Gruppe"
+      count: "%{count} Benutzer ohne Gruppe gefunden."
+      owners_warning: "Bitte beachten Sie, dass dieses Werkzeug aus Sicherheitsgründen keine Benutzer ändert, die Organisationsbesitzer sind. Diese Benutzer werden hier jedoch normal aufgelistet."
+      action: "Aktion"
+      lock: "Diese Benutzer sperren"
+      mark: "Diese Benutzer zum späteren Löschen markieren"
+      move: "Diese Benutzer in die Gruppe verschieben"
+      no_groups: "Diese Schule hat keine Gruppen"
+      members: "Mitglied(er)"
+      proceed: "Fortfahren"
+      missing_params: "Fehlende oder ungültige Formularparameter"
+      done: "%{count} Benutzer verarbeitet"
+
+  # Devices editing
+  devices:
+    index:
+      add_new_device: "Ein neues Gerät hinzufügen"
+      title: Liste der Geräte
+      select_device_label: Auswählen
+      devices: Geräte
+      pending_reset: "Ein Reset wurde angefordert"
+      previous_reset_fulfilled: "Zeitpunkt der vorherigen Reset-Erfüllung"
+      expired_device: "Dieses Gerät ist abgelaufen"
+
+      filters:
+        uses_stretch: "Verwendet ein Stretch-basiertes Image"
+        uses_buster: "Verwendet ein Buster-basiertes Image"
+        uses_bullseye: "Verwendet ein Bullseye-basiertes Image"
+        have_monitors_xml: "Gerät hat Anzeigeeinstellungen (XML)"
+        have_xrandr: "Gerät hat xrandr-Einstellungen"
+        have_hwinfo: "Hardware-Informationen erhalten"
+        maybe_unused: "Es ist über ein Jahr her, seit zuletzt Hardware-Infos empfangen wurden"
+        has_primary_user: "Gerät hat einen Hauptbenutzer"
+        has_invalid_primary_user: "Gerät hat einen ungültigen Hauptbenutzer"
+        hdd_500g: "Die Festplattenkapazität des Geräts beträgt mindestens 500 GiB"
+        ram_atleast_16g: "Das Gerät hat mindestens 16 GiB RAM"
+        ram_lt_4g: "Das Gerät hat weniger als 4 GiB RAM"
+        home_5g: "Die /home-Partition hat weniger als 5 GiB freien Speicherplatz"
+        poor_battery: "Die Akkukapazität beträgt 70% oder weniger"
+      mass_operations:
+        change_school:
+          title: "Schule wechseln..."
+          school_title: "Neue Schule:"
+        puavoconf:
+          json_warning: "Dieses Werkzeug kann <strong>einzelne</strong> PuavoConf-Werte hinzufügen, entfernen und ändern. Wenn Sie alle auf einmal ersetzen möchten und sie bereits im JSON-Format haben, wählen Sie <em>\"Datenbankfeldwert setzen...\"</em> aus der Operationsliste und dann <em>\"PuavoConf (alle ersetzen)\"</em>. Mit diesem Werkzeug können Sie alle PuavoConf-Werte auf einmal überschreiben.<br><br>"
+          title: "PuavoConf-Editor..."
+          key: "Schlüssel:"
+          value: "Neuer Wert:"
+          validity_warning: "Stellen Sie sicher, dass der Wert gültig ist! Dieses Werkzeug validiert ihn nicht. Überprüfen Sie auch den Datentyp unten."
+          action: "Aktion:"
+          add: "Erstellen oder aktualisieren (wenn der Schlüssel existiert, wird sein Wert aktualisiert, andernfalls wird er erstellt)"
+          remove: "Schlüssel und Wert entfernen"
+          type: "Datentyp:"
+          type_string: "Zeichenkette"
+          type_int: "Ganzzahl"
+          type_bool: "Boolesch"
+          empty_key: "Der Schlüssel darf nicht leer sein"
+        tags:
+          warning: "Dieses Werkzeug fügt Tags hinzu und entfernt sie, ohne die anderen Tags zu berühren. Wenn Sie alle entfernen oder ersetzen müssen, wählen Sie <em>\"Datenbankfeldwert setzen...\"</em> aus der Operationsliste und dann <em>\"Tags (alle ersetzen)\"</em>."
+          title: "Tags-Editor"
+          tags: "Tags:"
+          action: "Aktion:"
+          help: "Geben Sie einen oder mehrere Tags ein, die durch mindestens ein Leerzeichen getrennt sind. Zusätzliche Leerzeichen werden automatisch entfernt (einschließlich führender und nachfolgender Leerzeichen)."
+          add: "Tag(s) hinzufügen"
+          remove: "Tag(s) entfernen"
+          empty_tag: "Das Tags-Feld darf nicht leer sein"
+        set_field:
+          title: "Datenbankfeldwert setzen..."
+          field: "Feld:"
+          value: "Wert:"
+          "yes": "Ja"
+          "no": "Nein"
+          default: "Standard"
+          "off": "Aus"
+          custom: "Benutzerdefiniert"
+          desktop_image: "Desktop-Image"
+          kernel_args: "Kernel-Parameter"
+          kernel_version: "Kernel-Version"
+          puavoconf_replace: "PuavoConf (alle ersetzen)"
+          tags_replace: "Tags (alle ersetzen)"
+          manufacturer: "Hersteller"
+          model: "Modell"
+          serial: "Seriennummer"
+          primary_user: "Hauptbenutzer (Benutzername)"
+          description: "Beschreibung"
+          status: "Status"
+          location: "Standort"
+          latitude: "Breitengrad"
+          longitude: "Längengrad"
+          allow_guest: "Gast erlauben?"
+          automatic_updates: "Automatische Image-Updates?"
+          personal_device: "Persönliches Gerät?"
+          personally_administered: "Persönlich verwaltet?"
+          automatic_poweroff: "Automatischer Abschaltmodus"
+          daytime_start: "Tagesbeginn"
+          daytime_end: "Tagesende"
+          audio_source: "Standard-Eingabe-Audiogerät"
+          audio_sink: "Standard-Ausgabe-Audiogerät"
+          printer_uri: "Druckergeräte-URI"
+          default_printer: "Standarddrucker"
+          image_source_url: "Image-Serien-Quell-URL"
+          xrandr: "Xrandr-Einstellungen"
+          monitors_xml: "Anzeigeeinstellungen (XML)"
+          invalid_json: "Ungültige JSON-Daten"
+          invalid_xml: "Ungültige XML-Daten"
+          validity_warning_string: "Der hier angegebene Wert wird in keiner Weise validiert. Wenn der Wert ungültig ist, kann der Server ihn beim Speichern ablehnen."
+          validity_warning_json: "Dies muss gültiges JSON sein. Es wird validiert, bevor die Massenoperation gestartet wird."
+          validity_warning_xml: "Dies muss gültiges XML sein. Es wird validiert, bevor die Massenoperation gestartet wird."
+          validity_warning_xrandr: "Jede Zeile ist ein separater Xrandr-Befehl. Leerzeichen werden am Anfang und Ende jeder Zeile entfernt. Die Befehle werden nicht validiert!"
+          validity_warning_image_source: "Jede Zeile ist eine separate Quell-URL. Leerzeichen werden am Anfang und Ende jeder Zeile entfernt. Die Adressen werden nicht validiert!"
+          unknown_user: "Unbekannter Benutzer \"%{name}\""
+        delete:
+          title: "Löschen"
+        purchase_info:
+          title: "Kaufinformationen..."
+          validity_warning: "Überprüfen Sie jedes Feld, das Sie während dieser Operation ändern möchten. <strong>Diese Werte werden in keiner Weise validiert! Wenn ein Feld einen ungültigen Wert enthält, wird die Datenbank ihn ablehnen!</strong> Ein Feld kann leer gelassen werden, in diesem Fall wird der vorhandene Wert aus der Datenbank entfernt."
+        reset:
+          title: "Reset-Modus setzen/löschen"
+          action: "Aktion:"
+          reset: "In den Reset-Modus setzen (falls noch nicht darin)"
+          clear: "Reset-Modus löschen (falls gesetzt)"
+          not_a_laptop: "Nur Laptops können in den Reset-Modus versetzt werden"
+
+    new:
+      new_device: "Neues Gerät (%{device_type})"
+    edit:
+      edit: Gerät bearbeiten
+    form:
+      printer_title: Druckberechtigungen
+    form_cups:
+      cups_settings: CUPS-Einstellungen
+    cups:
+      cups_settings: CUPS-Einstellungen
+    reset:
+      title: "Für dieses Gerät wurde ein Reset angefordert"
+      at: "Anfrage gestellt am"
+      from: "Anfrage gestellt von"
+      pin: "Verifizierungscode (PIN)"
+      mode: "Modus"
+      operation: "Operation"
+    show:
+      change_school: Schule wechseln...
+      copy_basic_info: "Grundlegende Informationen in die Zwischenablage kopieren"
+    select_school:
+      title: "Gerät \"%{name}\" in eine andere Schule verschieben"
+      select_new_school: Die neue Schule auswählen
+      submit: Gerät verschieben
+
+  # Device types (used in app/models/host.rb)
+  host:
+    types:
+      register_label: Gerätetyp
+      register_title: Auswahl des Gerätetyps
+      register_question: "Gerätetyp auswählen: "
+      thinclient: Thin Client
+      fatclient: Fat Client
+      laptop: Laptop
+      workstation: Workstation
+      server: Server
+      netstand: Netstand
+      infotv: Info-TV
+      switch: Switch
+      printer: Drucker
+      projector: Projektor
+      webcam: Webcam
+      other: Andere
+      wirelessaccesspoint: "Drahtloser Zugangspunkt"
+
+  # Device hardware info
+  hwinfo:
+    title: "Hardware-Informationen"
+    no_info: "Keine Hardware-Informationen von diesem Gerät erhalten"
+    json_failed: "Hardware-Info-JSON des Geräts konnte nicht geparst werden: %{msg}"
+    received_timestamp: "Daten empfangen"
+    download_raw: "Die Rohdaten im JSON-Format herunterladen"
+    image:
+      name: "Image"
+      release: "Name"
+      kernel: "Kernel"
+    windows:
+      installed: "Windows installiert?"
+      license: "Windows-Lizenzinformationen"
+    cpu:
+      title: "Prozessor"
+      cores: "Kerne"
+      name: "Name"
+    memory:
+      title: "Speicher"
+      total: "Gesamt"
+      modules:
+        title: "Speichermodule"
+        size: "Größe"
+        slot: "Steckplatz"
+        product: "Produkt"
+        vendor: "Hersteller"
+        empty: "(leer)"
+    hard_drive:
+      title: "Festplatte"
+      none: "(Keine Festplatte)"
+    smart:
+      no_data: "(Keine SMART-Daten)"
+      general_title: "Allgemeine Informationen"
+      model_name: "Name"
+      model_family: "Modell"
+      serial_number: "Seriennummer"
+      firmware_version: "Firmware-Version"
+      block_size: "Blockgröße (logisch/physisch)"
+      wwn: "WWN (World Wide Name)"
+      trim_supported: "TRIM-Unterstützung?"
+      ata_version: "ATA-Version"
+      sata_version: "SATA-Version"
+      interface_speed: "Schnittstellengeschwindigkeit"
+      time: "Zeit (lokal)"
+      self_test: "Selbsttest"
+      power_on_time: "Einschaltzeit (HH:MM)"
+      power_cycles: "Einschaltzyklen"
+      temperature: "Temperatur"
+      attributes_title: "SMART-Attribute"
+      attr_attribute: "(ID) Attribut"
+      attr_value: "Wert"
+      attr_worst: "Schlechtester"
+      attr_threshold: "Schwellenwert"
+      attr_raw: "Rohwert"
+      nvme_title: "NVME-Informationen"
+      nvme_attr: "Attribut"
+      nvme_value: "Wert"
+    df:
+      title: "Freier Speicherplatz auf Partitionen"
+    uefi:
+      title: "UEFI-Installation"
+    wifi:
+      title: "WLAN"
+    product:
+      title: "Produktname"
+    bios:
+      title: "BIOS"
+      vendor: "Hersteller"
+      version: "Version"
+      date: "Datum"
+    serial:
+      title: "Seriennummern"
+      device: "Maschine"
+      mainboard: "Hauptplatine"
+    lspci:
+      title: "lspci-Werte"
+    lsusb:
+      title: "lsusb"
+    xrandr:
+      title: "xrandr-Ausgabe"
+      no_xrandr: "(Leer)"
+    battery:
+      title: "Akku"
+      no_battery: "(Kein Akku)"
+      vendor: "Hersteller"
+      serial: "Seriennummer"
+      state: "Zustand"
+      energy_full: "Energie (Design)"
+      voltage: "Spannung"
+      capacity: "Kapazität"
+      percentage: "Prozentsatz"
+    abitti:
+      title: "Abitti-Version"
+      unknown: "(Unbekannt)"
+    local_puavoconf:
+      title: "Lokale PuavoConf-Einstellungen"
+      key: "Schlüssel"
+      value: "Wert"
+    puavopkg:
+      title: "puavo-pkg"
+      totals: "%{num_packages} Pakete, %{disk_space} Gesamtbytes an genutztem Speicherplatz."
+      package_name: "Paketname"
+      version: "Version"
+      package_id: "Paket-ID"
+      upstream_hash: "Upstream-Hash"
+    logins:
+      title: "Anmeldungen am Gerät"
+      last_login: "Zuletzt eingeloggter Benutzer"
+    uptime:
+      title: "Betriebszeit"
+
+  # Username lists for mass password resets (created by mass imports)
+  lists:
+    index:
+      title: "Benutzernamenlisten"
+      help: "Sobald die Operation abgeschlossen ist, lädt Ihr Browser eine PDF-Datei herunter, die die Benutzernamen und die neuen Passwörter enthält, gruppiert nach der Hauptgruppe jedes Benutzers. Diese PDF ist zum Ausdrucken auf Papier gedacht, dann werden die Blätter mit einer Schere in Stücke geschnitten. Diese Stücke können dann an die Benutzer verteilt werden. Aufgrund der Funktionsweise der Listen können sie nur einmal verwendet werden. Sobald Sie die PDF herunterladen, verschwindet die Liste. Verlieren Sie die Datei also nicht! Sie können den Inhalt der Liste als CSV-Datei herunterladen, ohne die Liste zu löschen. Eine Liste wird nach sechs Monaten automatisch entfernt. Die Listen auf dieser Seite sind von neu nach alt geordnet."
+      description_empty: "Es gibt keine Benutzernamenlisten"
+      created: Liste erstellt am
+      expires: "Liste läuft ab am"
+      created_by: "Liste erstellt von"
+      description: "Beschreibung"
+      users_count_title: "Anzahl der Benutzer"
+      password_mass_setting: "Massen-Passworteinstellung"
+      label_generate_password: "Zufällige Passwörter für alle Benutzer generieren"
+      label_set_password: "Das gleiche Passwort für alle Benutzer festlegen (gefährlich!):"
+      label_submit_button: "Passwörter festlegen und eine PDF herunterladen (löscht die Liste danach)"
+      invalid_id: "(Unbekannter Benutzer %{id}, vielleicht gelöscht?)"
+      download_list_as_csv: "Liste als CSV-Datei herunterladen"
+      delete_without_downloading: "Liste löschen"
+    download:
+      password_changing_failed: "Passwortänderung fehlgeschlagen. Bitte versuchen Sie es erneut. Wenn Sie den Puavo-Support kontaktieren möchten, geben Sie bitte diesen Code an: %{request_id}."
+    delete:
+      invalid_list: "Unbekannte Liste"
+      deletion_failed: "Löschen der Liste fehlgeschlagen"
+      deleted: "Liste gelöscht"
+
+  # Shared forms that live in app/views/shared/
+  shared:
+    terminal_title: Terminalinformationen
+    location: Standort
+    display_settings: Anzeigeeinstellungen
+    kernel_settings: Image- und Kernel-Einstellungen
+    title: Geräteinformationen
+    printer_title: Druckerinformationen
+    server_title: Serverinformationen
+    printers_title: Drucker
+    no_printers_for_this_device: Keine Drucker für dieses Gerät konfiguriert
+    add_puavoDeviceXrandr: Neue xrandr-Einstellung hinzufügen
+    boot_mode_netboot: Terminal
+    boot_mode_dualboot: Dualboot
+    boot_mode_: Terminal
+    purchase_information: Kaufinformationen
+    add_macAddress: Neue MAC-Adresse hinzufügen
+    autopoweroff: Automatische Abschaltung
+    img_extension_will_be_stripped: "Die Erweiterung \".img\" wird automatisch vom Ende des Namens entfernt, falls vorhanden"
+    known_recent_releases: "Bekannte aktuelle Versionen"
+    add_puavoImageSeriesSourceURL: "Neue Image-Serien-Quell-URL hinzufügen"
+    linux_device_information:
+      certificate_status_true: Gültig
+      certificate_status_false: Nicht gültig
+      xrandr_status_true: "Ja"
+      xrandr_status_false: "Nein"
+      xrandr_status_: "Nein"
+    form_linux_device_information:
+      select: Auswählen
+    form_wlan:
+      title: Drahtlosnetzwerke
+      warning: "<strong>WARNUNG</strong>: Das Ändern des Passworts oder anderer Einstellungen eines drahtlosen Netzwerks trennt Geräte von diesem Netzwerk, bis sie aktualisierte Netzwerkinformationen über eine andere Netzwerkverbindung erhalten haben. Es wird daher empfohlen, ein neues temporäres Netzwerk (drahtlos oder kabelgebunden) zu erstellen und die Geräte damit verbinden zu lassen, und dann die Netzwerkeinstellungen zu bearbeiten. Auf diese Weise erhalten die Geräte aktualisierte Netzwerkeinstellungen über die andere Verbindung, und Sie müssen sie nicht manuell einzeln aktualisieren."
+      wireless_access_point_setup: Standard-WLAN-Zugangspunkt-Setup
+      channel_random: Zufällig
+      wireless_network_setup: WLAN-Setup
+      wireless_network_title: Netzwerk %{index}
+      file_md5: MD5
+      file_size: Größe
+      wlan_name: Name
+      wlan_description: Beschreibung
+      wlan_type: Typ
+      wlan_priority: Priorität
+      wlan_password: Passwort
+      wlan_identity: Identität
+      wlan_ca_cert: CA-Zertifikat
+      wlan_client_cert: Client-Zertifikat
+      wlan_client_key: Client-Zertifikatsschlüssel
+      wlan_client_key_password: Passwort des Client-Zertifikatsschlüssels
+      wlan_phase2_auth_mschapv2: "\"mschapv2\" verwenden (kein EAP)"
+      wlan_hidden: "Versteckt"
+      wlan_ap: In Zugangspunkten aktiviert
+      select_value_open: Offen
+      select_value_psk: PSK
+      select_value_eaptls: EAP-TLS
+      select_value_eapttls: EAP-TTLS
+      select_value_eappeap: EAP-PEAP
+      select_value_strongprefer: Stark bevorzugen
+      select_value_weakprefer: Leicht bevorzugen
+      select_value_strongavoid: Stark vermeiden
+      select_value_weakavoid: Leicht vermeiden
+      default: Standard
+    mountpoint:
+      title: Lokale und Netzwerk-Mountpunkte
+      filesystem: Dateisystem
+      path: Pfad
+      mountpoint: Mountpunkt
+      options: Optionen
+      no_mount_points: "(Keine Mountpunkte)"
+    form_mountpoint:
+      title: Lokale und Netzwerk-Mountpunkte
+      filesystem: Dateisystem
+      path: Pfad
+      mountpoint: Mountpunkt
+      options: Optionen
+      add_more: "Neuen Mountpunkt hinzufügen"
+    form_auto_power_off_settings:
+      select: Auswählen
+
+  # Used by various helper methods. Some key names have a predefined format.
+  helpers:
+    boolean_true: "Ja"
+    boolean_false: "Nein"
+    default: Standard
+    ppd_file:
+      no_file: Keine Treiberdatei
+      cannot_detect_filetype: Treiberdateityp kann nicht erkannt werden
+    invalid_ssh_public_key: Ungültiger öffentlicher Schlüssel
+    default_by_school: Standard nach Schule
+    default_by_organisation: Standard nach Organisation
+    by_organisation: (Organisation)
+    by_school: (Schule)
+
+  controllers:
+    import:
+      school_has_changed: Benutzer wurde transferiert, das alte Passwort ist in Verwendung
+
+  # Forms and form errors. Many of these have specially formatted names and
+  # they're structured in a specific way, because they're accessed by form
+  # helper methods and those interpolate the key from field names/IDs.
+  activeldap:
+    errors:
+      messages:
+        taken: "%{attribute} ist bereits vergeben"
+        blank: "%{attribute} darf nicht leer sein"
+        invalid: "%{attribute} ist ungültig"
+        confirmation: "%{attribute} stimmt nicht mit der Bestätigung überein"
+        too_long: "%{attribute} ist zu lang (maximal %{count} Zeichen)"
+        too_short: "%{attribute} ist zu kurz (mindestens %{count} Zeichen)"
+        image_failed: "Speichern des Bildes fehlgeschlagen"
+        email_not_valid: "Die E-Mail-Adresse ist ungültig."
+        invalid_verified_email: "Verifizierte E-Mail-Adresse kann nicht in der normalen E-Mail-Adressliste gefunden werden"
+        invalid_primary_email: "Die primäre E-Mail-Adresse kann nicht in der Liste der verifizierten E-Mail-Adressen gefunden werden"
+        user:
+          must_begin_with: Benutzername muss mit einem Kleinbuchstaben beginnen
+          invalid_characters: Benutzername enthält ungültige Zeichen (erlaubte Zeichen sind a-z0-9.-)
+          username_cannot_end_in_dot: "Benutzername darf nicht mit einem Punkt enden"
+          invalid_license_data: "Ungültige Lizenzdaten"
+        group:
+          invalid_characters: Kürzel enthält ungültige Zeichen (erlaubte Zeichen sind a-z0-9-)
+          forbidden_cn: "Dieses Kürzel ist ein reservierter Systemgruppenname (Kürzel \"root\", \"sudo\", \"puavo-os\", \"puavo\" und \"lpadmin\" sind verboten). Wählen Sie ein anderes Kürzel."
+        school:
+          invalid_characters: "%{attribute} enthält ungültige Zeichen (erlaubte Zeichen sind a-z0-9-)"
+        uniqueness: "%{attribute} wird bereits verwendet"
+        invalid_characters: "%{attribute} enthält ungültige Zeichen"
+        device:
+          puavoHostname:
+            invalid_characters: "Hostname enthält ungültige Zeichen (erlaubte Zeichen sind: a-z0-9-)"
+          macAddress:
+            invalid_characters: MAC-Adresse enthält ungültige Zeichen. Z.B. 0f:1f:a9:2f:a3:ad
+        wlan:
+          duplicate_name: Ein doppelter Netzwerkname existiert
+        puavoconf:
+          not_json: "PuavoConf ist kein korrektes JSON"
+          unknown_json_error: "PuavoConf JSON-Parsing aufgrund eines unbekannten Fehlers fehlgeschlagen"
+          not_a_hash: "PuavoConf ist nicht im Schlüssel/Wert-Paar-Format"
+          unsupported_value_types: "Nicht unterstützte Typen in PuavoConf-Werten"
+        username_validation:
+          leading_whitespace: "Der Benutzername beginnt mit einem Leerzeichen"
+          trailing_whitespace: "Der Benutzername endet mit einem Leerzeichen"
+          domain: "Verwenden Sie nicht das @-Zeichen oder fügen Sie einen Domainnamen danach ein"
+          uppercase: "Verwenden Sie keine Großbuchstaben"
+          invalid_characters: "Der Benutzername enthält ungültige Zeichen"
+        password_validation:
+          too_short: "Das Passwort ist zu kurz"
+          too_long: "Das Passwort ist zu lang"
+          cant_start_or_end_in_whitespace: "Das Passwort darf nicht mit einem Leerzeichen beginnen oder enden"
+          ascii_only: "Das Passwort darf nur die Buchstaben A-Z und a-z, Zahlen und einige gebräuchliche Satzzeichen enthalten"
+          not_complex_enough: "Das Passwort ist nicht komplex genug (es enthält nicht alle erforderlichen Zeichen)"
+          contains_name: "Das Passwort darf nicht den Vornamen, Nachnamen oder Benutzernamen enthalten"
+          common: "Dieses Passwort ist schwach und wird häufig verwendet"
+    models:
+      group: Gruppe
+      user: Benutzer
+      school: Schule
+      ldap_service: LDAP-Dienst
+
+    # Form field titles
+    attributes:
+      dn: DN
+      puavoMenuData: "Puavomenu-Menüdaten"
+      puavoMenuDataPreview: "Puavomenu-Menüdaten (Vorschau)"
+      ldap_organisation:
+        description: Beschreibung
+        puavoOrganisationOID: "OID"
+        puavoNotes: "Notizen"
+        telephoneNumber: Telefonnummer
+        facsimileTelephoneNumber: Faxnummer
+        l: Ort
+        street: Straßenadresse
+        postOfficeBox: Postfach
+        postalAddress: Postanschrift
+        postalCode: Postleitzahl
+        st: Bundesland
+        preferredLanguage: Bevorzugte Sprache
+        puavoLocale: Bevorzugte Sprache
+        eduOrgHomePageURI: Homepage
+        puavoTag: Tags
+        puavoConf: PuavoConf-Einstellungen
+        puavoDeviceAutoPowerOffMode: Automatischer Abschaltmodus
+        puavoDeviceAutoPowerOffMode_default: Standard
+        puavoDeviceAutoPowerOffMode_off: "Aus"
+        puavoDeviceAutoPowerOffMode_custom: Benutzerdefiniert
+        puavoDeviceOnHour: Tagesbeginn
+        puavoDeviceOffHour: Tagesende
+        o: Name
+        puavoEduOrgAbbreviation: Kürzel
+        puavoBillingInfo: Rechnungsinformationen
+        puavoDeviceImage: Desktop-Image
+        puavoWlanChannel: Kanal
+        puavoAllowGuest: Gast erlauben
+        puavoPersonalDevice: Persönliche Geräte
+        puavoTimezone: Zeitzone
+        puavoKeyboardLayout: Tastaturlayout
+        puavoKeyboardVariant: Tastaturvariante
+        puavoAutomaticImageUpdates: Automatische Image-Updates
+        puavoImageSeriesSourceURL: Image-Serien-Quell-URL
+      ldap_service:
+        uid: Dienst-ID
+        description: Beschreibung
+        userPassword: Passwort
+        groups: Systemgruppen
+        dn: Bind-DN
+      school:
+        cn: Gruppenname
+        displayName: Schulname
+        puavoNamePrefix: Namenspräfix
+        puavoSchoolCode: Schulcode
+        puavoSchoolOID: "OID-Code"
+        puavoSchoolHomePageURL: Homepage der Schule
+        description: Beschreibung
+        puavoSchoolNameAbbreviation: Kürzel
+        telephoneNumber: Telefonnummer
+        facsimileTelephoneNumber: Faxnummer
+        l: Ort
+        street: Straße
+        postOfficeBox: Postfach
+        postalAddress: Postanschrift
+        postalCode: Postleitzahl
+        st: Bundesland
+        gidNumber: GID-Nummer
+        puavoDeviceImage: Desktop-Image
+        puavoBillingInfo: Rechnungsinformationen
+        puavoWlanChannel: Kanal
+        puavoAllowGuest: Gast erlauben
+        puavoPersonalDevice: Persönliche Geräte
+        preferredLanguage: Sprache
+        image: Image
+        puavoTag: Tags
+        puavoConf: PuavoConf-Einstellungen
+        puavoLocale: Sprache
+        puavoTimezone: Zeitzone
+        puavoAutomaticImageUpdates: Automatische Image-Updates
+        puavoDeviceAutoPowerOffMode: Automatischer Abschaltmodus
+        puavoDeviceAutoPowerOffMode_default: Standard
+        puavoDeviceAutoPowerOffMode_off: "Aus"
+        puavoDeviceAutoPowerOffMode_custom: Benutzerdefiniert
+        puavoDeviceOnHour: Tagesbeginn
+        puavoDeviceOffHour: Tagesende
+        puavoImageSeriesSourceURL: Image-Serien-Quell-URL
+        puavoExternalId: Externe ID
+        bootservers: "Boot-Server"
+        puavoNotes: "Notizen"
+      user:
+        displayName: Name
+        sn: Nachname
+        givenName: Vorname
+        uid: Benutzername
+        primary_group: Hauptgruppe
+        uidNumber: UID-Nummer
+        gidNumber: Gruppe
+        password: Passwort
+        mail: E-Mail
+        telephoneNumber: Telefonnummer
+        puavoEduPersonAffiliation: Rolle
+        puavoEduPersonAccountExpirationTime: "Konto läuft ab am"
+        markedForDeletion: Zum Löschen markiert
+        roles: Rollen
+        preferredLanguage: Sprache
+        new_password: Neues Passwort
+        new_password_confirmation: Neues Passwort bestätigen
+        puavoEduPersonPersonnelNumber: Personalnummer
+        image: Bild
+        jpegPhoto: Bild
+        puavoLocked: Benutzer ist gesperrt
+        puavoLocale: Sprache
+        puavoSshPublicKey: Öffentlicher SSH-Schlüssel
+        groups: Gruppen
+        puavoExternalId: Externe ID
+        teaching_group: Lerngruppe
+        administrative_groups: Verwaltungsgruppen
+        year_class: Jahrgangsklasse
+        puavoLearnerId: "Lerner-ID"
+        mpass_materials_charge: "Lernmittelgebühr (MPASS)"
+        puavoNotes: "Notizen"
+      group:
+        displayName: Gruppenname
+        cn: Kürzel
+        gidNumber: GID-Nummer
+        primary_members: Hauptmitglieder
+        members: Mitglieder
+        puavoEduGroupType: Typ
+        puavoExternalId: Externe ID
+        puavoNotes: "Notizen"
+      device:
+        dn: DN
+        puavoHostname: Hostname
+        puavoDisplayName: "Lesbarer Name"
+        puavoDeviceType: Gerätetyp
+        macAddress: MAC-Adresse(n)
+        ipHostNumber: IP-Adresse
+        hostCertificates: Zertifikate
+        serialNumber: Seriennummer
+        puavoDeviceManufacturer: Gerätehersteller
+        puavoDeviceModel: Gerätemodell
+        puavoDevicePrimaryUser: Geräte-Hauptbenutzer
+        jpegPhoto: Foto
+        puavoLatitude: Breitengrad
+        puavoLongitude: Längengrad
+        puavoLocationName: Standort
+        puavoRole: Rolle
+        puavoDeviceStatus: Status
+        puavoDeviceBootMode: Boot-Modus
+        description: Beschreibung
+        puavoNotes: "Notizen"
+        puavoTag: Tags
+        puavoConf: PuavoConf-Einstellungen
+        puavoPurchaseDate: Kaufdatum
+        puavoWarrantyEndDate: Garantieende
+        puavoPurchaseLocation: Kaufort
+        puavoPurchaseURL: Kauf-URL
+        puavoSupportContract: Supportvertrag
+        puavoDefaultPrinter: Standarddrucker
+        puavoDeviceMonitorsXML: "Anzeigeeinstellungen (XML)"
+        puavoDeviceXrandr: Xrandr-Einstellungen
+        puavoDeviceKernelVersion: Kernel-Version
+        puavoDeviceKernelArguments: Kernel-Argumente
+        puavoPrinterCartridge: Druckerpatrone
+        printerDescription: Beschreibung
+        printerURI: URI
+        printerLocation: Standort
+        printerInfo: Name in CUPS
+        printerMakeAndModel: Marke und Modell
+        image: Image
+        puavoDeviceAutoPowerOffMode: Automatischer Abschaltmodus
+        puavoDeviceAutoPowerOffMode_default: Standard
+        puavoDeviceAutoPowerOffMode_off: "Aus"
+        puavoDeviceAutoPowerOffMode_custom: Benutzerdefiniert
+        puavoDeviceOnHour: Tagesbeginn
+        puavoDeviceOffHour: Tagesende
+        puavoDeviceCurrentImage: Aktuelles Desktop-Image
+        puavoDeviceImage: Desktop-Image
+        puavoDeviceBootImage: Geräte-Boot-Image
+        puavoAllowGuest: Gast erlauben
+        puavoPersonalDevice: Persönliches Gerät
+        puavoPrinterDeviceURI: Druckergeräte-URI
+        puavoPrinterPPD: Druckertreiberdatei
+        puavoDeviceDefaultAudioSource: Standard-Eingabe-Audiogerät
+        puavoDeviceDefaultAudioSink: Standard-Ausgabe-Audiogerät
+        puavoAutomaticImageUpdates: Automatische Image-Updates
+        puavoPersonallyAdministered: Persönlich verwaltet
+        puavoImageSeriesSourceURL: Image-Serien-Quell-URL
+        puavoDeviceHWInfo: Hardware-Info aktualisiert
+        puavoTimezone: "Zeitzone"
+        puavoDeviceExpirationTime: "Gerät läuft ab am"
+      server:
+        puavoDeviceType: Gerätetyp
+        puavoHostname: Hostname
+        macAddress: MAC-Adresse(n)
+        hostCertificates: Zertifikate
+        serialNumber: Seriennummer
+        puavoDeviceManufacturer: Gerätehersteller
+        puavoDeviceModel: Gerätemodell
+        puavoDevicePrimaryUser: Geräte-Hauptbenutzer
+        jpegPhoto: Foto
+        puavoLatitude: Breitengrad
+        puavoLongitude: Längengrad
+        puavoLocationName: Standortname
+        puavoRole: Rolle
+        puavoDeviceStatus: Status
+        description: Beschreibung
+        puavoNotes: "Notizen"
+        puavoTag: Tags
+        puavoConf: PuavoConf-Einstellungen
+        puavoPurchaseDate: Kaufdatum
+        puavoWarrantyEndDate: Garantieende
+        puavoPurchaseLocation: Kaufort
+        puavoPurchaseURL: Kauf-URL
+        puavoSupportContract: Supportvertrag
+        puavoDefaultPrinter: Standarddrucker
+        puavoDeviceMonitorsXML: "Anzeigeeinstellungen (XML)"
+        puavoDeviceXrandr: Xrandr-Einstellungen
+        puavoDeviceKernelVersion: Kernel-Version
+        puavoDeviceKernelArguments: Kernel-Argumente
+        puavoExport: Pfad
+        image: Image
+        puavoDeviceImage: Desktop-Image
+        puavoDeviceAvailableImage: Images auf dem Server
+        puavoPrinterDeviceURI: Druckergeräte-URI
+        puavoPrinterPPD: Druckertreiberdatei
+        puavoDeviceDefaultAudioSource: Standard-Eingabe-Audiogerät
+        puavoDeviceDefaultAudioSink: Standard-Ausgabe-Audiogerät
+        puavoImageSeriesSourceURL: Image-Serien-Quell-URL
+        puavoTimezone: "Zeitzone"
+      printer:
+        printerDescription: Druckername
+        printerInfo: Druckername in CUPS
+        printerMakeAndModel: Hersteller und Modell
+        printerLocation: Standort
+        printerType: Typ
+        printerURI: URI
+        puavoPrinterPPD: Treiberdatei (PPD)
+        puavoServer: Boot-Server
+    values:
+      device:
+        roles:
+          puavoNetbootDevice: Netboot
+          puavoLocalbootDevice: Lokaler Start
+          puavoPrinter: Drucker
+
+  # Password forms
+  # (There are more password-related messages in the flash messages section)
+  password:
+    current_password_too_old: "Aufgrund der Sicherheitsrichtlinien Ihrer Organisation muss Ihr aktuelles Passwort geändert werden, da es zu alt ist."
+    attempts_are_logged_own: "Alle Versuche zur Passwortänderung werden protokolliert."
+    attempts_are_logged_other: "Dieses Formular ist nur für Lehrer und Administratoren bestimmt. Alle Passwortänderungen und Änderungsversuche werden protokolliert. Wir protokollieren alle Benutzernamen, Ihre IP-Adresse(n) und Zeitstempel."
+    invalid: "Das neue Passwort entsprach nicht den vordefinierten Anforderungen"
+    edit:
+      title: Passwort eines anderen ändern
+      head: Um das Passwort eines anderen Benutzers zu ändern, geben Sie Ihren eigenen Benutzernamen und Ihr Passwort ein, und dann den Benutzernamen und das neue Passwort für den Benutzer, dessen Passwort geändert wird. Sie müssen über ausreichende Berechtigungen verfügen, um die Passwörter anderer Benutzer zu ändern.
+      changing_user: Benutzer wird geändert
+      changed_user: Benutzer geändert
+      password: Passwort
+      link_own_password: Eigenes Passwort ändern
+      domain_or: " oder "
+    own:
+      title: Eigenes Passwort ändern
+      password: Aktuelles Passwort
+      link_other_password: Passwort eines anderen ändern
+    forgot:
+      title: "Ich habe mein Passwort vergessen"
+      description: "Bitte geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link, mit dem Sie Ihr neues Passwort festlegen können."
+    reset:
+      title: Passwort zurücksetzen
+      password: Neues Passwort eingeben
+      password_confirmation: Neues Passwort erneut eingeben
+      description: Bitte geben Sie Ihr neues Passwort ein
+      submit: Passwort zurücksetzen
+    successfully:
+      send_token: "Wir haben Ihnen eine E-Mail gesendet, mit der Sie Ihr Passwort zurücksetzen können. Der Link läuft bald ab, also öffnen Sie ihn bitte so schnell wie möglich.<br><br>Wenn Sie die E-Mail nicht erhalten, wenden Sie sich bitte an den Puavo-Support und geben Sie diesen Code an: %{request_id}."
+      update: "Ihr Passwort wurde erfolgreich zurückgesetzt."
+
+  # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
+  profiles:
+    edit:
+      title: "Ihre Informationen"
+      licenses: "Lizenzcodes des Benutzerkontos"
+
+      mfa:
+        title: "Zwei-Faktor-Authentifizierung"
+        status_title: "Ihr Zwei-Faktor-Authentifizierungsstatus"
+        status_enabled: "aktiviert"
+        status_disabled: "nicht aktiviert"
+        edit: "Zwei-Faktor-Authentifizierungseinstellungen bearbeiten"
+
+      emails:
+        automatic_notice: "Automatische E-Mail-Adressen sind in Ihrer Organisation aktiviert. Sie können die Adresse nicht bearbeiten, aber Sie können sie verifizieren, wenn sie noch nicht verifiziert wurde."
+        help: "Sie können sich eine oder mehrere E-Mail-Adressen einrichten. Nach dem Speichern des Profils können Sie zu diesem Formular zurückkehren und eine Verifizierungsnachricht an eine Adresse senden. Diese Nachricht wird verwendet, um zu überprüfen, ob die Adresse wirklich Ihnen gehört und Sie darauf zugreifen können. Einige Dienste erfordern mindestens eine verifizierte Adresse. Die erste Adresse, die Sie verifizieren, wird auch zu Ihrer <strong>primären Adresse</strong>, die bei Kontaktaufnahme und an Stellen verwendet wird, an denen nur eine Adresse verwendet werden kann."
+        verified_address: "Verifiziert"
+        primary_address: "Ihre primäre Adresse"
+        verify_button: "Verifizierungsnachricht senden"
+        verify_title: "Eine Verifizierungsnachricht an diese Adresse senden. Die Nachricht enthält einen Link, den Sie öffnen müssen."
+        verification_sent: "Verifizierungsnachricht gesendet"
+        delete_button: "Löschen"
+        delete_title: "Diese Adresse löschen, wenn Ihr Profil gespeichert wird"
+        undo_deletion_button: "Löschung rückgängig machen"
+        undo_deletion_title: "Diese Adresse nicht löschen"
+        new_placeholder: "Geben Sie die neue Adresse hier ein"
+        new_button: "Hinzufügen"
+        new_title: "Die neue Adresse zur Tabelle hinzufügen. Denken Sie daran, Ihr Profil zu speichern!"
+
+        errors:
+          invalid: "Die Adresse ist nicht korrekt formatiert."
+          already_in_use: "Sie haben diese Adresse bereits."
+          unknown: "Unbekannter Fehler."
+          already_verified: "Diese Adresse wurde bereits verifiziert."
+          verification_not_sent: "Die Verifizierungsnachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.\n\nWenn Sie den technischen Support kontaktieren, geben Sie bitte diesen Code an: %{code}."
+          verification_rate_limit: "Sie müssen eine Minute zwischen den Anfragen für Verifizierungsnachrichten warten."
+
+        delete:
+          base: "Sind Sie sicher, dass Sie die Adresse {address} löschen möchten?"
+          verified_primary: "Die Adresse wurde verifiziert und ist auch Ihre primäre Adresse!"
+          verified: "Die Adresse wurde verifiziert."
+          breakage: "Wenn es keine anderen verifizierten Adressen gibt, könnten einige Anmeldungen fehlschlagen, bis Sie eine andere Adresse verifizieren!"
+
+      remove_photo_on_save: "Bild beim Speichern löschen"
+
+    failed:
+      email: "E-Mail-Adressänderung"
+      phone: "Telefonnummernänderung"
+      locale: "Sprachänderung"
+      photo_save: "Profilbildspeicherung"
+    show:
+      partially_failed_code: "Nicht alle Ihre Informationen konnten gespeichert werden. Die folgenden Elemente sind fehlgeschlagen: %{failed}. Sie können es erneut versuchen. Wenn Sie den technischen Support von Puavo kontaktieren, geben Sie bitte diesen Code an: \"%{request_id}\"."
+      updated: "Ihre Informationen wurden erfolgreich aktualisiert"
+      go_back: "Zurück zum Ändern Ihrer Informationen"
+
+  # Email address verification
+  email_verifications:
+    title: "Eine E-Mail-Adresse verifizieren"
+    expired_token: "Dieser Verifizierungslink ist ungültig oder abgelaufen. Bitte versuchen Sie es erneut, indem Sie die Verifizierungsmail aus dem Profil-Editor erneut senden. Wenn Sie den technischen Support kontaktieren möchten, geben Sie bitte diesen Code an: %{code}."
+    verification_failed: "Die Adresse konnte aufgrund eines internen Systemfehlers nicht verifiziert werden. Bitte kontaktieren Sie den technischen Support und geben Sie diesen Code an: %{code}."
+    verification_complete: "Die Adresse wurde verifiziert. Sie können dieses Fenster oder diesen Tab jetzt schließen."
+    verify_message1: "Durch Drücken der Schaltfläche unten bestätigen Sie, dass die E-Mail-Adresse"
+    verify_message2: " funktioniert, Ihnen gehört und dass Sie darauf zugreifen können. Wenn Sie diese Adresse nicht bestätigen möchten, schließen Sie bitte dieses Fenster oder diesen Tab."
+    verify_button: "Diese Adresse verifizieren"
+
+  # The MFA editor
+  mfas:
+    show:
+      title: "Einstellungen zur Zwei-Faktor-Authentifizierung"
+      logged_as: "Sie sind als <strong>%{first_name} %{last_name}</strong> (<strong>%{username}</strong>) in der Organisation <strong>%{organisation}</strong> angemeldet"
+      back_profile: "Zu Ihrem Profil zurückkehren"
+      back_puavo: "Zur Benutzerbearbeitung zurückkehren"
+
+      new:
+        title: "Eine neue Zwei-Faktor-Authentifizierung hinzufügen"
+        explanation: "Sie können mehrere Zwei-Faktor-Authentifizierungsmethoden hinzufügen (die TOTP-Methode kann mehrmals verwendet werden). Zum Beispiel können Sie einen primären Schlüssel erstellen und dann einen sekundären Schlüssel hinzufügen, falls das Gerät, mit dem Sie auf den primären Schlüssel zugreifen (ein Smartphone, ein Tablet, ein Passwort-Manager usw.), verloren geht oder kaputtgeht."
+        step1:
+          title: "Schritt 1"
+          type: "Schlüsseltyp"
+          description_title: "Schlüsselbeschreibung"
+          description_help: "Die Beschreibung ist nicht obligatorisch, aber wenn Sie mehr als eine Authentifizierungsmethode hinzufügen, hilft sie, zwischen verschiedenen Schlüsseln zu unterscheiden. Beispiele für gute Beschreibungen sind \"Primärschlüssel\" und \"Backup-Schlüssel\". Dies kann nachträglich nicht geändert werden und ist nicht der Titel, der in der Authenticator-App angezeigt wird (dort steht nur der Organisationsname)."
+        step2_totp:
+          title: "Schritt 2/3"
+          qrhelp: "Scannen Sie das QR-Bild unten mit Ihrer Authenticator-App. Wenn Sie es nicht scannen können, geben oder kopieren Sie den Code unter dem Bild manuell in Ihre Authenticator-App (und wenn Sie dies tun, stellen Sie den Hashing-Algorithmus auf SHA1, die Anzahl der Ziffern auf 6 und das Intervall auf 30 Sekunden ein)."
+          qrhelp2: "Nachdem Sie den Code zu Ihrer App hinzugefügt haben, klicken Sie auf \"Weiter\" oder drücken Sie die Eingabetaste."
+        step2_yubikey:
+          title: "Schritt 2/2"
+          help: "Stellen Sie sicher, dass Ihr Yubikey angeschlossen ist und funktioniert, und berühren Sie dann die Taste darauf, um einen Code in das Feld unten einzugeben (es wurde automatisch fokussiert). Wenn der Code gültig ist, wird der Schlüssel sofort aktiviert. Sie müssen nur dann auf die Schaltfläche \"Überprüfen\" klicken, wenn Ihr Yubikey nach der Eingabe des Codes nicht das Drücken der Eingabetaste simuliert."
+        step3_totp:
+          title: "Schritt 3/3"
+          verify_help: "Die neue TOTP-Methode muss überprüft werden, bevor sie verwendet werden kann. Bitte geben Sie den sechsstelligen Code, der in der Authenticator-App angezeigt wird, in das Feld unten ein und klicken Sie auf \"Überprüfen\" (oder drücken Sie die Eingabetaste). Wenn der Code gültig ist, wird die neue Methode aktiviert."
+      existing:
+        title: "Aktive Zwei-Faktor-Authentifizierungsmethoden"
+        no_mfas: "Sie haben keine Zwei-Faktor-Authentifizierungsmethode aktiviert."
+        table:
+          created: "erstellt"
+          verified: "verifiziert"
+          last_used: "zuletzt verwendet"
+          never_used: "dieser Schlüssel wurde nie verwendet"
+      recovery:
+        title: "Wiederherstellungsschlüssel"
+        no_keys: "Sie haben keine Wiederherstellungsschlüssel. Es wird dringend empfohlen, einen neuen Satz zu erstellen."
+        have_keys: "Sie haben Wiederherstellungsschlüssel."
+        list_disclaimer: "Jeder dieser Codes ist nur für den einmaligen Gebrauch bestimmt und soll nur verwendet werden, wenn alle Ihre anderen Authentifizierungsmethoden unbrauchbar sind. Bitte bewahren Sie sie an einem sicheren Ort auf (denken Sie daran: wenn Sie nicht auf Ihr Konto zugreifen können, können Sie auch nicht auf diese Liste zugreifen)."
+        confirm_new: "Sind Sie sicher? Das Erstellen neuer Schlüssel macht alle vorhandenen Schlüssel ungültig!"
+      buttons:
+        add_new: "Neu hinzufügen"
+        verify: "Überprüfen"
+        cancel: "Abbrechen"
+        previous: "Zurück"
+        next: "Weiter"
+        remove: "Entfernen"
+        list_keys: "Aktuelle Schlüssel auflisten"
+        create_keys: "Neuen Satz Wiederherstellungsschlüssel erstellen"
+        delete_keys: "Alle Wiederherstellungsschlüssel löschen"
+      errors:
+        # These are generated on the client
+        generic: "Der Server kann nicht erreicht werden. Versuchen Sie es in einem Moment erneut. Wenn das Problem erneut auftritt, wenden Sie sich bitte an den Support."
+        totp_code_incorrect: "Der Code war nicht korrekt."
+        code_partially_verified: "Der Code war korrekt, aber die Liste der bestehenden Zwei-Faktor-Authentifizierungsmethoden konnte nicht aktualisiert werden. Bitte laden Sie die Seite manuell neu."
+        yubikey_input_incorrect: "Die Yubikey-Eingabe war nicht korrekt."
+        key_deleted_but_not_updated: "Der Schlüssel wurde entfernt, aber die Liste der bestehenden Zwei-Faktor-Authentifizierungsmethoden konnte nicht aktualisiert werden. Bitte laden Sie die Seite manuell neu."
+    server:
+      errors:
+        # These are generated on the server
+        missing_required_data: "Ihrem Konto fehlen Informationen, die für die Multi-Faktor-Authentifizierung erforderlich sind. Bitte kontaktieren Sie den Support und geben Sie ihnen diesen Code: %{request_id}."
+        mfa_server_not_responding: "Der Verifizierungsserver kann nicht erreicht werden. Bitte versuchen Sie es in einem Moment erneut. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support und geben Sie ihnen diesen Code: %{request_id}."
+        unknown_server_error: "Unbekannter Serverfehler. Bitte versuchen Sie es in einem Moment erneut. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support und geben Sie ihnen diesen Code: %{request_id}."
+        unknown_key_type: "Unbekannter Schlüsseltyp. Bitte kontaktieren Sie den Support und geben Sie ihnen diesen Code: %{request_id}."
+        qr_code_generation_failed: "Die QR-Code-Erstellung ist fehlgeschlagen. Bitte versuchen Sie es in einem Moment erneut. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support und geben Sie ihnen diesen Code: %{request_id}."
+        invalid_key: "Die Schlüssel-ID ist falsch. Bitte laden Sie die Seite neu und versuchen Sie, die Methode erneut hinzuzufügen. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support und geben Sie ihnen diesen Code: %{request_id}."
+        yubikey_already_in_use: "Dieser Yubikey wird bereits verwendet. Sie können ihn nicht erneut hinzufügen. Wenn Sie mehrere Yubikey-Authentifizierungen hinzufügen möchten, müssen Sie mehrere physische Schlüssel verwenden."
+        mfa_activation_error: "Die neue Authentifizierungsmethode wurde hinzugefügt, aber die Zwei-Faktor-Authentifizierung konnte nicht aktiviert werden. Bitte kontaktieren Sie den Support und geben Sie ihnen diesen Code: %{request_id}."
+        mfa_deactivation_error: "Die letzte Authentifizierungsmethode wurde entfernt, aber die Zwei-Faktor-Authentifizierung konnte nicht deaktiviert werden. Bitte kontaktieren Sie den Support und geben Sie ihnen diesen Code: %{request_id}."
+
+  # Used in script/create_organisation_owner
+  create_organisation_owner:
+    school_name: Administration
+    group_name: Maintenance
