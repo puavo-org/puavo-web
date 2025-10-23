@@ -110,7 +110,7 @@ module PuavoUsers
 
     # These locales are listed in language selectors, in the order they're specified.
     # Very bad things will happen if this list is not correct.
-    config.available_ui_locales = ['en', 'fi']
+    config.available_ui_locales = ['en', 'fi', 'de']
 
     # Enable deflate/gzip compression
     config.middleware.use Rack::Deflater
