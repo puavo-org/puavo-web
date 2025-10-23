@@ -1467,7 +1467,6 @@ fi:
       fill: "Täytä"
       reload_groups: "Päivitä ryhmät"
       overwrite_existing: "Ylikirjoita olemassaolevat arvot"
-      reload_groups: "Päivitä ryhmät"
       reloading: "Päivitetään..."
 
     tools:
@@ -1739,11 +1738,10 @@ fi:
       new_entry:
         menu_title: "Lisää valikko"
         program_title: "Lisää ohjelma"
-        add_new: "Lisää uusi"
         unique_id_placeholder: "Yksilöllinen tunniste"
         external_title: "Tämä on ulkoinen valikko tai ohjelma"
         external_help: "Valikon tai ohjelman määritys tulee muualta, ei nykyisestä valikkodatasta"
-        add_new_button: "Lisää"
+        add_new_button: "Lisää uusi"
         add_existing: "Lisää olemassaoleva"
         search_placeholder: "Etsi"
 

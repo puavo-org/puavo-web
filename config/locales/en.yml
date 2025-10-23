@@ -1467,7 +1467,6 @@ en:
       fill: "Fill"
       reload_groups: "Reload groups"
       overwrite_existing: "Overwrite existing values"
-      reload_groups: "Reload groups"
       reloading: "Reloading..."
 
     tools:
@@ -1739,11 +1738,10 @@ en:
       new_entry:
         menu_title: "Add a menu"
         program_title: "Add a program"
-        add_new: "Add a new"
         unique_id_placeholder: "Unique ID"
         external_title: "This is an external menu or program"
         external_help: "The data for this menu or program comes elsewhere, not from the current menu data"
-        add_new: "Add"
+        add_new_button: "Add new"
         add_existing: "Add an existing"
         search_placeholder: "Search"
 
