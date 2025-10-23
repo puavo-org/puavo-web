@@ -290,7 +290,7 @@ class User < LdapBase
     if self.image && !self.image.path.to_s.empty?
       begin
         resize_image
-      rescue
+      rescue StandardError
         errors.add(:image, I18n.t('activeldap.errors.messages.image_failed'))
       end
     end

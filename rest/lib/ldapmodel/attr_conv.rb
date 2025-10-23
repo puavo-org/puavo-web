@@ -500,7 +500,7 @@ class LdapModel
     begin
       # Don't compare against ourselves
       return if self.puavo_id == other.puavo_id
-    rescue
+    rescue StandardError
     end
 
     add_validation_error(pretty_name, "#{ pretty_name.to_s }_not_unique".to_sym, "#{ pretty_name }=#{ val } is not unique")

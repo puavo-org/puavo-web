@@ -121,7 +121,7 @@ class ApplicationController < ActionController::Base
   def get_organisation
     begin
       @organisation_name = LdapOrganisation.current.cn
-    rescue
+    rescue StandardError
       # This fails, for example, when opening password change forms, because
       # no LDAP connection exists when the form is opened. It's not a big
       # problem, though, because the password forms call a special method
@@ -240,7 +240,7 @@ class ApplicationController < ActionController::Base
   def get_releases
     begin
       JSON.parse(File.read("#{Rails.root}/config/releases.json"))
-    rescue
+    rescue StandardError
       {}
     end
   end

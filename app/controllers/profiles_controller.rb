@@ -238,7 +238,7 @@ class ProfilesController < ApplicationController
     if @params.include?('jpegPhoto')
       begin
         modify << { 'jpegPhoto' => User.resize_image(@params['jpegPhoto'].path) }
-      rescue => e
+      rescue StandardError => e
         logger.error("[#{@request_id}] Could not resize the uploaded profile picture: #{e}")
         failed << t('profiles.failed.photo_save')
         return false

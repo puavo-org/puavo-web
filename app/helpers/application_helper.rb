@@ -303,11 +303,11 @@ module ApplicationHelper
     # series JSON, then placing it in the configuration directory (a symlink is good).
     begin
       defs = File.read("#{Rails.root}/config/puavoconf_definitions.json")
-    rescue
+    rescue StandardError
       defs = '{}'
     end
 
-    return defs.html_safe
+    defs.html_safe
   end
 
   def format_uptime(seconds)

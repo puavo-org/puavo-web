@@ -42,7 +42,7 @@ module Puavo
            'school_name' => (device.school.name if device.respond_to?(:school)),
            'serial' => (device.respond_to?(:serial) ? device.serial : device.serial_number),
          }
-       rescue => e
+       rescue StandardError => e
          logger.error("Puavo::Inventory::self.inventory_notification_from_device(): data gathering failed: #{e}")
          nil
        end
@@ -76,7 +76,7 @@ module Puavo
       begin
         response = http.request(post)
         logger.info("Puavo::Inventory::send_device_change(): response status: #{response.code}")
-      rescue => e
+      rescue StandardError => e
         logger.error("Puavo::Inventory::send_device_change(): send failed: #{e}")
 
         # Retry five times to weed out intermittent network errors

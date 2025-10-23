@@ -71,7 +71,7 @@ module Puavo
     def get_conditions
       begin
         JSON.parse(File.read(File.join(Rails.root, 'config', 'puavomenu_editor_conditions.json'))).keys
-      rescue
+      rescue StandardError
         []
       end
     end

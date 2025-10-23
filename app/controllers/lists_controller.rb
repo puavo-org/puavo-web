@@ -48,7 +48,8 @@ class ListsController < ApplicationController
     begin
       @list.downloaded = true
       @list.save
-    rescue
+    rescue StandardError => e
+      logger.error(e)
       flash[:alert] = t('.deletion_failed')
       redirect_to lists_path(@school)
       return

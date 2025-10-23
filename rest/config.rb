@@ -192,7 +192,7 @@ OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY = public_key.freeze
 # Load organisations.yml if it exists
 begin
   ORGANISATIONS = YAML.load_file('/etc/puavo-web/organisations.yml').freeze
-rescue => e
+rescue StandardError => e
   ORGANISATIONS = {}.freeze
 end
 

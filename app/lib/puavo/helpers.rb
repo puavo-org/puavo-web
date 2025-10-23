@@ -11,7 +11,7 @@ module Puavo
       # case-by-case exceptions that are overridden in the configuration file.
       begin
         Puavo::Organisation.find(LdapOrganisation.current.cn).value_by_key('sort_locale') || 'fi-FI'
-      rescue
+      rescue StandardError
         'fi-FI'
       end
     end
@@ -84,14 +84,14 @@ module Puavo
     # "YYYYMMDDHHMMSSZ" or "YYYYMMDDHHMMSS+offset") and returns it as a UTC Time object
     def self.ldap_time_string_to_utc_time(t)
       t ? Time.strptime(t[0], '%Y%m%d%H%M%S%z').utc : nil
-    rescue
+    rescue StandardError
       nil
     end
 
     # Like above, but returns a Unixtime stamp
     def self.ldap_time_string_to_unixtime(t)
       t ? ldap_time_string_to_utc_time(t).to_i : nil
-    rescue
+    rescue StandardError
       nil
     end
 

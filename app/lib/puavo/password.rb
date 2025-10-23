@@ -93,7 +93,7 @@ module Puavo
                               username: user.uid,
                               email: address,
                             })
-      rescue => e
+      rescue StandardError => e
         logger.error("[#{request_id}] Request failed: #{e}")
 
         if e.to_s.include?('Connection reset by peer') && !tried

@@ -240,7 +240,7 @@ class GroupsController < ApplicationController
           # cannot access. A bit hacky...
           begin
             member.primary_school.cn
-          rescue
+          rescue StandardError
             next
           end
 
@@ -252,7 +252,7 @@ class GroupsController < ApplicationController
 
       new_list.save
       ok = true
-    rescue
+    rescue StandardError
       ok = false
     end
 
@@ -404,7 +404,8 @@ class GroupsController < ApplicationController
     begin
       @group.puavoSchool = school.dn
       @group.save!
-    rescue => e
+    rescue StandardError => e
+      logger.error(e)
       flash[:alert] = t('flash.save_failed')    # Not the best possible error message
       return redirect_to group_path(@school, @group)
     end
@@ -531,7 +532,7 @@ class GroupsController < ApplicationController
         begin
           # extract the PuavoID from the DN
           uid = dn_to_uid.match(dn)[0].to_i
-        rescue
+        rescue StandardError
           next
         end
 
@@ -598,7 +599,8 @@ class GroupsController < ApplicationController
             m.puavoLocked = true
             m.save
             count += 1
-          rescue => e
+          rescue StandardError => e
+            logger.error(e)
           end
         end
 
@@ -613,7 +615,8 @@ class GroupsController < ApplicationController
             m.puavoLocked = true
             m.save!
             count += 1
-          rescue => e
+          rescue StandardError => e
+            logger.error(e)
           end
         end
 
@@ -640,7 +643,7 @@ class GroupsController < ApplicationController
           begin
             group.add_user(m)
             count += 1
-          rescue => e
+          rescue StandardError => e
             logger.error(e)
           end
         end
@@ -685,8 +688,9 @@ class GroupsController < ApplicationController
           row << m.primary_school.displayName
           row << m.primary_school.cn
           row << m.primary_school.id
-        rescue
+        rescue StandardError => e
           # Probably an inaccessible user, in another school the current admin has no access to?
+          logger.error(e)
           next
         end
 
@@ -804,7 +808,7 @@ class GroupsController < ApplicationController
         # immediately afterwards will still fail?
         m.primary_school.cn
         false
-      rescue
+      rescue StandardError
         num_hidden += 1
         true
       end

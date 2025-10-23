@@ -112,7 +112,7 @@ module DevicesHelper
         link: "/users/#{school_id}/users/#{u.id}",
         title: "#{u.uid} (#{u.givenName} #{u.sn})"
       }
-    rescue
+    rescue StandardError
       # The DN is not valid, indicate it on the table
       return {
         valid: false,
@@ -317,13 +317,13 @@ module DevicesHelper
       if reset.include?('request-time')
         begin
           out[:reset_time] = DateTime.parse(reset['request-time']).to_i
-        rescue
+        rescue StandardError
         end
       end
 
       begin
         out[:reset_fulfilled] = DateTime.parse(reset['request-fulfilled']).to_i
-      rescue
+      rescue StandardError
       end
     end
 
@@ -448,7 +448,7 @@ module DevicesHelper
 
         begin
           out[:ll_time] = Time.parse(last['timestamp']).to_i if last['timestamp']
-        rescue
+        rescue StandardError
         end
       end
 
@@ -459,9 +459,9 @@ module DevicesHelper
       if info['puavopkgs']
         out[:puavopkgs] = info['puavopkgs']
       end
-    rescue => e
+    rescue StandardError => e
       # oh dear
-      puts e
+      logger.error(e)
     end
 
     return out

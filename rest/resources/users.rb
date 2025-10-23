@@ -427,7 +427,7 @@ class User < LdapModel
           group = PuavoRest::Group.by_dn(dn)
           group.add_member(self)
           group.save!
-        rescue => e
+        rescue StandardError => e
           $rest_log.error("Can't put the renamed user back to group \"#{dn}\": #{e}")
         end
       end
@@ -755,7 +755,7 @@ class User < LdapModel
     if roles.include?('student') && external_data
       begin
         ed = JSON.parse(external_data)
-      rescue
+      rescue StandardError
         ed = {}
       end
 

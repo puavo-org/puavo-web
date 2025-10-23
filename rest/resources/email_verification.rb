@@ -142,7 +142,7 @@ class EmailManagement < PuavoSinatra
 
     begin
       $mailer.send(to: email, subject: t.email_verification.subject, body: message, charset: 'UTF-8')
-    rescue => e
+    rescue StandardError => e
       $rest_log.info("[#{request_id}] The email could not be sent: #{e}")
       status 404
       return

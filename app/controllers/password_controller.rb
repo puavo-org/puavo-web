@@ -160,7 +160,7 @@ class PasswordController < ApplicationController
       if ret != :ok
         logger.error("[#{request_id}] Password reset failed, return code is \"#{ret.to_s}\"")
        end
-    rescue => e
+    rescue StandardError => e
       logger.error("[#{request_id}] Password reset failed: #{e}")
     end
 
@@ -323,7 +323,7 @@ class PasswordController < ApplicationController
           end
 
           logger.info("[#{request_id}] Password reset complete for user \"#{data['uid']}\" (ID=#{data['id']})")
-        rescue => e
+        rescue StandardError => e
           logger.error("[#{request_id}] Unable to parse the response received from the password reset host: #{e}")
           logger.error("[#{request_id}] Raw response data: #{rest_response.body.to_s}")
           logger.error("[#{request_id}] Redis entries not cleared")

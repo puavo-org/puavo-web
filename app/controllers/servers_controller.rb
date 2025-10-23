@@ -174,7 +174,7 @@ class ServersController < ApplicationController
 
     begin
       data = JSON.parse(server.puavoDeviceHWInfo)
-    rescue => e
+    rescue StandardError => e
     end
 
     send_data data.to_json,

@@ -65,7 +65,7 @@ class Password < PuavoSinatra
                     :subject => t.password_management.subject,
                     :body => message,
                     :charset => 'UTF-8' )
-    rescue => e
+    rescue StandardError => e
       $rest_log.info("[#{request_id}] The email could not be sent: #{e}")
       status 404
       return json({ :status => 'failed' })
@@ -161,7 +161,7 @@ class Password < PuavoSinatra
                     :subject => t.password_management.subject,
                     :body => message,
                     :charset => 'UTF-8' )
-    rescue => e
+    rescue StandardError => e
       $rest_log.info("[#{request_id}] The email could not be sent: #{e}")
       status 404
       return json({ :status => 'failed' })

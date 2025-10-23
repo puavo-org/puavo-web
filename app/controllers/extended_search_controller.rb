@@ -49,7 +49,7 @@ class ExtendedSearchController < ApplicationController
     begin
       strings = params[:searchTerms].force_encoding('utf-8')
       settings.terms = strings.split("\n").map{ |t| t.strip }.reject{ |t| t.empty? || t[0] == '#' }
-    rescue
+    rescue StandardError
       return make_error(t('extended_search.controller.search_terms_cleanup_failed'))
     end
 
@@ -63,7 +63,7 @@ class ExtendedSearchController < ApplicationController
         s = School.find(params[:schoolLimit].to_i)
         settings.school_filter = "(puavoSchool=#{s.dn})"
       rescue StandardError => e
-        puts "----> #{e}"
+        logger.error(e)
         return make_error(t('extended_search.controller.school_limit_failed'))
       end
     end
@@ -109,7 +109,7 @@ class ExtendedSearchController < ApplicationController
       settings.terms.each do |t|
         begin
           terms2 << Regexp.new(t)
-        rescue
+        rescue StandardError
           return make_error(t('extended_search.controller.invalid_regexp') + "\"#{t}\"")
         end
       end
@@ -230,7 +230,7 @@ class ExtendedSearchController < ApplicationController
 
     begin
       s = School.find(school_dn)[0]
-    rescue
+    rescue StandardError
       s = nil
     end
 
@@ -402,7 +402,7 @@ class ExtendedSearchController < ApplicationController
       begin
         user[1]['down_sn'] = user[1]['sn'][0].downcase
         user[1]['down_givenName'] = user[1]['givenName'][0].downcase
-      rescue
+      rescue StandardError
         # There are users out there who have only one name. They shouldn't exist, but they do.
         # Skip them.
       end

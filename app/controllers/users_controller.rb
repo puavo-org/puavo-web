@@ -328,7 +328,7 @@ class UsersController < ApplicationController
         if @user.puavoEduPersonAffiliation.include?('student')
           @mpass_materials_charge = ed.fetch('materials_charge', nil)
         end
-      rescue
+      rescue StandardError
       end
     end
 
@@ -826,7 +826,7 @@ class UsersController < ApplicationController
           when :puavo_rest_call_failed
             flash[:alert] = t('flash.user.reset_failed_puavo_rest_call_failed', request_id: request_id)
         end
-      rescue => e
+      rescue StandardError => e
         logger.error("[#{request_id}] Password reset failed: #{e}")
         flash[:alert] = t('flash.user.reset_failed_generic', request_id: request_id)
       end
@@ -899,9 +899,7 @@ class UsersController < ApplicationController
 
       flash[:notice] = t('flash.user.added_to_school', name: @target.displayName)
     rescue StandardError => e
-      logger.error('-' * 50)
       logger.error(e)
-      logger.error('-' * 50)
       flash[:alert] = t('flash.user.school_adding_failed')
     end
 
@@ -928,9 +926,7 @@ class UsersController < ApplicationController
 
       flash[:notice] = t('flash.user.removed_from_school', name: @target.displayName)
     rescue StandardError => e
-      logger.error('-' * 50)
       logger.error(e)
-      logger.error('-' * 50)
       flash[:alert] = t('flash.user.school_removing_failed')
     end
 
@@ -959,9 +955,7 @@ class UsersController < ApplicationController
 
       flash[:notice] = t('flash.user.primary_school_changed', name: @target.displayName)
     rescue StandardError => e
-      logger.error('-' * 50)
       logger.error(e)
-      logger.error('-' * 50)
       flash[:alert] = t('flash.user.primary_school_change_failed')
     end
 
@@ -985,9 +979,7 @@ class UsersController < ApplicationController
 
       flash[:notice] = t('flash.user.primary_school_added_and_changed', name: @target.displayName)
     rescue StandardError => e
-      logger.error('-' * 50)
       logger.error(e)
-      logger.error('-' * 50)
       flash[:alert] = t('flash.user.primary_school_add_and_change_failed')
     end
 
@@ -1044,9 +1036,7 @@ class UsersController < ApplicationController
 
       flash[:notice] = t('flash.user.user_moved_to_school', name: @target.displayName)
     rescue StandardError => e
-      logger.error('-' * 50)
       logger.error(e)
-      logger.error('-' * 50)
       flash[:alert] = t('flash.user.school_moving_failed')
     end
 
