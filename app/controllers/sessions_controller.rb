@@ -8,6 +8,8 @@ class SessionsController < ApplicationController
   skip_before_action :require_puavo_authorization, :only => [ :new, :create, :mfa_ask, :mfa_post ]
   skip_before_action :require_login, :only => [ :new, :create, :mfa_ask, :mfa_post ]
 
+  # The default mount point for Rack. This used to be a method in application_controller.rb.
+  RACK_MOUNT_POINT = '/'.freeze
 
   def new
     # Base content
@@ -52,7 +54,7 @@ class SessionsController < ApplicationController
 
     mfa_init_session
 
-    redirect_back_or_default  rack_mount_point
+    redirect_back_or_default RACK_MOUNT_POINT
   end
 
   def auth
@@ -190,7 +192,7 @@ class SessionsController < ApplicationController
         logger.info("[#{request_id}] the code is valid")
         redis.del(session[:uuid])
         session[:mfa] = 'pass'
-        redirect_back_or_default rack_mount_point
+        redirect_back_or_default RACK_MOUNT_POINT
       elsif response.status == 403 && data['status'] == 'fail' && data['messages'].include?('2002')
         logger.info("[#{request_id}] the code is not valid")
         session[:mfa] = 'fail'

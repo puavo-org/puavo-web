@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
                  :show_authentication_error, :store_location,
                  :redirect_back_or_default, :organisation_key_from_host,
                  :set_initial_locale, :remove_ldap_connection, :theme,
-                 :school_list, :list_all_puavoconf_values, :rack_mount_point )
+                 :school_list, :list_all_puavoconf_values )
 
   # Raise an exception if the CSRF check fails. Ignore JSON and XML
   # requests, as they're used in scripts and tests and protecting
@@ -103,10 +103,6 @@ class ApplicationController < ActionController::Base
 
     # There is no error handling here. If there's invalid puavo-conf somewhere in the chain, we must
     # explode loudly and violently with internal server error, to force someone to investigate it.
-  end
-
-  def rack_mount_point
-    "/users"
   end
 
   def handle_date_multiparameter_attribute(object_params, attribute)
