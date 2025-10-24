@@ -3,7 +3,7 @@ Given(/^the following servers:$/) do |servers|
   servers.hashes.each do |attrs|
     server = Server.new
     server.attributes = attrs
-    server.puavoDeviceType = "ltspserver"
+    server.puavoDeviceType = 'bootserver'
     server.save!
   end
 end

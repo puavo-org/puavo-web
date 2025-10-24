@@ -34,25 +34,22 @@ Feature: Devices registration
     Then I should see the following output from process "puavo-register":
     """
     Device type selection:
-    1. Boot server
-    2. Digital signage
-    3. Fatclient
+    1. Bootserver
+    2. Fat Client
+    3. Info-tv
     4. Laptop
-    5. LTSP server
-    6. Netstand
-    7. Other
-    8. Printer
-    9. Projector
-    10. Switch (network)
-    11. Thinclient
-    12. Webcam
-    13. Wireless access point
-    14. Workstation
+    5. Other
+    6. Printer
+    7. Projector
+    8. Switch
+    9. Thin Client
+    10. Webcam
+    11. Wireless access point
     """
-    When I enter "Thinclient" into process "puavo-register"
+    When I enter "Thin Client" into process "puavo-register"
     Then I should see the following output from process "puavo-register":
     """
-    ===> selected [Thinclient]
+    ===> selected [Thin Client]
     School selection:
     1. Administration
     2. Example school 1
@@ -72,7 +69,7 @@ Feature: Devices registration
     Then I should see the following output from process "puavo-register":
     """
     HOST INFORMATION:
-    Device type:            Thinclient
+    Device type:            Thin Client
     School:                 Example school 1
     Hostname:               test-thin-01
     MAC address(es):        52:54:00:aa:aa:aa
