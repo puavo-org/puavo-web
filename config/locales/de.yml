@@ -1980,6 +1980,7 @@ de:
       register_label: Gerätetyp
       register_title: Auswahl des Gerätetyps
       register_question: "Gerätetyp auswählen: "
+      bootserver: "Bootserver"
       thinclient: Thin Client
       fatclient: Fat Client
       laptop: Laptop

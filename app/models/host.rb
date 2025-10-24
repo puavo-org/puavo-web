@@ -49,30 +49,33 @@ class Host < DeviceBase
       end
     end
 
-    # Set host's label by user's locale. Localization values must be set on the puavo.yml
+    # Translate the device labels
     type_list.each_key do |type|
-      type_list[type]["label"] = type_list[type]["label"][I18n.locale.to_s]
+      type_list[type]['label'] = I18n.t("host.types.#{type}")
     end
 
     # Set default device type by last device
     if current_user
-      if device = Device.find( :all,
-                               :attributes => ["*", "+"],
-                               :attribute => 'creatorsName',
-                               :value => current_user.dn.to_s ).max do |a,b|
+      if device = Device.find(:all,
+                              attributes: ['*', '+'],
+                              attribute: 'creatorsName',
+                              value: current_user.dn.to_s ).max do |a,b|
           a.puavoId.to_i <=> b.puavoId.to_i
         end
         default_device_type = device.puavoDeviceType
       end
     end
+
     unless type_list.keys.include?(default_device_type)
       default_device_type = type_list.keys.first
     end
 
-    { "default" => default_device_type,
-      "label" => I18n.t("host.types.register_label"),
-      "title" => I18n.t("host.types.register_title"),
-      "question" => I18n.t("host.types.register_question"),
-      "list" => type_list }
+    {
+      'default' => default_device_type,
+      'label' => I18n.t('host.types.register_label'),
+      'title' => I18n.t('host.types.register_title'),
+      'question' => I18n.t('host.types.register_question'),
+      'list' => type_list
+    }
   end
 end

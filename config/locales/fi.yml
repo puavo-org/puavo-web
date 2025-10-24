@@ -1980,6 +1980,7 @@ fi:
       register_label: Laitetyyppi
       register_title: Laitetyypin valinta
       register_question: "Valitse laitetyyppi: "
+      bootserver: "Boot server"
       thinclient: "Kevytpääte"
       fatclient: "Tehopääte"
       laptop: Kannettava
