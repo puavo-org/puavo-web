@@ -258,14 +258,5 @@ module Puavo
     def remove_ldap_connection
       Puavo::Authentication.remove_connection
     end
-
-    def theme
-      if current_organisation
-        theme = current_organisation.value_by_key('theme')
-      end
-
-      return theme || "breathe"
-    end
-
   end
 end

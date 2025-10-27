@@ -31,7 +31,6 @@ Feature: Manage profile
     # FIXME image field?
     # And I fill in "background" with ""
     # FIXME following fields should be add to ldap
-    # And I fill in "theme" with ""
     # And I fill in "mouse?" with ""
 
     When I press "Update"

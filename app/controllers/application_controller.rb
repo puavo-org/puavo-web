@@ -8,13 +8,13 @@ class ApplicationController < ActionController::Base
   include FastGettext::Translation
 
   attr_reader :school
-  helper_method( :theme, :current_user, :current_organisation,
+  helper_method( :current_user, :current_organisation,
                  :current_organisation?, :acquire_credentials,
                  :setup_authentication, :perform_login, :require_login,
                  :require_puavo_authorization,
                  :show_authentication_error, :store_location,
                  :redirect_back_or_default, :organisation_key_from_host,
-                 :set_initial_locale, :remove_ldap_connection, :theme,
+                 :set_initial_locale, :remove_ldap_connection,
                  :school_list, :list_all_puavoconf_values )
 
   # Raise an exception if the CSRF check fails. Ignore JSON and XML
