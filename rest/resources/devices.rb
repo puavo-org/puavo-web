@@ -693,6 +693,13 @@ class Devices < PuavoSinatra
         # ERS servers with a naksu profile do not have exam-o-matic integration
         next if conf.fetch('puavo.ers.mode', '') == 'naksu'
 
+        # Which Abitti version?
+        if conf.fetch('puavo.ers.mode', nil) == 'abitti2server'
+          abitti_version = 2
+        else
+          abitti_version = 1
+        end
+
         # Include school information directly in the response,
         # so we don't have to make multiple searches
         school_dn = dev['puavoSchool'][0]
@@ -713,6 +720,7 @@ class Devices < PuavoSinatra
           school_id: school_cache[school_dn].id.to_i,
           school_abbr: school_cache[school_dn].abbreviation,
           school_name: school_cache[school_dn].name,
+          abitti_version: abitti_version
         }
       rescue StandardError => e
         rlog.error(e)
