@@ -111,12 +111,12 @@ bootserver.save!
   {
     :puavoHostname => "ltsp1",
     :macAddress => "00:60:2f:2C:C3:ED",
-    :puavoDeviceType => "ltspserver"
+    :puavoDeviceType => "bootserver"
   },
   {
     :puavoHostname => "ltsp2",
     :macAddress => "00:60:2f:4D:00:4B",
-    :puavoDeviceType => "ltspserver"
+    :puavoDeviceType => "bootserver"
   },
 ].each do |attrs|
   server = Server.new
