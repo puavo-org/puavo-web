@@ -9,7 +9,6 @@ After=network-online.target
 Type=simple
 User=puavo
 Group=puavo
-WorkingDirectory=/var/app/puavo-web
 Environment="RAILS_ENV=production"
 # This secret key is only used in development and testing, even if the development server
 # is run in production mode. The actual production servers use a different key.
@@ -101,9 +100,9 @@ SystemCallFilter=~@resources
 RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
 
 # Filesystem restrictions
-NoExecPaths=/tmp
+NoExecPaths=/tmp /var/app/puavo-web/tmp
 WorkingDirectory=/var/app/puavo-web
-ReadWritePaths=/var/app/puavo-web/log
+ReadWritePaths=/var/app/puavo-web/log /var/app/puavo-web/tmp
 ReadOnlyPaths=/etc/puavo-web
 UMask=0177
 

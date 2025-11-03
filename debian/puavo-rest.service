@@ -10,7 +10,6 @@ Type=simple
 PermissionsStartOnly=true
 User=puavo
 Group=puavo
-WorkingDirectory=/var/app/puavo-rest
 LimitNOFILE=65536
 Environment="RACK_ENV=production"
 ExecStartPre=/bin/mkdir -p /run/puavo-rest
