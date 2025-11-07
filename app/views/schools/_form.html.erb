@@ -4,12 +4,12 @@
 <table class="editForm">
   <tr>
     <th class="requiredField"><%= f.label :displayName %></th>
-    <td><%= f.text_field :displayName, :required => 'required', :autofocus => @is_new_school ? true : nil %></td>
+    <td><%= f.text_field :displayName, required: 'required', autofocus: @is_new_school ? true : nil %></td>
   </tr>
 
   <tr>
     <th class="requiredField"><%= f.label :cn %></th>
-    <td><%= f.text_field :cn, :required => 'required' %></td>
+    <td><%= f.text_field :cn, required: 'required' %></td>
   </tr>
 
   <tr>
@@ -102,12 +102,9 @@
     <td><%= f.text_field :puavoExternalId %></td>
   </tr>
 
-  <%= render :partial => 'shared/form_allow_guest_and_personal_device', :locals => { :f => f } %>
+  <%= render partial: 'shared/form_allow_guest_and_personal_device', locals: { f: f } %>
 
-  <%= render( :partial => 'shared/form_boolean_attribute',
-              :locals => {
-                :f => f,
-                :attribute => :puavoAutomaticImageUpdates } ) %>
+  <%= render partial: 'shared/form_boolean_attribute', locals: { f: f, attribute: :puavoAutomaticImageUpdates } %>
 
   <% if current_user.organisation_owner? %>
   <tr class="ownersOnly">
@@ -155,15 +152,12 @@
     <td><%= f.text_field :puavoTag %></td>
   </tr>
 
-  <%= render( :partial => 'shared/form_puavoconf', :locals => { :f => f } ) %>
+  <%= render partial: 'shared/form_puavoconf', locals: { f: f } %>
 
-  <%= render( :partial => 'shared/form_auto_power_off_settings',
-              :locals => {
-                :f => f } ) %>
-
+  <%= render partial: 'shared/form_auto_power_off_settings', locals: { f: f } %>
 </table>
 
-<%= render :partial => 'shared/form_mountpoint', :locals => { :f => f } %>
+<%= render partial: 'shared/form_mountpoint', locals: { f: f } %>
 
 <table class="editForm">
   <tr class="buttonRow">

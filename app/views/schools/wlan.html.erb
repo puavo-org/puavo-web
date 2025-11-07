@@ -4,12 +4,8 @@
 
 <h1><%= t('shared.form_wlan.title') %></h1>
 
-<%= form_for(@school,
-             :html => { :multipart => true },
-             :url  => wlan_update_school_path) do |f| %>
-
-<%= render :partial => 'shared/form_wlan', :locals => { :f => f } %>
-
+<%= form_for(@school, html: { multipart: true }, url: wlan_update_school_path) do |f| %>
+<%= render partial: 'shared/form_wlan', locals: { f: f } %>
 <% end %>
 
 <% content_for :javascript do %>

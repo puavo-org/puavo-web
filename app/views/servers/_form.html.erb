@@ -1,9 +1,9 @@
 <p class='requiredTitle'><%= t('layouts.forms.required_field')%></p>
 <%= form_for(@server, url: server_path(@server), html: { multipart: true }) do |f| %>
 
-  <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>
+  <%= render partial: 'shared/form_main_information', locals: { f: f } %>
 
-  <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
+  <%= render partial: 'shared/form_linux_device_information', locals: { f: f } %>
 
   <h2><%= t('.automounts') %></h2>
   <table class="editForm">
@@ -40,10 +40,10 @@
     <li>
       <label>
         <%= check_box_tag(
-          "server[puavoSchool][]",
+          'server[puavoSchool][]',
           school.dn,
           Array(@server.puavoSchool).include?(school.dn.to_s),
-          :id => "school_limit_#{ school.puavoId }"
+          id: "school_limit_#{ school.puavoId }"
         ) %>
         <span><%= school.displayName %></span>
       </label>

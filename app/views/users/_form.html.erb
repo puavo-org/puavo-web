@@ -16,17 +16,17 @@
   <table class="editForm">
     <tr>
       <th class="requiredField"><%= f.label :givenName %></th>
-      <td><%= f.text_field :givenName, :required => 'required', :autofocus => @is_new_user ? true : nil %></td>
+      <td><%= f.text_field :givenName, required: 'required', autofocus: @is_new_user ? true : nil %></td>
     </tr>
 
     <tr>
       <th class="requiredField"><%= f.label :sn %></th>
-      <td><%= f.text_field :sn, :required => 'required' %></td>
+      <td><%= f.text_field :sn, required: 'required' %></td>
     </tr>
 
     <tr>
       <th class="requiredField"><%= f.label :uid %></th>
-      <td><%= f.text_field :uid, :required => 'required' %></td>
+      <td><%= f.text_field :uid, required: 'required' %></td>
     </tr>
 
     <tr>

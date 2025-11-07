@@ -4,7 +4,7 @@
 
 <h1><%= html_escape @printer.printerDescription %></h1>
 
-<%= form_tag(printer_permission_path(@school, @printer), :method => :put) do %>
+<%= form_tag(printer_permission_path(@school, @printer), method: :put) do %>
 
   <fieldset>
     <legend><%= t('.global') %></legend>
@@ -74,7 +74,7 @@
         <td data-title="<%= t('activeldap.attributes.device.puavoHostname')%>"><%= device.cn %></td>
         <td data-title="<%= t('link.remove')%>"><%= check_box_tag "remove_device_permission[]", device.dn %></td>
         <td data-title="<%= t('actions')%>" class="tableActions">
-          <%= link_to edit_device_path(@school, device), :class => "btn" do %>
+          <%= link_to edit_device_path(@school, device), class: 'btn' do %>
             <i class="icon-pencil"></i> <%= t('link.edit') %>
           <% end %>
         </td>
@@ -89,9 +89,9 @@
 <table class="editForm">
   <tr class="buttonRow">
     <td>
-      <%= submit_tag t('link.save'),  :class => "btn" %>
+      <%= submit_tag t('link.save'),  class: 'btn' %>
       <div class="cancel">
-        <%= link_to t('link.cancel'), printer_permissions_path(@school), :class => 'btn btn-danger' %>
+        <%= link_to t('link.cancel'), printer_permissions_path(@school), class: 'btn btn-danger' %>
       </div>
     </td>
   </tr>

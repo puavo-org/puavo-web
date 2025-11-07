@@ -3,7 +3,7 @@
 <h1><%= t('.title') %></h1>
 
 <% if test_environment? %>
-<%= render :partial => 'index_legacy' %>
+<%= render partial: 'index_legacy' %>
 <% else %>
-<%= render :partial => 'index_new' %>
+<%= render partial: 'index_new' %>
 <% end %>

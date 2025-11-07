@@ -1,6 +1,6 @@
 <% unless @synchronised_deletions.nil? %>
 <% if @synchronised_deletions.include?(@school.id.to_i) && !@synchronised_deletions[@school.id.to_i].empty? %>
-<p class="genericWarning"><%= t('users.index.synchronised_deletions', :systems => @synchronised_deletions[@school.id.to_i].join(', ')) %></p>
+<p class="genericWarning"><%= t('users.index.synchronised_deletions', systems: @synchronised_deletions[@school.id.to_i].join(', ')) %></p>
 <% end %>
 <% end %>
 

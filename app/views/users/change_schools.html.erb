@@ -2,13 +2,13 @@
 
 <div class="formContainer">
 
-<h1><%= t('.header', :name => link_to( @user.displayName, "./") ).html_safe %></h1>
+<h1><%= t('.header', name: link_to(@user.displayName, './')).html_safe %></h1>
 
 <p><%= t('.sync_warning') %></p>
 <p><%= t('.instant_save_warning') %></p>
 
 <table class="schoolsTable">
-  <tr><th colspan="3"><span><%= t('.current_title', :count => @current_schools.count) %></span></th></tr>
+  <tr><th colspan="3"><span><%= t('.current_title', count: @current_schools.count) %></span></th></tr>
 
   <% @current_schools.each do |s| %>
   <% classes = ["school"] %>
@@ -40,7 +40,7 @@
   <% end %>
 
   <% unless @available_schools.empty? %>
-  <tr><th colspan="3"><br><span><%= t('.available_title', :count => @available_schools.count) %></span></th></tr>
+  <tr><th colspan="3"><br><span><%= t('.available_title', count: @available_schools.count) %></span></th></tr>
   <% @available_schools.each_with_index do |s, index| %>
   <tr class="school" id="available-<%= s.cn %>">
     <td>

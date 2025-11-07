@@ -1,10 +1,10 @@
 <% page_title t('titles.organisation'), t('titles.servers'), @server.cn %>
 
-<%= render :partial => 'shared/main_information', :locals => { :device => @server} %>
+<%= render partial: 'shared/main_information', locals: { device: @server} %>
 
-<%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
+<%= render partial: 'shared/linux_device_information', locals: { device: @server} %>
 
-<%= render :partial => 'devices/hwinfo', :locals => { :rawInfo => @server.puavoDeviceHWInfo } %>
+<%= render partial: 'devices/hwinfo', locals: { rawInfo: @server.puavoDeviceHWInfo } %>
 
 <%= start_box t('.automounts'), extraClass="fullWidth" %>
   <% if Array(@server.puavoExport).empty? %>

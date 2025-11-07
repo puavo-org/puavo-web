@@ -4,12 +4,12 @@
 
 <h1><%= t('.title') %></h1>
 
-<%= render :partial => 'form',
- :locals => {
-  :path => users_path(@school),
-  :submit_text => t('link.create'),
-  :method => :post
-}
+<%= render partial: 'form',
+    locals: {
+      path: users_path(@school),
+      submit_text: t('link.create'),
+      method: :post
+    }
 %>
 
 </div>

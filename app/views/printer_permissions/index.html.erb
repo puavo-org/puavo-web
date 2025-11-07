@@ -25,7 +25,7 @@
     <% end %>
     </td>
     <td data-title="<%= t('actions') %>" class="tableActions">
-      <%= link_to edit_printer_permission_path(@school, printer), :class => 'btn' do %>
+      <%= link_to edit_printer_permission_path(@school, printer), class: 'btn' do %>
         <i class="icon-pencil"></i><%= t('.edit_permissions') %>
       <% end %>
     </td>
@@ -59,8 +59,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <% if @printers.empty? %>
 <% if current_user.organisation_owner? %>
-<p class="ownersOnly"><%= t("printer_permissions.no_printers_html", :href => link_to(t("printer_permissions.bootserver_ref"), servers_path)) %></p>
+<p class="ownersOnly"><%= t("printer_permissions.no_printers_html", href: link_to(t('printer_permissions.bootserver_ref'), servers_path)) %></p>
 <% else %>
-<p class="genericNotice"><%= t("printer_permissions.no_printers_nonowner") %></p>
+<p class="genericNotice"><%= t('printer_permissions.no_printers_nonowner') %></p>
 <% end %>
 <% end %>

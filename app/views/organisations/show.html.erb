@@ -102,7 +102,7 @@
       <td><%= @organisation.eduOrgHomePageURI %></td>
     </tr>
 
-    <%= render :partial => 'shared/auto_power_off_settings', :locals => { :object => @organisation } %>
+    <%= render partial: 'shared/auto_power_off_settings', locals: { object: @organisation } %>
 
     <tr>
       <th><%= t("activeldap.attributes.ldap_organisation.puavoDeviceImage") %></th>
