@@ -137,7 +137,7 @@ def oidc_access_token_request(temp_request_id)
   # Re-verify the client configuration
 
   clients = ClientDatabase.new
-  client_config = clients.get_client_by_id(request_id, client_id, :login)
+  client_config = clients.get_login_client(client_id)
   clients.close
 
   if client_config.nil?

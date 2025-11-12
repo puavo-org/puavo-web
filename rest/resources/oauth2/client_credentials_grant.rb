@@ -59,7 +59,7 @@ def client_credentials_grant(request_id)
   end
 
   clients = ClientDatabase.new
-  client_config = clients.get_client_by_id(request_id, credentials[0], :token)
+  client_config = clients.get_token_client(credentials[0])
   clients.close
 
   if client_config.nil?

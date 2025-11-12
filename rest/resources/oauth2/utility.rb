@@ -29,13 +29,17 @@ class ClientDatabase
     end
   end
 
-  # Retrieves the client configuration from the database using the specified client ID.
-  # 'type' must be either :login or :token, depending on the client type.
-  def get_client_by_id(request_id, client_id, type)
-    # Fetch the entry from the database. There are two tables, one for OpenID Connect
-    # login clients, and one for OAuth2 access token clients. They have some identical
-    # columns, but ultimately they contain different data.
+  def get_login_client(client_id)
+    get_client_by_id(client_id, :login)
+  end
 
+  def get_token_client(client_id)
+    get_client_by_id(client_id, :token)
+  end
+
+  private
+
+  def get_client_by_id(client_id, type)
     # exec_params doesn't support parameterizing the table name
     table = (type == :login) ? 'login_clients' : 'token_clients'
     rows = @db.exec_params("SELECT * FROM #{table} WHERE client_id = $1;", [client_id])
