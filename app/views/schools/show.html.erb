@@ -12,9 +12,11 @@
   <%= h @school.street %><br>
   <%= h @school.postalCode %> <%= h @school.postalAddress %><br>
   <%= h @school.postOfficeBox %><br>
+  <% if @school.puavoSchoolHomePageURL %>
   <%= link_to t('activeldap.attributes.school.puavoSchoolHomePageURL'),
               @school.puavoSchoolHomePageURL,
               class: 'schoolHomepage' %>
+  <% end %>
 <%= end_box %>
 
 <hr>

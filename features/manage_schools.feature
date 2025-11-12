@@ -106,7 +106,6 @@ Feature: Manage schools
     And I press "Create"
     Then I should see "Name prefix contains invalid characters (allowed characters are a-z0-9-)"
 
-
   Scenario: Edit school and set empty names
     Given I am on the school page with "Greenwich Steiner School"
     And I follow "Edit..."
@@ -124,7 +123,6 @@ Feature: Manage schools
     And I press "Update"
     Then I should see "St. Paul's"
     And I should see "School was successfully updated."
-
 
   Scenario: Add duplicate school or group abbreviation
     Given the following groups:
@@ -204,7 +202,7 @@ Feature: Manage schools
     And I press "Create"
     Then I should see "Device was successfully created."
     Given I am on the school page with "Condemned School"
-    Then I should see "School's home page"
+    Then I should not see "School's home page"
     When I follow "Delete school"
     Then I should see "The school was not removed. Its users, groups, devices and boot servers must be removed first."
     Given I am on the devices list page with "Condemned School"
@@ -214,6 +212,20 @@ Feature: Manage schools
     When I follow "Delete school"
     Then I should see "School was successfully removed."
     And I should see "Example Organisation" within "#schoolsTitle"
+
+  Scenario: Not specifying school homepage means no homepage link either
+    Given I am on the new school page
+    Then I should see "New school"
+    When I fill in the following:
+    | School name | Test school |
+    | Group name  | testschool  |
+    And I press "Create"
+    Then I should see "School was successfully created."
+    And I should not see "School's home page"
+    Then I follow "Edit..."
+    Then I fill in "School's home page" with "https://example.com"
+    And I press "Update"
+    Then I should see "School's home page"
 
   Scenario: Add school management access rights to the user
     Given the following users:
