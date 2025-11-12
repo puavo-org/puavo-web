@@ -57,6 +57,7 @@ class IDTokenDataGenerator
       'profile' => -> { handle_profile(include_sub) },
       'email' => method(:handle_email),
       'phone' => method(:handle_phone),
+      'puavo.read.userinfo.primus' => method(:handle_primus),
       'puavo.read.userinfo.schools' => method(:handle_schools),
       'puavo.read.userinfo.groups' => method(:handle_groups),
       'puavo.read.userinfo.organisation' => method(:handle_organisation),
@@ -119,11 +120,6 @@ class IDTokenDataGenerator
     out['puavo.roles'] = @user.roles
     out['puavo.account_expiration_time'] = @user.account_expiration_time.to_i if @user.account_expiration_time
 
-    if @scopes.include?('puavo.read.userinfo.primus')
-      # External Primus card ID (not always available)
-      out['puavo.primus_card_id'] = @external_data.fetch('primus_card_id', nil)
-    end
-
     out
   end
 
@@ -161,6 +157,11 @@ class IDTokenDataGenerator
   # Standard claim: phone
   def handle_phone
     { 'phone_number' => @user.telephone_number[0] } unless @user.telephone_number.empty?
+  end
+
+  # Custom claim: puavo.read.userinfo.primus
+  def handle_primus
+    { 'puavo.primus_card_id' => @external_data.fetch('primus_card_id', nil) }
   end
 
   # Custom claim: puavo.read.userinfo.schools
