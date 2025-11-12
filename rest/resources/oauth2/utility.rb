@@ -5,8 +5,10 @@
 module PuavoRest
 module OAuth2
 
+CLIENT_ID_VALIDATOR = /\A[a-z][a-z0-9_-]*\Z/.freeze
+
 def self.valid_client_id?(id)
-  id.is_a?(String) && id.length >= 4 && id.length <= 32 && id.match?(/\A[a-z][a-z0-9_-]*\Z/)
+  id.is_a?(String) && id.length >= 4 && id.length <= 32 && id.match?(CLIENT_ID_VALIDATOR)
 end
 
 # Handles connections to the OAuth2 client database. Note the lack of exception handling;
