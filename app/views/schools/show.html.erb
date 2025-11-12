@@ -8,15 +8,15 @@
 </div>
 
 <%= start_box t('.contacts') %>
-  <%= h @school.displayName %><br>
-  <%= h @school.street %><br>
-  <%= h @school.postalCode %> <%= h @school.postalAddress %><br>
-  <%= h @school.postOfficeBox %><br>
-  <% if @school.puavoSchoolHomePageURL %>
-  <%= link_to t('activeldap.attributes.school.puavoSchoolHomePageURL'),
-              @school.puavoSchoolHomePageURL,
-              class: 'schoolHomepage' %>
-  <% end %>
+  <div class="flex-row">
+    <div><%= h @school.displayName %></div>
+    <div><%= h @school.street %></div>
+    <div><%= h @school.postalCode %> <%= h @school.postalAddress %></div>
+    <div><%= h @school.postOfficeBox %></div>
+    <% if @school.puavoSchoolHomePageURL %></div>
+    <div><%= link_to t('activeldap.attributes.school.puavoSchoolHomePageURL'), @school.puavoSchoolHomePageURL, class: 'schoolHomepage' %></div>
+    <% end %>
+  </div>
 <%= end_box %>
 
 <hr>
