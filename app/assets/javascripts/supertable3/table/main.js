@@ -673,15 +673,15 @@ enableUI(isEnabled)
 // clicking any buttons in it. You don't want to disturb the table during mass operations...
 enableTable(isEnabled)
 {
-    // TODO: This does not work entirely as it should. The "no-pointer-events" class applied to
+    // TODO: This does not work entirely as it should. The "pointer-events-none" class applied to
     // the whole table is just a hacky workaround. But I don't know any other quick way to
     // disable all the clickable links.
     if (isEnabled) {
-        this.ui.headers.classList.remove("no-text-selection", "no-pointer-events");
-        this.ui.body.classList.remove("no-text-selection", "no-pointer-events");
+        this.ui.headers.classList.remove("user-select-none", "pointer-events-none");
+        this.ui.body.classList.remove("user-select-none", "pointer-events-none");
     } else {
-        this.ui.headers.classList.add("no-text-selection", "no-pointer-events");
-        this.ui.body.classList.add("no-text-selection", "no-pointer-events");
+        this.ui.headers.classList.add("user-select-none", "pointer-events-none");
+        this.ui.body.classList.add("user-select-none", "pointer-events-none");
     }
 }
 
@@ -1941,7 +1941,7 @@ onHeaderMouseUp(e)
 
     const table = this.container.querySelector("table.stTable");
 
-    table.classList.remove("no-text-select", "no-pointer-events");
+    table.classList.remove("user-select-none", "pointer-events-none");
     document.body.classList.remove("cursor-grabbing");
 
     this.headerDrag.element = null;
@@ -2046,7 +2046,7 @@ onHeaderMouseMove(e)
         document.removeEventListener("mouseup", this.onHeaderMouseUp);
         document.removeEventListener("mousemove", this.onHeaderMouseMove);
 
-        table.classList.remove("no-text-select", "no-pointer-events");
+        table.classList.remove("user-select-none", "pointer-events-none");
         document.body.classList.remove("cursor-grabbing");
 
         this.headerDrag.element = null;
@@ -2059,7 +2059,7 @@ onHeaderMouseMove(e)
     // Start dragging the header cell
     const table = this.container.querySelector("table.stTable");
 
-    table.classList.add("no-text-select", "no-pointer-events");
+    table.classList.add("user-select-none", "pointer-events-none");
     document.body.classList.add("cursor-grabbing");
 
     this.headerDrag.active = true;
