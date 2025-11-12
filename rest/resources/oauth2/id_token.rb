@@ -75,12 +75,12 @@ class IDTokenDataGenerator
         user_data.merge!(result) if result
       rescue StandardError => e
         $rest_log.error("[#{@request_id}] Calling the handler for scope #{scope.inspect} failed: #{e}")
-        @uschool_cache = nil
+        @school_cache = nil
         return 'server_error'
       end
     end
 
-    @uschool_cache = nil
+    @school_cache = nil
     user_data
   end
 
