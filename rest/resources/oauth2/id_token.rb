@@ -53,16 +53,18 @@ class IDTokenDataGenerator
     @has_ldap = @scopes.include?('puavo.read.userinfo.ldap')
 
     # Handler functions for all possible scopes. Use lambdas when additional arguments are needed.
+    # NOTE: There is no handler for puavo.read.userinfo.ldap and puavo.read.userinfo.mpassid; they're
+    # handled internally in handlers where they are relevant.
     scope_handlers = {
       'profile' => -> { handle_profile(include_sub) },
       'email' => method(:handle_email),
       'phone' => method(:handle_phone),
-      'puavo.read.userinfo.primus' => method(:handle_primus),
+      'puavo.read.userinfo.organisation' => method(:handle_organisation),
       'puavo.read.userinfo.schools' => method(:handle_schools),
       'puavo.read.userinfo.groups' => method(:handle_groups),
-      'puavo.read.userinfo.organisation' => method(:handle_organisation),
       'puavo.read.userinfo.admin' => method(:handle_admin),
-      'puavo.read.userinfo.security' => method(:handle_security)
+      'puavo.read.userinfo.security' => method(:handle_security),
+      'puavo.read.userinfo.primus' => method(:handle_primus)
     }.freeze
 
     # Iterate over the scope handlers instead of scopes. This ensures the outputted claims are
@@ -159,9 +161,16 @@ class IDTokenDataGenerator
     { 'phone_number' => @user.telephone_number[0] } unless @user.telephone_number.empty?
   end
 
-  # Custom claim: puavo.read.userinfo.primus
-  def handle_primus
-    { 'puavo.primus_card_id' => @external_data.fetch('primus_card_id', nil) }
+  # Custom claim: puavo.read.userinfo.organisation
+  def handle_organisation
+    org = {
+      'name' => @organisation.name,
+      'domain' => @organisation.domain
+    }
+
+    org['ldap_dn'] = @organisation.dn if @scopes.include?('puavo.read.userinfo.ldap')
+
+    { 'puavo.organisation' => org }
   end
 
   # Custom claim: puavo.read.userinfo.schools
@@ -186,11 +195,12 @@ class IDTokenDataGenerator
         'primary' => @user.primary_school_dn == s.dn
       }
 
+      school['ldap_dn'] = s.dn if @has_ldap
+
       if has_mpass && s.school_code == mpass_charging_school
         school['mpass_learning_materials_charge'] = mpass_charging_state
       end
 
-      school['ldap_dn'] = s.dn if @has_ldap
       school
     end
 
@@ -210,14 +220,14 @@ class IDTokenDataGenerator
         'type' => g.type
       }
 
-      group['ldap_dn'] = g.dn if @has_ldap
-
       if have_schools
         sch = get_school(g.school_dn)
 
-        group['school_abbreviation'] = sch.abbreviation
         group['school_puavoid'] = sch.id.to_i
+        group['school_abbreviation'] = sch.abbreviation
       end
+
+      group['ldap_dn'] = g.dn if @has_ldap
 
       group
     end
@@ -233,24 +243,17 @@ class IDTokenDataGenerator
     }
   end
 
-  # Custom claim: puavo.read.userinfo.organisation
-  def handle_organisation
-    org = {
-      'name' => @organisation.name,
-      'domain' => @organisation.domain
-    }
-
-    org['ldap_dn'] = @organisation.dn if @scopes.include?('puavo.read.userinfo.ldap')
-
-    { 'puavo.organisation' => org }
-  end
-
   # Custom claim: puavo.read.userinfo.security
   def handle_security
     {
       'puavo.mfa_enabled' => @user.mfa_enabled == true,
       'puavo.super_owner' => @organisation.owner.include?(@user.dn) && PuavoRest.super_owner?(@user.username)
     }
+  end
+
+  # Custom claim: puavo.read.userinfo.primus
+  def handle_primus
+    { 'puavo.primus_card_id' => @external_data.fetch('primus_card_id', nil) }
   end
 
   # School searches are slow, so cache them

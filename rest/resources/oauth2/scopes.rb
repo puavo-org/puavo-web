@@ -17,9 +17,9 @@ BUILTIN_LOGIN_SCOPES = %w[
   puavo.read.userinfo.organisation
   puavo.read.userinfo.schools
   puavo.read.userinfo.groups
-  puavo.read.userinfo.ldap
   puavo.read.userinfo.admin
   puavo.read.userinfo.security
+  puavo.read.userinfo.ldap
   puavo.read.userinfo.primus
   puavo.read.userinfo.mpassid
 ].to_set.freeze
@@ -30,8 +30,8 @@ BUILTIN_LOGIN_SCOPES = %w[
 BUILTIN_PUAVO_OAUTH2_SCOPES = %w[
   puavo.read.organisation
   puavo.read.schools
-  puavo.read.groups
   puavo.read.users
+  puavo.read.groups
   puavo.read.devices
 ].to_set.freeze
 
