@@ -637,9 +637,11 @@ class Devices < PuavoSinatra
     json device
   end
 
-  post "/v3/devices/:hostname" do
-    auth :basic_auth, :kerberos
-    device = Device.by_hostname!(params["hostname"])
+  post '/v3/devices/:hostname' do
+    oauth2 scopes: ['puavo.write.devices']
+    auth :oauth2_token, :basic_auth, :kerberos
+
+    device = Device.by_hostname!(params['hostname'])
     device.update!(json_params)
     device.save!
     json device
