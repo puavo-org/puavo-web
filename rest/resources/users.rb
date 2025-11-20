@@ -706,6 +706,30 @@ class User < LdapModel
     return e.to_time.to_i if e
   end
 
+  # I couldn't get setting the expiration time to work in any other way in a "POST /v3/users" call.
+  # I'm probably thinking this incorrectly. I'm probably also breakig something with this.
+  def account_expiration_time=(t)
+    value = nil
+
+    if t.nil?
+      # Specifying nil or [nil] won't work
+      write_raw(:puavoEduPersonAccountExpirationTime, [])
+      return
+    elsif t.is_a?(Integer)
+      value = Time.at(t).utc
+    elsif t.is_a?(String)
+      value = Time.parse(t).utc
+    elsif t.is_a?(Time)
+      value = t.utc
+    else
+      add_validation_error(:account_expiration_time, :invalid_time,
+                           'the account expiration time was specified in an unknown format; use null, a Unixtime stamp (seconds), or an ISO 8601 string')
+      return
+    end
+
+    write_raw(:puavoEduPersonAccountExpirationTime, [value.strftime('%Y%m%d%H%M%SZ')])
+  end
+
   def get_request_domain(request_username, request_domain)
     return request_domain if request_domain
 
