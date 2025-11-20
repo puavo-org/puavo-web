@@ -149,6 +149,7 @@
   text-decoration: none;
   font-weight: normal;
   cursor: pointer;
+  user-select: none;
 }
 
 #content .btn:hover,
