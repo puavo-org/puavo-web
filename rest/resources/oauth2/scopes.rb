@@ -33,6 +33,8 @@ BUILTIN_PUAVO_OAUTH2_SCOPES = %w[
   puavo.read.users
   puavo.read.groups
   puavo.read.devices
+  puavo.write.users
+  puavo.write.devices
 ].to_set.freeze
 
 # The return value of clean_scopes()
