@@ -1214,11 +1214,12 @@ class Users < PuavoSinatra
     json User.by_id!(params["id"])
   end
 
-  # Return users in a organisation
-  get "/v3/users/:username" do
-    auth :basic_auth, :kerberos
+  # Returns the data of the specified user
+  get '/v3/users/:username' do
+    oauth2 scopes: ['puavo.read.users']
+    auth :oauth2_token, :basic_auth, :kerberos
 
-    json User.by_username!(params["username"], :attrs => params["attributes"])
+    json User.by_username!(params['username'], attrs: params['attributes'])
   end
 
   post "/v3/users/:username" do

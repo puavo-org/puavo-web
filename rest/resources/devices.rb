@@ -549,8 +549,10 @@ class Devices < PuavoSinatra
   #
   #
   # @!macro route
-  get "/v3/devices/:hostname" do
-    auth :basic_auth, :server_auth, :legacy_server_auth
+
+  get '/v3/devices/:hostname' do
+    oauth2 scopes: ['puavo.read.devices']
+    auth :oauth2_token, :basic_auth, :server_auth, :legacy_server_auth
 
     json Device.create_device_info(params['hostname'])
   end
