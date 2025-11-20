@@ -141,6 +141,10 @@ input[type="submit"] {
 input[type="submit"]:hover {
 }
 
+input, button, select {
+  font-family: "Arial", sans-serif;
+}
+
 /* The "* = required" label displayed at the top of forms */
 .requiredTitle {
   color: var(--form-error-fore);
