@@ -1024,8 +1024,9 @@ class Users < PuavoSinatra
     File.expand_path(File.join(File.dirname(__FILE__), '..', 'public', 'images', 'anonymous.png'))
   end
 
-  post "/v3/users" do
-    auth :basic_auth, :kerberos
+  post '/v3/users' do
+    oauth2 scopes: ['puavo.write.users']
+    auth :oauth2_token, :basic_auth, :kerberos
 
     # You can't add/edit verified email addresses directly
     parameters = json_params
@@ -1222,9 +1223,12 @@ class Users < PuavoSinatra
     json User.by_username!(params['username'], attrs: params['attributes'])
   end
 
-  post "/v3/users/:username" do
-    auth :basic_auth, :kerberos
-    user = User.by_username!(params["username"])
+  # Updates an existing user
+  post '/v3/users/:username' do
+    oauth2 scopes: ['puavo.write.users']
+    auth :oauth2_token, :basic_auth, :kerberos
+
+    user = User.by_username!(params['username'])
 
     parameters = json_params
 
