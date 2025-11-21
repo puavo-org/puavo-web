@@ -15,16 +15,16 @@ require "action_mailer/railtie"
 require "action_view/railtie"
 # require "action_cable/engine"
 require "rails/test_unit/railtie"
-require "sprockets/railtie"
-require "active_ldap/railtie"
+require 'sprockets/railtie'
+require 'active_ldap/railtie'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-require_relative "../monkeypatches"
-require_relative "./version"
-require_relative "../rest/lib/external_login"
+require_relative '../monkeypatches'
+require_relative './version'
+require_relative '../rest/lib/external_login'
 
 # Another line "rails app:update" wants that... just fails.
 #Bundler.require(*Rails.groups)
@@ -40,7 +40,7 @@ end
 module PuavoUsers
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 7.2
 
     # The documentation says this is discouraged, but without it, the autoloader
     # won't find any files in app/lib, no matter what, and the program crashes at
@@ -53,7 +53,7 @@ module PuavoUsers
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w(assets tasks))
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Configuration for the application, engines, and railties goes here.
     #
