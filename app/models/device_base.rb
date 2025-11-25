@@ -24,6 +24,8 @@ class DeviceBase < LdapBase
   MAC_REGEXP = /^([0-9a-f]{2}[:]){5}[0-9a-f]{2}$/.freeze
   IP_REGEXP = /^([0-9]{1,3}[.]){3}[0-9]{1,3}$/.freeze
 
+  DEVICE_PASSWORD_CHARS = ('a'..'z').to_a + ('0'..'9').to_a.freeze
+
   validate :validate, :validate_puavoconf
 
   def self.image_size
@@ -370,8 +372,7 @@ class DeviceBase < LdapBase
         self.add_class('simpleSecurityObject')
       end
       if self.userPassword.nil? || self.userPassword.empty?
-        characters = ("a".."z").to_a + ("0".."9").to_a
-        self.ldap_password = Array.new(40) { characters[rand(characters.size)] }.join
+        self.ldap_password = DEVICE_PASSWORD_CHARS.sample(40).join
         self.userPassword = Server.ssha_hash(self.ldap_password)
       end
     end
