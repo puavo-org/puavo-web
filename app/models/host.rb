@@ -7,7 +7,7 @@ class Host < DeviceBase
   # Example:
   # { "thinclient" => "puavoNetbootDevice" }
   @@objectClass_by_device_type = Puavo::CONFIG['device_types'].inject({}) do |result, type|
-    result[type.first] = type.last["classes"]
+    result[type.first] = type.last['classes']
     result
   end
 
@@ -20,7 +20,7 @@ class Host < DeviceBase
   end
 
   def self.validates_uniqueness_of_hostname(new_host)
-    if host =  Host.find(:first, :attribute => 'puavoHostname', :value => new_host.puavoHostname)
+    if host =  Host.find(:first, attribute: 'puavoHostname', value: new_host.puavoHostname)
       if host.puavoId != new_host.puavoId
         return false
       end
@@ -38,14 +38,14 @@ class Host < DeviceBase
 
     # Filter device_type by params[:boottype]
     case boottype
-    when "net"
-      type_list = type_list.delete_if{ |type, value| !Array(value["classes"]).include?("puavoNetbootDevice") }
-    when "local"
-      type_list = type_list.delete_if{ |type, value| !Array(value["classes"]).include?("puavoLocalbootDevice") }
-    when "nothing"
+    when 'net'
+      type_list = type_list.delete_if{ |type, value| !Array(value['classes']).include?('puavoNetbootDevice') }
+    when 'local'
+      type_list = type_list.delete_if{ |type, value| !Array(value['classes']).include?('puavoLocalbootDevice') }
+    when 'nothing'
       type_list = type_list.delete_if do |type, value|
-        Array(value["classes"]).include?("puavoLocalbootDevice") ||
-          Array(value["classes"]).include?("puavoNetbootDevice")
+        Array(value['classes']).include?('puavoLocalbootDevice') ||
+          Array(value['classes']).include?('puavoNetbootDevice')
       end
     end
 

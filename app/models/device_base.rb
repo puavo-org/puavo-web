@@ -1,7 +1,7 @@
 require 'date'
 require 'net/http'
-require_relative "./puavo_conf_mixin"
-require_relative "./puavo_tag_mixin"
+require_relative './puavo_conf_mixin'
+require_relative './puavo_tag_mixin'
 
 class DeviceBase < LdapBase
   include BooleanAttributes
@@ -18,8 +18,8 @@ class DeviceBase < LdapBase
                      :downcase_mac_addresses )
   before_save :set_puppetclass, :set_parentNode, :set_puavo_mountpoint
 
-  IA5STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?')
-  PRINTABLE_STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('()+,-./:\? ')
+  IA5STRING_CHARACTERS = ('A-Za-z0-9' + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?'))
+  PRINTABLE_STRING_CHARACTERS = ('A-Za-z0-9' + Regexp.escape('()+,-./:\? '))
 
   validate :validate, :validate_puavoconf
 
@@ -27,13 +27,12 @@ class DeviceBase < LdapBase
     { width: 220, height: 220 }
   end
 
-
   def host_certificate_request_send?
     host_certificate_request_send ? true : false
   end
 
   def self.find_by_hostname(hostname)
-    Device.find(:first, :attribute => "puavoHostname", :value => hostname)
+    Device.find(:first, attribute: 'puavoHostname', value: hostname)
   end
 
   def userCertificate
@@ -60,17 +59,19 @@ class DeviceBase < LdapBase
                             :userCertificate,
                             :host_configuration ]
     end
-    method_values = { }
 
-    allowed_attributes["dn"] = dn.to_s
+    method_values = { }
+    allowed_attributes['dn'] = dn.to_s
 
     # Create Hash by :methods name if :methods options is set.
     if options.has_key?(:methods)
       method_values = Array(options[:methods]).inject({ }) do |result, method|
         result.merge( { "#{method}" => self.send(method) } )
       end
+
       options.delete(:methods)
     end
+
     # Include method's values to the return value
     method_values.empty? ? allowed_attributes.to_json(options) :
       allowed_attributes.merge( method_values ).to_json(options)
@@ -89,12 +90,12 @@ class DeviceBase < LdapBase
     # Validate format of puavoHostname
     unless self.puavoHostname.to_s =~ /^[0-9a-z-]+$/
       errors.add( :puavoHostname,
-                  I18n.t("activeldap.errors.messages.device.puavoHostname.invalid_characters" ) )
+                  I18n.t('activeldap.errors.messages.device.puavoHostname.invalid_characters' ) )
     end
 
     unless !puavoHostname.empty? && Host.validates_uniqueness_of_hostname(self)
       errors.add :puavoHostname, I18n.t('activeldap.errors.messages.taken',
-                                        :attribute => I18n.t('activeldap.attributes.device.puavoHostname'))
+                                        attribute: I18n.t('activeldap.attributes.device.puavoHostname'))
     end
 
     unless self.puavoPurchaseURL.to_s.empty?
@@ -107,9 +108,10 @@ class DeviceBase < LdapBase
     if self.classes.include?('puavoNetbootDevice') ||
         self.classes.include?('puavoLocalbootDevice') ||
         self.classes.include?('puavoServer')
+
       if self.macAddress.to_s.empty?
         errors.add :macAddress, I18n.t('activeldap.errors.messages.taken',
-                                       :attribute => I18n.t('activeldap.attributes.device.macAddress'))
+                                       attribute: I18n.t('activeldap.attributes.device.macAddress'))
       end
     end
 
@@ -118,7 +120,7 @@ class DeviceBase < LdapBase
       unless mac.to_s.empty?
         unless mac =~ /^([0-9a-f]{2}[:]){5}[0-9a-f]{2}$/
           errors.add( :macAddress,
-                      I18n.t("activeldap.errors.messages.device.macAddress.invalid_characters" ) )
+                      I18n.t('activeldap.errors.messages.device.macAddress.invalid_characters' ) )
           break
         end
       end
@@ -128,33 +130,35 @@ class DeviceBase < LdapBase
     #
     # Remove spaces from the end of the string
     self.serialNumber = self.serialNumber.to_s.rstrip
+
     if !self.serialNumber.to_s.empty? && (self.serialNumber.to_s =~ /^[#{PRINTABLE_STRING_CHARACTERS}]+$/).nil?
       unless errors[:serialNumber].nil?
         errors.delete(:serialNumber)
       end
+
       errors.add( :serialNumber,
-                  I18n.t("activeldap.errors.messages.invalid_characters",
-                         :attribute => I18n.t('activeldap.attributes.device.serialNumber') ) )
+                  I18n.t('activeldap.errors.messages.invalid_characters',
+                         attribute: I18n.t('activeldap.attributes.device.serialNumber') ) )
     end
 
     # Validate format of puavoLongitude and puavoLatitude
     if !self.puavoLongitude.to_s.empty? && (self.puavoLongitude =~ /^[#{IA5STRING_CHARACTERS}]+$/).nil?
       errors.add( :puavoLongitude,
-                  I18n.t("activeldap.errors.messages.invalid_characters",
-                         :attribute => I18n.t('activeldap.attributes.device.puavoLongitude') ) )
+                  I18n.t('activeldap.errors.messages.invalid_characters',
+                         attribute: I18n.t('activeldap.attributes.device.puavoLongitude') ) )
     end
     if !self.puavoLatitude.to_s.empty? && (self.puavoLatitude.to_s =~ /^[#{IA5STRING_CHARACTERS}]+$/).nil?
       errors.add( :puavoLatitude,
-                  I18n.t("activeldap.errors.messages.invalid_characters",
-                         :attribute => I18n.t('activeldap.attributes.device.puavoLatitude') ) )
+                  I18n.t('activeldap.errors.messages.invalid_characters',
+                         attribute: I18n.t('activeldap.attributes.device.puavoLatitude') ) )
     end
 
     # Valdiate format of ipHostNumber
     if self.classes.include?('puavoOtherDevice') || self.classes.include?('puavoPrinter')
       if !self.ipHostNumber.to_s.empty? && (self.ipHostNumber =~ /^([0-9]{1,3}[.]){3}[0-9]{1,3}$/).nil?
         errors.add( :ipHostNumber,
-                    I18n.t("activeldap.errors.messages.invalid",
-                           :attribute => I18n.t('activeldap.attributes.device.ipHostNumber') ) )
+                    I18n.t('activeldap.errors.messages.invalid',
+                           attribute: I18n.t('activeldap.attributes.device.ipHostNumber') ) )
       end
     end
 
@@ -173,13 +177,14 @@ class DeviceBase < LdapBase
     begin
       self.host_certificate_request_send = true
       http = http_puavo_ca
+
       request = Net::HTTP::Post.new('/certificates.json',
                                     { 'Content-Type' => 'application/json' })
       request.basic_auth(dn, password)
       response = http.request(request,
                               {
                                 'certificate' => {
-                                  'fqdn'                     => self.puavoHostname + "." + LdapOrganisation.current.puavoDomain,
+                                  'fqdn'                     => "#{self.puavoHostname}.#{LdapOrganisation.current.puavoDomain}",
                                   'host_certificate_request' => self.host_certificate_request,
                                   'organisation'             => organisation_key,
                                 }
@@ -195,7 +200,7 @@ class DeviceBase < LdapBase
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end
     rescue StandardError => e
-      logger.info "ERROR: Unable to sign certificate"
+      logger.info 'ERROR: Unable to sign certificate'
       logger.info "Exception: #{ e.message }"
     end
   end
@@ -230,9 +235,11 @@ class DeviceBase < LdapBase
   def revoke_certificate(organisation_key, dn, password)
     begin
       http = http_puavo_ca
-      request = Net::HTTP::Delete.new("/certificates/revoke.json?fqdn=#{self.puavoHostname + "." + LdapOrganisation.current.puavoDomain}")
+
+      request = Net::HTTP::Delete.new("/certificates/revoke.json?fqdn=#{self.puavoHostname}.#{LdapOrganisation.current.puavoDomain}")
       request.basic_auth(dn, password)
       response = http.request(request)
+
       case response.code
       when /^2/
         # successful request
@@ -240,7 +247,7 @@ class DeviceBase < LdapBase
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end
     rescue StandardError => e
-      logger.info "Unable to revoke certificate"
+      logger.info 'Unable to revoke certificate'
       logger.info "Exception: #{ e.message }"
     end
   end
@@ -248,11 +255,13 @@ class DeviceBase < LdapBase
   def get_certificate(organisation_key, dn, password)
     begin
       http = http_puavo_ca
+
       fqdn = "#{ self.puavoHostname }.#{ LdapOrganisation.current.puavoDomain }"
       uri_path = "/certificates/show_by_fqdn.json?fqdn=#{ fqdn }"
       request = Net::HTTP::Get.new(uri_path)
       request.basic_auth(dn, password)
       response = http.request(request)
+
       case response.code
       when /^2/
         # successful request
@@ -261,7 +270,7 @@ class DeviceBase < LdapBase
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end
     rescue StandardError => e
-      logger.info "Unable to get certificate"
+      logger.info 'Unable to get certificate'
       logger.info "Exception: #{ e.message }"
     end
   end
@@ -272,6 +281,7 @@ class DeviceBase < LdapBase
 
       request = Net::HTTP::Get.new('/certificates/rootca.text')
       response = http.request(request)
+
       case response.code
       when /^2/
         # successful request
@@ -282,6 +292,7 @@ class DeviceBase < LdapBase
 
       request = Net::HTTP::Get.new("/certificates/orgcabundle.text?org=#{organisation_key}")
       response = http.request(request)
+
       case response.code
       when /^2/
         # successful request
@@ -290,14 +301,13 @@ class DeviceBase < LdapBase
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end
     rescue StandardError => e
-      logger.info "Unable to get CA certificate"
+      logger.info 'Unable to get CA certificate'
       logger.info "Exception: #{ e.message }"
     end
   end
 
-
   def parent
-    if self.attributes.include?("puavoSchool") && !self.puavoSchool.nil?
+    if self.attributes.include?('puavoSchool') && !self.puavoSchool.nil?
       begin
         return School.find(self.puavoSchool)
       rescue ActiveLdap::EntryNotFound => e
@@ -309,29 +319,29 @@ class DeviceBase < LdapBase
   def self.uid_to_dn(uid)
     return nil if uid.nil? || uid.empty?
 
-    uid = Net::LDAP::Filter.escape( uid )
-    filter = "(uid=#{ uid })"
-
     user_dn = nil
-    users = User.search_as_utf8( :filter => filter,
-                                 :scope => :one,
-                                 :attributes => [] ).each do |dn, attributes|
+
+    users = User.search_as_utf8(filter: "(uid=#{ Net::LDAP::Filter.escape(uid) })",
+                                scope: :one,
+                                attributes: []).each do |dn, attributes|
       user_dn = dn
     end
 
-    return user_dn
+    user_dn
   end
 
   private
 
   def http_puavo_ca
     http = Net::HTTP.new(Puavo::CONFIG['puavo_ca']['host'], Puavo::CONFIG['puavo_ca']['port'] || '80')
+
     if Puavo::CONFIG['puavo_ca']['use_ssl']
       http.use_ssl = true
       http.ca_file = Puavo::CONFIG['puavo_ca']['ca_file']
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     end
-    return http
+
+    http
   end
 
   def set_puppetclass
@@ -341,11 +351,13 @@ class DeviceBase < LdapBase
   def host_configuration
     hostname, *domain_a = LdapOrganisation.current.puavoDomain.split('.')
     domain = domain_a.join('.')
+
     if self.class == Device || self.class == Server
-      return {
+      {
         'devicetype' => self.puavoDeviceType,
         'kerberos_realm' => LdapOrganisation.current.puavoKerberosRealm,
-        'puppet_server' => "#{hostname}.puppet.#{domain}" }
+        'puppet_server' => "#{hostname}.puppet.#{domain}"
+      }
     end
   end
 
@@ -363,7 +375,10 @@ class DeviceBase < LdapBase
   end
 
   def set_puavo_id
-    self.puavoId = IdPool.next_puavo_id if attribute_names.include?("puavoId") && self.puavoId.nil?
+    if attribute_names.include?('puavoId') && self.puavoId.nil?
+      self.puavoId = IdPool.next_puavo_id
+    end
+
     self.cn = self.puavoHostname
   end
 
@@ -388,7 +403,8 @@ class DeviceBase < LdapBase
       attribute_value = data.class == Hash ? data[attr[:original_attribute_name]] : data.send(attr[:original_attribute_name])
       new_device_hash[attr[:new_attribute_name]] = attr[:value_block].call(attribute_value)
     end
-    return new_device_hash
+
+    new_device_hash
   end
 
   def self.json_attributes
