@@ -18,8 +18,11 @@ class DeviceBase < LdapBase
                      :downcase_mac_addresses )
   before_save :set_puppetclass, :set_parentNode, :set_puavo_mountpoint
 
-  IA5STRING_CHARACTERS = ('A-Za-z0-9' + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?'))
-  PRINTABLE_STRING_CHARACTERS = ('A-Za-z0-9' + Regexp.escape('()+,-./:\? '))
+  IA5STRING_CHARACTERS = ('A-Za-z0-9' + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?')).freeze
+  PRINTABLE_STRING_CHARACTERS = ('A-Za-z0-9' + Regexp.escape('()+,-./:\? ')).freeze
+  HOSTNAME_REGEXP = /^[0-9a-z-]+$/.freeze
+  MAC_REGEXP = /^([0-9a-f]{2}[:]){5}[0-9a-f]{2}$/.freeze
+  IP_REGEXP = /^([0-9]{1,3}[.]){3}[0-9]{1,3}$/.freeze
 
   validate :validate, :validate_puavoconf
 
@@ -88,7 +91,7 @@ class DeviceBase < LdapBase
 
   def validate
     # Validate format of puavoHostname
-    unless self.puavoHostname.to_s =~ /^[0-9a-z-]+$/
+    unless self.puavoHostname.to_s =~ HOSTNAME_REGEXP
       errors.add( :puavoHostname,
                   I18n.t('activeldap.errors.messages.device.puavoHostname.invalid_characters' ) )
     end
@@ -118,7 +121,7 @@ class DeviceBase < LdapBase
     # Validate format of macAddress
     Array(self.macAddress).each do |mac|
       unless mac.to_s.empty?
-        unless mac =~ /^([0-9a-f]{2}[:]){5}[0-9a-f]{2}$/
+        unless mac =~ MAC_REGEXP
           errors.add( :macAddress,
                       I18n.t('activeldap.errors.messages.device.macAddress.invalid_characters' ) )
           break
@@ -155,7 +158,7 @@ class DeviceBase < LdapBase
 
     # Valdiate format of ipHostNumber
     if self.classes.include?('puavoOtherDevice') || self.classes.include?('puavoPrinter')
-      if !self.ipHostNumber.to_s.empty? && (self.ipHostNumber =~ /^([0-9]{1,3}[.]){3}[0-9]{1,3}$/).nil?
+      if !self.ipHostNumber.to_s.empty? && (self.ipHostNumber =~ IP_REGEXP).nil?
         errors.add( :ipHostNumber,
                     I18n.t('activeldap.errors.messages.invalid',
                            attribute: I18n.t('activeldap.attributes.device.ipHostNumber') ) )
