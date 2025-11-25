@@ -88,7 +88,7 @@ module UsersHelper
     end
 
     if raw['puavoNotes']
-      out[:notes] = raw['puavoNotes'][0]
+      out[:notes] = raw['puavoNotes'][0].gsub("\r", '').split("\n")
     end
 
     if raw.include?('telephoneNumber')

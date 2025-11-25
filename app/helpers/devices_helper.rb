@@ -171,11 +171,11 @@ module DevicesHelper
     end
 
     if dev.include?('description')
-      out[:desc] = dev['description'][0]
+      out[:desc] = dev['description'][0].gsub("\r", '').split("\n")
     end
 
     if dev.include?('puavoNotes')
-      out[:notes] = dev['puavoNotes'][0]
+      out[:notes] = dev['puavoNotes'][0].gsub("\r", '').split("\n")
     end
 
     if dev.include?('puavoDeviceKernelArguments')
@@ -236,7 +236,7 @@ module DevicesHelper
     end
 
     if dev.include?('puavoLocationName')
-      a = dev['puavoLocationName'][0].split("\n")
+      a = dev['puavoLocationName'][0].gsub("\r", '').split("\n")
 
       if a.count > 0
         out[:location] = a

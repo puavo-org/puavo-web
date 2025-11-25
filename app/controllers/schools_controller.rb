@@ -84,7 +84,7 @@ class SchoolsController < ApplicationController
           autopower_on: s.puavoDeviceOnHour,
           autopower_off: s.puavoDeviceOffHour,
           description: s.description,
-          notes: s.puavoNotes,
+          notes: s.puavoNotes ? s.puavoNotes.gsub("\r", '').split("\n") : nil,
           link: school_path(s),
         }
       end

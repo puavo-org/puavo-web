@@ -272,12 +272,7 @@ const COLUMN_DEFINITIONS = {
         key: "notes",
         title: "<%= t('columns.notes') %>",
         type: ST.ColumnType.STRING,
-        transform: e => {
-            if (e.notes === null)
-                return [null, null, null];
-
-            return [ST.escapeHTML(e.notes).replaceAll("\r", "").replaceAll("\n", "<br>"), e.notes, e.notes];
-        }
+        flags: ST.ColumnFlag.ARRAY,
     },
 
     locale: {

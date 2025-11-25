@@ -34,7 +34,7 @@ module GroupsHelper
     end
 
     if raw.include?('puavoNotes')
-      out[:notes] = raw['puavoNotes'][0]
+      out[:notes] = raw['puavoNotes'][0].gsub("\r", '').split("\n")
     end
 
     # This is just a plain number field, always include it

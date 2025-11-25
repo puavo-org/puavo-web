@@ -280,7 +280,7 @@ const COLUMN_DEFINITIONS = {
         key: "notes",
         title: "<%= t('columns.notes') %>",
         type: ST.ColumnType.STRING,
-        transform: entry => [ST.escapeHTML(entry.notes).replaceAll("\r", "").replaceAll("\n", "<br>"), entry.notes],
+        flags: ST.ColumnFlag.ARRAY,
     },
 
     devices: {
