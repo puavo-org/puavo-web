@@ -6,8 +6,14 @@ import { getPopupContents } from "../../common/modal_popup.js";
 import { ColumnType, INDEX_FILTERABLE } from "./constants.js";
 import { JAVASCRIPT_TIME_GRANULARITY } from "./utils.js";
 
+const ESCAPE = [
+    ["\"", "\\\""],
+    ["\t", "\\t"],
+    ["\n", "\\n"],
+];
+
 // Exports the data in columns, delimited by a single character
-function storeAsColumns(data, source, columns, timeColumns, separator, onlySelected, output)
+function storeAsColumns(data, source, columns, timeColumns, mustQuote, separator, onlySelected, output)
 {
     for (const rowIndex of source) {
         const row = data.transformed[rowIndex];
@@ -19,13 +25,28 @@ function storeAsColumns(data, source, columns, timeColumns, separator, onlySelec
 
         for (const col of columns) {
             if (!(col in row) || row[col][INDEX_FILTERABLE] === null || row[col][INDEX_FILTERABLE] === undefined) {
-                out.push("");
+                out.push(null);
                 continue;
             }
 
             if (timeColumns.has(col))
                 out.push(new Date(row[col][INDEX_FILTERABLE] * JAVASCRIPT_TIME_GRANULARITY).toISOString());
-            else out.push(row[col][INDEX_FILTERABLE]);
+            else if (mustQuote.has(col)) {
+                let value = row[col][INDEX_FILTERABLE];
+
+                if (Array.isArray(value)) {
+                    for (const e of ESCAPE)
+                        for (let v of value)
+                            v = v.replaceAll(e[0], e[1]);
+
+                    value = value.join("\n");
+                } else {
+                    for (const e of ESCAPE)
+                        value = value.replaceAll(e[0], e[1]);
+                }
+
+                out.push(`"${value}"`);
+            } else out.push(row[col][INDEX_FILTERABLE]);
         }
 
         output.push(out.join(separator));
@@ -57,7 +78,8 @@ function _doExport(format, data, allColumns, prefix)
 
         let headers = [...columns];
 
-        const timeColumns = new Set();
+        const timeColumns = new Set(),
+              mustQuote = new Set();
 
         // Optional export alias names
         for (let i = 0; i < headers.length; i++) {
@@ -68,13 +90,16 @@ function _doExport(format, data, allColumns, prefix)
 
             if (def.type == ColumnType.UNIXTIME)
                 timeColumns.add(headers[i]);
+
+            if (def.type == ColumnType.STRING)
+                mustQuote.add(headers[i]);
         }
 
         switch (format) {
             case "csv":
             default:
                 output.push(headers.join(";"));
-                storeAsColumns(data, source, columns, timeColumns, ";", onlySelected, output);
+                storeAsColumns(data, source, columns, timeColumns, mustQuote, ";", onlySelected, output);
 
                 output = output.join("\n");
                 mimetype = "text/csv";
@@ -83,7 +108,7 @@ function _doExport(format, data, allColumns, prefix)
 
             case "tsv":
                 output.push(headers.join("\t"));
-                storeAsColumns(data, source, columns, timeColumns, "\t", onlySelected, output);
+                storeAsColumns(data, source, columns, timeColumns, mustQuote, "\t", onlySelected, output);
 
                 output = output.join("\n");
                 mimetype = "text/tab-separated-values";
