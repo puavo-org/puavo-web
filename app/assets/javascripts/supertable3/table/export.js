@@ -152,7 +152,7 @@ function _doExport(format, data, allColumns, prefix)
         let a = window.document.createElement("a");
 
         a.href = window.URL.createObjectURL(b);
-        a.download = `${prefix}-${I18n.strftime(new Date(), "%Y-%m-%d-%H-%M-%S")}.${extension}`;
+        a.download = `${prefix}-${I18n.strftime(new Date(), "%Y%m%d-%H%M%S")}.${extension}`;
 
         document.body.appendChild(a);
         a.click();
