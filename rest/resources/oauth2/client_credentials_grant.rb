@@ -68,7 +68,7 @@ def client_credentials_grant(request_id)
     json_error('unauthorized_client', request_id: request_id)
   end
 
-  unless client_config['enabled'] == 't'
+  unless client_config['enabled']
     # Tested
     rlog.error("[#{request_id}] This client exists but it has been disabled")
     json_error('unauthorized_client', request_id: request_id)

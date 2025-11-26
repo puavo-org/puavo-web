@@ -164,7 +164,7 @@ private
       generic_error(t.oauth2.invalid_client_id(request_id), status: 400)
     end
 
-    unless client_config['enabled'] == 't'
+    unless client_config['enabled']
       # Tested
       rlog.error("[#{request_id}] The client exists but it has been disabled")
       generic_error(t.oauth2.invalid_client_id(request_id), status: 400)

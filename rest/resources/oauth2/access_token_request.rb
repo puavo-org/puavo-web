@@ -146,7 +146,7 @@ def oidc_access_token_request(temp_request_id)
     json_error('unauthorized_client', state: state, request_id: request_id)
   end
 
-  unless client_config['enabled'] == 't'
+  unless client_config['enabled']
     # Tested
     rlog.error("[#{request_id}] This client exists but it has been disabled (it was enabled in stage 1)")
     json_error('unauthorized_client', state: state, request_id: request_id)

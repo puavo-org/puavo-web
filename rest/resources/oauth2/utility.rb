@@ -57,6 +57,9 @@ class ClientDatabase
       client_config[key] = array_decoder.decode(client_config[key])
     end
 
+    # Turn the enabled flag into an actual boolean
+    client_config['enabled'] = client_config['enabled'] == 't'
+
     client_config.freeze
   end
 end   # class ClientDatabase
