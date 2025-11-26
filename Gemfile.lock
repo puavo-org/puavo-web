@@ -1,5 +1,5 @@
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     actioncable (7.2.3)
       actionpack (= 7.2.3)
@@ -210,7 +210,7 @@ GEM
     method_source (1.1.0)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
-    minitest (5.26.1)
+    minitest (5.26.2)
     multi_test (1.1.0)
     mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
@@ -309,7 +309,7 @@ GEM
     redis-namespace (1.11.0)
       redis (>= 4)
     regexp_parser (2.11.3)
-    reline (0.6.2)
+    reline (0.6.3)
       io-console (~> 0.5)
     rexml (3.4.4)
     rmagick (6.1.4)
@@ -359,7 +359,7 @@ GEM
     sqlite3 (2.8.0)
       mini_portile2 (~> 2.8.0)
     sshkey (3.0.0)
-    stringio (3.1.7)
+    stringio (3.1.8)
     sys-uname (1.4.1)
       ffi (~> 1.1)
       memoist3 (~> 1.0.0)
@@ -400,7 +400,7 @@ DEPENDENCIES
   colorize
   concurrent-ruby
   cucumber
-  cucumber-rails (= 3.1.1)
+  cucumber-rails
   gettext
   gettext_i18n_rails
   gibberish
