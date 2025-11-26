@@ -15,16 +15,19 @@ module Userinfo
     request_id = make_request_id
 
     begin
-      # Since only a OAuth2 access token authentication is possible, this can never be nil
+      # Since only an OAuth2 access token authentication is possible, this can never be nil
       access_token = LdapModel.settings[:credentials][:access_token]
 
       rlog.info("[#{request_id}] Returning userinfo data for user \"#{access_token['user_dn']}\" " \
                 "in organisation \"#{access_token['organisation_domain']}\"")
 
+      # Use the built-in userinfo credentials
+      credentials = CONFIG['oauth2']['ldap_id']['userinfo']
+
       out = IDTokenDataGenerator.new(request_id).generate(
         ldap_credentials: {
-          dn: CONFIG['oauth2']['userinfo_dn'],
-          password: CONFIG['oauth2']['ldap_accounts'][CONFIG['oauth2']['userinfo_dn']]
+          dn: credentials['dn'],
+          password: credentials['password']
         },
         domain: access_token['organisation_domain'],
         user_dn: access_token['user_dn'],

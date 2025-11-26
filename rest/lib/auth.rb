@@ -179,31 +179,32 @@ class PuavoSinatra < Sinatra::Base
       raise InvalidOAuth2Token, user: 'invalid_token'
     end
 
-    # Verify the LDAP user DN
-    ldap_accounts = CONFIG['oauth2'].fetch('ldap_accounts', {})
+    # Verify the LDAP ID
+    ldap_ids = CONFIG['oauth2'].fetch('ldap_id', {})
 
-    if access_token['ldap_user_dn'].nil? || !ldap_accounts.include?(access_token['ldap_user_dn'])
-      rlog.error("No LDAP account mapping found for #{access_token['ldap_user_dn'].inspect}")
+    if access_token['ldap_id'].nil? || !ldap_ids.include?(access_token['ldap_id'])
+      rlog.error("LDAP ID #{access_token['ldap_id'].inspect} is not valid (no mapping to LDAP credentials found)")
 
-      audit_token_use(status: 'invalid_ldap_user_dn',
+      audit_token_use(status: 'invalid_ldap_id',
                       organisation: LdapModel.organisation.domain,
                       token_id: access_token['jti'],
                       client_id: access_token['client_id'],
-                      ldap_user_dn: access_token['ldap_user_dn'],
+                      ldap_id: access_token['ldap_id'],
                       audience: @oauth2_params[:audience],
                       requested_scopes: access_token['scopes'],
                       requested_endpoint: request.env['sinatra.route'],
                       request: request)
 
-      raise InvalidOAuth2Token, user: 'invalid_ldap_user_dn'
+      raise InvalidOAuth2Token, user: 'invalid_ldap_id'
     end
+
+    ldap_credentials = CONFIG['oauth2']['ldap_id'][access_token['ldap_id']]
 
     # The access token is valid
     rlog.info("Request authorized using access token #{access_token['jti'].inspect}, " \
-              "client=#{access_token['client_id'].inspect}, audience=#{access_token['aud'].inspect}, " \
-              "subject=#{access_token['sub'].inspect}, scopes=#{access_token['scopes'].inspect}, " \
-              "endpoints=#{access_token.fetch('allowed_endpoints', nil).inspect}, " \
-              "LDAP user DN=#{access_token['ldap_user_dn'].inspect}")
+              "client=#{access_token['client_id'].inspect}, LDAP ID=#{access_token['ldap_id'].inspect}, " \
+              "audience=#{access_token['aud'].inspect}, subject=#{access_token['sub'].inspect}, " \
+              "scopes=#{access_token['scopes'].inspect}, endpoints=#{access_token.fetch('allowed_endpoints', nil).inspect}")
 
     rlog.info("The access token expires at #{Time.at(access_token['exp']).to_s}")
 
@@ -252,8 +253,8 @@ class PuavoSinatra < Sinatra::Base
 
     # Good to go
     {
-      dn: access_token['ldap_user_dn'],
-      password: ldap_accounts[access_token['ldap_user_dn']],
+      dn: ldap_credentials['dn'],
+      password: ldap_credentials['password'],
       access_token: access_token.freeze
     }
   end
@@ -337,7 +338,7 @@ class PuavoSinatra < Sinatra::Base
                       organisation: domain,
                       token_id: access_token['jti'],
                       client_id: access_token['client_id'],
-                      ldap_user_dn: CONFIG['server'][:dn],
+                      ldap_id: access_token['ldap_id'],
                       audience: @oauth2_params[:audience],
                       requested_scopes: access_token['scopes'],
                       requested_endpoint: request.env['sinatra.route'],

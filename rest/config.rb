@@ -94,9 +94,15 @@ if ENV['RACK_ENV'] == 'test' then
         'user' => 'standalone_user',
         'password' => 'standalone_password'
       },
-      'userinfo_dn' => PUAVO_ETC.ldap_dn,    # used when generating userinfo
-      'ldap_accounts' => {
-        PUAVO_ETC.ldap_dn => PUAVO_ETC.ldap_password,
+      'ldap_id' => {
+        'userinfo' => {       # The built-in ID that's used in the userinfo endpoint. Do not delete!
+          'dn' => PUAVO_ETC.ldap_dn,
+          'password' => PUAVO_ETC.ldap_password
+        },
+        'admin' => {
+          'dn' => 'uid=admin,o=puavo',
+          'password' => 'password'
+        },
       },
       'audit' => {
         'enabled' => false,

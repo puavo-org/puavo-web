@@ -177,11 +177,11 @@ def oidc_access_token_request(temp_request_id)
   # as the scope names are different.
   token = build_access_token(
     request_id,
+    ldap_id: 'userinfo',                  # the hardcoded built-in userinfo LDAP ID
     subject: oidc_state['user']['uuid'],
     audience: 'puavo-rest-userinfo',      # this token is only usable in the userinfo endpoint
     scopes: oidc_state['scopes'],
     expires_in: expires_in,
-    ldap_user_dn: CONFIG['oauth2']['userinfo_dn'],
 
     # These are hard to determine afterwards, so stash them in the token
     # (These are for the userinfo endpoint; it works because auth() stores the full
@@ -225,10 +225,12 @@ def oidc_access_token_request(temp_request_id)
 
   # Collect the user data and append it to the ID token
   begin
+    credentials = CONFIG['oauth2']['ldap_id']['userinfo']
+
     user_data = IDTokenDataGenerator.new(request_id).generate(
       ldap_credentials: {
-        dn: CONFIG['oauth2']['userinfo_dn'],
-        password: CONFIG['oauth2']['ldap_accounts'][CONFIG['oauth2']['userinfo_dn']]
+        dn: credentials['dn'],
+        password: credentials['password']
       },
       domain: oidc_state['organisation']['domain'],
       user_dn: oidc_state['user']['dn'],
@@ -258,7 +260,7 @@ def oidc_access_token_request(temp_request_id)
 
   audit_issued_id_token(request_id,
                         client_id: client_id,
-                        ldap_user_dn: CONFIG['server'][:dn],
+                        ldap_id: 'userinfo',        # the hardcoded built-in userinfo LDAP ID
                         raw_requested_scopes: oidc_state['original_scopes'],
                         issued_scopes: oidc_state['scopes'],
                         redirect_uri: oidc_state['redirect_uri'],
@@ -267,7 +269,7 @@ def oidc_access_token_request(temp_request_id)
 
   audit_issued_access_token(request_id,
                             client_id: client_id,
-                            ldap_user_dn: CONFIG['server'][:dn],
+                            ldap_id: 'userinfo',    # ditto
                             raw_requested_scopes: oidc_state['original_scopes'],
                             raw_token: token[:raw_token],
                             request: request)
@@ -300,12 +302,12 @@ rescue StandardError => e
 end
 
 def build_access_token(request_id,
+                       ldap_id:,
                        scopes: [],
                        client_id: nil,
                        subject: nil,
                        audience: 'puavo-rest-v4',
                        expires_in: 3600,
-                       ldap_user_dn: nil,
                        custom_claims: nil)
   now = Time.now.utc.to_i
 
@@ -320,9 +322,8 @@ def build_access_token(request_id,
     'scopes' => scopes.join(' ')
   }
 
+  token_claims['ldap_id'] = ldap_id
   token_claims['client_id'] = client_id if client_id
-
-  token_claims['ldap_user_dn'] = ldap_user_dn if ldap_user_dn
 
   token_claims.merge!(custom_claims) if custom_claims.is_a?(Hash)
 

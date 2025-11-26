@@ -761,7 +761,7 @@ def list_token_clients
     puts "\tClient ID............: #{row['client_id'].inspect}"
     puts "\tEnabled..............: #{row['enabled'] == 't' ? 'Yes' : 'No'}"
     puts "\tExpires in...........: #{row['expires_in']} seconds"
-    puts "\tAssociated LDAP DN...: #{row['ldap_user_dn'].nil? ? '<Unset>' : row['ldap_user_dn']}"
+    puts "\tLDAP ID..............: #{row['ldap_id'].inspect}"
 
     puts "\tAllowed scopes.......:"
 
@@ -917,48 +917,35 @@ def change_token_client_expires_in_time(client)
   true
 end
 
-def format_token_client_ldap_user_dn(client)
-  if client['ldap_user_dn'].nil?
-    "Set the LDAP user DN (currently unset, the client will not work)"
-  else
-    "Set the LDAP user DN (currently #{client['ldap_user_dn'].inspect})"
-  end
+def format_token_client_ldap_id(client)
+  "Set the LDAP ID (currently #{client['ldap_id'].inspect})"
 end
 
-def change_token_client_ldap_user_dn(client)
-  new_dn = read_string(
-    'Enter an LDAP user DN (leave empty to set it to NULL)',
-    allow_empty: true
-  )
+def change_token_client_ldap_id(client)
+  new_id = read_string('Enter new LDAP ID')
 
-  if new_dn == :cancel
+  if new_id == :cancel
     print_action('Cancelled')
     return false
   end
 
-  if new_dn.nil? || new_dn.empty?
-    db.exec_params(
-      'UPDATE token_clients SET ldap_user_dn = NULL, modified = $2 WHERE client_id = $1',
-      [client['client_id'], Time.now.utc]
-    )
-
-    client['ldap_user_dn'] = nil
-    print_action('User DN cleared, the client will not work')
-    return true
+  if new_id.nil? || new_id.empty?
+    print_action('The LDAP ID cannot be empty. ID not changed.')
+    return false
   end
 
-  if new_dn == client['ldap_user_dn']
-    print_action('LDAP user DN not changed')
+  if new_id == client['ldap_id']
+    print_action('LDAP ID not changed')
     return false
   end
 
   db.exec_params(
-    'UPDATE token_clients SET ldap_user_dn = $2, modified = $3 WHERE client_id = $1',
-    [client['client_id'], new_dn, Time.now.utc]
+    'UPDATE token_clients SET ldap_id = $2, modified = $3 WHERE client_id = $1',
+    [client['client_id'], new_id, Time.now.utc]
   )
 
-  client['ldap_user_dn'] = new_dn
-  print_action("LDAP user DN changed to \"#{new_dn}\"")
+  client['ldap_id'] = new_id
+  print_action("LDAP ID changed to \"#{new_id}\"")
   true
 end
 
@@ -1170,10 +1157,10 @@ def edit_token_client
     end
   end
 
-  # LDAP user DN
-  edit_menu << MenuItem.new(:ldap_user_dn, 'l', format_token_client_ldap_user_dn(client)) do |item|
-    if change_token_client_ldap_user_dn(client)
-      item.title = format_token_client_ldap_user_dn(client)
+  # LDAP ID
+  edit_menu << MenuItem.new(:ldap_id, 'l', format_token_client_ldap_id(client)) do |item|
+    if change_token_client_ldap_id(client)
+      item.title = format_token_client_ldap_id(client)
     end
   end
 
@@ -1301,10 +1288,10 @@ def new_token_client
     organisations = nil
   end
 
-  # Underlying LDAP DN
-  ldap_dn = read_string('LDAP DN used for this token (can be empty, but the client will not work without this)')
+  # LDAP ID
+  ldap_id = read_string('LDAP ID')
 
-  if organisations == :cancel
+  if ldap_id == :cancel
     print_action('Cancelled')
     return
   end
@@ -1320,9 +1307,9 @@ def new_token_client
 
   db.exec_params(
     'INSERT INTO token_clients (client_id, client_password, enabled, ' \
-    'allowed_scopes, allowed_endpoints, allowed_organisations, ldap_user_dn, ' \
+    'allowed_scopes, allowed_endpoints, allowed_organisations, ldap_id, ' \
     'created, modified, password_changed) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-    [client_id, hashed_password, enabled, scopes, endpoints, organisations, ldap_dn, now, now, now]
+    [client_id, hashed_password, enabled, scopes, endpoints, organisations, ldap_id, now, now, now]
   )
 
   puts "#{clr(:action)}Done!#{clr(:off)}"

@@ -58,17 +58,17 @@ describe PuavoRest::OAuth2 do
         enabled: false
       },
       {
-        client_id: 'test_client_wrong_dn',
+        client_id: 'test_client_wrong_ldap_id',
         scopes: ['puavo.read.users'],
         endpoints: ['/v4/users'],
-        ldap_user_dn: 'foobar'
+        ldap_id: 'foobar'
       },
     ].each do |client|
       db.exec_params(
-        'INSERT INTO token_clients(client_id, client_password, enabled, ldap_user_dn, allowed_scopes, ' \
+        'INSERT INTO token_clients(client_id, client_password, enabled, ldap_id, allowed_scopes, ' \
         'allowed_endpoints, created, modified, password_changed) VALUES ' \
         "($1, $2, $3, $4, $5, $6, $7, $8, $9)",
-        [client[:client_id], password_hash, client.fetch(:enabled, true), client.fetch(:ldap_user_dn, 'uid=admin,o=puavo'),
+        [client[:client_id], password_hash, client.fetch(:enabled, true), client.fetch(:ldap_id, 'admin'),
         array_encoder.encode(client[:scopes]), array_encoder.encode(client[:endpoints]), now, now, now]
       )
     end
@@ -405,7 +405,7 @@ describe PuavoRest::OAuth2 do
     end
 
     it 'token with an invalid LDAP mapping' do
-      acquire_token('test_client_wrong_dn', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
+      acquire_token('test_client_wrong_ldap_id', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
       response = JSON.parse last_response.body
       access_token = response['access_token']
       decoded_token = decode_token(access_token)
@@ -418,7 +418,7 @@ describe PuavoRest::OAuth2 do
       assert_equal last_response.status, 401
       response = JSON.parse last_response.body
       assert_equal response['error']['code'], 'InvalidOAuth2Token'
-      assert_equal response['error']['message'], 'invalid_ldap_user_dn'
+      assert_equal response['error']['message'], 'invalid_ldap_id'
     end
 
     it 'retrieve groups data with token authentication' do

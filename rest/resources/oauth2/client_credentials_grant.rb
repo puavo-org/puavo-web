@@ -144,12 +144,12 @@ def client_credentials_grant(request_id)
 
   token = build_access_token(
     request_id,
+    ldap_id: client_config['ldap_id'],
     client_id: credentials[0],
     subject: credentials[0],
     scopes: scopes[:scopes],
     expires_in: expires_in,
-    custom_claims: custom_claims,
-    ldap_user_dn: client_config['ldap_user_dn']
+    custom_claims: custom_claims
   )
 
   unless token[:success]
@@ -168,7 +168,7 @@ def client_credentials_grant(request_id)
             "expires at #{Time.at(token[:expires_at])}")
 
   audit_issued_access_token(request_id,
-                            ldap_user_dn: CONFIG['server'][:dn],
+                            ldap_id: client_config['ldap_id'],
                             client_id: credentials[0],
                             raw_requested_scopes: params.fetch('scope', ''),
                             raw_token: token[:raw_token],

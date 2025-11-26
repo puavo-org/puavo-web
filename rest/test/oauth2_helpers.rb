@@ -38,11 +38,11 @@ def setup_login_clients(clients, remove_old: true)
 
   clients.each do |client|
     db.exec_params(
-      'INSERT INTO login_clients(client_id, enabled, puavo_service_dn, ldap_user_dn, ' \
+      'INSERT INTO login_clients(client_id, enabled, puavo_service_dn, ldap_id, ' \
       'allowed_redirects, allowed_scopes, created, modified) VALUES ' \
       "($1, $2, $3, $4, $5, $6, $7, $8)",
       [client[:client_id], client.fetch(:enabled, false), client[:puavo_service_dn],
-      client.fetch(:ldap_user_dn, nil), array_encoder.encode(client[:redirects]),
+      client.fetch(:ldap_id, nil), array_encoder.encode(client[:redirects]),
       array_encoder.encode(client[:scopes]), now, now]
     )
   end

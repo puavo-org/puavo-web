@@ -143,7 +143,7 @@ private
     end
 
     # ----------------------------------------------------------------------------------------------
-    # Verify the client ID and the target external service
+    # Verify the client ID, the client parameters, and the target external service
 
     client_id = params['client_id']
     rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
