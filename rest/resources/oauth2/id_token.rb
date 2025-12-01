@@ -175,6 +175,7 @@ class IDTokenDataGenerator
 
   # Custom claim: puavo.read.userinfo.schools
   def handle_schools
+    has_primus = @scopes.include?('puavo.read.userinfo.primus')
     has_mpass = @scopes.include?('puavo.read.userinfo.mpassid')
 
     if has_mpass && @external_data.include?('materials_charge')
@@ -196,6 +197,20 @@ class IDTokenDataGenerator
       }
 
       school['ldap_dn'] = s.dn if @has_ldap
+
+      if has_primus
+        if s.external_data
+          # Try to extract the Primus card ID from the external data
+          begin
+            ed = JSON.parse(s.external_data)
+            school['primus_card_id'] = ed['primus_card_id'] if ed.include?('primus_card_id')
+          rescue StandardError => e
+            $rest_log.error("[#{@request_id}] Unable to parse the external data of the school #{s.dn.inspect}: #{e}")
+          end
+        else
+          school['primus_card_id'] = nil
+        end
+      end
 
       if has_mpass && s.school_code == mpass_charging_school
         school['mpass_learning_materials_charge'] = mpass_charging_state
