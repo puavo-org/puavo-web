@@ -9,6 +9,7 @@ class School < LdapModel
   ldap_map :dn, :dn
   ldap_map :puavoId, :id, LdapConverters::SingleValue
   ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
+  ldap_map :puavoExternalData, :external_data, LdapConverters::SingleValue
   ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :displayName, :name
   ldap_map :puavoSchoolCode, :school_code, LdapConverters::SingleValue
@@ -50,6 +51,8 @@ class School < LdapModel
 
   ldap_map :puavoSchoolOID, :school_oid, LdapConverters::SingleValue
   skip_serialize :school_oid
+
+  skip_serialize :external_data
 
   # Internal attributes, do not use! These are automatically set when
   # User#school_dns is updated
@@ -282,6 +285,7 @@ class Schools < PuavoSinatra
     'description'           => "description",
     'dn'                    => 'dn',
     'external_id'           => 'puavoExternalId',
+    'external_data'         => 'puavoExternalData',
     'fax'                   => "facsimileTelephoneNumber",
     'gid_number'            => 'gidNumber',
     'group_prefix'          => 'cn',
@@ -341,6 +345,7 @@ class Schools < PuavoSinatra
     'puavoDeviceOffHour'          => { name: 'autopoweroff_off_hour', type: :integer },
     'puavoDeviceOnHour'           => { name: 'autopoweroff_on_hour', type: :integer },
     'puavoExternalId'             => { name: 'external_id' },
+    'puavoExternalData'           => { name: 'external_data', type: :json },
     'puavoId'                     => { name: 'id', type: :integer },
     'puavoImageSeriesSourceURL'   => { name: 'image_series_url' },
     'puavoLocale'                 => { name: 'locale' },
