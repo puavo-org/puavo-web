@@ -285,7 +285,7 @@ def oidc_access_token_request(temp_request_id)
     'access_token' => token[:access_token],
     'token_type' => 'Bearer',
     'expires_in' => expires_in,
-    'id_token' => JWT.encode(id_token, private_key, 'ES256', { typ: 'at+jwt' }),
+    'id_token' => JWT.encode(id_token, private_key, 'ES256', { typ: 'at+jwt', kid: CONFIG['oauth2']['kid'] }),
     'puavo_request_id' => request_id
   }
 
@@ -346,7 +346,7 @@ def build_access_token(request_id,
   # Sign the token data using the private key. RFC 9068 section 2.1. says the "typ" value
   # SHOULD be "at+jwt", but the JWT gem does not set it, so let's set it manually.
   # (I have no idea what I'm doing.)
-  access_token = JWT.encode(token_claims, private_key, 'ES256', { typ: 'at+jwt' })
+  access_token = JWT.encode(token_claims, private_key, 'ES256', { typ: 'at+jwt', kid: CONFIG['oauth2']['kid'] })
 
   {
     success: true,

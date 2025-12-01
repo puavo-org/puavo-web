@@ -87,6 +87,7 @@ if ENV['RACK_ENV'] == 'test' then
         'public_pem' => '/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem',
         'creation_time' => '20250115T095034Z',
       },
+      'kid' => 'puavo_standalone_20250115T095034Z',   # change this if the PEM files are rotated
       'client_database' => {
         'host' => '127.0.0.1',
         'port' => 5432,

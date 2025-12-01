@@ -560,7 +560,7 @@ describe PuavoRest::OAuth2 do
 
       # Re-sign the token with the actual signing key. This works in puavo-standalone, but not in production.
       private_key = OpenSSL::PKey.read(File.read('/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem'))
-      new_token = JWT.encode(decoded_token, private_key, 'ES256', { typ: 'at+jwt' })
+      new_token = JWT.encode(decoded_token, private_key, 'ES256', { typ: 'at+jwt', kid: CONFIG['oauth2']['kid'] })
 
       # Then try to use the tampered token. It must fail.
       fetch_data_with_token(new_token, '/v4/users', 'id,first_names,last_name,username')
