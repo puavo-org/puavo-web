@@ -82,9 +82,9 @@ if ENV['RACK_ENV'] == 'test' then
       },
     },
     'oauth2' => {
-      'token_key' => {
-        'private_file' => '/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem',
-        'public_file' => '/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem',
+      'key_files' => {
+        'private_pem' => '/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem',
+        'public_pem' => '/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem',
         'creation_time' => '20250115T095034Z',
       },
       'client_database' => {
@@ -183,9 +183,9 @@ end
 # signing an access token, so that its contents cannot leak through global variables.
 public_key = nil
 
-if CONFIG.fetch('oauth2', {}).fetch('token_key', {}).include?('public_file')
+if CONFIG.fetch('oauth2', {}).fetch('key_files', {}).include?('public_pem')
   begin
-    public_key = OpenSSL::PKey.read(File.read(CONFIG['oauth2']['token_key']['public_file']))
+    public_key = OpenSSL::PKey.read(File.read(CONFIG['oauth2']['key_files']['public_pem']))
   rescue StandardError => e
     puts "ERROR: Cannot load the OAuth2 JWT validation key: #{e}"
     puts "ERROR: OAuth2 access token validations will always fail and access tokens cannot be used"

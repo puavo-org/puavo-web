@@ -252,7 +252,7 @@ def oidc_access_token_request(temp_request_id)
 
   # Load the signing private key. Unlike the public key, this is not kept in memory.
   begin
-    private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['token_key']['private_file']))
+    private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['key_files']['private_pem']))
   rescue StandardError => e
     # Tested (manually)
     rlog.error("[#{request_id}] Cannot load the access token signing private key file: #{e}")
@@ -333,7 +333,7 @@ def build_access_token(request_id,
 
   # Load the signing private key. Unlike the public key, this is not kept in memory.
   begin
-    private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['token_key']['private_file']))
+    private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['key_files']['private_pem']))
   rescue StandardError => e
     # Tested (manually)
     rlog.error("[#{request_id}] Cannot load the access token signing private key file: #{e}")
