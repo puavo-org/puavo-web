@@ -187,6 +187,10 @@ def oidc_access_token_request(temp_request_id)
     # (These are for the userinfo endpoint; it works because auth() stores the full
     # token in the credentials data and we can dig these up from it.)
     custom_claims: {
+      # Set the required_service_dn claim to "tie" the generated userinfo access token
+      # into the service where the original login was made to. This won't do anything
+      # unless the token client specifies the required service DN (they should).
+      'required_service_dn' => oidc_state['service']['dn'],
       'allowed_endpoints' => ['/oidc/userinfo'],
       'organisation_domain' => oidc_state['organisation']['domain'],
       'user_dn' => oidc_state['user']['dn']

@@ -333,6 +333,28 @@ class PuavoSinatra < Sinatra::Base
         end
       end
 
+      # External service requirements?
+      if access_token.include?('required_service_dn')
+        # Tested
+        # TODO: The .downcase is a hack. It's needed because the model code downcases the DNs. It must be removed
+        # after the model-assisted DN downcasing stupidity has been erased from existence.
+        unless Organisation.current(:no_cache).external_services.include?(access_token['required_service_dn'].downcase)
+          rlog.error("This token requires the service #{access_token['required_service_dn'].inspect} to be enabled in this organisation and it's not.")
+
+          audit_token_use(status: 'required_service_not_active',
+                          organisation: domain,
+                          token_id: access_token['jti'],
+                          client_id: access_token['client_id'],
+                          audience: @oauth2_params[:audience],
+                          requested_scopes: access_token['scopes'],
+                          requested_endpoint: request.env['sinatra.route'],
+                          required_service_dn: access_token['required_service_dn'],
+                          request: request)
+
+          raise Forbidden, user: 'invalid_token'
+        end
+      end
+
       # Log the token usage
       audit_token_use(status: 'success',
                       organisation: domain,

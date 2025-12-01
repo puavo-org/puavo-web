@@ -63,13 +63,19 @@ describe PuavoRest::OAuth2 do
         endpoints: ['/v4/users'],
         ldap_id: 'foobar'
       },
+      {
+        client_id: 'test_client_required_dn',
+        scopes: ['puavo.read.users'],
+        endpoints: ['/v4/users'],
+        # The required service DN is inserted later, when this client is actually used
+      },
     ].each do |client|
       db.exec_params(
         'INSERT INTO token_clients(client_id, client_password, enabled, ldap_id, allowed_scopes, ' \
-        'allowed_endpoints, created, modified, password_changed) VALUES ' \
-        "($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+        'allowed_endpoints, required_service_dn, created, modified, password_changed) VALUES ' \
+        '($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
         [client[:client_id], password_hash, client.fetch(:enabled, true), client.fetch(:ldap_id, 'admin'),
-        array_encoder.encode(client[:scopes]), array_encoder.encode(client[:endpoints]), now, now, now]
+        array_encoder.encode(client[:scopes]), array_encoder.encode(client[:endpoints]), nil, now, now, now]
       )
     end
 
@@ -494,6 +500,75 @@ describe PuavoRest::OAuth2 do
       # Ensure it will not be accepted by puavo-rest either
       fetch_data_with_token(expired_token, '/v4/users', 'id,first_names,last_name,username')
       assert_equal last_response.status, 401
+    end
+  end
+
+  describe 'required service DN tests' do
+    before(:context) do
+      # Create an external service
+      PuavoRest::Organisation.refresh
+
+      @external_service = ExternalService.new
+      @external_service.classes = ['top', 'puavoJWTService']
+      @external_service.cn = 'Temporary Service'
+      @external_service.puavoServiceDomain = 'temporary.example.com'
+      @external_service.puavoServiceSecret = 'secret'
+      @external_service.puavoServiceTrusted = false
+      @external_service.save!
+
+      activate_organisation_services([@external_service.dn.to_s])
+
+      # Update the token client entry
+      db = oauth2_client_db()
+      db.exec_params('UPDATE token_clients SET required_service_dn = $1 WHERE client_id = $2;',
+                     [@external_service.dn.to_s, 'test_client_required_dn'])
+      db.close()
+    end
+
+    it 'ensure the token contains a required service DN string' do
+      acquire_token('test_client_required_dn', 'supersecretpassword', ['puavo.read.users'])
+
+      assert_equal last_response.status, 200
+      access_token = JSON.parse(last_response.body)['access_token']
+      decoded_token = decode_token(access_token)
+
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
+      assert_equal decoded_token['required_service_dn'], @external_service.dn.to_s
+
+      # Use the token
+      fetch_data_with_token(access_token, '/v4/users', 'id,first_names,last_name,username')
+
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert_equal response['status'], 'ok'
+      assert_nil response['error']
+      assert_equal response['data'].length, 1   # the "cucumber" user
+    end
+
+    it 'tamper with the data' do
+      acquire_token('test_client_required_dn', 'supersecretpassword', ['puavo.read.users'])
+
+      assert_equal last_response.status, 200
+      access_token = JSON.parse(last_response.body)['access_token']
+      decoded_token = decode_token(access_token)
+
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
+      assert_equal decoded_token['required_service_dn'], @external_service.dn.to_s
+
+      # Change the required service DN to something that's unlikely to exist (and definitely not activated!)
+      decoded_token['required_service_dn'] = 'puavoId=0,ou=Services,o=puavo'
+
+      # Re-sign the token with the actual signing key. This works in puavo-standalone, but not in production.
+      private_key = OpenSSL::PKey.read(File.read('/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem'))
+      new_token = JWT.encode(decoded_token, private_key, 'ES256', { typ: 'at+jwt' })
+
+      # Then try to use the tampered token. It must fail.
+      fetch_data_with_token(new_token, '/v4/users', 'id,first_names,last_name,username')
+
+      assert_equal last_response.status, 403
+      response = JSON.parse last_response.body
+      assert_equal response['error']['code'], 'Forbidden'
+      assert_equal response['error']['message'], 'invalid_token'
     end
   end
 end

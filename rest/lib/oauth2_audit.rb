@@ -15,6 +15,7 @@ module Audit
                       audience: nil,
                       requested_scopes: nil,
                       requested_endpoint: nil,
+                      required_service_dn: nil,
                       raw_token: nil,
                       request: nil)
 
@@ -33,6 +34,7 @@ module Audit
       aud: audience,
       requested_scopes: requested_scopes,
       requested_endpoint: requested_endpoint,
+      required_service_dn: required_service_dn,
       raw_token: raw_token
     }
 

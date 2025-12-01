@@ -563,6 +563,7 @@ describe PuavoRest::OAuth2 do
       assert_equal access_token['scopes'], 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups'
       assert_equal access_token['allowed_endpoints'], ['/oidc/userinfo']
       assert_equal access_token['organisation_domain'], 'example.puavo.net'
+      assert_equal access_token['required_service_dn'], @external_service.dn
       assert_equal access_token['user_dn'], @user.dn.to_s
 
       # Validate the ID token
@@ -660,6 +661,7 @@ describe PuavoRest::OAuth2 do
       validate_access_token(token)
       access_token = decode_token(token['access_token'], audience: 'puavo-rest-userinfo')
       assert_equal access_token['user_dn'], @user.dn.to_s
+      assert_equal access_token['required_service_dn'], @external_service.dn
 
       id_token = decode_token(token['id_token'], audience: 'test_login_service')
       assert_equal id_token['sub'], @user.uuid
@@ -708,6 +710,7 @@ describe PuavoRest::OAuth2 do
       validate_access_token(token)
       access_token = decode_token(token['access_token'], audience: 'puavo-rest-userinfo')
       assert_equal access_token['user_dn'], @user.dn.to_s
+      assert_equal access_token['required_service_dn'], @external_service.dn
 
       id_token = decode_token(token['id_token'], audience: 'test_login_service')
       assert_equal id_token['sub'], @user.uuid
@@ -755,6 +758,7 @@ describe PuavoRest::OAuth2 do
       validate_access_token(token)
       access_token = decode_token(token['access_token'], audience: 'puavo-rest-userinfo')
       assert_equal access_token['user_dn'], @user.dn.to_s
+      assert_equal access_token['required_service_dn'], @external_service.dn
 
       id_token = decode_token(token['id_token'], audience: 'test_login_service')
       assert_equal id_token['sub'], @user.uuid
@@ -940,6 +944,7 @@ describe PuavoRest::OAuth2 do
       assert_equal access_token['scopes'], 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups'
       assert_equal access_token['allowed_endpoints'], ['/oidc/userinfo']
       assert_equal access_token['organisation_domain'], 'example.puavo.net'
+      assert_equal access_token['required_service_dn'], @external_service.dn
       assert_equal access_token['user_dn'], @user.dn.to_s
 
       # Validate the ID token
@@ -1033,6 +1038,7 @@ describe PuavoRest::OAuth2 do
       assert_equal access_token['scopes'], 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups'
       assert_equal access_token['allowed_endpoints'], ['/oidc/userinfo']
       assert_equal access_token['organisation_domain'], 'example.puavo.net'
+      assert_equal access_token['required_service_dn'], @external_service.dn
       assert_equal access_token['user_dn'], @user.dn.to_s
 
       # Validate the ID token
@@ -2187,6 +2193,7 @@ describe PuavoRest::OAuth2 do
       assert_equal access_token['scopes'], 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups'
       assert_equal access_token['allowed_endpoints'], ['/oidc/userinfo']
       assert_equal access_token['organisation_domain'], 'example.puavo.net'
+      assert_equal access_token['required_service_dn'], @external_service2.dn
       assert_equal access_token['user_dn'], @user.dn.to_s
 
       # Validate the ID token
@@ -2270,6 +2277,7 @@ describe PuavoRest::OAuth2 do
       assert_equal access_token2['scopes'], 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups'
       assert_equal access_token2['allowed_endpoints'], ['/oidc/userinfo']
       assert_equal access_token2['organisation_domain'], 'example.puavo.net'
+      assert_equal access_token2['required_service_dn'], @external_service2.dn
       assert_equal access_token2['user_dn'], @user.dn.to_s
 
       id_token2 = decode_token(token2['id_token'], audience: 'test_login_service_session')
@@ -2742,6 +2750,7 @@ describe PuavoRest::OAuth2 do
       assert_equal access_token['scopes'], 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups'
       assert_equal access_token['allowed_endpoints'], ['/oidc/userinfo']
       assert_equal access_token['organisation_domain'], 'example.puavo.net'
+      assert_equal access_token['required_service_dn'], @external_service.dn
       assert_equal access_token['user_dn'], @mfa_user.dn.to_s
 
       # Validate the ID token
@@ -2921,6 +2930,7 @@ describe PuavoRest::OAuth2 do
       assert_equal access_token['scopes'], 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups'
       assert_equal access_token['allowed_endpoints'], ['/oidc/userinfo']
       assert_equal access_token['organisation_domain'], 'example.puavo.net'
+      assert_equal access_token['required_service_dn'], @external_service2.dn
       assert_equal access_token['user_dn'], @mfa_user.dn.to_s
 
       # Validate the ID token

@@ -136,6 +136,14 @@ def client_credentials_grant(request_id)
               "#{custom_claims['allowed_endpoints'].inspect}")
   end
 
+  if client_config.include?('required_service_dn') &&
+      !client_config['required_service_dn'].nil? &&
+      !client_config['required_service_dn'].empty?
+    custom_claims['required_service_dn'] = client_config['required_service_dn']
+    rlog.info("[#{request_id}] Token usage is restricted to organisations where the external service " \
+              "#{client_config['required_service_dn'].inspect} is active")
+  end
+
   # ----------------------------------------------------------------------------------------------
   # Generate the token. Put it in a JWT and sign the JWT with a private key,
   # so we now have a self-validating token.
