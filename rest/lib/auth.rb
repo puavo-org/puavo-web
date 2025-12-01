@@ -139,7 +139,7 @@ class PuavoSinatra < Sinatra::Base
     # Assume it's an OAuth2 bearer token
     rlog.info('oauth2_token(): have an authorization header that looks like a bearer token, checking it')
 
-    # The access token is a signed JWT. Validate it using the public key.
+    # See if the token is valid
     begin
       decoded_token = JWT.decode(authorization[1], OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY, true, {
         algorithm: 'ES256',
@@ -251,6 +251,8 @@ class PuavoSinatra < Sinatra::Base
       end
     end
 
+    rlog.info('oauth2_token(): initial authorization header checks passed')
+
     # Good to go
     {
       dn: ldap_credentials['dn'],
@@ -309,6 +311,7 @@ class PuavoSinatra < Sinatra::Base
         :user => "Could not create ldap connection. Bad/missing credentials. #{ auth_methods.inspect }"
     end
 
+    # Further OAuth2 token validation. These cannot be made until a connection has been established.
     if auth_method == :oauth2_token
       access_token = LdapModel.settings[:credentials][:access_token]
       domain = LdapModel.organisation.domain
