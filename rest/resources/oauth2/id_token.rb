@@ -165,7 +165,8 @@ class IDTokenDataGenerator
   def handle_organisation
     org = {
       'name' => @organisation.name,
-      'domain' => @organisation.domain
+      'domain' => @organisation.domain,
+      'oid' => @organisation.oid,
     }
 
     org['ldap_dn'] = @organisation.dn if @scopes.include?('puavo.read.userinfo.ldap')
