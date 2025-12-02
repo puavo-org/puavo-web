@@ -83,46 +83,46 @@ extlogin_conf.each do |organisation, org_conf|
 
     PuavoRest::User.all.each do |puavo_user|
       begin
-        external_id = puavo_user.external_id
-        unless external_id then
+        extlogin_id = external_login.extlogin_id(puavo_user)
+        unless extlogin_id then
+          id_field = external_login.puavo_extlogin_id_field
           puts "> user #{ puavo_user.username } [#{ organisation }] " \
-                 + 'has no external id, skipping check'
+                 + "has no extlogin id (#{ id_field }), skipping check"
           next
         end
 
-        if external_users.has_key?(external_id) then
-          puts "> user #{ puavo_user.username } (#{ external_id })" \
+        if external_users.has_key?(extlogin_id) then
+          puts "> user #{ puavo_user.username } (#{ extlogin_id })" \
                  + " [#{ organisation }] exists in external service"
           next
         end
 
-        puts "> user #{ puavo_user.username } (#{ external_id })" \
+        puts "> user #{ puavo_user.username } (#{ extlogin_id })"
                + " [#{ organisation }] does not exist in external service"
 
         # User not found in external service, so it must be in Puavo
         # and we mark it for removal.
         if puavo_user.mark_for_removal! then
-          puts("> puavo user '#{ puavo_user.username }' (#{ external_id })" \
+          puts("> puavo user '#{ puavo_user.username }' (#{ extlogin_id })" \
                  + " [#{ organisation }] is marked for removal")
         end
 
       rescue StandardError => e
         warn("! error in marking user '#{ puavo_user.username }'" \
-               + " [#{ organisation }] for removal: #{ e.backtrace }")
-               # + " [#{ organisation }] for removal: #{ e.message }")
+               + " [#{ organisation }] for removal: #{ e.message } / #{ e.backtrace }")
         all_users_ok = false
       end
     end
 
     puts '>> checking updates to users in Puavo'
 
-    external_users.each do |external_id, userinfo|
+    external_users.each do |extlogin_id, userinfo|
       begin
         username   = userinfo['username']
         ldap_entry = userinfo['ldap_entry']
 
         puts "> updating Puavo information on #{ username }" \
-               + " (#{ external_id }) [#{ organisation }]"
+               + " (#{ extlogin_id }) [#{ organisation }]"
 
         login_service.set_ldapuserinfo(username, ldap_entry)
         userinfo = login_service.get_userinfo(username)
@@ -131,16 +131,15 @@ extlogin_conf.each do |organisation, org_conf|
         if user_status != PuavoRest::ExternalLoginStatus::NOCHANGE \
           && user_status != PuavoRest::ExternalLoginStatus::UPDATED then
             raise '! user information update to Puavo failed for' \
-                    + " '#{ username }' (#{ external_id })" \
+                    + " '#{ username }' (#{ extlogin_id })" \
                     + " (#{ organisation })"
         end
 
       rescue StandardError => e
-        warn("! error checking user '#{ username }' (#{ external_id })" \
+        warn("! error checking user '#{ username }' (#{ extlogin_id })" \
                + " [#{ organisation }] in external login service: "     \
                + e.message + " " \
                + e.backtrace.join(' / '))
-               # + " [#{ organisation }] in external login service: "   \
         all_users_ok = false
       end
     end
