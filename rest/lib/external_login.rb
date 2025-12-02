@@ -931,7 +931,7 @@ module PuavoRest
       end
 
       if @external_learner_id_field \
-        && @puavo_extlogin_id_field != 'learner_id' then
+        && puavo_extlogin_id_field != 'learner_id' then
           userinfo['learner_id'] \
             = Array(@ldap_userinfo[@external_learner_id_field]).first.to_s.dup
       end
