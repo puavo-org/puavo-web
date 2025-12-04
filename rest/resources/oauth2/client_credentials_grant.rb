@@ -2,6 +2,8 @@
 
 # Client credentials grant request, for machine <-> machine communication with OAuth tokens
 
+require 'jwt'
+
 module PuavoRest
 module OAuth2
 module ClientCredentialsGrant
