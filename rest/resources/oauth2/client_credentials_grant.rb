@@ -20,73 +20,15 @@ def client_credentials_grant(request_id)
   end
 
   # ----------------------------------------------------------------------------------------------
-  # Load client credentials from the request
+  # Figure out the authentication method, and authenticate the client
 
-  # TODO: We need to support other client authorization systems
-
-  unless request.env.include?('HTTP_AUTHORIZATION')
-    # Tested
-    rlog.error("[#{request_id}] Received a client_credentials request without an HTTP_AUTHORIZATION header")
+  if request.env.include?('HTTP_AUTHORIZATION')
+    # Basic authentication (client_secret_post)
+    rlog.info("[#{request_id}] Found HTTP_AUTHORIZATION header in the request, assuming basic authentication")
+    client_id, client_config = client_auth_basic(request_id)
+  else
+    rlog.error("[#{request_id}] Client did not provide any way to authenticate themselves")
     json_error('invalid_request', request_id: request_id)
-  end
-
-  begin
-    credentials = request.env.fetch('HTTP_AUTHORIZATION', '').split
-    credentials = Base64.strict_decode64(credentials[1])
-    credentials = credentials.split(':')
-
-    if credentials.count != 2
-      # Tested (manually)
-      rlog.error("[#{request_id}] the HTTP_AUTHORIZATION header does not contain a valid client_id:password combo")
-      json_error('invalid_request', request_id: request_id)
-    end
-  rescue StandardError => e
-    # Tested (manually)
-    rlog.error("[#{request_id}] Could not parse the HTTP_AUTHORIZATION header: #{e}")
-    rlog.error("[#{request_id}] Raw header: #{request.env['HTTP_AUTHORIZATION'].inspect}")
-    json_error('invalid_request', request_id: request_id)
-  end
-
-  # ----------------------------------------------------------------------------------------------
-  # Authenticate the client
-
-  rlog.info("[#{request_id}] Client ID: #{credentials[0].inspect}")
-
-  unless OAuth2.valid_client_id?(credentials[0])
-    # Tested
-    rlog.error("[#{request_id}] Malformed client ID")
-    json_error('unauthorized_client', request_id: request_id)
-  end
-
-  clients = ClientDatabase.new
-  client_config = clients.get_token_client(credentials[0])
-  clients.close
-
-  if client_config.nil?
-    # Tested
-    rlog.error("[#{request_id}] Unknown/invalid client")
-    json_error('unauthorized_client', request_id: request_id)
-  end
-
-  unless client_config['enabled']
-    # Tested
-    rlog.error("[#{request_id}] This client exists but it has been disabled")
-    json_error('unauthorized_client', request_id: request_id)
-  end
-
-  hashed_password = client_config.fetch('client_password', nil)
-
-  if hashed_password.nil? || hashed_password.strip.empty?
-    # Tested (manually, by intentionally changing the password to an empty string in psql)
-    rlog.error("[#{request_id}] Empty hashed password specified in the database for a " \
-               "token client, refusing access")
-    json_error('unauthorized_client', request_id: request_id)
-  end
-
-  unless Argon2::Password.verify_password(credentials[1], hashed_password)
-    # Tested
-    rlog.error("[#{request_id}] Invalid client password")
-    json_error('unauthorized_client', request_id: request_id)
   end
 
   rlog.info("[#{request_id}] Client authorized")
@@ -153,8 +95,8 @@ def client_credentials_grant(request_id)
   token = build_access_token(
     request_id,
     ldap_id: client_config['ldap_id'],
-    client_id: credentials[0],
-    subject: credentials[0],
+    client_id: client_id,
+    subject: client_id,
     scopes: scopes[:scopes],
     expires_in: expires_in,
     custom_claims: custom_claims
@@ -177,7 +119,7 @@ def client_credentials_grant(request_id)
 
   audit_issued_access_token(request_id,
                             ldap_id: client_config['ldap_id'],
-                            client_id: credentials[0],
+                            client_id: client_id,
                             raw_requested_scopes: params.fetch('scope', ''),
                             raw_token: token[:raw_token],
                             request: request)
@@ -186,6 +128,68 @@ def client_credentials_grant(request_id)
   headers['Pragma'] = 'no-cache'
 
   json(out)
+end
+
+# Performs a HTTP basic auth client authentication
+def client_auth_basic(request_id)
+  begin
+    credentials = request.env.fetch('HTTP_AUTHORIZATION', '').split
+    credentials = Base64.strict_decode64(credentials[1])
+    credentials = credentials.split(':')
+
+    if credentials.count != 2
+      # Tested (manually)
+      rlog.error("[#{request_id}] the HTTP_AUTHORIZATION header does not contain a valid client_id:password combo")
+      json_error('invalid_request', request_id: request_id)
+    end
+  rescue StandardError => e
+    # Tested (manually)
+    rlog.error("[#{request_id}] Could not parse the HTTP_AUTHORIZATION header: #{e}")
+    rlog.error("[#{request_id}] Raw header: #{request.env['HTTP_AUTHORIZATION'].inspect}")
+    json_error('invalid_request', request_id: request_id)
+  end
+
+  rlog.info("[#{request_id}] Client ID: #{credentials[0].inspect}")
+
+  unless OAuth2.valid_client_id?(credentials[0])
+    # Tested
+    rlog.error("[#{request_id}] Malformed client ID")
+    json_error('unauthorized_client', request_id: request_id)
+  end
+
+  # Load client configuration
+  clients = ClientDatabase.new
+  client_config = clients.get_token_client(credentials[0])
+  clients.close
+
+  if client_config.nil?
+    # Tested
+    rlog.error("[#{request_id}] Unknown/invalid client")
+    json_error('unauthorized_client', request_id: request_id)
+  end
+
+  unless client_config['enabled']
+    # Tested
+    rlog.error("[#{request_id}] This client exists but it has been disabled")
+    json_error('unauthorized_client', request_id: request_id)
+  end
+
+  hashed_password = client_config.fetch('client_password', nil)
+
+  if hashed_password.nil? || hashed_password.strip.empty?
+    # Tested (manually, by intentionally changing the password to an empty string in psql)
+    rlog.error("[#{request_id}] Empty hashed password specified in the database for a " \
+               "token client, refusing access")
+    json_error('unauthorized_client', request_id: request_id)
+  end
+
+  unless Argon2::Password.verify_password(credentials[1], hashed_password)
+    # Tested
+    rlog.error("[#{request_id}] Invalid client password")
+    json_error('unauthorized_client', request_id: request_id)
+  end
+
+  return credentials[0], client_config
 end
 end   # module ClientCredentialsGrant
 end   # module OAuth2
