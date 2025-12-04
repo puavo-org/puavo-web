@@ -8,7 +8,9 @@ module ClientCredentialsGrant
 def client_credentials_grant(request_id)
   rlog.info("[#{request_id}] This is a client credentials grant request")
 
-  # RFC 6749 section 2.2.
+  # ----------------------------------------------------------------------------------------------
+  # Verify the content type (RFC 6749 section 2.2.)
+
   content_type = request.env.fetch('CONTENT_TYPE', nil)
 
   unless content_type == 'application/x-www-form-urlencoded'
