@@ -169,6 +169,16 @@ end
 
 # Performs the common parts of client_secret_basic and client_secret_post
 def _do_password_auth(request_id, client_id, client_password)
+  # RFC 6749 section 2.3.1.
+  content_type = request.env.fetch('CONTENT_TYPE', nil)
+
+  unless content_type ==  'application/x-www-form-urlencoded'
+    # I'm not sure how to test this. Manually changing the content-type in curl (and elsewhere) will break the
+    # process long before we get here.
+    rlog.error("[#{request_id}] The request Content-Type is #{content_type.inspect}, not application/x-www-form-urlencoded ")
+    json_error('invalid_request', request_id: request_id)
+  end
+
   rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
 
   unless OAuth2.valid_client_id?(client_id)
