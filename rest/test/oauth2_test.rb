@@ -82,7 +82,7 @@ describe PuavoRest::OAuth2 do
     db.close
   end
 
-  # Acquires an OAuth2 access token
+  # Acquires an OAuth2 access token using client_secret_basic authentication (ie. the normal HTTP basic auth)
   def acquire_token(client_id, client_password, scopes)
     url = Addressable::URI.parse('/oidc/token')
 
@@ -92,6 +92,20 @@ describe PuavoRest::OAuth2 do
     }
 
     basic_authorize client_id, client_password
+
+    post url.to_s
+  end
+
+  # Acquires an OAuth2 access token using client_secret_post authentication
+  def acquire_token_client_secret_post(client_id, client_password, scopes)
+    url = Addressable::URI.parse('/oidc/token')
+
+    url.query_values = {
+      'client_id' => client_id,
+      'client_password' => client_password,
+      'grant_type' => 'client_credentials',
+      'scope' => scopes.join(' ')
+    }
 
     post url.to_s
   end
@@ -143,6 +157,35 @@ describe PuavoRest::OAuth2 do
     response = JSON.parse last_response.body
     assert_equal response['error'], 'unauthorized_client'
     assert_equal response['iss'], 'https://api.opinsys.fi'
+  end
+
+  describe 'authentication types' do
+    it 'test client_secret_basic' do
+      # This test is a bit redundant, as basic auth is used on all tests by default, but let's be thorough
+      acquire_token('test_client_users_groups', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
+
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+
+      access_token = decode_token(response['access_token'])
+      assert_equal access_token['iss'], 'https://api.opinsys.fi'
+      assert_equal access_token['scopes'], 'puavo.read.users puavo.read.groups'
+    end
+
+    it 'test client_secret_post' do
+      acquire_token_client_secret_post('test_client_users_groups', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
+
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+
+      access_token = decode_token(response['access_token'])
+      assert_equal access_token['iss'], 'https://api.opinsys.fi'
+      assert_equal access_token['scopes'], 'puavo.read.users puavo.read.groups'
+    end
   end
 
   describe 'credentials testing' do

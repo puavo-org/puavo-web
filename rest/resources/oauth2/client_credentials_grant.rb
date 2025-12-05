@@ -26,14 +26,20 @@ def client_credentials_grant(request_id)
   # ----------------------------------------------------------------------------------------------
   # Figure out the authentication method, and authenticate the client
 
+  auth_method = nil
+
   if request.env.include?('HTTP_AUTHORIZATION')
-    # Basic authentication (client_secret_post)
-    rlog.info("[#{request_id}] Found HTTP_AUTHORIZATION header in the request, assuming basic authentication")
-    client_id, client_config = client_auth_basic(request_id)
+    rlog.info("[#{request_id}] Found HTTP_AUTHORIZATION header in the request, assuming client_secret_basic authentication")
+    auth_method = method(:client_secret_basic)
+  elsif params.include?('client_id') && params.include?('client_password')
+    rlog.info("[#{request_id}] Found client_id and client_password parameters, assuming client_secret_post authentication")
+    auth_method = method(:client_secret_post)
   else
-    rlog.error("[#{request_id}] Client did not provide any way to authenticate themselves")
+    rlog.error("[#{request_id}] Client did not provide any way to authenticate themselves (tried: client_secret_basic, client_secret_post)")
     json_error('invalid_request', request_id: request_id)
   end
+
+  client_id, client_config = auth_method.call(request_id)
 
   rlog.info("[#{request_id}] Client authorized")
 
@@ -134,8 +140,8 @@ def client_credentials_grant(request_id)
   json(out)
 end
 
-# Performs a HTTP basic auth client authentication
-def client_auth_basic(request_id)
+# Authenticates the client using client_secret_basic authentication (ie. the plain old HTTP basic auth)
+def client_secret_basic(request_id)
   begin
     credentials = request.env.fetch('HTTP_AUTHORIZATION', '').split
     credentials = Base64.strict_decode64(credentials[1])
@@ -153,9 +159,19 @@ def client_auth_basic(request_id)
     json_error('invalid_request', request_id: request_id)
   end
 
-  rlog.info("[#{request_id}] Client ID: #{credentials[0].inspect}")
+  return _do_password_auth(request_id, credentials[0], credentials[1])
+end
 
-  unless OAuth2.valid_client_id?(credentials[0])
+# Authenticates the client using client_secret_post method
+def client_secret_post(request_id)
+  return _do_password_auth(request_id, params['client_id'], params['client_password'])
+end
+
+# Performs the common parts of client_secret_basic and client_secret_post
+def _do_password_auth(request_id, client_id, client_password)
+  rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
+
+  unless OAuth2.valid_client_id?(client_id)
     # Tested
     rlog.error("[#{request_id}] Malformed client ID")
     json_error('unauthorized_client', request_id: request_id)
@@ -163,7 +179,7 @@ def client_auth_basic(request_id)
 
   # Load client configuration
   clients = ClientDatabase.new
-  client_config = clients.get_token_client(credentials[0])
+  client_config = clients.get_token_client(client_id)
   clients.close
 
   if client_config.nil?
@@ -187,14 +203,15 @@ def client_auth_basic(request_id)
     json_error('unauthorized_client', request_id: request_id)
   end
 
-  unless Argon2::Password.verify_password(credentials[1], hashed_password)
+  unless Argon2::Password.verify_password(client_password, hashed_password)
     # Tested
     rlog.error("[#{request_id}] Invalid client password")
     json_error('unauthorized_client', request_id: request_id)
   end
 
-  return credentials[0], client_config
+  return client_id, client_config
 end
+
 end   # module ClientCredentialsGrant
 end   # module OAuth2
 end   # module PuavoRest
