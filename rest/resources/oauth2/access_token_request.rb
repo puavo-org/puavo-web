@@ -81,6 +81,9 @@ def oidc_access_token_request(temp_request_id)
   # ----------------------------------------------------------------------------------------------
   # Verify the client ID and secret
 
+  # TODO: This authentication method is client_secret_post. We could probably support client_secret_basic,
+  # but we really need to support private_key_jwt.
+
   client_id = params.fetch('client_id', nil)
 
   rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
