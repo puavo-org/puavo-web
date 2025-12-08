@@ -141,28 +141,30 @@ class PuavoSinatra < Sinatra::Base
 
     # See if the token is valid
     begin
-      decoded_token = JWT.decode(authorization[1], OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY, true, {
-        algorithm: 'ES256',
+      # Load the JWKS into a keyfinder
+      jwks_json = JSON.parse(File.read(CONFIG['oauth2']['key_files']['public_jwks']));
+      key_finder = JWT::JWK::KeyFinder.new(jwks: JWT::JWK::Set.new(jwks_json))
 
-        verify_iat: true,
+      et = JWT::EncodedToken.new(authorization[1])
 
-        # Verify the issuer
-        iss: 'https://api.opinsys.fi',
-        verify_iss: true,
+      # Validate the passed token using the keyfinder. Try ES256 as the algorithm first because it's what we
+      # use by default. If it fails, try again with RS256. If the latter fails, then fail the whole process.
+      begin
+        et.verify!(signature: { algorithm: 'ES256', key_finder: key_finder })
+      rescue StandardError => e
+        et.verify!(signature: { algorithm: 'RS256', key_finder: key_finder })
+      end
 
-        # Is this token even meant for us? RFC 9068 says the audience claim MUST be verified
-        # to prevent cross-JWT confusion.
-        aud: @oauth2_params[:audience],
-        verify_aud: true,
-      })
-
-      access_token = decoded_token[0]
-      headers = decoded_token[1]
+      # Validate the claims
+      et.verify_claims!(:iat, :exp, :nbf)
+      et.verify_claims!({ iss: 'https://api.opinsys.fi', aud: @oauth2_params[:audience] })
 
       # RFC 9068 section 4 says this MUST be checked. The jwt gem does not put it there
       # and it does not validate it, so do it manually.
-      typ = headers.fetch('typ', nil)
-      raise "invalid header 'typ' value #{typ.inspect}; expected \"at+jwt\"" unless typ == 'at+jwt'
+      raise "invalid header 'typ' value #{typ.inspect}; expected \"at+jwt\"" unless et.header['typ'] == 'at+jwt'
+
+      # If we get here, the token is valid
+      access_token = et.payload
     rescue StandardError => e
       # Tested
       rlog.error("OAuth2 access token validation failed: #{e}")

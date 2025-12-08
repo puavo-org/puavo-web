@@ -85,7 +85,7 @@ if ENV['RACK_ENV'] == 'test' then
       'key_files' => {
         'private_pem' => '/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem',
         'public_pem' => '/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem',
-        'creation_time' => '20250115T095034Z',
+        'public_jwks' => '/etc/puavo-rest.d/oauth2_public_jwks_example.json',
       },
       'kid' => 'puavo_standalone_20250115T095034Z',   # change this if the PEM files are rotated
       'client_database' => {
