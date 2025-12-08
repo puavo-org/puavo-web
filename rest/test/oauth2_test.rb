@@ -532,7 +532,7 @@ describe PuavoRest::OAuth2 do
 
       # Ensure the JWT is not valid anymore
       assert_raises JWT::ExpiredSignature do
-        JWT.decode(expired_token, OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY, true, {
+        JWT.decode(expired_token, load_default_public_key(), true, {
           algorithm: 'ES256',
           verify_iat: true,
           verify_iss: false,
@@ -612,6 +612,83 @@ describe PuavoRest::OAuth2 do
       response = JSON.parse last_response.body
       assert_equal response['error']['code'], 'Forbidden'
       assert_equal response['error']['message'], 'invalid_token'
+    end
+  end
+
+  describe 'JWKS tests' do
+    it 'can decode a key with the built-in key in JWKS' do
+      # Get a token
+      acquire_token('test_client_users2', 'supersecretpassword', ['puavo.read.users'])
+      response = JSON.parse last_response.body
+
+      # Decode it using the default JWKs
+      jwks = JSON.parse(File.read(CONFIG['oauth2']['key_files']['public_jwks']))
+      decoded_token = decode_token_jwks(response['access_token'], jwks)
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
+    end
+
+    it 'the other test key will not validate the issued token' do
+      acquire_token('test_client_users2', 'supersecretpassword', ['puavo.read.users'])
+      response = JSON.parse last_response.body
+
+      # Load the other JWKS and manually change the KID to match the real key
+      jwks = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'other_key_jwks.json')))
+      jwks['keys'][0]['kid'] = 'puavo_standalone_20250115T095034Z'
+
+      # This must now fail
+      exception = assert_raises JWT::VerificationError do
+        decode_token_jwks(response['access_token'], jwks)
+      end
+
+      assert_equal exception.to_s, 'Signature verification failed'
+    end
+
+    it 'custom signed token will open with the custom key' do
+      other_key = OpenSSL::PKey.read(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'other_private_key.pem')))
+      token = sign_token_with_pem(other_key, subject: 'test subject', scopes: ['foo', 'bar'], kid: 'puavo_standalone_2_20250115T095034Z')
+
+      jwks = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'other_key_jwks.json')))
+      decoded_token = decode_token_jwks(token, jwks)
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
+    end
+
+    it 'custom signed token will not open with the real key' do
+      other_key = OpenSSL::PKey.read(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'other_private_key.pem')))
+      token = sign_token_with_pem(other_key, subject: 'test subject', scopes: ['foo', 'bar'], kid: 'puavo_standalone_2_20250115T095034Z')
+
+      # Load the real JWKS and manually change the KID to match the other key
+      jwks = JSON.parse(File.read(CONFIG['oauth2']['key_files']['public_jwks']))
+      jwks['keys'][0]['kid'] = 'puavo_standalone_2_20250115T095034Z'
+
+      exception = assert_raises JWT::VerificationError do
+        decode_token_jwks(token, jwks)
+      end
+
+      assert_equal exception.to_s, 'Signature verification failed'
+    end
+
+    it 'multiple keys in a JWKS will work' do
+      # Acquire two tokens
+      acquire_token('test_client_users2', 'supersecretpassword', ['puavo.read.users'])
+      response = JSON.parse last_response.body
+      token_a = response['access_token']
+
+      other_key = OpenSSL::PKey.read(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'other_private_key.pem')))
+      token_b = sign_token_with_pem(other_key, subject: 'test subject', scopes: ['foo', 'bar'], kid: 'puavo_standalone_2_20250115T095034Z')
+
+      # Combine two different JWKS files and ensure the token will open
+      jwks_a = JSON.parse(File.read(CONFIG['oauth2']['key_files']['public_jwks']))
+      jwks_b = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'other_key_jwks.json')))
+
+      combined_jwks = {
+        'keys' => jwks_a['keys'] + jwks_b['keys']
+      }
+
+      # Both must work
+      decoded_token_a = decode_token_jwks(token_a, combined_jwks)
+      decoded_token_b = decode_token_jwks(token_b, combined_jwks)
+      assert_equal decoded_token_a['iss'], 'https://api.opinsys.fi'
+      assert_equal decoded_token_b['iss'], 'https://api.opinsys.fi'
     end
   end
 end

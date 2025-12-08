@@ -1,0 +1,16 @@
+{
+    "keys": [
+        {
+            "kty": "EC",
+            "use": "sig",
+            "kid": "puavo_standalone_2_20250115T095034Z",
+            "alg": "ES256",
+            "key_ops": [
+                "verify"
+            ],
+            "crv": "P-256",
+            "x": "BNxR8ydU2jxM0ujiAtWBbMI0Q3dDi4sTbPsNf2qdLjw",
+            "y": "8Qczv8UsaYL6M7nxpOm-judvdtuQsyOEMeRQ4PBwOWI"
+        }
+    ]
+}

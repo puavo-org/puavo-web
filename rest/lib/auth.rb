@@ -131,11 +131,6 @@ class PuavoSinatra < Sinatra::Base
               authorization[1].nil? ||
               authorization[1].strip.empty?
 
-    if OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY.nil?
-      rlog.error('oauth2_token(): have an authorization header that looks like a bearer token, but the OAuth2 token key is nil (configuration error?), refusing to process the header')
-      return
-    end
-
     # Assume it's an OAuth2 bearer token
     rlog.info('oauth2_token(): have an authorization header that looks like a bearer token, checking it')
 

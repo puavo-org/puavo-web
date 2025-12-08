@@ -180,22 +180,6 @@ else
   end
 end
 
-# Load the public OAuth2 JWT validation key. The private key file is loaded only when
-# signing an access token, so that its contents cannot leak through global variables.
-public_key = nil
-
-if CONFIG.fetch('oauth2', {}).fetch('key_files', {}).include?('public_pem')
-  begin
-    public_key = OpenSSL::PKey.read(File.read(CONFIG['oauth2']['key_files']['public_pem']))
-  rescue StandardError => e
-    puts "ERROR: Cannot load the OAuth2 JWT validation key: #{e}"
-    puts "ERROR: OAuth2 access token validations will always fail and access tokens cannot be used"
-    public_key = nil
-  end
-end
-
-OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY = public_key.freeze
-
 # Load organisations.yml if it exists
 begin
   ORGANISATIONS = YAML.load_file('/etc/puavo-web/organisations.yml').freeze

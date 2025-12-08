@@ -253,7 +253,7 @@ def oidc_access_token_request(temp_request_id)
 
   id_token.merge!(user_data)
 
-  # Load the signing private key. Unlike the public key, this is not kept in memory.
+  # Load the private signing key
   begin
     private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['key_files']['private_pem']))
   rescue StandardError => e
@@ -334,7 +334,7 @@ def build_access_token(request_id,
 
   token_claims.merge!(custom_claims) if custom_claims.is_a?(Hash)
 
-  # Load the signing private key. Unlike the public key, this is not kept in memory.
+  # Load the private signing key
   begin
     private_key = OpenSSL::PKey.read(File.open(CONFIG['oauth2']['key_files']['private_pem']))
   rescue StandardError => e

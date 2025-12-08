@@ -50,8 +50,17 @@ def setup_login_clients(clients, remove_old: true)
   db.close
 end
 
-# Decodes a JWT token using the specified public key (in PEM format)
-def decode_token(token, key: OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY, audience: 'puavo-rest-v4')
+def load_default_public_key
+  OpenSSL::PKey.read(File.read(CONFIG['oauth2']['key_files']['public_pem']))
+end
+
+# Decodes a JWT token using a public key in PEM format. The key is the default built-in public key, by default.
+def decode_token(token, key: :default, audience: 'puavo-rest-v4')
+  if key == :default
+    # Load the default development public key
+    key = load_default_public_key()
+  end
+
   decoded_token = JWT.decode(token, key, true, {
     algorithm: 'ES256',
 
@@ -66,6 +75,43 @@ def decode_token(token, key: OAUTH2_TOKEN_VERIFICATION_PUBLIC_KEY, audience: 'pu
 
   assert_equal decoded_token[1]['typ'], 'at+jwt'
   decoded_token[0]
+end
+
+# Decodes a token with a key stored in a JWKS. The JWKS object is assumed to be Ruby Hash, not a string of JSON.
+# Supports only ES256 keys!
+def decode_token_jwks(token, jwks, audience: 'puavo-rest-v4')
+  key_finder = JWT::JWK::KeyFinder.new(jwks: JWT::JWK::Set.new(jwks))
+
+  et = JWT::EncodedToken.new(token)
+  et.verify!(signature: { algorithm: 'ES256', key_finder: key_finder })
+
+  # Validate the claims
+  et.verify_claims!(:iat, :exp, :nbf)
+  et.verify_claims!({ iss: 'https://api.opinsys.fi', aud: audience })
+
+  # RFC 9068 section 4 says this MUST be checked. The jwt gem does not put it there
+  # and it does not validate it, so do it manually.
+  raise "invalid header 'typ' value #{typ.inspect}; expected \"at+jwt\"" unless et.header['typ'] == 'at+jwt'
+
+  et.payload
+end
+
+# Signs a token with arbitrary private key (in PEM format)
+def sign_token_with_pem(key, subject:, scopes:, kid:)
+  now = Time.now.utc.to_i
+
+  claims = {
+    'jti' => SecureRandom.uuid,
+    'iat' => now,
+    'nbf' => now,
+    'exp' => now + 60,    # very short-lived tokens, just for testing
+    'iss' => 'https://api.opinsys.fi',
+    'sub' => subject,
+    'aud' => 'puavo-rest-v4',
+    'scopes' => scopes.join(' ')
+  }
+
+  JWT.encode(claims, key, 'ES256', { typ: 'at+jwt', kid: kid })
 end
 
 def format_uri(url, client_id: nil, redirect_uri: nil, response_type: nil, scope: nil, extra: nil)
