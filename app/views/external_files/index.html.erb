@@ -46,7 +46,7 @@
     </td>
 
     <td data-title="<%= t('actions') %>" class="tableActions">
-    <%= file_field_tag "file[#{ file["meta"]["name"] }", :value => "Add or change" %>
+    <%= file_field_tag "file[#{ file["meta"]["name"] }]", :value => "Add or change" %>
     <% if file["model"] %>
     <td>
     <span class="tableActions">
