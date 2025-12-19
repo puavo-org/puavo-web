@@ -635,12 +635,12 @@ private
   def redirect_error(redirect_uri, error, error_description: nil, error_uri: nil, state: nil, request_id: nil)
     out = {}
 
+    out['iss'] = ISSUER
     out['error'] = error
     out['error_description'] = error_description if error_description
     out['error_uri'] = error_uri if error_uri
     out['state'] = state if state
     out['puavo_request_id'] = request_id if request_id
-    out['iss'] = ISSUER
 
     uri = URI(redirect_uri)
     uri.query = URI.encode_www_form(out)
@@ -652,12 +652,12 @@ private
   def json_error(error, http_status: 400, error_description: nil, error_uri: nil, state: nil, request_id: nil)
     out = {}
 
+    out['iss'] = ISSUER
     out['error'] = error
     out['error_description'] = error_description if error_description
     out['error_uri'] = error_uri if error_uri
     out['state'] = state if state
     out['puavo_request_id'] = request_id if request_id
-    out['iss'] = ISSUER
 
     headers['Cache-Control'] = 'no-store'
     headers['Pragma'] = 'no-cache'
