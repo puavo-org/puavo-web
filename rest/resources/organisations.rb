@@ -37,6 +37,7 @@ class Organisation < LdapModel
   skip_serialize :puavomenu_data
 
   ldap_map :puavoOrganisationOID, :oid
+  ldap_map :puavoDeviceRecoveryPublicKey, :device_recovery_public_key, LdapConverters::JSONObj
 
   def organisation_key
     domain.split(".").first if domain
@@ -182,7 +183,8 @@ class Organisation < LdapModel
       daytime_start_hour: self.daytime_start_hour,
       daytime_end_hour: self.daytime_end_hour,
       puavo_kerberos_realm: self.puavo_kerberos_realm,
-      owners: []
+      owners: [],
+      device_recovery_public_key: self.device_recovery_public_key,
     }
 
     # Fill in the owners array without constructing user objects
