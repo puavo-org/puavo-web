@@ -138,6 +138,9 @@ def client_credentials_grant(request_id)
   headers['Pragma'] = 'no-cache'
 
   json(out)
+rescue StandardError => e
+  rlog.error("[#{request_id}] Unhandled exception in client_credentials_grant(): #{e}")
+  json_error('server_error', request_id: request_id)
 end
 
 # Authenticates the client using client_secret_basic authentication (ie. the plain old HTTP basic auth)
@@ -210,6 +213,9 @@ def _do_password_auth(request_id, client_id, client_password)
   end
 
   return client_id, client_config
+rescue StandardError => e
+  rlog.error("[#{request_id}] Unhandled exception in _do_password_auth(): #{e}")
+  json_error('server_error', request_id: request_id)
 end
 
 end   # module ClientCredentialsGrant
