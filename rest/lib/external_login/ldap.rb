@@ -3,7 +3,7 @@ require 'net/ldap'
 require 'openssl'
 
 require_relative './errors'
-require_relative './login'
+require_relative './service'
 
 module PuavoRest
   class ExternalLdapService < ExternalLoginService

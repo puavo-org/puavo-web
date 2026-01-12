@@ -2,6 +2,7 @@ require 'net/ldap'
 
 require_relative './errors'
 require_relative './ldap'
+require_relative './univention'
 
 module PuavoRest
   class ExternalLoginStatus
@@ -63,6 +64,7 @@ module PuavoRest
       # for other types of external logins.
       loginclass_map = {
         'external_ldap' => ExternalLdapService,
+        'univention'    => ExternalUniventionService,
       }
       @external_login_class = loginclass_map[@login_service_name]
       raise ExternalLoginError,
@@ -619,16 +621,6 @@ module PuavoRest
     def self.status_updateerror(msg=nil)
       status(ExternalLoginStatus::UPDATEERROR,
              (msg || 'error when updating user information in Puavo'))
-    end
-  end
-
-  class ExternalLoginService
-    attr_reader :service_name
-
-    def initialize(external_login, service_name, rlog)
-      @external_login = external_login
-      @rlog           = rlog
-      @service_name   = service_name
     end
   end
 end
