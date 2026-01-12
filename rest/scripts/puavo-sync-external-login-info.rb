@@ -119,12 +119,12 @@ extlogin_conf.each do |organisation, org_conf|
     external_users.each do |extlogin_id, userinfo|
       begin
         username   = userinfo['username']
-        ldap_entry = userinfo['ldap_entry']
+        user_entry = userinfo['user_entry']
 
         puts "> updating Puavo information on #{ username }" \
                + " (#{ extlogin_id }) [#{ organisation }]"
 
-        login_service.set_ldapuserinfo(username, ldap_entry)
+        login_service.set_userinfo(username, user_entry)
         userinfo = login_service.get_userinfo(username)
         user_status = external_login.update_user_info(userinfo, nil, {})
 
