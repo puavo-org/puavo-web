@@ -359,7 +359,7 @@ module PuavoRest
           next unless match
 
           users[ extlogin_id ] = {
-            'ldap_entry' => ldap_entry,
+            'user_entry' => ldap_entry,
             'username'   => match[1],
           }
         end
@@ -368,7 +368,7 @@ module PuavoRest
       return users
     end
 
-    def set_ldapuserinfo(username, ldap_userinfo)
+    def set_userinfo(username, ldap_userinfo)
       @username = username
       @ldap_userinfo = ldap_userinfo
     end
@@ -636,7 +636,7 @@ module PuavoRest
     def update_ldapuserinfo(username)
       return if @username && @username == username
 
-      set_ldapuserinfo(nil, nil)
+      set_userinfo(nil, nil)
 
       ldap_entries = ext_ldapop('update_ldapuserinfo/search_username',
                                 :search,
@@ -690,7 +690,7 @@ module PuavoRest
 
       @rlog.info("looked up user '#{ username }' from external ldap")
 
-      set_ldapuserinfo(username, ldap_entries.first)
+      set_userinfo(username, ldap_entries.first)
     end
 
     def user_ldapfilter(username)
