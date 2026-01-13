@@ -285,7 +285,7 @@ module PuavoRest
 
       if userinfo['username'].empty? then
         raise ExternalLoginUnavailable,
-              "User '#{ username }' has no account name external ldap"
+              "User '#{ username }' has no account name in external ldap"
       end
 
       if @external_learner_id_field \
