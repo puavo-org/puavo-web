@@ -10,6 +10,9 @@ module PuavoRest
     def initialize(external_login, univention_config, service_name, rlog)
       super(external_login, service_name, rlog)
 
+      raise 'manage puavousers is not set to true' \
+        unless external_login.manage_puavousers
+
       @extlogin_id_field \
         = get_conf(univention_config,
                    'extlogin_id_field',
@@ -70,6 +73,56 @@ module PuavoRest
       return parsed_response['access_token']
     end
 
+    def get_userinfo(username)
+      raise 'univention userinfo not set' \
+        unless @username && @univention_userinfo
+
+      puavo_extlogin_id_field = @external_login.puavo_extlogin_id_field
+      userinfo = {
+        puavo_extlogin_id_field => lookup_extlogin_id(username),
+        'first_name' => @univention_userinfo['firstname'],
+        'last_name'  => @univention_userinfo['lastname'],
+        'username'   => username,
+      }
+
+      if !userinfo['first_name'] || userinfo['first_name'].empty? then
+        raise ExternalLoginUnavailable,
+              "User '#{ username }' has no first name in Univention"
+      end
+
+      if !userinfo['last_name'] || userinfo['last_name'].empty? then
+        raise ExternalLoginUnavailable,
+              "User '#{ username }' has no last name in Univention"
+      end
+
+      if !userinfo['username'] || userinfo['username'].empty? then
+        raise ExternalLoginUnavailable,
+              "User '#{ username }' has no account name in Univention"
+      end
+
+      # we apply some magicks to determine user school, groups and roles
+      apply_groups_and_roles!(userinfo)
+
+      return userinfo
+    end
+
+    def apply_groups_and_roles!(userinfo)
+      added_roles      = []
+      added_school_dns = []
+      external_groups  = {
+                           'administrative group' => {},
+                           'teaching group'       => {},
+                           'year class'           => {},
+                         }
+
+      added_roles << 'student'  # XXX
+      added_school_dns << 'puavoId=XXX,ou=Groups,dc=edu,dc=example,dc=org'      # XXX
+
+      userinfo['external_groups'] = external_groups
+      userinfo['roles']           = added_roles.sort.uniq
+      userinfo['school_dns']      = added_school_dns.sort.uniq
+    end
+
     def lookup_all_users
       users = {}
 
@@ -87,10 +140,31 @@ module PuavoRest
         }
       end
 
-      p users
-      raise 'not implemented'
-
       return users
+    end
+
+    def lookup_extlogin_id(username)
+      update_univentionuserinfo(username)
+
+      extlogin_id = @univention_userinfo \
+                      && @univention_userinfo[@extlogin_id_field]
+
+      if !extlogin_id || extlogin_id.empty? then
+        raise(ExternalLoginUnavailable,
+              "could not lookup extlogin id (#{ @extlogin_id_field })" \
+                + " for user '#{ username }'")
+      end
+
+      extlogin_id
+    end
+
+    def set_userinfo(username, univention_userinfo)
+      @username = username
+      @univention_userinfo = univention_userinfo
+    end
+
+    def setup_univention_connection(server_uri, username, password)
+      @token = get_univention_token(server_uri, username, password)
     end
 
     def univention_get_users
@@ -110,8 +184,9 @@ module PuavoRest
       return JSON.parse(response.body)
     end
 
-    def setup_univention_connection(server_uri, username, password)
-      @token = get_univention_token(server_uri, username, password)
+    def update_univentionuserinfo(username)
+      # XXX no-op but may be needed later?
+      return
     end
   end
 end
