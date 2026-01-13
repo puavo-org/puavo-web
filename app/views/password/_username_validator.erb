@@ -13,7 +13,7 @@ function validateUsername(elem)
         message = "<%= t('activeldap.errors.messages.username_validation.domain') %>";
     else if (name.match(/[A-Z]/))
         message = "<%= t('activeldap.errors.messages.username_validation.uppercase') %>";
-    else if (name.length > 0 && !name.match(/^[a-z]([a-z0-9.-]*)$/))        // regexp adapted from the user model validator
+    else if (name.length > 0 && !name.match(/^[a-z]([a-z0-9._-]*)$/))        // regexp adapted from the user model validator
         message = "<%= t('activeldap.errors.messages.username_validation.invalid_characters') %>";
 
     // No Rails, you don't have to escape these...

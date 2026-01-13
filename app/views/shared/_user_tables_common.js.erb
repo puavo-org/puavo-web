@@ -1061,7 +1061,7 @@ const FILTER_PRESETS = [
         short_uids: {
             title: "<%= t('users.index.filters.short_uids') %>",
             filters: [
-                [1,"uid","=","^[a-z0-9-.]{1,5}$"]
+                [1,"uid","=","^[a-z0-9_-.]{1,5}$"]
             ],
         },
 
@@ -1113,7 +1113,7 @@ const FILTER_PRESETS = [
 
         short_uids: {
             title: "<%= t('users.index.filters.short_uids') %>",
-            filter: `uid = /^[a-z0-9-.]{1,5}$/`,
+            filter: `uid = /^[a-z0-9_-.]{1,5}$/`,
         }
     }
 ];

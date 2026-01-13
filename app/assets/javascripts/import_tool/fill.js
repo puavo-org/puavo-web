@@ -39,7 +39,7 @@ export function dropDiacritics(string, alternateUmlauts)
     out = out.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     // Finally remove everything that isn't permitted
-    out = out.replace(/[^a-z0-9.-]/g, "");
+    out = out.replace(/[^a-z0-9_.-]/g, "");
 
     return out;
 }

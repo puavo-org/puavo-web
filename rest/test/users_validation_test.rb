@@ -220,7 +220,7 @@ describe LdapModel do
         error = err.as_json[:error][:meta][:invalid_attributes][:username].first
         assert error, "must not allow username '#{ invalid_username }'"
         assert_equal :username_invalid, error[:code]
-        assert_equal "Invalid username. Allowed characters a-z, 0-9, dot and dash. Also it must begin with a letter", error[:message]
+        assert_equal "Invalid username.  Allowed characters a-z, 0-9, underscore, dot and dash.  Also it must begin with a letter.", error[:message]
       end
 
     end

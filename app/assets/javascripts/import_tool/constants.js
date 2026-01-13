@@ -74,7 +74,7 @@ export const MIN_PASSWORD_LENGTH = 8,
 
 // Validation regexps. I'm not sure about the email and phone number regexps, but they're the same
 // regexps we've used elsewhere (I think the telephone validator lets through too much junk).
-export const USERNAME_REGEXP = /^[a-z][a-z0-9.-]{2,}$/,
+export const USERNAME_REGEXP = /^[a-z][a-z0-9_.-]{2,}$/,
              EMAIL_REGEXP = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
              PHONE_REGEXP = /^\+?[A-Za-z0-9 '(),-.\/:?"]+$/;
 
