@@ -107,20 +107,42 @@ module PuavoRest
     end
 
     def apply_groups_and_roles!(userinfo)
-      added_roles      = []
-      added_school_dns = []
-      external_groups  = {
-                           'administrative group' => {},
-                           'teaching group'       => {},
-                           'year class'           => {},
-                         }
+      added_roles       = []
+      added_school_dns  = []
+      primary_school_dn = nil
+      external_groups   = {
+                            'administrative group' => {},
+                            'teaching group'       => {},
+                            'year class'           => {},
+                          }
 
-      added_roles << 'student'  # XXX
+      ucsschool_roles = @univention_userinfo['ucsschool_roles']
+      if ucsschool_roles && ucsschool_roles.kind_of?(Array) then
+        # UCS@school supports separate roles for each school but Puavo does
+        # not, so dismiss school information in roles
+        ucsschool_roles.each do |ucs_role|
+          case ucs_role
+            when /\Alegal_guardian:/
+              added_roles << 'parent'
+            when /\Astaff:/
+              added_roles << 'staff'
+            when /\Astudent:/
+              added_roles << 'student'
+            when /\Ateacher:/
+              added_roles << 'teacher'
+          end
+        end
+      end
+
       added_school_dns << 'puavoId=XXX,ou=Groups,dc=edu,dc=example,dc=org'      # XXX
 
       userinfo['external_groups'] = external_groups
       userinfo['roles']           = added_roles.sort.uniq
       userinfo['school_dns']      = added_school_dns.sort.uniq
+
+      # XXX could we look this up in a different way?
+      primary_school_dn = userinfo['school_dns'].first
+      userinfo['primary_school_dn'] = primary_school_dn
     end
 
     def lookup_all_users
