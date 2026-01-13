@@ -154,12 +154,16 @@ class User < LdapModel
 
       # XXX: In puavo-web it's possible to configure from organisation upper
       # case letters as allowed but it's not implemented here yet
-      if !/^[a-z]+[a-z0-9.-]+$/.match(username.strip)
-        add_validation_error(:username, :username_invalid, "Invalid username. Allowed characters a-z, 0-9, dot and dash. Also it must begin with a letter")
+      if !/^[a-z]+[a-z0-9._-]+$/.match(username.strip)
+        add_validation_error(:username, :username_invalid, "Invalid username.  Allowed characters are a-z, 0-9, dot, underscore and dash.  Also it must begin with a letter.")
       end
 
       if username[-1] == '.'
         add_validation_error(:username, :username_invalid, 'Username cannot end in a dot')
+      end
+
+      if username[-1] == '_'
+        add_validation_error(:username, :username_invalid, 'Username cannot end in an underscore')
       end
 
       if username.size < 3
