@@ -45,11 +45,10 @@ module PuavoRest
                                 'admin password not configured')
 
       @puavo_schools_by_id = get_puavoschools_by_id()
+      @univention_schools_by_url = {}
 
       setup_univention_connection(@server_uri, admin_username,
                                   admin_password)
-
-      @univention_schools_by_url = univention_get_schools_by_url()
     end
 
     def get_conf(config, key, errmsg)
@@ -189,8 +188,13 @@ module PuavoRest
 
     def get_user_puavo_school_dns()
       user_univention_school_urls = @univention_userinfo['schools']
-      raise 'user univention school information not known' \
-        unless user_univention_school_urls.kind_of?(Array)
+      check_schools = lambda do
+                        user_univention_school_urls.any? do |url|
+                          !@univention_schools_by_url.has_key?(url)
+                        end
+                      end
+      update_univention_schools_by_url() if check_schools.call()
+      raise 'user is in an unknown school' if check_schools.call()
 
       user_univention_schools \
         = @univention_schools_by_url.values_at(*user_univention_school_urls)
@@ -210,6 +214,7 @@ module PuavoRest
 
     def lookup_all_users
       users = {}
+      update_univention_schools_by_url()
 
       univention_user_list = univention_get_users()
       univention_user_list.each do |univention_user|
@@ -291,6 +296,10 @@ module PuavoRest
 
     def univention_get_users
       univention_get_something('/ucsschool/kelvin/v1/users/', 'users')
+    end
+
+    def update_univention_schools_by_url()
+      @univention_schools_by_url = univention_get_schools_by_url()
     end
 
     def update_univentionuserinfo(username)
