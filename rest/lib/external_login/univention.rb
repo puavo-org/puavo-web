@@ -23,26 +23,26 @@ module PuavoRest
         unless external_login.manage_puavousers
 
       @extlogin_id_field \
-        = get_conf(univention_config,
-                   'extlogin_id_field',
-                   'univention extlogin id field not configured')
+        = get_conf_string(univention_config,
+                          'extlogin_id_field',
+                          'univention extlogin id field not configured')
       @extschool_id_field \
-        = get_conf(univention_config,
-                   'extschool_id_field',
-                   'univention extschool id field not configured')
+        = get_conf_string(univention_config,
+                          'extschool_id_field',
+                          'univention extschool id field not configured')
       @external_username_field \
-        = get_conf(univention_config,
-                   'external_username_field',
-                   'univention extlogin name field not configured')
-      @server_uri = get_conf(univention_config, 'server_uri',
-                             'univention server uri not configured')
+        = get_conf_string(univention_config,
+                          'external_username_field',
+                          'univention extlogin name field not configured')
+      @server_uri = get_conf_string(univention_config, 'server_uri',
+                                    'univention server uri not configured')
 
-      admin_username = get_conf(univention_config,
-                                'admin_username',
-                                'admin username not configured')
-      admin_password = get_conf(univention_config,
-                                'admin_password',
-                                'admin password not configured')
+      admin_username = get_conf_string(univention_config,
+                                       'admin_username',
+                                       'admin username not configured')
+      admin_password = get_conf_string(univention_config,
+                                       'admin_password',
+                                       'admin password not configured')
 
       @puavo_schools_by_id = get_puavoschools_by_id()
       @univention_schools_by_url = {}
@@ -51,7 +51,7 @@ module PuavoRest
                                   admin_password)
     end
 
-    def get_conf(config, key, errmsg)
+    def get_conf_string(config, key, errmsg)
       value = config[key]
       raise ExternalLoginConfigError, errmsg \
         unless value.kind_of?(String) && !value.empty?
@@ -106,7 +106,7 @@ module PuavoRest
 
       puavo_extlogin_id_field = @external_login.puavo_extlogin_id_field
       userinfo = {
-        puavo_extlogin_id_field => lookup_extlogin_id(username),
+        puavo_extlogin_id_field => lookup_extlogin_id_by_username(username),
         'first_name' => @univention_userinfo['firstname'],
         'last_name'  => @univention_userinfo['lastname'],
         'username'   => username,
@@ -218,7 +218,7 @@ module PuavoRest
 
       univention_user_list = univention_get_users()
       univention_user_list.each do |univention_user|
-        extlogin_id = univention_user[@extlogin_id_field]
+        extlogin_id = get_extlogin_id(univention_user)
         next unless extlogin_id.kind_of?(String)
 
         username = univention_user[@external_username_field]
@@ -233,12 +233,16 @@ module PuavoRest
       return users
     end
 
-    def lookup_extlogin_id(username)
+    def get_extlogin_id(univention_user)
+      @extlogin_id_field == 'univentionObjectIdentifier'            \
+        ? univention_user.dig('udm_properties', @extlogin_id_field) \
+        : univention_user.dig(@extlogin_id_field)
+    end
+
+    def lookup_extlogin_id_by_username(username)
       update_univentionuserinfo(username)
 
-      extlogin_id = @univention_userinfo \
-                      && @univention_userinfo[@extlogin_id_field]
-
+      extlogin_id = get_extlogin_id(@univention_userinfo)
       if !extlogin_id || extlogin_id.empty? then
         raise(ExternalLoginUnavailable,
               "could not lookup extlogin id (#{ @extlogin_id_field })" \
