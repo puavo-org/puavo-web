@@ -2246,7 +2246,7 @@ fi:
         invalid_primary_email: "Pääsähköpostiosoitetta ei löydy varmennettujen osoitteiden listalta"
         user:
           must_begin_with: "Käyttäjätunnuksen pitää alkaa pienellä kirjaimella"
-          invalid_characters: "Käyttäjätunnus sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
+          invalid_characters: "Käyttäjätunnus sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9_.-)"
           username_cannot_end_in_dot: "Käyttäjätunnus ei saa päättyä pisteeseen"
           invalid_license_data: "Virheellinen lisenssidata"
         group:

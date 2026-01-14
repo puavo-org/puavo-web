@@ -2246,7 +2246,7 @@ de:
         invalid_primary_email: "Die primäre E-Mail-Adresse kann nicht in der Liste der verifizierten E-Mail-Adressen gefunden werden"
         user:
           must_begin_with: Benutzername muss mit einem Kleinbuchstaben beginnen
-          invalid_characters: Benutzername enthält ungültige Zeichen (erlaubte Zeichen sind a-z0-9.-)
+          invalid_characters: Benutzername enthält ungültige Zeichen (erlaubte Zeichen sind a-z0-9_.-)
           username_cannot_end_in_dot: "Benutzername darf nicht mit einem Punkt enden"
           invalid_license_data: "Ungültige Lizenzdaten"
         group:

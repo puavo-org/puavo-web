@@ -249,7 +249,7 @@ class User < LdapBase
                                :count => 255) )
     end
     # Format of uid, default configuration:
-    #   * allowed characters is a-z0-9.-
+    #   * allowed characters is a-z0-9_.-
     #   * uid must begin with the small letter
 
     usernameFailed = false
@@ -259,7 +259,7 @@ class User < LdapBase
       usernameFailed = true
     end
 
-    unless self.uid.to_s =~ /^[a-z0-9.-]+$/
+    unless self.uid.to_s =~ /^[a-z0-9_.-]+$/
       errors.add( :uid, I18n.t("activeldap.errors.messages.user.invalid_characters") )
       usernameFailed = true
     end
