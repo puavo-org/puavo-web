@@ -5,6 +5,15 @@ require 'uri'
 require_relative './errors'
 require_relative './service'
 
+class UniventionRequestError < StandardError
+  attr_reader :response
+
+  def initialize(response)
+    @response = response
+    super("Error with response: #{ response.message }")
+  end
+end
+
 module PuavoRest
   class ExternalUniventionService < ExternalLoginService
     def initialize(external_login, univention_config, service_name, rlog)
@@ -17,6 +26,10 @@ module PuavoRest
         = get_conf(univention_config,
                    'extlogin_id_field',
                    'univention extlogin id field not configured')
+      @extschool_id_field \
+        = get_conf(univention_config,
+                   'extschool_id_field',
+                   'univention extschool id field not configured')
       @external_username_field \
         = get_conf(univention_config,
                    'external_username_field',
@@ -31,6 +44,9 @@ module PuavoRest
                                 'admin_password',
                                 'admin password not configured')
 
+      @puavo_schools_by_id = get_puavoschools_by_id()
+      @univention_schools = {}
+
       setup_univention_connection(@server_uri, admin_username,
                                   admin_password)
     end
@@ -38,8 +54,20 @@ module PuavoRest
     def get_conf(config, key, errmsg)
       value = config[key]
       raise ExternalLoginConfigError, errmsg \
-        unless value && value.kind_of?(String) && !value.empty?
+        unless value.kind_of?(String) && !value.empty?
       return value
+    end
+
+    def get_puavoschools_by_id()
+      puavo_schools_by_id = {}
+
+      School.all.each do |school|
+        external_school_id = @external_login.extschool_id(school)
+        next unless external_school_id.kind_of?(String)
+        puavo_schools_by_id[external_school_id] = school
+      end
+
+      return puavo_schools_by_id
     end
 
     def do_http_request(uri, request)
@@ -66,8 +94,7 @@ module PuavoRest
 
       parsed_response = JSON.parse(response.body)
       raise 'no access token received' \
-        unless parsed_response['access_token']                       \
-                 && parsed_response['access_token'].kind_of?(String) \
+        unless parsed_response['access_token'].kind_of?(String) \
                  && !parsed_response['access_token'].empty?
 
       return parsed_response['access_token']
@@ -101,40 +128,22 @@ module PuavoRest
       end
 
       # we apply some magicks to determine user school, groups and roles
-      apply_groups_and_roles!(userinfo)
+      add_roles_and_schools!(userinfo)
 
       return userinfo
     end
 
-    def apply_groups_and_roles!(userinfo)
-      added_roles       = []
+    def add_roles_and_schools!(userinfo)
       added_school_dns  = []
-      primary_school_dn = nil
       external_groups   = {
                             'administrative group' => {},
                             'teaching group'       => {},
                             'year class'           => {},
                           }
+      primary_school_dn = nil
 
-      ucsschool_roles = @univention_userinfo['ucsschool_roles']
-      if ucsschool_roles && ucsschool_roles.kind_of?(Array) then
-        # UCS@school supports separate roles for each school but Puavo does
-        # not, so dismiss school information in roles
-        ucsschool_roles.each do |ucs_role|
-          case ucs_role
-            when /\Alegal_guardian:/
-              added_roles << 'parent'
-            when /\Astaff:/
-              added_roles << 'staff'
-            when /\Astudent:/
-              added_roles << 'student'
-            when /\Ateacher:/
-              added_roles << 'teacher'
-          end
-        end
-      end
-
-      added_school_dns << 'puavoId=XXX,ou=Groups,dc=edu,dc=example,dc=org'      # XXX
+      added_roles = get_user_roles()
+      added_school_dns = get_user_puavo_school_dns()
 
       userinfo['external_groups'] = external_groups
       userinfo['roles']           = added_roles.sort.uniq
@@ -143,6 +152,71 @@ module PuavoRest
       # XXX could we look this up in a different way?
       primary_school_dn = userinfo['school_dns'].first
       userinfo['primary_school_dn'] = primary_school_dn
+    end
+
+    def get_user_roles()
+      user_roles = []
+
+      ucsschool_roles = @univention_userinfo['ucsschool_roles']
+      raise 'user has no roles in UCS@school' \
+        unless ucsschool_roles.kind_of?(Array) && !ucsschool_roles.empty?
+
+      # UCS@school supports separate roles for each school but Puavo does
+      # not, so dismiss school information in roles
+      ucsschool_roles.each do |ucs_role|
+        case ucs_role
+          when /\Alegal_guardian:/
+            user_roles << 'parent'
+          when /\Astaff:/
+            user_roles << 'staff'
+          when /\Astudent:/
+            user_roles << 'student'
+          when /\Ateacher:/
+            user_roles << 'teacher'
+        end
+      end
+
+      raise 'user has no roles in UCS@school that actually exist in Puavo' \
+        if user_roles.empty?
+
+      return user_roles
+    end
+
+    def get_univention_school_info(uri_string)
+      return do_univention_json_request_with_token(uri_string)
+    end
+
+    def update_univention_schools(univention_school_urls)
+      # XXX what about error handling here?
+      # XXX the schools should all probably be looked up only once
+      # XXX like we do with Puavo schools
+      univention_school_urls.each do |school_url|
+        next if @univention_schools.has_key?(school_url)
+        univention_school = get_univention_school_info(school_url)
+        @univention_schools[school_url] = univention_school
+      end
+    end
+
+    def get_user_puavo_school_dns()
+      user_univention_school_urls = @univention_userinfo['schools']
+      raise 'user univention school information not known' \
+        unless user_univention_school_urls.kind_of?(Array)
+      update_univention_schools(user_univention_school_urls)
+
+      user_univention_schools \
+        = @univention_schools.values_at(*user_univention_school_urls)
+
+      user_puavo_schools = []
+      @univention_schools.each do |school_url, univention_school_info|
+        extschool_id = univention_school_info[@extschool_id_field]
+        # XXX if not found, some warning should be raised?
+        next unless extschool_id
+        puavo_school = @puavo_schools_by_id[extschool_id]
+        # XXX if not found, some warning should be raised?
+        user_puavo_schools << puavo_school if puavo_school
+      end
+
+      user_puavo_schools.map { |s| s.dn }
     end
 
     def lookup_all_users
@@ -189,21 +263,27 @@ module PuavoRest
       @token = get_univention_token(server_uri, username, password)
     end
 
-    def univention_get_users
-      uri = URI("#{ @server_uri }/ucsschool/kelvin/v1/users/")
-
+    def do_univention_json_request_with_token(uri_string)
+      uri = URI(uri_string)
       request = Net::HTTP::Get.new(uri)
       request['Authorization'] = "Bearer #{ @token }"
       request['Content-Type'] = 'application/json'
 
       response = do_http_request(uri, request)
-      unless response.is_a?(Net::HTTPSuccess) then
-        errmsg = "failure when requesting users: #{ response.code }" \
-                   + " #{ response.message } :: #{ response.body }"
-        raise errmsg
-      end
+      raise UniventionRequestError.new(response) \
+        unless response.is_a?(Net::HTTPSuccess)
 
       return JSON.parse(response.body)
+    end
+
+    def univention_get_users
+      uri_string = "#{ @server_uri }/ucsschool/kelvin/v1/users/"
+      begin
+        return do_univention_json_request_with_token(uri_string)
+      rescue UniventionRequestError => e
+        raise "failure when requesting users: #{ e.response.code }" \
+                + " #{ e.response.message } :: #{ e.response.body }"
+      end
     end
 
     def update_univentionuserinfo(username)

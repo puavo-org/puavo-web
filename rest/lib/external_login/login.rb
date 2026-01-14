@@ -71,6 +71,12 @@ module PuavoRest
         "external login '#{ @login_service_name }' is not supported" \
           unless @external_login_class
 
+      @puavo_extschool_id_field = @config['puavo_extschool_id_field']
+      raise ExternalLoginConfigError,
+            'puavo_extlogin_id_field is missing or has an unsupported value' \
+        if @external_login_class == ExternalUniventionService \
+             && @puavo_extlogin_id_field != 'external_id'
+
       @external_login_params = @config[@login_service_name]
       raise ExternalLoginError,
         'external login parameters not configured' \
@@ -95,6 +101,10 @@ module PuavoRest
 
     def extlogin_id(user)
       user.send(@puavo_extlogin_id_field)
+    end
+
+    def extschool_id(school)
+      school.send(@puavo_extschool_id_field)
     end
 
     def check_user_is_manageable(username)
