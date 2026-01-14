@@ -55,6 +55,11 @@ module PuavoRest
             'external_login manage_puavousers not set' \
         if @manage_puavousers.nil?
 
+      @managed_roles = @config['managed_roles']
+      raise ExternalLoginConfigError,
+            'external_login managed roles not set' \
+        unless @managed_roles.kind_of?(Array)
+
       @puavo_extlogin_id_field = @config['puavo_extlogin_id_field']
       raise ExternalLoginConfigError,
             'puavo_extlogin_id_field is missing or has an unsupported value' \
@@ -439,12 +444,10 @@ module PuavoRest
     def adjust_userinfo(user, userinfo)
       return userinfo unless user
 
-      # We want to get "student" and "teacher" roles from the
-      # external login information, but others such as "admin"-role
-      # we want to maintain ourselves.
-      new_user_roles = user.roles.reject do |role|
-                         %w(student teacher).include?(role)
-                       end + userinfo['roles']
+      # We want to get roles listed in @managed_roles from the external
+      # login information, but other roles we want to maintain ourselves
+      # (often, for example, the "admin"-role).
+      new_user_roles = (user.roles - @managed_roles) + userinfo['roles']
       userinfo['roles'] = new_user_roles.sort.uniq
 
       userinfo
