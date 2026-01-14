@@ -45,10 +45,11 @@ module PuavoRest
                                 'admin password not configured')
 
       @puavo_schools_by_id = get_puavoschools_by_id()
-      @univention_schools = {}
 
       setup_univention_connection(@server_uri, admin_username,
                                   admin_password)
+
+      @univention_schools_by_url = univention_get_schools_by_url()
     end
 
     def get_conf(config, key, errmsg)
@@ -186,28 +187,16 @@ module PuavoRest
       return do_univention_json_request_with_token(uri_string)
     end
 
-    def update_univention_schools(univention_school_urls)
-      # XXX what about error handling here?
-      # XXX the schools should all probably be looked up only once
-      # XXX like we do with Puavo schools
-      univention_school_urls.each do |school_url|
-        next if @univention_schools.has_key?(school_url)
-        univention_school = get_univention_school_info(school_url)
-        @univention_schools[school_url] = univention_school
-      end
-    end
-
     def get_user_puavo_school_dns()
       user_univention_school_urls = @univention_userinfo['schools']
       raise 'user univention school information not known' \
         unless user_univention_school_urls.kind_of?(Array)
-      update_univention_schools(user_univention_school_urls)
 
       user_univention_schools \
-        = @univention_schools.values_at(*user_univention_school_urls)
+        = @univention_schools_by_url.values_at(*user_univention_school_urls)
 
       user_puavo_schools = []
-      @univention_schools.each do |school_url, univention_school_info|
+      @univention_schools_by_url.each do |school_url, univention_school_info|
         extschool_id = univention_school_info[@extschool_id_field]
         # XXX if not found, some warning should be raised?
         next unless extschool_id
@@ -276,14 +265,32 @@ module PuavoRest
       return JSON.parse(response.body)
     end
 
-    def univention_get_users
-      uri_string = "#{ @server_uri }/ucsschool/kelvin/v1/users/"
+    def univention_get_schools_by_url
+      schools_by_url = {}
+
+      school_list = univention_get_something('/ucsschool/kelvin/v1/schools/',
+                                             'schools')
+      school_list.each do |school|
+        url = school['url']
+        next unless url.kind_of?(String)        # XXX what if this is not?
+        schools_by_url[url] = school
+      end
+
+      return schools_by_url
+    end
+
+    def univention_get_something(subpath, something)
+      uri_string = "#{ @server_uri }#{ subpath }"
       begin
         return do_univention_json_request_with_token(uri_string)
       rescue UniventionRequestError => e
-        raise "failure when requesting users: #{ e.response.code }" \
+        raise "failure when requesting #{ something }: #{ e.response.code }" \
                 + " #{ e.response.message } :: #{ e.response.body }"
       end
+    end
+
+    def univention_get_users
+      univention_get_something('/ucsschool/kelvin/v1/users/', 'users')
     end
 
     def update_univentionuserinfo(username)
