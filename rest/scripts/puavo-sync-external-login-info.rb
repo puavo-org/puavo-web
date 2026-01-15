@@ -12,6 +12,12 @@ class SyncLog
   def warn(msg) ; Kernel::warn(msg); end
 end
 
+def log_warn(e, orig_msg)
+  msg ="#{ orig_msg }: #{ e.message }"
+  msg += " / #{ e.backtrace.join(' / ') }" unless e.kind_of?(ExternalLoginError)
+  warn(msg)
+end
+
 # necessary for routing ExternalLogin logging to stdout/stderr
 $rest_log = SyncLog.new
 
@@ -50,7 +56,7 @@ extlogin_conf.each do |organisation, org_conf|
     raise 'no manage puavousers configuration value' if manage_puavousers.nil?
 
     unless manage_puavousers then
-      puts ">> skipping organisation '#{ organisation }', users are not" \
+      puts %Q{>> skipping organisation "#{ organisation }", users are not} \
              + ' managed by external logins'
       next
     end
@@ -103,13 +109,13 @@ extlogin_conf.each do |organisation, org_conf|
         # User not found in external service, so it must be in Puavo
         # and we mark it for removal.
         if puavo_user.mark_for_removal! then
-          puts("> puavo user '#{ puavo_user.username }' (#{ extlogin_id })" \
+          puts(%Q{> puavo user "#{ puavo_user.username }" (#{ extlogin_id })} \
                  + " [#{ organisation }] is marked for removal")
         end
 
       rescue StandardError => e
-        warn("! error in marking user '#{ puavo_user.username }'" \
-               + " [#{ organisation }] for removal: #{ e.message } / #{ e.backtrace }")
+        log_warn(e, %Q{> ! error in marking user "#{ puavo_user.username }"} \
+                      + " [#{ organisation }] for removal")
         all_users_ok = false
       end
     end
@@ -130,16 +136,14 @@ extlogin_conf.each do |organisation, org_conf|
 
         if user_status != PuavoRest::ExternalLoginStatus::NOCHANGE \
           && user_status != PuavoRest::ExternalLoginStatus::UPDATED then
-            raise '! user information update to Puavo failed for' \
-                    + " '#{ username }' (#{ extlogin_id })" \
-                    + " (#{ organisation })"
+            raise 'user information update to Puavo failed with status' \
+                    + " #{ user_status }"
         end
 
       rescue StandardError => e
-        warn("! error checking user '#{ username }' (#{ extlogin_id })" \
-               + " [#{ organisation }] in external login service: "     \
-               + e.message + " " \
-               + e.backtrace.join(' / '))
+        log_warn(e,
+                 %Q{! error checking user "#{ username }" (#{ extlogin_id })} \
+                   + " [#{ organisation }] in external login service")
         all_users_ok = false
       end
     end
@@ -150,8 +154,8 @@ extlogin_conf.each do |organisation, org_conf|
     end
 
   rescue StandardError => e
-    warn('!! error in updating users from external login service on' \
-           + " organisation '#{ organisation }': #{ e.message }")
+    log_warn(e, '!! error in updating users from external login service on' \
+                  + %Q{ organisation "#{ organisation }"})
     all_organisations_ok = false
   end
 end
