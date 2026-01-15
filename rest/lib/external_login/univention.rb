@@ -201,7 +201,8 @@ module PuavoRest
 
       user_puavo_schools = []
       @univention_schools_by_url.each do |school_url, univention_school_info|
-        extschool_id = univention_school_info[@extschool_id_field]
+        extschool_id = get_univention_attribute(univention_school_info,
+                                                @extschool_id_field)
         # XXX if not found, some warning should be raised?
         next unless extschool_id
         puavo_school = @puavo_schools_by_id[extschool_id]
@@ -218,7 +219,8 @@ module PuavoRest
 
       univention_user_list = univention_get_users()
       univention_user_list.each do |univention_user|
-        extlogin_id = get_extlogin_id(univention_user)
+        extlogin_id = get_univention_attribute(univention_user,
+                                               @extlogin_id_field)
         next unless extlogin_id.kind_of?(String)
 
         username = univention_user[@external_username_field]
@@ -233,16 +235,17 @@ module PuavoRest
       return users
     end
 
-    def get_extlogin_id(univention_user)
-      @extlogin_id_field == 'univentionObjectIdentifier'            \
-        ? univention_user.dig('udm_properties', @extlogin_id_field) \
-        : univention_user.dig(@extlogin_id_field)
+    def get_univention_attribute(univention_object, attribute)
+      attribute == 'univentionObjectIdentifier'            \
+        ? univention_object.dig('udm_properties', attribute) \
+        : univention_object.dig(attribute)
     end
 
     def lookup_extlogin_id_by_username(username)
       update_univentionuserinfo(username)
 
-      extlogin_id = get_extlogin_id(@univention_userinfo)
+      extlogin_id = get_univention_attribute(@univention_userinfo,
+                                             @extlogin_id_field)
       if !extlogin_id || extlogin_id.empty? then
         raise(ExternalLoginUnavailable,
               "could not lookup extlogin id (#{ @extlogin_id_field })" \
