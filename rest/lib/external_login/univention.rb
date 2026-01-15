@@ -44,7 +44,7 @@ module PuavoRest
                                        'admin_password',
                                        'admin password not configured')
 
-      @puavo_schools_by_id = get_puavoschools_by_id()
+      @puavo_schools_by_id = nil
       @univention_schools_by_url = {}
 
       setup_univention_connection(@server_uri, admin_username,
@@ -58,13 +58,12 @@ module PuavoRest
       return value
     end
 
-    def get_puavoschools_by_id()
+    def get_puavo_schools_by_id()
       puavo_schools_by_id = {}
 
       School.all.each do |school|
         external_school_id = @external_login.extschool_id(school)
-        next unless external_school_id.kind_of?(String)
-        puavo_schools_by_id[external_school_id] = school
+        (puavo_schools_by_id[external_school_id] ||= []) << school
       end
 
       return puavo_schools_by_id
@@ -187,6 +186,8 @@ module PuavoRest
     end
 
     def get_user_puavo_school_dns()
+      update_puavo_schools_by_id()
+
       user_univention_school_urls = @univention_userinfo['schools']
       check_schools = lambda do
                         user_univention_school_urls.any? do |url|
@@ -203,19 +204,50 @@ module PuavoRest
       @univention_schools_by_url.each do |school_url, univention_school_info|
         extschool_id = get_univention_attribute(univention_school_info,
                                                 @extschool_id_field)
-        # XXX if not found, some warning should be raised?
-        next unless extschool_id
-        puavo_school = @puavo_schools_by_id[extschool_id]
-        # XXX if not found, some warning should be raised?
-        user_puavo_schools << puavo_school if puavo_school
+        puavo_schools = @puavo_schools_by_id[extschool_id]
+        user_puavo_schools += puavo_schools if puavo_schools
       end
 
       user_puavo_schools.map { |s| s.dn }
     end
 
-    def lookup_all_users
-      users = {}
+    def update_school_information_and_report_connections()
+      update_puavo_schools_by_id()
       update_univention_schools_by_url()
+
+      @rlog.info('>> reporting school linkages')
+
+      current_puavo_schools_by_id = @puavo_schools_by_id.clone
+
+      @univention_schools_by_url.each do |school_url, univention_school_info|
+        extschool_id = get_univention_attribute(univention_school_info,
+                                                @extschool_id_field)
+        msg = %Q{> Univention school "#{ univention_school_info['name'] }"} \
+                + " (#{ extschool_id })"
+        puavo_schools = current_puavo_schools_by_id.delete(extschool_id)
+        if puavo_schools then
+          school_names = puavo_schools.map { |s| %Q{"#{ s.name }"} }
+          msg += " is connected to puavo schools: #{ school_names.join(', ') }"
+        else
+          msg += ' is not connected to any Puavo school'
+        end
+        @rlog.info(msg)
+      end
+
+      current_puavo_schools_by_id.each do |external_id, school_list|
+        school_list.each do |school|
+          msg = %Q{> Puavo school "#{ school.name }"} \
+                  + " (external_id=#{ external_id })" \
+                  + ' is not connected to any Univention school'
+          @rlog.info(msg)
+        end
+      end
+    end
+
+    def lookup_all_users
+      update_school_information_and_report_connections()
+
+      users = {}
 
       univention_user_list = univention_get_users()
       univention_user_list.each do |univention_user|
@@ -283,9 +315,18 @@ module PuavoRest
       school_list = univention_get_something('/ucsschool/kelvin/v1/schools/',
                                              'schools')
       school_list.each do |school|
-        url = school['url']
-        next unless url.kind_of?(String)        # XXX what if this is not?
-        schools_by_url[url] = school
+        begin
+          raise 'school does not have a name of type string' \
+            unless get_univention_attribute(school, 'name').kind_of?(String)
+          raise 'school does not have an url of type string' \
+            unless get_univention_attribute(school, 'url').kind_of?(String)
+          raise 'school does not have an external id of type string' \
+            unless get_univention_attribute(school, @extschool_id_field) \
+                     .kind_of?(String)
+          schools_by_url[ school['url'] ] = school
+        rescue StandardError => e
+          @rlog.error("error looking up school from Univention: #{ e.message }")
+        end
       end
 
       return schools_by_url
@@ -303,6 +344,11 @@ module PuavoRest
 
     def univention_get_users
       univention_get_something('/ucsschool/kelvin/v1/users/', 'users')
+    end
+
+    def update_puavo_schools_by_id()
+      return if @puavo_schools_by_id
+      @puavo_schools_by_id = get_puavo_schools_by_id()
     end
 
     def update_univention_schools_by_url()
