@@ -108,28 +108,34 @@ module PuavoRest
       raise 'univention userinfo not set' \
         unless @username && @univention_userinfo
 
+      get_attr = lambda do |attr|
+                   get_univention_attribute(@univention_userinfo, attr)
+                 end
+
       puavo_extlogin_id_field = @external_login.puavo_extlogin_id_field
       userinfo = {
-        puavo_extlogin_id_field => lookup_extlogin_id_by_username(username),
-        'first_name' => @univention_userinfo['firstname'],
-        'last_name'  => @univention_userinfo['lastname'],
-        'username'   => username,
+        puavo_extlogin_id_field => get_attr.call(@extlogin_id_field),
+        'first_name'            => get_attr.call('firstname'),
+        'last_name'             => get_attr.call('lastname'),
+        'ldap_password_hash'    => get_attr.call('userPasswordHash'),
+        'username'              => username,
       }
 
-      if !userinfo['first_name'] || userinfo['first_name'].empty? then
-        raise ExternalLoginUnavailable,
-              "User '#{ username }' has no first name in Univention"
-      end
+      check_attr = lambda do |field, msg|
+                     raise(ExternalLoginUnavailable, msg) \
+                       unless userinfo[field] && !userinfo[field].empty?
+                   end
 
-      if !userinfo['last_name'] || userinfo['last_name'].empty? then
-        raise ExternalLoginUnavailable,
-              "User '#{ username }' has no last name in Univention"
-      end
-
-      if !userinfo['username'] || userinfo['username'].empty? then
-        raise ExternalLoginUnavailable,
-              "User '#{ username }' has no account name in Univention"
-      end
+      check_attr.call(puavo_extlogin_id_field,
+                      "User '#{ username }' has no extlogin id in Univention")
+      check_attr.call('first_name',
+                      "User '#{ username }' has no first name in Univention")
+      check_attr.call('last_name',
+                      "User '#{ username }' has no last name in Univention")
+      check_attr.call('ldap_password_hash',
+                      "User '#{ username }' has no ldap password in Univention")
+      check_attr.call('username',
+                      "User '#{ username }' has no account name in Univention")
 
       # we apply some magicks to determine user school, groups and roles
       add_roles_and_schools!(userinfo)
@@ -273,23 +279,12 @@ module PuavoRest
     end
 
     def get_univention_attribute(univention_object, attribute)
-      attribute == 'univentionObjectIdentifier'            \
-        ? univention_object.dig('udm_properties', attribute) \
-        : univention_object.dig(attribute)
-    end
-
-    def lookup_extlogin_id_by_username(username)
-      update_univentionuserinfo(username)
-
-      extlogin_id = get_univention_attribute(@univention_userinfo,
-                                             @extlogin_id_field)
-      if !extlogin_id || extlogin_id.empty? then
-        raise(ExternalLoginUnavailable,
-              "could not lookup extlogin id (#{ @extlogin_id_field })" \
-                + " for user '#{ username }'")
+      case attribute
+        when 'univentionObjectIdentifier', 'userPasswordHash'
+          univention_object.dig('udm_properties', attribute) \
+        else
+          univention_object.dig(attribute)
       end
-
-      extlogin_id
     end
 
     def set_userinfo(username, univention_userinfo)
