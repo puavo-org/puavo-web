@@ -51,6 +51,11 @@ module PuavoRest
                                   admin_password)
     end
 
+    def change_password(actor_username, actor_password, target_user_username,
+                        target_user_password)
+      # XXX Do nothing.  Should this actually do something?
+    end
+
     def get_conf_string(config, key, errmsg)
       value = config[key]
       raise ExternalLoginConfigError, errmsg \
