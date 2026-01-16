@@ -967,6 +967,13 @@ class User < LdapModel
         next
       end
 
+      if attribute == 'ldap_password_hash' then
+        # as we do not (should not) have a read permission to user password
+        # hash, we must compare it in a different way
+        return true unless compare(attribute, new_value)
+        next
+      end
+
       old_value = old_userinfo[attribute]
       if old_value != new_value then
         return true

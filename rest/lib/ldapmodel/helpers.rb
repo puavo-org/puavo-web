@@ -15,6 +15,16 @@ class LdapModel
   def self.ldap_escape(string)
     Net::LDAP::Filter.escape(string.to_s)
   end
+
+  # Compare some value to the value in some attribute of this model.
+  # This is needed in some cases where we do not have a read permission
+  # to the attribute value, but we want to check if we already know it.
+  # This presumes that the ldapmodel has a "dn".
+  def compare(attribute, value)
+    ldap_attr_sym = self.class.pretty_attrs_to_ldap([ attribute ]).first
+    raise "no attribute named #{ attribute } known" unless ldap_attr_sym
+    self.class.ldap_op(:compare, dn, ldap_attr_sym.to_s, value)
+  end
 end
 
 
