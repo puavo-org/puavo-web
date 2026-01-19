@@ -60,6 +60,17 @@ class ClientDatabase
     # Turn the enabled flag into an actual boolean
     client_config['enabled'] = client_config['enabled'] == 't'
 
+    # Retrieve all enabled authentication credentials for this client. We know the client ID is valid.
+    client_config.delete('client_password')
+    auth = @db.exec_params("SELECT * FROM client_authentication WHERE client_id = $1 AND enabled = true;", [client_id]).to_a
+
+    auth.map do |a|
+      a.delete('client_id')
+      a.delete('enabled')
+    end
+
+    client_config['client_authentication'] = auth
+
     client_config.freeze
   end
 end   # class ClientDatabase

@@ -24,6 +24,7 @@ require_relative '../../lib/oauth2_audit'
 
 require_relative './scopes'
 require_relative './utility'
+require_relative './client_authentication'
 require_relative './userinfo'
 
 require_relative 'access_token_request'
@@ -44,6 +45,7 @@ class OpenIDConnect < PuavoSinatra
   include MFA
 
   include AccessTokenRequest
+  include ClientAuthentication
   include ClientCredentialsGrant
   include Userinfo
 

@@ -81,10 +81,10 @@ def oidc_access_token_request(temp_request_id)
   # ----------------------------------------------------------------------------------------------
   # Verify the client ID and secret
 
-  # TODO: This authentication method is client_secret_post. We could probably support client_secret_basic,
-  # but we really need to support private_key_jwt.
+  # This call halts the request if the client cannot be authenticated
+  auth_ctx = detect_authentication_context(request_id)
 
-  client_id = params.fetch('client_id', nil)
+  client_id = auth_ctx.client_id
 
   rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
 
@@ -116,7 +116,7 @@ def oidc_access_token_request(temp_request_id)
     json_error('unauthorized_client', state: state, request_id: request_id)
   end
 
-  client_secret = params.fetch('client_secret', nil)
+  client_secret = auth_ctx.client_secret
 
   if external_service.secret.start_with?('$argon2')
     # Secure Argon2 hash comparison

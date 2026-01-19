@@ -24,24 +24,12 @@ def client_credentials_grant(request_id)
   end
 
   # ----------------------------------------------------------------------------------------------
-  # Figure out the authentication method, and authenticate the client
+  # Authenticate the client
 
-  auth_method = nil
-
-  if request.env.include?('HTTP_AUTHORIZATION')
-    rlog.info("[#{request_id}] Found HTTP_AUTHORIZATION header in the request, assuming client_secret_basic authentication")
-    auth_method = method(:client_secret_basic)
-  elsif params.include?('client_id') && params.include?('client_password')
-    rlog.info("[#{request_id}] Found client_id and client_password parameters, assuming client_secret_post authentication")
-    auth_method = method(:client_secret_post)
-  else
-    rlog.error("[#{request_id}] Client did not provide any way to authenticate themselves (tried: client_secret_basic, client_secret_post)")
-    json_error('invalid_request', request_id: request_id)
-  end
-
-  client_id, client_config = auth_method.call(request_id)
-
-  rlog.info("[#{request_id}] Client authorized")
+  # These calls automatically halt the request if there are errors
+  auth_ctx = detect_authentication_context(request_id)
+  client_config = load_client_config(auth_ctx.client_id, request_id)
+  authenticate_client(auth_ctx, client_config, request_id)
 
   # ----------------------------------------------------------------------------------------------
   # Validate the scopes. RFC 6479 says these are optional for client credential requests,
@@ -105,8 +93,8 @@ def client_credentials_grant(request_id)
   token = build_access_token(
     request_id,
     ldap_id: client_config['ldap_id'],
-    client_id: client_id,
-    subject: client_id,
+    client_id: auth_ctx.client_id,
+    subject: auth_ctx.client_id,
     scopes: scopes[:scopes],
     expires_in: expires_in,
     custom_claims: custom_claims
@@ -129,7 +117,7 @@ def client_credentials_grant(request_id)
 
   audit_issued_access_token(request_id,
                             ldap_id: client_config['ldap_id'],
-                            client_id: client_id,
+                            client_id: auth_ctx.client_id,
                             raw_requested_scopes: params.fetch('scope', ''),
                             raw_token: token[:raw_token],
                             request: request)
@@ -140,81 +128,6 @@ def client_credentials_grant(request_id)
   json(out)
 rescue StandardError => e
   rlog.error("[#{request_id}] Unhandled exception in client_credentials_grant(): #{e}")
-  json_error('server_error', request_id: request_id)
-end
-
-# Authenticates the client using client_secret_basic authentication (ie. the plain old HTTP basic auth)
-def client_secret_basic(request_id)
-  begin
-    credentials = request.env.fetch('HTTP_AUTHORIZATION', '').split
-    credentials = Base64.strict_decode64(credentials[1])
-    credentials = credentials.split(':')
-
-    if credentials.count != 2
-      # Tested (manually)
-      rlog.error("[#{request_id}] the HTTP_AUTHORIZATION header does not contain a valid client_id:password combo")
-      json_error('invalid_request', request_id: request_id)
-    end
-  rescue StandardError => e
-    # Tested (manually)
-    rlog.error("[#{request_id}] Could not parse the HTTP_AUTHORIZATION header: #{e}")
-    rlog.error("[#{request_id}] Raw header: #{request.env['HTTP_AUTHORIZATION'].inspect}")
-    json_error('invalid_request', request_id: request_id)
-  end
-
-  return _do_password_auth(request_id, credentials[0], credentials[1])
-end
-
-# Authenticates the client using client_secret_post method
-def client_secret_post(request_id)
-  return _do_password_auth(request_id, params['client_id'], params['client_password'])
-end
-
-# Performs the common parts of client_secret_basic and client_secret_post
-def _do_password_auth(request_id, client_id, client_password)
-  rlog.info("[#{request_id}] Client ID: #{client_id.inspect}")
-
-  unless OAuth2.valid_client_id?(client_id)
-    # Tested
-    rlog.error("[#{request_id}] Malformed client ID")
-    json_error('unauthorized_client', request_id: request_id)
-  end
-
-  # Load client configuration
-  clients = ClientDatabase.new
-  client_config = clients.get_token_client(client_id)
-  clients.close
-
-  if client_config.nil?
-    # Tested
-    rlog.error("[#{request_id}] Unknown/invalid client")
-    json_error('unauthorized_client', request_id: request_id)
-  end
-
-  unless client_config['enabled']
-    # Tested
-    rlog.error("[#{request_id}] This client exists but it has been disabled")
-    json_error('unauthorized_client', request_id: request_id)
-  end
-
-  hashed_password = client_config.fetch('client_password', nil)
-
-  if hashed_password.nil? || hashed_password.strip.empty?
-    # Tested (manually, by intentionally changing the password to an empty string in psql)
-    rlog.error("[#{request_id}] Empty hashed password specified in the database for a " \
-               "token client, refusing access")
-    json_error('unauthorized_client', request_id: request_id)
-  end
-
-  unless Argon2::Password.verify_password(client_password, hashed_password)
-    # Tested
-    rlog.error("[#{request_id}] Invalid client password")
-    json_error('unauthorized_client', request_id: request_id)
-  end
-
-  return client_id, client_config
-rescue StandardError => e
-  rlog.error("[#{request_id}] Unhandled exception in _do_password_auth(): #{e}")
   json_error('server_error', request_id: request_id)
 end
 
