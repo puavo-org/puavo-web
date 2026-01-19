@@ -15,39 +15,89 @@ def activate_organisation_services(s)
 end
 
 # Connects to the OAuth 2 client SQL database
-def oauth2_client_db
+def oauth2_client_db(&block)
   db_config = CONFIG['oauth2']['client_database']
 
-  PG.connect(hostaddr: db_config['host'],
-             port: db_config['port'],
-             dbname: db_config['database'],
-             user: db_config['user'],
-             password: db_config['password'])
+  db = PG.connect(hostaddr: db_config['host'],
+                  port: db_config['port'],
+                  dbname: db_config['database'],
+                  user: db_config['user'],
+                  password: db_config['password'])
+
+  block.call(db)
+  db.close()
+end
+
+def create_login_client(db, client_id, puavo_service_dn, allowed_redirects, allowed_scopes, enabled: true)
+  array_encoder = PG::TextEncoder::Array.new
+  now = Time.now.utc
+
+  db.exec_params(
+    'INSERT INTO login_clients(client_id, enabled, puavo_service_dn, allowed_redirects, allowed_scopes, ' \
+    'created, modified) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+    [client_id, enabled, puavo_service_dn, array_encoder.encode(allowed_redirects),
+    array_encoder.encode(allowed_scopes), now, now]
+  )
 end
 
 # Creates one or more login clients
 def setup_login_clients(clients, remove_old: true)
-  db = oauth2_client_db()
+  oauth2_client_db do |db|
+    db.exec("DELETE FROM login_clients WHERE client_id like 'test_login_%';") if remove_old
 
-  if remove_old
-    db.exec("DELETE FROM login_clients WHERE client_id like 'test_login_%';")
+    clients.each do |client|
+      create_login_client(db, client[:client_id], client[:puavo_service_dn], client[:redirects], client[:scopes], enabled: client.fetch(:enabled, false))
+    end
   end
+end
 
+# Deletes all test client data used in these tests
+def delete_test_client_data(db)
+  db.exec("DELETE FROM login_clients WHERE client_id like 'test_login_%';")
+  db.exec("DELETE FROM token_clients WHERE client_id like 'test_client_%';")
+  db.exec("DELETE FROM client_authentication WHERE client_id like 'test_client_%';")
+end
+
+# Creates a new token client
+def create_token_client(db, client_id, scopes, endpoints: [], ldap_id: 'admin', enabled: true, service_dn: nil)
   array_encoder = PG::TextEncoder::Array.new
   now = Time.now.utc
 
-  clients.each do |client|
-    db.exec_params(
-      'INSERT INTO login_clients(client_id, enabled, puavo_service_dn, ldap_id, ' \
-      'allowed_redirects, allowed_scopes, created, modified) VALUES ' \
-      "($1, $2, $3, $4, $5, $6, $7, $8)",
-      [client[:client_id], client.fetch(:enabled, false), client[:puavo_service_dn],
-      client.fetch(:ldap_id, nil), array_encoder.encode(client[:redirects]),
-      array_encoder.encode(client[:scopes]), now, now]
-    )
-  end
+  db.exec_params(
+    'INSERT INTO token_clients(client_id, enabled, ldap_id, allowed_scopes, ' \
+    'allowed_endpoints, required_service_dn, created, modified) VALUES ' \
+    '($1, $2, $3, $4, $5, $6, $7, $8)',
+    [client_id, enabled, ldap_id, array_encoder.encode(scopes), array_encoder.encode(endpoints), service_dn, now, now]
+  )
+end
 
-  db.close
+def delete_token_client(db, client_id, auth: false)
+  db.exec_params('DELETE FROM token_clients WHERE client_id = $1;', [client_id])
+  db.exec_params('DELETE FROM client_authentication WHERE client_id = $1;', [client_id]) if auth
+end
+
+def create_client_authentication(db, client_id, auth_type, params: {}, enabled: true)
+  now = Time.now.utc
+
+  case auth_type
+    when 'client_secret_basic', 'client_secret_post'
+      if params[:password]
+        password_hash = Argon2::Password.new(profile: :rfc_9106_low_memory).create(params[:password])
+      elsif params[:password_hash]
+        password_hash = params[:password_hash]
+      else
+        raise 'create_client_authentication(): missing both password and password_hash'
+      end
+
+      db.exec_params(
+        'INSERT INTO client_authentication(id, client_id, enabled, auth_type, password_hash, created, modified) VALUES ' \
+        '($1, $2, $3, $4, $5, $6, $7)',
+        [SecureRandom.uuid, client_id, enabled, auth_type.to_s, password_hash, now, now]
+      )
+
+    else
+      raise "create_client_authentication(): unknown auth_type #{auth_type.inspect}"
+  end
 end
 
 def load_default_public_key

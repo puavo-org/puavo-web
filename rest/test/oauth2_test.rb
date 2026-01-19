@@ -10,80 +10,44 @@ require_relative 'oauth2_helpers'
 describe PuavoRest::OAuth2 do
   before(:each) do
     Puavo::Test.clean_up_ldap
+
     setup_oauth2_database
     setup_ldap_admin_connection()
   end
 
-  # Sets up the clients used in these tests
-  def setup_oauth2_database
-    # Use the standalone settings
-    db = oauth2_client_db()
-
-    # Delete...
-    db.exec("DELETE FROM token_clients WHERE client_id like 'test_client_%';")
-
-    # ...then recreate them. This is wasteful, but I haven't found a way to create
-    # these only once at the very start of these tests. There's "before" but it is
-    # run before each test.
-    array_encoder = PG::TextEncoder::Array.new
-
-    password_hash = Argon2::Password.new(profile: :rfc_9106_low_memory).create('supersecretpassword')
-    now = Time.now.utc
-
-    [
-      {
-        client_id: 'test_client_users_groups',
-        scopes: ['puavo.read.users', 'puavo.read.groups'],
-        endpoints: ['/v4/users', '/v4/groups'],
-      },
-      {
-        client_id: 'test_client_devices',
-        scopes: ['puavo.read.devices'],
-        endpoints: ['/v4/devices'],
-      },
-      {
-        client_id: 'test_client_users1',
-        scopes: ['puavo.read.users', 'puavo.read.groups'],
-        endpoints: ['/v4/users'],
-      },
-      {
-        client_id: 'test_client_users2',
-        scopes: ['puavo.read.users'],
-        endpoints: ['/v4/users', '/v4/groups'],
-      },
-      {
-        client_id: 'test_client_disabled',
-        scopes: ['puavo.read.users'],
-        endpoints: ['/v4/users'],
-        enabled: false
-      },
-      {
-        client_id: 'test_client_wrong_ldap_id',
-        scopes: ['puavo.read.users'],
-        endpoints: ['/v4/users'],
-        ldap_id: 'foobar'
-      },
-      {
-        client_id: 'test_client_required_dn',
-        scopes: ['puavo.read.users'],
-        endpoints: ['/v4/users'],
-        # The required service DN is inserted later, when this client is actually used
-      },
-    ].each do |client|
-      db.exec_params(
-        'INSERT INTO token_clients(client_id, client_password, enabled, ldap_id, allowed_scopes, ' \
-        'allowed_endpoints, required_service_dn, created, modified, password_changed) VALUES ' \
-        '($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-        [client[:client_id], password_hash, client.fetch(:enabled, true), client.fetch(:ldap_id, 'admin'),
-        array_encoder.encode(client[:scopes]), array_encoder.encode(client[:endpoints]), nil, now, now, now]
-      )
+  after(:each) do
+    oauth2_client_db do |db|
+      delete_test_client_data(db)
     end
+  end
 
-    db.close
+  # Sets up the common clients used in these tests
+  def setup_oauth2_database
+    common_password_hash = Argon2::Password.new(profile: :rfc_9106_low_memory).create('supersecretpassword')
+
+    oauth2_client_db do |db|
+      delete_test_client_data(db)
+
+      create_token_client(db, 'test_client_users_groups', ['puavo.read.users', 'puavo.read.groups'], endpoints: ['/v4/users', '/v4/groups'])
+      create_client_authentication(db, 'test_client_users_groups', 'client_secret_basic', params: { password_hash: common_password_hash })
+      create_client_authentication(db, 'test_client_users_groups', 'client_secret_post', params: { password_hash: common_password_hash })
+      create_token_client(db, 'test_client_devices', ['puavo.read.devices'], endpoints: ['/v4/devices'])
+      create_client_authentication(db, 'test_client_devices', 'client_secret_basic', params: { password_hash: common_password_hash })
+      create_token_client(db, 'test_client_users1', ['puavo.read.users', 'puavo.read.groups'], endpoints: ['/v4/users'])
+      create_client_authentication(db, 'test_client_users1', 'client_secret_basic', params: { password_hash: common_password_hash })
+      create_token_client(db, 'test_client_users2', ['puavo.read.users', 'puavo.read.groups'], endpoints: ['/v4/users', '/v4/groups'])
+      create_client_authentication(db, 'test_client_users2', 'client_secret_basic', params: { password_hash: common_password_hash })
+      create_token_client(db, 'test_client_wrong_ldap_id', ['puavo.read.users'], endpoints: ['/v4/users'], ldap_id: 'foobar')
+      create_client_authentication(db, 'test_client_wrong_ldap_id', 'client_secret_basic', params: { password_hash: common_password_hash })
+
+      # The required service DN is inserted later, when this client is actually used
+      create_token_client(db, 'test_client_required_dn', ['puavo.read.users'], endpoints: ['/v4/users'])
+      create_client_authentication(db, 'test_client_required_dn', 'client_secret_basic', params: { password_hash: common_password_hash })
+    end
   end
 
   # Acquires an OAuth2 access token using client_secret_basic authentication (ie. the normal HTTP basic auth)
-  def acquire_token(client_id, client_password, scopes)
+  def acquire_token(client_id, client_secret, scopes)
     url = Addressable::URI.parse('/oidc/token')
 
     url.query_values = {
@@ -91,18 +55,18 @@ describe PuavoRest::OAuth2 do
       'scope' => scopes.join(' '),
     }
 
-    basic_authorize client_id, client_password
+    basic_authorize client_id, client_secret
 
     post url.to_s
   end
 
   # Acquires an OAuth2 access token using client_secret_post authentication
-  def acquire_token_client_secret_post(client_id, client_password, scopes)
+  def acquire_token_client_secret_post(client_id, client_secret, scopes)
     url = Addressable::URI.parse('/oidc/token')
 
     url.query_values = {
       'client_id' => client_id,
-      'client_password' => client_password,
+      'client_secret' => client_secret,
       'grant_type' => 'client_credentials',
       'scope' => scopes.join(' ')
     }
@@ -110,6 +74,7 @@ describe PuavoRest::OAuth2 do
     post url.to_s
   end
 
+  # Authenticates a request with an OAuth2 token
   def fetch_data_with_token(access_token, url, fields)
     url = Addressable::URI.parse(url)
 
@@ -123,68 +88,56 @@ describe PuavoRest::OAuth2 do
     get url.to_s
   end
 
-  it 'ask for something else than client credentials' do
-    url = Addressable::URI.parse('/oidc/token')
-
-    url.query_values = {
-      'grant_type' => 'spherical_cow',
-      'scope' => 'puavo.read.users',
-    }
-
-    basic_authorize 'users_client', 'supersecretpassword'
-
-    post url.to_s
-
-    assert_equal last_response.status, 400
-    response = JSON.parse last_response.body
-    assert_equal response['error'], 'unsupported_grant_type'
-    assert_equal response['iss'], 'https://api.opinsys.fi'
-  end
-
-  it 'trying to use a disabled client must fail' do
-    url = Addressable::URI.parse('/oidc/token')
-
-    url.query_values = {
-      'grant_type' => 'client_credentials',
-      'scope' => 'puavo.read.users',
-    }
-
-    basic_authorize 'test_client_disabled', 'supersecretpassword'
-
-    post url.to_s
-
-    assert_equal last_response.status, 400
-    response = JSON.parse last_response.body
-    assert_equal response['error'], 'unauthorized_client'
-    assert_equal response['iss'], 'https://api.opinsys.fi'
-  end
-
-  describe 'authentication types' do
-    it 'test client_secret_basic' do
-      # This test is a bit redundant, as basic auth is used on all tests by default, but let's be thorough
-      acquire_token('test_client_users_groups', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
-
-      assert_equal last_response.status, 200
-      response = JSON.parse last_response.body
-      assert response['access_token']
-      assert_equal response['token_type'], 'Bearer'
-
-      access_token = decode_token(response['access_token'])
-      assert_equal access_token['iss'], 'https://api.opinsys.fi'
-      assert_equal access_token['scopes'], 'puavo.read.users puavo.read.groups'
+  describe 'miscellaneous tests' do
+    before(:each) do
+      oauth2_client_db do |db|
+        create_token_client(db, 'test_client_disabled', ['puavo.read.users'], endpoints: ['/v4/users'], enabled: false)
+        create_client_authentication(db, 'test_client_disabled', 'client_secret_basic', params: { password: 'disabled_client_password' })
+      end
     end
 
-    it 'test client_secret_post' do
-      acquire_token_client_secret_post('test_client_users_groups', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
+    it 'ask for something else than client credentials' do
+      url = Addressable::URI.parse('/oidc/token')
 
-      assert_equal last_response.status, 200
+      url.query_values = {
+        'grant_type' => 'spherical_cow',
+        'scope' => 'puavo.read.users',
+      }
+
+      # This client does not exist, but it doesn't matter since the grant type is checked first
+      basic_authorize 'users_client', 'supersecretpassword'
+      post url.to_s
+
+      assert_equal last_response.status, 400
       response = JSON.parse last_response.body
-      assert response['access_token']
-      assert_equal response['token_type'], 'Bearer'
+      assert_equal response['error'], 'unsupported_grant_type'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
+    end
 
-      access_token = decode_token(response['access_token'])
-      assert_equal access_token['iss'], 'https://api.opinsys.fi'
-      assert_equal access_token['scopes'], 'puavo.read.users puavo.read.groups'
+    it 'trying to use a disabled client must fail' do
+      url = Addressable::URI.parse('/oidc/token')
+
+      url.query_values = {
+        'grant_type' => 'client_credentials',
+        'scope' => 'puavo.read.users',
+      }
+
+      basic_authorize 'test_client_disabled', 'disabled_client_password'
+      post url.to_s
+
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
+    end
+
+    it 'invalid client ID rejection tests' do
+      ['a', 'aa', 'aaa', 'a' * 33, 'client_!"#%', '3foo', 'FOOBAR', '{{{{{{', 'öööö', 'foo bar', 'client_❌', '➕➖➗🟰🧮️', 'hölökyn kölökyn'].each do |id|
+        acquire_token(id, 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
+        assert_equal last_response.status, 400
+        response = JSON.parse(last_response.body)
+        assert_equal response['error'], 'unauthorized_client'
+      end
     end
   end
 
@@ -202,7 +155,7 @@ describe PuavoRest::OAuth2 do
 
       assert_equal last_response.status, 400
       response = JSON.parse last_response.body
-      assert_equal response['error'], 'invalid_request'
+      assert_equal response['error'], 'unauthorized_client'
       assert_equal response['iss'], 'https://api.opinsys.fi'
     end
 
@@ -362,26 +315,95 @@ describe PuavoRest::OAuth2 do
     end
   end
 
-  it 'acquire a basic access token' do
-    acquire_token('test_client_users_groups', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
+  describe 'various client authentication method tests' do
+    it 'acquire a basic access token (client_secret_basic)' do
+      acquire_token('test_client_users_groups', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
 
-    assert_equal last_response.status, 200
-    response = JSON.parse last_response.body
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
 
-    assert response['access_token']
-    assert_equal response['token_type'], 'Bearer'
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
 
-    access_token = decode_token(response['access_token'])
-    assert_equal access_token['iss'], 'https://api.opinsys.fi'
-    assert_equal access_token['scopes'], 'puavo.read.users puavo.read.groups'
+      access_token = decode_token(response['access_token'])
+      assert_equal access_token['iss'], 'https://api.opinsys.fi'
+      assert_equal access_token['scopes'], 'puavo.read.users puavo.read.groups'
+    end
+
+    it 'acquire a basic access token (client_secret_post)' do
+      acquire_token_client_secret_post('test_client_users_groups', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
+
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+
+      access_token = decode_token(response['access_token'])
+      assert_equal access_token['iss'], 'https://api.opinsys.fi'
+      assert_equal access_token['scopes'], 'puavo.read.users puavo.read.groups'
+    end
+
+    it 'supply more than one authentication in one request' do
+      client_id = 'test_client_users_groups'
+      client_secret = 'supersecretpassword'
+
+      url = Addressable::URI.parse('/oidc/token')
+
+      # Put two different authentication methods in one request
+
+      # client_secret_basic
+      basic_authorize client_id, client_secret
+
+      # client_secret_post
+      url.query_values = {
+        'client_id' => client_id,
+        'client_secret' => client_secret,
+        'grant_type' => 'client_credentials',
+        'scope' => ['puavo.read.users', 'puavo.read.groups'].join(' ')
+      }
+
+      post url.to_s
+
+      # The request must fail
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_nil response['access_token']
+      assert_equal response['error'], 'unauthorized_client'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
+    end
   end
 
-  it 'acquire a basic access token' do
-    ['a', 'aa', 'aaa', 'a' * 33, 'client_!"#%', 'FOOBAR', '{{{{{{', 'öööö', 'foo bar', 'client_❌', '➕➖➗🟰🧮️', 'hölökyn kölökyn'].each do |id|
-      acquire_token(id, 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
+  describe 'authentication record testing' do
+    before do
+      oauth2_client_db do |db|
+        # This client has no authentication records at all, so while it exists it cannot be used
+        create_token_client(db, 'test_client_no_client_auth', ['puavo.read.users'], endpoints: ['/v4/users'])
+
+        # This client has two active overlapping records, so it won't work
+        create_token_client(db, 'test_client_too_many_auths', ['puavo.read.users'], endpoints: ['/v4/users'])
+        create_client_authentication(db, 'test_client_too_many_auths', 'client_secret_basic', params: { password: 'foo' })
+        create_client_authentication(db, 'test_client_too_many_auths', 'client_secret_basic', params: { password: 'bar' })
+      end
+    end
+
+    it 'missing client authentication records must fail' do
+      acquire_token('test_client_no_client_auth', 'foobar', ['puavo.read.users'])
+
       assert_equal last_response.status, 400
-      response = JSON.parse(last_response.body)
+      response = JSON.parse last_response.body
+      assert_nil response['access_token']
       assert_equal response['error'], 'unauthorized_client'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
+    end
+
+    it 'more than one active record must fail' do
+      acquire_token('test_client_too_many_auths', 'foo', ['puavo.read.users'])
+
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_nil response['access_token']
+      assert_equal response['error'], 'unauthorized_client'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
     end
   end
 
@@ -427,6 +449,34 @@ describe PuavoRest::OAuth2 do
 
     it 'retrieve users data with token authentication' do
       acquire_token('test_client_users_groups', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
+      response = JSON.parse last_response.body
+      access_token = response['access_token']
+      decoded_token = decode_token(access_token)
+
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
+
+      fetch_data_with_token(access_token, '/v4/users', 'id,first_names,last_name,username')
+
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+
+      assert_equal response['status'], 'ok'
+      assert_nil response['error']
+      assert_equal response['data'].length, 5   # the "cucumber" user is included in the results
+
+      # Ensure every user we created exists in the data
+      @users.each do |user|
+        user2 = response['data'].find { |i| i['username'] == user[2] }
+
+        assert user2
+        assert_equal user2['first_names'], user[0]
+        assert_equal user2['last_name'], user[1]
+        assert_equal user2['username'], user[2]
+      end
+    end
+
+    it 'retrieve users data with token authentication (2)' do
+      acquire_token_client_secret_post('test_client_users_groups', 'supersecretpassword', ['puavo.read.users', 'puavo.read.groups'])
       response = JSON.parse last_response.body
       access_token = response['access_token']
       decoded_token = decode_token(access_token)
@@ -562,10 +612,10 @@ describe PuavoRest::OAuth2 do
       activate_organisation_services([@external_service.dn.to_s])
 
       # Update the token client entry
-      db = oauth2_client_db()
-      db.exec_params('UPDATE token_clients SET required_service_dn = $1 WHERE client_id = $2;',
-                     [@external_service.dn.to_s, 'test_client_required_dn'])
-      db.close()
+      oauth2_client_db do |db|
+        db.exec_params('UPDATE token_clients SET required_service_dn = $1 WHERE client_id = $2;',
+                       [@external_service.dn.to_s, 'test_client_required_dn'])
+      end
     end
 
     it 'ensure the token contains a required service DN string' do
@@ -676,7 +726,7 @@ describe PuavoRest::OAuth2 do
       other_key = OpenSSL::PKey.read(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'other_private_key.pem')))
       token_b = sign_token_with_pem(other_key, subject: 'test subject', scopes: ['foo', 'bar'], kid: 'puavo_standalone_2_20250115T095034Z')
 
-      # Combine two different JWKS files and ensure the token will open
+      # Combine two different JWKS files
       jwks_a = JSON.parse(File.read(CONFIG['oauth2']['key_files']['public_jwks']))
       jwks_b = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'other_key_jwks.json')))
 
@@ -684,7 +734,7 @@ describe PuavoRest::OAuth2 do
         'keys' => jwks_a['keys'] + jwks_b['keys']
       }
 
-      # Both must work
+      # The JWKS now contains two keys and thus it must validate both tokens
       decoded_token_a = decode_token_jwks(token_a, combined_jwks)
       decoded_token_b = decode_token_jwks(token_b, combined_jwks)
       assert_equal decoded_token_a['iss'], 'https://api.opinsys.fi'
