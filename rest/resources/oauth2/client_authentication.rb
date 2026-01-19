@@ -20,8 +20,9 @@ ClientAuthenticationContext = Struct.new(
 def detect_authentication_context(request_id)
   have_http_authorization = request.env.include?('HTTP_AUTHORIZATION')
   have_client_id = params.include?('client_id')
+  have_client_secret = params.include?('client_secret')
 
-  if have_http_authorization && !have_client_id
+  if have_http_authorization && !have_client_id && !have_client_secret
     logger.info("[#{request_id}] Found HTTP_AUTHORIZATION header in the request, assuming client_secret_basic authentication")
 
     # Just a normal HTTP basic auth
