@@ -77,7 +77,7 @@ def detect_authentication_context(request_id)
       client_jwt_key: params['client_assertion']
     )
   else
-    rlog.error("[#{request_id}] 'The client did not provide any way to authenticate themselves'")
+    rlog.error("[#{request_id}] The client did not provide any way to authenticate themselves")
     json_error('unauthorized_client', request_id: request_id)
   end
 
