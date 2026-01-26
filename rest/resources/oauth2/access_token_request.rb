@@ -107,6 +107,16 @@ def oidc_access_token_request(temp_request_id)
     json_error('unauthorized_client', state: state, request_id: request_id)
   end
 
+  if auth_ctx.auth_type == :private_key_jwt
+    # Unfortunately, as of 2026-01-22, private_key_jwt is not yet supported in OpenID Connect logins.
+    # This is because we're still dependent on the old external service system, which only supports
+    # password authentication. Once the old JWT logins go away and the external service system can be
+    # either expanded or completely removed, we can support private_key_jwt. Until then, only
+    # client_secret_basic and client_secret_post are supported.
+    rlog.error("[#{request_id}] private_key_jwt authentication is not yet supported")
+    json_error('unauthorized_client', state: state, request_id: request_id)
+  end
+
   begin
     external_service = get_external_service(oidc_state['service']['dn'])
   rescue StandardError => e

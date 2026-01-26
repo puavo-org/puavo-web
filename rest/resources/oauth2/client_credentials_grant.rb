@@ -28,6 +28,8 @@ def client_credentials_grant(request_id)
 
   # These calls automatically halt the request if there are errors
   auth_ctx = detect_authentication_context(request_id)
+  rlog.info("[#{request_id}] Client ID #{auth_ctx.client_id.inspect}")
+
   client_config = load_client_config(auth_ctx.client_id, request_id)
   authenticate_client(auth_ctx, client_config, request_id)
 

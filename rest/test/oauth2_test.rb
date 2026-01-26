@@ -74,6 +74,33 @@ describe PuavoRest::OAuth2 do
     post url.to_s
   end
 
+  # Acquires an OAuth2 access token using private_key_jwt authentication
+  def acquire_token_private_key_jwt(client_id, scopes, private_key, kid: 'puavo_standalone_20250115T095034Z', alg: 'ES256')
+    now = Time.now.utc.to_i
+
+    jwt = {
+      'jti' => SecureRandom.uuid,
+      'iat' => now,
+      'nbf' => now,
+      'exp' => now + 10,
+      'iss' => client_id,
+      'sub' => client_id,
+      'aud' => 'https://api.opinsys.fi'
+    }
+
+    url = Addressable::URI.parse('/oidc/token')
+
+    url.query_values = {
+      'grant_type' => 'client_credentials',
+      'scope' => scopes.join(' '),
+      'client_id' => client_id,
+      'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+      'client_assertion' => JWT.encode(jwt, private_key, alg, { typ: 'at+jwt', kid: kid }),
+    }
+
+    post url.to_s
+  end
+
   # Authenticates a request with an OAuth2 token
   def fetch_data_with_token(access_token, url, fields)
     url = Addressable::URI.parse(url)
@@ -739,6 +766,695 @@ describe PuavoRest::OAuth2 do
       decoded_token_b = decode_token_jwks(token_b, combined_jwks)
       assert_equal decoded_token_a['iss'], 'https://api.opinsys.fi'
       assert_equal decoded_token_b['iss'], 'https://api.opinsys.fi'
+    end
+  end
+
+  describe 'private_key_jwt with PEM tests' do
+    before do
+      oauth2_client_db do |db|
+        create_token_client(db, 'test_client_pem', ['puavo.read.users'], endpoints: ['/v4/users'])
+        create_client_authentication(db, 'test_client_pem', 'private_key_jwt', params: {
+          public_key: File.read('/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem'),
+        })
+
+        create_token_client(db, 'test_client_pem_kid', ['puavo.read.users'], endpoints: ['/v4/users'])
+        create_client_authentication(db, 'test_client_pem_kid', 'private_key_jwt', params: {
+          public_key: File.read('/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem'),
+          pk_kid: 'foobar',
+        })
+
+        create_token_client(db, 'test_client_pem_alg', ['puavo.read.users'], endpoints: ['/v4/users'])
+        create_client_authentication(db, 'test_client_pem_alg', 'private_key_jwt', params: {
+          public_key: File.read('/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem'),
+          pk_alg: 'ES256',
+        })
+
+        # TODO: Need more test keys in other formats, like ES384 and maybe even RSA keys?
+      end
+    end
+
+    def setup_malformed_jwt_query_params(url, jwt)
+      url.query_values = {
+        'grant_type' => 'client_credentials',
+        'scope' => 'puavo.read.users',
+        'client_id' => 'test_client_pem',
+        'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+        'client_assertion' => JWT.encode(jwt, load_default_private_key(), 'ES256', { typ: 'at+jwt', kid: 'puavo_standalone_20250115T095034Z' }),
+      }
+    end
+
+    it 'authenticate a client using a PEM key' do
+      acquire_token_private_key_jwt(
+        'test_client_pem',
+        ['puavo.read.users'],
+        read_pem('/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem')
+      )
+
+      # The request must succeed
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+
+      access_token = response['access_token']
+      decoded_token = decode_token(access_token)
+
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
+      assert_equal decoded_token['scopes'], 'puavo.read.users'
+
+      # Fetch some data using the token, just to be sure it really works
+      fetch_data_with_token(access_token, '/v4/users', 'id,first_names,last_name,username')
+
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert_equal response['status'], 'ok'
+      assert_nil response['error']
+
+      # Only the "cucumber" user exists in this test, but that's okay. We get user data, the token works.
+      assert_equal response['data'].length, 1
+    end
+
+    it 'authenticate a client using a PEM key, with correct key ID' do
+      acquire_token_private_key_jwt(
+        'test_client_pem_kid',
+        ['puavo.read.users'],
+        read_pem('/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem'),
+        kid: 'foobar'
+      )
+
+      # The request must succeed
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+      access_token = response['access_token']
+      decoded_token = decode_token(access_token)
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
+      assert_equal decoded_token['scopes'], 'puavo.read.users'
+    end
+
+    it 'authenticate a client using a PEM key, with incorrect key ID (1)' do
+      acquire_token_private_key_jwt(
+        'test_client_pem_kid',
+        ['puavo.read.users'],
+        read_pem('/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem'),
+        kid: 'foobarbaz'
+      )
+
+      # The request must fail, since we used the wrong key ID
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
+    end
+
+    it 'authenticate a client using a PEM key, with incorrect key ID (2)' do
+      acquire_token_private_key_jwt(
+        'test_client_pem_kid',
+        ['puavo.read.users'],
+        read_pem('/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem')
+      )
+
+      # The request must fail, since we omitted the key ID
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
+    end
+
+    it 'authenticate a client using a PEM key, with correct algorithm' do
+      acquire_token_private_key_jwt(
+        'test_client_pem_alg',
+        ['puavo.read.users'],
+        read_pem('/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem'),
+        alg: 'ES256'
+      )
+
+      # The request must succeed
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+      access_token = response['access_token']
+      decoded_token = decode_token(access_token)
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
+      assert_equal decoded_token['scopes'], 'puavo.read.users'
+    end
+
+    it 'sign the JWT with a wrong key' do
+      acquire_token_private_key_jwt(
+        'test_client_pem',
+        ['puavo.read.users'],
+        read_pem(File.join(File.dirname(__FILE__), 'fixtures', 'other_private_key.pem'))
+      )
+
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
+    end
+
+    it 'malformed JWT contents (part 1, sub/aud)' do
+      # Manually construct the JWT
+      now = Time.now.utc.to_i
+
+      jwt = {
+        'jti' => SecureRandom.uuid,
+        'iat' => now,
+        'nbf' => now,
+        'exp' => now + 10,
+        'iss' => 'test_client_pem_foo',
+        'sub' => 'test_client_pem_foo',
+        'aud' => 'https://api.opinsys.fi'
+      }
+
+      url = Addressable::URI.parse('/oidc/token')
+      setup_malformed_jwt_query_params(url, jwt)
+      post url.to_s
+
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
+    end
+
+    it 'malformed JWT contents (part 2, exp)' do
+      # Manually construct the JWT
+      now = Time.now.utc.to_i - 60
+
+      jwt = {
+        'jti' => SecureRandom.uuid,
+        'iat' => now,
+        'nbf' => now,
+        'exp' => now + 10,
+        'iss' => 'test_client_pem',
+        'sub' => 'test_client_pem',
+        'aud' => 'https://api.opinsys.fi'
+      }
+
+      url = Addressable::URI.parse('/oidc/token')
+      setup_malformed_jwt_query_params(url, jwt)
+      post url.to_s
+
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
+    end
+
+    it 'malformed JWT contents (part 3, nbf)' do
+      # Manually construct the JWT
+      now = Time.now.utc.to_i + 60
+
+      jwt = {
+        'jti' => SecureRandom.uuid,
+        'iat' => now,
+        'nbf' => now,
+        'exp' => now + 10,
+        'iss' => 'test_client_pem',
+        'sub' => 'test_client_pem',
+        'aud' => 'https://api.opinsys.fi'
+      }
+
+      url = Addressable::URI.parse('/oidc/token')
+      setup_malformed_jwt_query_params(url, jwt)
+      post url.to_s
+
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
+    end
+  end
+
+  describe 'private_key_jwt with JWKS tests' do
+    before do
+      oauth2_client_db do |db|
+        create_token_client(db, 'test_client_jwks', ['puavo.read.users'], endpoints: ['/v4/users'])
+        create_client_authentication(db, 'test_client_jwks', 'private_key_jwt', params: {
+          jwks: JSON.parse(File.read(CONFIG['oauth2']['key_files']['public_jwks']))
+        })
+      end
+    end
+
+    it 'authenticate a client using a JWKS' do
+      acquire_token_private_key_jwt(
+        'test_client_jwks',
+        ['puavo.read.users'],
+        read_pem('/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem')
+      )
+
+      # The request must succeed
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+
+      access_token = response['access_token']
+      decoded_token = decode_token(access_token)
+
+      assert_equal decoded_token['iss'], 'https://api.opinsys.fi'
+      assert_equal decoded_token['scopes'], 'puavo.read.users'
+
+      # Fetch some data using the token, just to be sure it really works
+      fetch_data_with_token(access_token, '/v4/users', 'id,first_names,last_name,username')
+
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert_equal response['status'], 'ok'
+      assert_nil response['error']
+
+      # Only the "cucumber" user exists in this test, but that's okay. We get user data, the token works.
+      assert_equal response['data'].length, 1
+    end
+
+    it 'wrong private key will not validate against the JWKS' do
+      acquire_token_private_key_jwt(
+        'test_client_jwks',
+        ['puavo.read.users'],
+        read_pem(File.join(File.dirname(__FILE__), 'fixtures', 'other_private_key.pem'))
+      )
+
+      # The request must fail
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
+      assert_equal response['iss'], 'https://api.opinsys.fi'
+    end
+  end
+
+  describe 'key rotation tests' do
+    def integer_time
+      Time.at(Time.now.utc.to_i).utc
+    end
+
+    it 'basic not_before test' do
+      t0 = integer_time
+      t1 = t0 + 60
+
+      oauth2_client_db do |db|
+        create_token_client(db, 'test_client_1', ['puavo.read.users'], endpoints: ['/v4/users'])
+        create_client_authentication(db, 'test_client_1', 'client_secret_basic', params: { password: 'foobar' }, not_before: t1)
+      end
+
+      # Try to get a token. It must fail, because the only authentication record is not yet active.
+      acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
+
+      # Travel to one second before the activation time. The call must fail.
+      Timecop.travel(t1 - 1) do
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+        response = JSON.parse last_response.body
+        assert_equal response['error'], 'unauthorized_client'
+      end
+
+      # Now test the exact activation moment. This must succeed.
+      Timecop.travel(t1) do
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 200
+        response = JSON.parse last_response.body
+        assert response['access_token']
+        assert_equal response['token_type'], 'Bearer'
+      end
+
+      # There must be no problems afterwards either
+      Timecop.travel(t1 + 1) do
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 200
+        response = JSON.parse last_response.body
+        assert response['access_token']
+        assert_equal response['token_type'], 'Bearer'
+      end
+    end
+
+    it 'basic expiration test' do
+      t0 = integer_time + 60
+
+      oauth2_client_db do |db|
+        create_token_client(db, 'test_client_1', ['puavo.read.users'], endpoints: ['/v4/users'])
+        create_client_authentication(db, 'test_client_1', 'client_secret_basic', params: { password: 'foobar' }, expires: t0)
+      end
+
+      # Try to get a token. This must succeed because the key has not expired yet.
+      acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+
+      # The key must still work one second before expiration
+      Timecop.travel(t0 - 1) do
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 200
+        response = JSON.parse last_response.body
+        assert response['access_token']
+        assert_equal response['token_type'], 'Bearer'
+      end
+
+      # But this must fail
+      Timecop.travel(t0) do
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+        response = JSON.parse last_response.body
+        assert_equal response['error'], 'unauthorized_client'
+      end
+
+      # As must everything after
+      Timecop.travel(t0 + 1) do
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+        response = JSON.parse last_response.body
+        assert_equal response['error'], 'unauthorized_client'
+      end
+    end
+
+    it 'password authentication rotation' do
+      exp = integer_time + 60
+
+      # Setup one client with two keys with different passwords, to simulate a password change
+      oauth2_client_db do |db|
+        create_token_client(db, 'test_client_1', ['puavo.read.users'], endpoints: ['/v4/users'])
+        create_client_authentication(db, 'test_client_1', 'client_secret_basic', params: { password: 'foobar' }, expires: exp)
+        create_client_authentication(db, 'test_client_1', 'client_secret_basic', params: { password: 'barbaz' }, not_before: exp)
+      end
+
+      # Now try to get a token with the first key. It must succeed.
+      acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+
+      # The second key must not work yet
+      acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+      assert_equal last_response.status, 400
+
+      # Try one second before expiration
+      Timecop.travel(exp - 1) do
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 200  # flap
+      end
+
+      Timecop.travel(exp - 1) do
+        acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+      end
+
+      # The exact rollover moment
+      Timecop.travel(exp) do
+        # The first key will not work anymore
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+      end
+
+      Timecop.travel(exp) do
+        # But the second key must
+        acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+        assert_equal last_response.status, 200
+        response = JSON.parse last_response.body
+        assert response['access_token']
+        assert_equal response['token_type'], 'Bearer'
+      end
+
+      # Later
+      Timecop.travel(exp + 10) do
+        # The first key will not work
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+      end
+
+      Timecop.travel(exp + 10) do
+        # The second must work
+        acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+        assert_equal last_response.status, 200
+      end
+    end
+
+    it 'password authentication rotation with a "hole"' do
+      exp = integer_time + 60
+
+      # Leave one second hole between the keys
+      oauth2_client_db do |db|
+        create_token_client(db, 'test_client_1', ['puavo.read.users'], endpoints: ['/v4/users'])
+        create_client_authentication(db, 'test_client_1', 'client_secret_basic', params: { password: 'foobar' }, expires: exp)
+        create_client_authentication(db, 'test_client_1', 'client_secret_basic', params: { password: 'barbaz' }, not_before: exp + 1)
+      end
+
+      # The first key must work
+      acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+
+      # The second key must not
+      acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+      assert_equal last_response.status, 400
+
+      # The exact rollover moment
+      Timecop.travel(exp) do
+        # The first key will not work anymore
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+      end
+
+      Timecop.travel(exp) do
+        # But the second key will not work either
+        acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+        assert_equal last_response.status, 400  # flap
+      end
+
+      # Later
+      Timecop.travel(exp + 1) do
+        # The first key will not work
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+      end
+
+      Timecop.travel(exp + 1) do
+        # The second must work
+        acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+        assert_equal last_response.status, 200
+        response = JSON.parse last_response.body
+        assert response['access_token']
+        assert_equal response['token_type'], 'Bearer'
+      end
+    end
+
+    it 'overlapping keys rotation' do
+      exp = integer_time + 60
+
+      # The keys overlap briefly. This is incorrect and should not be actually done in production.
+      oauth2_client_db do |db|
+        create_token_client(db, 'test_client_1', ['puavo.read.users'], endpoints: ['/v4/users'])
+        create_client_authentication(db, 'test_client_1', 'client_secret_basic', params: { password: 'foobar' }, expires: exp)
+        create_client_authentication(db, 'test_client_1', 'client_secret_basic', params: { password: 'barbaz' }, not_before: exp - 2)
+      end
+
+      # The first key must work
+      acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+
+      # The second key must not
+      acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+      assert_equal last_response.status, 400
+
+      # Both keys are active, neither will work
+      Timecop.travel(exp - 2) do
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+      end
+
+      Timecop.travel(exp - 2) do
+        acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+      end
+
+      # Both keys are active, neither will work
+      Timecop.travel(exp - 1) do
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+      end
+
+      Timecop.travel(exp - 1) do
+        acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+        assert_equal last_response.status, 400  # flap
+      end
+
+      # The first one expired
+      Timecop.travel(exp) do
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+      end
+
+      Timecop.travel(exp) do
+        acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+        assert_equal last_response.status, 200
+      end
+
+      # The second one must still work
+      Timecop.travel(exp  + 1) do
+        acquire_token('test_client_1', 'foobar', ['puavo.read.users'])
+        assert_equal last_response.status, 400
+      end
+
+      Timecop.travel(exp  + 1) do
+        acquire_token('test_client_1', 'barbaz', ['puavo.read.users'])
+        assert_equal last_response.status, 200
+      end
+    end
+
+    it 'PEM rotation' do
+      exp = integer_time + 60
+
+      oauth2_client_db do |db|
+        create_token_client(db, 'test_client_1', ['puavo.read.users'], endpoints: ['/v4/users'])
+
+        create_client_authentication(db, 'test_client_1', 'private_key_jwt', params: {
+          public_key: File.read('/etc/puavo-rest.d/oauth2_token_signing_public_key_example.pem'),
+        }, expires: exp)
+
+        create_client_authentication(db, 'test_client_1', 'private_key_jwt', params: {
+          public_key: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'other_public_key.pem')),
+        }, not_before: exp)
+      end
+
+      # Now try to get a token with the first key. It must succeed.
+      acquire_token_private_key_jwt(
+        'test_client_1',
+        ['puavo.read.users'],
+        read_pem('/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem')
+      )
+
+      assert_equal last_response.status, 200
+      response = JSON.parse last_response.body
+      assert response['access_token']
+      assert_equal response['token_type'], 'Bearer'
+
+      # The second key must fail
+      acquire_token_private_key_jwt(
+        'test_client_1',
+        ['puavo.read.users'],
+        read_pem(File.join(File.dirname(__FILE__), 'fixtures', 'other_private_key.pem'))
+      )
+
+      assert_equal last_response.status, 400
+
+      # Test the rotation rollover
+      Timecop.travel(exp) do
+        # The first key must not work anymore
+        acquire_token_private_key_jwt(
+          'test_client_1',
+          ['puavo.read.users'],
+          read_pem('/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem')
+        )
+
+        assert_equal last_response.status, 400
+      end
+
+      Timecop.travel(exp) do
+        # The second key must work
+        acquire_token_private_key_jwt(
+          'test_client_1',
+          ['puavo.read.users'],
+          read_pem(File.join(File.dirname(__FILE__), 'fixtures', 'other_private_key.pem'))
+        )
+
+        assert_equal last_response.status, 200
+      end
+
+      # Test the future
+      Timecop.travel(exp + 1) do
+        acquire_token_private_key_jwt(
+          'test_client_1',
+          ['puavo.read.users'],
+          read_pem('/etc/puavo-rest.d/oauth2_token_signing_private_key_example.pem')
+        )
+
+        assert_equal last_response.status, 400
+      end
+
+      Timecop.travel(exp + 1) do
+        acquire_token_private_key_jwt(
+          'test_client_1',
+          ['puavo.read.users'],
+          read_pem(File.join(File.dirname(__FILE__), 'fixtures', 'other_private_key.pem'))
+        )
+
+        assert_equal last_response.status, 200
+      end
+    end
+  end
+
+  describe 'mixed authentication tests' do
+    before do
+      @client_id = 'foo'
+      @client_secret = 'bar'
+      @client_key = 'baz'
+      @scopes = 'foo bar baz'
+    end
+
+    it 'both client_secret_basic and client_secret_post' do
+      url = Addressable::URI.parse('/oidc/token')
+
+      url.query_values = {
+        'grant_type' => 'client_credentials',
+        'scope' => @scopes,
+        'client_id' => @client_id,
+        'client_secret' => @client_secret,
+      }
+
+      basic_authorize @client_id, @client_secret
+
+      post url.to_s
+
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
+    end
+
+    it 'both client_secret_basic and private_key_jwt' do
+      url = Addressable::URI.parse('/oidc/token')
+
+      url.query_values = {
+        'grant_type' => 'client_credentials',
+        'scope' => @scopes,
+        'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+        'client_assertion' => @client_key,
+      }
+
+      basic_authorize @client_id, @client_secret
+
+      post url.to_s
+
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
+    end
+
+    it 'both client_secret_post and private_key_jwt' do
+      url = Addressable::URI.parse('/oidc/token')
+
+      url.query_values = {
+        'grant_type' => 'client_credentials',
+        'scope' => @scopes,
+        'client_id' => @client_id,
+        'client_secret' => @client_secret,
+        'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+        'client_assertion' => @client_key,
+      }
+
+      post url.to_s
+
+      assert_equal last_response.status, 400
+      response = JSON.parse last_response.body
+      assert_equal response['error'], 'unauthorized_client'
     end
   end
 end

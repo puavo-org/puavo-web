@@ -76,7 +76,7 @@ def delete_token_client(db, client_id, auth: false)
   db.exec_params('DELETE FROM client_authentication WHERE client_id = $1;', [client_id]) if auth
 end
 
-def create_client_authentication(db, client_id, auth_type, params: {}, enabled: true)
+def create_client_authentication(db, client_id, auth_type, params: {}, enabled: true, not_before: nil, expires: nil)
   now = Time.now.utc
 
   case auth_type
@@ -90,18 +90,46 @@ def create_client_authentication(db, client_id, auth_type, params: {}, enabled: 
       end
 
       db.exec_params(
-        'INSERT INTO client_authentication(id, client_id, enabled, auth_type, password_hash, created, modified) VALUES ' \
-        '($1, $2, $3, $4, $5, $6, $7)',
-        [SecureRandom.uuid, client_id, enabled, auth_type.to_s, password_hash, now, now]
+        'INSERT INTO client_authentication(id, client_id, enabled, auth_type, password_hash, not_before, expires, created, modified) VALUES ' \
+        '($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+        [SecureRandom.uuid, client_id, enabled, auth_type.to_s, password_hash, not_before, expires, now, now]
       )
+
+    when 'private_key_jwt'
+      if params[:public_key]
+        db.exec_params(
+          'INSERT INTO client_authentication(id, client_id, enabled, auth_type, public_key, pk_kid, pk_alg, not_before, expires, created, modified) VALUES ' \
+          '($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
+          [SecureRandom.uuid, client_id, enabled, 'private_key_jwt', params[:public_key], params.fetch(:pk_kid, nil),
+          params.fetch(:pk_alg, nil), not_before, expires, now, now]
+        )
+
+      elsif params[:jwks]
+        db.exec_params(
+          'INSERT INTO client_authentication(id, client_id, enabled, auth_type, jwks, not_before, expires, created, modified) VALUES ' \
+          '($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+          [SecureRandom.uuid, client_id, enabled, 'private_key_jwt', params[:jwks].to_json, not_before, expires, now, now]
+        )
+
+      else
+        raise 'create_client_authentication(): missing both public_key and jwks for private_key_jwt auth'
+      end
 
     else
       raise "create_client_authentication(): unknown auth_type #{auth_type.inspect}"
   end
 end
 
+def read_pem(filename)
+  OpenSSL::PKey.read(File.read(filename))
+end
+
 def load_default_public_key
-  OpenSSL::PKey.read(File.read(CONFIG['oauth2']['key_files']['public_pem']))
+  read_pem(CONFIG['oauth2']['key_files']['public_pem'])
+end
+
+def load_default_private_key
+  read_pem(CONFIG['oauth2']['key_files']['private_pem'])
 end
 
 # Decodes a JWT token using a public key in PEM format. The key is the default built-in public key, by default.
