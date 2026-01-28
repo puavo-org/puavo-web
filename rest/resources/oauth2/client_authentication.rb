@@ -78,6 +78,7 @@ def detect_authentication_context(request_id)
     )
   else
     rlog.error("[#{request_id}] The client did not provide any way to authenticate themselves")
+    rlog.error("[#{request_id}] (basic: #{have_http_authorization}, client_id: #{have_client_id}, client_secret: #{have_client_secret}, assertion: #{have_client_assertion})")
     json_error('unauthorized_client', request_id: request_id)
   end
 
