@@ -89,6 +89,8 @@ def detect_authentication_context(request_id)
     json_error('unauthorized_client', request_id: request_id)
   end
 
+  rlog.info("[#{request_id}] Detected #{ctx.auth_type.inspect} authentication")
+
   ctx
 rescue StandardError => e
   puts e
