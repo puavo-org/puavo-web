@@ -312,6 +312,7 @@ HEADER CONTROLS
 ----------------------------------------------------------------------------------------------------
 */
 
+/* A "generic" scrollable DIV with checkbox items */
 div.checkboxScrollListOuter {
   border: 1px solid var(--st-common-border);
 }
@@ -336,19 +337,20 @@ div.checkboxScrollList {
   font-size: 100%;
 }
 
-div.checkboxScrollList .item {
+div.checkboxScrollList label {
   display: flex;
+  flex-direction: row;
   align-items: center;
   padding: 5px 10px;
   cursor: pointer;
 }
 
-div.checkboxScrollList .item { color: var(--st-tab-container-fg); }
-div.checkboxScrollList .item:hover { background: var(--st-scroll-list-hover-bg); }
+div.checkboxScrollList label { color: var(--st-tab-container-fg); }
+div.checkboxScrollList label:hover { background: var(--st-scroll-list-hover-bg); }
 
-div.checkboxScrollList .item input {
+div.checkboxScrollList input {
   pointer-events: none;       /* The checkbox is there just for the looks */
-  margin-right: 10px;
+  margin-right: 0.75em;
 }
 
 /* Expandable details elements */
