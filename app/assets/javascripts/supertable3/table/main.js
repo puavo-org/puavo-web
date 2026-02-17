@@ -433,7 +433,7 @@ buildUI()
     const colButton = frag.querySelector("thead div#top button#columns");
 
     if (this.settings.enableColumnEditing)
-        colButton.addEventListener("click", e => ColumnEditor.openEditor(e.target, this));
+        colButton.addEventListener("click", e => ColumnEditor.open(e.target, this));
     else colButton.remove();
 
     // Setup filtering

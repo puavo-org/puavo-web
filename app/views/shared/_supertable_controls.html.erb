@@ -166,28 +166,24 @@
 
 <!-- Visible columns edit popup -->
 <template id="template_columnsPopup">
-    <div id="popupColumns" class="padding-5px">
-        <div class="flex-rows gap-10px">
-            <p class="margin-0 padding-0"><%= t("supertable.columns.explanation") %></p>
+    <div id="popupColumns" class="flex-rows gap-10px padding-5px">
+        <p class="margin-0 padding-0"><%= t("supertable.columns.explanation") %></p>
 
-            <div class="flex-columns gap-10px">
-                <div id="columnContainer" class="checkboxScrollListOuter">
-                    <div>
-                        <input type="search" placeholder="<%= t("supertable.columns.search_placeholder") %>" spellcheck="false"/>
-                    </div>
-                    <div id="columnList" class="checkboxScrollList"></div>
-                </div>
+        <div class="flex-columns gap-10px">
+            <div id="columnContainer" class="checkboxScrollListOuter">
+                <input type="search" placeholder="<%= t("supertable.columns.search_placeholder") %>" spellcheck="false">
+                <div id="columnList" class="checkboxScrollList"></div>
+            </div>
 
-                <div class="flex flex-rows gap-5px">
-                    <button id="save"><%= t("supertable.columns.save") %></button>
-                    <div class="separator"></div>
-                    <button id="selectAll"><%= t("supertable.columns.select_all") %></button>
-                    <button id="deselectAll"><%= t("supertable.columns.deselect_all") %></button>
-                    <div class="separator"></div>
-                    <button id="defaults"><%= t("supertable.columns.default_columns") %></button>
-                    <button id="resetOrder"><%= t("supertable.columns.default_order") %></button>
-                    <div id="columnStats"></div>
-                </div>
+            <div class="flex flex-rows gap-5px">
+                <button id="save"><%= t("supertable.columns.save") %></button>
+                <div class="separator"></div>
+                <button id="selectAll"><%= t("supertable.columns.select_all") %></button>
+                <button id="deselectAll"><%= t("supertable.columns.deselect_all") %></button>
+                <div class="separator"></div>
+                <button id="defaults"><%= t("supertable.columns.default_columns") %></button>
+                <button id="resetOrder"><%= t("supertable.columns.default_order") %></button>
+                <div id="columnStats"></div>
             </div>
         </div>
     </div>
