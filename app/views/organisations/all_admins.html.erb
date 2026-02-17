@@ -21,7 +21,7 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
             <div id="permissionsList" class="checkboxScrollList" style="width: 25em; height: 20em;">
 <% User::ADMIN_PERMISSIONS.each do |permission| %>
                 <% name = "users.show.admin_permissions.#{permission}" %>
-                <div class="item" data-permission="<%= permission.to_s %>" data-filter="<%= t(name).downcase %>"><input type="checkbox"><%= t(name) %></div>
+                <label data-permission="<%= permission.to_s %>" data-filter="<%= t(name).downcase %>"><input type="checkbox"><%= t(name) %></label>
 <% end %>
             </div>
         </div>
@@ -176,34 +176,14 @@ class MassPermissionBase extends ST.MassOperation {
             this.container.innerHTML = `<p class="margin-0">${preamble}</p>`;
 
         this.container.appendChild(list);
-
-        for (const i of this.container.querySelectorAll("div.item"))
-            i.addEventListener("click", e => this.onTogglePermission(e.target));
-
         this.container.querySelector("button#selectAll").addEventListener("click", e => this.onSelectAll(true));
         this.container.querySelector("button#deselectAll").addEventListener("click", e => this.onSelectAll(false));
     }
 
-    onTogglePermission(target)
-    {
-        if (target.classList.contains("disabled"))
-            return;
-
-        if (target.classList.contains("selected")) {
-            target.classList.remove("selected");
-            target.childNodes[0].checked = false;
-        } else {
-            target.classList.add("selected");
-            target.childNodes[0].checked = true;
-        }
-    }
-
     onSelectAll(state)
     {
-        for (const i of this.container.querySelectorAll("div.item")) {
-            i.classList.add("selected");
-            i.childNodes[0].checked = state;
-        }
+        for (const i of this.container.querySelectorAll("input"))
+            i.checked = state;
     }
 
     canProceed()
@@ -215,8 +195,8 @@ class MassPermissionBase extends ST.MassOperation {
     {
         this.permissions = [];
 
-        for (const i of this.container.querySelectorAll("div#permissionsList div.item.selected"))
-            this.permissions.push(i.dataset.permission);
+        for (const i of this.container.querySelectorAll("div#permissionsList input:checked"))
+            this.permissions.push(i.parentNode.dataset.permission);
 
         console.log(this.permissions);
     }
