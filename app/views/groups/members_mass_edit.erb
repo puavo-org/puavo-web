@@ -184,7 +184,7 @@ class GroupOperationBase extends ST.MassOperation {
         this.groupIDs = [];
 
         for (const i of this.getGroupItems(true))
-            this.groupIDs.push(parseInt(i.dataset.id, 10));
+            this.groupIDs.push(parseInt(i.parentNode.id, 10));
 
         console.log(this.groupIDs);
     }
@@ -226,21 +226,15 @@ class GroupOperationBase extends ST.MassOperation {
         for (const g of GROUPS_LIST) {
             const type = g.type ? GROUP_TYPES[g.type] : "(?)";
 
-            html += `<div class="item" data-id="${g.id}" data-filter="${g.name.toLowerCase()}">`;
-            html += `<input type="checkbox"></input>${g.name} (${g.abbr}), ${type}</div>`;
+            html += `<label id="${g.id}" data-filter="${g.name.toLowerCase()}"><input type="checkbox">${g.name} (${g.abbr}), ${type}</label>`;
         }
 
         this.container.querySelector("div#groupList").innerHTML = html;
     }
 
-    getGroupItems(selected)
+    getGroupItems(selected=false)
     {
-        let path = "div#groupList > div.item";
-
-        if (selected)
-            path += ".selected";
-
-        return this.container.querySelectorAll(path);
+        return this.container.querySelectorAll("div#groupList input" + (selected ? ":checked" : ""));
     }
 
     onReloadGroups()
@@ -307,27 +301,12 @@ class GroupOperationBase extends ST.MassOperation {
         const search = this.container.querySelector(`input[type="search"]`).value.trim().toLowerCase();
 
         for (const i of this.getGroupItems()) {
-            const title = i.dataset.filter;
+            const title = i.parentNode.dataset.filter;
 
             // Hide, don't remove. Preserves selections.
             if (search && title.indexOf(search) == -1)
-                i.classList.add("hidden");
-            else i.classList.remove("hidden");
-        }
-    }
-
-    // Select/deselect group
-    onToggleGroup(target)
-    {
-        if (target.classList.contains("disabled"))
-            return;
-
-        if (target.classList.contains("selected")) {
-            target.classList.remove("selected");
-            target.childNodes[0].checked = false;
-        } else {
-            target.classList.add("selected");
-            target.childNodes[0].checked = true;
+                i.parentNode.classList.add("hidden");
+            else i.parentNode.classList.remove("hidden");
         }
     }
 
@@ -340,9 +319,6 @@ class GroupOperationBase extends ST.MassOperation {
             this.container.querySelector(`button#reloadGroups`)
                 .addEventListener("click", () => this.onReloadGroups());
         }
-
-        for (const i of this.getGroupItems())
-            i.addEventListener("click", e => this.onToggleGroup(e.target));
     }
 }
 
