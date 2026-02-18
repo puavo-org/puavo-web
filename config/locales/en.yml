@@ -108,7 +108,6 @@ en:
     all_groups: "All groups in the organisation"
     servers: "Servers"
     printers: "Printers"
-    wlan: "Wireless Networks"
     change_school: "Change school"
     printer_permissions: "Printing permissions"
     all_users_marked_for_deletion: "Users in the organisation who are marked for deletion"
@@ -2162,7 +2161,10 @@ en:
     form_linux_device_information:
       select: Select
     form_wlan:
-      title: Wireless networks
+      title_organisation: "Organisaation Wireless Networks"
+      title_school: "School Wireless Networks"
+      organisation_override_title: "Wireless networks inherited from the organisation level"
+      organisation_override_warning: "The following networks are defined on the organisation level. The school's networks are appended after them, but an identically named school network will overwrite the organisation level network, so be careful with the names."
       warning: "<strong>WARNING</strong>: Changing the password or other settings of a wireless network will disconnect devices from that network until they have received updated network information through some other network connection. It is therefore recommended that you create a new temporary network (wireless or wired) and let the devices connect to it, and then edit the network settings. This way devices will receive updated network settings through the other connection, and you don't have to update them by hand one-by-one."
       wireless_access_point_setup: Default Wireless Access Point setup
       channel_random: Random

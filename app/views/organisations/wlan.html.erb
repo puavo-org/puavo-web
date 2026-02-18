@@ -1,15 +1,13 @@
-<% page_title t('titles.organisation'), t('titles.wlan') %>
+<% page_title t('titles.organisation'), t('shared.form_wlan.title_organisation') %>
 
 <div class="formContainer">
 
-<h1><%= t('shared.form_wlan.title') %></h1>
+<h1><%= t('shared.form_wlan.title_organisation') %></h1>
 
-<%= form_for(@organisation,
-             html: { multipart: true },
-             url: wlan_update_organisation_path) do |f| %>
+<p class="genericWarning"><%= t('shared.form_wlan.warning').html_safe %></p>
 
-<%= render partial: 'shared/form_wlan', locals: { f: f } %>
-
+<%= form_for(@organisation, html: { multipart: true }, url: wlan_update_organisation_path) do |f| %>
+    <%= render partial: 'shared/form_wlan', locals: { f: f } %>
 <% end %>
 
 <% content_for :javascript do %>

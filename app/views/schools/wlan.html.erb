@@ -1,11 +1,39 @@
-<% page_title t('titles.schools'), @school.displayName, t('titles.wlan') %>
+<% page_title t('titles.schools'), @school.displayName, t('shared.form_wlan.title_school') %>
 
 <div class="formContainer">
 
-<h1><%= t('shared.form_wlan.title') %></h1>
+<h1><%= t('shared.form_wlan.title_school') %></h1>
+
+<p class="genericWarning"><%= t('shared.form_wlan.warning').html_safe %></p>
+
+<% unless @organisation_networks.empty? %>
+<h2><%= t('shared.form_wlan.organisation_override_title') %></h2>
+<p><%= t('shared.form_wlan.organisation_override_warning') %></p>
+<table class="list">
+    <thead>
+        <tr>
+            <th class="minimize-width nowrap"><%= t('shared.form_wlan.wlan_name') %></th>
+            <th><%= t('shared.form_wlan.wlan_description') %></th>
+            <th><%= t('shared.form_wlan.wlan_type') %></th>
+            <th class="minimize-width nowrap"><%= t('shared.form_wlan.wlan_hidden') %></th>
+            <th class="minimize-width nowrap"><%= t('shared.form_wlan.wlan_ap') %></th>
+        </tr>
+    </thead>
+    <tbody>
+    <% @organisation_networks.each do |n| %>
+    <tr>
+        <td><%= n['ssid'] %></td>
+        <td><%= n['description'] %></td>
+        <td><%= t("shared.form_wlan.select_value_#{n['type'].gsub('-', '')}") %></td>
+        <td><%= n['hidden'] ? '✔' : '' %></td>
+        <td><%= n['wlan_ap'] ? '✔' : '' %></td>
+    </tr>
+    <% end %>
+</table>
+<% end %>
 
 <%= form_for(@school, html: { multipart: true }, url: wlan_update_school_path) do |f| %>
-<%= render partial: 'shared/form_wlan', locals: { f: f } %>
+    <%= render partial: 'shared/form_wlan', locals: { f: f } %>
 <% end %>
 
 <% content_for :javascript do %>

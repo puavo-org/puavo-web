@@ -108,7 +108,6 @@ de:
     all_groups: "Alle Gruppen in der Organisation"
     servers: "Server"
     printers: "Drucker"
-    wlan: "Drahtlosnetzwerke"
     change_school: "Schule wechseln"
     printer_permissions: "Druckberechtigungen"
     all_users_marked_for_deletion: "Benutzer in der Organisation, die zum Löschen markiert sind"
@@ -2162,7 +2161,10 @@ de:
     form_linux_device_information:
       select: Auswählen
     form_wlan:
-      title: Drahtlosnetzwerke
+      title_organisation: "Drahtlose Netzwerke der Organisation"
+      title_school: "Drahtlose Netzwerke der Schule"
+      organisation_override_title: "Von der Organisationsebene geerbte Netzwerke"
+      organisation_override_warning: "Die folgenden Netzwerke sind auf Organisationsebene definiert. Die Netzwerke der Schule werden an diese angehängt. Beachten Sie jedoch, dass ein Schulnetzwerk mit demselben Namen das Netzwerk der Organisationsebene überschreibt – wählen Sie die Namen daher mit Bedacht."
       warning: "<strong>WARNUNG</strong>: Das Ändern des Passworts oder anderer Einstellungen eines drahtlosen Netzwerks trennt Geräte von diesem Netzwerk, bis sie aktualisierte Netzwerkinformationen über eine andere Netzwerkverbindung erhalten haben. Es wird daher empfohlen, ein neues temporäres Netzwerk (drahtlos oder kabelgebunden) zu erstellen und die Geräte damit verbinden zu lassen, und dann die Netzwerkeinstellungen zu bearbeiten. Auf diese Weise erhalten die Geräte aktualisierte Netzwerkeinstellungen über die andere Verbindung, und Sie müssen sie nicht manuell einzeln aktualisieren."
       wireless_access_point_setup: Standard-WLAN-Zugangspunkt-Setup
       channel_random: Zufällig

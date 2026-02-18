@@ -345,6 +345,16 @@ class SchoolsController < ApplicationController
   def wlan
     @school = School.find(params[:id])
 
+    # Make a sorted list of organisation-level wireless networks. They're stored as LDAP arrays of JSON.
+    networks = LdapOrganisation.current.puavoWlanSSID
+    @organisation_networks = []
+
+    if networks
+      @organisation_networks = Array(networks)
+        .map { |n| JSON.parse(n) }
+        .sort { |a, b| a['ssid'].downcase <=> b['ssid'].downcase }
+    end
+
     unless can_edit_wlans?
       flash[:alert] = t('flash.you_must_be_an_owner')
       redirect_to school_path(current_user.primary_school)

@@ -108,7 +108,6 @@ fi:
     all_groups: "Organisaation kaikki ryhmät"
     servers: "Palvelimet"
     printers: "Tulostimet"
-    wlan: "Langattomat verkot"
     change_school: "Vaihda koulua"
     printer_permissions: "Tulostusoikeudet"
     all_users_marked_for_deletion: "Organisaation poistetuksi merkityt käyttäjät"
@@ -2162,7 +2161,10 @@ fi:
     form_linux_device_information:
       select: Valitse
     form_wlan:
-      title: Langattomat verkot
+      title_organisation: "Organisaation langattomat verkot"
+      title_school: "Koulun langattomat verkot"
+      organisation_override_title: "Organisaatiotasolta periytyvät verkot"
+      organisation_override_warning: "Seuraavat verkot on määritetty organisaatiotasolla. Koulun verkot lisätään niiden perään, mutta samanniminen koulun verkko ylikirjoittaa organisaatiotason verkon, joten ole varovainen nimien kanssa."
       warning: "<strong>VAROITUS</strong>: Langattoman verkon salasanan tai sen muiden asetusten vaihto katkaisee laitteiden yhteyden kyseiseen verkkoon siihen asti, kunnes ne ovat saaneet päivitetyt verkkotiedot jonkin toisen verkkoyhteyden kautta. Siksi on suositeltavaa, että luot ensin uuden väliaikaisen verkon (langaton tai langallinen) ja annat laitteiden yhdistyä siihen, ja muutat verkon asetuksia vasta sitten. Näin laitteet saavat päivitetyt verkkotiedot toisen yhteyden kautta ja sinun ei tarvitse päivittää laitteita käsin yksi kerrallaan."
       wireless_access_point_setup: Tukiasemien oletusasetukset
       channel_random: Satunnainen
