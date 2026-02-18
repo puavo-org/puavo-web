@@ -21,7 +21,6 @@ import {
     INDEX_DISPLAYABLE,
     INDEX_FILTERABLE,
     INDEX_SORTABLE,
-    ROWS_PER_PAGE_PRESETS,
     DEFAULT_ROWS_PER_PAGE,
 } from "./constants.js";
 
@@ -40,6 +39,8 @@ import { FilterEditor } from "../filters/editor/fe_main.js";
 import * as Mass from "./mass_operations.js";
 
 import * as Settings from "./settings.js";
+
+import * as Pagination from "./pagination.js";
 
 // Mass operation batch size (how many items are processed on one request)
 const BATCH_SIZE = 5;
@@ -530,31 +531,9 @@ buildUI()
     }
 
     // Setup pagination
-    if (this.settings.enablePagination) {
-        // Pagination controls
-        this.ui.paging = frag.querySelector("section#paging");
-
-        const selector = frag.querySelector("select#rowsPerPage");
-
-        for (const preset of ROWS_PER_PAGE_PRESETS) {
-            const o = create("option", { label: preset[1] });
-
-            o.value = preset[0];
-            o.selected = (preset[0] == this.paging.rowsPerPage);
-
-            selector.appendChild(o);
-        }
-
-        this.ui.paging.querySelector("select#rowsPerPage").addEventListener("change", () => this.onRowsPerPageChanged());
-        this.ui.paging.querySelector("button#first").addEventListener("click", () => this.onPageDelta(-999999));
-        this.ui.paging.querySelector("button#prev").addEventListener("click", () => this.onPageDelta(-1));
-        this.ui.paging.querySelector("button#next").addEventListener("click", () => this.onPageDelta(+1));
-        this.ui.paging.querySelector("button#last").addEventListener("click", () => this.onPageDelta(+999999));
-        this.ui.paging.querySelector("button#page").addEventListener("click", (e) => this.onJumpToPage(e.target));
-    } else {
-        // Remove pagination controls
-        frag.querySelector("section#paging")?.remove();
-    }
+    if (this.settings.enablePagination)
+        Pagination.initialize(this, frag);
+    else frag.querySelector("section#paging")?.remove();
 
     // If the tools section is completely empty, remove it
     if (!this.settings.enableExport && !this.settings.enableColumnEditing && !this.settings.enableSelection)
@@ -641,7 +620,7 @@ enableUI(isEnabled)
         this.container.querySelector(`button#columns`).disabled = !isEnabled;
 
     if (this.settings.enablePagination)
-        this.enablePaginationControls(isEnabled);
+        Pagination.enableControls(this, isEnabled);
 
     if (this.settings.enableFiltering) {
         this.ui.filters.show.disabled = !isEnabled;
@@ -914,14 +893,14 @@ updateTable()
     console.log(`Data filtering: ${t1 - t0} ms`);
     console.log(`Data sorting: ${t3 - t2} ms`);
 
-    // Make sure the table knows what page to show
-    this.calculatePagination();
+    if (this.settings.enablePagination) {
+        Pagination.calculatePagination(this.data, this.paging);
+        Pagination.updatePageCounter(this);
+        Pagination.enableControls(this);
+    }
 
     // Rebuild the table
     this.buildTable();
-
-    this.updatePageCounter();
-    this.enablePaginationControls();
     this.endTableUpdate();
 
     console.log("updateTable(): table update complete");
@@ -1198,176 +1177,6 @@ onRowOpen(e)
         return;
 
     window.open(url, "_blank");
-}
-
-// --------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------
-// PAGINATION
-
-// Calculates which page will be displayed on the next table update
-calculatePagination()
-{
-    if (this.data.current === null || this.data.current === undefined || this.data.current.length == 0) {
-        // No data at all
-        this.paging.numPages = 0;
-        this.paging.currentPage = 0;
-
-        return;
-    }
-
-    if (this.paging.rowsPerPage == -1 || this.data.current.length <= this.paging.rowsPerPage) {
-        // Only one page
-        this.paging.numPages = 1;
-        this.paging.currentPage = 0;
-
-        return;
-    }
-
-    this.paging.numPages = (this.paging.rowsPerPage == -1) ? 1 :
-        Math.ceil(this.data.current.length / this.paging.rowsPerPage);
-
-    this.paging.currentPage =
-        Math.min(Math.max(this.paging.currentPage, 0), this.paging.numPages - 1);
-}
-
-updatePageCounter()
-{
-    if (!this.ui.paging)
-        return;
-
-    this.ui.paging.querySelector("button#page").innerText = _tr("status.pagination", {
-        current: (this.paging.numPages == 0) ? 1 : this.paging.currentPage + 1,
-        total: (this.paging.numPages == 0) ? 1 : this.paging.numPages
-    });
-}
-
-onRowsPerPageChanged()
-{
-    const selector = this.ui.paging.querySelector("select#rowsPerPage");
-    const numRows = parseInt(selector.value, 10);
-
-    console.log(`Rows per page changed to ${numRows}`);
-
-    this.paging.rowsPerPage = numRows;
-    Settings.save(this);
-
-    const old = this.paging.numPages;
-
-    this.calculatePagination();
-    this.updatePageCounter();
-    this.enablePaginationControls(true);
-
-    if (old != this.paging.numPages && this.data.current && this.data.current.length > 0) {
-        this.clearPreviousRow();
-        this.buildTable();
-    }
-}
-
-onPageDelta(delta)
-{
-    const old = this.paging.currentPage;
-
-    this.paging.currentPage += delta;
-    this.calculatePagination();
-
-    if (this.paging.currentPage == old)
-        return;
-
-    this.updatePageCounter();
-    this.enablePaginationControls(true);
-
-    if (this.data.current && this.data.current.length > 0) {
-        this.clearPreviousRow();
-        this.buildTable();
-    }
-}
-
-onJumpToPage(e)
-{
-    const template = getTemplate("jumpToPagePopup");
-
-    // Too long strings can break the layout
-    const MAX_LENGTH = 30;
-    const ellipsize = (str) => (str.length > MAX_LENGTH) ? str.substring(0, MAX_LENGTH) + "…" : str;
-
-    const col = this.sorting.column;
-
-    // Assume string columns can contain HTML, but numeric columns won't. The values are
-    // HTML-escaped when displayed, but that means HTML tags can slip through and it looks
-    // really ugly.
-    const index = (this.columns.definitions[col].type == ColumnType.STRING) ?
-        INDEX_FILTERABLE : INDEX_DISPLAYABLE;
-
-    let html = "";
-
-    if (this.paging.rowsPerPage == -1) {
-        // Everything on one giant page
-        let first = this.data.transformed[this.data.current[0]],
-            last = this.data.transformed[this.data.current[this.data.current.length - 1]];
-
-        first = ellipsize(first[col][INDEX_EXISTS] ? first[col][index] : "-");
-        last = ellipsize(last[col][INDEX_EXISTS] ? last[col][index] : "-");
-
-        html += `<option value="1" selected}>1: ${escapeHTML(first)} → ${escapeHTML(last)}</option>`;
-    } else {
-        for (let page = 0; page < this.paging.numPages; page++) {
-            const start = page * this.paging.rowsPerPage;
-            const end = Math.min((page + 1) * this.paging.rowsPerPage, this.data.current.length);
-
-            let first = this.data.transformed[this.data.current[start]],
-                last = this.data.transformed[this.data.current[end - 1]];
-
-            first = ellipsize(first[col][INDEX_EXISTS] ? first[col][index] : "-");
-            last = ellipsize(last[col][INDEX_EXISTS] ? last[col][index] : "-");
-
-            html += `<option value="${page}" ${page == this.paging.currentPage ? "selected" : ""} >` +
-                    `${page + 1}: ${escapeHTML(first)} → ${escapeHTML(last)}</option>`;
-        }
-    }
-
-    template.querySelector("select").innerHTML = html;
-
-    template.querySelector("select").addEventListener("change", (e) => {
-        // Change the row count. The popup stays open.
-        const pageNum = parseInt(e.target.value, 10);
-
-        if (pageNum != this.paging.currentPage) {
-            this.paging.currentPage = pageNum;
-
-            this.updatePageCounter();
-            this.enablePaginationControls(true);
-
-            if (this.data.current && this.data.current.length > 0) {
-                this.clearPreviousRow();
-                this.buildTable();
-            }
-        }
-    });
-
-    if (modalPopup.create()) {
-        modalPopup.getContents().appendChild(template);
-        modalPopup.attach(e);
-        modalPopup.display("bottom");
-        modalPopup.getContents().querySelector("select").focus();
-    }
-}
-
-enablePaginationControls(state)
-{
-    if (!this.ui.paging)
-        return;
-
-    this.ui.paging.querySelector("select#rowsPerPage").disabled = !state;
-    this.ui.paging.querySelector("button#first").disabled = !(state && this.paging.currentPage > 0);
-    this.ui.paging.querySelector("button#prev").disabled = !(state && this.paging.currentPage > 0);
-    this.ui.paging.querySelector("button#next").disabled = !(state && this.paging.currentPage < this.paging.numPages - 1);
-    this.ui.paging.querySelector("button#last").disabled = !(state && this.paging.currentPage < this.paging.numPages - 1);
-    this.ui.paging.querySelector("button#page").disabled = !(state && this.paging.numPages > 1);
-}
-
-isTableRowVisible(rowNum)
-{
-    return rowNum >= this.paging.firstRowIndex && rowNum < this.paging.lastRowIndex;
 }
 
 // --------------------------------------------------------------------------------------------------
@@ -1743,7 +1552,7 @@ prepareNextBatch(batchSize)
     for (; this.massOperation.pos < end; this.massOperation.pos++) {
         const item = this.massOperation.rows[this.massOperation.pos];
 
-        const tRow = this.isTableRowVisible(item.index) ?
+        const tRow = Pagination.isTableRowVisible(this.paging, item.index) ?
             tableRows[item.index - this.paging.firstRowIndex] :
             null;
 
@@ -1833,7 +1642,7 @@ onWorkerMessage(e)
                 else this.data.failedItems.add(row.id);
 
                 // If this row is visible, update its status
-                if (this.isTableRowVisible(row.index)) {
+                if (Pagination.isTableRowVisible(this.paging, row.index)) {
                     const tRow = tableRows[row.index - this.paging.firstRowIndex];
 
                     tRow.classList.remove("processing");
@@ -1861,7 +1670,7 @@ onWorkerMessage(e)
             for (let i = this.massOperation.prevPos; i < this.massOperation.pos; i++) {
                 const item = this.massOperation.rows[i];
                 const index = item.index;
-                const tableRow = this.isTableRowVisible(index) ? tableRows[index - this.paging.firstRowIndex] : null;
+                const tableRow = Pagination.isTableRowVisible(this.paging, index) ? tableRows[index - this.paging.firstRowIndex] : null;
 
                 if (tableRow)
                     tableRow.classList.remove("processing");
