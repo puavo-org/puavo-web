@@ -1055,7 +1055,7 @@ buildTable(updateMask=["headers", "rows"])
                 if (this.data.failedItems.has(rowID))
                     rowClasses.push("fail");
 
-                html += `<tr data-index="${index}" class=${rowClasses.join(" ")}>`;
+                html += `<tr data-index="${index}" data-puavoid="${rowID}" class=${rowClasses.join(" ")}>`;
 
                 // The checkbox
                 if (this.settings.enableSelection) {
