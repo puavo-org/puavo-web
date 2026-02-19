@@ -36,7 +36,7 @@ import * as HeaderDrag from "./header_reordering.js";
 
 import { FilterEditor } from "../filters/editor/fe_main.js";
 
-import * as Mass from "./mass_operations.js";
+import { onOpenMassRowSelectionPopup } from "./row_selection.js";
 
 import * as Settings from "./settings.js";
 
@@ -249,7 +249,6 @@ constructor(container, settings)
     this.processing = false;
     this.stopRequested = false;
     this.doneAtLeastOneOperation = false;
-    this.massRowSelectPopup = null;
 
     // Header drag callback functions. "bind()" is needed to get around some weird
     // JS scoping garbage I don't understand.
@@ -491,7 +490,7 @@ buildUI()
             Settings.save(this);
         });
 
-        rowsButton.addEventListener("click", e => this.openRowsSelection(e.target));
+        rowsButton.addEventListener("click", e => onOpenMassRowSelectionPopup(this, e.target));
 
         const mass = frag.querySelector("thead div#massContainer");
 
@@ -944,7 +943,7 @@ buildTable(updateMask=["headers", "rows"])
         let html = "";
 
         if (this.settings.enableSelection)
-            html += `<th class="width-0"><span class="headerCheckbox"></span></th>`;
+            html += `<th class="width-0"></th>`;
 
         for (const [index, key] of this.columns.current.entries()) {
             const def = this.columns.definitions[key];
@@ -1060,8 +1059,7 @@ buildTable(updateMask=["headers", "rows"])
                 // The checkbox
                 if (this.settings.enableSelection) {
                     html += `<td class="minimize-width cursor-pointer checkbox">`;
-                    html += this.data.selectedItems.has(row.id[INDEX_DISPLAYABLE]) ? `<span class="checked">` : `<span>`;
-                    html += `</span></td>`;
+                    html += `<input type="checkbox" ${this.data.selectedItems.has(row.id[INDEX_DISPLAYABLE]) ? "checked": ""}></td>`;
                 }
 
                 // Data columns
@@ -1230,93 +1228,6 @@ toggleFiltersReverse(e)
 
 // --------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------
-// MASS ROW SELECTIONS
-
-openRowsSelection(e)
-{
-    let template = null;
-
-    if (this.massRowSelectPopup) {
-        // Restore previous copy
-        template = this.massRowSelectPopup;
-    } else {
-        template = getTemplate("rowSelection");
-
-        template.querySelector("#all").addEventListener("click", () => this.massSelectAllRows("select_all"));
-        template.querySelector("#none").addEventListener("click", () => this.massSelectAllRows("deselect_all"));
-        template.querySelector("#invert").addEventListener("click", () => this.massSelectAllRows("invert_selection"));
-        template.querySelector("#successfull").addEventListener("click", () => this.massSelectAllRows("deselect_successfull"));
-
-        if (this.user.massSelects.length > 0) {
-            // Enable mass row selections. List available types in the selector.
-            const selector = template.querySelector("select#sourceType");
-
-            for (const m of this.user.massSelects) {
-                const o = create("option");
-
-                o.value = m[0];
-                o.label = m[1];
-
-                selector.appendChild(o);
-            }
-
-            template.querySelector("div#source").addEventListener("paste", e => {
-                // Strip HTML from the pasted text (plain text only!). The thing is, the "text box" is a
-                // contentEdit-enabled DIV, so it accepts HTML. If you paste data from, say, LibreOffice
-                // Calc, the spreadsheet font gets embedded in it and it can actually screw up the page's
-                // layout completely (I saw that happening)! That's not acceptable, so this little function
-                // will hopefully remove all HTML from whatever's being pasted and leave only plain text.
-                // See https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent/clipboardData
-                e.preventDefault();
-                e.target.innerText = e.clipboardData.getData("text/plain");
-            });
-
-            template.querySelector("button#massRowSelect").addEventListener("click", () => this.massSelectSpecificRows(true));
-            template.querySelector("button#massRowDeselect").addEventListener("click", () => this.massSelectSpecificRows(false));
-        } else {
-            // No row mass selections available
-            template.querySelector("fieldset#massSelects").remove();
-        }
-    }
-
-    if (modalPopup.create((_) => {
-        // Detach the template from the popup, so we can retain its contents
-        let n = modalPopup.getContents().querySelector("div.popupRows");
-
-        this.massRowSelectPopup = n.parentElement.removeChild(n);
-    })) {
-        modalPopup.getContents().appendChild(template);
-        modalPopup.attach(e, 800);
-        modalPopup.display("bottom");
-    }
-}
-
-// Mass select or deselect table rows
-massSelectAllRows(operation)
-{
-    this.clearPreviousRow();
-    Mass.selectAllRows(operation, this.data, this.getTableRows());
-    this.doneAtLeastOneOperation = false;
-    this.updateStats();
-    this.updateMassButtons();
-}
-
-// Perform row mass selection
-massSelectSpecificRows(state)
-{
-    if (this.updating || this.processing)
-        return;
-
-    const container = modalPopup.getContents().querySelector("fieldset#massSelects");
-
-    this.clearPreviousRow();
-    Mass.selectSpecificRows(container, state, this.columns, this.data, this.paging, this.getTableRows());
-    this.updateStats();
-    this.updateMassButtons();
-}
-
-// --------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------
 // MASS OPERATIONS
 
 clearPreviousRow()
@@ -1371,10 +1282,10 @@ onRowCheckboxClick(e)
             row.classList.remove("success", "fail");
 
             if (state) {
-                cb.classList.add("checked");
+                cb.checked = true;
                 this.data.selectedItems.add(id);
             } else {
-                cb.classList.remove("checked");
+                cb.checked = false;
                 this.data.selectedItems.delete(id);
             }
         }
@@ -1382,11 +1293,11 @@ onRowCheckboxClick(e)
         // Check/uncheck just one row
         e.target.parentNode.classList.remove("success", "fail");
 
-        if (cb.classList.contains("checked")) {
-            cb.classList.remove("checked");
+        if (cb.checked) {
+            cb.checked = false;
             this.data.selectedItems.delete(id);
         } else {
-            cb.classList.add("checked");
+            cb.checked = true;
             this.data.selectedItems.add(id);
         }
     }

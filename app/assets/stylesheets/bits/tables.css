@@ -668,32 +668,15 @@ TABLE BODY ROWS
 .stTable tbody tr.fail:hover .sorted { background: var(--st-row-fail-sorted-hover-bg) !important; }
 
 /* Row checkboxes */
-.stTable .headerCheckbox {
-  display: block;
+.stTable .checkbox input {
   width: 20px;
   height: 20px;
+  pointer-events: none;     /* the input element is there just for the looks */
 }
 
 .stTable .checkbox {
   /* Prevent text/table cell selections during range selections */
   user-select: none;
-}
-
-.stTable .checkbox span {
-  border: 1px solid var(--st-checkbox-border);
-  display: block;
-  width: 20px;
-  height: 20px;
-  background: var(--st-checkbox-bg);
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  pointer-events: none;
-}
-
-.stTable .checkbox span.checked {
-  background-image: url("/images/cross.svg");
-  background-color: var(--st-checkbox-bg);
-  background-size: 80%;
 }
 
 /* The previously selected row indicator */
