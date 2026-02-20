@@ -908,7 +908,6 @@ updateTable()
 buildTable(updateMask=["headers", "rows"])
 {
     const haveActions = !!this.user.actions,
-          canOpen = !!this.user.open,
           currentColumn = this.sorting.column;
 
     // Unicode arrow characters and empirically determined padding values (their widths
@@ -1111,17 +1110,13 @@ buildTable(updateMask=["headers", "rows"])
     }
 
     if (updateMask.includes("rows")) {
-        if (this.data.current.length > 0) {
-            for (const row of bodyFragment.querySelectorAll("tbody > tr")) {
-                // Full row click open handlers
-                if (canOpen)
-                    row.addEventListener("mouseup", event => this.onRowOpen(event));
+        // Setup table rows event handling
+        const tbody = bodyFragment.querySelector("tbody");
 
-                // Row checkbox handlers
-                if (this.settings.enableSelection)
-                    row.childNodes[0].addEventListener("mousedown", event => this.onRowCheckboxClick(event));
-            }
-        }
+        tbody.addEventListener("mousedown", e => this.onTableBodyMouseDown(e));
+
+        if (this.user.open)
+            tbody.addEventListener("mouseup", e => this.onTableBodyMouseUp(e));
     }
 
     const t3 = performance.now();
@@ -1152,29 +1147,48 @@ buildTable(updateMask=["headers", "rows"])
     console.log(`[TABLE] Total: ${t4 - t0} ms`);
 }
 
-// Called when a table row is middle-clicked. Uses the user-supplied callback function
-// figure out the URL that is to be opened.
-onRowOpen(e)
+onTableBodyMouseDown(e)
 {
-    if (e.button != 1)    // middle button
+    if (this.updating || this.processing)
         return;
 
-    if (e.target.tagName != "TD")
+    if (this.data.current.length == 0)
         return;
 
-    if (e.target.classList.contains("checkbox"))
+    if (e.button != 0 ||
+            !this.settings.enableSelection ||
+            e.target.tagName != "TD" ||
+            !e.target.firstChild ||
+            e.target.firstChild.tagName != "INPUT")
         return;
 
+    // Clicked a row checkbox, forward the event
+    this.onRowCheckboxClick(e);
+}
+
+onTableBodyMouseUp(e)
+{
+    if (this.updating || this.processing)
+        return;
+
+    if (this.data.current.length == 0)
+        return;
+
+    if (e.button != 1 ||
+            !this.user.open ||
+            e.target.tagName == "A" ||
+            e.target.classList.contains("checkbox"))
+        return;
+
+    // Full row open. Call the user-supplied callback function to format the URL and open it.
     e.preventDefault();
 
-    const index = e.target.parentNode.dataset.index;
-
-    const url = this.user.open(this.data.transformed[this.data.current[index]]);
+    const url = this.user.open(this.data.transformed[this.data.current[e.target.closest("tr").dataset.index]]);
 
     if (url === null || url === undefined)
         return;
 
-    window.open(url, "_blank");
+    return window.open(url, "_blank");
 }
 
 // --------------------------------------------------------------------------------------------------
