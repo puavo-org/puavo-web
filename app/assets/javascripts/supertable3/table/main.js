@@ -657,16 +657,11 @@ enableTable(isEnabled)
     const headers = this.container.querySelector("table.stTable thead tr#headers"),
           body = this.getTableBody();
 
-    // TODO: This does not work entirely as it should. The "pointer-events-none" class applied to
-    // the whole table is just a hacky workaround. But I don't know any other quick way to
-    // disable all the clickable links.
-    if (isEnabled) {
-        headers.classList.remove("user-select-none", "pointer-events-none");
-        body.classList.remove("user-select-none", "pointer-events-none");
-    } else {
-        headers.classList.add("user-select-none", "pointer-events-none");
-        body.classList.add("user-select-none", "pointer-events-none");
-    }
+    // TODO: This is a hack. All links need to be disabled and this is the only quick way I know that works.
+    headers.classList.toggle("user-select-none", !isEnabled);
+    body.classList.toggle("user-select-none", !isEnabled);
+    headers.classList.toggle("pointer-events-none", !isEnabled);
+    body.classList.toggle("pointer-events-none", !isEnabled);
 }
 
 updateMassButtons()
