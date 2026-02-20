@@ -542,14 +542,17 @@ buildUI()
     this.container.appendChild(frag);
 
     this.ui.controls = this.container.querySelector("thead tr#controls div#wrap div#top");
-    this.ui.headers = this.container.querySelector("table.stTable thead tr#headers");
-    this.ui.body = this.container.querySelector("table.stTable tbody#data");
 
     if (this.settings.dynamicData) {
         // Display the load animation. This gets overwritten with actual data once
         // the table is loaded. Assume the table has less than 1000 columns.
-        this.ui.body.innerHTML = `<tr><td colspan="999"><img src="/images/spinner.svg" class="spinner"></td></tr>`;
+        this.getTableBody().innerHTML = `<tr><td colspan="999"><img src="/images/spinner.svg" class="spinner"></td></tr>`;
     }
+}
+
+getTableBody()
+{
+    return this.container.querySelector("table.stTable tbody#data");
 }
 
 // Sets and shows the error message
@@ -651,15 +654,18 @@ enableUI(isEnabled)
 // clicking any buttons in it. You don't want to disturb the table during mass operations...
 enableTable(isEnabled)
 {
+    const headers = this.container.querySelector("table.stTable thead tr#headers"),
+          body = this.getTableBody();
+
     // TODO: This does not work entirely as it should. The "pointer-events-none" class applied to
     // the whole table is just a hacky workaround. But I don't know any other quick way to
     // disable all the clickable links.
     if (isEnabled) {
-        this.ui.headers.classList.remove("user-select-none", "pointer-events-none");
-        this.ui.body.classList.remove("user-select-none", "pointer-events-none");
+        headers.classList.remove("user-select-none", "pointer-events-none");
+        body.classList.remove("user-select-none", "pointer-events-none");
     } else {
-        this.ui.headers.classList.add("user-select-none", "pointer-events-none");
-        this.ui.body.classList.add("user-select-none", "pointer-events-none");
+        headers.classList.add("user-select-none", "pointer-events-none");
+        body.classList.add("user-select-none", "pointer-events-none");
     }
 }
 
@@ -715,7 +721,7 @@ setVisibleColumns(newColumns)
 // Retrieves the actual table rows
 getTableRows()
 {
-    return this.ui.body.querySelectorAll("tr");
+    return this.getTableBody().querySelectorAll("tr");
 }
 
 clearRowSelections()
@@ -1126,15 +1132,11 @@ buildTable(updateMask=["headers", "rows"])
 
     this.container.querySelector("table.stTable thead tr#controls th").colSpan = numColumns;
 
-    if (updateMask.includes("headers")) {
+    if (updateMask.includes("headers"))
         this.container.querySelector("table.stTable thead tr#headers").replaceWith(headersFragment);
-        this.ui.headers = this.container.querySelector("table.stTable thead tr#headers");
-    }
 
-    if (updateMask.includes("rows")) {
-        this.container.querySelector("table.stTable tbody#data").replaceWith(bodyFragment);
-        this.ui.body = this.container.querySelector("table.stTable tbody#data");
-    }
+    if (updateMask.includes("rows"))
+        this.getTableBody().replaceWith(bodyFragment);
 
     const t4 = performance.now();
 
