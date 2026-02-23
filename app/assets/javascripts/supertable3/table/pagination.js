@@ -4,6 +4,7 @@
 
 import { _tr, escapeHTML } from "../../common/utils.js";
 import { create, getTemplate } from "../../common/dom.js";
+import { setPreviousRow } from "./row_selection.js";
 import * as Settings from "./settings.js";
 
 import {
@@ -63,7 +64,7 @@ function onPageDelta(table, delta)
     updatePageCounter(table);
     enableControls(table);
 
-    table.clearPreviousRow();
+    setPreviousRow(table, -1);
     table.buildTable();
 }
 
@@ -111,7 +112,7 @@ function onJumpToPage(table, e)
 
         updatePageCounter(table);
         enableControls(table);
-        table.clearPreviousRow();
+        setPreviousRow(table, -1);
         table.buildTable();
     });
 
@@ -167,7 +168,7 @@ export function initialize(table, template)
         enableControls(table);
 
         Settings.save(table);
-        table.clearPreviousRow();
+        setPreviousRow(table, -1);
         table.buildTable();
     });
 

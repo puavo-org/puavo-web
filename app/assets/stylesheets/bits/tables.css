@@ -679,8 +679,11 @@ TABLE BODY ROWS
   user-select: none;
 }
 
-/* The previously selected row indicator */
-.stTable .previousRow {
+/*
+The "previously selected row" indicator that's used to indicate the start of a range selection.
+This style imitates the keyboard focus indicator what was used in older operating systems.
+*/
+.stTable tr.previousRow td:first-child {
   outline: 2px dotted var(--st-previous-row);
 }
 

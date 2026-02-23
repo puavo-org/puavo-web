@@ -36,7 +36,7 @@ import * as HeaderDrag from "./header_reordering.js";
 
 import { FilterEditor } from "../filters/editor/fe_main.js";
 
-import { onOpenMassRowSelectionPopup } from "./row_selection.js";
+import { onRowCheckboxClick, onOpenMassRowSelectionPopup } from "./row_selection.js";
 
 import * as Settings from "./settings.js";
 
@@ -211,9 +211,9 @@ constructor(container, settings)
         // The pagination controls
         paging: null,
 
-        // The previously clicked table row. Can be null. Used when doing Shift+LMB
-        // range selections.
-        previousRow: null,
+        // Index of the previously clicked table row (in the current page), -1 if nothing.
+        // Used when doing Shift+LMB range selections.
+        previousRow: -1,
     };
 
     // A child class that implements the filter editor. Everything it does happens inside its
@@ -1160,7 +1160,7 @@ onTableBodyMouseDown(e)
         return;
 
     // Clicked a row checkbox, forward the event
-    this.onRowCheckboxClick(e);
+    onRowCheckboxClick(this, e);
 }
 
 onTableBodyMouseUp(e)
@@ -1240,90 +1240,6 @@ toggleFiltersReverse(e)
 // --------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------
 // MASS OPERATIONS
-
-clearPreviousRow()
-{
-    if (this.ui.previousRow) {
-        this.ui.previousRow.classList.remove("previousRow");
-        this.ui.previousRow = null;
-    }
-}
-
-// Check/uncheck a row. If Shift is being held, perform a range checking/unchecking.
-onRowCheckboxClick(e)
-{
-    e.preventDefault();
-
-    if (this.updating || this.processing)
-        return;
-
-    const tr = e.target.parentNode,
-          td = e.target,
-          cb = tr.childNodes[0].childNodes[0];
-
-    const index = parseInt(tr.dataset.index, 10),
-          id = this.data.transformed[this.data.current[index]].id[INDEX_DISPLAYABLE];
-
-    if (e.shiftKey && this.ui.previousRow != null && this.ui.previousRow != td) {
-        // Range select/deselect between the previously clicked row and this row
-        let startIndex = this.ui.previousRow.parentNode.dataset.index,
-            endIndex = tr.dataset.index;
-
-        if (startIndex === undefined || endIndex === undefined) {
-            console.error("Cannot determine the start/end indexes for range selection!");
-            return;
-        }
-
-        startIndex = parseInt(startIndex, 10);
-        endIndex = parseInt(endIndex, 10);
-
-        // Select or deselect?
-        const state = this.data.selectedItems.has(this.data.transformed[this.data.current[startIndex]].id[INDEX_DISPLAYABLE]);
-
-        if (startIndex > endIndex)
-            [startIndex, endIndex] = [endIndex, startIndex];
-
-        const tableRows = this.getTableRows();
-
-        for (let i = startIndex; i <= endIndex; i++) {
-            const id = this.data.transformed[this.data.current[i]].id[INDEX_DISPLAYABLE];
-            const row = tableRows[i - this.paging.firstRowIndex],
-                  cb = row.childNodes[0].childNodes[0];
-
-            row.classList.remove("success", "fail");
-
-            if (state) {
-                cb.checked = true;
-                this.data.selectedItems.add(id);
-            } else {
-                cb.checked = false;
-                this.data.selectedItems.delete(id);
-            }
-        }
-    } else {
-        // Check/uncheck just one row
-        e.target.parentNode.classList.remove("success", "fail");
-
-        if (cb.checked) {
-            cb.checked = false;
-            this.data.selectedItems.delete(id);
-        } else {
-            cb.checked = true;
-            this.data.selectedItems.add(id);
-        }
-    }
-
-    // Remember the previously clicked row
-    if (this.ui.previousRow)
-        this.ui.previousRow.classList.remove("previousRow");
-
-    td.classList.add("previousRow");
-    this.ui.previousRow = td;
-
-    this.doneAtLeastOneOperation = false;
-    this.updateStats();
-    this.updateMassButtons();
-}
 
 // Called when the selected mass operation changes
 switchMassOperation(e)

@@ -1,4 +1,4 @@
-// Mass table rows selection (all, none, invert, specific, etc.)
+// Table row selection (single/range, all/none/invert, specific rows matching some criteria)
 
 import { create, getTemplate } from "../../common/dom.js";
 import { _tr, escapeHTML } from "../../common/utils.js";
@@ -10,6 +10,85 @@ import {
     INDEX_FILTERABLE,
     INDEX_SORTABLE
 } from "./constants.js";
+
+// Sets and clears the "previous row" marker that appears around the row's checkbox when it's clicked.
+// It acts as a "from here" marker when doing range selections.
+export function setPreviousRow(table, newIndex)
+{
+    if (table.ui.previousRow == newIndex)
+        return;
+
+    const body = table.getTableBody();
+
+    // Remove the previous marker, if present
+    body.querySelector("tr.previousRow")?.classList.remove("previousRow");
+
+    // Set the new marker
+    if (newIndex != -1)
+        body.childNodes[newIndex - table.paging.firstRowIndex].classList.add("previousRow");
+
+    table.ui.previousRow = newIndex;
+}
+
+// Check or uncheck a row. If Shift is being held, perform a range checking/unchecking from the previously
+// clicked row to the clicked row.
+export function onRowCheckboxClick(table, e)
+{
+    e.preventDefault();
+
+    if (table.updating || table.processing)
+        return;
+
+    const tr = e.target.parentNode,
+          currentRow = parseInt(tr.dataset.index, 10),
+          tableRows = table.getTableRows();
+
+    const selectedItems = table.data.selectedItems;
+
+    if (e.shiftKey && table.ui.previousRow != -1 && table.ui.previousRow != currentRow) {
+        // Range select/deselect between the previously clicked row and this row
+        const startRow = Math.min(table.ui.previousRow, currentRow),
+              endRow = Math.max(table.ui.previousRow, currentRow);
+
+        // Select or deselect?
+        const state = selectedItems.has(table.data.transformed[table.data.current[table.ui.previousRow]].id[INDEX_DISPLAYABLE]);
+
+        console.log(`${startRow} -> ${endRow}: ${state}`);
+
+        for (let i = startRow; i <= endRow; i++) {
+            // The row indexes are relative to the whole data array, not the current visible page,
+            // so the loop index must be offsetted
+            const row = tableRows[i - table.paging.firstRowIndex],
+                  cb = row.childNodes[0].childNodes[0],
+                  id = parseInt(row.dataset.puavoid, 10);
+
+            if (state)
+                selectedItems.add(id);
+            else selectedItems.delete(id);
+
+            cb.checked = state;
+            row.classList.remove("success", "fail");
+        }
+    } else {
+        // Check/uncheck just one row
+        const cb = e.target.childNodes[0],
+              id = parseInt(tr.dataset.puavoid, 10);
+
+        if (cb.checked)
+            selectedItems.delete(id);
+        else selectedItems.add(id);
+
+        cb.checked = !cb.checked;
+        e.target.parentNode.classList.remove("success", "fail");
+    }
+
+    // Mark the last selected row so the user knows where the next range will start from
+    setPreviousRow(table, currentRow);
+
+    table.doneAtLeastOneOperation = false;
+    table.updateStats();
+    table.updateMassButtons();
+}
 
 // Updates the internal item PuavoID sets to match the desired selection mode
 function updateItemIDSets(data, operation)
@@ -81,7 +160,7 @@ function selectAllRows(table, operation)
     updateItemIDSets(table.data, operation);
     updateTableCheckboxes(table);
 
-    table.clearPreviousRow();
+    setPreviousRow(table, -1);
     table.doneAtLeastOneOperation = false;
     table.updateStats();
     table.updateMassButtons();
@@ -161,7 +240,7 @@ function selectSpecificRows(table, state)
         });
 
     // doneAtLeastOneOperation is not set to false on purpose
-    table.clearPreviousRow();
+    setPreviousRow(table, -1);
     table.updateStats();
     table.updateMassButtons();
 }
