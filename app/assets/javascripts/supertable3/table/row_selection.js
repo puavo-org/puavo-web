@@ -15,7 +15,7 @@ import {
 // It acts as a "from here" marker when doing range selections.
 export function setPreviousRow(table, newIndex)
 {
-    if (table.ui.previousRow == newIndex)
+    if (table.previousRow == newIndex)
         return;
 
     const body = table.getTableBody();
@@ -27,7 +27,7 @@ export function setPreviousRow(table, newIndex)
     if (newIndex != -1)
         body.childNodes[newIndex - table.paging.firstRowIndex].classList.add("previousRow");
 
-    table.ui.previousRow = newIndex;
+    table.previousRow = newIndex;
 }
 
 // Check or uncheck a row. If Shift is being held, perform a range checking/unchecking from the previously
@@ -45,13 +45,13 @@ export function onRowCheckboxClick(table, e)
 
     const selectedItems = table.data.selectedItems;
 
-    if (e.shiftKey && table.ui.previousRow != -1 && table.ui.previousRow != currentRow) {
+    if (e.shiftKey && table.previousRow != -1 && table.previousRow != currentRow) {
         // Range select/deselect between the previously clicked row and this row
-        const startRow = Math.min(table.ui.previousRow, currentRow),
-              endRow = Math.max(table.ui.previousRow, currentRow);
+        const startRow = Math.min(table.previousRow, currentRow),
+              endRow = Math.max(table.previousRow, currentRow);
 
         // Select or deselect?
-        const state = selectedItems.has(table.data.transformed[table.data.current[table.ui.previousRow]].id[INDEX_DISPLAYABLE]);
+        const state = selectedItems.has(table.data.transformed[table.data.current[table.previousRow]].id[INDEX_DISPLAYABLE]);
 
         console.log(`${startRow} -> ${endRow}: ${state}`);
 

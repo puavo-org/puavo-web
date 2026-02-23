@@ -189,6 +189,10 @@ constructor(container, settings)
         lastRowIndex: 0,
     };
 
+    // Index of the previously clicked table row (in the current page), -1 if nothing.
+    // Used when doing Shift+LMB range selections.
+    this.previousRow = -1;
+
     // Direct handles to various user interface elements. Cleaner than using querySelector()
     // everywhere (but I have my suspicions about memory leaks).
     this.ui = {
@@ -203,10 +207,6 @@ constructor(container, settings)
             progress: null,
             counter: null,
         },
-
-        // Index of the previously clicked table row (in the current page), -1 if nothing.
-        // Used when doing Shift+LMB range selections.
-        previousRow: -1,
     };
 
     // A child class that implements the filter editor. Everything it does happens inside its
