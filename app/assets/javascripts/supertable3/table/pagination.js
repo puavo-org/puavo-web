@@ -44,7 +44,7 @@ export function calculatePagination(data, paging)
 
 export function updatePageCounter(table)
 {
-    table.ui.controls.querySelector("section#paging button#page").innerText =
+    table.container.querySelector("thead tr#controls section#paging button#page").innerText =
         _tr("status.pagination", {
             current: (table.paging.numPages == 0) ? 1 : table.paging.currentPage + 1,
             total: (table.paging.numPages == 0) ? 1 : table.paging.numPages
@@ -126,7 +126,7 @@ function onJumpToPage(table, e)
 
 export function enableControls(table, state = true)
 {
-    const ui = table.ui.controls.querySelector("section#paging"),
+    const ui = table.container.querySelector("thead tr#controls section#paging"),
           paging = table.paging;
 
     // [selector, condition]

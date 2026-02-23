@@ -541,8 +541,6 @@ buildUI()
     // Insert the empty table template on the page
     this.container.appendChild(frag);
 
-    this.ui.controls = this.container.querySelector("thead tr#controls div#wrap div#top");
-
     if (this.settings.dynamicData) {
         // Display the load animation. This gets overwritten with actual data once
         // the table is loaded. Assume the table has less than 1000 columns.
@@ -625,9 +623,11 @@ enableUI(isEnabled)
         Pagination.enableControls(this, isEnabled);
 
     if (this.settings.enableFiltering) {
+        const uiControls = this.container.querySelector("thead tr#controls section#filteringControls");
+
         this.ui.filters.show.disabled = !isEnabled;
-        this.ui.controls.querySelector("section#filteringControls input#enabled").disabled = !isEnabled;
-        this.ui.controls.querySelector("section#filteringControls input#reverse").disabled = !isEnabled;
+        uiControls.querySelector("input#enabled").disabled = !isEnabled;
+        uiControls.querySelector("input#reverse").disabled = !isEnabled;
         this.filterEditor.enableOrDisable(isEnabled);
     }
 
