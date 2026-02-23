@@ -192,10 +192,6 @@ constructor(container, settings)
     // Direct handles to various user interface elements. Cleaner than using querySelector()
     // everywhere (but I have my suspicions about memory leaks).
     this.ui = {
-        controls: null,         // the controls above the header cells
-        headers: null,          // the table header cells
-        body: null,             // the actual table body
-
         filters: {
             show: null,         // show/hide filter editor checkbox
         },
@@ -207,9 +203,6 @@ constructor(container, settings)
             progress: null,
             counter: null,
         },
-
-        // The pagination controls
-        paging: null,
 
         // Index of the previously clicked table row (in the current page), -1 if nothing.
         // Used when doing Shift+LMB range selections.
