@@ -36,7 +36,7 @@ export function onRowCheckboxClick(table, e)
 {
     e.preventDefault();
 
-    if (table.updating || table.processing)
+    if (table.isBusy())
         return;
 
     const tr = e.target.parentNode,
@@ -154,7 +154,7 @@ function updateTableCheckboxes(table)
 // Mass select or deselect all table rows
 function selectAllRows(table, operation)
 {
-    if (table.updating || table.processing)
+    if (table.isBusy())
         return;
 
     updateItemIDSets(table.data, operation);
@@ -169,7 +169,7 @@ function selectAllRows(table, operation)
 // Selects (or deselects) specific rows that match one or more search terms
 function selectSpecificRows(table, state)
 {
-    if (table.updating || table.processing)
+    if (table.isBusy())
         return;
 
     const container = modalPopup.getContents().querySelector("fieldset#massSelects"),

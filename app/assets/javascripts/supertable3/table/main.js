@@ -541,6 +541,13 @@ buildUI()
     }
 }
 
+// Returns true if the table is "busy", ie. it's updating itself, or a mass operation is underway.
+// The table data or rows must not be modified while it's busy.
+isBusy()
+{
+    return this.updating || this.processing;
+}
+
 getTableBody()
 {
     return this.container.querySelector("table.stTable tbody#data");
@@ -1139,7 +1146,7 @@ buildTable(updateMask=["headers", "rows"])
 
 onTableBodyMouseDown(e)
 {
-    if (this.updating || this.processing)
+    if (this.isBusy())
         return;
 
     if (this.data.current.length == 0)
@@ -1158,7 +1165,7 @@ onTableBodyMouseDown(e)
 
 onTableBodyMouseUp(e)
 {
-    if (this.updating || this.processing)
+    if (this.isBusy())
         return;
 
     if (this.data.current.length == 0)
@@ -1263,7 +1270,7 @@ switchMassOperation(e)
 
 startMassOperation()
 {
-    if (this.updating || this.processing)
+    if (this.isBusy())
         return;
 
     if (!this.massOperation.handler.canProceed())
@@ -1552,9 +1559,8 @@ onHeaderMouseDown(e)
 {
     e.preventDefault();
 
-    if (this.updating || this.processing) {
+    if (this.isBusy())
         return;
-    }
 
     if (e.button != 0) {
         // "Main" button only, no right clicks (or left clicks, if the buttons are swapped)
