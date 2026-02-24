@@ -1,30 +1,14 @@
-import { _tr, escapeHTML } from "../../common/utils.js";
+import { _tr } from "../../common/utils.js";
 
-import { create, destroy, getTemplate, toggleClass } from "../../common/dom.js";
-
-import {
-    setupGlobalEvents,
-    createPopup,
-    closePopup,
-    attachPopup,
-    displayPopup,
-    ensurePopupIsVisible,
-    isPopupOpen,
-    getPopupContents,
-} from "../../common/modal_popup.js";
+import { create, getTemplate } from "../../common/dom.js";
 
 import {
     ColumnFlag,
     ColumnType,
     SortOrder,
-    INDEX_EXISTS,
     INDEX_DISPLAYABLE,
-    INDEX_FILTERABLE,
-    INDEX_SORTABLE,
     DEFAULT_ROWS_PER_PAGE,
 } from "./constants.js";
-
-import { JAVASCRIPT_TIME_GRANULARITY } from "./utils.js";
 
 import * as Data from "./data";
 
@@ -471,7 +455,7 @@ buildUI()
         this.ui.mass.show = frag.querySelector("thead section input#mass");
 
         frag.querySelector("thead div#top input#mass").addEventListener("click", e => {
-            toggleClass(this.container.querySelector("tr#controls div#massContainer"), "hidden", !e.target.checked);
+            this.container.querySelector("tr#controls div#massContainer").classList.toggle("hidden", !e.target.checked);
             this.toggleArrow(e.target);
             Settings.save(this);
         });
