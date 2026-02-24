@@ -85,7 +85,6 @@ export function onRowCheckboxClick(table, e)
     // Mark the last selected row so the user knows where the next range will start from
     setPreviousRow(table, currentRow);
 
-    table.doneAtLeastOneOperation = false;
     table.updateStats();
     table.updateMassButtons();
 }
@@ -161,7 +160,6 @@ function selectAllRows(table, operation)
     updateTableCheckboxes(table);
 
     setPreviousRow(table, -1);
-    table.doneAtLeastOneOperation = false;
     table.updateStats();
     table.updateMassButtons();
 }
@@ -239,7 +237,6 @@ function selectSpecificRows(table, state)
             unmatched: entries.size - found.size
         });
 
-    // doneAtLeastOneOperation is not set to false on purpose
     setPreviousRow(table, -1);
     table.updateStats();
     table.updateMassButtons();

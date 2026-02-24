@@ -218,7 +218,6 @@ constructor(container, settings)
     this.updating = false;
     this.processing = false;
     this.stopRequested = false;
-    this.doneAtLeastOneOperation = false;
 
     // Header drag callback functions. "bind()" is needed to get around some weird
     // JS scoping garbage I don't understand.
@@ -811,7 +810,6 @@ updateTable()
 
     this.enableUI(false);
     this.updating = true;
-    this.doneAtLeastOneOperation = false;
 
     const t0 = performance.now();
 
@@ -1164,7 +1162,6 @@ saveFilters()
 updateFiltering()
 {
     this.filters.program = this.filterEditor.getFilterProgram();
-    this.doneAtLeastOneOperation = false;
 
     if (this.filters.enabled) {
         this.clearRowSelections();
@@ -1177,7 +1174,6 @@ toggleFiltersEnabled(e)
     this.filters.enabled = e.target.checked;
     Settings.save(this);
 
-    this.doneAtLeastOneOperation = false;
     this.clearRowSelections();
     this.updateTable();
 }
@@ -1188,7 +1184,6 @@ toggleFiltersReverse(e)
     Settings.save(this);
 
     if (this.filters.enabled) {
-        this.doneAtLeastOneOperation = false;
         this.clearRowSelections();
         this.updateTable();
     }
@@ -1220,7 +1215,6 @@ switchMassOperation(e)
     this.ui.mass.progress.classList.add("hidden");
     this.ui.mass.counter.classList.add("hidden");
 
-    this.doneAtLeastOneOperation = false;
     this.updateStats();
     this.updateMassButtons();
 }
@@ -1266,10 +1260,6 @@ startMassOperation()
     this.massOperation.handler.start();
     this.massOperation.singleShot = this.massOperation.definition.singleShot || false;
     this.massOperation.parameters = this.massOperation.handler.getOperationParameters() || {};
-
-    // This flag controls whether the success/fail counters will be visible after the
-    // operation is done. They will be visible until the UI/selections change.
-    this.doneAtLeastOneOperation = true;
 
     // Initiate the operation
     this.processing = true;
@@ -1535,8 +1525,6 @@ onHeaderMouseUp(e)
 
     document.removeEventListener("mouseup", this.onHeaderMouseUp);
     document.removeEventListener("mousemove", this.onHeaderMouseMove);
-
-    this.doneAtLeastOneOperation = false;
 
     Headers.endMouseTracking(this, e);
     Settings.save(this);
