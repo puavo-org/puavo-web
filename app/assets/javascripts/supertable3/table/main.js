@@ -32,7 +32,7 @@ import * as Export from "./export.js";
 
 import * as ColumnEditor from "./column_editor.js";
 
-import * as HeaderDrag from "./header_reordering.js";
+import * as Headers from "./headers.js";
 
 import { FilterEditor } from "../filters/editor/fe_main.js";
 
@@ -228,13 +228,6 @@ constructor(container, settings)
         rows: [],
         pos: 0,
         prevPos: 0,
-    };
-
-    // Table column header dragging state
-    this.headerDrag = {
-        element: null,              // the original TH where the drag originated from
-        canSort: false,             // true if the dragged cell (column) is sortable
-        active: false
     };
 
     // State
@@ -1562,16 +1555,10 @@ onHeaderMouseDown(e)
     if (this.isBusy())
         return;
 
-    if (e.button != 0) {
-        // "Main" button only, no right clicks (or left clicks, if the buttons are swapped)
+    if (e.button != 0)      // LMB only (or RMB if the buttons are swapped)
         return;
-    }
 
-    this.headerDrag.element = e.target;
-    this.headerDrag.canSort = (e.target.dataset.sortable == "1");
-
-    HeaderDrag.initialize(e);
-
+    Headers.beginMouseTracking(this, e);
     document.addEventListener("mouseup", this.onHeaderMouseUp);
     document.addEventListener("mousemove", this.onHeaderMouseMove);
 }
@@ -1585,131 +1572,31 @@ onHeaderMouseUp(e)
     document.removeEventListener("mouseup", this.onHeaderMouseUp);
     document.removeEventListener("mousemove", this.onHeaderMouseMove);
 
-    const table = this.container.querySelector("table.stTable");
-
-    table.classList.remove("user-select-none", "pointer-events-none");
-    document.body.classList.remove("cursor-grabbing");
-
-    this.headerDrag.element = null;
-
     this.doneAtLeastOneOperation = false;
 
-    if (this.headerDrag.active) {
-        // Reorder the columns
-        this.headerDrag.active = false;
-        HeaderDrag.end();
-
-        const [startIndex, endIndex] = HeaderDrag.getIndexes();
-
-        HeaderDrag.reset();
-
-        if (startIndex == endIndex)
-            return;
-
-        // Reorder the columns array
-        this.columns.current.splice(endIndex, 0, this.columns.current.splice(startIndex, 1)[0]);
-
-        // Reorder the table row columns. Perform an in-place swap of the two table columns,
-        // it's significantly faster than regenerating the whole table.
-        const t0 = performance.now();
-
-        // Skip the checkbox column
-        const skip = this.settings.enableSelection ? 1 : 0;
-
-        const from = startIndex + skip,
-              to = endIndex + skip;
-
-        let rows = this.container.querySelector("table.stTable").rows,
-            n = rows.length,
-            row, cell;
-
-        if (this.data.current.length == 0) {
-            // The table is empty, so only reorder the header columns. There are two
-            // header rows, but only one of the will be processed.
-            n = 2;
-        }
-
-        while (n--) {
-            if (n == 0)         // don't reorder the table controls row
-                break;
-
-            row = rows[n];
-            cell = row.removeChild(row.cells[from]);
-            row.insertBefore(cell, row.cells[to]);
-        }
-
-        const t1 = performance.now();
-        console.log(`Table column swap: ${t1 - t0} ms`);
-
-        Settings.save(this);
-    } else {
-        // No drag, sort the table by this column
-        HeaderDrag.reset();
-
-        if (!this.headerDrag.canSort)
-            return;
-
-        const index = e.target.dataset.index,
-              key = e.target.dataset.key;
-
-        if (key == this.sorting.column) {
-            // Same column, but invert sort direction
-            if (this.sorting.dir == SortOrder.ASCENDING)
-                this.sorting.dir = SortOrder.DESCENDING;
-            else this.sorting.dir = SortOrder.ASCENDING;
-        } else {
-            // Change the sort column
-            this.sorting.column = key;
-
-            if (this.columns.definitions[key].flags & ColumnFlag.DESCENDING_DEFAULT)
-                this.sorting.dir = SortOrder.DESCENDING;
-            else this.sorting.dir = SortOrder.ASCENDING;
-        }
-
-        Settings.save(this);
-
-        this.clearRowSelections();
-        this.updateTable();
-        this.updateStats();
-    }
+    Headers.endMouseTracking(this, e);
+    Settings.save(this);
 }
 
-// Track mouse movement. If the mouse moves "enough", initiate a header cell drag.
+// Drag a header cell around, or track mouse movement to see if header drag should be started
 onHeaderMouseMove(e)
 {
     e.preventDefault();
 
-    if (this.headerDrag.active) {
-        HeaderDrag.update(e);
+    if (Headers.updateDrag(e))
         return;
-    }
 
-    if (!this.headerDrag.active && e.target != this.headerDrag.element) {
-        // The mouse has veered away from the tracked element before enough
-        // distance had been accumulated to properly trigger a drag
-        const table = this.container.querySelector("table.stTable");
+    if (Headers.shouldCancelMouseTracking(e)) {
+        // The mouse veered away from the tracked element before enough "distance" had been accumulated
+        // to trigger a header drag. Cancel the whole thing.
+        Headers.cancelMouseTracking(this);
 
         document.removeEventListener("mouseup", this.onHeaderMouseUp);
         document.removeEventListener("mousemove", this.onHeaderMouseMove);
-
-        table.classList.remove("user-select-none", "pointer-events-none");
-        document.body.classList.remove("cursor-grabbing");
-
-        this.headerDrag.element = null;
         return;
     }
 
-    if (!HeaderDrag.begin(e, this.headerDrag.canSort, this.settings.enableSelection, this.user.actions !== null))
-        return;
-
-    // Start dragging the header cell
-    const table = this.container.querySelector("table.stTable");
-
-    table.classList.add("user-select-none", "pointer-events-none");
-    document.body.classList.add("cursor-grabbing");
-
-    this.headerDrag.active = true;
-    HeaderDrag.update(e);
+    Headers.tryBeginDrag(this, e);
 }
 
 }   // class SuperTable
