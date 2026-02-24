@@ -730,7 +730,7 @@ fetchDataAndUpdate()
     if (this.settings.staticData) {
         console.log("fetchDataAndUpdate(): static data only");
 
-        this.transformRawData(this.settings.staticData);
+        Data.transformRawData(this, this.settings.staticData);
         this.updateTable();
         this.endTableUpdate();
         return;
@@ -795,33 +795,13 @@ parseServerResponse(textData, startTime)
         return false;
     }
 
-    console.log(`JSON parsing: ${performance.now() - t0} ms`);
+    console.log(`parseServerResponse(): JSON parsing took ${performance.now() - t0} ms`);
 
-    this.transformRawData(raw);
+    Data.transformRawData(this, raw);
 
     console.log("parseServerResponse(): done");
 
     return true;
-}
-
-// Transform the received data. This is done here (and not in updateTable()) because it
-// only needs to be done once, but sorting and filtering can be done multiple times
-// on the transformed data.
-transformRawData(incomingJSON)
-{
-    const t0 = performance.now();
-
-    this.resetError();
-
-    this.data.transformed = Data.transformRows(
-        this.columns.definitions,
-        incomingJSON,
-        this.user.preFilterFunction
-    );
-
-    const t1 = performance.now();
-
-    console.log(`Data transformation: ${t1 - t0} ms`);
 }
 
 // Takes the currently cached transformed data, filters, sorts and displays it

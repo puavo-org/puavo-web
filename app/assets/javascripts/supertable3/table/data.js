@@ -78,7 +78,7 @@ function _transformValue(raw, key, coldef, defVal)
 // convert timestamps into user's local time, turn booleans into checkmarks, and so on.
 // The data we generate here is purely presentational, intended for humans; it's never
 // fed back into the database.
-export function transformRows(columnDefinitions, rawData, preFilterFunction=null)
+function transformRows(columnDefinitions, rawData, preFilterFunction=null)
 {
     const columnKeys = Object.keys(columnDefinitions);
 
@@ -137,6 +137,24 @@ export function transformRows(columnDefinitions, rawData, preFilterFunction=null
     }
 
     return out;
+}
+
+// Transform the received data. This needs to be done only once after new data has been received.
+export function transformRawData(table, incomingJSON)
+{
+    const t0 = performance.now();
+
+    table.resetError();
+
+    table.data.transformed = transformRows(
+        table.columns.definitions,
+        incomingJSON,
+        table.user.preFilterFunction
+    );
+
+    const t1 = performance.now();
+
+    console.log(`transformRawData(): rows transform took ${t1 - t0} ms`);
 }
 
 // Applies zero or more filters to the data. Returns the indexes of rows that are visible.
