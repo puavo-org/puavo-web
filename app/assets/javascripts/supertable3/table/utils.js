@@ -3,6 +3,8 @@ import { pad } from "../../common/utils.js";
 // Scaler for converting between JavaScript dates and unixtimes
 export const JAVASCRIPT_TIME_GRANULARITY = 1000;
 
+const formatYMD = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
 export function convertTimestamp(unixtime, dateOnly = false, formatter = null)
 {
     if (unixtime < 0)
@@ -19,9 +21,7 @@ export function convertTimestamp(unixtime, dateOnly = false, formatter = null)
 
         if (formatter) {
             // Use the supplied formatter function instead
-            const hover = dateOnly ?
-                `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` :
-                d.toISOString();
+            const hover = dateOnly ? formatYMD(d) : d.toISOString();
 
             // Omit the "timestamp" class from the abbr element to prevent the on-page JavaScript from attempting
             // to localize. It would fail anyway, as the contents of the abbr element isn't an ISO 8601 string.
@@ -29,18 +29,9 @@ export function convertTimestamp(unixtime, dateOnly = false, formatter = null)
         }
 
         // Why is there no sprintf() in JavaScript?
-        if (dateOnly) {
-            return [
-                true,
-                `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
-                d];
-        } else {
-            return [
-                true,
-                `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`,
-                d
-            ];
-        }
+        if (dateOnly)
+            return [true, formatYMD(d), d];
+        else return [true, `${formatYMD(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`, d];
     } catch (e) {
         console.log(e);
         return [false, "(ERROR)", null];
