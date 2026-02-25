@@ -92,8 +92,7 @@ function reorderColumns(table)
 // Toggles the current sort column and sorting direction
 function toggleSorting(table, e)
 {
-    const index = e.dataset.index,
-          key = e.dataset.key,
+    const key = e.dataset.key,
           sorting = table.sorting;
 
     if (key == sorting.column) {

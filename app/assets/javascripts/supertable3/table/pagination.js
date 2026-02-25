@@ -5,6 +5,7 @@
 import { _tr, escapeHTML } from "../../common/utils.js";
 import { create, getTemplate } from "../../common/dom.js";
 import { setPreviousRow } from "./row_selection.js";
+import { buildTable } from "./table_builder.js";
 import * as Settings from "./settings.js";
 
 import {
@@ -65,7 +66,7 @@ function onPageDelta(table, delta)
     enableControls(table);
 
     setPreviousRow(table, -1);
-    table.buildTable();
+    buildTable(table);
 }
 
 function onJumpToPage(table, e)
@@ -113,7 +114,7 @@ function onJumpToPage(table, e)
         updatePageCounter(table);
         enableControls(table);
         setPreviousRow(table, -1);
-        table.buildTable();
+        buildTable(table);
     });
 
     if (modalPopup.create()) {
@@ -169,7 +170,7 @@ export function initialize(table, template)
 
         Settings.save(table);
         setPreviousRow(table, -1);
-        table.buildTable();
+        buildTable(table);
     });
 
     ui.querySelector("button#first").addEventListener("click", () => onPageDelta(table, -999999));

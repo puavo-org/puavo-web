@@ -4,7 +4,6 @@ import { create, getTemplate } from "../../common/dom.js";
 
 import {
     ColumnFlag,
-    ColumnType,
     SortOrder,
     INDEX_DISPLAYABLE,
     DEFAULT_ROWS_PER_PAGE,
@@ -25,6 +24,8 @@ import { onRowCheckboxClick, onOpenMassRowSelectionPopup } from "./row_selection
 import * as Settings from "./settings.js";
 
 import * as Pagination from "./pagination.js";
+
+import { buildTable } from "./table_builder.js";
 
 // Mass operation batch size (how many items are processed on one request)
 const BATCH_SIZE = 5;
@@ -855,248 +856,10 @@ updateTable()
     }
 
     // Rebuild the table
-    this.buildTable();
+    buildTable(this);
     this.endTableUpdate();
 
     console.log("updateTable(): table update complete");
-}
-
-buildTable(updateMask=["headers", "rows"])
-{
-    const haveActions = !!this.user.actions,
-          currentColumn = this.sorting.column;
-
-    // Unicode arrow characters and empirically determined padding values (their widths
-    // vary slightly). These won't work unless the custom puavo-icons font is applied.
-    const arrows = {
-        unsorted: { asc: "\uf0dc",                 padding: 10 },
-        string:   { asc: "\uf15d", desc: "\uf15e", padding: 5 },
-        numeric:  { asc: "\uf162", desc: "\uf163", padding: 6 },
-    };
-
-    let customCSSColumns = new Map();
-
-    // How many columns does the table have? Include the checkbox and actions
-    // columns, if present.
-    let numColumns = this.columns.current.length;
-
-    if (this.settings.enableSelection)
-        numColumns++;
-
-    if (haveActions)
-        numColumns++;
-
-    // ----------------------------------------------------------------------------------------------
-    // Construct the table parts in memory
-
-    const t0 = performance.now();
-
-    let headersFragment = null,
-        bodyFragment = null;
-
-    if (updateMask.includes("headers")) {
-        let html = "";
-
-        if (this.settings.enableSelection)
-            html += `<th class="width-0"></th>`;
-
-        for (const [index, key] of this.columns.current.entries()) {
-            const def = this.columns.definitions[key];
-            const sortable = (def.flags & ColumnFlag.NOT_SORTABLE) ? false : true;
-
-            let classes = [],
-                data = [["index", index], ["key", key]];
-
-            if (!sortable)
-                classes.push("cursor-default");
-            else {
-                classes.push("cursor-pointer");
-                classes.push("sortable");
-            }
-
-            if (key == currentColumn)
-                classes.push("sorted");
-
-            data.push(["sortable", sortable ? 1 : 0]);
-
-            html += `<th `;
-            html += `title="${key}" `;
-            html += data.map(d => `data-${d[0]}="${d[1]}"`).join(" ");
-            html += ` class="${classes.join(' ')}">`;
-
-            // Figure out the cell contents (title + sort direction arrow)
-            const isNumeric = (def.type != ColumnType.STRING);
-
-            if (!sortable)
-                html += def.title;
-            else {
-                let symbol, padding;
-
-                if (key == currentColumn) {
-                    // Currently sorted by this column
-                    const type = isNumeric ? "numeric" : "string",
-                          dir = (this.sorting.dir == SortOrder.ASCENDING) ? "asc" : "desc";
-
-                    symbol = arrows[type][dir];
-                    padding = arrows[type].padding;
-                } else {
-                    symbol = arrows.unsorted.asc;
-                    padding = arrows.unsorted.padding;
-                }
-
-                // Do not put newlines in this HTML! Header drag cell construction will fail otherwise!
-                html += `<div><span>${def.title}</span>` +
-                        `<span class="arrow" style="padding-left: ${padding}px">${symbol}</span></div>`;
-            }
-
-            html += "</th>";
-
-            if (def.customCSS !== undefined) {
-                if (Array.isArray(def.customCSS))
-                    customCSSColumns.set(key, def.customCSS)
-                else customCSSColumns.set(key, [def.customCSS]);
-            }
-        }
-
-        // The actions column is always the last. It can't be sorted nor dragged.
-        if (haveActions)
-            html += `<th>${_tr('column_actions')}</th>`;
-
-        headersFragment = new DocumentFragment();
-        headersFragment.appendChild(create("tr", { id: "headers", html: html }));
-    }
-
-    const t1 = performance.now();
-
-    if (updateMask.includes("rows")) {
-        let html = "";
-
-        if (this.data.current.length == 0) {
-            // The table is empty
-            html += `<tr><td colspan="${numColumns}">(${_tr('empty_table')})</td></tr>`;
-        } else {
-            // Calculate start and end indexes for the current page
-            let start, end;
-
-            if (this.settings.enablePagination) {
-                if (this.paging.rowsPerPage == -1) {
-                    start = 0;
-                    end = this.data.current.length;
-                } else {
-                    start = this.paging.currentPage * this.paging.rowsPerPage;
-                    end = Math.min((this.paging.currentPage + 1) * this.paging.rowsPerPage, this.data.current.length);
-                }
-
-                //console.log(`currentPage=${this.paging.currentPage} start=${start} end=${end}`);
-            } else {
-                // The table was created without pagination
-                start = 0;
-                end = this.data.current.length;
-            }
-
-            // These must always be updated, even when pagination is disabled
-            this.paging.firstRowIndex = start;
-            this.paging.lastRowIndex = end;
-
-            for (let index = start; index < end; index++) {
-                const row = this.data.transformed[this.data.current[index]];
-                const rowID = row.id[INDEX_DISPLAYABLE];
-                let rowClasses = [];
-
-                if (this.data.successItems.has(rowID))
-                    rowClasses.push("success");
-
-                if (this.data.failedItems.has(rowID))
-                    rowClasses.push("fail");
-
-                html += `<tr data-index="${index}" data-puavoid="${rowID}" class=${rowClasses.join(" ")}>`;
-
-                // The checkbox
-                if (this.settings.enableSelection) {
-                    html += `<td class="minimize-width cursor-pointer checkbox">`;
-                    html += `<input type="checkbox" ${this.data.selectedItems.has(row.id[INDEX_DISPLAYABLE]) ? "checked": ""}></td>`;
-                }
-
-                // Data columns
-                for (const column of this.columns.current) {
-                    let classes = [];
-
-                    if (column == currentColumn)
-                        classes.push("sorted");
-
-                    if (customCSSColumns.has(column))
-                        classes = classes.concat(customCSSColumns.get(column));
-
-                    if (classes.length > 0)
-                        html += `<td class=\"${classes.join(' ')}\">`;
-                    else html += "<td>";
-
-                    if (row[column][INDEX_DISPLAYABLE] !== null)
-                        html += row[column][INDEX_DISPLAYABLE];
-
-                    html += "</td>";
-                }
-
-                // The actions column
-                if (haveActions)
-                    html += "<td>" + this.user.actions(row) + "</td>";
-
-                html += "</tr>";
-            }
-        }
-
-        bodyFragment = new DocumentFragment();
-        bodyFragment.appendChild(create("tbody", { html: html, id: "data" }));
-    }
-
-    const t2 = performance.now();
-
-    // ----------------------------------------------------------------------------------------------
-    // Setup event handling
-
-    if (updateMask.includes("headers")) {
-        const headings = headersFragment.querySelectorAll("tr#headers th");
-
-        // Header cell click handlers
-        const start = this.settings.enableSelection ? 1 : 0,                // skip the checkbox column
-              count = haveActions ? headings.length - 1 : headings.length;  // skip the actions column
-
-        for (let i = start; i < count; i++)
-            headings[i].addEventListener("mousedown", event => this.onHeaderMouseDown(event));
-    }
-
-    if (updateMask.includes("rows")) {
-        // Setup table rows event handling
-        const tbody = bodyFragment.querySelector("tbody");
-
-        tbody.addEventListener("mousedown", e => this.onTableBodyMouseDown(e));
-
-        if (this.user.open)
-            tbody.addEventListener("mouseup", e => this.onTableBodyMouseUp(e));
-    }
-
-    const t3 = performance.now();
-
-    // ----------------------------------------------------------------------------------------------
-    // DOM update
-
-    this.container.querySelector("table.stTable thead tr#controls th").colSpan = numColumns;
-
-    if (updateMask.includes("headers"))
-        this.container.querySelector("table.stTable thead tr#headers").replaceWith(headersFragment);
-
-    if (updateMask.includes("rows"))
-        this.getTableBody().replaceWith(bodyFragment);
-
-    const t4 = performance.now();
-
-    // ----------------------------------------------------------------------------------------------
-
-    console.log(`[TABLE] HTML generation: ${t1 - t0} ms`);
-    console.log(`[TABLE] In-memory table construction: ${t2 - t1} ms`);
-    console.log(`[TABLE] Callback setup: ${t3 - t2} ms`);
-    console.log(`[TABLE] DOM replace: ${t4 - t3} ms`);
-    console.log(`[TABLE] Total: ${t4 - t0} ms`);
 }
 
 onTableBodyMouseDown(e)
