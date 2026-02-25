@@ -754,6 +754,106 @@ describe PuavoRest::OAuth2 do
       assert_equal userinfo.include?('auth_time'), false
     end
 
+    # The same test as above, but make the userinfo token expire
+    it 'Complete succesfull OpenID Connect login and userinfo test (client_secret_basic without host headers)' do
+      # Step 1: Authorize the user
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service',
+                     redirect_uri: 'http://service.example.com',
+                     response_type: 'code',
+                     scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups',
+                     extra: { 'state' => 'foo', 'nonce' => 'bar' })
+
+      assert_equal last_response.status, 401
+      assert last_response.body.include?('Login to service <span>The Service</span>')
+      assert get_named_form_value('type') == 'oidc'
+      assert_equal css('input[name="organisation"]').count, 0
+      assert_equal css("div.col-orgname").count, 0
+
+      post '/oidc/authorize/post', {
+        type: 'oidc',
+        request_id: get_named_form_value('request_id'),
+        state_key: get_named_form_value('state_key'),
+        return_to: get_named_form_value('return_to'),
+        username: 'bob.brown@example.puavo.net',
+        password: 'secret',
+      }
+
+      assert last_response.redirect?
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+      assert_equal redirect.query_values['iss'], 'https://api.opinsys.fi'
+      assert_equal redirect.query_values['state'], 'foo'
+      assert_equal redirect.query_values.include?('nonce'), false
+      assert_equal redirect.query_values.include?('scope'), false   # the scopes have not changed
+      code = redirect.query_values['code']
+      assert_equal last_response.headers.include?('Set-Cookie'), false
+      assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+
+      # Step 2: Acquire the access and ID tokens (client_secret_basic)
+      basic_authorize 'test_login_service', @external_service.puavoServiceSecret
+
+      post '/oidc/token', {
+        grant_type: 'authorization_code',
+        redirect_uri: 'http://service.example.com',
+        code: code,
+      }
+
+      assert_equal last_response.status, 200
+      assert_equal last_response.header['Content-Type'], 'application/json'
+      token = JSON.parse(last_response.body)
+      validate_access_token(token)
+      access_token = decode_token(token['access_token'], audience: 'puavo-rest-userinfo')
+      assert_equal access_token['iss'], 'https://api.opinsys.fi'
+      assert_equal access_token['sub'], @user.uuid
+      assert_equal access_token['aud'], 'puavo-rest-userinfo'
+      assert_equal access_token['scopes'], 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups'
+      assert_equal access_token['allowed_endpoints'], ['/oidc/userinfo']
+      assert_equal access_token['organisation_domain'], 'example.puavo.net'
+      assert_equal access_token['required_service_dn'], @external_service.dn
+      assert_equal access_token['user_dn'], @user.dn.to_s
+
+      id_token = decode_token(token['id_token'], audience: 'test_login_service')
+      assert_equal id_token['iss'], 'https://api.opinsys.fi'
+      assert_equal id_token['sub'], @user.uuid
+      assert_equal id_token['aud'], 'test_login_service'
+      assert_equal id_token['amr'], ['pwd']
+      assert_equal id_token['azp'], 'test_login_service'
+      check_at_hash(token, id_token)
+      check_c_hash(code, id_token)
+      assert_equal id_token['nonce'], 'bar'
+      assert_equal id_token['given_name'], @user.first_name
+      assert_equal id_token['family_name'], @user.last_name
+      assert_equal id_token['name'], "#{@user.first_name} #{@user.last_name}"
+      assert_equal id_token['preferred_username'], @user.username
+      assert_equal id_token['puavo.uuid'], @user.uuid
+      assert_equal id_token['puavo.puavoid'], @user.id
+      assert_equal id_token['puavo.roles'], ['student']
+      assert_equal id_token['puavo.schools'].count, 1
+      assert_equal id_token['puavo.schools'][0]['name'], 'Gryffindor'
+      assert_equal id_token['puavo.schools'][0]['abbreviation'], 'gryffindor'
+      assert_equal id_token['puavo.schools'][0]['puavoid'], @school.id.to_i
+      assert_equal id_token['puavo.schools'][0]['primary'], true
+      assert_equal id_token['puavo.groups'].count, 1
+      assert_equal id_token['puavo.groups'][0]['name'], 'Group 1'
+      assert_equal id_token['puavo.groups'][0]['abbreviation'], 'group1'
+      assert_equal id_token['puavo.groups'][0]['puavoid'], @group.id.to_i
+      assert_equal id_token['puavo.groups'][0]['type'], 'teaching group'
+      assert_equal id_token['puavo.groups'][0]['school_abbreviation'], 'gryffindor'
+
+      # Step 3: Try to call the userinfo endpoint, but oh dear, the token has expired (it's been over an hour)
+      now = Time.now.utc
+
+      Timecop.travel(now + 3610) do
+        header 'Host', 'example.puavo.net'
+        header 'Authorization', "Bearer #{token['access_token']}"
+        get '/oidc/userinfo'
+
+        assert_equal last_response.status, 401
+        error = JSON.parse(last_response.body)
+        assert_equal error['error']['message'], 'invalid_token'
+      end
+    end
+
     it 'Complete succesfull OpenID Connect login test (without nonce)' do
       get format_uri('/oidc/authorize',
                      client_id: 'test_login_service',
