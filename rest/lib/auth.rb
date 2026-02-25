@@ -296,6 +296,12 @@ class PuavoSinatra < Sinatra::Base
           }
       end
 
+      if method == :oauth2_token && credentials[:access_token].include?('organisation_domain')
+        # We can't assume there's a HTTP Host header in the request, so forcibly set up the correct organisation.
+        # If the header was specified, then this will result in a duplicate connection setup, but eh.
+        LdapModel.setup(organisation: PuavoRest::Organisation.by_domain(credentials[:access_token]['organisation_domain']))
+      end
+
       credentials[:auth_method] = method
       auth_method = method
       LdapModel.setup(:credentials => credentials)
