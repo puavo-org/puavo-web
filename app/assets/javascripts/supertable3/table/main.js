@@ -291,16 +291,7 @@ constructor(container, settings)
     Settings.load(this);
 
     // Validate the current sorting column and ensure it is in the currently visible columns
-    let found = false;
-
-    for (const c of this.columns.current) {
-        if (c == this.sorting.column) {
-            found = true;
-            break;
-        }
-    }
-
-    if (!found) {
+    if (!this.columns.current.includes(this.sorting.column)) {
         // FIXME: What happens if the first column has ColumnFlag.NOT_SORTABLE flag?
         // FIXME: What happens if there are no sortable columns at all?
         console.warn(`The initial sorting column "${this.sorting.column}" isn't visible, ` +
