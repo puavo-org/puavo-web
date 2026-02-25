@@ -27,6 +27,8 @@ import * as Pagination from "./pagination.js";
 
 import { buildTable } from "./table_builder.js";
 
+import { isNullOrUndefined, isObject } from "./utils.js";
+
 // Mass operation batch size (how many items are processed on one request)
 const BATCH_SIZE = 5;
 
@@ -58,6 +60,59 @@ export const ST_TIMESTAMP_FORMATTER = Intl.DateTimeFormat(document.documentEleme
     timeZone: document.documentElement.dataset.intlTimezone
 });
 
+// Validates the parameters passed to the table class
+function validateParameters(container, settings)
+{
+    if (isNullOrUndefined(container)) {
+        console.error("this.container is null or undefined");
+        return false;
+    }
+
+    const fatalError = msg => container.innerHTML = `<p class="stError">${msg}</p>`;
+
+    if (!isObject(settings.columnDefinitions) || Object.keys(settings.columnDefinitions).length == 0) {
+        fatalError("settings.columnDefinitions is missing or invalid (not an object)");
+        return false;
+    }
+
+    if (!Array.isArray(settings.defaultColumns) || settings.defaultColumns.length == 0) {
+        fatalError("settings.defaultColumns is missing, not an array, or empty");
+        return false;
+    }
+
+    if (!isObject(settings.defaultSorting)) {
+        fatalError("settings.defaultSorting is missing or invalid (not an object)");
+        return false;
+    }
+
+    // Ensure we have at least one data source
+    if (isNullOrUndefined(settings.staticData) && isNullOrUndefined(settings.dynamicData)) {
+        fatalError("No data source defined (staticData and dynamicData are both missing)");
+        return false;
+    }
+
+    // The default columns parameter MUST be correct at all times
+    for (const c of settings.defaultColumns) {
+        if (!(c in settings.columnDefinitions)) {
+            fatalError(`Default column "${c}" is not in the column definitions`);
+            return false;
+        }
+    }
+
+    // The default sorting column and direction must be valid
+    if (!(settings.defaultSorting.column in settings.columnDefinitions)) {
+        fatalError(`Invalid default sorting column "${settings.defaultSorting.column}"`);
+        return false;
+    }
+
+    if (![SortOrder.ASCENDING, SortOrder.DESCENDING].includes(settings.defaultSorting.dir)) {
+        fatalError(`Invalid or unknown default sorting direction "${settings.defaultSorting.dir}".`);
+        return false;
+    }
+
+    return true;
+}
+
 export class SuperTable {
 
 constructor(container, settings)
@@ -65,7 +120,7 @@ constructor(container, settings)
     this.id = settings.id;
     this.container = container;
 
-    if (!this.validateParameters(settings))
+    if (!validateParameters(this.container, settings))
         return;
 
     // ----------------------------------------------------------------------------------------------
@@ -283,100 +338,6 @@ constructor(container, settings)
 
     Settings.save(this);
     this.fetchDataAndUpdate();
-}
-
-// Validates the parameters passed to the class constructor
-validateParameters(settings)
-{
-    // If these checks fail, explode loudly and completely prevent the table from even appearing.
-    // That's intentional. These should be caught in development/testing.
-
-    if (this.container === null || this.container === undefined) {
-        console.error("The container DIV element is null or undefined");
-        window.alert("The table container DIV is null or undefined. The table cannot be displayed. " +
-                     "Please contact Opinsys support.");
-
-        return false;
-    }
-
-    if (settings.columnDefinitions === undefined ||
-        settings.columnDefinitions === null ||
-        typeof(settings.columnDefinitions) != "object" ||
-        Object.keys(settings.columnDefinitions).length == 0) {
-
-        this.container.innerHTML =
-            `<p class="error">The settings.columnDefinitions parameter missing/empty, or it isn't an associative array. ` +
-            `Please contact Opinsys support.</p>`;
-
-        return false;
-    }
-
-    if (settings.defaultColumns === undefined ||
-        settings.defaultColumns === null ||
-        !Array.isArray(settings.defaultColumns) ||
-        settings.defaultColumns.length == 0) {
-
-        this.container.innerHTML =
-            `<p class="error">The settings.defaultColumn parameter missing/empty, or it isn't an array. ` +
-            `Please contact Opinsys support.</p>`;
-
-        return false;
-    }
-
-    if (settings.defaultSorting === undefined ||
-        settings.defaultSorting === null ||
-        typeof(settings.defaultSorting) != "object" ||
-        settings.defaultSorting.length == 0) {
-
-        this.container.innerHTML =
-            `<p class="error">The settings.defaultSorting parameter missing/empty, or it isn't an associative array. ` +
-            `Please contact Opinsys support.</p>`;
-
-        return false;
-    }
-
-    // Ensure we have at least one data source
-    if ((settings.staticData === undefined || settings.staticData === null) &&
-        (settings.dynamicData === undefined || settings.dynamicData === null)) {
-
-        this.container.innerHTML =
-            `<p class="error">No data source has been defined (missing both <code>staticData</code> and <code>dynamicData</code>). ` +
-            `Please contact Opinsys support.</p>`;
-
-        return false;
-    }
-
-    // The default columns parameter MUST be correct at all times
-    for (const c of settings.defaultColumns) {
-        if (!(c in settings.columnDefinitions)) {
-            this.container.innerHTML =
-                `<p class="error">Invalid/unknown default column "${c}". The table cannot be displayed. ` +
-                `Please contact Opinsys support.</p>`;
-
-            return false;
-        }
-    }
-
-    // The default sorting column and direction must be valid
-    if (!(settings.defaultSorting.column in settings.columnDefinitions)) {
-        const c = settings.defaultSorting.column;
-
-        this.container.innerHTML =
-            `<p class="error">Invalid/unknown default sorting column "${c}". The table cannot be displayed. ` +
-            `Please contact Opinsys support.</p>`;
-
-        return false;
-    }
-
-    if (settings.defaultSorting.dir != SortOrder.ASCENDING && settings.defaultSorting.dir != SortOrder.DESCENDING) {
-        this.container.innerHTML =
-            `<p class="error">Invalid/unknown default sorting direction. The table cannot be displayed. ` +
-            `Please contact Opinsys support.</p>`;
-
-        return false;
-    }
-
-    return true;
 }
 
 // --------------------------------------------------------------------------------------------------
