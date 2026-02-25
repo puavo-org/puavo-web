@@ -900,7 +900,7 @@ onTableBodyMouseUp(e)
 
     const url = this.user.open(this.data.transformed[this.data.current[e.target.closest("tr").dataset.index]]);
 
-    if (url === null || url === undefined)
+    if (isNullOrUndefined(url))
         return;
 
     return window.open(url, "_blank");

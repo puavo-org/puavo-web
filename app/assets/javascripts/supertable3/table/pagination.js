@@ -7,6 +7,7 @@ import { create, getTemplate } from "../../common/dom.js";
 import { setPreviousRow } from "./row_selection.js";
 import { buildTable } from "./table_builder.js";
 import * as Settings from "./settings.js";
+import { isNullOrUndefined } from "./utils.js";
 
 import {
     ColumnType,
@@ -22,7 +23,7 @@ export const isTableRowVisible = (paging, rowNum) => (rowNum >= paging.firstRowI
 // Calculates which page will be displayed on the next table update
 export function calculatePagination(data, paging)
 {
-    if (data.current === null || data.current === undefined || data.current.length == 0) {
+    if (isNullOrUndefined(data.current) || data.current.length == 0) {
         // No data at all
         paging.numPages = 0;
         paging.currentPage = 0;

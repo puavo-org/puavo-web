@@ -46,3 +46,7 @@ export function convertTimestamp(unixtime, dateOnly = false, formatter = null)
         return [false, "(ERROR)", null];
     }
 }
+
+// Type checking stuff
+export const isNullOrUndefined = i => i === null || i === undefined;
+export const isObject = i => !isNullOrUndefined(i) && typeof(i) === 'object';
