@@ -177,7 +177,9 @@ function _getSettingsObject(cls)
 
     let show = [];
 
-    if (cls.ui.filters.show && cls.ui.filters.show.checked)
+    const showFilters = cls.container.querySelector("thead section input#editor");
+
+    if (showFilters && showFilters.checked)
         show.push("filters");
 
     if (cls.ui.mass.show && cls.ui.mass.show.checked)

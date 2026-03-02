@@ -236,10 +236,6 @@ constructor(container, settings)
     // Direct handles to various user interface elements. Cleaner than using querySelector()
     // everywhere (but I have my suspicions about memory leaks).
     this.ui = {
-        filters: {
-            show: null,         // show/hide filter editor checkbox
-        },
-
         mass: {
             show: null,         // show/hide checkbox
             start: null,
@@ -370,7 +366,7 @@ buildUI()
         reverse.checked = this.filters.reverse;
         reverse.addEventListener("click", (e) => this.toggleFiltersReverse(e));
 
-        this.ui.filters.show = frag.querySelector("thead section input#editor");
+        const show = frag.querySelector("thead section input#editor");
 
         frag.querySelector("thead div#top input#editor").addEventListener("click", e => {
             this.filterEditor.setVisibility(e.target.checked);
@@ -389,11 +385,11 @@ buildUI()
 
         // Expand the tool pane immediately
         if (this.settings.show.includes("filters")) {
-            this.ui.filters.show.checked = true;
+            show.checked = true;
             this.filterEditor.setVisibility(true);
         }
 
-        this.toggleArrow(this.ui.filters.show);
+        this.toggleArrow(show);
     } else {
         // Remove all filtering stuff from the view
         frag.querySelector("thead section#filteringControls").remove();
@@ -552,11 +548,11 @@ enableUI(isEnabled)
         Pagination.enableControls(this, isEnabled);
 
     if (this.settings.enableFiltering) {
-        const uiControls = this.container.querySelector("thead tr#controls section#filteringControls");
+        const controls = this.container.querySelector("thead tr#controls section#filteringControls");
 
-        this.ui.filters.show.disabled = !isEnabled;
-        uiControls.querySelector("input#enabled").disabled = !isEnabled;
-        uiControls.querySelector("input#reverse").disabled = !isEnabled;
+        for (const id of ["editor", "enabled", "reverse"])
+            controls.querySelector(`input#${id}`).disabled = !isEnabled;
+
         this.filterEditor.enableOrDisable(isEnabled);
     }
 
