@@ -233,17 +233,6 @@ constructor(container, settings)
     // Used when doing Shift+LMB range selections.
     this.previousRow = -1;
 
-    // Direct handles to various user interface elements. Cleaner than using querySelector()
-    // everywhere (but I have my suspicions about memory leaks).
-    this.ui = {
-        mass: {
-            start: null,
-            stop: null,
-            progress: null,
-            counter: null,
-        },
-    };
-
     // A child class that implements the filter editor. Everything it does happens inside its
     // own container DIV element that is shown or hidden independently of the editor.
     this.filterEditor = null;
@@ -426,13 +415,10 @@ buildUI()
 
         mass.querySelector("div.massControls > select").addEventListener("change", (e) => this.switchMassOperation(e));
 
-        this.ui.mass.start = mass.querySelector("div.massControls button#start");
-        this.ui.mass.stop = mass.querySelector("div.massControls button#stop");
-        this.ui.mass.progress = mass.querySelector("div.massControls progress");
-        this.ui.mass.counter = mass.querySelector("div.massControls span.counter");
+        const ui = frag.querySelector("thead div#massContainer div.massControls");
 
-        this.ui.mass.start.addEventListener("click", () => this.startMassOperation());
-        this.ui.mass.stop.addEventListener("click", () => this.stopMassOperation());
+        ui.querySelector("button#start").addEventListener("click", () => this.startMassOperation());
+        ui.querySelector("button#stop").addEventListener("click", () => this.stopMassOperation());
 
         // Expand the tool pane immediately
         if (this.settings.show.includes("mass")) {
@@ -564,8 +550,8 @@ enableUI(isEnabled)
             this.updateMassButtons();
         else {
             // Explicitly all disabled
-            this.ui.mass.start.disabled = true;
-            this.ui.mass.stop.disabled = true;
+            for (const id of ["start", "stop"])
+                this.container.querySelector(`thead tr div#massContainer button#${id}`).disabled = true;
         }
 
         for (const b of this.container.querySelectorAll("div#massSelects button"))
@@ -590,14 +576,14 @@ enableTable(isEnabled)
 
 updateMassButtons()
 {
-    if (!this.ui.mass.start || !this.ui.mass.stop)
-        return;
+    const ui = this.container.querySelector("thead div#massContainer div.massControls"),
+          start = ui.querySelector("button#start"),
+          stop = ui.querySelector("button#stop");
 
-    if (this.processing || this.data.selectedItems.size == 0 || this.massOperation.definition === null)
-        this.ui.mass.start.disabled = true
-    else this.ui.mass.start.disabled = false;
-
-    this.ui.mass.stop.disabled = !this.processing;
+    if (start && stop) {
+        start.disabled = this.processing || this.data.selectedItems.size == 0 || this.massOperation.definition === null;
+        stop.disabled = !this.processing;
+    }
 }
 
 // --------------------------------------------------------------------------------------------------
@@ -922,8 +908,10 @@ switchMassOperation(e)
         fieldset.classList.remove("hidden");
     } else fieldset.classList.add("hidden");
 
-    this.ui.mass.progress.classList.add("hidden");
-    this.ui.mass.counter.classList.add("hidden");
+    const ui = this.container.querySelector("thead div#massContainer div.massControls");
+
+    ui.querySelector("progress").classList.add("hidden");
+    ui.querySelector("span.counter").classList.add("hidden");
 
     this.updateStats();
     this.updateMassButtons();
@@ -979,11 +967,15 @@ startMassOperation()
     this.enableTable(false);
     this.updateMassButtons();
 
-    this.ui.mass.progress.setAttribute("max", this.massOperation.rows.length);
-    this.ui.mass.progress.setAttribute("value", 0);
-    this.ui.mass.progress.classList.remove("hidden");
-    this.ui.mass.counter.innerHTML = _tr("status.mass_progress", { count: 0, total: this.massOperation.rows.length, success: 0, fail: 0 });
-    this.ui.mass.counter.classList.remove("hidden");
+    const ui = this.container.querySelector("thead div#massContainer div.massControls"),
+          progress = ui.querySelector("progress"),
+          counter = ui.querySelector("span.counter");
+
+    progress.setAttribute("max", this.massOperation.rows.length);
+    progress.setAttribute("value", 0);
+    progress.classList.remove("hidden");
+    counter.innerHTML = _tr("status.mass_progress", { count: 0, total: this.massOperation.rows.length, success: 0, fail: 0 });
+    counter.classList.remove("hidden");
 
     if (this.massOperation.definition.singleShot) {
         // Process all rows at once
@@ -1004,9 +996,11 @@ stopMassOperation()
 
 updateMassOperation()
 {
-    this.ui.mass.progress.setAttribute("value", this.massOperation.pos);
+    const ui = this.container.querySelector("thead div#massContainer div.massControls");
 
-    this.ui.mass.counter.innerHTML = _tr("status.mass_progress", {
+    ui.querySelector("progress").setAttribute("value", this.massOperation.pos);
+
+    ui.querySelector("span.counter").innerHTML = _tr("status.mass_progress", {
         count: this.massOperation.pos,
         total: this.massOperation.rows.length,
         success: this.data.successItems.size,
