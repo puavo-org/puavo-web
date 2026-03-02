@@ -237,7 +237,6 @@ constructor(container, settings)
     // everywhere (but I have my suspicions about memory leaks).
     this.ui = {
         mass: {
-            show: null,         // show/hide checkbox
             start: null,
             stop: null,
             progress: null,
@@ -400,7 +399,7 @@ buildUI()
     const rowsButton = frag.querySelector("thead div#top button#rows");
 
     if (this.settings.enableSelection) {
-        this.ui.mass.show = frag.querySelector("thead section input#mass");
+        const show = frag.querySelector("thead section input#mass");
 
         frag.querySelector("thead div#top input#mass").addEventListener("click", e => {
             this.container.querySelector("tr#controls div#massContainer").classList.toggle("hidden", !e.target.checked);
@@ -437,11 +436,11 @@ buildUI()
 
         // Expand the tool pane immediately
         if (this.settings.show.includes("mass")) {
-            this.ui.mass.show.checked = true;
+            show.checked = true;
             frag.querySelector("tr#controls div#massContainer").classList.remove("hidden");
         }
 
-        this.toggleArrow(this.ui.mass.show);
+        this.toggleArrow(show);
     } else {
         rowsButton.remove();
         frag.querySelector("tr#controls section#massSpan").remove();
@@ -558,7 +557,7 @@ enableUI(isEnabled)
 
     if (this.settings.enableSelection) {
         this.container.querySelector(`button#rows`).disabled = !isEnabled;
-        this.ui.mass.show.disabled = !isEnabled;
+        this.container.querySelector("thead tr#controls section#massSpan input").disabled = !isEnabled;
         this.container.querySelector("div.massControls select").disabled = !isEnabled;
 
         if (isEnabled)

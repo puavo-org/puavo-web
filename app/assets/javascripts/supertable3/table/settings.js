@@ -182,7 +182,9 @@ function _getSettingsObject(cls)
     if (showFilters && showFilters.checked)
         show.push("filters");
 
-    if (cls.ui.mass.show && cls.ui.mass.show.checked)
+    const showMass = cls.container.querySelector("thead section#massSpan input");
+
+    if (showMass && showMass.checked)
         show.push("mass");
 
     let settings = {
