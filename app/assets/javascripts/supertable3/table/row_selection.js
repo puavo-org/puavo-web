@@ -11,6 +11,8 @@ import {
     INDEX_SORTABLE
 } from "./constants.js";
 
+import * as Mass from "./mass_operations.js";
+
 // Sets and clears the "previous row" marker that appears around the row's checkbox when it's clicked.
 // It acts as a "from here" marker when doing range selections.
 export function setPreviousRow(table, newIndex)
@@ -86,7 +88,7 @@ export function onRowCheckboxClick(table, e)
     setPreviousRow(table, currentRow);
 
     table.updateStats();
-    table.updateMassButtons();
+    Mass.updateButtons(table);
 }
 
 // Updates the internal item PuavoID sets to match the desired selection mode
@@ -161,7 +163,7 @@ function selectAllRows(table, operation)
 
     setPreviousRow(table, -1);
     table.updateStats();
-    table.updateMassButtons();
+    Mass.updateButtons(table);
 }
 
 // Selects (or deselects) specific rows that match one or more search terms
@@ -239,7 +241,7 @@ function selectSpecificRows(table, state)
 
     setPreviousRow(table, -1);
     table.updateStats();
-    table.updateMassButtons();
+    Mass.updateButtons(table);
 }
 
 // Remember the previous contents

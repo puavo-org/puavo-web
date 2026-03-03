@@ -7,6 +7,7 @@ import {
     SortOrder,
     INDEX_DISPLAYABLE,
     DEFAULT_ROWS_PER_PAGE,
+    BATCH_SIZE
 } from "./constants.js";
 
 import * as Data from "./data";
@@ -29,8 +30,7 @@ import { buildTable } from "./table_builder.js";
 
 import { isNullOrUndefined, isObject } from "./utils.js";
 
-// Mass operation batch size (how many items are processed on one request)
-const BATCH_SIZE = 5;
+import * as Mass from "./mass_operations.js";
 
 // SUPERTABLE_WORKER_FILE must be defined in the HTML file where the bundle is included in
 const MASS_WORKER = new Worker(SUPERTABLE_WORKER_FILE);
@@ -413,12 +413,12 @@ buildUI()
             selector.appendChild(o);
         }
 
-        mass.querySelector("div.massControls > select").addEventListener("change", (e) => this.switchMassOperation(e));
+        mass.querySelector("div.massControls > select").addEventListener("change", e => Mass.changeOperation(this, e.target));
 
         const ui = frag.querySelector("thead div#massContainer div.massControls");
 
-        ui.querySelector("button#start").addEventListener("click", () => this.startMassOperation());
-        ui.querySelector("button#stop").addEventListener("click", () => this.stopMassOperation());
+        ui.querySelector("button#start").addEventListener("click", () => Mass.start(this));
+        ui.querySelector("button#stop").addEventListener("click", () => Mass.requestStop(this));
 
         // Expand the tool pane immediately
         if (this.settings.show.includes("mass")) {
@@ -547,7 +547,7 @@ enableUI(isEnabled)
         this.container.querySelector("div.massControls select").disabled = !isEnabled;
 
         if (isEnabled)
-            this.updateMassButtons();
+            Mass.updateButtons(this);
         else {
             // Explicitly all disabled
             for (const id of ["start", "stop"])
@@ -572,18 +572,6 @@ enableTable(isEnabled)
     body.classList.toggle("user-select-none", !isEnabled);
     headers.classList.toggle("pointer-events-none", !isEnabled);
     body.classList.toggle("pointer-events-none", !isEnabled);
-}
-
-updateMassButtons()
-{
-    const ui = this.container.querySelector("thead div#massContainer div.massControls"),
-          start = ui.querySelector("button#start"),
-          stop = ui.querySelector("button#stop");
-
-    if (start && stop) {
-        start.disabled = this.processing || this.data.selectedItems.size == 0 || this.massOperation.definition === null;
-        stop.disabled = !this.processing;
-    }
 }
 
 // --------------------------------------------------------------------------------------------------
@@ -889,203 +877,19 @@ toggleFiltersReverse(e)
 // --------------------------------------------------------------------------------------------------
 // MASS OPERATIONS
 
-// Called when the selected mass operation changes
-switchMassOperation(e)
-{
-    const fieldset = this.container.querySelector("table.stTable thead div#massContainer fieldset#settings"),
-          container = fieldset.querySelector("div#ui");
-
-    const index = e.target.selectedIndex - 1;
-
-    this.massOperation.definition = this.user.massOperations[index];
-    this.massOperation.handler = new this.massOperation.definition.cls(this, container);
-
-    // Hide/swap the UI
-    container.innerText = "";
-
-    if (this.massOperation.definition.haveSettings) {
-        this.massOperation.handler.buildInterface();
-        fieldset.classList.remove("hidden");
-    } else fieldset.classList.add("hidden");
-
-    const ui = this.container.querySelector("thead div#massContainer div.massControls");
-
-    ui.querySelector("progress").classList.add("hidden");
-    ui.querySelector("span.counter").classList.add("hidden");
-
-    this.updateStats();
-    this.updateMassButtons();
-}
-
-startMassOperation()
-{
-    if (this.isBusy())
-        return;
-
-    if (!this.massOperation.handler.canProceed())
-        return;
-
-    if (!window.confirm(_tr('are_you_sure')))
-        return;
-
-    // Reset previous row states of visible rows
-    for (const row of this.getTableRows()) {
-        row.classList.remove("success", "fail", "processing");
-        row.title = "";
-    }
-
-    this.data.successItems.clear();
-    this.data.failedItems.clear();
-
-    this.massOperation.rows = [];
-    this.massOperation.pos = 0;
-    this.massOperation.prevPos = 0;
-
-    // Make a list of all selected rows
-    for (let rowNum = 0; rowNum < this.data.current.length; rowNum++) {
-        const id = this.data.transformed[this.data.current[rowNum]].id[INDEX_DISPLAYABLE];
-
-        if (this.data.selectedItems.has(id)) {
-            this.massOperation.rows.push({
-                index: rowNum,
-                id: id,
-            });
-        }
-    }
-
-    //console.log(this.data.selectedItems);
-
-    this.massOperation.handler.start();
-    this.massOperation.singleShot = this.massOperation.definition.singleShot || false;
-    this.massOperation.parameters = this.massOperation.handler.getOperationParameters() || {};
-
-    // Initiate the operation
-    this.processing = true;
-    this.stopRequested = false;
-
-    this.enableUI(false);
-    this.enableTable(false);
-    this.updateMassButtons();
-
-    const ui = this.container.querySelector("thead div#massContainer div.massControls"),
-          progress = ui.querySelector("progress"),
-          counter = ui.querySelector("span.counter");
-
-    progress.setAttribute("max", this.massOperation.rows.length);
-    progress.setAttribute("value", 0);
-    progress.classList.remove("hidden");
-    counter.innerHTML = _tr("status.mass_progress", { count: 0, total: this.massOperation.rows.length, success: 0, fail: 0 });
-    counter.classList.remove("hidden");
-
-    if (this.massOperation.definition.singleShot) {
-        // Process all rows at once
-        this.processBatch(this.prepareNextBatch(this.data.selectedItems.size));
-    } else {
-        // Process in smaller batches
-        this.processBatch(this.prepareNextBatch(BATCH_SIZE));
-    }
-}
-
-stopMassOperation()
-{
-    // The operation will stop after the current batch has been processed
-    // (no way to cancel the batch that's currently in-flight)
-    this.stopRequested = true;
-    console.log("Stopping the mass operation after the current batch finishes");
-}
-
-updateMassOperation()
-{
-    const ui = this.container.querySelector("thead div#massContainer div.massControls");
-
-    ui.querySelector("progress").setAttribute("value", this.massOperation.pos);
-
-    ui.querySelector("span.counter").innerHTML = _tr("status.mass_progress", {
-        count: this.massOperation.pos,
-        total: this.massOperation.rows.length,
-        success: this.data.successItems.size,
-        fail: this.data.failedItems.size
-    });
-}
-
-endMassOperation()
-{
-    this.massOperation.handler.finish();
-    this.processing = false;
-    this.enableUI(true);
-    this.enableTable(true);
-    this.updateMassButtons();
-
-    // Leave the progress bar and the counter visible. They're only hidden until
-    // the first time a mass operation is executed.
-}
-
 // Prepares the next N rows of the mass operation
 prepareNextBatch(batchSize)
 {
     if (this.massOperation.pos >= this.massOperation.rows.length) {
         console.log(`----- All items have been processed -----`);
-        this.endMassOperation();
+        Mass.finish(this);
         return null;
     }
 
-    const tableRows = this.getTableRows();
+    const batch = Mass.prepareBatch(this, batchSize);
 
-    const end = Math.min(this.massOperation.rows.length, this.massOperation.pos + batchSize);
-
-    this.massOperation.prevPos = this.massOperation.pos;
-
-    let batch = [];
-
-    // Go through the next N rows and prepare them
-    for (; this.massOperation.pos < end; this.massOperation.pos++) {
-        const item = this.massOperation.rows[this.massOperation.pos];
-
-        const tRow = Pagination.isTableRowVisible(this.paging, item.index) ?
-            tableRows[item.index - this.paging.firstRowIndex] :
-            null;
-
-        //console.log(`Processing item ${this.massOperation.pos + 1}/${this.massOperation.rows.length}: ${item.id} (row ${item.index})`);
-
-        // Returns a { state, data } object
-        const result = this.massOperation.handler.prepareItem(this.data.transformed[this.data.current[item.index]]);
-
-        // Immediately update the table if the results are already known
-        switch (result.state) {
-            case "ready":
-                // This item can be processed
-                if (result.data !== undefined)
-                    this.massOperation.rows[this.massOperation.pos].data = result.data;
-
-                batch.push(this.massOperation.rows[this.massOperation.pos]);
-                tRow?.classList.add("processing");
-                break;
-
-            case "skip":
-                // This item is already in the desired state, it can be skipped
-                tRow?.classList.add("success");
-                this.data.successItems.add(item.id);
-                break;
-
-            case "error":
-                // This item could not be prepared for processing, skip it
-                tRow?.classList.add("fail");
-                this.data.failedItems.add(item.id);
-
-                if (tRow && result.message) {
-                    // Instantly set the error message
-                    tRow.title = result.message;
-                }
-
-                break;
-
-            default:
-                console.error(result);
-                window.alert(`Unknown prepare status: "${result.state}". This is a fatal error, stopping here. See the console for details, then contact support.`);
-                this.endMassOperation();
-                return null;
-        }
-    }
+    if (batch === null)
+        Mass.finish(this);
 
     return batch;
 }
@@ -1120,33 +924,10 @@ onWorkerMessage(e)
 {
     console.log(`[main] worker sent message:`, e.data.message);
 
-    const tableRows = this.getTableRows();
-
     switch (e.data.message) {
         case "batch_processed":
             // Update table row colors
-            for (const row of e.data.result) {
-                if (row.status)
-                    this.data.successItems.add(row.id);
-                else this.data.failedItems.add(row.id);
-
-                // If this row is visible, update its status
-                if (Pagination.isTableRowVisible(this.paging, row.index)) {
-                    const tRow = tableRows[row.index - this.paging.firstRowIndex];
-
-                    tRow.classList.remove("processing");
-
-                    if (row.status)
-                        tRow.classList.add("success");
-                    else {
-                        tRow.classList.add("fail");
-
-                        if (row.message)
-                            tRow.title = row.message;
-                    }
-                }
-            }
-
+            Mass.updateTableColors(this, e);
             break;
 
         case "batch_skipped":
@@ -1156,45 +937,23 @@ onWorkerMessage(e)
         case "server_error":
         case "network_error":
             // This batch could not be processed. Flag all rows as failed and move on.
-            for (let i = this.massOperation.prevPos; i < this.massOperation.pos; i++) {
-                const item = this.massOperation.rows[i];
-                const index = item.index;
-                const tableRow = Pagination.isTableRowVisible(this.paging, index) ? tableRows[index - this.paging.firstRowIndex] : null;
-
-                if (tableRow)
-                    tableRow.classList.remove("processing");
-
-                if (this.data.successItems.has(item.id) || this.data.failedItems.has(item.id)) {
-                    // It's possible that some items were skipped in the preparation state,
-                    // and they're not affected by this network/server error. They were
-                    // not sent to the server, but because we mark all previous BATCH_SIZE
-                    // rows as "failed", they must be skipped again here.
-                    continue;
-                }
-
-                this.data.failedItems.add(item.id);
-
-                if (tableRow) {
-                    tableRow.classList.add("fail");
-                    tableRow.title = e.data.error;
-                }
-            }
-
+            Mass.flagNetworkError(this, e);
             break;
 
         default:
             // This is a fatal error
             console.error(`The worker thread sent an unknown message: "${e.data.message}"!`);
             window.alert("Unhandled worker thread message. Operation halted. See the console for details, then contact support.");
-            this.endMassOperation();
+            Mass.finish(this);
             return;
     }
 
-    this.updateMassOperation();
+    Mass.updateProgress(this);
 
+    // Stop here?
     if (this.stopRequested) {
         console.log(`----- Stopping per user request -----`);
-        this.endMassOperation();
+        Mass.finish(this);
         return;
     }
 

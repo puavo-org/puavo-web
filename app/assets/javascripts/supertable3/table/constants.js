@@ -71,3 +71,6 @@ export const ROWS_PER_PAGE_PRESETS = [
 
 // How many rows are displayed by default
 export const DEFAULT_ROWS_PER_PAGE = 100;
+
+// Mass operation batch size (how many items are processed on one request)
+export const BATCH_SIZE = 5;
