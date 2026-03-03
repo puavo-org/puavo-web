@@ -327,20 +327,10 @@ buildUI()
     this.container.appendChild(create("div", { cls: ["stError", "hidden"]}));
 
     const frag = getTemplate("tableControls");
-    let elem;
 
     // Setup event handling for the elements that are visible
-    elem = frag.querySelector("thead div#top button#export");
-
-    if (this.settings.enableExport)
-        elem.addEventListener("click", e => Export.openPopup(e.target, this.data, this.columns, this.settings.csvPrefix, this.settings.enableSelection));
-    else elem.remove();
-
-    const colButton = frag.querySelector("thead div#top button#columns");
-
-    if (this.settings.enableColumnEditing)
-        colButton.addEventListener("click", e => ColumnEditor.open(e.target, this));
-    else colButton.remove();
+    Export.setup(this, frag);
+    ColumnEditor.setup(this, frag);
 
     // Setup filtering
     if (this.settings.enableFiltering) {

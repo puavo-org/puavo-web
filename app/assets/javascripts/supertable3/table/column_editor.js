@@ -98,7 +98,7 @@ function resetOrder(table)
     table.updateTable();
 }
 
-export function open(e, table)
+function open(table, e)
 {
     const template = getTemplate("columnsPopup");
 
@@ -137,4 +137,13 @@ export function open(e, table)
         update(table, false);
         modalPopup.getContents().querySelector(`input[type="search"]`).focus();
     }
+}
+
+export function setup(table, frag)
+{
+    const button = frag.querySelector("thead div#top button#columns");
+
+    if (table.settings.enableColumnEditing)
+        button.addEventListener("click", e => open(table, e.target));
+    else button.remove();
 }

@@ -163,7 +163,7 @@ function _doExport(format, data, allColumns, prefix)
     }
 }
 
-export function openPopup(event, data, columns, prefix, enableSelection)
+function open(event, data, columns, prefix, enableSelection)
 {
     const template = getTemplate("exportPopup");
 
@@ -178,4 +178,13 @@ export function openPopup(event, data, columns, prefix, enableSelection)
         modalPopup.attach(event);
         modalPopup.display("bottom");
     }
+}
+
+export function setup(table, frag)
+{
+    const button = frag.querySelector("thead div#top button#export");
+
+    if (table.settings.enableExport)
+        button.addEventListener("click", e => open(e.target, table.data, table.columns, table.settings.csvPrefix, table.settings.enableSelection));
+    else button.remove();
 }
