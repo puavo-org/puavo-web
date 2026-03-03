@@ -20,7 +20,7 @@ import * as Headers from "./headers.js";
 
 import { FilterEditor } from "../filters/editor/fe_main.js";
 
-import { onRowCheckboxClick, onOpenMassRowSelectionPopup } from "./row_selection.js";
+import { setupRowSelections, onRowCheckboxClick } from "./row_selection.js";
 
 import * as Settings from "./settings.js";
 
@@ -384,53 +384,8 @@ buildUI()
         frag.querySelector("div#filteringPreview").remove();
     }
 
-    // Setup mass tools and row selection
-    const rowsButton = frag.querySelector("thead div#top button#rows");
-
-    if (this.settings.enableSelection) {
-        const show = frag.querySelector("thead section input#mass");
-
-        frag.querySelector("thead div#top input#mass").addEventListener("click", e => {
-            this.container.querySelector("tr#controls div#massContainer").classList.toggle("hidden", !e.target.checked);
-            this.toggleArrow(e.target);
-            Settings.save(this);
-        });
-
-        rowsButton.addEventListener("click", e => onOpenMassRowSelectionPopup(this, e.target));
-
-        const mass = frag.querySelector("thead div#massContainer");
-
-        // List the available mass operations. The combo already contains a "select" placeholder
-        // item which is selected by default.
-        const selector = mass.querySelector("fieldset div.massControls select.operation");
-
-        for (const m of this.user.massOperations) {
-            const o = create("option");
-
-            o.value = m.id;
-            o.label = m.title;
-
-            selector.appendChild(o);
-        }
-
-        mass.querySelector("div.massControls > select").addEventListener("change", e => Mass.changeOperation(this, e.target));
-
-        const ui = frag.querySelector("thead div#massContainer div.massControls");
-
-        ui.querySelector("button#start").addEventListener("click", () => Mass.start(this));
-        ui.querySelector("button#stop").addEventListener("click", () => Mass.requestStop(this));
-
-        // Expand the tool pane immediately
-        if (this.settings.show.includes("mass")) {
-            show.checked = true;
-            frag.querySelector("tr#controls div#massContainer").classList.remove("hidden");
-        }
-
-        this.toggleArrow(show);
-    } else {
-        rowsButton.remove();
-        frag.querySelector("tr#controls section#massSpan").remove();
-    }
+    setupRowSelections(this, frag);
+    Mass.setupMassTools(this, frag);
 
     // Setup pagination
     if (this.settings.enablePagination)

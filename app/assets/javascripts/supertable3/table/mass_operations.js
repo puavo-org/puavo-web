@@ -61,9 +61,54 @@ export class MassOperation {
     }
 }
 
+import { create } from "../../common/dom.js";
 import { _tr } from "../../common/utils.js";
 import { INDEX_DISPLAYABLE, BATCH_SIZE } from "./constants.js";
 import * as Pagination from "./pagination.js";
+import * as Settings from "./settings.js";
+import { onOpenMassRowSelectionPopup } from "./row_selection.js";
+
+export function setupMassTools(table, frag)
+{
+    const massSpan = frag.querySelector("thead section#massSpan");
+
+    if (!table.settings.enableSelection) {
+        massSpan.remove();
+        return;
+    }
+
+    const showButton = massSpan.querySelector("input#mass");
+
+    showButton.addEventListener("click", e => {
+        table.container.querySelector("tr#controls div#massContainer").classList.toggle("hidden", !e.target.checked);
+        table.toggleArrow(e.target);
+        Settings.save(table);
+    });
+
+    const mass = frag.querySelector("thead div#massContainer");
+
+    // List the available mass operations. The combo already contains a "select" placeholder
+    // item which is selected by default.
+    const selector = mass.querySelector("fieldset div.massControls select.operation");
+
+    for (const m of table.user.massOperations)
+        selector.appendChild(create("option", { label: m.title, inputValue: m.id }));
+
+    mass.querySelector("div.massControls > select").addEventListener("change", e => changeOperation(table, e.target));
+
+    const ui = frag.querySelector("thead div#massContainer div.massControls");
+
+    ui.querySelector("button#start").addEventListener("click", () => start(table));
+    ui.querySelector("button#stop").addEventListener("click", () => requestStop(table));
+
+    // Expand the tool pane immediately
+    if (table.settings.show.includes("mass")) {
+        showButton.checked = true;
+        frag.querySelector("tr#controls div#massContainer").classList.remove("hidden");
+    }
+
+    table.toggleArrow(showButton);
+}
 
 export function updateButtons(table)
 {

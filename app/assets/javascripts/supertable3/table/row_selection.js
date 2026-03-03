@@ -13,6 +13,15 @@ import {
 
 import * as Mass from "./mass_operations.js";
 
+export function setupRowSelections(table, frag)
+{
+    const button = frag.querySelector("thead div#top button#rows");
+
+    if (table.settings.enableSelection)
+        button.addEventListener("click", e => onOpenMassRowSelectionPopup(table, e.target));
+    else button.remove();
+}
+
 // Sets and clears the "previous row" marker that appears around the row's checkbox when it's clicked.
 // It acts as a "from here" marker when doing range selections.
 export function setPreviousRow(table, newIndex)
