@@ -118,18 +118,18 @@
         <div class="flex-rows gap-10px">
             <p class="margin-0 padding-0"><%= t("supertable.export.title") %>:</p>
 
-            <div class="flex-vcenter flex-columns gap-10px">
-                <button id="btnCSV">CSV</button>
-                <button id="btnTSV">TSV</button>
-                <button id="btnJSON">JSON</button>
+            <div class="flex-vcenter flex-columns gap-10px" id="exportButtons"">
+                <button id="btnCSV" data-format="csv">CSV</button>
+                <button id="btnTSV" data-format="tsv">TSV</button>
+                <button id="btnJSON" data-format="json">JSON</button>
             </div>
 
             <p class="margin-0 padding-0"><%= t("supertable.export.settings") %>:</p>
 
             <div class="flex-rows">
-                <label title="<%= t("supertable.export.only_selected_rows_title") %>"><input type="checkbox" id="only-selected-rows"><%= t("supertable.export.only_selected_rows_checkbox") %></label>
-                <label title="<%= t("supertable.export.only_visible_rows_title") %>"><input type="checkbox" id="only-visible-rows" checked><%= t("supertable.export.only_visible_rows_checkbox") %></label>
-                <label title="<%= t("supertable.export.only_visible_cols_title") %>"><input type="checkbox" id="only-visible-cols" checked><%= t("supertable.export.only_visible_cols_checkbox") %></label>
+                <label title="<%= t("supertable.export.only_selected_rows_title") %>"><input type="checkbox" id="selected_rows"><%= t("supertable.export.only_selected_rows_checkbox") %></label>
+                <label title="<%= t("supertable.export.only_visible_rows_title") %>"><input type="checkbox" id="visible_rows" checked><%= t("supertable.export.only_visible_rows_checkbox") %></label>
+                <label title="<%= t("supertable.export.only_visible_cols_title") %>"><input type="checkbox" id="visible_cols" checked><%= t("supertable.export.only_visible_cols_checkbox") %></label>
             </div>
         </div>
     </div>
