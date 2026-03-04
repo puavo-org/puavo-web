@@ -2,7 +2,7 @@
 
 import { getTemplate } from "../../common/dom.js";
 import { _tr } from "../../common/utils.js";
-import * as Settings from "./settings.js";
+import { saveSettings } from "./settings.js";
 
 const getColumnList = selected => modalPopup.getContents().querySelectorAll("div#columnList input" + (selected ? ":checked" : ""));
 
@@ -94,7 +94,7 @@ function resetOrder(table)
             nc.push(c);
 
     table.columns.current = nc;
-    Settings.save(table);
+    saveSettings(table);
     table.updateTable();
 }
 

@@ -6,7 +6,7 @@ import { _tr, escapeHTML } from "../../common/utils.js";
 import { create, getTemplate } from "../../common/dom.js";
 import { setPreviousRow } from "./row_selection.js";
 import { buildTable } from "./table_builder.js";
-import * as Settings from "./settings.js";
+import { saveSettings } from "./settings.js";
 import { isNullOrUndefined } from "./utils.js";
 
 import {
@@ -169,7 +169,7 @@ export function initialize(table, template)
         updatePageCounter(table);
         enableControls(table);
 
-        Settings.save(table);
+        saveSettings(table);
         setPreviousRow(table, -1);
         buildTable(table);
     });

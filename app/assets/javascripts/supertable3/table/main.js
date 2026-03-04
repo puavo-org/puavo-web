@@ -22,7 +22,7 @@ import { FilterEditor } from "../filters/editor/fe_main.js";
 
 import { setupRowSelections, onRowCheckboxClick } from "./row_selection.js";
 
-import * as Settings from "./settings.js";
+import { loadSettings, saveSettings } from "./settings.js";
 
 import * as Pagination from "./pagination.js";
 
@@ -272,7 +272,7 @@ constructor(container, settings)
         this.settings.enableSelection = false;
 
     // Load stored settings
-    Settings.load(this);
+    loadSettings(this);
 
     // Validate the current sorting column and ensure it is in the currently visible columns
     if (!this.columns.current.includes(this.sorting.column)) {
@@ -311,7 +311,7 @@ constructor(container, settings)
     // ----------------------------------------------------------------------------------------------
     // Do the initial data fetch and table update
 
-    Settings.save(this);
+    saveSettings(this);
     this.fetchDataAndUpdate();
 }
 
@@ -349,7 +349,7 @@ buildUI()
         frag.querySelector("thead div#top input#editor").addEventListener("click", e => {
             this.filterEditor.setVisibility(e.target.checked);
             this.toggleArrow(e.target);
-            Settings.save(this);
+            saveSettings(this);
         });
 
         // Construct the filter editor
@@ -552,7 +552,7 @@ setVisibleColumns(newColumns)
         }
     }
 
-    Settings.save(this);
+    saveSettings(this);
     this.updateTable();
 }
 
@@ -783,7 +783,7 @@ saveFilters()
     this.filters.string = this.filterEditor.getAdvancedFilter();
     this.filters.advanced = this.filterEditor.isAdvancedMode();
 
-    Settings.save(this);
+    saveSettings(this);
     this.filterEditor.updatePreview();
 }
 
@@ -801,7 +801,7 @@ updateFiltering()
 toggleFiltersEnabled(e)
 {
     this.filters.enabled = e.target.checked;
-    Settings.save(this);
+    saveSettings(this);
 
     this.clearRowSelections();
     this.updateTable();
@@ -810,7 +810,7 @@ toggleFiltersEnabled(e)
 toggleFiltersReverse(e)
 {
     this.filters.reverse = e.target.checked;
-    Settings.save(this);
+    saveSettings(this);
 
     if (this.filters.enabled) {
         this.clearRowSelections();
@@ -935,7 +935,7 @@ onHeaderMouseUp(e)
     document.removeEventListener("mousemove", this.onHeaderMouseMove);
 
     Headers.endMouseTracking(this, e);
-    Settings.save(this);
+    saveSettings(this);
 }
 
 // Drag a header cell around, or track mouse movement to see if header drag should be started

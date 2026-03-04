@@ -65,7 +65,7 @@ import { create } from "../../common/dom.js";
 import { _tr } from "../../common/utils.js";
 import { INDEX_DISPLAYABLE, BATCH_SIZE } from "./constants.js";
 import * as Pagination from "./pagination.js";
-import * as Settings from "./settings.js";
+import { saveSettings } from "./settings.js";
 import { onOpenMassRowSelectionPopup } from "./row_selection.js";
 
 export function setupMassTools(table, frag)
@@ -82,7 +82,7 @@ export function setupMassTools(table, frag)
     showButton.addEventListener("click", e => {
         table.container.querySelector("tr#controls div#massContainer").classList.toggle("hidden", !e.target.checked);
         table.toggleArrow(e.target);
-        Settings.save(table);
+        saveSettings(table);
     });
 
     const mass = frag.querySelector("thead div#massContainer");
