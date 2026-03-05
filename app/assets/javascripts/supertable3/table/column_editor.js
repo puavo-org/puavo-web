@@ -111,11 +111,8 @@ function open(table, e)
     const current = new Set(table.columns.current);
     let html = "";
 
-    for (const c of columnNames) {
-        const def = table.columns.definitions[c[0]];
-
+    for (const c of columnNames)
         html += `<label id="${c[0]}"><input type="checkbox"${current.has(c[0]) ? " checked": ""}>${c[1]}</label>`;
-    }
 
     template.querySelector("div#columnList").innerHTML = html;
 

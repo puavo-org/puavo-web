@@ -100,12 +100,11 @@ function onJumpToPage(table, e)
         first = ellipsize(first[col][INDEX_EXISTS] ? first[col][index] : "-");
         last = ellipsize(last[col][INDEX_EXISTS] ? last[col][index] : "-");
 
-        const o = create("option", { label: `${page + 1}: ${escapeHTML(first)} → ${escapeHTML(last)}` });
-
-        o.value = page;
-        o.selected = (page == paging.currentPage);
-
-        select.appendChild(o);
+        select.appendChild(create("option", {
+            label: `${page + 1}: ${escapeHTML(first)} → ${escapeHTML(last)}`,
+            inputValue: page,
+            selected: page == paging.currentPage
+        }));
     }
 
     template.querySelector("select").addEventListener("change", e => {
@@ -152,13 +151,8 @@ export function initialize(table, template)
     // Fill in the rows per page selector
     const selector = ui.querySelector("select#rowsPerPage");
 
-    for (const [value, label] of ROWS_PER_PAGE_PRESETS) {
-        const o = create("option", { label: label });
-
-        o.value = value;
-        o.selected = (value == table.paging.rowsPerPage);
-        selector.appendChild(o);
-    }
+    for (const [value, label] of ROWS_PER_PAGE_PRESETS)
+        selector.appendChild(create("option", { label: label, inputValue: value, selected: value == table.paging.rowsPerPage }));
 
     // Setup events
     ui.querySelector("select#rowsPerPage").addEventListener("change", e => {
