@@ -34,6 +34,12 @@ export function create(tag, params={})
     if ("inputValue" in params && params.inputValue !== undefined)
         e.value = params.inputValue;
 
+    if ("selected" in params && params.selected !== undefined)
+        e.selected = params.selected;
+
+    if ("checked" in params && params.checked !== undefined)
+        e.checked = params.checked;
+
     return e;
 }
 
