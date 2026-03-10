@@ -15,7 +15,25 @@ class UniventionRequestError < StandardError
 end
 
 module PuavoRest
+  module Univention
+    def self.do_http_request(uri, request)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE  # XXX
+      http.request(request)
+    end
+
+    def self.get_conf_string(config, key, errmsg)
+      value = config[key]
+      raise ExternalLoginConfigError, errmsg \
+        unless value.kind_of?(String) && !value.empty?
+      return value
+    end
+  end
+
   class ExternalUniventionService < ExternalLoginService
+    attr_reader :provisioning, :server_uri
+
     def initialize(external_login, univention_config, service_name, rlog)
       super(external_login, service_name, rlog)
 
@@ -23,34 +41,30 @@ module PuavoRest
         unless external_login.manage_puavousers
 
       @extlogin_id_field \
-        = get_conf_string(univention_config,
-                          'extlogin_id_field',
-                          'univention extlogin id field not configured')
+        = Univention::get_conf_string(univention_config,
+                                      'extlogin_id_field',
+                                      'univention extlogin id field not configured')
       @extschool_id_field \
-        = get_conf_string(univention_config,
-                          'extschool_id_field',
-                          'univention extschool id field not configured')
+        = Univention::get_conf_string(univention_config,
+                                      'extschool_id_field',
+                                      'univention extschool id field not configured')
       @external_username_field \
-        = get_conf_string(univention_config,
-                          'external_username_field',
-                          'univention extlogin name field not configured')
-      @server_uri = get_conf_string(univention_config, 'server_uri',
-                                    'univention server uri not configured')
+        = Univention::get_conf_string(univention_config,
+                                      'external_username_field',
+                                      'univention extlogin name field not configured')
+      @server_uri = Univention::get_conf_string(univention_config, 'server_uri',
+                                                'univention server uri not configured')
 
-      @admin_username = get_conf_string(univention_config,
-                                        'admin_username',
-                                        'admin username not configured')
-      @admin_password = get_conf_string(univention_config,
-                                        'admin_password',
-                                        'admin password not configured')
-      @provisioning_api_admin_password \
-        = get_conf_string(univention_config,
-                          'provisioning_api_admin_password',
-                          'provisioning_api_admin_password not configured')
-      @provisioning_api_subscription_password \
-        = get_conf_string(univention_config,
-            'provisioning_api_subscription_password',
-            'provisioning_api_subscription_password not configured')
+      @admin_username = Univention::get_conf_string(univention_config,
+                                                    'admin_username',
+                                                    'admin username not configured')
+      @admin_password = Univention::get_conf_string(univention_config,
+                                                    'admin_password',
+                                                    'admin password not configured')
+
+      raise 'no provisioning configration' \
+        unless univention_config['provisioning'].kind_of?(Hash)
+      @provisioning = Provisioning.new(self, univention_config['provisioning'])
 
       @puavo_schools_by_id = nil
       @univention_schools_by_url = {}
@@ -61,13 +75,6 @@ module PuavoRest
     def change_password(actor_username, actor_password, target_user_username,
                         target_user_password)
       # XXX Do nothing.  Should this actually do something?
-    end
-
-    def get_conf_string(config, key, errmsg)
-      value = config[key]
-      raise ExternalLoginConfigError, errmsg \
-        unless value.kind_of?(String) && !value.empty?
-      return value
     end
 
     def get_puavo_schools_by_id()
@@ -81,34 +88,6 @@ module PuavoRest
       return puavo_schools_by_id
     end
 
-    def do_http_request(uri, request)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE  # XXX
-      http.request(request)
-    end
-
-    def create_provisioning_subscription
-      # we set the @provisioning_subscription_password here
-      subscription_params = {
-        "name": "test-consumer",
-        "realms_topics": [ {"realm":"udm","topic":"users/user"} ],
-        "request_prefill": true,
-        "password": @provisioning_api_subscription_password,
-      }
-
-      uri = URI("#{ @server_uri }/univention/provisioning/v1/subscriptions")
-      request = Net::HTTP::Post.new(uri)
-      request['Content-Type'] = 'application/json'
-      request.basic_auth('admin', @provisioning_api_admin_password)
-      request.body = subscription_params.to_json
-
-      response = do_http_request(uri, request)
-      # XXX
-      p response
-      p response.body
-    end
-
     def get_univention_token
       uri = URI("#{ @server_uri }/ucsschool/kelvin/token")
 
@@ -117,7 +96,7 @@ module PuavoRest
       request.set_form_data('username' => @admin_username,
                             'password' => @admin_password)
 
-      response = do_http_request(uri, request)
+      response = Univention::do_http_request(uri, request)
       unless response.is_a?(Net::HTTPSuccess) then
         errmsg = "failure when requesting a token: #{ response.code }" \
                    + " #{ response.message } :: #{ response.body }"
@@ -330,7 +309,7 @@ module PuavoRest
       request['Authorization'] = "Bearer #{ @token }"
       request['Content-Type'] = 'application/json'
 
-      response = do_http_request(uri, request)
+      response = Univention::do_http_request(uri, request)
       raise UniventionRequestError.new(response) \
         unless response.is_a?(Net::HTTPSuccess)
 
@@ -386,6 +365,64 @@ module PuavoRest
     def update_univentionuserinfo(username)
       # XXX no-op but may be needed later?
       return
+    end
+  end
+
+  class Provisioning
+    def initialize(external_service, provisioning_config)
+      @external_service = external_service
+      @admin_password = Univention::get_conf_string(provisioning_config,
+                                                    'admin_password',
+                                                    'admin_password not configured')
+      @subscription_password \
+        = Univention::get_conf_string(provisioning_config,
+                                      'subscription_password',
+                                      'subscription_password not configured')
+    end
+
+    # needs to be called only once to setup subscription
+    # but if called multiple times with the same parameters it is okay
+    def create_subscription
+      server_uri = @external_service.server_uri
+
+      # we set the @subscription_password here (to Univention)
+      subscription_params = {
+        "name": "puavo",
+        "realms_topics": [ { "realm": "udm", "topic": "users/user" } ],
+        "request_prefill": true,
+        "password": @subscription_password,
+      }
+
+      uri = URI("#{ server_uri }/univention/provisioning/v1/subscriptions")
+      request = Net::HTTP::Post.new(uri)
+      request['Content-Type'] = 'application/json'
+      request.basic_auth('admin', @admin_password)
+      request.body = subscription_params.to_json
+
+      response = Univention::do_http_request(uri, request)
+      unless response.is_a?(Net::HTTPSuccess) then
+        errmsg = 'failure when creating a provisioning subscription:' \
+                   + "#{ response.code } #{ response.message } :: #{ response.body }"
+        raise errmsg
+      end
+    end
+
+    # not called from anywhere and normally not needed
+    # but is here in case this ever becomes useful
+    def delete_subscription
+      server_uri = @external_service.server_uri
+
+      uri = URI("#{ server_uri }/univention/provisioning/v1/subscriptions")
+      request = Net::HTTP::Delete.new(uri)
+      request['Content-Type'] = 'application/json'
+      request.basic_auth('admin', @admin_password)
+      request.body = { 'name': 'puavo' }.to_json
+      response = Univention::do_http_request(uri, request)
+      unless response.is_a?(Net::HTTPSuccess) then
+        errmsg = 'failure when deleting a provisioning subscription:' \
+                   + "#{ response.code } #{ response.message } :: #{ response.body }"
+        raise errmsg
+      end
     end
   end
 end
