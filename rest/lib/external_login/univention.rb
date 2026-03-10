@@ -37,18 +37,25 @@ module PuavoRest
       @server_uri = get_conf_string(univention_config, 'server_uri',
                                     'univention server uri not configured')
 
-      admin_username = get_conf_string(univention_config,
-                                       'admin_username',
-                                       'admin username not configured')
-      admin_password = get_conf_string(univention_config,
-                                       'admin_password',
-                                       'admin password not configured')
+      @admin_username = get_conf_string(univention_config,
+                                        'admin_username',
+                                        'admin username not configured')
+      @admin_password = get_conf_string(univention_config,
+                                        'admin_password',
+                                        'admin password not configured')
+      @provisioning_api_admin_password \
+        = get_conf_string(univention_config,
+                          'provisioning_api_admin_password',
+                          'provisioning_api_admin_password not configured')
+      @provisioning_api_subscription_password \
+        = get_conf_string(univention_config,
+            'provisioning_api_subscription_password',
+            'provisioning_api_subscription_password not configured')
 
       @puavo_schools_by_id = nil
       @univention_schools_by_url = {}
 
-      setup_univention_connection(@server_uri, admin_username,
-                                  admin_password)
+      setup_univention_connection()
     end
 
     def change_password(actor_username, actor_password, target_user_username,
@@ -81,13 +88,34 @@ module PuavoRest
       http.request(request)
     end
 
-    def get_univention_token(server_uri, username, password)
-      uri = URI("#{ server_uri }/ucsschool/kelvin/token")
+    def create_provisioning_subscription
+      # we set the @provisioning_subscription_password here
+      subscription_params = {
+        "name": "test-consumer",
+        "realms_topics": [ {"realm":"udm","topic":"users/user"} ],
+        "request_prefill": true,
+        "password": @provisioning_api_subscription_password,
+      }
+
+      uri = URI("#{ @server_uri }/univention/provisioning/v1/subscriptions")
+      request = Net::HTTP::Post.new(uri)
+      request['Content-Type'] = 'application/json'
+      request.basic_auth('admin', @provisioning_api_admin_password)
+      request.body = subscription_params.to_json
+
+      response = do_http_request(uri, request)
+      # XXX
+      p response
+      p response.body
+    end
+
+    def get_univention_token
+      uri = URI("#{ @server_uri }/ucsschool/kelvin/token")
 
       request = Net::HTTP::Post.new(uri)
       request['Content-Type'] = 'application/x-www-form-urlencoded'
-      request.set_form_data('username' => username,
-                            'password' => password)
+      request.set_form_data('username' => @admin_username,
+                            'password' => @admin_password)
 
       response = do_http_request(uri, request)
       unless response.is_a?(Net::HTTPSuccess) then
@@ -292,8 +320,8 @@ module PuavoRest
       @univention_userinfo = univention_userinfo
     end
 
-    def setup_univention_connection(server_uri, username, password)
-      @token = get_univention_token(server_uri, username, password)
+    def setup_univention_connection
+      @token = get_univention_token()
     end
 
     def do_univention_json_request_with_token(uri_string)
