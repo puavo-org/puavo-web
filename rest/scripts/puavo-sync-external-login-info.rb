@@ -12,11 +12,24 @@ class SyncLog
   def warn(msg) ; Kernel::warn(msg); end
 end
 
+class UniventionEventHandler
+  def initialize(extlogin_service)
+    @extlogin_service = extlogin_service
+  end
+
+  def run
+    puts "> running the univention event handler"
+    @extlogin_service.create_provisioning_subscription()
+  end
+end
+
 def log_warn(e, orig_msg)
   msg = orig_msg
-  msg += ": #{ e.message }" if e
-  msg += " / #{ e.backtrace.join(' / ') }" \
-    unless e.kind_of?(ExternalLoginError)
+  if e then
+    msg += ": #{ e.message }"
+    msg += " / #{ e.backtrace.join(' / ') }" \
+      unless e.kind_of?(ExternalLoginError)
+  end
   warn(msg)
 end
 
@@ -24,30 +37,33 @@ end
 $rest_log = SyncLog.new
 
 organisation = ARGV[0]
-raise "usage: $0 organisation_name" unless this_organisation
-
-topdomain = IO.read('/etc/puavo/topdomain').chomp
-
-puavo_rest_base_conf = YAML::load_file('/etc/puavo-rest.yml')
-raise '/etc/puavo-rest.yml is not a hash' \
-  unless puavo_rest_base_conf.kind_of?(Hash)
-
-puavo_rest_extlogin_conf \
-  = YAML::load_file('/etc/puavo-rest.d/external_logins.yml')
-raise '/etc/puavo-rest.d/external_logins.yml is not a hash' \
-  unless puavo_rest_extlogin_conf.kind_of?(Hash)
-
-puavo_rest_conf = puavo_rest_base_conf.merge(puavo_rest_extlogin_conf)
-
-extlogin_conf = puavo_rest_conf['external_login']
-
-raise 'no external login configuration' unless extlogin_conf.kind_of?(Hash)
-
-org_conf = extlogin_conf[organisation]
-raise 'no external login configuration for "#{ organisation }"' \
-  unless org_conf.kind_of?(Hash)
+if ARGV.count != 1 || !organisation then
+  warn "usage: #{ File.basename($0) } organisation_name"
+  exit 1
+end
 
 begin
+  topdomain = IO.read('/etc/puavo/topdomain').chomp
+
+  puavo_rest_base_conf = YAML::load_file('/etc/puavo-rest.yml')
+  raise '/etc/puavo-rest.yml is not a hash' \
+    unless puavo_rest_base_conf.kind_of?(Hash)
+
+  puavo_rest_extlogin_conf \
+    = YAML::load_file('/etc/puavo-rest.d/external_logins.yml')
+  raise '/etc/puavo-rest.d/external_logins.yml is not a hash' \
+    unless puavo_rest_extlogin_conf.kind_of?(Hash)
+
+  puavo_rest_conf = puavo_rest_base_conf.merge(puavo_rest_extlogin_conf)
+
+  extlogin_conf = puavo_rest_conf['external_login']
+
+  raise 'no external login configuration' unless extlogin_conf.kind_of?(Hash)
+
+  org_conf = extlogin_conf[organisation]
+  raise %Q{no external login configuration for "#{ organisation }"} \
+    unless org_conf.kind_of?(Hash)
+
   puts ">>> checking organisation #{ organisation }"
 
   org_domain = "#{ organisation }.#{ topdomain }"
@@ -85,6 +101,11 @@ begin
   all_users_ok = true
 
   puts ">> checking users to remove on [#{ organisation }]"
+
+  univention_event_handler = nil
+  if org_conf.has_key?('univention') then
+    univention_event_handler = UniventionEventHandler.new(login_service)
+  end
 
   PuavoRest::User.all.each do |puavo_user|
     begin
@@ -155,6 +176,10 @@ begin
 rescue StandardError => e
   log_warn(e, '!! error in updating users from external login service on' \
                 + %Q{ organisation "#{ organisation }"})
+end
+
+if univention_event_handler then
+  univention_event_handler.run
 end
 
 exit(0)
