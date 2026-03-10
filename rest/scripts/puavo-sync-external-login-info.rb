@@ -14,12 +14,12 @@ end
 
 class UniventionEventHandler
   def initialize(extlogin_service)
-    @extlogin_service = extlogin_service
+    @provisioning = extlogin_service.provisioning
   end
 
   def run
     puts "> running the univention event handler"
-    @extlogin_service.create_provisioning_subscription()
+    @provisioning.create_subscription
   end
 end
 
