@@ -201,8 +201,8 @@ module PuavoRest
       return user_roles
     end
 
-    def get_univention_school_info(uri_string)
-      return do_univention_json_request_with_token(uri_string)
+    def get_univention_school_info(uri)
+      return do_univention_json_request_with_token(uri)
     end
 
     def get_user_puavo_school_dns()
@@ -305,8 +305,7 @@ module PuavoRest
       @token = get_univention_token()
     end
 
-    def do_univention_json_request_with_token(uri_string)
-      uri = URI(uri_string)
+    def do_univention_json_request_with_token(uri)
       request = Net::HTTP::Get.new(uri)
       request['Authorization'] = "Bearer #{ @token }"
       request['Content-Type'] = 'application/json'
@@ -342,9 +341,9 @@ module PuavoRest
     end
 
     def univention_get_something(subpath, something)
-      uri_string = "#{ @server_uri }#{ subpath }"
+      uri = URI("#{ @server_uri }#{ subpath }")
       begin
-        return do_univention_json_request_with_token(uri_string)
+        return do_univention_json_request_with_token(uri)
       rescue UniventionRequestError => e
         raise "failure when requesting #{ something }: #{ e.response.code }" \
                 + " #{ e.response.message } :: #{ e.response.body }"
@@ -387,11 +386,61 @@ module PuavoRest
                                       'subscription_password not configured')
     end
 
+    def run
+      create_subscription
+
+      # XXX when to break out of the loop?  once a day, or in some unexpected
+      # XXX events?
+      loop do
+        begin
+          event_data = get_next_event()
+          if event_data.nil? then
+            @rlog.info('got a null event')
+            sleep 2
+            redo
+          end
+          validate_event_data(event_data)
+          handle_event(event_data)
+          acknowledge_event(event_data)
+        rescue StandardError => e
+          @rlog.error("next event error: #{ e.message }")
+          # in case of errors, wait a while before trying again
+          sleep 10
+        end
+      end
+    end
+
+    def handle_event(event_data)
+      # XXX
+      # @rlog.info("handling event :: #{ event_data.inspect }")
+    end
+
+    def validate_event_data(event_data)
+      raise 'no sequence number' unless event_data.has_key?('sequence_number')
+      raise 'sequence number is not an integer' \
+         unless event_data['sequence_number'].kind_of?(Integer)
+    end
+
+    def acknowledge_event(event_data)
+      sequence_number = event_data['sequence_number']
+      uri = URI("#{ subscription_uri }/messages/#{ sequence_number }/status")
+      request = Net::HTTP::Patch.new(uri)
+      request['Content-Type'] = 'application/json'
+      request.basic_auth(SUBSCRIPTION_NAME, @subscription_password)
+      request.body = { 'status': 'ok' }.to_json
+      response = Univention::do_http_request(uri, request)
+      unless response.is_a?(Net::HTTPSuccess) then
+        errmsg = 'failure when acknowledging event number'       \
+                   + " #{ sequence_number }: "                   \
+                   + " #{ response.code } #{ response.message }" \
+                   + " :: #{ response.body }"
+        raise errmsg
+      end
+    end
+
     # needs to be called only once to setup subscription
     # but if called multiple times with the same parameters it is okay
     def create_subscription
-      server_uri = @external_service.server_uri
-
       # we set the @subscription_password here (to Univention)
       subscription_params = {
         "name": SUBSCRIPTION_NAME,
@@ -400,7 +449,7 @@ module PuavoRest
         "password": @subscription_password,
       }
 
-      uri = URI("#{ server_uri }/univention/provisioning/v1/subscriptions")
+      uri = URI(subscriptions_baseuri)
       request = Net::HTTP::Post.new(uri)
       request['Content-Type'] = 'application/json'
       request.basic_auth('admin', @admin_password)
@@ -426,8 +475,7 @@ module PuavoRest
     # not called from anywhere and normally not needed
     # but is here in case this ever becomes useful
     def delete_subscription
-      server_uri = @external_service.server_uri
-      uri = URI("#{ server_uri }/univention/provisioning/v1/subscriptions/#{ SUBSCRIPTION_NAME }")
+      uri = URI("#{ subscriptions_baseuri }/#{ SUBSCRIPTION_NAME }")
       request = Net::HTTP::Delete.new(uri)
       request['Content-Type'] = 'application/json'
       request.basic_auth('admin', @admin_password)
@@ -438,6 +486,31 @@ module PuavoRest
                    + "#{ response.code } #{ response.message } :: #{ response.body }"
         raise errmsg
       end
+    end
+
+    def subscriptions_baseuri
+      URI("#{ @external_service.server_uri }/univention/provisioning/v1" \
+            + '/subscriptions')
+    end
+
+    def subscription_uri
+      URI("#{ subscriptions_baseuri }/#{ SUBSCRIPTION_NAME }")
+    end
+
+    def get_next_event
+      uri = URI("#{ subscription_uri }/messages/next")
+      request = Net::HTTP::Get.new(uri)
+      request.basic_auth(SUBSCRIPTION_NAME, @subscription_password)
+      response = Univention::do_http_request(uri, request)
+
+      unless response.is_a?(Net::HTTPSuccess) then
+        errmsg = 'failure when getting the next event on subscription:' \
+                   + " #{ response.code } #{ response.message } "       \
+                   + " :: #{ response.body }"
+        raise errmsg
+      end
+
+      JSON.parse(response.body)
     end
   end
 end
