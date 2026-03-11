@@ -16,8 +16,9 @@ end
 
 module PuavoRest
   module Univention
-    def self.do_http_request(uri, request)
+    def self.do_http_request(uri, request, read_timeout=nil)
       http = Net::HTTP.new(uri.host, uri.port)
+      http.read_timeout = read_timeout if read_timeout
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE  # XXX
       http.request(request)
@@ -504,10 +505,12 @@ module PuavoRest
     end
 
     def get_next_event
+      timeout_seconds = 60
       uri = URI("#{ subscription_uri }/messages/next")
+      uri.query = URI.encode_www_form({ 'timeout' => timeout_seconds })
       request = Net::HTTP::Get.new(uri)
       request.basic_auth(SUBSCRIPTION_NAME, @subscription_password)
-      response = Univention::do_http_request(uri, request)
+      response = Univention::do_http_request(uri, request, timeout_seconds+10)
 
       unless response.is_a?(Net::HTTPSuccess) then
         errmsg = 'failure when getting the next event on subscription:' \
