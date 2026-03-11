@@ -386,9 +386,11 @@ module PuavoRest
                                       'subscription_password not configured')
     end
 
-    def run
+    def prepare
       create_subscription
+    end
 
+    def run
       # XXX when to break out of the loop?  once a day, or in some unexpected
       # XXX events?
       loop do
@@ -411,6 +413,7 @@ module PuavoRest
     end
 
     def handle_event(event_data)
+      puts "got an event with some data :: #{ event_data }"
       # XXX
       # @rlog.info("handling event :: #{ event_data.inspect }")
     end
@@ -441,11 +444,13 @@ module PuavoRest
     # needs to be called only once to setup subscription
     # but if called multiple times with the same parameters it is okay
     def create_subscription
+      @rlog.info('setting up provisioning subscription')
+
       # we set the @subscription_password here (to Univention)
       subscription_params = {
         "name": SUBSCRIPTION_NAME,
         "realms_topics": [ { "realm": "udm", "topic": "users/user" } ],
-        "request_prefill": true,
+        "request_prefill": false,
         "password": @subscription_password,
       }
 
@@ -467,7 +472,8 @@ module PuavoRest
 
       unless response.is_a?(Net::HTTPSuccess) then
         errmsg = 'failure when creating a provisioning subscription:' \
-                   + "#{ response.code } #{ response.message } :: #{ response.body }"
+                   + "#{ response.code } #{ response.message }"       \
+                   + " :: #{ response.body }"
         raise errmsg
       end
     end

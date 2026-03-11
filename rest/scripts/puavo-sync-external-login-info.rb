@@ -12,17 +12,6 @@ class SyncLog
   def warn(msg) ; Kernel::warn(msg); end
 end
 
-class UniventionEventHandler
-  def initialize(extlogin_service)
-    @provisioning = extlogin_service.provisioning
-  end
-
-  def run
-    puts "> running the univention provisioning event handler"
-    @provisioning.run
-  end
-end
-
 def log_warn(e, orig_msg)
   msg = orig_msg
   if e then
@@ -43,6 +32,8 @@ if ARGV.count != 1 || !organisation then
 end
 
 exitstatus = 0
+
+univention_provisioning = nil
 
 begin
   topdomain = IO.read('/etc/puavo/topdomain').chomp
@@ -92,6 +83,11 @@ begin
   external_login = PuavoRest::ExternalLogin.new
   login_service = external_login.new_external_service_handler()
 
+  if org_conf.has_key?('univention') then
+    univention_provisioning = login_service.provisioning
+    univention_provisioning.prepare
+  end
+
   external_users = nil
   begin
     external_users = login_service.lookup_all_users()
@@ -103,11 +99,6 @@ begin
   all_users_ok = true
 
   puts ">> checking users to remove on [#{ organisation }]"
-
-  univention_event_handler = nil
-  if org_conf.has_key?('univention') then
-    univention_event_handler = UniventionEventHandler.new(login_service)
-  end
 
   PuavoRest::User.all.each do |puavo_user|
     begin
@@ -181,12 +172,12 @@ rescue StandardError => e
   exitstatus = 1
 end
 
-if univention_event_handler then
+if univention_provisioning then
   begin
-    univention_event_handler.run
+    univention_provisioning.run
   rescue StandardError => e
-    log_warn(e, '!! error in running Univention event handler on ' \
-                  + %Q{ organisation "#{ organisation }"})
+    log_warn(e, '!! error in running Univention provisioning event handler' \
+                  + %Q{ on organisation "#{ organisation }"})
     exitstatus = 1
   end
 end
