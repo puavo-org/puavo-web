@@ -64,7 +64,9 @@ module PuavoRest
 
       raise 'no provisioning configration' \
         unless univention_config['provisioning'].kind_of?(Hash)
-      @provisioning = Provisioning.new(self, univention_config['provisioning'])
+      @provisioning = Provisioning.new(self,
+                                       univention_config['provisioning'],
+                                       rlog)
 
       @puavo_schools_by_id = nil
       @univention_schools_by_url = {}
@@ -369,13 +371,18 @@ module PuavoRest
   end
 
   class Provisioning
-    def initialize(external_service, provisioning_config)
+    SUBSCRIPTION_NAME = 'puavo'
+
+    def initialize(external_service, provisioning_config, rlog)
       @external_service = external_service
-      @admin_password = Univention::get_conf_string(provisioning_config,
+      @provisioning_config = provisioning_config
+      @rlog = rlog
+
+      @admin_password = Univention::get_conf_string(@provisioning_config,
                                                     'admin_password',
                                                     'admin_password not configured')
       @subscription_password \
-        = Univention::get_conf_string(provisioning_config,
+        = Univention::get_conf_string(@provisioning_config,
                                       'subscription_password',
                                       'subscription_password not configured')
     end
@@ -387,7 +394,7 @@ module PuavoRest
 
       # we set the @subscription_password here (to Univention)
       subscription_params = {
-        "name": "puavo",
+        "name": SUBSCRIPTION_NAME,
         "realms_topics": [ { "realm": "udm", "topic": "users/user" } ],
         "request_prefill": true,
         "password": @subscription_password,
@@ -400,6 +407,15 @@ module PuavoRest
       request.body = subscription_params.to_json
 
       response = Univention::do_http_request(uri, request)
+      if response.is_a?(Net::HTTPConflict) then
+        # Subscription already exists but with conflicting options,
+        # delete the old one and try again.
+        @rlog.info('> deleting existing provisioning subscription' \
+                     + ' because of conflicting configuration')
+        delete_subscription
+        response = Univention::do_http_request(uri, request)
+      end
+
       unless response.is_a?(Net::HTTPSuccess) then
         errmsg = 'failure when creating a provisioning subscription:' \
                    + "#{ response.code } #{ response.message } :: #{ response.body }"
@@ -411,8 +427,7 @@ module PuavoRest
     # but is here in case this ever becomes useful
     def delete_subscription
       server_uri = @external_service.server_uri
-
-      uri = URI("#{ server_uri }/univention/provisioning/v1/subscriptions")
+      uri = URI("#{ server_uri }/univention/provisioning/v1/subscriptions/#{ SUBSCRIPTION_NAME }")
       request = Net::HTTP::Delete.new(uri)
       request['Content-Type'] = 'application/json'
       request.basic_auth('admin', @admin_password)
