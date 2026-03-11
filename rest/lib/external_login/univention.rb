@@ -33,7 +33,7 @@ module PuavoRest
   end
 
   class ExternalUniventionService < ExternalLoginService
-    attr_reader :provisioning, :server_uri
+    attr_reader :kelvin, :provisioning
 
     def initialize(external_login, univention_config, service_name, rlog)
       super(external_login, service_name, rlog)
@@ -53,26 +53,28 @@ module PuavoRest
         = Univention::get_conf_string(univention_config,
                                       'external_username_field',
                                       'univention extlogin name field not configured')
-      @server_uri = Univention::get_conf_string(univention_config, 'server_uri',
-                                                'univention server uri not configured')
+      server_uri = Univention::get_conf_string(univention_config,
+                     'server_uri', 'univention server uri not configured')
 
-      @admin_username = Univention::get_conf_string(univention_config,
-                                                    'admin_username',
-                                                    'admin username not configured')
-      @admin_password = Univention::get_conf_string(univention_config,
-                                                    'admin_password',
-                                                    'admin password not configured')
+      admin_username = Univention::get_conf_string(univention_config,
+                                                   'admin_username',
+                                                   'admin username not configured')
+      admin_password = Univention::get_conf_string(univention_config,
+                                                   'admin_password',
+                                                   'admin password not configured')
+      @kelvin = Kelvin.new(server_uri, admin_username, admin_password, rlog)
 
       raise 'no provisioning configration' \
         unless univention_config['provisioning'].kind_of?(Hash)
       @provisioning = Provisioning.new(self,
+                                       server_uri,
                                        univention_config['provisioning'],
                                        rlog)
 
       @puavo_schools_by_id = nil
       @univention_schools_by_url = {}
 
-      setup_univention_connection()
+      @kelvin.setup_connection()
     end
 
     def change_password(actor_username, actor_password, target_user_username,
@@ -89,29 +91,6 @@ module PuavoRest
       end
 
       return puavo_schools_by_id
-    end
-
-    def get_univention_token
-      uri = URI("#{ @server_uri }/ucsschool/kelvin/token")
-
-      request = Net::HTTP::Post.new(uri)
-      request['Content-Type'] = 'application/x-www-form-urlencoded'
-      request.set_form_data('username' => @admin_username,
-                            'password' => @admin_password)
-
-      response = Univention::do_http_request(uri, request)
-      unless response.is_a?(Net::HTTPSuccess) then
-        errmsg = "failure when requesting a token: #{ response.code }" \
-                   + " #{ response.message } :: #{ response.body }"
-        raise errmsg
-      end
-
-      parsed_response = JSON.parse(response.body)
-      raise 'no access token received' \
-        unless parsed_response['access_token'].kind_of?(String) \
-                 && !parsed_response['access_token'].empty?
-
-      return parsed_response['access_token']
     end
 
     def get_userinfo(username)
@@ -202,10 +181,6 @@ module PuavoRest
       return user_roles
     end
 
-    def get_univention_school_info(uri)
-      return do_univention_json_request_with_token(uri)
-    end
-
     def get_user_puavo_school_dns()
       update_puavo_schools_by_id()
 
@@ -270,7 +245,7 @@ module PuavoRest
 
       users = {}
 
-      univention_user_list = univention_get_users()
+      univention_user_list = @kelvin.get_all_users()
       univention_user_list.each do |univention_user|
         extlogin_id = get_univention_attribute(univention_user,
                                                @extlogin_id_field)
@@ -288,41 +263,10 @@ module PuavoRest
       return users
     end
 
-    def get_univention_attribute(univention_object, attribute)
-      case attribute
-        when 'univentionObjectIdentifier', 'userPasswordHash'
-          univention_object.dig('udm_properties', attribute) \
-        else
-          univention_object.dig(attribute)
-      end
-    end
-
-    def set_userinfo(username, univention_userinfo)
-      @username = username
-      @univention_userinfo = univention_userinfo
-    end
-
-    def setup_univention_connection
-      @token = get_univention_token()
-    end
-
-    def do_univention_json_request_with_token(uri)
-      request = Net::HTTP::Get.new(uri)
-      request['Authorization'] = "Bearer #{ @token }"
-      request['Content-Type'] = 'application/json'
-
-      response = Univention::do_http_request(uri, request)
-      raise UniventionRequestError.new(response) \
-        unless response.is_a?(Net::HTTPSuccess)
-
-      return JSON.parse(response.body)
-    end
-
-    def univention_get_schools_by_url
+    def get_schools_by_url
       schools_by_url = {}
 
-      school_list = univention_get_something('/ucsschool/kelvin/v1/schools/',
-                                             'schools')
+      school_list = @kelvin.get_schools()
       school_list.each do |school|
         begin
           raise 'school does not have a name of type string' \
@@ -341,18 +285,18 @@ module PuavoRest
       return schools_by_url
     end
 
-    def univention_get_something(subpath, something)
-      uri = URI("#{ @server_uri }#{ subpath }")
-      begin
-        return do_univention_json_request_with_token(uri)
-      rescue UniventionRequestError => e
-        raise "failure when requesting #{ something }: #{ e.response.code }" \
-                + " #{ e.response.message } :: #{ e.response.body }"
+    def get_univention_attribute(univention_object, attribute)
+      case attribute
+        when 'univentionObjectIdentifier', 'userPasswordHash'
+          univention_object.dig('udm_properties', attribute) \
+        else
+          univention_object.dig(attribute)
       end
     end
 
-    def univention_get_users
-      univention_get_something('/ucsschool/kelvin/v1/users/', 'users')
+    def set_userinfo(username, univention_userinfo)
+      @username = username
+      @univention_userinfo = univention_userinfo
     end
 
     def update_puavo_schools_by_id()
@@ -361,7 +305,7 @@ module PuavoRest
     end
 
     def update_univention_schools_by_url()
-      @univention_schools_by_url = univention_get_schools_by_url()
+      @univention_schools_by_url = get_schools_by_url()
     end
 
     def update_univentionuserinfo(username)
@@ -370,11 +314,85 @@ module PuavoRest
     end
   end
 
+  class Kelvin
+    def initialize(server_uri, admin_username, admin_password, rlog)
+      @server_uri     = server_uri
+      @admin_username = admin_username
+      @admin_password = admin_password
+      @rlog           = rlog
+    end
+
+    def setup_connection
+      @token = get_token()
+    end
+
+    def get_token
+      uri = URI("#{ @server_uri }/ucsschool/kelvin/token")
+
+      request = Net::HTTP::Post.new(uri)
+      request['Content-Type'] = 'application/x-www-form-urlencoded'
+      request.set_form_data('username' => @admin_username,
+                            'password' => @admin_password)
+
+      response = Univention::do_http_request(uri, request)
+      unless response.is_a?(Net::HTTPSuccess) then
+        errmsg = "failure when requesting a token: #{ response.code }" \
+                   + " #{ response.message } :: #{ response.body }"
+        raise errmsg
+      end
+
+      parsed_response = JSON.parse(response.body)
+      raise 'no access token received' \
+        unless parsed_response['access_token'].kind_of?(String) \
+                 && !parsed_response['access_token'].empty?
+
+      return parsed_response['access_token']
+    end
+
+    def get_something(subpath, something)
+      uri = URI("#{ @server_uri }#{ subpath }")
+      begin
+        return do_json_request_with_token(uri)
+      rescue UniventionRequestError => e
+        raise "failure when requesting #{ something }: #{ e.response.code }" \
+                + " #{ e.response.message } :: #{ e.response.body }"
+      end
+    end
+
+    def get_all_users
+      get_something('/ucsschool/kelvin/v1/users/', 'users')
+    end
+
+    def get_user(username)
+      get_something("/ucsschool/kelvin/v1/users/#{ username }",
+                    "user #{ username }")
+    end
+
+    def get_schools
+      get_something('/ucsschool/kelvin/v1/schools/', 'schools')
+    end
+
+    def do_json_request_with_token(uri)
+      request = Net::HTTP::Get.new(uri)
+      request['Authorization'] = "Bearer #{ @token }"
+      request['Content-Type'] = 'application/json'
+
+      response = Univention::do_http_request(uri, request)
+      raise UniventionRequestError.new(response) \
+        unless response.is_a?(Net::HTTPSuccess)
+
+      return JSON.parse(response.body)
+    end
+  end
+
   class Provisioning
     SUBSCRIPTION_NAME = 'puavo'
 
-    def initialize(external_login_service, provisioning_config, rlog)
+    def initialize(external_login_service, server_uri, provisioning_config,
+                   rlog)
       @external_login_service = external_login_service
+      @kelvin = external_login_service.kelvin
+      @server_uri = server_uri
       @provisioning_config = provisioning_config
       @rlog = rlog
 
@@ -414,10 +432,10 @@ module PuavoRest
     end
 
     def handle_event(event_data)
-      univention_object_identifier \
-        = event_data['body']['new']['properties']['univentionObjectIdentifier']
-      @rlog.info("something changed on person :: #{ univention_object_identifier.inspect }")
-      # XXX should do something?
+      # XXX
+      username = event_data['body']['new']['properties']['username']
+      user = @external_login_service.kelvin.get_user(username)
+      p user
     end
 
     def check_types(types, data)
@@ -434,7 +452,7 @@ module PuavoRest
     end
 
     def validate_event_data(event_data)
-      # puts "got an event with some data :: #{ JSON.pretty_generate(event_data) }"
+      puts "got an event with some data :: #{ JSON.pretty_generate(event_data) }"
 
       main_types = {
         'body'            => Hash,
@@ -454,9 +472,7 @@ module PuavoRest
       }
       check_types(new_types, event_data['body']['new'])
 
-      property_types = {
-        'univentionObjectIdentifier' => String,
-      }
+      property_types = { 'username' => String }
       check_types(property_types, event_data['body']['new']['properties'])
     end
 
@@ -531,8 +547,7 @@ module PuavoRest
     end
 
     def subscriptions_baseuri
-      URI("#{ @external_login_service.server_uri }/univention/provisioning" \
-            + '/v1/subscriptions')
+      URI("#{ @server_uri }/univention/provisioning/v1/subscriptions")
     end
 
     def subscription_uri
