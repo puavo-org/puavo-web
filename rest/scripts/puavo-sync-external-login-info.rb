@@ -18,8 +18,8 @@ class UniventionEventHandler
   end
 
   def run
-    puts "> running the univention event handler"
-    @provisioning.create_subscription
+    puts "> running the univention provisioning event handler"
+    @provisioning.run
   end
 end
 
@@ -41,6 +41,8 @@ if ARGV.count != 1 || !organisation then
   warn "usage: #{ File.basename($0) } organisation_name"
   exit 1
 end
+
+exitstatus = 0
 
 begin
   topdomain = IO.read('/etc/puavo/topdomain').chomp
@@ -176,10 +178,17 @@ begin
 rescue StandardError => e
   log_warn(e, '!! error in updating users from external login service on' \
                 + %Q{ organisation "#{ organisation }"})
+  exitstatus = 1
 end
 
 if univention_event_handler then
-  univention_event_handler.run
+  begin
+    univention_event_handler.run
+  rescue StandardError => e
+    log_warn(e, '!! error in running Univention event handler on ' \
+                  + %Q{ organisation "#{ organisation }"})
+    exitstatus = 1
+  end
 end
 
-exit(0)
+exit(exitstatus)
