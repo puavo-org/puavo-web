@@ -373,8 +373,8 @@ module PuavoRest
   class Provisioning
     SUBSCRIPTION_NAME = 'puavo'
 
-    def initialize(external_service, provisioning_config, rlog)
-      @external_service = external_service
+    def initialize(external_login_service, provisioning_config, rlog)
+      @external_login_service = external_login_service
       @provisioning_config = provisioning_config
       @rlog = rlog
 
@@ -414,15 +414,50 @@ module PuavoRest
     end
 
     def handle_event(event_data)
-      puts "got an event with some data :: #{ event_data }"
-      # XXX
-      # @rlog.info("handling event :: #{ event_data.inspect }")
+      univention_object_identifier \
+        = event_data['body']['new']['properties']['univentionObjectIdentifier']
+      @rlog.info("something changed on person :: #{ univention_object_identifier.inspect }")
+      # XXX should do something?
+    end
+
+    def check_types(types, data)
+      types.each do |field, class_or_value|
+        raise "missing #{ field }" unless data.has_key?(field)
+        if class_or_value.class == Class then
+          raise "#{ field } is not #{ class_or_value }" \
+            unless data[field].kind_of?(class_or_value)
+        else
+          raise %Q{#{ field } is not #{ class_or_value }} \
+            unless data[field] == class_or_value
+        end
+      end
     end
 
     def validate_event_data(event_data)
-      raise 'no sequence number' unless event_data.has_key?('sequence_number')
-      raise 'sequence number is not an integer' \
-         unless event_data['sequence_number'].kind_of?(Integer)
+      # puts "got an event with some data :: #{ JSON.pretty_generate(event_data) }"
+
+      main_types = {
+        'body'            => Hash,
+        'publisher_name'  => 'udm-listener',
+        'realm'           => 'udm',
+        'sequence_number' => Integer,
+        'topic'           => 'users/user',
+      }
+      check_types(main_types, event_data)
+
+      body_types = { 'new' => Hash }
+      check_types(body_types, event_data['body'])
+
+      new_types = {
+        'objectType' => 'users/user',
+        'properties' => Hash,
+      }
+      check_types(new_types, event_data['body']['new'])
+
+      property_types = {
+        'univentionObjectIdentifier' => String,
+      }
+      check_types(property_types, event_data['body']['new']['properties'])
     end
 
     def acknowledge_event(event_data)
@@ -496,8 +531,8 @@ module PuavoRest
     end
 
     def subscriptions_baseuri
-      URI("#{ @external_service.server_uri }/univention/provisioning/v1" \
-            + '/subscriptions')
+      URI("#{ @external_login_service.server_uri }/univention/provisioning" \
+            + '/v1/subscriptions')
     end
 
     def subscription_uri
