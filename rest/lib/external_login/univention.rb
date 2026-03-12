@@ -390,6 +390,53 @@ module PuavoRest
     end
   end
 
+  class Event
+    attr_reader :sequence_number, :username
+
+    def initialize(event_data)
+      @data = event_data
+      validate
+      @sequence_number = @data['sequence_number']
+      @username        = @data['body']['new']['properties']['username']
+    end
+
+    def validate
+      main_types = {
+        'body'            => Hash,
+        'publisher_name'  => 'udm-listener',
+        'realm'           => 'udm',
+        'sequence_number' => Integer,
+        'topic'           => 'users/user',
+      }
+      check_types(main_types, @data)
+
+      body_types = { 'new' => Hash }
+      check_types(body_types, @data['body'])
+
+      new_types = {
+        'objectType' => 'users/user',
+        'properties' => Hash,
+      }
+      check_types(new_types, @data['body']['new'])
+
+      property_types = { 'username' => String }
+      check_types(property_types, @data['body']['new']['properties'])
+    end
+
+    def check_types(types, data)
+      types.each do |field, class_or_value|
+        raise "missing #{ field }" unless data.has_key?(field)
+        if class_or_value.class == Class then
+          raise "#{ field } is not #{ class_or_value }" \
+            unless data[field].kind_of?(class_or_value)
+        else
+          raise %Q{#{ field } is not #{ class_or_value }} \
+            unless data[field] == class_or_value
+        end
+      end
+    end
+  end
+
   class Provisioning
     SUBSCRIPTION_NAME = 'puavo'
 
@@ -427,88 +474,20 @@ module PuavoRest
             sleep 2
             redo
           end
-          # XXX in which cases we should not acknowledge the event?
-          # XXX because the problem is that the queue will not go
-          # XXX further unless we acknowledge them
-          validate_event_data(event_data)
-          handle_event(event_data)
-          acknowledge_event(event_data)
+          event = nil
+          begin
+            event = Event.new(event_data)
+            handle_event(event)
+          ensure
+            if event then
+              send_acknowledgement(event)
+            end
+          end
         rescue StandardError => e
           @rlog.error("next event error: #{ e.message }")
           # in case of errors, wait a while before trying again
           sleep 10
         end
-      end
-    end
-
-    def handle_event(event_data)
-      # XXX copy-pasted from scripts/puavo-sync-external-login-info.rb
-      # XXX could this code be somewhere so it could be reused,
-      # XXX and that set_userinfo() + get_userinfo() looks strange
-
-      username = event_data['body']['new']['properties']['username']
-      user = @kelvin.get_user(username)
-
-      @login_service.set_userinfo(username, user)
-      userinfo = @login_service.get_userinfo(username)
-      user_status = @external_login.update_user_info(userinfo, nil, {})
-      if user_status != PuavoRest::ExternalLoginStatus::NOCHANGE \
-        && user_status != PuavoRest::ExternalLoginStatus::UPDATED then
-          raise 'user information update to Puavo failed with status' \
-                  + " #{ user_status }"
-      end
-    end
-
-    def check_types(types, data)
-      types.each do |field, class_or_value|
-        raise "missing #{ field }" unless data.has_key?(field)
-        if class_or_value.class == Class then
-          raise "#{ field } is not #{ class_or_value }" \
-            unless data[field].kind_of?(class_or_value)
-        else
-          raise %Q{#{ field } is not #{ class_or_value }} \
-            unless data[field] == class_or_value
-        end
-      end
-    end
-
-    def validate_event_data(event_data)
-      main_types = {
-        'body'            => Hash,
-        'publisher_name'  => 'udm-listener',
-        'realm'           => 'udm',
-        'sequence_number' => Integer,
-        'topic'           => 'users/user',
-      }
-      check_types(main_types, event_data)
-
-      body_types = { 'new' => Hash }
-      check_types(body_types, event_data['body'])
-
-      new_types = {
-        'objectType' => 'users/user',
-        'properties' => Hash,
-      }
-      check_types(new_types, event_data['body']['new'])
-
-      property_types = { 'username' => String }
-      check_types(property_types, event_data['body']['new']['properties'])
-    end
-
-    def acknowledge_event(event_data)
-      sequence_number = event_data['sequence_number']
-      uri = URI("#{ subscription_uri }/messages/#{ sequence_number }/status")
-      request = Net::HTTP::Patch.new(uri)
-      request['Content-Type'] = 'application/json'
-      request.basic_auth(SUBSCRIPTION_NAME, @subscription_password)
-      request.body = { 'status': 'ok' }.to_json
-      response = Univention::do_http_request(uri, request)
-      unless response.is_a?(Net::HTTPSuccess) then
-        errmsg = 'failure when acknowledging event number'       \
-                   + " #{ sequence_number }: "                   \
-                   + " #{ response.code } #{ response.message }" \
-                   + " :: #{ response.body }"
-        raise errmsg
       end
     end
 
@@ -589,6 +568,43 @@ module PuavoRest
       end
 
       JSON.parse(response.body)
+    end
+
+    def handle_event(event)
+      # XXX copy-pasted from scripts/puavo-sync-external-login-info.rb
+      # XXX could this code be somewhere so it could be reused,
+      # XXX and that set_userinfo() + get_userinfo() looks strange
+
+      @rlog.info("handling event number #{ event.sequence_number }")
+
+      user = @kelvin.get_user(event.username)
+
+      @login_service.set_userinfo(event.username, user)
+      userinfo = @login_service.get_userinfo(event.username)
+      user_status = @external_login.update_user_info(userinfo, nil, {})
+      if user_status != PuavoRest::ExternalLoginStatus::NOCHANGE \
+        && user_status != PuavoRest::ExternalLoginStatus::UPDATED then
+          raise 'user information update to Puavo failed with status' \
+                  + " #{ user_status }"
+      end
+    end
+
+    def send_acknowledgement(event)
+      seq_number = event.sequence_number
+      @rlog.info("sending acknowledgement for event number #{ seq_number }")
+      uri = URI("#{ subscription_uri }/messages/#{ seq_number }/status")
+      request = Net::HTTP::Patch.new(uri)
+      request['Content-Type'] = 'application/json'
+      request.basic_auth(SUBSCRIPTION_NAME, @subscription_password)
+      request.body = { 'status': 'ok' }.to_json
+      response = Univention::do_http_request(uri, request)
+      unless response.is_a?(Net::HTTPSuccess) then
+        errmsg = 'failure when acknowledging event number'       \
+                   + " #{ sequence_number }: "                   \
+                   + " #{ response.code } #{ response.message }" \
+                   + " :: #{ response.body }"
+        raise errmsg
+      end
     end
   end
 end
