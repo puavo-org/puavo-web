@@ -571,22 +571,9 @@ module PuavoRest
     end
 
     def handle_event(event)
-      # XXX copy-pasted from scripts/puavo-sync-external-login-info.rb
-      # XXX could this code be somewhere so it could be reused,
-      # XXX and that set_userinfo_from_external() + get_userinfo_for_puavo() looks strange
-
       @rlog.info("handling event number #{ event.sequence_number }")
-
       user = @kelvin.get_user(event.username)
-
-      @login_service.set_userinfo_from_external(event.username, user)
-      userinfo = @login_service.get_userinfo_for_puavo(event.username)
-      user_status = @external_login.update_user_info(userinfo, nil, {})
-      if user_status != PuavoRest::ExternalLoginStatus::NOCHANGE \
-        && user_status != PuavoRest::ExternalLoginStatus::UPDATED then
-          raise 'user information update to Puavo failed with status' \
-                  + " #{ user_status }"
-      end
+      @login_service.update_from_external(event.username, user)
     end
 
     def send_acknowledgement(event)
