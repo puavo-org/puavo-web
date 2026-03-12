@@ -393,45 +393,61 @@ module PuavoRest
   class Event
     attr_reader :sequence_number, :username
 
+    UCSSCHOOL_OPTIONS = %w(ucsschoolAdministrator ucsschoolExam
+                           ucsschoolLegalGuardian ucsschoolStaff
+                           ucsschoolStudent ucsschoolTeacher)
+
     def initialize(event_data)
       @data = event_data
       validate
       @sequence_number = @data['sequence_number']
+      @options         = @data['body']['new']['options']
       @username        = @data['body']['new']['properties']['username']
     end
 
+    def is_ucsschool_user?
+      # return true if any of the ucsschool options is true for this user
+      UCSSCHOOL_OPTIONS.any? { |opt| @options[opt] }
+    end
+
     def validate
-      main_types = {
+      check_types(@data, {
         'body'            => Hash,
         'publisher_name'  => 'udm-listener',
         'realm'           => 'udm',
         'sequence_number' => Integer,
         'topic'           => 'users/user',
-      }
-      check_types(main_types, @data)
+      })
 
-      body_types = { 'new' => Hash }
-      check_types(body_types, @data['body'])
+      check_types(@data['body'], { 'new' => Hash })
 
-      new_types = {
+      check_types(@data['body']['new'], {
         'objectType' => 'users/user',
         'properties' => Hash,
-      }
-      check_types(new_types, @data['body']['new'])
+      })
 
-      property_types = { 'username' => String }
-      check_types(property_types, @data['body']['new']['properties'])
+      check_types(@data['body']['new']['properties'], { 'username' => String })
+
+      # XXX should the existence of all these options be checked?
+      option_types = Hash[
+        UCSSCHOOL_OPTIONS.map { |opt| [ opt, [ TrueClass, FalseClass ] ] }
+      ]
+      check_types(@data['body']['new']['options'], option_types)
     end
 
-    def check_types(types, data)
-      types.each do |field, class_or_value|
+    def check_types(data, types)
+      types.each do |field, constraint|
         raise "missing #{ field }" unless data.has_key?(field)
-        if class_or_value.class == Class then
-          raise "#{ field } is not #{ class_or_value }" \
-            unless data[field].kind_of?(class_or_value)
+        value = data[field]
+        if constraint.class == Class then
+          raise "#{ field } is not #{ constraint }" \
+            unless value.kind_of?(constraint)
+        elsif constraint.kind_of?(Array) then
+          raise "#{ field } is not any of #{ constraint }" \
+            unless constraint.any? { |cls| value.kind_of?(cls) }
         else
-          raise %Q{#{ field } is not #{ class_or_value }} \
-            unless data[field] == class_or_value
+          raise %Q{#{ field } is not #{ constraint }} \
+            unless value == constraint
         end
       end
     end
@@ -480,6 +496,7 @@ module PuavoRest
             handle_event(event)
           ensure
             if event then
+              # Acknowledge even in case of errors.  The show must go on.
               send_acknowledgement(event)
             end
           end
@@ -571,14 +588,24 @@ module PuavoRest
     end
 
     def handle_event(event)
-      @rlog.info("handling event number #{ event.sequence_number }")
+      @rlog.info("handling event number #{ event.sequence_number }" \
+                   + %Q{ for user "#{ event.username }"})
+
+      unless event.is_ucsschool_user? then
+        @rlog.info("ignoring event #{ event.sequence_number }" \
+                     + %Q{ for user "#{ event.username }" because he/she} \
+                     + 'has no ucsschool roles')
+        return
+      end
+
       user = @kelvin.get_user(event.username)
       @login_service.update_from_external(event.username, user)
     end
 
     def send_acknowledgement(event)
       seq_number = event.sequence_number
-      @rlog.info("sending acknowledgement for event number #{ seq_number }")
+      @rlog.info("sending acknowledgement for event number #{ seq_number }" \
+                   + %Q{ for user "#{ event.username }"})
       uri = URI("#{ subscription_uri }/messages/#{ seq_number }/status")
       request = Net::HTTP::Patch.new(uri)
       request['Content-Type'] = 'application/json'
