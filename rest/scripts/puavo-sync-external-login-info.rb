@@ -143,8 +143,8 @@ begin
       puts "> updating Puavo information on #{ username }" \
              + " (#{ extlogin_id }) [#{ organisation }]"
 
-      login_service.set_userinfo(username, user_entry)
-      userinfo = login_service.get_userinfo(username)
+      login_service.set_userinfo_from_external(username, user_entry)
+      userinfo = login_service.get_userinfo_for_puavo(username)
       user_status = external_login.update_user_info(userinfo, nil, {})
 
       if user_status != PuavoRest::ExternalLoginStatus::NOCHANGE \
