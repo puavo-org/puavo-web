@@ -66,7 +66,8 @@ module PuavoRest
 
       raise 'no provisioning configration' \
         unless univention_config['provisioning'].kind_of?(Hash)
-      @provisioning = Provisioning.new(self,
+      @provisioning = Provisioning.new(external_login,
+                                       self,
                                        server_uri,
                                        univention_config['provisioning'],
                                        rlog)
@@ -349,8 +350,7 @@ module PuavoRest
       return parsed_response['access_token']
     end
 
-    def get_something(subpath, something)
-      uri = URI("#{ @server_uri }#{ subpath }")
+    def get(uri, something)
       begin
         return do_json_request_with_token(uri)
       rescue UniventionRequestError => e
@@ -359,17 +359,22 @@ module PuavoRest
       end
     end
 
+    def get_subpath(subpath, something)
+      uri = URI("#{ @server_uri }#{ subpath }")
+      get(uri, something)
+    end
+
     def get_all_users
-      get_something('/ucsschool/kelvin/v1/users/', 'users')
+      get_subpath('/ucsschool/kelvin/v1/users/', 'users')
     end
 
     def get_user(username)
-      get_something("/ucsschool/kelvin/v1/users/#{ username }",
-                    "user #{ username }")
+      get_subpath("/ucsschool/kelvin/v1/users/#{ username }",
+                  "user #{ username }")
     end
 
     def get_schools
-      get_something('/ucsschool/kelvin/v1/schools/', 'schools')
+      get_subpath('/ucsschool/kelvin/v1/schools/', 'schools')
     end
 
     def do_json_request_with_token(uri)
@@ -388,13 +393,15 @@ module PuavoRest
   class Provisioning
     SUBSCRIPTION_NAME = 'puavo'
 
-    def initialize(external_login_service, server_uri, provisioning_config,
-                   rlog)
-      @external_login_service = external_login_service
-      @kelvin = external_login_service.kelvin
-      @server_uri = server_uri
+    def initialize(external_login, login_service, server_uri,
+                   provisioning_config, rlog)
+      @external_login      = external_login
+      @login_service       = login_service
+      @server_uri          = server_uri
       @provisioning_config = provisioning_config
-      @rlog = rlog
+      @rlog                = rlog
+
+      @kelvin = login_service.kelvin
 
       @admin_password = Univention::get_conf_string(@provisioning_config,
                                                     'admin_password',
@@ -420,6 +427,9 @@ module PuavoRest
             sleep 2
             redo
           end
+          # XXX in which cases we should not acknowledge the event?
+          # XXX because the problem is that the queue will not go
+          # XXX further unless we acknowledge them
           validate_event_data(event_data)
           handle_event(event_data)
           acknowledge_event(event_data)
@@ -432,10 +442,21 @@ module PuavoRest
     end
 
     def handle_event(event_data)
-      # XXX
+      # XXX copy-pasted from scripts/puavo-sync-external-login-info.rb
+      # XXX could this code be somewhere so it could be reused,
+      # XXX and that set_userinfo() + get_userinfo() looks strange
+
       username = event_data['body']['new']['properties']['username']
-      user = @external_login_service.kelvin.get_user(username)
-      p user
+      user = @kelvin.get_user(username)
+
+      @login_service.set_userinfo(username, user)
+      userinfo = @login_service.get_userinfo(username)
+      user_status = @external_login.update_user_info(userinfo, nil, {})
+      if user_status != PuavoRest::ExternalLoginStatus::NOCHANGE \
+        && user_status != PuavoRest::ExternalLoginStatus::UPDATED then
+          raise 'user information update to Puavo failed with status' \
+                  + " #{ user_status }"
+      end
     end
 
     def check_types(types, data)
@@ -452,8 +473,6 @@ module PuavoRest
     end
 
     def validate_event_data(event_data)
-      puts "got an event with some data :: #{ JSON.pretty_generate(event_data) }"
-
       main_types = {
         'body'            => Hash,
         'publisher_name'  => 'udm-listener',
