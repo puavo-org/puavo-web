@@ -177,7 +177,7 @@ module PuavoRest
 
       @rlog.info('authentication to ldap succeeded')
 
-      get_userinfo(username)
+      get_userinfo_for_puavo(username)
     end
 
     def change_password(actor_username, actor_password, target_user_username,
@@ -259,7 +259,7 @@ module PuavoRest
       extlogin_id
     end
 
-    def get_userinfo(username)
+    def get_userinfo_for_puavo(username)
       raise 'ldap userinfo not set' unless @username && @ldap_userinfo
 
       # Use .dup here for userinfo values so that we can use force_encoding
@@ -368,7 +368,7 @@ module PuavoRest
       return users
     end
 
-    def set_userinfo(username, ldap_userinfo)
+    def set_userinfo_from_external(username, ldap_userinfo)
       @username = username
       @ldap_userinfo = ldap_userinfo
     end
@@ -636,7 +636,7 @@ module PuavoRest
     def update_ldapuserinfo(username)
       return if @username && @username == username
 
-      set_userinfo(nil, nil)
+      set_userinfo_from_external(nil, nil)
 
       ldap_entries = ext_ldapop('update_ldapuserinfo/search_username',
                                 :search,
@@ -690,7 +690,7 @@ module PuavoRest
 
       @rlog.info("looked up user '#{ username }' from external ldap")
 
-      set_userinfo(username, ldap_entries.first)
+      set_userinfo_from_external(username, ldap_entries.first)
     end
 
     def user_ldapfilter(username)
