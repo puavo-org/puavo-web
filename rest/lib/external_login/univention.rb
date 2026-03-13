@@ -5,12 +5,18 @@ require 'uri'
 require_relative './errors'
 require_relative './service'
 
-class UniventionRequestError < StandardError
+class UniventionDataError < ExternalLoginDataError; end
+class UniventionRequestError < ExternalLoginAccessError
   attr_reader :response
 
-  def initialize(response)
+  def initialize(response, errmsg)
     @response = response
-    super("Error with response: #{ response.message }")
+    super(errmsg)
+  end
+
+  def message
+    "#{ super }: response code=#{ @response.code }" \
+      + " #{ @response.message } :: #{ @response.body }"
   end
 end
 
@@ -158,8 +164,10 @@ module PuavoRest
       user_roles = []
 
       ucsschool_roles = @univention_userinfo['ucsschool_roles']
-      raise 'user has no roles in UCS@school' \
-        unless ucsschool_roles.kind_of?(Array) && !ucsschool_roles.empty?
+      unless ucsschool_roles.kind_of?(Array) && !ucsschool_roles.empty? then
+        raise UniventionDataError,
+              %Q{user "#{ @username }" has no roles in UCS@school}
+      end
 
       # UCS@school supports separate roles for each school but Puavo does
       # not, so dismiss school information in roles
@@ -176,8 +184,11 @@ module PuavoRest
         end
       end
 
-      raise 'user has no roles in UCS@school that actually exist in Puavo' \
-        if user_roles.empty?
+      if user_roles.empty? then
+        raise UniventionDataError,
+              %Q{user "#{ @userinfo }" has no roles in UCS@school} \
+                + ' that actually" exist in Puavo'
+      end
 
       return user_roles
     end
@@ -186,13 +197,16 @@ module PuavoRest
       update_puavo_schools_by_id()
 
       user_univention_school_urls = @univention_userinfo['schools']
-      check_schools = lambda do
-                        user_univention_school_urls.any? do |url|
-                          !@univention_schools_by_url.has_key?(url)
-                        end
-                      end
-      update_univention_schools_by_url() if check_schools.call()
-      raise 'user is in an unknown school' if check_schools.call()
+      check_if_some_user_school_is_not_known \
+        = lambda do
+            user_univention_school_urls.any? do |url|
+              !@univention_schools_by_url.has_key?(url)
+            end
+          end
+      if check_if_some_user_school_is_not_known.call() then
+        raise UniventionDataError,
+              %Q{user "#{ @username }" is in an unknown school}
+      end
 
       user_univention_schools \
         = @univention_schools_by_url.values_at(*user_univention_school_urls)
@@ -270,11 +284,14 @@ module PuavoRest
       school_list = @kelvin.get_schools()
       school_list.each do |school|
         begin
-          raise 'school does not have a name of type string' \
+          raise UniventionDataError,
+                'school does not have a name of type string' \
             unless get_univention_attribute(school, 'name').kind_of?(String)
-          raise 'school does not have an url of type string' \
+          raise UniventionDataError,
+                'school does not have an url of type string' \
             unless get_univention_attribute(school, 'url').kind_of?(String)
-          raise 'school does not have an external id of type string' \
+          raise UniventionDataError,
+                'school does not have an external id of type string' \
             unless get_univention_attribute(school, @extschool_id_field) \
                      .kind_of?(String)
           schools_by_url[ school['url'] ] = school
@@ -337,9 +354,8 @@ module PuavoRest
 
       response = Univention::do_http_request(uri, request)
       unless response.is_a?(Net::HTTPSuccess) then
-        errmsg = "failure when requesting a token: #{ response.code }" \
-                   + " #{ response.message } :: #{ response.body }"
-        raise errmsg
+        raise UniventionRequestError.new(response,
+                                         'failure when requesting a token')
       end
 
       parsed_response = JSON.parse(response.body)
@@ -354,8 +370,8 @@ module PuavoRest
       begin
         return do_json_request_with_token(uri)
       rescue UniventionRequestError => e
-        raise "failure when requesting #{ something }: #{ e.response.code }" \
-                + " #{ e.response.message } :: #{ e.response.body }"
+        raise UniventionRequestError.new(e.response,
+                "failure when requesting #{ something }: #{ e.message }")
       end
     end
 
@@ -383,8 +399,9 @@ module PuavoRest
       request['Content-Type'] = 'application/json'
 
       response = Univention::do_http_request(uri, request)
-      raise UniventionRequestError.new(response) \
-        unless response.is_a?(Net::HTTPSuccess)
+      unless response.is_a?(Net::HTTPSuccess) then
+        raise UniventionRequestError.new(response, 'error in request')
+      end
 
       return JSON.parse(response.body)
     end
@@ -434,13 +451,14 @@ module PuavoRest
         raise "missing #{ field }" unless data.has_key?(field)
         value = data[field]
         if constraint.class == Class then
-          raise "#{ field } is not #{ constraint }" \
+          raise UniventionDataError, "#{ field } is not #{ constraint }" \
             unless value.kind_of?(constraint)
         elsif constraint.kind_of?(Array) then
-          raise "#{ field } is not any of #{ constraint }" \
+          raise UniventionDataError,
+                "#{ field } is not any of #{ constraint }" \
             unless constraint.any? { |cls| value.kind_of?(cls) }
         else
-          raise %Q{#{ field } is not #{ constraint }} \
+          raise UniventionDataError, %Q{#{ field } is not #{ constraint }} \
             unless value == constraint
         end
       end
@@ -480,7 +498,6 @@ module PuavoRest
         begin
           event_data = get_next_event()
           if event_data.nil? then
-            @rlog.info('got a null event')
             sleep 2
             redo
           end
@@ -496,7 +513,7 @@ module PuavoRest
           end
         rescue StandardError => e
           @rlog.error("next event error: #{ e.message }")
-          # in case of errors, wait a while before trying again
+          # in case of unexpected errors, wait a while before trying again
           sleep 10
         end
       end
@@ -532,10 +549,8 @@ module PuavoRest
       end
 
       unless response.is_a?(Net::HTTPSuccess) then
-        errmsg = 'failure when creating a provisioning subscription:' \
-                   + "#{ response.code } #{ response.message }"       \
-                   + " :: #{ response.body }"
-        raise errmsg
+        raise UniventionRequestError.new(response,
+                'failure when creating a provisioning subscription')
       end
     end
 
@@ -549,9 +564,8 @@ module PuavoRest
       request.body = { 'name': 'puavo' }.to_json
       response = Univention::do_http_request(uri, request)
       unless response.is_a?(Net::HTTPSuccess) then
-        errmsg = 'failure when deleting a provisioning subscription:' \
-                   + "#{ response.code } #{ response.message } :: #{ response.body }"
-        raise errmsg
+        raise UniventionRequestError.new(response,
+                'failure when deleting a provisioning subscription')
       end
     end
 
@@ -564,6 +578,8 @@ module PuavoRest
     end
 
     def get_next_event
+      @rlog.info('making a new request for the next provisioning event')
+
       timeout_seconds = 60
       uri = URI("#{ subscription_uri }/messages/next")
       uri.query = URI.encode_www_form({ 'timeout' => timeout_seconds })
@@ -572,10 +588,8 @@ module PuavoRest
       response = Univention::do_http_request(uri, request, timeout_seconds+10)
 
       unless response.is_a?(Net::HTTPSuccess) then
-        errmsg = 'failure when getting the next event on subscription:' \
-                   + " #{ response.code } #{ response.message } "       \
-                   + " :: #{ response.body }"
-        raise errmsg
+        raise UniventionRequestError.new(response,
+                'failure when getting the next event on subscription')
       end
 
       JSON.parse(response.body)
@@ -592,8 +606,18 @@ module PuavoRest
         return
       end
 
-      user = @kelvin.get_user(event.username)
-      @login_service.update_from_external(event.username, user)
+      begin
+        user = @kelvin.get_user(event.username)
+      rescue StandardError => e
+        @rlog.warn("can not get user from Univention: #{ e.message }")
+        return
+      end
+
+      begin
+        @login_service.update_from_external(event.username, user)
+      rescue StandardError => e
+        @rlog.warn("can not update user to Puavo: #{ e.message }")
+      end
     end
 
     def send_acknowledgement(event)
@@ -607,11 +631,8 @@ module PuavoRest
       request.body = { 'status': 'ok' }.to_json
       response = Univention::do_http_request(uri, request)
       unless response.is_a?(Net::HTTPSuccess) then
-        errmsg = 'failure when acknowledging event number'       \
-                   + " #{ sequence_number }: "                   \
-                   + " #{ response.code } #{ response.message }" \
-                   + " :: #{ response.body }"
-        raise errmsg
+        raise UniventionRequestError.new(response,
+                'failure when acknowledging event number')
       end
     end
   end
