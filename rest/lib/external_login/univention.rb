@@ -13,7 +13,6 @@ class UniventionRequestError < ExternalLoginAccessError
     @response = response
     super(errmsg)
   end
-
   def message
     "#{ super }: response code=#{ @response.code }" \
       + " #{ @response.message } :: #{ @response.body }"
@@ -371,7 +370,7 @@ module PuavoRest
         return do_json_request_with_token(uri)
       rescue UniventionRequestError => e
         raise UniventionRequestError.new(e.response,
-                "failure when requesting #{ something }: #{ e.message }")
+                "failure when requesting #{ something }: #{ e.message }")
       end
     end
 
@@ -413,9 +412,10 @@ module PuavoRest
     def initialize(event_data)
       @data = event_data
       validate
+      subkey = is_being_deleted? ? 'old' : 'new'
       @sequence_number = @data['sequence_number']
-      @options         = @data['body']['new']['options']
-      @username        = @data['body']['new']['properties']['username']
+      @options         = @data['body'][subkey]['options']
+      @username        = @data['body'][subkey]['properties']['username']
     end
 
     def is_ucsschool_user?
@@ -424,6 +424,10 @@ module PuavoRest
           && (value.kind_of?(FalseClass) || value.kind_of?(TrueClass)) \
           && value
       end
+    end
+
+    def is_being_deleted?
+      @data['body']['new'].empty?
     end
 
     def validate
@@ -435,15 +439,18 @@ module PuavoRest
         'topic'           => 'users/user',
       })
 
-      check_types(@data['body'], { 'new' => Hash })
+      subkey = 'new'
+      check_types(@data['body'], { subkey => Hash })
+      subkey = 'old' if is_being_deleted?
 
-      check_types(@data['body']['new'], {
+      check_types(@data['body'][subkey], {
         'objectType' => 'users/user',
         'properties' => Hash,
         'options'    => Hash,
       })
 
-      check_types(@data['body']['new']['properties'], { 'username' => String })
+      check_types(@data['body'][subkey]['properties'],
+                  { 'username' => String })
     end
 
     def check_types(data, types)
@@ -604,6 +611,17 @@ module PuavoRest
                      + %Q{ for user "#{ event.username }" because he/she} \
                      + ' has no ucsschool roles')
         return
+      end
+
+      if event.is_being_deleted? then
+        # XXX instead of using username, this should probably look for
+        # XXX Puavo user with the same Univention Object Id?
+        puavo_user = User.by_username(event.username)
+        if puavo_user.mark_for_removal! then
+          @rlog.info("puavo user '#{ puavo_user.username }' is marked" \
+                       + ' for removal')
+          return
+        end
       end
 
       begin
