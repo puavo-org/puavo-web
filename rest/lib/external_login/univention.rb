@@ -393,10 +393,6 @@ module PuavoRest
   class Event
     attr_reader :sequence_number, :username
 
-    UCSSCHOOL_OPTIONS = %w(ucsschoolAdministrator ucsschoolExam
-                           ucsschoolLegalGuardian ucsschoolStaff
-                           ucsschoolStudent ucsschoolTeacher)
-
     def initialize(event_data)
       @data = event_data
       validate
@@ -406,8 +402,11 @@ module PuavoRest
     end
 
     def is_ucsschool_user?
-      # return true if any of the ucsschool options is true for this user
-      UCSSCHOOL_OPTIONS.any? { |opt| @options[opt] }
+      @options.any? do |opt, value|
+        opt.match(/\Aucsschool/) \
+          && (value.kind_of?(FalseClass) || value.kind_of?(TrueClass)) \
+          && value
+      end
     end
 
     def validate
@@ -424,15 +423,10 @@ module PuavoRest
       check_types(@data['body']['new'], {
         'objectType' => 'users/user',
         'properties' => Hash,
+        'options'    => Hash,
       })
 
       check_types(@data['body']['new']['properties'], { 'username' => String })
-
-      # XXX should the existence of all these options be checked?
-      option_types = Hash[
-        UCSSCHOOL_OPTIONS.map { |opt| [ opt, [ TrueClass, FalseClass ] ] }
-      ]
-      check_types(@data['body']['new']['options'], option_types)
     end
 
     def check_types(data, types)
@@ -592,9 +586,9 @@ module PuavoRest
                    + %Q{ for user "#{ event.username }"})
 
       unless event.is_ucsschool_user? then
-        @rlog.info("ignoring event #{ event.sequence_number }" \
+        @rlog.info("ignoring event #{ event.sequence_number }"            \
                      + %Q{ for user "#{ event.username }" because he/she} \
-                     + 'has no ucsschool roles')
+                     + ' has no ucsschool roles')
         return
       end
 
