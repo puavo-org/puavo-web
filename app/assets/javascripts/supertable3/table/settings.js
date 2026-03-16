@@ -91,7 +91,7 @@ export function saveSettings(table)
         if (table.container.querySelector("thead section input#editor")?.checked)
             showSections.push("filters");
 
-        if (table.container.querySelector("thead section#massSpan input").checked)
+        if (table.container.querySelector("thead section#massSpan input")?.checked)
             showSections.push("mass");
 
         localStorage.setItem(keyName(table), JSON.stringify({
