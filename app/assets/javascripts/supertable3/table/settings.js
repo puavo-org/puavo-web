@@ -106,6 +106,7 @@ export function saveSettings(table)
             rows_per_page: table.paging.rowsPerPage,
         }));
     } catch (e) {
-        console.error(`Cannot save the table settings: ${e}`);
+        console.error("Cannot save the table settings:");
+        console.log(e);
     }
 }
