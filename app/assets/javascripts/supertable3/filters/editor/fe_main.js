@@ -4,6 +4,7 @@ import { ColumnType, ColumnFlag } from "../../table/constants.js";
 import { _tr, escapeHTML, pad } from "../../../common/utils.js";
 import { convertTimestamp } from "../../table/utils.js";
 import { create, getTemplate } from "../../../common/dom.js";
+import { getColumnType } from "../../table/utils.js";
 
 import { MessageLogger } from "../interpreter/logger.js";
 import { Tokenizer } from "../interpreter/tokenizer.js";
@@ -40,7 +41,7 @@ function humanOperatorName(operator)
 
 function getDefaultValue(definition)
 {
-    switch (definition.type) {
+    switch (getColumnType(definition)) {
         case ColumnType.BOOL:
             return true;
 
@@ -467,12 +468,14 @@ export class FilterEditor {
     prettyPrintTraditionalFilter(filter)
     {
         const colDef = this.columnDefinitions[this.columnAliases.get(filter.column)],
+              type = getColumnType(colDef),
               operator = OPERATORS[filter.operator];
 
+        // Apply type-specific formatting
         function formatValue(v)
         {
             // Format a timestamp
-            if (colDef.type == ColumnType.UNIXTIME) {
+            if (type == ColumnType.UNIXTIME) {
                 const d = parseAbsoluteOrRelativeDate(v);
 
                 if (d === null)
@@ -503,6 +506,7 @@ export class FilterEditor {
                 return `${v.slice(0, v.length - 1)} ${unit}`
             }
 
+            // Use the value as-is
             return v;
         }
 
@@ -525,11 +529,11 @@ export class FilterEditor {
             html += formatValue(filter.values[1]);
             html += `</span>`;
         } else {
-            if (colDef.type == ColumnType.BOOL)
+            if (type == ColumnType.BOOL)
                 html += `<span class="value">${filter.values[0] === 1 ? prettyTrue : prettyFalse}</span>`;
             else {
                 for (let i = 0, j = filter.values.length; i < j; i++) {
-                    if (filter.values[i].length == 0 && colDef.type == ColumnType.STRING)
+                    if (filter.values[i].length == 0 && type == ColumnType.STRING)
                         html += `<span class="value empty">${prettyEmpty}</span>`;
                     else {
                         html += `<span class="value">`;
@@ -661,10 +665,10 @@ export class FilterEditor {
             select.appendChild(o);
         }
 
-        const colDef = this.columnDefinitions[filter.editColumn];
+        const colDef = this.columnDefinitions[filter.editColumn],
+              type = getColumnType(colDef);
 
-        this.fillOperatorSelector(editor.querySelector("div#upper select#operator"),
-                                  colDef.type, filter.editOperator);
+        this.fillOperatorSelector(editor.querySelector("div#upper select#operator"), type, filter.editOperator);
 
         // Initial type-specific editor child UI
         this.buildValueEditor(filter, editor.querySelector("div#editor"), colDef);
@@ -757,6 +761,8 @@ export class FilterEditor {
 
     buildValueEditor(filter, container, colDef)
     {
+        const type = getColumnType(colDef);
+
         const editors = {
             [ColumnType.BOOL]: FilterEditorBoolean,
             [ColumnType.NUMERIC]: FilterEditorNumeric,
@@ -764,10 +770,10 @@ export class FilterEditor {
             [ColumnType.UNIXTIME]: FilterEditorUnixtime,
         };
 
-        if (colDef.type in editors) {
-            filter.editor = new editors[colDef.type](container, filter, colDef);
+        if (type in editors) {
+            filter.editor = new editors[type](container, filter, colDef);
             filter.editor.buildUI();
-        } else throw new Error(`Unknown column type ${colDef.type}`);
+        } else throw new Error(`Unknown column type ${type}`);
     }
 
     // Attempts to preserve the current filter values between operator/column changes and applies
@@ -800,17 +806,16 @@ export class FilterEditor {
 
         // Is the previous operator still valid for this type? If not, reset it to "=",
         // it's the default (and the safest) operator.
-        const newDef = this.columnDefinitions[filter.editColumn];
+        const newDef = this.columnDefinitions[filter.editColumn],
+              type = getColumnType(newDef);
 
-        if (!OPERATORS[filter.editOperator].allowed.has(newDef.type))
+        if (!OPERATORS[filter.editOperator].allowed.has(type))
             filter.editOperator = "=";
 
         // Refill the operator selector
         // TODO: Don't do this if the new column has the same operators available
         // as the previous column did.
-        this.fillOperatorSelector(upper.querySelector("select#operator"),
-                                  newDef.type, filter.editOperator);
-
+        this.fillOperatorSelector(upper.querySelector("select#operator"), type, filter.editOperator);
         this.preserveFilterData(filter);
 
         // Recreate the editor UI
@@ -857,11 +862,12 @@ export class FilterEditor {
                 continue;
             }
 
-            const colDef = this.columnDefinitions[this.columnAliases.get(col)];
+            const colDef = this.columnDefinitions[this.columnAliases.get(col)],
+                  type = getColumnType(colDef);
 
             // Convert the value
             for (let v of f.slice(3)) {
-                switch (colDef.type) {
+                switch (type) {
                     case ColumnType.BOOL:
                         if (v.length == 0)
                             continue;
@@ -1458,7 +1464,7 @@ export class FilterEditor {
                 if (c.operator == "!!")
                     tag("val-b", c.value);
                 else {
-                    switch (this.columnDefinitions[this.columnAliases.get(c.column)].type) {
+                    switch (getColumnType(this.columnDefinitions[this.columnAliases.get(c.column)])) {
                         case ColumnType.BOOL:
                             tag("val-b", c.value);
                             break;

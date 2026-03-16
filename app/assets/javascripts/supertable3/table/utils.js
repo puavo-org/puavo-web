@@ -1,4 +1,5 @@
 import { pad } from "../../common/utils.js";
+import { ColumnType } from "./constants.js";
 
 // Scaler for converting between JavaScript dates and unixtimes
 export const JAVASCRIPT_TIME_GRANULARITY = 1000;
@@ -37,6 +38,9 @@ export function convertTimestamp(unixtime, dateOnly = false, formatter = null)
         return [false, "(ERROR)", null];
     }
 }
+
+// Retrieves the column's type. If it hasn't been defined, use STRING.
+export const getColumnType = def => def.type ?? ColumnType.STRING;
 
 // Type checking stuff
 export const isNullOrUndefined = i => i === null || i === undefined;

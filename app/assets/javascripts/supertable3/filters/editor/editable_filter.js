@@ -1,9 +1,9 @@
 // A single editable filter. Takes the raw filter data and keeps it
 // in a parsed format that can be easily fiddled with.
 
-import { OPERATORS } from "./operators.js";
-
 import { ColumnType, ColumnFlag } from "../../table/constants.js";
+import { getColumnType } from "../../table/utils.js";
+import { OPERATORS } from "./operators.js";
 import { STORAGE_PARSER, parseAbsoluteOrRelativeDate } from "../interpreter/comparisons.js";
 
 const ColumnTypeStrings = {
@@ -90,11 +90,12 @@ export class EditableFilter {
 
         // Is the operator usable with this column type?
         const opDef = OPERATORS[this.operator],
-              colDef = columnDefinitions[columnNames.get(this.column)];
+              colDef = columnDefinitions[columnNames.get(this.column)],
+              type = getColumnType(colDef);
 
-        if (!opDef.allowed.has(colDef.type)) {
+        if (!opDef.allowed.has(type)) {
             console.warn(`EditableFilter::fromRaw(): operator "${this.operator}" cannot be used with ` +
-                         `column type "${ColumnTypeStrings[colDef.type]}" (column "${this.column}"), ` +
+                         `column type "${ColumnTypeStrings[type]}" (column "${this.column}"), ` +
                          `resetting to "="`);
             this.operator = "=";
         }
@@ -122,7 +123,7 @@ export class EditableFilter {
         }
 
         // Check time strings
-        if (colDef.type == ColumnType.UNIXTIME) {
+        if (type == ColumnType.UNIXTIME) {
             let proper = [];
 
             for (const v of this.values) {

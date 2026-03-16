@@ -6,6 +6,7 @@ re-evaluated again for every row that is being checked.
 
 import { ColumnType, ColumnFlag } from "../../table/constants.js";
 import { TokenType, TokenFlags } from "./tokenizer.js";
+import { getColumnType } from "../../table/utils.js";
 
 // All known operators
 const KNOWN_OPERATORS = new Set(["=", "!=", "<", "<=", ">", ">=", "!!"]);
@@ -343,9 +344,10 @@ export class ComparisonCompiler {
             return null;
         }
 
-        const colDef = this.columnDefinitions[this.columnNames.get(columnToken.str)];
+        const colDef = this.columnDefinitions[this.columnNames.get(columnToken.str)],
+              type = getColumnType(colDef);
 
-        if (!ALLOWED_OPERATORS[colDef.type].has(operatorToken.str)) {
+        if (!ALLOWED_OPERATORS[type].has(operatorToken.str)) {
             console.error(`ComparisonCompiler::compile(): operator "${operatorToken.str}" cannot be used with column type "${colDef.type}"`);
             this.logger.errorToken("incompatible_operator", operatorToken);
             return null;
@@ -363,7 +365,7 @@ export class ComparisonCompiler {
             return this.__compileBoolean(columnToken, operatorToken, valueToken);
         }
 
-        switch (colDef.type) {
+        switch (type) {
             case ColumnType.BOOL:
                 return this.__compileBoolean(columnToken, operatorToken, valueToken);
 
@@ -377,7 +379,7 @@ export class ComparisonCompiler {
                 return this.__compileString(columnToken, operatorToken, valueToken);
 
             default:
-                console.error(`ComparisonCompiler::compile(): unhandled column type "${colDef.type}"`);
+                console.error(`ComparisonCompiler::compile(): unhandled column type "${type}"`);
                 this.logger.errorToken("unknown_error", columnToken);
                 return null;
         }

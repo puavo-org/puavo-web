@@ -4,7 +4,7 @@ import { _tr } from "../../common/utils.js";
 import { getTemplate } from "../../common/dom.js";
 import { getPopupContents } from "../../common/modal_popup.js";
 import { ColumnType, INDEX_FILTERABLE } from "./constants.js";
-import { JAVASCRIPT_TIME_GRANULARITY, isNullOrUndefined } from "./utils.js";
+import { JAVASCRIPT_TIME_GRANULARITY, getColumnType, isNullOrUndefined } from "./utils.js";
 
 // These characters will be escaped, even if the outputted value will be quoted
 const ESCAPE = [
@@ -124,14 +124,15 @@ function doExport(table, format)
         options.mustQuote = new Set();
 
         for (const column of options.columns) {
-            const definition = table.columns.definitions[column];
+            const definition = table.columns.definitions[column],
+                  type = getColumnType(definition);
 
             options.headers.push(definition.export_name || column);
 
-            if (definition.type == ColumnType.UNIXTIME)
+            if (type == ColumnType.UNIXTIME)
                 options.timeColumns.add(column);
 
-            if (definition.type == ColumnType.STRING)
+            if (type == ColumnType.STRING)
                 options.mustQuote.add(column);
         }
 

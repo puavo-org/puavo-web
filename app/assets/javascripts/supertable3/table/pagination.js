@@ -7,7 +7,7 @@ import { create, getTemplate } from "../../common/dom.js";
 import { setPreviousRow } from "./row_selection.js";
 import { buildTable } from "./table_builder.js";
 import { saveSettings } from "./settings.js";
-import { isNullOrUndefined } from "./utils.js";
+import { getColumnType, isNullOrUndefined } from "./utils.js";
 
 import {
     ColumnType,
@@ -86,7 +86,7 @@ function onJumpToPage(table, e)
     // Assume string columns can contain HTML, but numeric columns won't. The values are
     // HTML-escaped when displayed, but that means HTML tags can slip through and it looks
     // really ugly.
-    const index = (table.columns.definitions[col].type == ColumnType.STRING) ? INDEX_FILTERABLE : INDEX_DISPLAYABLE;
+    const index = (getColumnType(table.columns.definitions[col]) == ColumnType.STRING) ? INDEX_FILTERABLE : INDEX_DISPLAYABLE;
 
     // CAUTION: This loop will break if there's only one page. That's why this popup cannot be
     // opened if there's only one page.

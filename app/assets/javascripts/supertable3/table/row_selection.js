@@ -2,6 +2,7 @@
 
 import { create, getTemplate } from "../../common/dom.js";
 import { _tr, escapeHTML } from "../../common/utils.js";
+import { getColumnType } from "./utils.js";
 
 import {
     ColumnType,
@@ -184,7 +185,7 @@ function selectSpecificRows(table, state)
     const container = modalPopup.getContents().querySelector("fieldset#massSelects"),
           source = container.querySelector("div#source"),
           type = container.querySelector("select#sourceType").value,
-          isNumeric = table.columns.definitions[type].type != ColumnType.STRING;
+          isNumeric = getColumnType(table.columns.definitions[type]) != ColumnType.STRING;
 
     // Parse the input values
     const entries = new Set();

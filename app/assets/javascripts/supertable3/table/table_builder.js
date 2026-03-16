@@ -2,6 +2,7 @@
 
 import { _tr } from "../../common/utils.js";
 import { create } from "../../common/dom.js";
+import { getColumnType } from "./utils.js";
 
 import {
     ColumnFlag,
@@ -46,7 +47,7 @@ function buildHeaders(table, currentColumn, haveActions)
                 `class="${classes.join(' ')}">`;
 
         // Figure out the cell contents (title + sort direction arrow)
-        const isNumeric = (def.type != ColumnType.STRING);
+        const isNumeric = getColumnType(def) != ColumnType.STRING;
 
         if (!sortable)
             html += def.title;
