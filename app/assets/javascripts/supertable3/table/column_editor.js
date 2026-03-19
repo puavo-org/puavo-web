@@ -4,6 +4,9 @@ import { getTemplate } from "../../common/dom.js";
 import { _tr } from "../../common/utils.js";
 import { saveSettings } from "./settings.js";
 
+// Remember the filter string. Restore it automatically when the editor is reopened.
+let currentFilter = "";
+
 const getColumnList = selected => modalPopup.getContents().querySelectorAll("div#columnList input" + (selected ? ":checked" : ""));
 
 function update(table, changed)
@@ -23,12 +26,13 @@ function update(table, changed)
 
 function filter(e, table)
 {
-    const str = e.target.value.trim().toLowerCase();
+    if (e)
+        currentFilter = e.target.value.trim().toLowerCase();
 
     for (const c of getColumnList(false)) {
         const p = c.parentNode;
 
-        p.classList.toggle("hidden", str && table.columns.definitions[p.id].title.toLowerCase().indexOf(str) == -1);
+        p.classList.toggle("hidden", currentFilter && table.columns.definitions[p.id].title.toLowerCase().indexOf(currentFilter) == -1);
     }
 }
 
@@ -119,6 +123,7 @@ function open(table, e)
     for (const i of template.querySelectorAll(`div#columnList input`))
         i.addEventListener("click", () => update(table, true));
 
+    template.querySelector(`input[type="search"]`).value = currentFilter;
     template.querySelector(`input[type="search"]`).addEventListener("input", e => filter(e, table));
     template.querySelector("button#save").addEventListener("click", () => save(table));
     template.querySelector("button#selectAll").addEventListener("click", () => selectVisible(true, table));
@@ -132,6 +137,7 @@ function open(table, e)
         modalPopup.display("bottom");
 
         update(table, false);
+        filter(null, table);
         modalPopup.getContents().querySelector(`input[type="search"]`).focus();
     }
 }
