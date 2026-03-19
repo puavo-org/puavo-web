@@ -3,7 +3,8 @@
 import { create, destroy } from "../../common/dom.js";
 import { ColumnFlag, SortOrder } from "./constants.js";
 
-// Internal data. This can be global, because you can't have multiple SuperTables with active header cell tracking
+// Internal data. These can be global, because even if you have multiple SuperTables on the same page,
+// only one of them can have header dragging active at any moment.
 let startMousePos = null,       // Initial drag mouse position (X and Y)
     dragStartIndex = -1,        // Source column index
     dragEndIndex = -1,          // Destination column index
@@ -129,7 +130,7 @@ export function tryBeginDrag(table, event)
         return;
 
     // Measure how far the mouse has been moved from the tracking start location. If it has,
-    // start dragging the header column. Assume 10 pixels is "far enough"
+    // start dragging the header column. Assume 10 pixels is "far enough".
     const dx = startMousePos.x - event.clientX,
           dy = startMousePos.y - event.clientY;
 
