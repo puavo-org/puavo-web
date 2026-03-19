@@ -268,8 +268,10 @@ constructor(container, settings)
     // ----------------------------------------------------------------------------------------------
 
     // There's no point in permitting row selection if there are no mass tools
-    if (this.settings.enableSelection && (this.user.massOperations.length == 0 || this.user.massOperationsEndpoint == null))
+    if (this.settings.enableSelection && (this.user.massOperations.length == 0 || this.user.massOperationsEndpoint == null)) {
+        console.warn("Row selection has been enabled, but no mass operations (or the mass operations endpoint) have been defined. Disabling row selection.");
         this.settings.enableSelection = false;
+    }
 
     // Load stored settings
     loadSettings(this);
