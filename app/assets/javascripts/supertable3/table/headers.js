@@ -277,17 +277,17 @@ export function endMouseTracking(table, e)
     if (isDragActive) {
         // Reorder the columns
         reorderColumns(table);
-    } else {
-        // Change table sorting
-        resetDrag();
-
-        if (!canSort)
-            return;
-
-        toggleSorting(table, e.target);
-
-        table.clearRowSelections();
-        table.updateTable();
-        table.updateStats();
+        return;
     }
+
+    // Change table sorting
+    resetDrag();
+
+    if (!canSort)
+        return;
+
+    toggleSorting(table, e.target);
+    table.clearRowSelections();
+    table.updateTable();
+    table.updateStats();
 }
