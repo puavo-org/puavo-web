@@ -1,644 +1,699 @@
-function doStorage(value)
+// A string containing a floating-point number, with a locate-specific digit separator
+// (dot, comma) and ending in a '%'. Convert it to a saner format.
+const manglePercentage = str => parseFloat(str.replaceAll(",", ".").replaceAll("%", ""));
+
+// Like above, but for voltages
+const mangleVoltage = str => parseFloat(str.replaceAll(",", ".").replaceAll("V", ""));
+
+// Extracts the free disk space for a partition and formats it
+const manglePartitionFree = (entry, field) => formatStorage(entry.puavoDeviceHWInfo?.free_space?.[field]);
+
+function formatStorage(value)
 {
-    return [(value / 1048576).toFixed(0), value];
+    if (value === undefined)
+        return undefined;
+
+    return {
+        // Display as megabytes, but use the raw value for others
+        display: (value / 1048576).toFixed(0),
+        sort: value,
+        filter: value,
+        export: value
+    };
 }
 
-function doImage(image)
+function formatRelease(context, image)
 {
-    let display = "",
-        value = image.file,
-        filter = "";
+    if (image === undefined)
+        return undefined;
 
-    if (image.release) {
-        // Display the release name nicely
-        display = `${image.file} <span class="releaseName">(${image.release})</span>`;
-        filter = `${image.file} (${image.release})`;
-    } else {
-        display = image.file;
-        filter = image.file;
-    }
+    image = image.replace(".img", "");
 
-    return [display, value, filter];
+    if (!(image in context.releases))
+        return { value: image };
+
+    const release = context.releases[image];
+
+    return {
+        display: `${image} <span class="releaseName">(${release})</span>`,
+        filter: `${image} ${release}`,
+        sort: `${image} ${release}`.toLowerCase(),
+        export: `${image} (${release})`,
+    };
 }
 
-function doTimestamp(value)
-{
-    const ts = ST.convertTimestamp(value, true, ST.dateFormatter);
-
-    return [
-        ts[0] === true ? ts[1] : "?",
-        value
-    ];
-}
-
+// Formats the device uptime "nicely"
 function formatUptime(seconds)
 {
-    let parts = [];
+    let parts = [],
+        s = seconds;
 
     // Days
-    if (seconds >= 86400) {
-        const d = Math.floor(seconds / 86400);
+    if (s >= 86400) {
+        const d = Math.floor(s / 86400);
 
         parts.push(`${d}d`);
-        seconds -= d * 86400;
+        s -= d * 86400;
     }
 
     // Hours
-    if (seconds >= 3600) {
-        const h = Math.floor(seconds / 3600);
+    if (s >= 3600) {
+        const h = Math.floor(s / 3600);
 
         parts.push(`${h}h`);
-        seconds -= h * 3600;
+        s -= h * 3600;
     }
 
     // Minutes
-    if (seconds >= 60) {
-        const m = Math.floor(seconds / 60);
+    if (s >= 60) {
+        const m = Math.floor(s / 60);
 
         parts.push(`${m}m`);
-        seconds -= m * 60;
+        s -= m * 60;
     }
 
     // Seconds (avoid adding "0s" to the end, unless there are no other parts)
-    if (seconds > 0 || parts.length == 0)
-        parts.push(`${seconds}s`);
+    if (s > 0 || parts.length == 0)
+        parts.push(`${s}s`);
 
-    return parts.join(', ');
+    return {
+        display: parts.join(', '),
+        filter: seconds,
+        sort: seconds,
+        export: seconds
+    };
 }
 
-// Table column definitions
 const COLUMN_DEFINITIONS = {
     abitti_version: {
-        key: "abitti_version",
         title: "<%= t('columns.devices.abitti_version') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => [entry.abitti_version, entry.abitti_version, entry.abitti_version],
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.extra_system_contents?.Abitti;
+            return (v === undefined) ? undefined : { value: v };
+        },
+    },
+
+    abitti2_version: {
+        title: "<%= t('columns.devices.abitti2_version') %>",
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.extra_system_contents?.Abitti2;
+            return (v === undefined) ? undefined : { value: v };
+        },
     },
 
 <% unless @is_servers %>
     allow_guest: {
-        key: "allow_guest",
+        attribute: "puavoAllowGuest",
         title: "<%= t('columns.devices.allow_guest') %>",
         type: ST.ColumnType.BOOL,
     },
 <% end %>
 
-    last_auth_time: {
-        key: "last_auth_time",
+    audio_sink: {
+        attribute: "puavoDeviceDefaultAudioSink",
+        title: "<%= t('columns.devices.audio_sink') %>",
+    },
+
+    audio_source: {
+        attribute: "puavoDeviceDefaultAudioSource",
+        title: "<%= t('columns.devices.audio_src') %>",
+        export_name: "audio_in",
+    },
+
+    auth_timestamp: {
+        attribute: "authTimestamp",
         title: "<%= t('last_ldap_auth_date') %>",
         type: ST.ColumnType.UNIXTIME,
-        transform: entry => doTimestamp(entry.last_auth_time),
-    },
-
-    audio_sink: {
-        key: "audio_sink",
-        title: "<%= t('columns.devices.audio_sink') %>",
-        type: ST.ColumnType.STRING,
-        export_name: "audio_out",
-    },
-
-    audio_src: {
-        key: "audio_src",
-        title: "<%= t('columns.devices.audio_src') %>",
-        type: ST.ColumnType.STRING,
-        export_name: "audio_in",
+        flags: ST.ColumnFlag.F_DATEONLY,
     },
 
 <% unless @is_servers %>
     auto_updates: {
-        key: "auto_updates",
+        attribute: "puavoAutomaticImageUpdates",
         title: "<%= t('columns.devices.auto_updates') %>",
         type: ST.ColumnType.BOOL,
     },
 
     autopower_mode: {
-        key: "autopower_mode",
+        attribute: "puavoDeviceAutoPowerOffMode",
         title: "<%= t('columns.devices.autopower_mode') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    autopower_on: {
-        key: "autopower_on",
-        title: "<%= t('columns.devices.autopower_on') %>",
-        type: ST.ColumnType.NUMERIC,
     },
 
     autopower_off: {
-        key: "autopower_off",
+        attribute: "puavoDeviceOffHour",
         title: "<%= t('columns.devices.autopower_off') %>",
+        type: ST.ColumnType.NUMERIC,
+    },
+
+    autopower_on: {
+        attribute: "puavoDeviceOnHour",
+        title: "<%= t('columns.devices.autopower_on') %>",
         type: ST.ColumnType.NUMERIC,
     },
 <% end %>
 
 <% if @is_servers %>
     available_images: {
-        key: "available_images",
         title: "<%= t('columns.servers.available_images') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
+        flags: ST.ColumnFlag.ARRAY,
+
+        synthesizer: (context, dn, entry) => {
+            const available = entry.puavoDeviceAvailableImage;
+
+            if (available === undefined || available === null)
+                return undefined;
+
             let display = [],
-                value = [],
-                filter = [];
+                filter = [],
+                sort = [],
+                export_ = [];
 
-            for (const i of entry.available_images) {
-                if (i.release) {
-                    display.push(`${i.file} <span class="releaseName">(${i.release})</span>`);
-                    filter.push(`${i.file} ${i.release}`);
+            for (let image of available) {
+                image = image.replace(".img", "");
+
+                if (image in context.releases) {
+                    const release = context.releases[image];
+
+                    display.push(`${image} <span class="releaseName">(${release})</span>`);
+                    filter.push(`${image} ${release}`);
+                    sort.push(`${image} ${release}`.toLowerCase());
+                    export_.push(`${image} (${release})`);
                 } else {
-                    display.push(i.file);
-                    filter.push(i.file);
+                    display.push(image);
+                    filter.push(image);
+                    sort.push(image);
+                    export_.push(image);
                 }
-
-                value.push(i.file);
             }
 
-            return [display.join('<br>'), value.join(','), filter.join(',')];
+            return {
+                display: display,
+                sort: sort.join(" "),
+                filter: filter,
+                export: export_
+            };
         },
     },
 <% end %>
 
-    bat_cap: {
-        key: "bat_cap",
+    battery_capacity: {
         title: "<%= t('columns.devices.bat_cap') %>",
         type: ST.ColumnType.NUMERIC,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.battery?.capacity;
+            return (v === undefined) ? undefined : { value: manglePercentage(v) };
+        },
     },
 
-    bat_pcnt: {
-        key: "bat_pcnt",
+    battery_percentage: {
         title: "<%= t('columns.devices.bat_pcnt') %>",
         type: ST.ColumnType.NUMERIC,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.battery?.percentage;
+            return (v === undefined) ? undefined : { value: manglePercentage(v) };
+        },
     },
 
-    bat_volts: {
-        key: "bat_volts",
+    battery_serial: {
+        title: "<%= t('columns.devices.bat_serial') %>",
+
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.battery?.serial;
+            return (v === undefined) ? undefined : { value: v };
+        },
+    },
+
+    battery_vendor: {
+        title: "<%= t('columns.devices.bat_vendor') %>",
+
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.battery?.vendor;
+            return (v === undefined) ? undefined : { value: v };
+        },
+    },
+
+    battery_volts: {
         title: "<%= t('columns.devices.bat_volts') %>",
         type: ST.ColumnType.NUMERIC,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.battery?.voltage;
+            return (v === undefined) ? undefined : { value: mangleVoltage(v) };
+        },
     },
 
-    bat_serial: {
-        key: "bat_serial",
-        title: "<%= t('columns.devices.bat_serial') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    bat_vendor: {
-        key: "bat_vendor",
-        title: "<%= t('columns.devices.bat_vendor') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    bios_date: {
-        key: "bios_date",
+    bios_release_date: {
         title: "<%= t('columns.devices.bios_date') %>",
-        type: ST.ColumnType.STRING,
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.bios_release_date;
+            return (v === undefined) ? undefined : { value: v };
+        },
     },
 
     bios_vendor: {
-        key: "bios_vendor",
         title: "<%= t('columns.devices.bios_vendor') %>",
-        type: ST.ColumnType.STRING,
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.bios_vendor;
+            return (v === undefined) ? undefined : { value: v };
+        },
     },
 
     bios_version: {
-        key: "bios_version",
         title: "<%= t('columns.devices.bios_version') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    conf: {
-        key: "conf",
-        title: "<%= t('columns.puavoconf') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY,
-        alias: ["puavo_conf", "puavoconf"],
-        export_name: "puavoconf",
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.bios_version;
+            return (v === undefined) ? undefined : { value: v };
+        },
     },
 
     cpu: {
-        key: "cpu",
         title: "<%= t('columns.devices.cpu') %>",
-        type: ST.ColumnType.STRING,
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.processor0;
+            return (v === undefined) ? undefined : { value: v };
+        }
+    },
+
+    cpu_cores: {
+        title: "<%= t('columns.devices.cpu_cores') %>",
+        type: ST.ColumnType.NUMERIC,
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.processorcount;
+            return (v === undefined) ? undefined : { value: parseInt(v, 10) };
+        }
     },
 
     created: {
-        key: "created",
+        attribute: "createTimestamp",
         title: "<%= t('columns.created') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     current_image: {
-        key: "current_image",
         title: "<%= t('columns.devices.current_image') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => doImage(entry.current_image),
+        synthesizer: (context, dn, entry) => formatRelease(context, entry.puavoDeviceHWInfo?.this_image),
     },
 
     default_printer: {
-        key: "default_printer",
+        attribute: "puavoDefaultPrinter",
         title: "<%= t('columns.devices.default_printer') %>",
-        type: ST.ColumnType.STRING,
     },
 
-    desc: {
-        key: "desc",
+    description: {
+        attribute: "description",
         title: "<%= t('columns.devices.description') %>",
         type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
-        alias: ["description"],
-    },
-
-    notes: {
-        key: "notes",
-        title: "<%= t('columns.notes') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY,
+        transformer: (context, dn, entry) => ST.outputAsStandardArray(entry.description[0].replaceAll("\r", "").split("\n"), false)
     },
 
     df_home: {
-        key: "df_home",
         title: "<%= t('columns.devices.df_home') %>",
         type: ST.ColumnType.NUMERIC,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
-        transform: entry => doStorage(entry.df_home),
+        synthesizer: (context, dn, entry) => manglePartitionFree(entry, "/home"),
     },
 
     df_images: {
-        key: "df_images",
         title: "<%= t('columns.devices.df_images') %>",
         type: ST.ColumnType.NUMERIC,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
-        transform: entry => doStorage(entry.df_images),
-    },
-
-    df_state: {
-        key: "df_state",
-        title: "<%= t('columns.devices.df_state') %>",
-        type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
-        transform: entry => doStorage(entry.df_state),
-    },
-
-    df_tmp: {
-        key: "df_tmp",
-        title: "<%= t('columns.devices.df_tmp') %>",
-        type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
-        transform: entry => doStorage(entry.df_tmp),
+        synthesizer: (context, dn, entry) => manglePartitionFree(entry, "/images"),
     },
 
     df_imageoverlays: {
-        key: "df_imageoverlays",
         title: "<%= t('columns.devices.df_imageoverlays') %>",
         type: ST.ColumnType.NUMERIC,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
-        transform: entry => doStorage(entry.df_imageoverlays),
+        synthesizer: (context, dn, entry) => manglePartitionFree(entry, "/imageoverlays"),
+    },
+
+    df_state: {
+        title: "<%= t('columns.devices.df_state') %>",
+        type: ST.ColumnType.NUMERIC,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        synthesizer: (context, dn, entry) => manglePartitionFree(entry, "/state"),
+    },
+
+    df_tmp: {
+        title: "<%= t('columns.devices.df_tmp') %>",
+        type: ST.ColumnType.NUMERIC,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
+        synthesizer: (context, dn, entry) => manglePartitionFree(entry, "/tmp"),
     },
 
     display_name: {
-        key: "display_name",
+        attribute: "puavoDisplayName",
         title: "<%= t('columns.devices.display_name') %>",
-        type: ST.ColumnType.STRING,
     },
 
 <% unless @is_servers %>
-    expiration: {
-        key: "expiration",
+    expiration_time: {
+        attribute: "puavoDeviceExpirationTime",
         title: "<%= t('columns.devices.expiration') %>",
         type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_NULLABLE,
 
-        transform: entry => {
-            const [valid, ts] = ST.convertTimestamp(entry.expiration, false, ST.timestampFormatter);
-            let html = "";
+        transformer: (context, dn, entry) => {
+            if (entry._expiration_timestamp === null)
+                return undefined;
 
-            if (valid && entry._has_expired)
-                html = `<span class="invalidData">${ts}</span>`;
-            else html = ts;
+            // Highlight expired timestamps (the expiration timestamp and expiration flag are set in the preparser)
+            const out = ST.outputISO8601Timestamp(entry._expiration_timestamp);
 
-            return [html, entry.expiration, entry.expiration];
-        }
+            if (entry._has_expired)
+                out.display = `<span class="invalidData">${out.display}</span>`;
+
+            return out;
+        },
     },
 <% end %>
 
-    hd: {
-        key: "hd",
+    hard_drive: {
         title: "<%= t('columns.devices.hwinfo_hd_size') %>",
         type: ST.ColumnType.NUMERIC,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
-        transform: entry => doStorage(entry.hd),
-        alias: ["hard_drive"],
+        synthesizer: (context, dn, entry) => formatStorage(entry.puavoDeviceHWInfo?.blockdevice_sda_size),
     },
 
-    hd_ssd: {
-        key: "hd_ssd",
+    hard_drive_ssd: {
         title: "<%= t('columns.devices.hwinfo_is_ssd') %>",
         type: ST.ColumnType.BOOL,
-    },
 
-    hn: {
-        key: "hn",
-        title: "<%= t('columns.devices.hostname') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            let extra = "";
-
-<% unless @is_servers %>
-            if (entry.reset_from && !entry.reset_fulfilled)
-                extra = ` <i class="icon-attention iconError" title="<%= t('devices.index.pending_reset') %>"></i>`;
-
-            if (entry._has_expired)
-                extra += `<i class="icon-clock" title="<%= t('devices.index.expired_device') %>"></i>`;
-<% end %>
-
-            return [
-                `<a href="${entry.link}">${ST.escapeHTML(entry.hn)}</a>${extra}`,
-                entry.hn
-            ];
-        },
-        alias: ["hostname"],
-        export_name: "hostname",
-    },
-
-    hw_time: {
-        key: "hw_time",
-        title: "<%= t('columns.devices.hwinfo_time') %>",
-        type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+        // Another mistake of mine. This is a string instead of an integer. "-1" means we don't know, "0"
+        // means not an SSD, "1" means sda is SSD.
+        synthesizer: (context, dn, entry) => ST.outputBoolean(entry.puavoDeviceHWInfo?.ssd === "1"),
     },
 
     have_smart: {
-        key: "have_smart",
         title: "<%= t('columns.devices.have_smart') %>",
         type: ST.ColumnType.BOOL,
+        synthesizer: (context, dn, entry) => ST.outputBoolean(typeof(entry.puavoDeviceHWInfo?.blockdevice_sda_smart) == "object"),
+    },
+
+    hostname: {
+        attribute: "puavoHostname",
+        title: "<%= t('columns.devices.hostname') %>",
+        transformer: (context, dn, entry) => {
+            const hostname = entry.puavoHostname[0];
+            let html = "";
+
+<% if @is_servers %>
+            html = `<a href="/devices/servers/${entry.puavoId[0]}">${ST.escapeHTML(hostname)}</a>`
+<% else %>
+            // Use the injected school ID (_school_id) to format the link
+            html = `<a href="/devices/${entry._school_id}/devices/${entry.puavoId[0]}">${ST.escapeHTML(hostname)}</a>`
+
+            // Indicate pending resets
+            if (entry.puavoDeviceReset !== undefined)
+                html += ` <i class="icon-attention iconError" title="<%= t('devices.index.pending_reset') %>"></i>`;
+
+            // Indicate expired devices
+            if (entry._has_expired)
+                html += `<i class="icon-clock" title="<%= t('devices.index.expired_device') %>"></i>`;
+<% end %>
+
+            return {
+                display: html,
+                filter: hostname,
+                sort: hostname,
+                export: hostname,
+            };
+        }
+    },
+
+    hwinfo_time: {
+        title: "<%= t('columns.devices.hwinfo_time') %>",
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+        synthesizer: (context, dn, entry) => ST.outputISO8601Timestamp(entry.puavoDeviceHWInfo?.["timestamp"]),
     },
 
     id: {
-        key: "id",
+        attribute: "puavoId",
         title: "<%= t('columns.puavoid') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     image: {
-        key: "image",
+        attribute: "puavoDeviceImage",
         title: "<%= t('columns.devices.image') %>",
         type: ST.ColumnType.STRING,
-        transform: entry => doImage(entry.image),
+        transformer: (context, dn, entry) => formatRelease(context, entry.puavoDeviceImage[0]),
     },
 
     image_series: {
-        key: "image_series",
+        attribute: "puavoImageSeriesSourceURL",
         title: "<%= t('columns.devices.image_series') %>",
         type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY,
     },
 
-    krn_args: {
-        key: "krn_args",
+    kernel_arguments: {
+        attribute: "puavoDeviceKernelArguments",
         title: "<%= t('columns.devices.kernel_args') %>",
-        type: ST.ColumnType.STRING,
-        alias: ["kernel_args"],
-        export_name: "kernel_args",
+        alias: ["krn_args"],
     },
 
-    krn_ver: {
-        key: "krn_ver",
+    kernel_version: {
+        attribute: "puavoDeviceKernelVersion",
         title: "<%= t('columns.devices.kernel_version') %>",
-        type: ST.ColumnType.STRING,
-        alias: ["kernel_version"],
-        export_name: "kernel_version",
+        alias: ["krn_ver"],
     },
 
-    ll_uid: {
-        key: "ll_uid",
-        title: "<%= t('columns.devices.last_login_uid') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    ll_time: {
-        key: "ll_time",
+    last_login_time: {
         title: "<%= t('columns.devices.last_login_time') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+        synthesizer: (context, dn, entry) => ST.outputISO8601Timestamp(entry.puavoDeviceHWInfo?.logins?.last?.timestamp),
+    },
+
+    last_login_uid: {
+        title: "<%= t('columns.devices.last_login_uid') %>",
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.logins?.last?.uid;
+            return (v === undefined || v === null) ? undefined : { value: v };
+        },
+    },
+
+    latitude: {
+        attribute: "puavoLatitude",
+        title: "<%= t('columns.devices.loc_lat') %>",
     },
 
     location: {
-        key: "location",
+        attribute: "puavoLocationName",
         title: "<%= t('columns.devices.location') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
+        transformer: (context, dn, entry) => ST.outputAsStandardArray(entry.puavoLocationName[0].replaceAll("\r", "").split("\n"), false),
     },
 
-    loc_lat: {
-        key: "loc_lat",
-        title: "<%= t('columns.devices.loc_lat') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    loc_lon: {
-        key: "loc_lon",
+    longitude: {
+        attribute: "puavoLongitude",
         title: "<%= t('columns.devices.loc_lon') %>",
-        type: ST.ColumnType.STRING,
     },
 
     lspci: {
-        key: "lspci",
         title: "<%= t('columns.devices.lspci') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.lspci_values;
+            return (v === undefined) ? undefined : ST.outputAsStandardArray(v, false);
+        }
     },
 
     lsusb: {
-        key: "lsusb",
         title: "<%= t('columns.devices.lsusb') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.lsusb_values;
+            return (v === undefined) ? undefined : ST.outputAsStandardArray(v, false);
+        }
     },
 
     mac: {
-        key: "mac",
+        attribute: "macAddress",
         title: "<%= t('columns.devices.mac') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 
-    mfer: {
-        key: "mfer",
+    manufacturer: {
+        attribute: "puavoDeviceManufacturer",
         title: "<%= t('columns.devices.manufacturer') %>",
-        type: ST.ColumnType.STRING,
-        alias: ["manufacturer"],
-        export_name: "manufacturer",
     },
 
     model: {
-        key: "model",
+        attribute: "puavoDeviceModel",
         title: "<%= t('columns.devices.model') %>",
-        type: ST.ColumnType.STRING,
     },
 
     modified: {
-        key: "modified",
+        attribute: "modifyTimestamp",
         title: "<%= t('columns.modified') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     monitors_xml: {
-        key: "monitors_xml",
+        attribute: "puavoDeviceMonitorsXML",
         title: "<%= t('columns.devices.monitors_xml') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            // It's actually XML, but HTML escaping can handle it
-            return ["<pre>" + ST.escapeHTML(entry.monitors_xml[0]) + "</pre>", entry.monitors_xml];
+        transformer: (context, dn, entry) => {
+            return {
+                // It's actually XML, but HTML escaping can handle it
+                display: "<pre>" + ST.escapeHTML(entry.puavoDeviceMonitorsXML[0]) + "</pre>",
+                filter: entry.puavoDeviceMonitorsXML[0],
+                sort: entry.puavoDeviceMonitorsXML[0],
+                export: entry.puavoDeviceMonitorsXML[0],
+            };
         },
     },
 
-<% if @is_organisation %>
-    school: {
-        key: "school",
-        title: "<%= t('columns.school') %>",
+    notes: {
+        attribute: "puavoNotes",
+        title: "<%= t('columns.notes') %>",
         type: ST.ColumnType.STRING,
-        transform: entry => {
-            // Makes filtering by school name work as expected, but the exported CSV
-            // will contain display names. Can't have everything.
-            return [
-                entry.school[1],
-                entry.school[1]
-            ];
-        }
-    },
-<% end %>
-
-<% if @is_servers %>
-    schools: {
-        key: "schools",
-        title: "<%= t('columns.servers.schools') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            let display = [],
-                value = [];
-
-            for (const sch of entry.schools) {
-                if (sch.valid) {
-                    display.push(`<a href="${sch.link}">${sch.title}</a>`);
-                    value.push(sch.title);
-                } else {
-                    display.push(`<span class="missingData">${sch.dn}</span>`);
-                    value.push('?');
-                }
-            }
-
-            return [display.join("<br>"), value.join(','), value.join(',')];
-        },
-    },
-<% end %>
-
-    user: {
-        key: "user",
-        title: "<%= t('columns.devices.primary_user') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            if (entry.user.valid) {
-                return [
-                    `<a href="${entry.user.link}">${entry.user.title}</a>`,
-                    entry.user.title,
-                    entry.user.title
-                ]
-            } else {
-                return [
-                    `<span class="missingData">${entry.user.dn}</span>`,
-                    entry.user.dn,
-                    entry.user.dn
-                ]
-            }
-        },
+        flags: ST.ColumnFlag.ARRAY,
+        transformer: (context, dn, entry) => ST.outputAsStandardArray(entry.puavoNotes[0].replaceAll("\r", "").split("\n"), false)
     },
 
 <% unless @is_servers %>
     personal_admin: {
-        key: "personal_admin",
+        attribute: "puavoPersonallyAdministered",
         title: "<%= t('columns.devices.personal_admin') %>",
         type: ST.ColumnType.BOOL,
-        export_name: "personally_administered",
     },
 
     personal_device: {
-        key: "personal_device",
+        attribute: "puavoPersonalDevice",
         title: "<%= t('columns.devices.personal_device') %>",
         type: ST.ColumnType.BOOL,
     },
 <% end %>
 
-    printer_uri: {
-        key: "printer_uri",
-        title: "<%= t('columns.devices.printer_uri') %>",
-        type: ST.ColumnType.STRING,
-    },
+    primary_user: {
+        title: "<%= t('columns.devices.primary_user') %>",
+        synthesizer: (context, dn, entry) => {
+            const primary = entry.puavoDevicePrimaryUser;
 
-    puavopkgs: {
-        key: "puavopkgs",
-        title: "<%= t('columns.devices.puavopkgs') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            if (entry.puavopkgs === undefined || entry.puavopkgs.installed === undefined)
-                return [null, null, null];
+            if (primary === undefined)
+                return undefined;
 
-            let html = `<ul class="margin-0 padding-0 no-list-bullets">`;
-            let text = "";
-
-            for (const [id, pkg] of Object.entries(entry.puavopkgs.installed)) {
-                html += `<li><strong>${id}</strong><ul class="padding-0 padding-left-25px">`;
-                html += `<li><%= t('hwinfo.puavopkg.version') %>: ${pkg.version}</li>`;
-                html += `<li><%= t('hwinfo.puavopkg.package_id') %>: ${pkg["package-id"]}</li>`;
-                html += `<li><%= t('hwinfo.puavopkg.upstream_hash') %>: ${pkg.upstream_pack === null ? "-" : pkg.upstream_pack}</li>`;
-                html += `</ul></li>`
-
-                // Include the hashes and IDs in the plain text string, so the column
-                // is substring-searchable in filters. Not pretty, but it works.
-                text += `${id} ${pkg["package-id"]} ${pkg.upstream_pack} `;
+            if (primary.valid) {
+                // Valid user
+                return {
+                    display: `<a href="${primary.link}">${primary.title}</a>`,
+                    sort: primary.title.toLowerCase(),
+                    filter: primary.title,
+                    export: primary.title,
+                };
+            } else {
+                // Missing user, show only the DN and highlight it
+                return {
+                    display: `<span class="data-error">${primary.dn}</span>`,
+                    sort: primary.dn,
+                    filter: primary.dn,
+                    export: primary.dn,
+                };
             }
-
-            html += "</ul>";
-
-            return [html, text, text];
         },
     },
 
-    purchase_date: {
-        key: "purchase_date",
-        title: "<%= t('columns.devices.purchase_date') %>",
-        type: ST.ColumnType.UNIXTIME,
-        transform: entry => doTimestamp(entry.purchase_date),
+    printer_uri: {
+        attribute: "puavoPrinterDeviceURI",
+        title: "<%= t('columns.devices.printer_uri') %>",
     },
 
-    purchase_loc: {
-        key: "purchase_loc",
+    puavoconf: {
+        attribute: "puavoConf",
+        title: "<%= t('columns.puavoconf') %>",
+        transformer: (context, dn, entry) => {
+            const conf = Object.entries(JSON.parse(entry.puavoConf));
+
+            return {
+                display: `<ul class="margin-0 padding-left-20px">` + conf.map(e => `<li>${e[0]} = <code>${e[1]}</code></li>`).join("") + `</ul>`,
+                filter: conf.join(" "),
+                sort: conf.join(" "),
+                export: conf,
+            };
+        },
+        alias: ["puavo_conf", "conf"]
+    },
+
+    // puavo-pkg packages listing
+    puavopkgs: {
+        title: "<%= t('columns.devices.puavopkgs') %>",
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.puavopkgs?.installed;
+
+            if (v === undefined || v === null)
+                return undefined;
+
+            let display = `<ul class="margin-0 padding-left-0 no-list-bullets">`,
+                plain = [],
+                sort = [];
+
+            for (const [id, pkg] of Object.entries(v)) {
+                let upstream = "-";
+
+                if (pkg.upstream_pack) {
+                    // Give word wrapping a chance to work
+                    upstream = pkg.upstream_pack.match(/.{1,4}/g).join("<wbr>");
+                }
+
+                display += `<li><strong>${id}</strong><ul class="padding-left-25px">`;
+                display += `<li><%= t('hwinfo.puavopkg.version') %>: ${pkg.version}</li>`;
+                display += `<li><%= t('hwinfo.puavopkg.package_id') %>: <code>${pkg["package-id"].match(/.{1,4}/g).join("<wbr>")}</code></li>`;
+                display += `<li><%= t('hwinfo.puavopkg.upstream_hash') %>: <code>${upstream}</code></li>`;
+                display += `</ul></li>`
+
+                // Include the hashes and IDs in the plain text string, so the column
+                // is substring-searchable in filters. Not pretty, but it works.
+                plain.push(`${id} ${pkg["package-id"]} ${pkg.upstream_pack ?? "-"}`);
+                sort.push(`${id} ${pkg["package-id"]}`);
+            }
+
+            display += "</ul>";
+
+            return {
+                display: display,
+                sort: sort.join(" "),
+                filter: plain.join(" "),
+                export: plain,
+            };
+        }
+    },
+
+    purchase_date: {
+        attribute: "puavoPurchaseDate",
+        title: "<%= t('columns.devices.purchase_date') %>",
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.F_DATEONLY,
+    },
+
+    purchase_location: {
+        attribute: "puavoPurchaseLocation",
         title: "<%= t('columns.devices.purchase_loc') %>",
-        type: ST.ColumnType.STRING,
     },
 
     purchase_support: {
-        key: "purchase_support",
+        attribute: "puavoSupportContract",
         title: "<%= t('columns.devices.purchase_support') %>",
-        type: ST.ColumnType.STRING,
-        export_name: "support_contract",
     },
 
     purchase_url: {
-        key: "purchase_url",
+        attribute: "puavoPurchaseURL",
         title: "<%= t('columns.devices.purchase_url') %>",
-        type: ST.ColumnType.STRING,
     },
 
     purchase_warranty: {
-        key: "purchase_warranty",
+        attribute: "puavoWarrantyEndDate",
         title: "<%= t('columns.devices.purchase_warranty') %>",
         type: ST.ColumnType.UNIXTIME,
-        transform: entry => doTimestamp(entry.purchase_warranty),
-        export_name: "warranty_ends",
+        flags: ST.ColumnFlag.F_DATEONLY,
     },
 
     ram: {
@@ -646,107 +701,190 @@ const COLUMN_DEFINITIONS = {
         title: "<%= t('columns.devices.hwinfo_ram_size') %>",
         type: ST.ColumnType.NUMERIC,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_STORAGE,
-        transform: entry => doStorage(entry.ram),
+        synthesizer: (context, dn, entry) => {
+            // For some reason, when I wrote the sysinfo collector tool back in 2017,
+            // I used megabytes as the unit, instead of bytes. Too late to change that.
+            // So use the memory slot information if it exists, and if not, then fallback
+            // to the old raw number.
+            if (entry.puavoDeviceHWInfo?.memory && entry.puavoDeviceHWInfo.memory.length > 0) {
+                let total = 0;
+
+                for (const s of entry.puavoDeviceHWInfo.memory) {
+                    if ("bytes" in s)           // plain bytes
+                        total += s.bytes;
+                    else if ("size" in s)       // megabytes to bytes
+                        total += s.size * 1024 * 1024;
+                }
+
+                return formatStorage(total);
+            }
+
+            if (entry.puavoDeviceHWInfo?.memorysize_mb) {
+                // Fallback, but convert the value to bytes for formatStorage()
+                return formatStorage(entry.puavoDeviceHWInfo.memorysize_mb * 1024 * 1024);
+            }
+
+            return undefined;
+        },
     },
 
 <% unless @is_servers %>
     reset_from: {
-        key: "reset_from",
         title: "<%= t('columns.devices.reset_from') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    reset_operation: {
-        key: "reset_operation",
-        title: "<%= t('columns.devices.reset_operation') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    reset_pin: {
-        key: "reset_pin",
-        title: "<%= t('columns.devices.reset_pin') %>",
-        type: ST.ColumnType.NUMERIC,
-    },
-
-    reset_time: {
-        key: "reset_time",
-        title: "<%= t('columns.devices.reset_time') %>",
-        type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
-    },
-
-    reset_fulfilled: {
-        key: "reset_time",
-        title: "<%= t('columns.devices.reset_fulfilled') %>",
-        type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
-    },
-<% end %>
-
-    serial: {
-        key: "serial",
-        title: "<%= t('columns.devices.serial') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    status: {
-        key: "status",
-        title: "<%= t('columns.devices.status') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    tags: {
-        key: "tags",
-        title: "<%= t('columns.devices.tags') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY,
-    },
-
-    type: {
-        key: "type",
-        title: "<%= t('columns.devices.type') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    tz: {
-        key: "tz",
-        title: "<%= t('columns.devices.tz') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.F_NULLABLE,
-    },
-
-    uptime: {
-        key: "uptime",
-        title: "<%= t('columns.devices.uptime') %>",
-        type: ST.ColumnType.NUMERIC,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
-        transform: entry => {
-            return [`${entry.uptime} (${formatUptime(entry.uptime)})`, entry.uptime, entry.uptime];
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceReset?.from;
+            return (v === undefined) ? undefined : { value: v };
         },
     },
 
-    wifi: {
-        key: "wifi",
-        title: "<%= t('columns.devices.wifi') %>",
-        type: ST.ColumnType.STRING,
+    reset_fulfilled: {
+        title: "<%= t('columns.devices.reset_fulfilled') %>",
+        type: ST.ColumnType.UNIXTIME,
+        synthesizer: (context, dn, entry) => ST.outputISO8601Timestamp(entry.puavoDeviceReset?.["request-fulfilled"]),
     },
 
-    windows_license: {
-        key: "windows_license",
-        title: "<%= t('columns.devices.has_windows_license') %>",
-        type: ST.ColumnType.BOOL,
+    reset_operation: {
+        title: "<%= t('columns.devices.reset_operation') %>",
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceReset?.operation;
+            return (v === undefined) ? undefined : { value: v };
+        },
+    },
+
+    reset_pin: {
+        title: "<%= t('columns.devices.reset_pin') %>",
+        type: ST.ColumnType.NUMERIC,
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceReset?.pin;
+            return (v === undefined) ? undefined : { value: parseInt(v, 10) };
+        },
+    },
+
+    reset_requested: {
+        title: "<%= t('columns.devices.reset_requested') %>",
+        type: ST.ColumnType.UNIXTIME,
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceReset?.["request-time"];
+            return (v === undefined || v === null) ? undefined : ST.outputISO8601Timestamp(v);
+        },
+    },
+<% end %>
+
+<% if @is_organisation %>
+<% unless @is_servers %>
+    school: {
+        title: "<%= t('columns.school') %>",
+        synthesizer: (context, dn, entry) => { return { value: context.schools[entry.puavoSchool[0]].name } },
+    },
+<% end %>
+<% end %>
+
+<% if @is_servers %>
+    schools: {
+        title: "<%= t('columns.servers.schools') %>",
+        flags: ST.ColumnFlag.ARRAY,
+        synthesizer: (context, dn, entry) => {
+            const schools = entry.puavoSchool;
+
+            if (schools === undefined || schools === null)
+                return undefined;
+
+            let display = [],
+                values = [];
+
+            for (const dn of schools) {
+                if (!(dn in context.schools))
+                    continue;
+
+                const school = context.schools[dn];
+
+                display.push(`<a href="${school.link}">${school.name}</a>`);
+                values.push(school.name);
+            }
+
+            return {
+                display: display,
+                sort: values.join(" "),
+                filter: values,
+                export: values,
+            };
+        },
+    },
+<% end %>
+
+    serial_number: {
+        attribute: "serialNumber",
+        title: "<%= t('columns.devices.serial') %>",
+    },
+
+    status: {
+        attribute: "puavoDeviceStatus",
+        title: "<%= t('columns.devices.status') %>",
+    },
+
+    tags: {
+        attribute: "puavoTag",
+        title: "<%= t('columns.devices.tags') %>",
+        flags: ST.ColumnFlag.ARRAY,
+    },
+
+    timezone: {
+        attribute: "puavoTimezone",
+        title: "<%= t('columns.devices.tz') %>",
+    },
+
+    type: {
+        attribute: "puavoDeviceType",
+        title: "<%= t('columns.devices.type') %>",
+    },
+
+    // Device uptime
+    uptime: {
+        title: "<%= t('columns.devices.uptime') %>",
+        type: ST.ColumnType.NUMERIC,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.uptime;
+            return (v === undefined) ? undefined : formatUptime(v);
+        }
+    },
+
+    wifi: {
+        title: "<%= t('columns.devices.wifi') %>",
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.wifi;
+            return (v === undefined) ? undefined : { value: v };
+        },
     },
 
     windows_installed: {
-        key: "windows_installed",
         title: "<%= t('columns.devices.windows_installed') %>",
         type: ST.ColumnType.BOOL,
+        synthesizer: (context, dn, entry) => ST.outputBoolean(entry.puavoDeviceHWInfo?.windows?.is_installed),
+    },
+
+    windows_license: {
+        title: "<%= t('columns.devices.has_windows_license') %>",
+        type: ST.ColumnType.BOOL,
+        synthesizer: (context, dn, entry) => {
+            const v = entry.puavoDeviceHWInfo?.windows_license;
+
+            if (v === undefined || v === null)
+                return undefined;
+
+            return {
+                display: v.replaceAll("\n", "<br>"),
+                filter: v.replaceAll("\n", " "),
+                sort: v.replaceAll("\n", " "),
+                export: v,
+            };
+        },
     },
 
     xrandr: {
-        key: "xrandr",
+        attribute: "puavoDeviceXrandr",
         title: "<%= t('columns.devices.xrandr') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 };
@@ -755,13 +893,13 @@ const COLUMN_DEFINITIONS = {
 const COLUMN_ORDER = [
 <% if @is_organisation %>
     "school",
-    "hw_time",
+    "hwinfo_time",
 <% end %>
     "id",
-    "hn",
+    "hostname",
     "display_name",
 <% if !@is_organisation || @is_servers %>
-    "hw_time",
+    "hwinfo_time",
 <% end %>
 <% if @is_servers %>
     "schools",
@@ -774,22 +912,22 @@ const COLUMN_ORDER = [
 <% unless @is_servers %>
     "mac",
 <% end %>
-    "mfer",
+    "manufacturer",
     "model",
-    "serial",
+    "serial_number",
     "status",
     "image",
     "current_image",
     "image_series",
-    "krn_args",
-    "krn_ver",
+    "kernel_arguments",
+    "kernel_version",
     "created",
     "modified",
-    "conf",
-    "user",
+    "puavoconf",
+    "primary_user",
     "ram",
-    "hd",
-    "hd_ssd",
+    "hard_drive",
+    "hard_drive_ssd",
     "have_smart",
     "df_home",
     "df_imageoverlays",
@@ -797,36 +935,38 @@ const COLUMN_ORDER = [
     "df_state",
     "df_tmp",
     "cpu",
+    "cpu_cores",
     "bios_vendor",
     "bios_version",
-    "bios_date",
-    "bat_vendor",
-    "bat_serial",
-    "bat_cap",
-    "bat_pcnt",
-    "bat_volts",
+    "bios_release_date",
+    "battery_vendor",
+    "battery_serial",
+    "battery_capacity",
+    "battery_percentage",
+    "battery_volts",
     "wifi",
     "xrandr",
     "monitors_xml",
     "lspci",
     "lsusb",
     "abitti_version",
+    "abitti2_version",
     "windows_license",
     "windows_installed",
     "purchase_date",
     "purchase_warranty",
-    "purchase_loc",
+    "purchase_location",
     "purchase_url",
     "purchase_support",
 <% unless @is_servers %>
     "location",
 <% end %>
-    "loc_lat",
-    "loc_lon",
-    "tz",
+    "latitude",
+    "longitude",
+    "timezone",
     "default_printer",
     "printer_uri",
-    "audio_src",
+    "audio_source",
     "audio_sink",
 <% unless @is_servers %>
     "allow_guest",
@@ -837,21 +977,57 @@ const COLUMN_ORDER = [
     "autopower_on",
     "autopower_off",
     "reset_from",
-    "reset_time",
+    "reset_requested",
     "reset_fulfilled",
     "reset_pin",
     "reset_operation",
 <% end %>
-    "ll_uid",
-    "ll_time",
-    "last_auth_time",
+    "last_login_uid",
+    "last_login_time",
+    "auth_timestamp",
     "uptime",
     "puavopkgs",
-    "desc",
+    "description",
     "notes",
 <% unless @is_servers %>
-    "expiration",
+    "expiration_time",
 <% end %>
+];
+
+function deviceActions(item)
+{
+    let html = "";
+
+<% if @is_servers %>
+    const link = `/devices/servers/${item._puavo_id}`;
+<% else %>
+    const link = `/devices/${item._school_id}/devices/${item._puavo_id}`;
+<% end %>
+
+    html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
+
+<% if @permit_device_deletion %>
+    let message = "<%= t('general_confirm') %>";
+
+    html += `<a href="${link}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
+<% end %>
+
+    return html;
+}
+
+function openCallback(item)
+{
+    return `/devices/${item._school_id}/devices/${item._puavo_id}`;
+}
+
+function openCallbackServers(item)
+{
+    return `/devices/servers/${item._puavo_id}`;
+}
+
+const MASS_SELECTS = [
+    ["hostname", "<%= t('columns.devices.hostname') %>"],
+    ["id", "<%= t('columns.puavoid') %>"],
 ];
 
 const FILTER_PRESETS = [
@@ -1386,6 +1562,14 @@ class MassDevicePurchaseInfo extends ST.MassOperation {
             this.data[key].value = null;
     }
 
+    datesDiffer(date1, date2)
+    {
+        const dateA = (date1 === null || date1 === undefined) ? null : new Date(date1 * 1000).toISOString().substring(0, 10),
+              dateB = date2;
+
+        return dateA != dateB;
+    }
+
     // I'm not sure if this function is really needed, but
     // JS's type coercions and comparisons are horrible and
     // I will not take any chances with them
@@ -1434,26 +1618,22 @@ class MassDevicePurchaseInfo extends ST.MassOperation {
         let changes = [];
 
         if (this.data["purchase_date"].checked) {
-            const date = item.purchase_date[ST.INDEX_EXISTS] ? item.purchase_date[ST.INDEX_DISPLAYABLE] : null;
-
-            if (this.hasChanged(date, this.data["purchase_date"].value))
+            if (this.datesDiffer(item.purchase_date?.filter ?? null, this.data["purchase_date"].value))
                 changes.push("purchase_date");
         }
 
         if (this.data["warranty_end_date"].checked) {
-            const date = item.purchase_warranty[ST.INDEX_EXISTS] ? item.purchase_warranty[ST.INDEX_DISPLAYABLE] : null;
-
-            if (this.hasChanged(date, this.data["warranty_end_date"].value))
+            if (this.datesDiffer(item.purchase_warranty?.filter ?? null, this.data["warranty_end_date"].value))
                 changes.push("warranty_end_date");
         }
 
-        if (this.data["purchase_location"].checked && this.hasChanged(item.purchase_loc[ST.INDEX_DISPLAYABLE], this.data["purchase_location"].value))
+        if (this.data["purchase_location"].checked && this.hasChanged(item.purchase_location?.value ?? null, this.data["purchase_location"].value))
             changes.push("purchase_location");
 
-        if (this.data["purchase_url"].checked && this.hasChanged(item.purchase_url[ST.INDEX_DISPLAYABLE], this.data["purchase_url"].value))
+        if (this.data["purchase_url"].checked && this.hasChanged(item.purchase_url?.value ?? null, this.data["purchase_url"].value))
             changes.push("purchase_url");
 
-        if (this.data["support_contract"].checked && this.hasChanged(item.purchase_support[ST.INDEX_DISPLAYABLE], this.data["support_contract"].value))
+        if (this.data["support_contract"].checked && this.hasChanged(item.purchase_support?.value ?? null, this.data["support_contract"].value))
             changes.push("support_contract");
 
         if (changes.length == 0) {
@@ -1749,16 +1929,14 @@ class MassDeviceReset extends ST.MassOperation {
 
     prepareItem(item)
     {
-        if (item.type[ST.INDEX_FILTERABLE] !== "laptop") {
+        if (item.type.value !== "laptop") {
             // Only laptops can be mass reset
             return { state: "error", message: "<%= t('devices.index.mass_operations.reset.not_a_laptop') %>" };
         }
 
         // All "reset" members will be omitted if the device is not in reset mode
-        if (item.reset_from[ST.INDEX_EXISTS] === this.reset) {
-            console.log(`Device ${item.id[ST.INDEX_FILTERABLE]} is already in the desired reset state, skipping`);
+        if ((item.reset_from !== undefined) === this.reset)
             return { state: "skip" };
-        }
 
         return { state: "ready" };
     }
@@ -1832,7 +2010,6 @@ class MassSetExpirationTimes extends ST.MassOperation {
               offsetString = `${offset < 0 ? "+" : "-"}${pad(Math.abs(offset) / 60, 2)}:${pad(Math.abs(offset) % 60, 2)}`;
 
         this.expirationTime = new Date(e.target.value + offsetString);
-        console.log(this.expirationTime);
     }
 
     onClear()
@@ -1962,61 +2139,48 @@ const MASS_OPERATIONS = [
 <% end %>
 ];
 
-function userActions(item)
+function preparse(raw)
 {
-    let html = "";
+    const context = {
+        entries: raw.devices,
+        schools: raw.schools,
+        releases: raw.releases,
+        now: new Date(),
+    };
+
+    for (const [dn, device] of Object.values(context.entries)) {
+        // Parse hardware infos so their values can be easily used in synthetic columns
+        if (device.puavoDeviceHWInfo !== undefined)
+            device.puavoDeviceHWInfo = JSON.parse(device.puavoDeviceHWInfo[0]);
+
+        // Parse reset information
+        if (device.puavoDeviceReset !== undefined)
+            device.puavoDeviceReset = JSON.parse(device.puavoDeviceReset[0]);
 
 <% if @is_servers %>
-    const link = `/devices/servers/${item.id[ST.INDEX_FILTERABLE]}`;
+        // Required by the transformer
+        device._school_id = -1;
 <% else %>
-    const link = `/devices/${item.school_id}/devices/${item.id[ST.INDEX_FILTERABLE]}`;
+        // Inject school PuavoIDs into the row entries, so that we can format the links correctly.
+        // The transformer for the "school" attribute only retains the school name, not its ID.
+        device._school_id = context.schools[device.puavoSchool[0]].id;
 <% end %>
 
-    html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
-
-<% if @permit_device_deletion %>
-    let message = "<%= t('general_confirm') %>";
-
-    html += `<a href="${link}" data-method="delete" data-confirm="${message}" rel="nofollow" class="btn btn-danger"><%= t('link.destroy') %></a>`
-<% end %>
-
-    return html;
-}
-
-function openCallback(item)
-{
-    return `/devices/${item.school_id}/devices/${item.id[ST.INDEX_DISPLAYABLE]}`;
-}
-
-function openCallbackServers(item)
-{
-    return `/devices/servers/${item.id[ST.INDEX_DISPLAYABLE]}`;
-}
-
-const MASS_SELECTS = [
-    ["hn", "<%= t('columns.devices.hostname') %>"],
-    ["id", "<%= t('columns.puavoid') %>"],
-];
-
-// Preprocesses the device data
-function* preprocessDeviceData(devices)
-{
-    const NOW = new Date();
-
-    for (const [_, d] of Object.entries(devices)) {
-        let d2 = { ...d };
-
-        // Inject a device expiration flag into the data, so we don't have to recalculate
-        // it in several places.
-        d2._has_expired = false;
-
-        if (d2.expiration) {
-            const [valid, ts] = ST.convertTimestamp(d2.expiration);
-
-            if (valid && NOW >= new Date(d2.expiration * 1000))
-                d2._has_expired = true;
-        }
-
-        yield d2;
+        // Inject expiration states, so the date object don't have to be repeatedly parsed everywhere.
+        // This exists only in the preparse stage.
+        device._expiration_timestamp = device.puavoDeviceExpirationTime ?
+            new Date(ST.convertLDAPTimestampToISO8601String(device.puavoDeviceExpirationTime[0])) : null;
+        device._has_expired = (device._expiration_timestamp !== null) && (context.now >= device._expiration_timestamp);
     }
+
+    return context;
+}
+
+function postparse(context, transformed)
+{
+<% unless @is_servers %>
+    // Inject the school IDs again
+    for (let i = 0; i < context.entries.length; i++)
+        transformed[i]._school_id = context.schools[context.entries[i][1].puavoSchool[0]].id;
+<% end %>
 }

@@ -25,8 +25,8 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 <%= render partial: 'shared/supertable_translations', formats: [:js] %>
 <%= render partial: 'shared/device_tables_common', formats: [:js] %>
 
-const DEFAULT_COLUMNS = ["school", "hw_time", "hn", "type", "tags", "mac", "current_image", "ram", "hd", "cpu"];
-const DEFAULT_SORTING = { column: "hw_time", dir: ST.SortOrder.DESCENDING };
+const DEFAULT_COLUMNS = ["school", "hwinfo_time", "hostname", "type", "tags", "mac", "current_image", "ram", "hard_drive", "cpu", "cpu_cores"];
+const DEFAULT_SORTING = { column: "hwinfo_time", dir: ST.SortOrder.DESCENDING };
 
 document.addEventListener("DOMContentLoaded", () => {
     modalPopup.setupGlobalEvents();
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
             csvPrefix: `<%= LdapOrganisation.current.o %>-devices`,
             columnDefinitions: COLUMN_DEFINITIONS,
             columnOrder: COLUMN_ORDER,
-            actions: userActions,
+            actions: deviceActions,
             openCallback: openCallback,
             massSelects: MASS_SELECTS,
             massOperations: MASS_OPERATIONS,
@@ -50,9 +50,9 @@ document.addEventListener("DOMContentLoaded", () => {
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
             filterPresets: FILTER_PRESETS,
-            defaultRowsPerPage: -1,     // show all devices by default
             dynamicData: "/get_all_devices",
-            preFilterFunction: preprocessDeviceData,
+            preparseFunction: preparse,
+            postparseFunction: postparse,
         }
     );
 });

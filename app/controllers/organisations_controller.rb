@@ -383,33 +383,44 @@ class OrganisationsController < ApplicationController
 
   # AJAX call
   def get_all_devices
-    schools_by_dn = raw_schools_by_dn()
+    devices = Device.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: DevicesHelper.get_device_attributes())
 
-    # Known image release names
-    releases = get_releases()
+    # Have to retrieve primary user data, because we will not send a list of all users to the clientside
+    cache = {}
 
-    # Get a raw list of all devices in all schools and convert it into easily parseable format
-    devices = Device.search_as_utf8(
-      filter: '(puavoSchool=*)',
-      scope: :one,
-      attributes: DevicesHelper.get_device_attributes())
-    .collect do |dn, dev|
-      school = schools_by_dn[dev['puavoSchool'][0]]
+    devices.each do |_, d|
+      user_dn = d.fetch('puavoDevicePrimaryUser', [nil])[0]
+      next unless user_dn
 
-      device = DevicesHelper.convert_raw_device(dev, releases)
-      device[:link] = "/devices/#{school[:id]}/devices/#{device[:id]}"
-      device[:school] = [school[:cn], school[:name]]
-      device[:school_id] = school[:id]
-
-      # Figure out the primary user
-      if device[:user]
-        device[:user] = DevicesHelper.format_device_primary_user(device[:user], school[:id])
+      unless cache.include?(user_dn)
+        begin
+          cache[user_dn] = User.find(user_dn)
+        rescue StandardError
+          cache[user_dn] = nil
+        end
       end
 
-      device
+      user = cache[user_dn]
+
+      if user
+        d['puavoDevicePrimaryUser'] = {
+          valid: true,
+          link: "/users/#{user.primary_school.id}/users/#{user.id}",
+          title: "#{user.uid} (#{user.givenName} #{user.sn})"
+        }
+      else
+        d['puavoDevicePrimaryUser'] = {
+          valid: false,
+          dn: user_dn,
+        }
+      end
     end
 
-    render json: devices
+    render json: {
+      devices: devices,
+      schools: raw_schools_by_dn(),
+      releases: get_releases(),
+    }
   end
 
   def edit_puavomenu

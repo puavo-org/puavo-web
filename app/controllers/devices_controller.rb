@@ -93,34 +93,17 @@ class DevicesController < ApplicationController
 
   # AJAX call
   def get_school_devices_list
-    # Get a raw list of devices in this school
-    raw = Device.search_as_utf8(filter: "(puavoSchool=#{@school.dn})",
-                                scope: :one,
-                                attributes: DevicesHelper.get_device_attributes())
-
-    # Known image release names
-    releases = get_releases()
-
-    # Convert the raw data into something we can easily parse in JavaScript
-    school_id = @school.id.to_i
-
-    devices = raw.collect do |dn, dev|
-      # Common attributes
-      device = DevicesHelper.convert_raw_device(dev, releases)
-
-      # Special attributes
-      device[:link] = "/devices/#{school_id}/devices/#{device[:id]}"
-      device[:school_id] = school_id
-
-      # Figure out the primary user
-      if device[:user]
-        device[:user] = DevicesHelper.format_device_primary_user(device[:user], school_id)
-      end
-
-      device
-    end
-
-    render json: devices
+    render json: {
+      devices: Device.search_as_utf8(filter: "(puavoSchool=#{@school.dn})", scope: :one, attributes: DevicesHelper.get_device_attributes()),
+      schools: {
+        "#{@school.dn}" => {
+          'id' => @school.id.to_i,
+          'cn' => @school.cn,
+          'name' => @school.displayName,
+        }
+      },
+      releases: get_releases(),
+    }
   end
 
   # GET /devices/1
