@@ -230,8 +230,12 @@ class OrganisationsController < ApplicationController
       primary_school = cache_school(admin.primary_school.dn)
 
       {
-        id: admin.id.to_i,            # the supertable code needs this
-        school_id: primary_school,    # this too (we need a separate member for the primary school)
+        # These two fields are needed by the SuperTable code
+        _puavo_id: admin.id.to_i,
+        _school_id: admin.primary_school.id.to_i,
+
+        id: admin.id.to_i,
+        school_id: primary_school,
         name: "#{admin.givenName} #{admin.sn}",
         username: admin.uid,
         owner: owners.include?(admin.dn.to_s),
