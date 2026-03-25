@@ -23,8 +23,8 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 
 const SERVERS = <%= raw JSON.pretty_generate(@servers) %>;
 
-const DEFAULT_COLUMNS = ["hn", "schools", "available_images", "location", "mac", "mfer", "model", "serial", "current_image"];
-const DEFAULT_SORTING = { column: "hn", dir: ST.SortOrder.ASCENDING };
+const DEFAULT_COLUMNS = ["hostname", "schools", "available_images", "location", "mac", "manufacturer", "model", "serial_number", "current_image"];
+const DEFAULT_SORTING = { column: "hostname", dir: ST.SortOrder.ASCENDING };
 
 document.addEventListener("DOMContentLoaded", () => {
     modalPopup.setupGlobalEvents();
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
             csvPrefix: `<%= LdapOrganisation.current.o %>-servers`,
             columnDefinitions: COLUMN_DEFINITIONS,
             columnOrder: COLUMN_ORDER,
-            actions: userActions,
+            actions: deviceActions,
             openCallback: openCallbackServers,
             massSelects: MASS_SELECTS,
             massOperations: MASS_OPERATIONS,
@@ -49,6 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
             defaultSorting: DEFAULT_SORTING,
             filterPresets: null,
             staticData: SERVERS,
+            preparseFunction: preparse,
+            postparseFunction: postparse,
         }
     );
 });
