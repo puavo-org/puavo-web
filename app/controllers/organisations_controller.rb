@@ -344,25 +344,18 @@ class OrganisationsController < ApplicationController
 
   # AJAX call
   def get_all_groups
-    schools_by_dn = raw_schools_by_dn()
+    groups = Group.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: GroupsHelper.get_group_attributes())
 
-    # Get a raw list of all groups in all schools and convert it into easily parseable format
-    groups = Group.search_as_utf8(
-      filter: '(puavoSchool=*)',
-      scope: :one,
-      attributes: GroupsHelper.get_group_attributes())
-    .collect do |dn, grp|
-      school = schools_by_dn[grp['puavoSchool'][0]]
-
-      group = GroupsHelper.convert_raw_group(dn, grp)
-      group[:link] = "/users/#{school[:id]}/groups/#{group[:id]}"
-      group[:school] = [school[:cn], school[:name]]
-      group[:school_id] = school[:id]
-
-      group
+    # Change the members list into a members count
+    groups.each do |_, g|
+      g['members_count'] = [g.fetch('memberUid', []).count]
+      g.delete('memberUid')
     end
 
-    render json: groups
+    render json: {
+      groups: groups,
+      schools: raw_schools_by_dn()
+    }
   end
 
   def all_devices
