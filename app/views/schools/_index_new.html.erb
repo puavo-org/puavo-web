@@ -46,23 +46,25 @@ const INTEGRATION_TYPES = [
 // All available columns, their names and types and other parameters
 const COLUMN_DEFINITIONS = {
     id: {
-        key: "id",
         title: "<%= t('columns.puavoid') %>",
         type: ST.ColumnType.NUMERIC,
         alias: ["puavoid"],
     },
 
     name: {
-        key: "name",
         title: "<%= t('activeldap.attributes.school.displayName') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => [`<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`, entry.name],
+        transform: entry => {
+            return {
+                display: `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`,
+                filter: entry.name,
+                sort: entry.name,
+                export: entry.name
+            };
+        }
     },
 
     integrations: {
-        key: "integrations",
         title: "<%= t('columns.schools.integrations') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
         transform: entry => {
             let display = [],
@@ -107,100 +109,83 @@ const COLUMN_DEFINITIONS = {
 
             sortable = sortable.flat();
 
-            return [
-                `<ul class="integrations inlineIntegrations">${display.join("<br>")}</ul>`,
-                sortable,
-                sortable
-            ];
+            return {
+                display: `<ul class="integrations inlineIntegrations">${display.join("<br>")}</ul>`,
+                filter: sortable,
+                sort: sortable,
+                export: sortable,
+            };
         }
     },
 
     prefix: {
-        key: "prefix",
         title: "<%= t('activeldap.attributes.school.puavoSchoolNameAbbreviation') %>",
-        type: ST.ColumnType.STRING,
     },
 
     boot_servers: {
-        key: "boot_servers",
         title: "<%= t('activeldap.attributes.school.bootservers') %>",
-        type: ST.ColumnType.STRING,
         transform: entry => {
             const plain = entry.boot_servers.map(s => s[0]).join(", "); // used for filtering and sorting
 
-            return [
+            return {
 <% if current_user.organisation_owner? %>
-                entry.boot_servers.map(s => `<a href="${s[1]}">${s[0]}</a>`).join("<br>"),
+                display: entry.boot_servers.map(s => `<a href="${s[1]}">${s[0]}</a>`).join("<br>"),
 <% else %>
-                entry.boot_servers.map(s => s[0]).join("<br>"),
+                display: entry.boot_servers.map(s => s[0]).join("<br>"),
 <% end %>
-                plain,
-                plain
-            ];
+                filter: plain,
+                sort: plain,
+                export: plain
+            };
         }
     },
 
     tags: {
-        key: "tags",
         title: "<%= t('columns.tags') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 
     school_code: {
-        key: "school_code",
         title: "<%= t('activeldap.attributes.school.puavoSchoolCode') %>",
-        type: ST.ColumnType.STRING,
     },
 
     school_oid: {
-        key: "school_oid",
         title: "<%= t('columns.schools.oid') %>",
-        type: ST.ColumnType.STRING,
     },
 
     eid: {
-        key: "eid",
         title: "<%= t('activeldap.attributes.school.puavoExternalId') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.F_NULLABLE,
         alias: ["external_id"]
     },
 
     num_members: {
-        key: "num_members",
         title: "<%= t('schools.index.members') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     num_groups: {
-        key: "num_groups",
         title: "<%= t('schools.index.groups') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     num_devices: {
-        key: "num_devices",
         title: "<%= t('schools.index.devices') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     conf: {
-        key: "conf",
         title: "<%= t('columns.puavoconf') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
         alias: ["puavoconf", "puavo_conf"],
         export_name: "puavoconf",
     },
 
     desktop_image: {
-        key: "desktop_image",
         title: "<%= t('activeldap.attributes.school.puavoDeviceImage') %>",
-        type: ST.ColumnType.STRING,
         transform: e => {
             if (e.desktop_image === null)
-                return [null, null, null];
+                return undefined;
 
             let display = "",
                 value = e.desktop_image.file,
@@ -215,77 +200,65 @@ const COLUMN_DEFINITIONS = {
                 filter = value;
             }
 
-            return [display, value, filter];
+            return {
+                display: display,
+                sort: value,
+                filter: filter,
+                export: filter,
+            };
         }
     },
 
     image_series: {
-        key: "image_series",
         title: "<%= t('activeldap.attributes.school.puavoImageSeriesSourceURL') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 
     allow_guest: {
-        key: "allow_guest",
         title: "<%= t('activeldap.attributes.school.puavoAllowGuest') %>",
         type: ST.ColumnType.BOOL,
     },
 
     personal_device: {
-        key: "personal_device",
         title: "<%= t('activeldap.attributes.school.puavoPersonalDevice') %>",
         type: ST.ColumnType.BOOL,
     },
 
     auto_updates: {
-        key: "auto_updates",
         title: "<%= t('activeldap.attributes.school.puavoAutomaticImageUpdates') %>",
         type: ST.ColumnType.BOOL,
     },
 
     autopower_mode: {
-        key: "autopower_mode",
         title: "<%= t('activeldap.attributes.school.puavoDeviceAutoPowerOffMode') %>",
-        type: ST.ColumnType.STRING,
     },
 
     autopower_on: {
-        key: "autopower_on",
         title: "<%= t('activeldap.attributes.school.puavoDeviceOnHour') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     autopower_off: {
-        key: "autopower_off",
         title: "<%= t('activeldap.attributes.school.puavoDeviceOffHour') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     description: {
-        key: "description",
         title: "<%= t('columns.description') %>",
-        type: ST.ColumnType.STRING,
     },
 
     notes: {
-        key: "notes",
         title: "<%= t('columns.notes') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
     },
 
     locale: {
-        key: "locale",
         title: "<%= t('columns.schools.locale') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.F_NULLABLE,
     },
 
     timezone: {
-        key: "timezone",
         title: "<%= t('columns.schools.timezone') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.F_NULLABLE,
     },
 };
@@ -321,7 +294,7 @@ const COLUMN_ORDER = [
 
 function schoolActions(entry)
 {
-    return `<a href="/users/schools/${entry.id[ST.INDEX_FILTERABLE]}/edit" class="btn"><%= t('link.edit') %></a>`;
+    return `<a href="/users/schools/${entry._puavo_id}/edit" class="btn"><%= t('link.edit') %></a>`;
 }
 
 <% if @is_owner %>
@@ -728,9 +701,11 @@ function* synthesizeData(raw)
     for (const [_, s] of Object.entries(raw.schools)) {
         let s2 = {...s};
 
+        s2._puavo_id = s.id;
+
         // The supertable code always wants a "school_id" for everything, in our case
         // it's the same as the puavoId.
-        s2.school_id = s.id;
+        s2._school_id = s.id;
 
         // Unpack bootserver links
         s2.boot_servers = [];
@@ -769,6 +744,7 @@ document.addEventListener("DOMContentLoaded", () => {
             defaultSorting: DEFAULT_SORTING,
             staticData: RAW_DATA,
             preFilterFunction: synthesizeData,
+            datamode: "custom",
         }
     );
 });
