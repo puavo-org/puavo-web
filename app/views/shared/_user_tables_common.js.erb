@@ -32,350 +32,308 @@ const GROUP_TYPES = {
     "other groups": "<%= t('group_type.other groups') %>",
 };
 
-// All available columns, their names and types and other parameters
 const COLUMN_DEFINITIONS = {
-    id: {
-        key: "id",
-        title: "<%= t('columns.puavoid') %>",
-        type: ST.ColumnType.NUMERIC,
-        alias: ["puavoid"],
-    },
-
-    first: {
-        key: "first",
-        title: "<%= t('columns.users.first_names') %>",
-        type: ST.ColumnType.STRING,
-        alias: ["first_name", "fn"],
-    },
-
-    last: {
-        key: "last",
-        title: "<%= t('columns.users.last_name') %>",
-        type: ST.ColumnType.STRING,
-        alias: ["last_name", "ln"],
-    },
-
-    name: {
-        key: "name",
-        title: "<%= t('columns.users.full_name') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            let s = "";
-
-            if (entry.rrt)
-                s += `<span class="stUserMarkedForDeletion">`;
-
-            s += `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`;
-
-            if (entry.locked)
-                s += `<i class="icon-lock"></i>`;
-
-            if (entry._has_expired)
-                s += `<i class="icon-clock" title="<%= t('users.index.expired_account') %>"></i>`;
-
-            if (entry.rrt)
-                s += `</span>`;
-
-            return [
-                s,
-                entry.name
-            ];
-        }
-    },
-
-    uid: {
-        key: "uid",
-        title: "<%= t('columns.users.uid') %>",
-        type: ST.ColumnType.STRING,
-        alias: ["username"],
-    },
-
-    eid: {
-        key: "eid",
-        title: "<%= t('columns.users.eid') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.F_NULLABLE,
-        alias: ["external_id"]
-    },
-
-    learner_id: {
-        key: "learner_id",
-        title: "<%= t('columns.users.learner_id') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.F_NULLABLE,
-        alias: ["lid"],
-    },
-
-    role: {
-        key: "role",
-        title: "<%= t('columns.users.role') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            let values = [];
-
-            // Translate user roles
-            for (let i = 0; i < entry.role.length; i++) {
-                const r = entry.role[i];
-
-                if (r in USER_ROLES) {
-                    if (r == "owner" || r == "schooladmin")
-                        values.push(`<span class="adminOrOwner">${USER_ROLES[r]}</span>`);
-                    else values.push(USER_ROLES[r]);
-                } else values.push(USER_ROLES['unknown']);
-            }
-
-            return [
-                values.join("<br>"),
-                entry.role.join()
-            ];
-        },
-    },
-
-    phone: {
-        key: "phone",
-        title: "<%= t('columns.users.phone') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
-        alias: ["phone_number"],
-    },
-
-    email: {
-        key: "email",
-        title: "<%= t('columns.users.email') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
-    },
-
-    v_email: {
-        key: "v_email",
-        title: "<%= t('columns.users.v_email') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY | ST.ColumnFlag.F_NULLABLE,
-    },
-
-    p_email: {
-        key: "p_email",
-        title: "<%= t('columns.users.p_email') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.F_NULLABLE,
-    },
-
-    pnumber: {
-        key: "pnumber",
-        title: "<%= t('columns.users.pnumber') %>",
-        type: ST.ColumnType.STRING,
-    },
-
-    rrt: {
-        key: "rrt",
-        title: "<%= t('columns.users.rrt') %>",
-        type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_NULLABLE,
-        transform: entry => {
-            if (entry.rrt === undefined || entry.rrt === null || entry.rrt === 0)
-                return ["", 0];
-
-            const [valid, ts] = ST.convertTimestamp(entry.rrt, false, ST.timestampFormatter);
-
-            if (!valid)
-                return ["?", 0];
-
-            return [ts, entry.rrt];
-        },
-        alias: ["removal_request_time"],
-    },
-
-    dnd: {
-        key: "dnd",
-        title: "<%= t('columns.users.dnd') %>",
-        type: ST.ColumnType.BOOL,
-        flags: ST.ColumnFlag.F_NULLABLE,
-        alias: ["do_not_delete"]
-    },
-
-    locked: {
-        key: "locked",
-        title: "<%= t('columns.users.is_locked') %>",
-        type: ST.ColumnType.BOOL,
-        flags: ST.ColumnFlag.F_NULLABLE,
-    },
-
     created: {
-        key: "created",
+        attribute: "createTimestamp",
         title: "<%= t('columns.created') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
-    modified: {
-        key: "modified",
-        title: "<%= t('columns.modified') %>",
-        type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
+    devices: {
+        title: "<%= t('columns.users.devices') %>",
+        flags: ST.ColumnFlag.ARRAY,
+        synthesizer: (context, dn, entry) => {
+            const devices = context.devices?.[dn];
+
+            if (devices === undefined)
+                return undefined;
+
+            let display = [],
+                raw = [];
+
+            for (const d of devices) {
+                const s = context.schools[d.school_dn];
+
+                display.push(`<a href="/devices/${d.school_id}/devices/${d.id}">${d.hostname}</a> (${s?.name ?? "?"})`);
+                raw.push(d.hostname);
+            }
+
+            return {
+                display: display.join("<br>"),
+                sort: raw.join(" "),
+                filter: raw.join(" ").toLowerCase(),
+                export: raw
+            };
+        }
     },
 
+    dnd: {
+        attribute: "puavoDoNotDelete",
+        title: "<%= t('columns.users.dnd') %>",
+        type: ST.ColumnType.BOOL,
+        defaultValue: false,
+        alias: ["do_not_delete"],
+    },
+
+    eid: {
+        attribute: "puavoExternalId",
+        title: "<%= t('columns.users.eid') %>",
+        alias: ["external_id"]
+    },
+
+    email: {
+        attribute: "mail",
+        title: "<%= t('columns.users.email') %>",
+        flags: ST.ColumnFlag.ARRAY,
+    },
+
+    expiration: {
+        attribute: "puavoEduPersonAccountExpirationTime",
+        title: "<%= t('columns.users.expiration') %>",
+        type: ST.ColumnType.UNIXTIME,
+
+        transformer: (context, dn, entry) => {
+            if (entry._expiration_timestamp === null)
+                return undefined;
+
+            // Highlight expired timestamps (the expiration timestamp and expiration flag are set in the preparser)
+            const out = ST.outputISO8601Timestamp(entry._expiration_timestamp);
+
+            if (entry._has_expired)
+                out.display = `<span class="invalidData">${out.display}</span>`;
+
+            return out;
+        },
+
+    },
+
+    first: {
+        attribute: "givenName",
+        title: "<%= t('columns.users.first_names') %>",
+        alias: ["first_name", "fn"],
+    },
+
+    // User's groups (synthetic column, does not exist in Puavo)
+    groups: {
+        title: "<%= t('columns.users.groups') %>",
+        flags: ST.ColumnFlag.ARRAY,
+        synthesizer: (context, dn, entry) => {
+            let groups = [];
+
+            if (context.userGroups.has(dn))
+                for (const gid of context.userGroups.get(dn))
+                    if (gid in context.groups)
+                        groups.push(context.groups[gid]);
+
+            const justNames = groups.map(g => g.name);
+
+            return {
+                display: groups.map(g => (g.link ? `<a href=\"${g.link}\">${g.name}</a>` : g.name) +
+                                          ` (<small>${GROUP_TYPES[g.type] || "?"}</small>)`).join("<br>"),
+                sort: justNames.join(",").toLowerCase(),
+                filter: justNames.map(n => n.toLowerCase()),
+                export: justNames
+            };
+        },
+    },
+
+    id: {
+        attribute: "puavoId",
+        title: "<%= t('columns.puavoid') %>",
+        type: ST.ColumnType.NUMERIC,
+        alias: ["puavoid"],
+    },
+
+    last: {
+        attribute: "sn",
+        title: "<%= t('columns.users.last_name') %>",
+        alias: ["last_name", "ln"],
+    },
+
+    // This attribute exists in Puavo, but its value cannot be used as-is
     last_kerberos_auth_date: {
-        key: "last_kerberos_auth_date",
         title: "<%= t('columns.last_kerberos_auth_date') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_DATEONLY,
+        synthesizer: (context, dn, entry) => {
+            if (!(entry.uid[0] in context.krb))
+                return undefined;
+
+            return ST.outputISO8601Timestamp(context.krb[entry.uid[0]], ST.ColumnFlag.F_DATEONLY);
+        }
     },
 
     last_ldap_auth_date: {
-        key: "last_ldap_auth_date",
+        attribute: "authTimestamp",
         title: "<%= t('columns.last_ldap_auth_date') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_DATEONLY,
     },
 
-<% if @is_organisation %>
-    school: {
-        key: "school",
-        title: "<%= t('columns.primary_school') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            // Makes filtering by school name work as expected, but the exported CSV
-            // will contain display names. Can't have everything.
-            return [entry.school[1], entry.school[1]];
-        },
-    },
-<% end %>
-
-    schools: {
-        key: "schools",
-        title: "<%= t('columns.users.other_schools') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            let out = [];
-
-            if (Array.isArray(entry.schools))
-                for (const id of entry.schools)
-                    out.push((id in SCHOOLS) ? SCHOOLS[id].name : "?");
-
-            return [out.join("<br>"), out.join(","), out.join(",")];
-        }
+    learner_id: {
+        attribute: "puavoLearnerId",
+        title: "<%= t('columns.users.learner_id') %>",
+        alias: ["lid"],
     },
 
     licenses: {
-        key: "licenses",
+        attribute: "puavoLicenses",
         title: "<%= t('columns.users.licenses') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
+        transformer: (context, dn, entry) => {
+            const parsed = JSON.parse(entry.puavoLicenses[0]);
+            const keys = Object.keys(parsed).sort();
+
+            return ST.outputAsStandardArray(keys, false);
+        }
     },
 
-    uuid: {
-        key: "uuid",
-        title: "UUID",
-        type: ST.ColumnType.STRING,
-        customCSS: ["font-monospace"],      // this makes these easier to read
+    locked: {
+        attribute: "puavoLocked",
+        title: "<%= t('columns.users.is_locked') %>",
+        type: ST.ColumnType.BOOL,
+        defaultValue: false,            // this is one of those weird quasi-ternary LDAP booleans (kinda our fault, though)
     },
 
     mfa: {
-        key: "mfa",
+        attribute: "puavoMFAEnabled",
         title: "MFA?",
         type: ST.ColumnType.BOOL,
+        defaultValue: false,            // ditto
     },
 
-    notes: {
-        key: "notes",
-        title: "<%= t('columns.notes') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY,
+    modified: {
+        attribute: "modifyTimestamp",
+        title: "<%= t('columns.modified') %>",
+        type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
-    devices: {
-        key: "devices",
-        title: "<%= t('columns.users.devices') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY,
-        transform: entry => {
-            let display = [],
-                raw = [];
+    name: {
+        attribute: "displayName",
+        title: "<%= t('columns.users.full_name') %>",
+        transformer: (context, dn, entry) => {
+            const name = entry.displayName[0];
+            let extra = "";
 
-            if (entry.devices) {
-                for (const d of entry.devices) {
-                    let link = `<a href="${d[1]}">${d[0]}</a>`,
-                        plain = d[0];
+            if (entry._has_expired)
+                extra += ` <i class="icon-clock" title="<%= t('users.index.expired_account') %>"></i>`;
 
-                    if (d[2] in SCHOOLS) {
-                        const name = SCHOOLS[d[2]].name;
-
-                        link += ` (${name})`;
-                        plain += `,${name}`;
-                    }
-
-                    display.push(link);
-                    raw.push(plain);
-                }
-            }
-
-            // Use the raw output for both sorting and filtering. Now you can filter by both
-            // device hostnames and device schools.
-            raw = raw.join(",");
-
-            return [display.join("<br>"), raw, raw];
-        }
-    },
-
-    groups: {
-        key: "groups",
-        title: "<%= t('columns.users.groups') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY,
-
-        transform: entry => {
-            let html = [],
-                value = [];
-
-            // If the user has groups, list them in clickable form.
-            // See the expandUserData() generator function elsewhere
-            // in this file.
-            if (entry.groups) {
-                for (const gid of entry.groups) {
-                    const group = GROUPS[gid];
-                    let h = "";
-
-                    // The group is not linked to if the current user cannot access
-                    // the school where the group is. We'll still display its name.
-                    if (group.link !== null)
-                        h += `<a href="${group.link}">`;
-
-                    h += group.name;
-
-                    if (group.link !== null)
-                        h += `</a>`;
-
-                    if (group.type in GROUP_TYPES)
-                        h += ` <small>(${GROUP_TYPES[group.type]})</small>`;
-
-                    html.push(h);
-                    value.push(group.name);
-                }
-            }
-
-            html = html.join("<br>");
-            value = value.join(",");
-
-            return [html, value, value];
+            return {
+                display: `<a href="/users/${context.schools[entry.puavoSchool[0]].id}/users/${entry.puavoId[0]}">${name}</a>${extra}`,
+                filter: name,
+                sort: name.toLowerCase(),
+                export: name
+            };
         },
     },
 
-    expiration: {
-        key: "expiration",
-        title: "<%= t('columns.users.expiration') %>",
-        type: ST.ColumnType.UNIXTIME,
-        flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_NULLABLE,
+    notes: {
+        attribute: "puavoNotes",
+        title: "<%= t('columns.notes') %>",
+        flags: ST.ColumnFlag.ARRAY,
+        transformer: (context, dn, entry) => ST.outputAsStandardArray(entry.puavoNotes[0].replaceAll("\r", "").split("\n"), false),
+    },
 
-        transform: entry => {
-            const [valid, ts] = ST.convertTimestamp(entry.expiration, false, ST.timestampFormatter);
-            let html = "";
+    p_email: {
+        attribute: "puavoPrimaryEmail",
+        title: "<%= t('columns.users.p_email') %>",
+        flags: ST.ColumnFlag.F_NULLABLE,
+    },
 
-            if (valid && entry._has_expired)
-                html = `<span class="invalidData">${ts}</span>`;
-            else html = ts;
+    phone: {
+        attribute: "telephoneNumber",
+        title: "<%= t('columns.users.phone') %>",
+        flags: ST.ColumnFlag.ARRAY,
+        alias: ["phone_number"],
+    },
 
-            return [html, entry.expiration, entry.expiration];
+    pnumber: {
+        attribute: "puavoEduPersonPersonnelNumber",
+        title: "<%= t('columns.users.pnumber') %>",
+    },
+
+    role: {
+        attribute: "puavoEduPersonAffiliation",
+        title: "<%= t('columns.users.role') %>",
+        flags: ST.ColumnFlag.ARRAY,
+        transformer: (context, dn, entry) => {
+            let plain = [...entry.puavoEduPersonAffiliation],
+                nice = [...plain].map(r => USER_ROLES[r]),
+                filtered = [...nice];
+
+            // Additional roles (these are synthetic, they don't exist in Puavo, but they're useful)
+            if (context.schoolAdmins.has(dn)) {
+                plain.unshift("schooladmin");
+                nice.unshift(`<span class="adminOrOwner">${USER_ROLES["schooladmin"]}</span>`);
+                filtered.unshift(USER_ROLES["schooladmin"]);
+            }
+
+            if (context.owners.has(dn)) {
+                plain.unshift("owner");
+                nice.unshift(`<span class="adminOrOwner">${USER_ROLES["owner"]}</span>`);
+                filtered.unshift(USER_ROLES["owner"]);
+            }
+
+            return {
+                display: nice,
+                filter: filtered,
+                sort: filtered.join(",").toLowerCase(),
+                export: plain
+            };
         }
+    },
+
+    rrt: {
+        attribute: "puavoRemovalRequestTime",
+        title: "<%= t('columns.users.rrt') %>",
+        type: ST.ColumnType.UNIXTIME,
+        alias: ["removal_request_time"],
+    },
+
+<% if @is_organisation %>
+    // Primary school
+    school: {
+        attribute: "puavoEduPersonPrimarySchool",
+        title: "<%= t('columns.primary_school') %>",
+        transformer: (context, dn, entry) => { return { value: context.schools[entry.puavoEduPersonPrimarySchool[0]].name } },
+    },
+<% end %>
+
+    // All schools
+    schools: {
+        attribute: "puavoSchool",
+        title: "<%= t('columns.users.other_schools') %>",
+        flags: ST.ColumnFlag.ARRAY,
+        transformer: (context, dn, entry) => {
+            const primary = entry.puavoEduPersonPrimarySchool[0];
+            let schools = [];
+
+            for (const dn of entry.puavoSchool)
+                if (dn != primary)
+                    schools.push(context.schools[dn].name);
+
+            return ST.outputAsStandardArray(schools, false);
+        }
+    },
+
+    uid: {
+        attribute: "uid",
+        title: "<%= t('columns.users.uid') %>",
+        alias: ["username"],
+    },
+
+    uuid: {
+        attribute: "puavoUuid",
+        title: "UUID",
+        customCSS: "font-monospace",        // this makes these easier to read
+    },
+
+    v_email: {
+        attribute: "puavoVerifiedEmail",
+        title: "<%= t('columns.users.v_email') %>",
+        flags: ST.ColumnFlag.ARRAY,
     },
 };
 
@@ -433,33 +391,51 @@ class MassUserDeletion extends ST.MassOperation {
 
     prepareItem(item)
     {
-        // Filter do-not-delete users, and those who have not been marked for deletion for
-        // at least one week. These same checks are also done on the server, the purpose
-        // of these is to reduce network traffic (no need to send a network request, when
-        // nothing will be done to these users).
-        const dnd = item.dnd[ST.INDEX_EXISTS] === true && item.dnd[ST.INDEX_FILTERABLE] !== undefined,
-              marked = item.rrt[ST.INDEX_EXISTS] === true && item.rrt[ST.INDEX_FILTERABLE] !== undefined,
-              locked = item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === true;
+        // These same checks are also done on the server side. The purpose of these is to add another
+        // layer of protection (just in case), and also to reduce network traffic (no need to send a
+        // network request if nothing will be done).
 
-        if (dnd)
-            return { state: "error", message: "<%= t('users.index.mass_operations.delete.deletion_prevented') %>" };
+        // You can't mass delete yourself
+        if (item._puavo_id == <%= @current_user_id %>) {
+            return {
+                state: "error",
+                message: "<%= t('users.index.mass_operations.delete.cant_delete_yourself') %>"
+            };
+        }
 
-        if (!marked)
-            return { state: "error", message: "<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>" };
+        // Prevent mass deletion of organisation owners
+        if (item.role.sort.includes("owner")) {
+            return {
+                state: "error",
+                message: "<%= t('users.index.mass_operations.delete.cant_delete_owners') %>"
+            };
+        }
 
-        const now = Math.floor(Date.now() / 1000);
-        const next = item.rrt[ST.INDEX_FILTERABLE] + (60 * 60 * 24 * 7);   // 7 days in seconds
+        // Reject do-not-delete users
+        if (item.dnd?.filter === true) {
+            return {
+                state: "error",
+                message: "<%= t('users.index.mass_operations.delete.deletion_prevented') %>"
+            };
+        }
 
-        if (next > now)
-            return { state: "error", message: "<%= t('users.index.mass_operations.delete.marked_too_recently') %>" };
+        // Reject users who have not been marked for deletion for at least one week.
+        if (item.rrt?.filter === undefined) {
+            return {
+                state: "error",
+                message: "<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>"
+            };
+        }
 
-        // Don't delete yourself
-        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>)
-            return { state: "error", message: "<%= t('users.index.mass_operations.delete.cant_delete_yourself') %>" };
+        const now = Math.floor(Date.now() / 1000),
+              next = item.rrt.filter + (60 * 60 * 24 * 7);
 
-        // Don't delete organisation owners
-        if (item.role[ST.INDEX_FILTERABLE].includes("owner"))
-            return { state: "error", message: "<%= t('users.index.mass_operations.delete.cant_delete_owners') %>" };
+        if (next > now) {
+            return {
+                state: "error",
+                message: "<%= t('users.index.mass_operations.delete.marked_too_recently') %>"
+            };
+        }
 
         return { state: "ready" };
     }
@@ -492,6 +468,7 @@ class MassUserLocking extends ST.MassOperation {
         this.container.querySelector("input#lock").addEventListener("click", e => this.lock = true);
         this.container.querySelector("input#unlock").addEventListener("click", e => this.lock = false);
     }
+
     start()
     {
         for (const i of this.container.querySelectorAll("input"))
@@ -514,15 +491,15 @@ class MassUserLocking extends ST.MassOperation {
     prepareItem(item)
     {
         // Don't lock yourself
-        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>)
+        if (item._puavo_id == <%= @current_user_id %>)
             return { state: "error", message: "<%= t('users.index.mass_operations.lock.cant_lock_yourself') %>" };
 
         // Don't lock organisation owners
-        if (item.role[ST.INDEX_FILTERABLE].includes("owner"))
+        if (item.role.sort.includes("owner"))
             return { state: "error", message: "<%= t('users.index.mass_operations.lock.cant_lock_owners') %>" };
 
         // Do nothing if the user is already in the desired locking state
-        if (item.locked[ST.INDEX_EXISTS] === true && item.locked[ST.INDEX_FILTERABLE] === this.lock)
+        if (item.locked?.filter === this.lock)
             return { state: "skip" };
 
         return { state: "ready" };
@@ -579,33 +556,38 @@ class MassUserMarkForDeletion extends ST.MassOperation {
 
     prepareItem(item)
     {
-        // Pre-filter users, avoid useless network requests. All of these checks
-        // are also done on the server end.
-        const dnd = item.dnd[ST.INDEX_EXISTS] === true && item.dnd[ST.INDEX_FILTERABLE] !== undefined,
-              marked = item.rrt[ST.INDEX_EXISTS] === true && item.rrt[ST.INDEX_FILTERABLE] !== undefined;
-
-        // Don't mark yourself for deletion
-        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>)
-            return { state: "error", message: "<%= t('users.index.mass_operations.mark.cant_mark_yourself') %>" };
-
         // Don't mark organisation owners for deletion
-        if (item.role[ST.INDEX_FILTERABLE].includes("owner"))
-            return { state: "error", message: "<%= t('users.index.mass_operations.mark.cant_mark_owners') %>" };
-
-        if (dnd) {
-            // Deletion prevented, can't mark for deletion
-            return { state: "error", message: "<%= t('users.index.mass_operations.delete.deletion_prevented') %>" };
+        if (item.role.sort.includes("owner")) {
+            return {
+                state: "error",
+                message: "<%= t('users.index.mass_operations.mark.cant_mark_owners') %>"
+            };
         }
 
-        if (marked && this.action == "mark") {
-            // Already marked for deletion and not in forced mode
+        // You can't mark yourself for deletion
+        if (item._puavo_id == <%= @current_user_id %>) {
+            return {
+                state: "error",
+                message: "<%= t('users.index.mass_operations.mark.cant_mark_yourself') %>"
+            };
+        }
+
+        // Reject do-not-delete users
+        if (item.dnd?.filter === true) {
+            return {
+                state: "error",
+                message: "<%= t('users.index.mass_operations.delete.deletion_prevented') %>"
+            };
+        }
+
+        // Already in the desired state?
+        const marked = (item.rrt?.filter !== undefined);
+
+        if (marked && this.action == "mark")
             return { state: "skip" };
-        }
 
-        if (!marked && this.action == "unmark") {
-            // Not marked for deletion, can't unmark
+        if (!marked && this.action == "unmark")
             return { state: "skip" };
-        }
 
         return { state: "ready" };
     }
@@ -915,8 +897,12 @@ class MassSetExpirationTimes extends ST.MassOperation {
     prepareItem(item)
     {
         // Refuse to lock non-deletable users
-        if (item.dnd[ST.INDEX_EXISTS] === true && item.dnd[ST.INDEX_FILTERABLE] === true)
-            return { state: "error", message: "<%= t('users.index.mass_operations.set_expiration_times.dnd') %>" };
+        if (item.dnd?.filter === true) {
+            return {
+                state: "error",
+                message: "<%= t('users.index.mass_operations.set_expiration_times.dnd') %>"
+            };
+        }
 
         return { state: "ready" };
     }
@@ -1124,8 +1110,8 @@ function userActions(item)
 {
     let html = "";
 
-    const link = `/users/${item.school_id}/users/${item.id[ST.INDEX_FILTERABLE]}`;
-    const dnd = item.dnd[ST.INDEX_EXISTS] === true && item.dnd[ST.INDEX_FILTERABLE] !== undefined;
+    const link = `/users/${item._school_id}/users/${item._puavo_id}`;
+    const dnd = item.dnd?.filter === true;
 
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
@@ -1134,14 +1120,14 @@ function userActions(item)
         let isAdmin = false,
             message = null;
 
-        if (item.id[ST.INDEX_FILTERABLE] == <%= @current_user_id %>) {
+        if (item._puavo_id == <%= @current_user_id %>) {
             // This is the current user, don't display the deletion button. The controller
             // does not let users delete themselves, but this hides even the button.
             return html;
         }
 
         // Extra warning when deleting owners/admins
-        for (let t of item.role[1].split(",")) {
+        for (let t of item.role.sort.split(",")) {
             if (t == "owner" || t == "admin") {
                 isAdmin = true;
                 break;
@@ -1152,7 +1138,7 @@ function userActions(item)
             message = "<%= t('destroy_confirm_admin') %>";
         else message = "<%= t('general_confirm') %>";
 
-        const school_id = item.school_id;
+        const school_id = item._school_id;
 
         if (school_id in SYNC_DELETIONS && SYNC_DELETIONS[school_id].length > 0) {
             // Extra warning about deletion synchronisations. "SYSTEM_NAMES_HERE" is the only
@@ -1175,7 +1161,7 @@ function userActions(item)
 
 function openCallback(item)
 {
-    return `/users/${item.school_id}/users/${item.id[ST.INDEX_DISPLAYABLE]}`;
+    return `/users/${item._school_id}/users/${item._puavo_id}`;
 }
 
 const MASS_SELECTS = [
@@ -1185,52 +1171,63 @@ const MASS_SELECTS = [
     ["id", "<%= t('columns.puavoid') %>"],
 ];
 
-let GROUPS = {},
-    GROUP_MEMBERS = {};
-
-// User groups lists are not generated server-side due to their enormous size.
-// Instead the server simply generates a list of groups and their members (DNs).
-// This generator function is used to process that "raw" list into something we
-// can use when formatting user tables.
-function* expandUserData(raw)
+function preparse(raw)
 {
-    const NOW = new Date();
+    let context = {
+        entries: raw.users,
+        groups: raw.groups,
+        schools: raw.schools,
+        devices: raw.devices,
+        owners: new Set(raw.owners),
+        krb: raw.krb_auth_times,
+        now: new Date(),
+    };
 
-    GROUPS = raw.groups;
-    GROUP_MEMBERS = {};
+    // Reverse school admins mappping
+    const schoolAdmins = new Map();
 
-    // First, generate a reverse lookup table. Instead of having a list groups and
-    // members in those groups, build a list of users and their groups.
+    for (const [schoolDN, userDNs] of Object.entries(raw.school_admins)) {
+        for (const dn of userDNs) {
+            if (!schoolAdmins.has(dn))
+                schoolAdmins.set(dn, []);
+
+            schoolAdmins.get(dn).push(schoolDN);
+        }
+    }
+
+    context.schoolAdmins = schoolAdmins;
+
+    // Construct a reverse group membership mapping. Instead of having objects of groups and group members,
+    // turn them into a map of user's groups, so we can look them up fast.
+    const userGroups = new Map();
+
     for (const [groupID, members] of Object.entries(raw.group_members)) {
         for (const dn of members) {
-            // Extract the user's PuavoID from the DN. This is faster than regexp.
-            const puavoId = parseInt(dn.split(",")[0].split("=")[1], 10);
+            if (!userGroups.has(dn))
+                userGroups.set(dn, []);
 
-            if (!(puavoId in GROUP_MEMBERS))
-                GROUP_MEMBERS[puavoId] = [];
-
-            GROUP_MEMBERS[puavoId].push(groupID);
+            userGroups.get(dn).push(parseInt(groupID, 10));
         }
     }
 
-    // Then for each user, insert the list of their groups into the user data
-    for (const [_, s] of Object.entries(raw.users)) {
-        let s2 = { ...s };
-
-        if (s2.id in GROUP_MEMBERS)
-            s2.groups = GROUP_MEMBERS[s2.id];
-
-        // Inject an account expiration flag into the data, so we don't have to recalculate
-        // it in several places.
-        s2._has_expired = false;
-
-        if (s2.expiration) {
-            const [valid, ts] = ST.convertTimestamp(s2.expiration);
-
-            if (valid && NOW >= new Date(s2.expiration * 1000))
-                s2._has_expired = true;
-        }
-
-        yield s2;
+    // Inject expiration states, so the date object don't have to be repeatedly parsed everywhere.
+    // This exists only in the preparse stage.
+    for (const [_, user] of Object.values(context.entries)) {
+        user._expiration_timestamp = user.puavoEduPersonAccountExpirationTime ?
+            new Date(ST.convertLDAPTimestampToISO8601String(user.puavoEduPersonAccountExpirationTime[0])) : null;
+        user._has_expired = (user._expiration_timestamp !== null) && (context.now >= user._expiration_timestamp);
+        //console.log(user._expiration_timestamp, user._has_expired);
     }
+
+    context.userGroups = userGroups;
+
+    return context;
+}
+
+function postparse(context, transformed)
+{
+    // Inject school PuavoIDs into the row entries, so that we can format the links correctly.
+    // The transformer for the "school" attribute only retains the school name, not its ID.
+    for (let i = 0; i < context.entries.length; i++)
+        transformed[i]._school_id = context.schools[context.entries[i][1].puavoEduPersonPrimarySchool[0]].id;
 }

@@ -53,7 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
             defaultSorting: DEFAULT_SORTING,
             filterPresets: FILTER_PRESETS,
             dynamicData: "/users/<%= @school.id %>/get_school_users_list",
-            preFilterFunction: expandUserData,
+            preparseFunction: preparse,
+            postparseFunction: postparse,
         }
     );
 });

@@ -293,40 +293,39 @@ class OrganisationsController < ApplicationController
 
   # AJAX call
   def get_all_users
-    owners = owners_set()
     schools_by_dn = raw_schools_by_dn()
-    school_admins = list_school_admins().values.map(&:to_a).flatten.to_set
+    groups, group_members = GroupsHelper.load_group_member_lists(schools_by_dn, Set.new)
     krb_auth_times_by_uid = Kerberos.all_auth_times_by_uid
 
-    # Get a raw list of all users in all schools and convert it into easily parseable format
-    users = User.search_as_utf8(
-      filter: '(puavoSchool=*)',
+    # Make a list of all devices with the primary user set
+    puavoid_extractor = /puavoId=([^, ]+)/.freeze
+    user_devices = {}
+
+    Device.search_as_utf8(
+      filter: "(puavoDevicePrimaryUser=*)",
       scope: :one,
-      attributes: UsersHelper.get_user_attributes())
-    .collect do |dn, usr|
-      school = schools_by_dn[usr['puavoEduPersonPrimarySchool'][0]]
+      attributes: ['puavoDevicePrimaryUser', 'puavoHostname', 'puavoSchool', 'puavoId']
+    ).each do |dn, device|
+      user_dn = device['puavoDevicePrimaryUser'][0]
+      user_devices[user_dn] ||= []
 
-      user = UsersHelper.convert_raw_user(dn, usr, owners, school_admins)
-      user[:link] = "/users/#{school[:id]}/users/#{user[:id]}"
-      user[:school] = [school[:cn], school[:name]]
-      user[:school_id] = school[:id]
-      user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school[:id]]
-
-      krb_auth_date = Integer(krb_auth_times_by_uid[ user[:uid] ] \
-                        .to_date.to_time) rescue nil
-      user[:last_kerberos_auth_date] = krb_auth_date if krb_auth_date
-
-      user
+      user_devices[user_dn] << {
+        'id' => device['puavoId'][0].to_i,
+        'school_id' => device['puavoSchool'][0].match(puavoid_extractor)[1].to_i,
+        'school_dn' => device['puavoSchool'][0],
+        'hostname' => device['puavoHostname'][0],
+      }
     end
 
-    # For listing user groups. Use empty set for the accessible schools, because only owners
-    # can get here and they can see everything.
-    groups, group_members = GroupsHelper.load_group_member_lists(schools_by_dn, Set.new)
-
     render json: {
-      users: users,
+      users: User.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: UsersHelper.get_user_attributes()),
+      schools: schools_by_dn,
+      school_admins: list_school_admins(),
+      owners: owners_set(),
       groups: groups,
-      group_members: group_members
+      group_members: group_members,
+      devices: user_devices,
+      krb_auth_times: krb_auth_times_by_uid,
     }
   end
 
