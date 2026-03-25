@@ -2,14 +2,8 @@
 
 import { _tr } from "../../common/utils.js";
 import { create } from "../../common/dom.js";
+import { ColumnFlag, ColumnType, SortOrder } from "./constants.js";
 import { getColumnType } from "./utils.js";
-
-import {
-    ColumnFlag,
-    ColumnType,
-    SortOrder,
-    INDEX_DISPLAYABLE,
-} from "./constants.js";
 
 function buildHeaders(table, currentColumn, haveActions)
 {
@@ -135,8 +129,8 @@ function buildBody(table, numColumns, currentColumn, haveActions)
 
     // Append the data rows
     for (let index = start; index < end; index++) {
-        const row = table.data.transformed[table.data.current[index]];
-        const rowID = row.id[INDEX_DISPLAYABLE];
+        const row = table.data.transformed[table.data.current[index]],
+              rowID = row._puavo_id;
         let rowClasses = [];
 
         if (table.data.successItems.has(rowID))
@@ -150,11 +144,13 @@ function buildBody(table, numColumns, currentColumn, haveActions)
         // The checkbox
         if (table.settings.enableSelection) {
             html += `<td class="minimize-width cursor-pointer checkbox">`;
-            html += `<input type="checkbox" ${table.data.selectedItems.has(row.id[INDEX_DISPLAYABLE]) ? "checked": ""}></td>`;
+            html += `<input type="checkbox" ${table.data.selectedItems.has(row._puavo_id) ? "checked" : ""}></td>`;
         }
 
         // Data columns
         for (const column of table.columns.current) {
+            const isArray = (table.columns.definitions[column].flags & ColumnFlag.ARRAY) ? true : false;
+
             let classes = [];
 
             if (column == currentColumn)
@@ -167,8 +163,19 @@ function buildBody(table, numColumns, currentColumn, haveActions)
                 html += `<td class=\"${classes.join(' ')}\">`;
             else html += "<td>";
 
-            if (row[column][INDEX_DISPLAYABLE] !== null)
-                html += row[column][INDEX_DISPLAYABLE];
+            const value = row[column];
+
+            if (value === undefined) {
+                // This value does not exist in the database
+                html += "</td>";
+                continue;
+            }
+
+            const v = value.value ?? value.display;
+
+            if (isArray && Array.isArray(v))
+                html += v.join("<br>");
+            else html += v;
 
             html += "</td>";
         }

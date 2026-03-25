@@ -2,13 +2,7 @@ import { _tr } from "../../common/utils.js";
 
 import { create, getTemplate } from "../../common/dom.js";
 
-import {
-    ColumnFlag,
-    SortOrder,
-    INDEX_DISPLAYABLE,
-    DEFAULT_ROWS_PER_PAGE,
-    BATCH_SIZE
-} from "./constants.js";
+import { ColumnFlag, SortOrder, DEFAULT_ROWS_PER_PAGE, BATCH_SIZE } from "./constants.js";
 
 import * as Data from "./data";
 
@@ -153,8 +147,17 @@ constructor(container, settings)
 
     // User-supplied functions and callbacks
     this.user = {
-        // An optional generator function that generates/filters the data when it is being
-        // transformed.
+        // There are two modes: direct LDAP ingestion, and custom. The custom is the old mechanism where you
+        // converted the data to an easily-usable format server-side and used it as-is. The direct LDAP ingestion
+        // mode can directly handle raw dumps of LDAP's arrays-of-arrays format. For every table, you must choose
+        // which mode you'll be in, and you can't have both at the same time.
+        datamode: settings.datamode ?? "direct",        // either "direct" or "custom"
+
+        // Direct LDAP ingestion callbacks
+        preparseFunction: typeof(settings.preparseFunction) == "function" ? settings.preparseFunction : null,
+        postparseFunction: typeof(settings.postparseFunction) == "function" ? settings.postparseFunction : null,
+
+        // Custom parser callbacks
         preFilterFunction: typeof(settings.preFilterFunction) == "function" ? settings.preFilterFunction : null,
 
         // Optional callback functions for populating the rightmost "actions" column and

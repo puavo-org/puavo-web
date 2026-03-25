@@ -8,15 +8,7 @@ import { setPreviousRow } from "./row_selection.js";
 import { buildTable } from "./table_builder.js";
 import { saveSettings } from "./settings.js";
 import { getColumnType, isNullOrUndefined } from "./utils.js";
-
-import {
-    ColumnType,
-    INDEX_EXISTS,
-    INDEX_DISPLAYABLE,
-    INDEX_FILTERABLE,
-    INDEX_SORTABLE,
-    ROWS_PER_PAGE_PRESETS,
-} from "./constants.js";
+import { ColumnType, ROWS_PER_PAGE_PRESETS } from "./constants.js";
 
 export const isTableRowVisible = (paging, rowNum) => (rowNum >= paging.firstRowIndex) && (rowNum < paging.lastRowIndex);
 
@@ -86,7 +78,7 @@ function onJumpToPage(table, e)
     // Assume string columns can contain HTML, but numeric columns won't. The values are
     // HTML-escaped when displayed, but that means HTML tags can slip through and it looks
     // really ugly.
-    const index = (getColumnType(table.columns.definitions[col]) == ColumnType.STRING) ? INDEX_FILTERABLE : INDEX_DISPLAYABLE;
+    const key = (getColumnType(table.columns.definitions[col]) == ColumnType.STRING) ? "filter" : "display";
 
     // CAUTION: This loop will break if there's only one page. That's why this popup cannot be
     // opened if there's only one page.
@@ -97,8 +89,8 @@ function onJumpToPage(table, e)
         let first = data.transformed[data.current[start]],
             last = data.transformed[data.current[end - 1]];
 
-        first = ellipsize(first[col][INDEX_EXISTS] ? first[col][index] : "-");
-        last = ellipsize(last[col][INDEX_EXISTS] ? last[col][index] : "-");
+        first = ellipsize((first[col] === undefined) ? "-" : (first[col].display ?? first[col].value));
+        last = ellipsize((last[col] === undefined) ? "-" : (last[col].display ?? last[col].value));
 
         select.appendChild(create("option", {
             label: `${page + 1}: ${escapeHTML(first)} → ${escapeHTML(last)}`,

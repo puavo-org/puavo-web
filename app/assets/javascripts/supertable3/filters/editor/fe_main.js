@@ -650,8 +650,8 @@ export class FilterEditor {
         let select = editor.querySelector("div#upper select#column"),
             columns = [];
 
-        for (const column of Object.values(this.columnDefinitions))
-            columns.push([column.key, column.title]);
+        for (const [key, column] of Object.entries(this.columnDefinitions))
+            columns.push([key, column.title]);
 
         columns.sort((a, b) => { return a[1].localeCompare(b[1]) });
 
