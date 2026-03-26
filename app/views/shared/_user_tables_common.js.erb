@@ -215,10 +215,16 @@ const COLUMN_DEFINITIONS = {
         title: "<%= t('columns.users.full_name') %>",
         transformer: (context, dn, entry) => {
             const name = entry.displayName[0];
-            let extra = "";
+            let extra = [];
+
+            if (entry.puavoLocked?.[0] === "TRUE")
+                extra.push(` <i class="icon-lock"></i>`);
 
             if (entry._has_expired)
-                extra += ` <i class="icon-clock" title="<%= t('users.index.expired_account') %>"></i>`;
+                extra.push(`<i class="icon-clock" title="<%= t('users.index.expired_account') %>"></i>`);
+
+            if (extra.length > 0)
+                extra = " " + extra.join("");
 
             return {
                 display: `<a href="/users/${context.schools[entry.puavoSchool[0]].id}/users/${entry.puavoId[0]}">${name}</a>${extra}`,
