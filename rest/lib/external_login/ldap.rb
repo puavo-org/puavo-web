@@ -270,6 +270,7 @@ module PuavoRest
         puavo_extlogin_id_field => lookup_extlogin_id(username).dup,
         'first_name' => Array(@ldap_userinfo['givenname']).first.to_s.dup,
         'last_name'  => Array(@ldap_userinfo['sn']).first.to_s.dup,
+        'locked'     => false,
         'username'   => username.dup,
       }
 

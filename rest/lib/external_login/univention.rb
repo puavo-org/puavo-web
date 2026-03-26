@@ -113,6 +113,7 @@ module PuavoRest
         'first_name'            => get_attr.call('firstname'),
         'last_name'             => get_attr.call('lastname'),
         'ldap_password_hash'    => get_attr.call('userPasswordHash'),
+        'locked'                => get_attr.call('disabled'),
         'username'              => username,
       }
 
