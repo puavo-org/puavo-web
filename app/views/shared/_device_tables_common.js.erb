@@ -471,7 +471,16 @@ const COLUMN_DEFINITIONS = {
         title: "<%= t('columns.devices.last_login_time') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
-        synthesizer: (context, dn, entry) => ST.outputISO8601Timestamp(entry.puavoDeviceHWInfo?.logins?.last?.timestamp),
+        synthesizer: (context, dn, entry) => {
+            const time = entry.puavoDeviceHWInfo?.logins?.last?.timestamp;
+
+            // Due to a weird feature/bug in puavo-sysinfo-collector, the last login timestamp can be just "-"
+            // instead of null, or completely omitted.
+            if (time === undefined || time === null || time === "-")
+                return undefined;
+
+            return ST.outputISO8601Timestamp(time, 0);
+        }
     },
 
     last_login_uid: {
