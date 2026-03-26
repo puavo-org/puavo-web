@@ -409,8 +409,10 @@ const COLUMN_DEFINITIONS = {
             // Use the injected school ID (_school_id) to format the link
             html = `<a href="/devices/${entry._school_id}/devices/${entry.puavoId[0]}">${ST.escapeHTML(hostname)}</a>`
 
-            // Indicate pending resets
-            if (entry.puavoDeviceReset !== undefined)
+            // Indicate pending resets (not fulfilled resets)
+            if (entry.puavoDeviceReset !== undefined &&
+                (entry.puavoDeviceReset["request-fulfilled"] === undefined ||
+                entry.puavoDeviceReset["request-fulfilled"] === null))
                 html += ` <i class="icon-attention iconError" title="<%= t('devices.index.pending_reset') %>"></i>`;
 
             // Indicate expired devices
