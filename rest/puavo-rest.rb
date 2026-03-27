@@ -1,4 +1,3 @@
-require "ldap"
 require "json"
 require "multi_json"
 require "sinatra/base"
