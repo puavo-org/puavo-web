@@ -221,19 +221,25 @@ class LdapModel
   ALPHABET = ('a'..'z').to_a.freeze
 
   def self.ldap_op(method, *args, &block)
-    res = nil
+    ldap_res = nil
 
     # Syslog.log(Syslog::LOG_DEBUG, "START(#{ ldap_op_uuid })> #{ connection.class }##{ method } #{ args.inspect }")
     err = nil
 
     begin
-      res = connection.send(method, *args, &block)
-    rescue StandardError => _err
-      err = _err
-
-      # not really an error. Just convert to nil response
-      return if is_not_found?(err)
-
+      connection.send(method, *args, &block)
+      ldap_res = connection.get_operation_result
+      case ldap_res.code
+        when Net::LDAP::ResultCode::SUCCESS
+          return ldap_res
+        when Net::LDAP::ResultCode::NO_SUCH_OBJECT
+          # Not really an error.  Just convert to nil response.
+          return nil
+        else
+          raise LdapError,
+                "ldap error: code=#{ ldap_res.code } #{ ldap_res.message }"
+      end
+    rescue StandardError => err
       ldap_op_uuid = ALPHABET.sample(25).join
 
       message = "\n#{ err.class }: #{ err }\n\n    was raised by\n\n"
@@ -241,31 +247,23 @@ class LdapModel
       message += "#{ connection.class }##{ method }(#{ args.map{|a| a.inspect }.join(", ")})\n"
 
       raise LdapError, {
-        :user => "#{ err.class }: #{ err.message } (grep syslog for #{ ldap_op_uuid })",
-        :message => message,
-        :op_uuid => ldap_op_uuid,
+        :args           => args,
+        :message        => message,
+        :method         => method,
+        :op_uuid        => ldap_op_uuid,
         :original_error => err,
-        :args => args,
-        :method => method
+        :user           => "#{ err.class }: #{ err.message } (grep syslog for #{ ldap_op_uuid })",
       }
     ensure
-      end_msg = "OK"
+      end_msg = 'OK'
       if err
         end_msg = " ERROR: #{ err.class } #{ err.message }"
       end
       # Syslog.log(Syslog::LOG_DEBUG, "END(#{ ldap_op_uuid })> #{ end_msg }")
     end
-
-    res
-  end
-
-  def self.is_not_found?(err)
-    !!(err && err.class == LDAP::ResultError && err.message == "No such object")
   end
 
   def link(path)
     self.class.settings[:rest_root] + path
   end
-
-
 end
