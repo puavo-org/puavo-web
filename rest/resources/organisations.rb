@@ -1,5 +1,3 @@
-require 'puavo/ldap'
-
 module PuavoRest
 class Organisation < LdapModel
   ldap_map :dn, :dn
