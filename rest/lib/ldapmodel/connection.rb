@@ -1,4 +1,8 @@
-require "syslog"
+require 'net/ldap'
+require 'net/ldap/auth_adapter/gssapi'
+require 'openssl'
+require 'syslog'
+
 Syslog.open("puavo-rest(slapd)", Syslog::LOG_PID, Syslog::LOG_DAEMON | Syslog::LOG_LOCAL3)
 
 # Connection management
@@ -8,84 +12,114 @@ class LdapModel
 
   KRB_LOCK = Mutex.new
 
-  # Do LDAP sasl bind with a kerberos ticket
-  def self.sasl_bind(ticket)
-    conn = LDAP::Conn.new(ldap_server)
-    conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
-    conn.sasl_quiet = true
-    conn.start_tls
+  # Do LDAP SASL bind with a kerberos ticket
+  def self.sasl_bind(credentials)
+    ticket = credentials[:kerberos]
+
     KRB_LOCK.synchronize do
       kg = nil
+
       begin
-        kg = Krb5Gssapi.new(CONFIG["fqdn"], CONFIG["keytab"])
+        kg = Krb5Gssapi.new(CONFIG['fqdn'], CONFIG['keytab'])
         kg.copy_ticket(ticket)
-        username, org = kg.display_name.split("@")
+
+        username, org = kg.display_name.split('@')
         settings[:credentials][:username] = username
-        LdapModel.setup(:organisation => PuavoRest::Organisation.by_domain(org.downcase))
-        conn.sasl_bind('', 'GSSAPI')
+        LdapModel.setup(organisation: PuavoRest::Organisation.by_domain(org.downcase))
+
+        ldap = Net::LDAP.new(
+          host: ldap_server,
+          port: 389,
+          encryption: {
+            method: :start_tls,
+            tls_options: OpenSSL::SSL::SSLContext::DEFAULT_PARAMS,
+          },
+          auth: {
+            method: :gssapi,
+            hostname: ldap_server,
+          }
+        )
+
+        bind_net_ldap(ldap, credentials)
+
+        return ldap
       rescue GSSAPI::GssApiError => err
         if err.message.match(/Clock skew too great/)
-          raise KerberosError, :user => "Your clock is messed up"
+          raise KerberosError, user: 'Your clock is messed up'
         else
-          raise KerberosError, :user => err.message
+          raise KerberosError, user: err.message
         end
-      rescue Krb5Gssapi::NoDelegation => err
-        raise KerberosError, :user =>
-          "Credentials are not delegated! \'--delegation always\' missing?"
+      rescue Krb5Gssapi::NoDelegation
+        raise KerberosError,
+          user: "Credentials are not delegated! '--delegation always' missing?"
       ensure
         kg.clean_up if kg
       end
     end
-    conn
   end
 
+  # assumes that is called in context where settings[:credentials] exists
+  def self.bind_net_ldap(ldap, credentials)
+    return if ldap.bind
 
-  # Do LDAP bind with dn and password
-  # @param dn [String]
-  # @param password [String]
-  def self.dn_bind(dn, pw)
-    conn = LDAP::Conn.new(ldap_server)
-    conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
-    conn.start_tls
-    conn.bind(dn, pw)
-    conn
+    result = ldap.get_operation_result
+    case result.code
+      when Net::LDAP::ResultCode::INVALID_CREDENTIALS
+        raise BadCredentials, {
+          :msg => 'Invalid credentials',
+          :meta => {
+            :dn       => credentials[:dn],
+            :username => credentials[:username],
+          }
+        }
+      else
+        raise LdapError,
+              "Other LDAP error: #{ result.code } #{ result.message }"
+    end
+  end
+
+  def self.dn_bind(credentials)
+    ldap = Net::LDAP.new(
+      host: ldap_server,
+      port: 389,
+      encryption: {
+        method: :start_tls,
+      },
+      auth: {
+        method: :simple,
+        username: credentials[:dn],
+        password: credentials[:pw],
+      }
+    )
+
+    bind_net_ldap(ldap, credentials)
+
+    ldap
   end
 
   # Create connection for LdapModel
   def self.create_connection
-    raise "Cannot create connection without credentials" if settings[:credentials].nil?
+    raise 'Cannot create connection without credentials' \
+      if settings[:credentials].nil?
     credentials = settings[:credentials]
     conn = nil
 
-    if credentials[:kerberos]
-      return sasl_bind(credentials[:kerberos])
+    if credentials[:kerberos] then
+      return sasl_bind(credentrials)
     end
 
-    if credentials[:dn].to_s.strip.empty?
+    if credentials[:dn].to_s.strip.empty? then
       raise BadCredentials, "DN missing" if not credentials[:dn]
     end
 
-    if credentials[:password].to_s.strip.empty?
+    if credentials[:password].to_s.strip.empty? then
       raise BadCredentials, "Password missing" if not credentials[:password]
     end
 
-    begin
-        conn = dn_bind(credentials[:dn], credentials[:password])
-    rescue LDAP::ResultError => err
-      if err.message == "Invalid credentials"
-        raise BadCredentials, {
-          :msg => "Invalid credentials (dn/pw)",
-          :meta => {
-            :dn => credentials[:dn],
-            :username => credentials[:username]
-        }}
-      else
-        raise LdapError, "Other LDAP error: #{ err.message }"
-      end
-    end
+    conn = dn_bind(credentials)
 
-    if conn.nil?
-        raise LdapError, "ldap bind returned nil instead of connection"
+    if conn.nil? then
+      raise LdapError, "ldap bind returned nil instead of connection"
     end
 
     return conn
