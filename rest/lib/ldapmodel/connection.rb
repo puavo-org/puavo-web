@@ -189,9 +189,7 @@ class LdapModel
   end
 
   def self.disconnect
-    if settings[:credentials_cache] && settings[:credentials_cache][:current_connection]
-      settings[:credentials_cache][:current_connection].unbind()
-    end
+    # we use Net::LDAP in such a way that it does not keep the connection open
     settings[:credentials_cache][:current_connection] = nil
   end
 
