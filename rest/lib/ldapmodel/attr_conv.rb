@@ -26,7 +26,6 @@ class LdapModel
     update!(attrs)
   end
 
-
   # Register block to be executed on the given states
   #
   # @param [Symbol] *states :create, :update or :validate
@@ -53,8 +52,6 @@ class LdapModel
     !@existing
   end
 
-
-
   # Define conversion between LDAP attribute and the JSON attribute. This will
   # create a getter method named by the `pretty_name` param
   #
@@ -76,7 +73,6 @@ class LdapModel
     if ![NilClass, Class, Hash].include?(options.class)
       raise "#{mapping_string} has invalid options argument: #{ options.inspect }"
     end
-
 
     transform = LdapConverters::SingleValue
     default_value = nil
@@ -127,7 +123,6 @@ class LdapModel
     end
   end
 
-
   # A method that will be executed and added to `to_hash` and `to_json`
   # conversions of this models
   # @param [Symbol] attr method to be called in serializations
@@ -169,7 +164,6 @@ class LdapModel
 
     @cache[pretty_name] = transform(pretty_name, :read, value)
   end
-
 
   # Transform value using the attribute transformer
   #
@@ -293,8 +287,6 @@ class LdapModel
       v == value
     end
   end
-
-
 
   # Save new model to LDAP
   # @param [String] _dn Set to use custom dn
