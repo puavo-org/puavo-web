@@ -62,7 +62,7 @@ class LdapModel
 
     result = ldap.get_operation_result
     case result.code
-      when Net::LDAP::ResultCode::INVALID_CREDENTIALS
+      when Net::LDAP::ResultCodeInvalidCredentials
         raise BadCredentials, {
           :msg => 'Invalid credentials',
           :meta => {
@@ -226,9 +226,9 @@ class LdapModel
       connection.send(method, *args, &block)
       ldap_res = connection.get_operation_result
       case ldap_res.code
-        when Net::LDAP::ResultCode::SUCCESS
+        when Net::LDAP::ResultCodeSuccess
           return ldap_res
-        when Net::LDAP::ResultCode::NO_SUCH_OBJECT
+        when Net::LDAP::ResultCodeNoSuchObject
           # Not really an error.  Just convert to nil response.
           return nil
         else
