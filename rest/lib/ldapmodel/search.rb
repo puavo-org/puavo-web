@@ -9,7 +9,7 @@ class LdapModel
     raise "ldap_base is not implemented for #{ self.name }"
   end
 
-  # LDAP::LDAP_SCOPE_SUBTREE filter search for #ldap_base
+  # subtree filter search for #ldap_base
   #
   # @param base [String] LDAP base
   # @param filter [String] LDAP filter
@@ -33,14 +33,12 @@ class LdapModel
     end
 
     begin
-      ldap_op(
-        :search,
-        base,
-        LDAP::LDAP_SCOPE_SUBTREE,
-        filter,
-        attributes.map{ |a| a.to_s },
-        &block
-      )
+      ldap_op(:search,
+              base: base,
+              filter: filter,
+              attributes: attributes.map { |a| a.to_s },
+              scope: Net::LDAP::SearchScope_WholeSubtree,
+              &block)
     ensure
       timer.stop("#{ self.name }#raw_filter(#{ filter.inspect }) base:#{ base } attributes:#{ attributes.inspect } found #{ res.size } items")
       PROF.count(timer)
@@ -262,7 +260,7 @@ class LdapModel
     res = Array(dns).map do |dn|
       begin
         by_dn(dn)
-      rescue LDAP::ResultError
+      rescue LdapError
         # Ignore broken dn pointers
       end
     end.compact
