@@ -8,8 +8,6 @@ Syslog.open("puavo-rest(slapd)", Syslog::LOG_PID, Syslog::LOG_DAEMON | Syslog::L
 # Connection management
 class LdapModel
 
-  class LdapHashError < StandardError; end
-
   KRB_LOCK = Mutex.new
 
   # Do LDAP SASL bind with a kerberos ticket
