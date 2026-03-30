@@ -86,7 +86,7 @@ class LdapModel
       auth: {
         method: :simple,
         username: credentials[:dn],
-        password: credentials[:pw],
+        password: credentials[:password],
       }
     )
 

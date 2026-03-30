@@ -953,16 +953,11 @@ class User < LdapModel
     new_userinfo.each do |attribute, new_value|
       if attribute == 'password' then
         begin
-          conn = LdapModel.dn_bind(self.dn, new_userinfo['password'])
-          conn.unbind
-        rescue LDAP::ResultError => e
-          # XXX how to check for Net::LDAP::ResultCodeInvalidCredentials
-          # XXX instead of checking for the human readable message?
-          if e.message == 'Invalid credentials' then
-            # password has changed
-            return true
-          end
-          raise e
+          creds = { :dn => self.fn, :password => new_userinfo['password'] }
+          LdapModel.dn_bind(creds)
+        rescue BadCredentials => e
+          # password has changed
+          return true
         end
 
         next
