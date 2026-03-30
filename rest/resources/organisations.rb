@@ -89,7 +89,9 @@ class Organisation < LdapModel
 
   def self.by_dn(dn)
     res = nil
-    connection.search(dn, LDAP::LDAP_SCOPE_BASE, "(objectClass=*)", []) do |entry|
+    ldap_op(:search, base: dn,
+                     scope: Net::LDAP::SearchScope_BaseObject,
+                     filter: '(objectClass=*)') do |entry|
       res = entry.to_hash
     end
 
@@ -97,9 +99,11 @@ class Organisation < LdapModel
   end
 
   def self.bases
-    connection.search("", LDAP::LDAP_SCOPE_BASE, "(objectClass=*)", ["namingContexts"]) do |e|
+    ldap_op(:search, scope: Net::LDAP::SearchScope_BaseObject,
+                     filter: '(objectClass=*)',
+                     attributes: ['namingContexts']) do
       return e.get_values("namingContexts").select do |base|
-        base != "o=puavo"
+        base != 'o=puavo'
       end
     end
   end
@@ -299,8 +303,10 @@ class Organisations < PuavoSinatra
       # Organisation.raw_filter() exists, but I can't get it to work
       raw = nil
 
-      Organisation.connection.search(Organisation.current.dn, LDAP::LDAP_SCOPE_BASE,
-                                     '(objectClass=*)', ldap_attrs) do |entry|
+      Organisation.ldap_op(:search, base: Organisation.current.dn,
+                                    scope: Net::LDAP::SearchScope_BaseObject,
+                                    filter: '(objectClass=*)',
+                                    attributes: ldap_attrs) do |entry|
         raw = [entry.to_hash]
       end
 
@@ -327,7 +333,9 @@ class Organisations < PuavoSinatra
     matcher = /^dc=edu,dc=(.*),dc=(.*$)/.freeze
     organisations = []
 
-    Organisation.connection.search('', LDAP::LDAP_SCOPE_BASE, '(objectClass=*)', ['namingContexts']) do |entry|
+    Organisation.ldap_op(:search, scope: Net::LDAP::SearchScope_BaseObject,
+                                  filter: '(objectClass=*)',
+                                  attributes: ['namingContexts']) do |entry|
       organisations = (entry['namingContexts'] || []).collect do |dn|
         match = matcher.match(dn)
 
