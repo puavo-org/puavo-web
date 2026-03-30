@@ -33,8 +33,10 @@ class WlanNetworks < PuavoSinatra
     # so query the database directly.
     organisation = []
 
-    Organisation.connection.search(
-      Organisation.current.dn, LDAP::LDAP_SCOPE_BASE, '(objectclass=*)', ['puavoWlanSSID']) do |org|
+    Organisation.ldap_op(:search, base: Organisation.current.dn,
+                                  scope: Net::LDAP::SearchScope_BaseObject,
+                                  filter: '(objectClass=*)',
+                                  attributes: ['puavoWlanSSID']) do |org|
       organisation << org.to_hash
     end
 
