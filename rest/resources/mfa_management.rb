@@ -59,7 +59,7 @@ class MFAManagement < PuavoSinatra
           return
       end
 
-      user.class.ldap_op(:modify, data['user_dn'], [LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoMFAEnabled', new_state)])
+      user.class.ldap_op(:modify, data['user_dn'], [ [ :replace, 'puavoMFAEnabled', new_state ] ])
     rescue StandardError => e
       $rest_log.error("[#{request_id}] Could not update the MFA activation state: #{e}")
       status 500
