@@ -590,9 +590,10 @@ private
         'password' => generate_password()
       }
 
-      # Normal users don't have enough rights to call "user.save!", so update the attribute directly
+      # Normal users don't have enough rights to call "user.save!",
+      # so update the attribute directly
       user.class.ldap_op(:modify, user.dn, [
-        LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoCitrixId', [citrix_id.to_json])
+        [ :replace, 'puavoCitrixId', [citrix_id.to_json] ],
       ])
     else
       rlog.info("[#{@request_id}] Have Citrix licensing data in Puavo, updating timestamp")
@@ -600,7 +601,7 @@ private
       citrix_id['last_used'] = make_timestamp()
 
       user.class.ldap_op(:modify, user.dn, [
-        LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, 'puavoCitrixId', [citrix_id.to_json])
+        [ :replace, 'puavoCitrixId', [citrix_id.to_json] ],
       ])
     end
 
