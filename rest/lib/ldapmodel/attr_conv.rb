@@ -202,7 +202,7 @@ class LdapModel
     end
 
     @ldap_attr_store[ldap_name] = new_val
-    add_mod(LDAP::LDAP_MOD_REPLACE, ldap_name.to_s, new_val)
+    add_mod(:replace, ldap_name.to_s, new_val)
 
     new_val
   end
@@ -248,7 +248,7 @@ class LdapModel
     end
 
     value = transform.new(self).write(value)
-    add_mod(LDAP::LDAP_MOD_ADD, ldap_name.to_s, value)
+    add_mod(:add, ldap_name.to_s, value)
     @cache[pretty_name] = nil
     current_val = @ldap_attr_store[ldap_name.to_sym]
     @ldap_attr_store[ldap_name.to_sym] = Array(current_val) + value
@@ -280,7 +280,7 @@ class LdapModel
     # Transform to the ldap format
     value = transform.new(self).write(value).first
 
-    add_mod(LDAP::LDAP_MOD_DELETE, ldap_name.to_s, [value])
+    add_mod(:delete, ldap_name.to_s, [value])
     @cache[pretty_name] = nil
     current_val = @ldap_attr_store[ldap_name.to_sym]
     @ldap_attr_store[ldap_name.to_sym] = Array(current_val).reject do |v|
@@ -301,13 +301,7 @@ class LdapModel
 
     _dn = dn if _dn.nil?
 
-    # XXX: Create close to LDAP call to avoid weird race condition with
-    # LDAP::Mod instances. See the commit from 29-Oct-15
-    mods = get_mods.select do |mod|
-      mod.mod_type != "dn"
-    end
-
-    res = self.class.ldap_op(:add, _dn, mods)
+    res = self.class.ldap_op(:add, dn: _dn, operations: get_mods)
     reset_pending
     @existing = true
 
@@ -325,9 +319,7 @@ class LdapModel
 
     run_hook :before, :update
     @before_save.each{|h| h.call}
-    if dirty?
-      res = self.class.ldap_op(:modify, dn, get_mods)
-    end
+    res = self.class.ldap_op(:modify, dn: dn, operations: get_mods) if dirty?
     @after_save.each{|h| h.call}
     reset_pending
     run_hook :after, :update
@@ -337,7 +329,7 @@ class LdapModel
 
   def destroy!
     run_hook :before, :destroy
-    self.class.ldap_op(:delete, dn)
+    self.class.ldap_op(:delete, dn: dn)
     run_hook :after, :destroy
   end
 
@@ -560,22 +552,20 @@ class LdapModel
     @previous_values = {}
   end
 
-  # @return [Array<LDAP::Mod>] LDAP::Mod instances
   def get_mods
-    @pending_mods.map{ |a| LDAP::Mod.new(*a) }
+    @pending_mods
   end
 
   # Add pending mod to be executed on the next {.save!} call
   #
-  # @param [Fixnum] Mod operation type. One of following constants
-  # LDAP::LDAP_MOD_REPLACE, LDAP::LDAP_MOD_ADD or LDAP::LDAP_MOD_DELETE,
+  # @param [Symbol] Mod operation type.
+  #                 One of following: :add, :replace or :delete.
   # @param [String] LDAP key string
   # @param [Array<String>] Value for the key
   def add_mod(mod, key, val)
     # Remove existing mods for this key. LDAP really, *really*, does not like
     # duplicate attribute modifications.
     @pending_mods.delete_if {|p| p[1] == key }
-
     @pending_mods.push([mod, key, val])
   end
 end
