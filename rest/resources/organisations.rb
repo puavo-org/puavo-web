@@ -92,26 +92,27 @@ class Organisation < LdapModel
     ldap_op(:search, base: dn,
                      scope: Net::LDAP::SearchScope_BaseObject,
                      filter: '(objectClass=*)') do |entry|
-      res = entry.to_hash
+      res = entry.to_h
     end
 
     from_ldap_hash(res) if res
   end
 
   def self.bases
-    ldap_op(:search, scope: Net::LDAP::SearchScope_BaseObject,
+    ldap_op(:search, base: '',
+                     scope: Net::LDAP::SearchScope_BaseObject,
                      filter: '(objectClass=*)',
-                     attributes: ['namingContexts']) do
-      return e.get_values("namingContexts").select do |base|
-        base != 'o=puavo'
-      end
+                     attributes: ['namingContexts']) do |entry|
+      return Array(entry[:namingcontexts]).select do |base|
+               base != 'o=puavo'
+             end
     end
   end
 
   def self.all
-    bases.map do |base|
-      by_dn(base)
-    end
+    _bases = bases
+    raise NotFound, :user => 'no ldap bases found' unless _bases
+    _bases.map { |base| by_dn(base) }
   end
 
   def self.current(option=nil)
@@ -333,7 +334,8 @@ class Organisations < PuavoSinatra
     matcher = /^dc=edu,dc=(.*),dc=(.*$)/.freeze
     organisations = []
 
-    Organisation.ldap_op(:search, scope: Net::LDAP::SearchScope_BaseObject,
+    Organisation.ldap_op(:search, base: '',
+                                  scope: Net::LDAP::SearchScope_BaseObject,
                                   filter: '(objectClass=*)',
                                   attributes: ['namingContexts']) do |entry|
       organisations = (entry['namingContexts'] || []).collect do |dn|
