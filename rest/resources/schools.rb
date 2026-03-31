@@ -271,58 +271,10 @@ class Schools < PuavoSinatra
 
   # Use at your own risk. Currently read-only.
 
-
-  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
-  # the requested fields are actually returned in the queries.
-  USER_TO_LDAP = {
-    'allow_guest'           => "puavoAllowGuest",
-    'automatic_updates'     => "puavoAutomaticImageUpdates",
-    'autopoweroff_mode'     => "puavoDeviceAutoPowerOffMode",
-    'autopoweroff_off_hour' => "puavoDeviceOffHour",
-    'autopoweroff_on_hour'  => "puavoDeviceOnHour",
-    'billing_info'          => "puavoBillingInfo",
-    'created'               => 'createTimestamp', # LDAP operational attribute
-    'description'           => "description",
-    'dn'                    => 'dn',
-    'external_id'           => 'puavoExternalId',
-    'external_data'         => 'puavoExternalData',
-    'fax'                   => "facsimileTelephoneNumber",
-    'gid_number'            => 'gidNumber',
-    'group_prefix'          => 'cn',
-    'homepage'              => "puavoSchoolHomePageURL",
-    'id'                    => 'puavoId',
-    'image'                 => "puavoDeviceImage",
-    'image_series_url'      => "puavoImageSeriesSourceURL",
-    'language'              => "preferredLanguage",
-    'locale'                => "puavoLocale",
-    'location'              => "l",
-    'member_dn'             => 'member',
-    'member_uid'            => 'memberUid',
-    'modified'              => 'modifyTimestamp', # LDAP operational attribute
-    'mount_point'           => "puavoMountpoint",
-    'name'                  => 'displayName',
-    'name_prefix'           => "puavoNamePrefix",
-    'notes'                 => 'puavoNotes',
-    'personal_device'       => "puavoPersonalDevice",
-    'postal_address'        => "postalAddress",
-    'postal_code'           => "postalCode",
-    'postal_street'         => "street",
-    'post_box'              => "postOfficeBox",
-    'puavoconf'             => "puavoConf",
-    'school_code'           => 'puavoSchoolCode',
-    'school_oid'            => 'puavoSchoolOID',
-    'state'                 => "st",
-    'tags'                  => "puavoTag",
-    'telephone'             => "telephoneNumber",
-    'timezone'              => 'puavoTimezone',
-    'wlan_channel'          => "puavoWlanChannel",
-    'wlan_ssid'             => "puavoWlanSSID",
-  }
-
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
     'cn'                          => { name: 'group_prefix' },
-    'createTimestamp'             => { name: 'created', type: :ldap_timestamp },
+    'createTimestamp'             => { name: 'created', type: :ldap_timestamp },        # LDAP operational attribute
     'description'                 => { name: 'description' },
     'displayName'                 => { name: 'name'},
     'dn'                          => { name: 'dn' },
@@ -331,7 +283,7 @@ class Schools < PuavoSinatra
     'l'                           => { name: 'location' },
     'member'                      => { name: 'member_dn' },
     'memberUid'                   => { name: 'member_uid' },
-    'modifyTimestamp'             => { name: 'modified', type: :ldap_timestamp },
+    'modifyTimestamp'             => { name: 'modified', type: :ldap_timestamp },       # LDAP operational attribute
     'postalAddress'               => { name: 'postal_address' },
     'postalCode'                  => { name: 'postal_code' },
     'postOfficeBox'               => { name: 'post_box' },
@@ -364,6 +316,10 @@ class Schools < PuavoSinatra
     'street'                      => { name: 'postal_street' },
     'telephoneNumber'             => { name: 'telephone' },
   }
+
+  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
+  # the requested fields are actually returned in the queries.
+  USER_TO_LDAP = Hash[ LDAP_TO_USER.map { |k,v| [ v[:name], k ] } ]
 
   def v4_do_school_search(filters, requested_ldap_attrs)
     base = "ou=Groups,#{Organisation.current['base']}"

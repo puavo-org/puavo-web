@@ -1421,50 +1421,14 @@ class Users < PuavoSinatra
 
   # Use at your own risk. Currently read-only.
 
-
-  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
-  # the requested fields are actually returned in the queries.
-  USER_TO_LDAP = {
-    'admin_school_id'    => 'puavoAdminOfSchool',
-    'account_expiration_time' => 'puavoEduPersonAccountExpirationTime',
-    'created'            => 'createTimestamp',  # LDAP operational attribute
-    'dn'                 => 'dn',
-    'do_not_delete'      => 'puavoDoNotDelete',
-    'email'              => 'mail',
-    'external_id'        => 'puavoExternalId',
-    'external_data'      => 'puavoExternalData',
-    'first_names'        => 'givenName',
-    'gid_number'         => 'gidNumber',
-    'id'                 => 'puavoId',
-    'last_name'          => 'sn',
-    'learner_id'         => 'puavoLearnerId',
-    'licenses'           => 'puavoLicenses',
-    'locale'             => 'puavoLocale',
-    'locked'             => 'puavoLocked',
-    'mfa_enabled'        => 'puavoMFAEnabled',
-    'modified'           => 'modifyTimestamp',  # LDAP operational attribute
-    'notes'              => 'puavoNotes',
-    'personnel_number'   => 'puavoEduPersonPersonnelNumber',
-    'phone'              => 'telephoneNumber',
-    'preferred_language' => 'preferredLanguage',
-    'primary_school_id'  => 'puavoEduPersonPrimarySchool',
-    'removal_mark_time'  => 'puavoRemovalRequestTime',
-    'role'               => 'puavoEduPersonAffiliation',
-    'school_ids'         => 'puavoSchool',
-    'ssh_public_key'     => 'puavoSshPublicKey',
-    'uid_number'         => 'uidNumber',
-    'username'           => 'uid',
-    'uuid'               => 'puavoUuid',
-  }
-
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
-    'createTimestamp'               => { name: 'created', type: :ldap_timestamp },
+    'createTimestamp'               => { name: 'created', type: :ldap_timestamp },      # LDAP operational attribute
     'dn'                            => { name: 'dn' },
     'gidNumber'                     => { name: 'gid_number', type: :integer },
     'givenName'                     => { name: 'first_names' },
     'mail'                          => { name: 'email' },
-    'modifyTimestamp'               => { name: 'modified', type: :ldap_timestamp },
+    'modifyTimestamp'               => { name: 'modified', type: :ldap_timestamp },     # LDAP operational attribute
     'preferredLanguage'             => { name: 'preferred_language' },
     'puavoAdminOfSchool'            => { name: 'admin_school_id', type: :id_from_dn },
     'puavoDoNotDelete'              => { name: 'do_not_delete', type: :boolean },
@@ -1490,6 +1454,10 @@ class Users < PuavoSinatra
     'uid'                           => { name: 'username' },
     'uidNumber'                     => { name: 'uid_number', type: :integer },
   }
+
+  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
+  # the requested fields are actually returned in the queries.
+  USER_TO_LDAP = Hash[ LDAP_TO_USER.map { |k,v| [ v[:name], k ] } ]
 
   def v4_do_user_search(filters, requested_ldap_attrs)
     base = "ou=People,#{Organisation.current['base']}"

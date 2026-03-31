@@ -260,35 +260,24 @@ class Organisations < PuavoSinatra
 
   # Use at your own risk. Currently read-only.
 
-  USER_TO_LDAP = {
-    'abbreviation'    => 'cn',
-    'active_services' => 'puavoActiveService',
-    'created'         => 'createTimestamp',   # LDAP operational attribute
-    'description'     => 'description',
-    'dn'              => 'dn',
-    'modified'        => 'modifyTimestamp',   # LDAP operational attribute
-    'name'            => 'o',
-    'notes'           => 'puavoNotes',
-    'oid'             => 'puavoOrganisationOID',
-    'owners'          => 'owner',
-    'puavoconf'       => 'puavoConf',
-    'timezone'        => 'puavoTimezone',
+  LDAP_TO_USER = {
+    'cn'                   => { name: 'abbreviation' },
+    'createTimestamp'      => { name: 'created', type: :ldap_timestamp },        # LDAP operational attribute
+    'description'          => { name: 'description' },
+    'dn'                   => { name: 'dn' },
+    'modifyTimestamp'      => { name: 'modified', type: :ldap_timestamp },       # LDAP operational attribute
+    'o'                    => { name: 'name' },
+    'owner'                => { name: 'owners' },
+    'puavoActiveService'   => { name: 'active_services' },
+    'puavoConf'            => { name: 'puavoconf', type: :json },
+    'puavoNotes'           => { name: 'notes' },
+    'puavoOrganisationOID' => { name: 'oid' },
+    'puavoTimezone'        => { name: 'timezone' },
   }
 
-  LDAP_TO_USER = {
-    'cn'                  => { name: 'abbreviation' },
-    'createTimestamp'     => { name: 'created', type: :ldap_timestamp },
-    'description'         => { name: 'description' },
-    'dn'                  => { name: 'dn' },
-    'modifyTimestamp'     => { name: 'modified', type: :ldap_timestamp },
-    'o'                   => { name: 'name' },
-    'owner'               => { name: 'owners' },
-    'puavoActiveService'  => { name: 'active_services' },
-    'puavoConf'           => { name: 'puavoconf', type: :json },
-    'puavoNotes'          => { name: 'notes' },
-    'puavoOrganisationOID' => { name: 'oid' },
-    'puavoTimezone'       => { name: 'timezone' },
-  }
+  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
+  # the requested fields are actually returned in the queries.
+  USER_TO_LDAP = Hash[ LDAP_TO_USER.map { |k,v| [ v[:name], k ] } ]
 
   # GET /v4/organisation?fields=...
   get '/v4/organisation' do
