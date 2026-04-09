@@ -11,60 +11,60 @@ class User < LdapModel
   include SambaAttrs
 
   ldap_map :dn, :dn
-  ldap_map :puavoId, :id, LdapConverters::Number # FIXME: this attribute should be a String
-  ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
-  ldap_map :puavoExternalData, :external_data, LdapConverters::SingleValue
-  ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
+  ldap_map :puavoid, :id, LdapConverters::Number # FIXME: this attribute should be a String
+  ldap_map :puavoexternalid, :external_id, LdapConverters::SingleValue
+  ldap_map :puavoexternaldata, :external_data, LdapConverters::SingleValue
+  ldap_map :objectclass, :object_classes, LdapConverters::ArrayValue
   ldap_map :uid, :username
-  ldap_map :uidNumber, :uid_number, LdapConverters::Number
-  ldap_map :gidNumber, :gid_number, LdapConverters::Number
+  ldap_map :uidnumber, :uid_number, LdapConverters::Number
+  ldap_map :gidnumber, :gid_number, LdapConverters::Number
   ldap_map :sn, :last_name
-  ldap_map :givenName, :first_name
+  ldap_map :givenname, :first_name
   ldap_map :mail, :email, LdapConverters::ArrayValue
-  ldap_map :puavoSchool, :school_dns, LdapConverters::ArrayValue
-  ldap_map :puavoEduPersonPrimarySchool, :primary_school_dn, LdapConverters::SingleValue
-  ldap_map :preferredLanguage, :preferred_language
-  ldap_map(:jpegPhoto, :profile_image_link) do |image_data|
+  ldap_map :puavoschool, :school_dns, LdapConverters::ArrayValue
+  ldap_map :puavoedupersonprimaryschool, :primary_school_dn, LdapConverters::SingleValue
+  ldap_map :preferredlanguage, :preferred_language
+  ldap_map(:jpegphoto, :profile_image_link) do |image_data|
     if image_data
       @model.link "/v3/users/#{ @model.username }/profile.jpg"
     end
   end
-  ldap_map :puavoLocale, :locale
-  ldap_map :puavoTimezone, :timezone
-  ldap_map :puavoLocked, :locked, LdapConverters::StringBoolean
-  ldap_map :puavoSshPublicKey, :ssh_public_key
-  ldap_map :homeDirectory, :home_directory
-  ldap_map :loginShell, :login_shell, :default => "/bin/bash"
-  ldap_map :telephoneNumber, :telephone_number, LdapConverters::ArrayValue
-  ldap_map :puavoRemovalRequestTime, :removal_request_time,
+  ldap_map :puavolocale, :locale
+  ldap_map :puavotimezone, :timezone
+  ldap_map :puavolocked, :locked, LdapConverters::StringBoolean
+  ldap_map :puavosshpublickey, :ssh_public_key
+  ldap_map :homedirectory, :home_directory
+  ldap_map :loginshell, :login_shell, :default => "/bin/bash"
+  ldap_map :telephonenumber, :telephone_number, LdapConverters::ArrayValue
+  ldap_map :puavoremovalrequesttime, :removal_request_time,
            LdapConverters::TimeStamp
-  ldap_map :eduPersonPrincipalName, :edu_person_principal_name
-  ldap_map :puavoDoNotDelete, :do_not_delete, LdapConverters::StringBoolean
-  ldap_map :sambaPwdLastSet, :password_last_set, LdapConverters::Number
-  ldap_map :puavoAdminPermissions, :admin_permissions, LdapConverters::ArrayValue
-  ldap_map :puavoTeacherPermissions, :teacher_permissions, LdapConverters::ArrayValue
+  ldap_map :edupersonprincipalname, :edu_person_principal_name
+  ldap_map :puavodonotdelete, :do_not_delete, LdapConverters::StringBoolean
+  ldap_map :sambapwdlastset, :password_last_set, LdapConverters::Number
+  ldap_map :puavoadminpermissions, :admin_permissions, LdapConverters::ArrayValue
+  ldap_map :puavoteacherpermissions, :teacher_permissions, LdapConverters::ArrayValue
 
-  ldap_map :puavoLearnerId, :learner_id
+  ldap_map :puavolearnerid, :learner_id
 
-  ldap_map :puavoVerifiedEmail, :verified_email, LdapConverters::ArrayValue
-  ldap_map :puavoPrimaryEmail, :primary_email
+  ldap_map :puavoverifiedemail, :verified_email, LdapConverters::ArrayValue
+  ldap_map :puavoprimaryemail, :primary_email
 
-  ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
+  ldap_map :puavoedupersonaffiliation, :roles, LdapConverters::ArrayValue
 
-  ldap_map :puavoUuid, :uuid, LdapConverters::SingleValue
-  ldap_map :puavoMFAEnabled, :mfa_enabled, LdapConverters::StringBoolean
-  ldap_map :puavoNotes, :notes, LdapConverters::SingleValue
+  ldap_map :puavouuid, :uuid, LdapConverters::SingleValue
+  ldap_map :puavomfaenabled, :mfa_enabled, LdapConverters::StringBoolean
+  ldap_map :puavonotes, :notes, LdapConverters::SingleValue
 
-  ldap_map :puavoLicenses, :licenses
+  ldap_map :puavolicenses, :licenses
 
-  ldap_map :puavoCitrixId, :citrix_id
+  ldap_map :puavocitrixid, :citrix_id
 
-  ldap_map :puavoEduPersonAccountExpirationTime, :account_expiration_time, LdapConverters::TimeStamp
+  ldap_map :puavoedupersonaccountexpirationtime, :account_expiration_time, LdapConverters::TimeStamp
 
   skip_serialize :external_data
 
   # List of school DNs where the user is school admin
-  ldap_map(:puavoAdminOfSchool, :admin_of_school_dns) do |dns|
+  ldap_map(:puavoadminofschool, :admin_of_school_dns) do |dns|
     Array(dns).map do |dn|
       dn
     end

@@ -3,39 +3,39 @@ class Organisation < LdapModel
   ldap_map :dn, :dn
   ldap_map :dn, :base
   ldap_map :o, :name
-  ldap_map :puavoDomain, :domain
+  ldap_map :puavodomain, :domain
   ldap_map(:owner, :owner) { |v| Array(v) }
-  ldap_map :puavoDeviceImage, :preferred_image
-  ldap_map :preferredLanguage, :preferred_language
-  ldap_map :puavoLocale, :locale
-  ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
-  ldap_map :puavoAllowGuest, :allow_guest, :default => false, &LdapConverters.string_boolean
-  ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, :default => false, &LdapConverters.string_boolean
-  ldap_map :puavoPersonalDevice, :personal_device, :default => false, &LdapConverters.string_boolean
-  ldap_map(:puavoActiveService, :external_services) do |es|
+  ldap_map :puavodeviceimage, :preferred_image
+  ldap_map :preferredlanguage, :preferred_language
+  ldap_map :puavolocale, :locale
+  ldap_map :puavowlanssid, :wlan_networks, &LdapConverters.parse_wlan
+  ldap_map :puavoallowguest, :allow_guest, :default => false, &LdapConverters.string_boolean
+  ldap_map :puavoautomaticimageupdates, :automatic_image_updates, :default => false, &LdapConverters.string_boolean
+  ldap_map :puavopersonaldevice, :personal_device, :default => false, &LdapConverters.string_boolean
+  ldap_map(:puavoactiveservice, :external_services) do |es|
       Array(es).map { |s| s.downcase.strip }
   end
-  ldap_map :puavoTimezone, :timezone
-  ldap_map :puavoKeyboardLayout, :keyboard_layout
-  ldap_map :puavoKeyboardVariant, :keyboard_variant
-  ldap_map :puavoImageSeriesSourceURL, :image_series_source_urls, LdapConverters::ArrayValue
-  ldap_map :puavoConf, :puavoconf, LdapConverters::PuavoConfObj
+  ldap_map :puavotimezone, :timezone
+  ldap_map :puavokeyboardlayout, :keyboard_layout
+  ldap_map :puavokeyboardvariant, :keyboard_variant
+  ldap_map :puavoimageseriessourceurl, :image_series_source_urls, LdapConverters::ArrayValue
+  ldap_map :puavoconf, :puavoconf, LdapConverters::PuavoConfObj
 
-  ldap_map :eduOrgHomePageURI, :homepage
+  ldap_map :eduorghomepageuri, :homepage
 
-  ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
-  ldap_map :puavoDeviceOnHour,           :daytime_start_hour
-  ldap_map :puavoDeviceOffHour,          :daytime_end_hour
-  ldap_map :puavoKerberosRealm,          :puavo_kerberos_realm
+  ldap_map :puavodeviceautopoweroffmode, :autopoweroff_mode
+  ldap_map :puavodeviceonhour,           :daytime_start_hour
+  ldap_map :puavodeviceoffhour,          :daytime_end_hour
+  ldap_map :puavokerberosrealm,          :puavo_kerberos_realm
 
-  ldap_map :puavoNotes, :notes, LdapConverters::SingleValue
-  ldap_map :puavoDefaultTeacherPermissions, :default_teacher_permissions, LdapConverters::ArrayValue
+  ldap_map :puavonotes, :notes, LdapConverters::SingleValue
+  ldap_map :puavodefaultteacherpermissions, :default_teacher_permissions, LdapConverters::ArrayValue
 
-  ldap_map :puavoMenuData, :puavomenu_data
+  ldap_map :puavomenudata, :puavomenu_data
   skip_serialize :puavomenu_data
 
-  ldap_map :puavoOrganisationOID, :oid
-  ldap_map :puavoDeviceRecoveryPublicKey, :device_recovery_public_key, LdapConverters::JSONObj
+  ldap_map :puavoorganisationoid, :oid
+  ldap_map :puavodevicerecoverypublickey, :device_recovery_public_key, LdapConverters::JSONObj
 
   def organisation_key
     domain.split(".").first if domain

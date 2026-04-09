@@ -5,10 +5,10 @@ class SambaDomain < LdapModel
 
 
   ldap_map :dn, :dn
-  ldap_map :puavoId, :id
-  ldap_map :sambaSID, :sid
-  ldap_map :sambaDomainName, :domain
-  ldap_map :sambaNextRid, :next_rid, LdapConverters::Number
+  ldap_map :puavoid, :id
+  ldap_map :sambasid, :sid
+  ldap_map :sambadomainname, :domain
+  ldap_map :sambanextrid, :next_rid, LdapConverters::Number
 
   def self.ldap_base
     organisation["base"]

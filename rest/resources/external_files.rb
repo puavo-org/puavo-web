@@ -3,7 +3,7 @@ module PuavoRest
 class ExternalFile < LdapModel
 
   ldap_map :cn, :name
-  ldap_map :puavoDataHash, :data_hash
+  ldap_map :puavodatahash, :data_hash
 
   def self.ldap_base
     "ou=Files,ou=Desktops,#{ organisation["base"] }"

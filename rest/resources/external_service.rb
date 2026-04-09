@@ -5,14 +5,14 @@ require 'securerandom'
 module PuavoRest
 
 class ExternalService < LdapModel
-  ldap_map(:dn, :dn){ |dn| Array(dn).first.downcase.strip }
+  ldap_map(:dn, :dn) { |dn| Array(dn).first.downcase.strip }
   ldap_map :cn, :name
-  ldap_map :puavoServiceDomain, :domain, LdapConverters::ArrayValue
-  ldap_map :puavoServiceSecret, :secret
+  ldap_map :puavoservicedomain, :domain, LdapConverters::ArrayValue
+  ldap_map :puavoservicesecret, :secret
   ldap_map :description, :description
-  ldap_map :puavoServiceDescriptionURL, :description_url
-  ldap_map :puavoServiceTrusted, :trusted, LdapConverters::StringBoolean
-  ldap_map :puavoServicePathPrefix, :prefix, :default => "/"
+  ldap_map :puavoservicedescriptionurl, :description_url
+  ldap_map :puavoservicetrusted, :trusted, LdapConverters::StringBoolean
+  ldap_map :puavoservicepathprefix, :prefix, :default => "/"
 
   def self.ldap_base
     "ou=Services,o=puavo"

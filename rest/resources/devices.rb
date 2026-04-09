@@ -4,29 +4,29 @@ require_relative '../lib/puavomenu.rb'
 
 module PuavoRest
 class Device < Host
-  ldap_map :puavoAllowGuest,               :allow_guest,              LdapConverters::StringBoolean
-  ldap_map :puavoDefaultPrinter,           :default_printer_name
-  ldap_map :puavoDeviceAutoPowerOffMode,   :autopoweroff_mode
-  ldap_map :puavoDeviceDefaultAudioSink,   :default_audio_sink
-  ldap_map :puavoDeviceDefaultAudioSource, :default_audio_source
-  ldap_map :puavoDeviceModel,              :model
-  ldap_map :puavoDeviceMonitorsXML,        :monitors_xml
-  ldap_map :puavoDeviceOffHour,            :daytime_end_hour
-  ldap_map :puavoDeviceOnHour,             :daytime_start_hour
-  ldap_map :puavoDevicePrimaryUser,        :primary_user_dn
-  ldap_map :puavoDeviceXrandr,             :xrandr,                   LdapConverters::ArrayValue
-  ldap_map :puavoMountpoint,               :mountpoints,              LdapConverters::ArrayValue
-  ldap_map :puavoNotes,                    :notes,                    LdapConverters::SingleValue
-  ldap_map :puavoPersonalDevice,           :personal_device,          LdapConverters::StringBoolean
-  ldap_map :puavoPersonallyAdministered,   :personally_administered,  LdapConverters::StringBoolean
-  ldap_map :puavoPrinterDeviceURI,         :printer_device_uri
-  ldap_map :puavoPrinterQueue,             :printer_queue_dns,        LdapConverters::ArrayValue
-  ldap_map :puavoSchool,                   :school_dn
-  ldap_map :serialNumber,                  :serial_number
-  ldap_map :puavoDisplayName,              :display_name
-  ldap_map :puavoDeviceExpirationTime,     :device_expiration_time,   LdapConverters::TimeStamp
+  ldap_map :puavoallowguest,               :allow_guest,              LdapConverters::StringBoolean
+  ldap_map :puavodefaultprinter,           :default_printer_name
+  ldap_map :puavodeviceautopoweroffmode,   :autopoweroff_mode
+  ldap_map :puavodevicedefaultaudiosink,   :default_audio_sink
+  ldap_map :puavodevicedefaultaudiosource, :default_audio_source
+  ldap_map :puavodevicemodel,              :model
+  ldap_map :puavodevicemonitorsxml,        :monitors_xml
+  ldap_map :puavodeviceoffhour,            :daytime_end_hour
+  ldap_map :puavodeviceonhour,             :daytime_start_hour
+  ldap_map :puavodeviceprimaryuser,        :primary_user_dn
+  ldap_map :puavodevicexrandr,             :xrandr,                   LdapConverters::ArrayValue
+  ldap_map :puavomountpoint,               :mountpoints,              LdapConverters::ArrayValue
+  ldap_map :puavonotes,                    :notes,                    LdapConverters::SingleValue
+  ldap_map :puavopersonaldevice,           :personal_device,          LdapConverters::StringBoolean
+  ldap_map :puavopersonallyadministered,   :personally_administered,  LdapConverters::StringBoolean
+  ldap_map :puavoprinterdeviceuri,         :printer_device_uri
+  ldap_map :puavoprinterqueue,             :printer_queue_dns,        LdapConverters::ArrayValue
+  ldap_map :puavoschool,                   :school_dn
+  ldap_map :serialnumber,                  :serial_number
+  ldap_map :puavodisplayname,              :display_name
+  ldap_map :puavodeviceexpirationtime,     :device_expiration_time,   LdapConverters::TimeStamp
 
-  ldap_map :puavoMenuData,                 :puavomenu_data
+  ldap_map :puavomenudata,                 :puavomenu_data
   skip_serialize :puavomenu_data
 
   def self.ldap_base

@@ -6,20 +6,20 @@ class Group < LdapModel
   include SambaAttrs
 
   ldap_map :dn, :dn
-  ldap_map :puavoEduGroupType, :type, LdapConverters::SingleValue
-  ldap_map :puavoId, :id, LdapConverters::SingleValue
-  ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
-  ldap_map :puavoExternalData, :external_data, LdapConverters::SingleValue
-  ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
+  ldap_map :puavoedugrouptype, :type, LdapConverters::SingleValue
+  ldap_map :puavoid, :id, LdapConverters::SingleValue
+  ldap_map :puavoexternalid, :external_id, LdapConverters::SingleValue
+  ldap_map :puavoexternaldata, :external_data, LdapConverters::SingleValue
+  ldap_map :objectclass, :object_classes, LdapConverters::ArrayValue
   ldap_map :cn, :abbreviation
-  ldap_map :displayName, :name
-  ldap_map :puavoSchool, :school_dn
-  ldap_map :gidNumber, :gid_number, LdapConverters::Number
-  ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
-  ldap_map :memberUid, :member_usernames, LdapConverters::ArrayValue
+  ldap_map :displayname, :name
+  ldap_map :puavoschool, :school_dn
+  ldap_map :gidnumber, :gid_number, LdapConverters::Number
+  ldap_map(:puavoprinterqueue, :printer_queue_dns){ |v| Array(v) }
+  ldap_map :memberuid, :member_usernames, LdapConverters::ArrayValue
   ldap_map :member, :member_dns, LdapConverters::ArrayValue
-  ldap_map :puavoEduGroupType, :type, LdapConverters::SingleValue
-  ldap_map :puavoNotes, :notes, LdapConverters::SingleValue
+  ldap_map :puavoedugrouptype, :type, LdapConverters::SingleValue
+  ldap_map :puavonotes, :notes, LdapConverters::SingleValue
 
   before :create do
     if Array(object_classes).empty?

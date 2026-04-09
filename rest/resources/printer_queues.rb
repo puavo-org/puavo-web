@@ -3,15 +3,15 @@ module PuavoRest
 class PrinterQueue < LdapModel
 
   ldap_map :dn, :dn
-  ldap_map :printerMakeAndModel, :model
-  ldap_map :printerLocation, :location
-  ldap_map :printerType, :type
-  ldap_map :printerURI, :local_uri
-  ldap_map :printerInfo, :info
-  ldap_map :printerDescription, :description
-  ldap_map :printerDescription, :name
-  ldap_map :puavoServer, :server_dn
-  ldap_map :puavoPrinterPPD, :ppd
+  ldap_map :printermakeandmodel, :model
+  ldap_map :printerlocation, :location
+  ldap_map :printertype, :type
+  ldap_map :printeruri, :local_uri
+  ldap_map :printerinfo, :info
+  ldap_map :printerdescription, :description
+  ldap_map :printerdescription, :name
+  ldap_map :puavoserver, :server_dn
+  ldap_map :puavoprinterppd, :ppd
 
   computed_attr :server_fqdn
   def server_fqdn

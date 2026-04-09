@@ -6,7 +6,7 @@ class SambaGroup < LdapModel
 
   ldap_map :dn, :dn
   ldap_map :cn, :name
-  ldap_map :memberUid, :members, LdapConverters::ArrayValue
+  ldap_map :memberuid, :members, LdapConverters::ArrayValue
 
   def self.ldap_base
     "ou=Groups,#{ organisation["base"] }"

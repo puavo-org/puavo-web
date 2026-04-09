@@ -2,39 +2,39 @@
 module PuavoRest
 class Host < LdapModel
   ldap_map :dn, :dn
-  ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
-  ldap_map :macAddress, :mac_address
-  ldap_map :macAddress, :mac_addresses, LdapConverters::ArrayValue
-  ldap_map :puavoAutomaticImageUpdates,
+  ldap_map :objectclass, :object_classes, LdapConverters::ArrayValue
+  ldap_map :macaddress, :mac_address
+  ldap_map :macaddress, :mac_addresses, LdapConverters::ArrayValue
+  ldap_map :puavoautomaticimageupdates,
            :automatic_image_updates,
            LdapConverters::StringBoolean
-  ldap_map :puavoConf, :puavoconf, LdapConverters::PuavoConfObj
-  ldap_map :puavoDeviceAvailableImage,
+  ldap_map :puavoconf, :puavoconf, LdapConverters::PuavoConfObj
+  ldap_map :puavodeviceavailableimage,
            :available_images,
            LdapConverters::ArrayValue
-  ldap_map :puavoDeviceBootImage, :preferred_boot_image
-  ldap_map :puavoDeviceBootMode, :boot_mode
-  ldap_map :puavoDeviceCurrentImage, :current_image, LdapConverters::SingleValue
-  ldap_map :puavoDeviceHWInfo, :hw_info
-  ldap_map :puavoDeviceImage, :preferred_image
-  ldap_map :puavoDeviceKernelArguments, :kernel_arguments
-  ldap_map :puavoDeviceKernelVersion, :kernel_version
-  ldap_map :puavoDeviceReset, :reset, LdapConverters::JSONObj
-  ldap_map :puavoDeviceType, :type
-  ldap_map :puavoHostname, :hostname
-  ldap_map :puavoId, :puavo_id
-  ldap_map :puavoImageSeriesSourceURL,
+  ldap_map :puavodevicebootimage, :preferred_boot_image
+  ldap_map :puavodevicebootmode, :boot_mode
+  ldap_map :puavodevicecurrentimage, :current_image, LdapConverters::SingleValue
+  ldap_map :puavodevicehwinfo, :hw_info
+  ldap_map :puavodeviceimage, :preferred_image
+  ldap_map :puavodevicekernelarguments, :kernel_arguments
+  ldap_map :puavodevicekernelversion, :kernel_version
+  ldap_map :puavodevicereset, :reset, LdapConverters::JSONObj
+  ldap_map :puavodevicetype, :type
+  ldap_map :puavohostname, :hostname
+  ldap_map :puavoid, :puavo_id
+  ldap_map :puavoimageseriessourceurl,
            :image_series_source_urls,
            LdapConverters::ArrayValue
-  ldap_map :puavoKeyboardLayout, :keyboard_layout
-  ldap_map :puavoKeyboardVariant, :keyboard_variant
-  ldap_map(:puavoTag, :tags){ |v| Array(v) }
-  ldap_map :puavoTimezone, :timezone
-  ldap_map :puavoLocale, :locale
+  ldap_map :puavokeyboardlayout, :keyboard_layout
+  ldap_map :puavokeyboardvariant, :keyboard_variant
+  ldap_map(:puavotag, :tags) { |v| Array(v) }
+  ldap_map :puavotimezone, :timezone
+  ldap_map :puavolocale, :locale
 
-  ldap_map :serialNumber, :serial_number
-  ldap_map :puavoDeviceManufacturer, :manufacturer
-  ldap_map :puavoDeviceModel, :model
+  ldap_map :serialnumber, :serial_number
+  ldap_map :puavodevicemanufacturer, :manufacturer
+  ldap_map :puavodevicemodel, :model
 
   def netboot?
     object_classes.include?("puavoNetbootDevice")

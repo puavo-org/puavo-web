@@ -7,49 +7,49 @@ class School < LdapModel
   include SambaAttrs
 
   ldap_map :dn, :dn
-  ldap_map :puavoId, :id, LdapConverters::SingleValue
-  ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
-  ldap_map :puavoExternalData, :external_data, LdapConverters::SingleValue
-  ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
-  ldap_map :displayName, :name
-  ldap_map :puavoSchoolCode, :school_code, LdapConverters::SingleValue
-  ldap_map :puavoDeviceImage, :preferred_image
-  ldap_map :puavoSchoolHomePageURL, :homepage
-  ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
-  ldap_map(:puavoWirelessPrinterQueue, :wireless_printer_queue_dns){ |v| Array(v) }
-  ldap_map :preferredLanguage, :preferred_language
-  ldap_map :puavoLocale, :locale
-  ldap_map :puavoWlanSSID, :wlan_networks, LdapConverters::ArrayOfJSON
-  ldap_map :puavoAllowGuest, :allow_guest, LdapConverters::StringBoolean
-  ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, LdapConverters::StringBoolean
-  ldap_map :puavoPersonalDevice, :personal_device, LdapConverters::StringBoolean
-  ldap_map(:puavoTag, :tags){ |v| Array(v) }
-  ldap_map :puavoConf, :puavoconf, LdapConverters::PuavoConfObj
-  ldap_map :gidNumber, :gid_number, LdapConverters::Number
+  ldap_map :puavoid, :id, LdapConverters::SingleValue
+  ldap_map :puavoexternalid, :external_id, LdapConverters::SingleValue
+  ldap_map :puavoexternaldata, :external_data, LdapConverters::SingleValue
+  ldap_map :objectclass, :object_classes, LdapConverters::ArrayValue
+  ldap_map :displayname, :name
+  ldap_map :puavoschoolcode, :school_code, LdapConverters::SingleValue
+  ldap_map :puavodeviceimage, :preferred_image
+  ldap_map :puavoschoolhomepageurl, :homepage
+  ldap_map(:puavoprinterqueue, :printer_queue_dns){ |v| Array(v) }
+  ldap_map(:puavowirelessprinterqueue, :wireless_printer_queue_dns){ |v| Array(v) }
+  ldap_map :preferredlanguage, :preferred_language
+  ldap_map :puavolocale, :locale
+  ldap_map :puavowlanssid, :wlan_networks, LdapConverters::ArrayOfJSON
+  ldap_map :puavoallowguest, :allow_guest, LdapConverters::StringBoolean
+  ldap_map :puavoautomaticimageupdates, :automatic_image_updates, LdapConverters::StringBoolean
+  ldap_map :puavopersonaldevice, :personal_device, LdapConverters::StringBoolean
+  ldap_map(:puavotag, :tags) { |v| Array(v) }
+  ldap_map :puavoconf, :puavoconf, LdapConverters::PuavoConfObj
+  ldap_map :gidnumber, :gid_number, LdapConverters::Number
   ldap_map :cn, :abbreviation
-  ldap_map(:puavoActiveService, :external_services) do |es|
+  ldap_map(:puavoactiveservice, :external_services) do |es|
       Array(es).map { |s| s.downcase.strip }
   end
-  ldap_map(:puavoMountpoint, :mountpoints){|m| Array(m).map{|json| JSON.parse(json) }}
-  ldap_map :puavoTimezone, :timezone
-  ldap_map :puavoKeyboardLayout, :keyboard_layout
-  ldap_map :puavoKeyboardVariant, :keyboard_variant
-  ldap_map :puavoImageSeriesSourceURL, :image_series_source_urls, LdapConverters::ArrayValue
+  ldap_map(:puavomountpoint, :mountpoints){|m| Array(m).map{|json| JSON.parse(json) }}
+  ldap_map :puavotimezone, :timezone
+  ldap_map :puavokeyboardlayout, :keyboard_layout
+  ldap_map :puavokeyboardvariant, :keyboard_variant
+  ldap_map :puavoimageseriessourceurl, :image_series_source_urls, LdapConverters::ArrayValue
 
-  ldap_map :postalAddress, :postal_address, LdapConverters::SingleValue
-  ldap_map :postalCode, :postal_code, LdapConverters::SingleValue
+  ldap_map :postaladdress, :postal_address, LdapConverters::SingleValue
+  ldap_map :postalcode, :postal_code, LdapConverters::SingleValue
   ldap_map :street, :postal_street, LdapConverters::SingleValue
-  ldap_map :postOfficeBox, :post_box, LdapConverters::SingleValue
+  ldap_map :postofficebox, :post_box, LdapConverters::SingleValue
   ldap_map :st, :state, LdapConverters::SingleValue
-  ldap_map :facsimileTelephoneNumber, :fax_number, LdapConverters::SingleValue
-  ldap_map :telephoneNumber, :phone_number, LdapConverters::SingleValue
+  ldap_map :facsimiletelephonenumber, :fax_number, LdapConverters::SingleValue
+  ldap_map :telephonenumber, :phone_number, LdapConverters::SingleValue
   ldap_map :description, :description, LdapConverters::SingleValue
-  ldap_map :puavoNotes, :notes, LdapConverters::SingleValue
+  ldap_map :puavonotes, :notes, LdapConverters::SingleValue
 
-  ldap_map :puavoMenuData, :puavomenu_data
+  ldap_map :puavomenudata, :puavomenu_data
   skip_serialize :puavomenu_data
 
-  ldap_map :puavoSchoolOID, :school_oid, LdapConverters::SingleValue
+  ldap_map :puavoschooloid, :school_oid, LdapConverters::SingleValue
   skip_serialize :school_oid
 
   skip_serialize :external_data
@@ -57,13 +57,13 @@ class School < LdapModel
   # Internal attributes, do not use! These are automatically set when
   # User#school_dns is updated
   ldap_map :member, :member_dns, LdapConverters::ArrayValue
-  ldap_map :memberUid, :member_usernames, LdapConverters::ArrayValue
+  ldap_map :memberuid, :member_usernames, LdapConverters::ArrayValue
 
-  ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
-  ldap_map :puavoDeviceOnHour,           :daytime_start_hour
-  ldap_map :puavoDeviceOffHour,          :daytime_end_hour
+  ldap_map :puavodeviceautopoweroffmode, :autopoweroff_mode
+  ldap_map :puavodeviceonhour,           :daytime_start_hour
+  ldap_map :puavodeviceoffhour,          :daytime_end_hour
 
-  ldap_map :puavoSchoolAdmin, :school_admin_dns, LdapConverters::ArrayValue
+  ldap_map :puavoschooladmin, :school_admin_dns, LdapConverters::ArrayValue
 
   before :create do
     if Array(object_classes).empty?
