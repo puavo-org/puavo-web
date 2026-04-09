@@ -206,7 +206,7 @@ class Organisation < LdapModel
           last_name: o['sn'][0].force_encoding('UTF-8'),
           uid_number: o['uidNumber'][0].to_i,
           gid_number: o['gidNumber'][0].to_i,
-          ssh_public_key: o.to_hash.fetch('puavoSshPublicKey', [])[0]
+          ssh_public_key: o.to_h.fetch('puavoSshPublicKey', [])[0]
         }
       end
     end
@@ -297,7 +297,7 @@ class Organisations < PuavoSinatra
                                     scope: Net::LDAP::SearchScope_BaseObject,
                                     filter: '(objectClass=*)',
                                     attributes: ldap_attrs) do |entry|
-        raw = [entry.to_hash]
+        raw = [entry.to_h]
       end
 
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)

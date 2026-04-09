@@ -101,7 +101,7 @@ class School < LdapModel
     out = []
 
     # due the way raw_filter() works, we must use a block when doing plain DN searches
-    School.raw_filter(dn, base_filter(), attributes) { |s| out << s.to_hash }
+    School.raw_filter(dn, base_filter(), attributes) { |s| out << s.to_h }
 
     return out.size == 1 ? out.first : nil
   end

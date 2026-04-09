@@ -28,7 +28,7 @@ class LdapModel
 
     if block.nil?
       block = lambda do |entry|
-        res.push(entry.to_hash) if entry.dn != base
+        res.push(entry.to_h) if entry.dn != base
       end
     end
 
@@ -203,7 +203,7 @@ class LdapModel
 
     res = nil
     raw_filter(dn, "(objectclass=*)", attributes) do |entry|
-      res = entry.to_hash
+      res = entry.to_h
       break
     end
     res

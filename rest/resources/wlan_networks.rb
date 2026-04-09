@@ -37,7 +37,7 @@ class WlanNetworks < PuavoSinatra
                                   scope: Net::LDAP::SearchScope_BaseObject,
                                   filter: '(objectClass=*)',
                                   attributes: ['puavoWlanSSID']) do |org|
-      organisation << org.to_hash
+      organisation << org.to_h
     end
 
     if organisation.count == 1
