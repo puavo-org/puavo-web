@@ -103,7 +103,7 @@ class LdapModel
     conn = nil
 
     if credentials[:kerberos] then
-      return sasl_bind(credentrials)
+      return sasl_bind(credentials)
     end
 
     if credentials[:dn].to_s.strip.empty? then
