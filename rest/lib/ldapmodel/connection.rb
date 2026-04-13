@@ -35,6 +35,7 @@ class LdapModel
           auth: {
             method: :gssapi,
             hostname: ldap_server,
+            credentials: kg.delegated_credentials,
           }
         )
 

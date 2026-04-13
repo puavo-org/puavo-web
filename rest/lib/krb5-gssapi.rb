@@ -13,6 +13,10 @@ class Krb5Gssapi
     @cachename = "MEMORY:#{ SecureRandom.uuid }"
   end
 
+  def delegated_credentials
+    @srv.delegated_credentials
+  end
+
   def display_name
     @srv.display_name
   end
