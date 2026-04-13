@@ -43,6 +43,7 @@ module Net
         #++
         def bind(auth)
           host, svc = [auth[:hostname], auth[:servicename] || "ldap"]
+          creds = auth[:credentials]
           raise Net::LDAP::BindingInformationInvalidError, "Invalid binding information" unless (host && svc)
 
           gsscli = ::GSSAPI::Simple.new(host, svc)
@@ -72,7 +73,7 @@ module Net
 
           Net::LDAP::AuthAdapter::Sasl.new(@connection).
             bind(method: :sasl, mechanism: "GSSAPI",
-                 initial_credential: gsscli.init_context,
+                 initial_credential: gsscli.init_context(nil, credentials: creds),
                  challenge_response: challenge_response)
         end
       end
