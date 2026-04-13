@@ -1,7 +1,8 @@
 require 'net/ldap'
-require 'net/ldap/auth_adapter/gssapi'
 require 'openssl'
 require 'syslog'
+
+require_relative '../net/ldap/auth_adapter/gssapi'
 
 Syslog.open("puavo-rest(slapd)", Syslog::LOG_PID, Syslog::LOG_DAEMON | Syslog::LOG_LOCAL3)
 
