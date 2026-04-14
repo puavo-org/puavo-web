@@ -9,53 +9,49 @@ Syslog.open("puavo-rest(slapd)", Syslog::LOG_PID, Syslog::LOG_DAEMON | Syslog::L
 # Connection management
 class LdapModel
 
-  KRB_LOCK = Mutex.new
-
   # Do LDAP SASL bind with a kerberos ticket
   def self.sasl_bind(credentials)
     ticket = credentials[:kerberos]
 
-    KRB_LOCK.synchronize do
-      kg = nil
+    kg = nil
 
-      begin
-        kg = Krb5Gssapi.new(CONFIG['fqdn'], CONFIG['keytab'])
-        delegated_krb_credentials = kg.get_delegated_credentials(ticket)
+    begin
+      kg = Krb5Gssapi.new(CONFIG['fqdn'], CONFIG['keytab'])
+      delegated_krb_credentials = kg.get_delegated_credentials(ticket)
 
-        username, org = kg.display_name.split('@')
-        settings[:credentials][:username] = username
-        LdapModel.setup(organisation: PuavoRest::Organisation.by_domain(org.downcase))
+      username, org = kg.display_name.split('@')
+      settings[:credentials][:username] = username
+      LdapModel.setup(organisation: PuavoRest::Organisation.by_domain(org.downcase))
 
-        ldap = Net::LDAP.new(
-          host: ldap_server,
-          port: 389,
-          encryption: {
-            method: :start_tls,
-            tls_options: {
-              ca_file: CONFIG['ca_cert_path'],
-              verify_mode: OpenSSL::SSL::VERIFY_PEER,
-            },
+      ldap = Net::LDAP.new(
+        host: ldap_server,
+        port: 389,
+        encryption: {
+          method: :start_tls,
+          tls_options: {
+            ca_file: CONFIG['ca_cert_path'],
+            verify_mode: OpenSSL::SSL::VERIFY_PEER,
           },
-          auth: {
-            method: :gssapi,
-            hostname: ldap_server,
-            credentials: delegated_krb_credentials,
-          },
-        )
+        },
+        auth: {
+          method: :gssapi,
+          hostname: ldap_server,
+          credentials: delegated_krb_credentials,
+        },
+      )
 
-        bind_net_ldap(ldap, credentials)
+      bind_net_ldap(ldap, credentials)
 
-        return ldap
-      rescue GSSAPI::GssApiError => err
-        if err.message.match(/Clock skew too great/)
-          raise KerberosError, user: 'Your clock is messed up'
-        else
-          raise KerberosError, user: err.message
-        end
-      rescue Krb5Gssapi::NoDelegation
-        raise KerberosError,
-          user: "Credentials are not delegated! '--delegation always' missing?"
+      return ldap
+    rescue GSSAPI::GssApiError => err
+      if err.message.match(/Clock skew too great/)
+        raise KerberosError, user: 'Your clock is messed up'
+      else
+        raise KerberosError, user: err.message
       end
+    rescue Krb5Gssapi::NoDelegation
+      raise KerberosError,
+        user: "Credentials are not delegated! '--delegation always' missing?"
     end
   end
 
