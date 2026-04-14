@@ -20,7 +20,7 @@ class LdapModel
 
       begin
         kg = Krb5Gssapi.new(CONFIG['fqdn'], CONFIG['keytab'])
-        kg.copy_ticket(ticket)
+        delegated_krb_credentials = kg.get_delegated_credentials(ticket)
 
         username, org = kg.display_name.split('@')
         settings[:credentials][:username] = username
@@ -39,7 +39,7 @@ class LdapModel
           auth: {
             method: :gssapi,
             hostname: ldap_server,
-            credentials: kg.delegated_credentials,
+            credentials: delegated_krb_credentials,
           },
         )
 
@@ -55,8 +55,6 @@ class LdapModel
       rescue Krb5Gssapi::NoDelegation
         raise KerberosError,
           user: "Credentials are not delegated! '--delegation always' missing?"
-      ensure
-        kg.clean_up if kg
       end
     end
   end
