@@ -31,13 +31,16 @@ class LdapModel
           port: 389,
           encryption: {
             method: :start_tls,
-            tls_options: OpenSSL::SSL::SSLContext::DEFAULT_PARAMS,
+            tls_options: {
+              ca_file: CONFIG['ca_cert_path'],
+              verify_mode: OpenSSL::SSL::VERIFY_PEER,
+            },
           },
           auth: {
             method: :gssapi,
             hostname: ldap_server,
             credentials: kg.delegated_credentials,
-          }
+          },
         )
 
         bind_net_ldap(ldap, credentials)
@@ -84,6 +87,10 @@ class LdapModel
       port: 389,
       encryption: {
         method: :start_tls,
+        tls_options: {
+          ca_file: CONFIG['ca_cert_path'],
+          verify_mode: OpenSSL::SSL::VERIFY_PEER,
+        },
       },
       auth: {
         method: :simple,

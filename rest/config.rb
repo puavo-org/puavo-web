@@ -7,6 +7,7 @@ require 'openssl'
 fqdn = Addrinfo.getaddrinfo(Socket.gethostname, nil).first.getnameinfo.first
 
 default_config = {
+  "ca_cert_path" => "/etc/puavo-conf/rootca.pem",
   "ldap" => fqdn,
   "ldapmaster" => PUAVO_ETC.get(:ldap_master),
   "topdomain" => PUAVO_ETC.get(:topdomain),
@@ -36,6 +37,7 @@ if ENV['RACK_ENV'] == 'test' then
   # XXX with the ldap accounts that puavo-rest uses.
 
   CONFIG = {
+    "ca_cert_path" => "/etc/puavo-conf/rootca.pem",
     "ldap" => fqdn,
     "ldapmaster" => PUAVO_ETC.get(:ldap_master),
     "topdomain" => "puavo.net",
