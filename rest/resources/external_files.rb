@@ -16,10 +16,10 @@ class ExternalFile < LdapModel
   def self.raw_list
     ExternalFile.raw_filter(self.ldap_base(),
                             self.base_filter(),
-                            ['cn', 'puavoDataHash']).collect do |file|
+                            ['cn', 'puavodatahash']).collect do |file|
       {
-        name: file['cn'][0],
-        data_hash: file['puavoDataHash'][0],
+        data_hash: Array(file[:puavodatahash]).first,
+        name:      Array(file[:cn]).first,
       }
     end
   end
@@ -28,9 +28,9 @@ class ExternalFile < LdapModel
   def self.data_only(name)
     res = by_attr!(:name, name, {
       :raw => true,
-      :ldap_attrs => [:puavoData]
+      :ldap_attrs => [:puavodata]
     })
-     Array(res["puavoData"]).first
+    Array(res[:puavodata]).first
   end
 
 end
