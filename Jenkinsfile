@@ -45,6 +45,7 @@ pipeline {
         // and running "ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml"
         // should work, we probably want to test that this works as well:
         sh '''
+          sleep 8640000
           wget -qO - https://github.com/puavo-org/puavo-standalone/raw/trixie/setup.sh | sh
         '''
       }
