@@ -52,7 +52,7 @@ end
 <tr>
   <th class="main"><%= t('hwinfo.abitti.title') %></th>
   <td colspan="2">
-  <% if extra.include?('Abitti') %>
+  <% if extra&.include?('Abitti') %>
   <%= extra['Abitti'] %>
   <% else %>
   <%= t('hwinfo.abitti.unknown') %>
