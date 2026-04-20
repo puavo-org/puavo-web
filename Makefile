@@ -182,4 +182,4 @@ install-build-deps:
 
 .PHONY: upload-debs
 upload-debs:
-	dput puavo ../puavo-users_*.changes
+	dput puavo ../puavo-web_*.changes
