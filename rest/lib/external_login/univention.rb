@@ -38,7 +38,7 @@ module PuavoRest
   end
 
   class ExternalUniventionService < ExternalLoginService
-    attr_reader :kelvin, :provisioning
+    attr_reader :provisioning
 
     def initialize(external_login, univention_config, service_name, rlog)
       super(external_login, service_name, rlog)
@@ -67,8 +67,6 @@ module PuavoRest
       admin_password = Univention::get_conf_string(univention_config,
                                                    'admin_password',
                                                    'admin password not configured')
-      @kelvin = Kelvin.new(server_uri, admin_username, admin_password, rlog)
-
       raise 'no provisioning configration' \
         unless univention_config['provisioning'].kind_of?(Hash)
       @provisioning = Provisioning.new(external_login,
@@ -79,8 +77,6 @@ module PuavoRest
 
       @puavo_schools_by_id = nil
       @univention_schools_by_url = {}
-
-      @kelvin.setup_connection()
     end
 
     def change_password(actor_username, actor_password, target_user_username,
@@ -260,7 +256,7 @@ module PuavoRest
 
       users = {}
 
-      univention_user_list = @kelvin.get_all_users()
+      univention_user_list = @provisioning.get_all_users()
       univention_user_list.each do |univention_user|
         extlogin_id = get_univention_attribute(univention_user,
                                                @extlogin_id_field)
@@ -281,7 +277,7 @@ module PuavoRest
     def get_schools_by_url
       schools_by_url = {}
 
-      school_list = @kelvin.get_schools()
+      school_list = @provisioning.get_schools()
       school_list.each do |school|
         begin
           raise UniventionDataError,
@@ -329,81 +325,6 @@ module PuavoRest
     def update_univentionuserinfo(username)
       # XXX no-op but may be needed later?
       return
-    end
-  end
-
-  class Kelvin
-    def initialize(server_uri, admin_username, admin_password, rlog)
-      @server_uri     = server_uri
-      @admin_username = admin_username
-      @admin_password = admin_password
-      @rlog           = rlog
-    end
-
-    def setup_connection
-      @token = get_token()
-    end
-
-    def get_token
-      uri = URI("#{ @server_uri }/ucsschool/kelvin/token")
-
-      request = Net::HTTP::Post.new(uri)
-      request['Content-Type'] = 'application/x-www-form-urlencoded'
-      request.set_form_data('username' => @admin_username,
-                            'password' => @admin_password)
-
-      response = Univention::do_http_request(uri, request)
-      unless response.is_a?(Net::HTTPSuccess) then
-        raise UniventionRequestError.new(response,
-                                         'failure when requesting a token')
-      end
-
-      parsed_response = JSON.parse(response.body)
-      raise 'no access token received' \
-        unless parsed_response['access_token'].kind_of?(String) \
-                 && !parsed_response['access_token'].empty?
-
-      return parsed_response['access_token']
-    end
-
-    def get(uri, something)
-      begin
-        return do_json_request_with_token(uri)
-      rescue UniventionRequestError => e
-        raise UniventionRequestError.new(e.response,
-                "failure when requesting #{ something }: #{ e.message }")
-      end
-    end
-
-    def get_subpath(subpath, something)
-      uri = URI("#{ @server_uri }#{ subpath }")
-      get(uri, something)
-    end
-
-    def get_all_users
-      get_subpath('/ucsschool/kelvin/v1/users/', 'users')
-    end
-
-    def get_user(username)
-      get_subpath("/ucsschool/kelvin/v1/users/#{ username }",
-                  "user #{ username }")
-    end
-
-    def get_schools
-      get_subpath('/ucsschool/kelvin/v1/schools/', 'schools')
-    end
-
-    def do_json_request_with_token(uri)
-      request = Net::HTTP::Get.new(uri)
-      request['Authorization'] = "Bearer #{ @token }"
-      request['Content-Type'] = 'application/json'
-
-      response = Univention::do_http_request(uri, request)
-      unless response.is_a?(Net::HTTPSuccess) then
-        raise UniventionRequestError.new(response, 'error in request')
-      end
-
-      return JSON.parse(response.body)
     end
   end
 
@@ -484,8 +405,6 @@ module PuavoRest
       @provisioning_config = provisioning_config
       @rlog                = rlog
 
-      @kelvin = login_service.kelvin
-
       @admin_password = Univention::get_conf_string(@provisioning_config,
                                                     'admin_password',
                                                     'admin_password not configured')
@@ -534,10 +453,10 @@ module PuavoRest
 
       # we set the @subscription_password here (to Univention)
       subscription_params = {
-        "name": SUBSCRIPTION_NAME,
-        "realms_topics": [ { "realm": "udm", "topic": "users/user" } ],
-        "request_prefill": false,
-        "password": @subscription_password,
+        'name': SUBSCRIPTION_NAME,
+        'realms_topics': [ { 'realm': 'udm', 'topic': 'users/user' } ],
+        'request_prefill': false,
+        'password': @subscription_password,
       }
 
       uri = URI(subscriptions_baseuri)
@@ -626,7 +545,7 @@ module PuavoRest
       end
 
       begin
-        user = @kelvin.get_user(event.username)
+        user = get_user(event)
       rescue StandardError => e
         @rlog.warn("can not get user from Univention: #{ e.message }")
         return
