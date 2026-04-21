@@ -43,14 +43,6 @@ export const SortOrder = {
     DESCENDING: "desc"
 };
 
-// After the data has been transformed, each row column is made up of multiple elements.
-// These are the indexes to those elements. NEVER use plain numbers, always use these!
-export const
-    INDEX_EXISTS = 0,
-    INDEX_DISPLAYABLE = 1,
-    INDEX_FILTERABLE = 2,
-    INDEX_SORTABLE = 3;
-
 // Pagination counts. Each entry is formatted as [row count, title]. -1 displays all rows.
 export const ROWS_PER_PAGE_PRESETS = [
     [-1, "∞"],

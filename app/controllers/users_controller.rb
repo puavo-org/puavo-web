@@ -124,14 +124,12 @@ class UsersController < ApplicationController
 
   # AJAX call
   def get_school_users_list
-    # Get lists of organisation owners and school admins (DNs)
-    organisation_owners = owners_set()
     school_admins = Array(@school.user_school_admins || []).collect { |a| a.dn.to_s }.to_set
 
+    # Make a list of schools
     schools_by_dn = {}
 
-    School.search_as_utf8(filter: '',
-                          attributes: ['cn', 'displayName', 'puavoId']).each do |dn, school|
+    School.search_as_utf8(filter: '', attributes: ['cn', 'displayName', 'puavoId']).each do |dn, school|
       schools_by_dn[dn] = {
         id: school['puavoId'][0].to_i,
         cn: school['cn'][0],
@@ -141,56 +139,26 @@ class UsersController < ApplicationController
 
     krb_auth_times_by_uid = Kerberos.all_auth_times_by_uid
 
-    # Get a raw list of users in this school
-    raw = User.search_as_utf8(filter: "(puavoSchool=#{@school.dn})",
-                              scope: :one,
-                              attributes: UsersHelper.get_user_attributes())
-
-    # Build a list of devices whose primary users are in this school. If the viewer is a school
-    # admin and the device is in a school they don't have access to, then ACLs will prevent the
+    # Make a list of all devices with the primary user set. If the viewer is a school admin
+    # and the device is in a school they don't have access to, then ACLs will prevent the
     # device search below from seeing the device.
     puavoid_extractor = /puavoId=([^, ]+)/.freeze
+    user_devices = {}
 
-    users_devices = {}
-
-    raaka = Device.search_as_utf8(
+    Device.search_as_utf8(
       filter: "(puavoDevicePrimaryUser=*)",
       scope: :one,
       attributes: ['puavoDevicePrimaryUser', 'puavoHostname', 'puavoSchool']
-    ).each do |device_dn, raw_device|
-      # PuavoIDs for manual link formatting (manual is faster than automatic)
-      device_id = device_dn.match(puavoid_extractor)[1].to_i
-      device_school_id = raw_device['puavoSchool'][0].match(puavoid_extractor)[1].to_i
+    ).each do |dn, device|
+      user_dn = device['puavoDevicePrimaryUser'][0]
+      user_devices[user_dn] ||= []
 
-      user_dn = raw_device['puavoDevicePrimaryUser'][0]
-      users_devices[user_dn] ||= []
-
-      users_devices[user_dn] << [
-        raw_device['puavoHostname'][0],
-        "/devices/#{device_school_id}/devices/#{device_id}",
-        device_school_id
-      ]
-    end
-
-    # Convert the raw data into something we can easily parse in JavaScript
-    school_id = @school.id.to_i
-    users = []
-
-    raw.each do |dn, usr|
-      # Common attributes
-      user = UsersHelper.convert_raw_user(dn, usr, organisation_owners, school_admins)
-
-      # Special attributes
-      user[:link] = "/users/#{school.id}/users/#{user[:id]}"
-      user[:school_id] = school_id
-      user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school_id]
-      user[:devices] = users_devices[dn] if users_devices.include?(dn)
-
-      krb_auth_date = Integer(krb_auth_times_by_uid[ user[:uid] ] \
-                        .to_date.to_time) rescue nil
-      user[:last_kerberos_auth_date] = krb_auth_date if krb_auth_date
-
-      users << user
+      user_devices[user_dn] << {
+        'id' => dn.match(puavoid_extractor)[1].to_i,
+        'school_id' => device['puavoSchool'][0].match(puavoid_extractor)[1].to_i,
+        'school_dn' => device['puavoSchool'][0],
+        'hostname' => device['puavoHostname'][0],
+      }
     end
 
     # For listing user groups. Only link to schools the current user can see (if not an owner)
@@ -202,7 +170,16 @@ class UsersController < ApplicationController
 
     groups, group_members = GroupsHelper.load_group_member_lists(schools_by_dn, accessible_schools)
 
-    render json: { users: users, groups: groups, group_members: group_members }
+    render json: {
+      users: User.search_as_utf8(filter: "(puavoSchool=#{@school.dn})", scope: :one, attributes: UsersHelper.get_user_attributes()),
+      schools: schools_by_dn,
+      school_admins: list_school_admins(),
+      owners: owners_set(),
+      devices: user_devices,
+      groups: groups,
+      group_members: group_members,
+      krb_auth_times: krb_auth_times_by_uid,
+    }
   end
 
   # GET /:school_id/users/1/image

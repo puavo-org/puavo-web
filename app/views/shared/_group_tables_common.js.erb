@@ -8,106 +8,103 @@ const GROUP_TYPES = {
     "other groups": "<%= t('group_type.other groups') %>",
 };
 
-// Table column definitions
 const COLUMN_DEFINITIONS = {
-    abbr: {
-        key: "abbr",
+    abbreviation: {
+        attribute: "cn",
         title: "<%= t('columns.groups.abbreviation') %>",
-        type: ST.ColumnType.STRING,
     },
 
     created: {
-        key: "created",
+        attribute: "createTimestamp",
         title: "<%= t('columns.created') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     eid: {
-        key: "eid",
-        title: "<%= t('columns.groups.eid') %>",
-        type: ST.ColumnType.STRING,
+        attribute: "puavoExternalId",
+        title: "<%= t('columns.users.eid') %>",
     },
 
     id: {
-        key: "id",
+        attribute: "puavoId",
         title: "<%= t('columns.puavoid') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
+    notes: {
+        attribute: "puavoNotes",
+        title: "<%= t('columns.notes') %>",
+        flags: ST.ColumnFlag.ARRAY,
+        transformer: (context, dn, entry) => ST.outputAsStandardArray(entry.puavoNotes[0].replaceAll("\r", "").split("\n"), false),
+    },
+
     modified: {
-        key: "modified",
+        attribute: "modifyTimestamp",
         title: "<%= t('columns.modified') %>",
         type: ST.ColumnType.UNIXTIME,
         flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     members_count: {
-        key: "members_count",
+        attribute: "members_count",
         title: "<%= t('columns.groups.members_count') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     name: {
-        key: "name",
+        attribute: "displayName",
         title: "<%= t('columns.groups.name') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            return [
-                `<a href="${entry.link}">${ST.escapeHTML(entry.name)}</a>`,
-                entry.name
-            ];
-        }
+        transformer: (context, dn, entry) => {
+            const name = entry.displayName[0];
+
+            return {
+                display: `<a href="/users/${context.schools[entry.puavoSchool[0]].id}/groups/${entry.puavoId[0]}">${name}</a>`,
+                filter: name,
+                sort: name.toLowerCase(),
+                export: name
+            };
+        },
     },
 
 <% if @is_organisation %>
     school: {
-        key: "school",
+        attribute: "puavoSchool",
         title: "<%= t('columns.school') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            // Makes filtering by school name work as expected, but the exported CSV
-            // will contain display names. Can't have everything.
-            return [
-                entry.school[1],
-                entry.school[1]
-            ];
-        },
+        transformer: (context, dn, entry) => { return { value: context.schools[entry.puavoSchool[0]].name } },
     },
 <% end %>
 
     type: {
-        key: "type",
+        attribute: "puavoEduGroupType",
         title: "<%= t('columns.groups.type') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => {
-            let type = null;
+        transformer: (context, dn, entry) => {
+            const rawType = entry.puavoEduGroupType[0],
+                  localized = (rawType in GROUP_TYPES) ? GROUP_TYPES[rawType] : null;
 
-            if (entry.type in GROUP_TYPES) {
-                type = GROUP_TYPES[entry.type];
-
-                if (entry.type == 'course group')
-                    type = `<span class="stCourseGroup">${type}</span>`;
-            } else {
-                type = `<span class="missingData"><%= t('missing_data') %></span>`;
+            return {
+                display: (localized === null) ? "?" : localized,
+                filter: rawType,
+                sort: localized,
+                export: rawType
             }
-
-            return [type, entry.type];
         },
-        missing: {
-            display: `<span class="missingData"><%= t('missing_data') %></span>`,
-            sort: "",
-            filter: "",
-        }
-    },
-
-    notes: {
-        key: "notes",
-        title: "<%= t('columns.notes') %>",
-        type: ST.ColumnType.STRING,
-        flags: ST.ColumnFlag.ARRAY,
     },
 };
+
+function preparse(raw)
+{
+    return {
+        entries: raw.groups,
+        schools: raw.schools,
+    };
+}
+
+function postparse(context, transformed)
+{
+    for (let i = 0; i < context.entries.length; i++)
+        transformed[i]._school_id = context.schools[context.entries[i][1].puavoSchool[0]].id;
+}
 
 // The default order for columns. "DEFAULT_COLUMNS" above does not have to be in this order.
 const COLUMN_ORDER = [
@@ -116,7 +113,7 @@ const COLUMN_ORDER = [
 <% end %>
     "id",
     "name",
-    "abbr",
+    "abbreviation",
     "type",
     "members_count",
     "eid",
@@ -211,10 +208,7 @@ class MassGroupSetType extends ST.MassOperation {
 
     prepareItem(item)
     {
-        if (item.type[ST.INDEX_FILTERABLE] == this.type)
-            return { state: "skip" };
-
-        return { state: "ready" };
+        return { state: (item.type?.filter === this.type) ? "skip" : "ready" };
     }
 };
 <% end %>
@@ -264,11 +258,11 @@ const MASS_OPERATIONS = [
 <% end %>
 ];
 
-function userActions(item)
+function groupActions(item)
 {
     let html = "";
 
-    const link = `/users/${item.school_id}/groups/${item.id[ST.INDEX_FILTERABLE]}`;
+    const link = `/users/${item._school_id}/groups/${item._puavo_id}`;
 
     html += `<a href="${link}/edit" class="btn"><%= t('link.edit') %></a> `;
 
@@ -283,7 +277,7 @@ function userActions(item)
 
 function openCallback(item)
 {
-    return `/users/${item.school_id}/groups/${item.id[ST.INDEX_DISPLAYABLE]}`;
+    return `/users/${item._school_id}/groups/${item._puavo_id}`;
 }
 
 const MASS_SELECTS = [

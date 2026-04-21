@@ -230,8 +230,12 @@ class OrganisationsController < ApplicationController
       primary_school = cache_school(admin.primary_school.dn)
 
       {
-        id: admin.id.to_i,            # the supertable code needs this
-        school_id: primary_school,    # this too (we need a separate member for the primary school)
+        # These two fields are needed by the SuperTable code
+        _puavo_id: admin.id.to_i,
+        _school_id: admin.primary_school.id.to_i,
+
+        id: admin.id.to_i,
+        school_id: primary_school,
         name: "#{admin.givenName} #{admin.sn}",
         username: admin.uid,
         owner: owners.include?(admin.dn.to_s),
@@ -293,40 +297,39 @@ class OrganisationsController < ApplicationController
 
   # AJAX call
   def get_all_users
-    owners = owners_set()
     schools_by_dn = raw_schools_by_dn()
-    school_admins = list_school_admins().values.map(&:to_a).flatten.to_set
+    groups, group_members = GroupsHelper.load_group_member_lists(schools_by_dn, Set.new)
     krb_auth_times_by_uid = Kerberos.all_auth_times_by_uid
 
-    # Get a raw list of all users in all schools and convert it into easily parseable format
-    users = User.search_as_utf8(
-      filter: '(puavoSchool=*)',
+    # Make a list of all devices with the primary user set
+    puavoid_extractor = /puavoId=([^, ]+)/.freeze
+    user_devices = {}
+
+    Device.search_as_utf8(
+      filter: "(puavoDevicePrimaryUser=*)",
       scope: :one,
-      attributes: UsersHelper.get_user_attributes())
-    .collect do |dn, usr|
-      school = schools_by_dn[usr['puavoEduPersonPrimarySchool'][0]]
+      attributes: ['puavoDevicePrimaryUser', 'puavoHostname', 'puavoSchool', 'puavoId']
+    ).each do |dn, device|
+      user_dn = device['puavoDevicePrimaryUser'][0]
+      user_devices[user_dn] ||= []
 
-      user = UsersHelper.convert_raw_user(dn, usr, owners, school_admins)
-      user[:link] = "/users/#{school[:id]}/users/#{user[:id]}"
-      user[:school] = [school[:cn], school[:name]]
-      user[:school_id] = school[:id]
-      user[:schools] = Array(usr['puavoSchool'].map { |dn| schools_by_dn[dn][:id] }) - [school[:id]]
-
-      krb_auth_date = Integer(krb_auth_times_by_uid[ user[:uid] ] \
-                        .to_date.to_time) rescue nil
-      user[:last_kerberos_auth_date] = krb_auth_date if krb_auth_date
-
-      user
+      user_devices[user_dn] << {
+        'id' => device['puavoId'][0].to_i,
+        'school_id' => device['puavoSchool'][0].match(puavoid_extractor)[1].to_i,
+        'school_dn' => device['puavoSchool'][0],
+        'hostname' => device['puavoHostname'][0],
+      }
     end
 
-    # For listing user groups. Use empty set for the accessible schools, because only owners
-    # can get here and they can see everything.
-    groups, group_members = GroupsHelper.load_group_member_lists(schools_by_dn, Set.new)
-
     render json: {
-      users: users,
+      users: User.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: UsersHelper.get_user_attributes()),
+      schools: schools_by_dn,
+      school_admins: list_school_admins(),
+      owners: owners_set(),
       groups: groups,
-      group_members: group_members
+      group_members: group_members,
+      devices: user_devices,
+      krb_auth_times: krb_auth_times_by_uid,
     }
   end
 
@@ -345,25 +348,18 @@ class OrganisationsController < ApplicationController
 
   # AJAX call
   def get_all_groups
-    schools_by_dn = raw_schools_by_dn()
+    groups = Group.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: GroupsHelper.get_group_attributes())
 
-    # Get a raw list of all groups in all schools and convert it into easily parseable format
-    groups = Group.search_as_utf8(
-      filter: '(puavoSchool=*)',
-      scope: :one,
-      attributes: GroupsHelper.get_group_attributes())
-    .collect do |dn, grp|
-      school = schools_by_dn[grp['puavoSchool'][0]]
-
-      group = GroupsHelper.convert_raw_group(dn, grp)
-      group[:link] = "/users/#{school[:id]}/groups/#{group[:id]}"
-      group[:school] = [school[:cn], school[:name]]
-      group[:school_id] = school[:id]
-
-      group
+    # Change the members list into a members count
+    groups.each do |_, g|
+      g['members_count'] = [g.fetch('memberUid', []).count]
+      g.delete('memberUid')
     end
 
-    render json: groups
+    render json: {
+      groups: groups,
+      schools: raw_schools_by_dn()
+    }
   end
 
   def all_devices
@@ -391,33 +387,44 @@ class OrganisationsController < ApplicationController
 
   # AJAX call
   def get_all_devices
-    schools_by_dn = raw_schools_by_dn()
+    devices = Device.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: DevicesHelper.get_device_attributes())
 
-    # Known image release names
-    releases = get_releases()
+    # Have to retrieve primary user data, because we will not send a list of all users to the clientside
+    cache = {}
 
-    # Get a raw list of all devices in all schools and convert it into easily parseable format
-    devices = Device.search_as_utf8(
-      filter: '(puavoSchool=*)',
-      scope: :one,
-      attributes: DevicesHelper.get_device_attributes())
-    .collect do |dn, dev|
-      school = schools_by_dn[dev['puavoSchool'][0]]
+    devices.each do |_, d|
+      user_dn = d.fetch('puavoDevicePrimaryUser', [nil])[0]
+      next unless user_dn
 
-      device = DevicesHelper.convert_raw_device(dev, releases)
-      device[:link] = "/devices/#{school[:id]}/devices/#{device[:id]}"
-      device[:school] = [school[:cn], school[:name]]
-      device[:school_id] = school[:id]
-
-      # Figure out the primary user
-      if device[:user]
-        device[:user] = DevicesHelper.format_device_primary_user(device[:user], school[:id])
+      unless cache.include?(user_dn)
+        begin
+          cache[user_dn] = User.find(user_dn)
+        rescue StandardError
+          cache[user_dn] = nil
+        end
       end
 
-      device
+      user = cache[user_dn]
+
+      if user
+        d['puavoDevicePrimaryUser'] = {
+          valid: true,
+          link: "/users/#{user.primary_school.id}/users/#{user.id}",
+          title: "#{user.uid} (#{user.givenName} #{user.sn})"
+        }
+      else
+        d['puavoDevicePrimaryUser'] = {
+          valid: false,
+          dn: user_dn,
+        }
+      end
     end
 
-    render json: devices
+    render json: {
+      devices: devices,
+      schools: raw_schools_by_dn(),
+      releases: get_releases(),
+    }
   end
 
   def edit_puavomenu

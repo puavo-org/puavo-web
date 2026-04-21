@@ -63,7 +63,7 @@ export class MassOperation {
 
 import { create } from "../../common/dom.js";
 import { _tr } from "../../common/utils.js";
-import { INDEX_DISPLAYABLE, BATCH_SIZE } from "./constants.js";
+import { BATCH_SIZE } from "./constants.js";
 import * as Pagination from "./pagination.js";
 import { saveSettings } from "./settings.js";
 import { onOpenMassRowSelectionPopup } from "./row_selection.js";
@@ -176,7 +176,7 @@ export function start(table)
 
     // Make a list of all selected rows
     for (let rowNum = 0; rowNum < table.data.current.length; rowNum++) {
-        const id = table.data.transformed[table.data.current[rowNum]].id[INDEX_DISPLAYABLE];
+        const id = table.data.transformed[table.data.current[rowNum]]._puavo_id;
 
         if (table.data.selectedItems.has(id)) {
             table.massOperation.rows.push({

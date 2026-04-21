@@ -62,94 +62,90 @@ const COLUMN_ORDER = [
 
 const COLUMN_DEFINITIONS = {
     id: {
-        key: "id",
         title: "<%= t('columns.puavoid') %>",
         type: ST.ColumnType.NUMERIC,
     },
 
     first: {
-        key: "first",
         title: "<%= t('columns.users.first_names') %>",
-        type: ST.ColumnType.STRING,
         alias: ["first_name", "fn"],
     },
 
     last: {
-        key: "last",
         title: "<%= t('columns.users.last_name') %>",
-        type: ST.ColumnType.STRING,
         alias: ["last_name", "ln"],
     },
 
     name: {
-        key: "name",
         title: "<%= t('columns.users.full_name') %>",
-        type: ST.ColumnType.STRING,
         transform: entry => {
-            return [
-                `<a href="/users/${entry.school_id}/users/${entry.id}">${ST.escapeHTML(entry.name)}</a>`,
-                entry.name
-            ];
+            return {
+                display: `<a href="/users/${entry._school_id}/users/${entry.id}">${ST.escapeHTML(entry.name)}</a>`,
+                filter: ST.escapeHTML(entry.name),
+                sort: ST.escapeHTML(entry.name),
+                export: entry.name,
+            };
         }
     },
 
     uid: {
-        key: "uid",
         title: "<%= t('columns.users.uid') %>",
-        type: ST.ColumnType.STRING,
     },
 
     role: {
-        key: "role",
         title: "<%= t('columns.users.role') %>",
-        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
         transform: entry => {
-            let values = [];
+            let values = [],
+                plain = [];
 
             // Translate user roles
             for (let i = 0; i < entry.role.length; i++) {
                 const r = entry.role[i];
+                const t = (r in USER_ROLES) ? USER_ROLES[r] : USER_ROLES['unknown'];
 
-                values.push((r in USER_ROLES) ? USER_ROLES[r] : USER_ROLES['unknown']);
+                values.push(t);
+                plain.push(t.toLowerCase());
             }
 
-            return [
-                values.join("<br>"),
-                entry.role.join()
-            ];
+            return {
+                display: values.join("<br>"),
+                filter: plain,
+                sort: plain,
+                export: entry.role.join("\n"),
+            };
         }
     },
 
     locked: {
-        key: "locked",
         title: "<%= t('columns.users.is_locked') %>",
         type: ST.ColumnType.BOOL,
     },
 
     marked: {
-        key: "marked",
         title: "<%= t('columns.users.rrt') %>",
         type: ST.ColumnType.UNIXTIME,
+        flags: ST.ColumnFlag.DESCENDING_DEFAULT,
     },
 
     groups: {
-        key: "groups",
         title: "<%= t('columns.groups.member_groups') %>",
-        type: ST.ColumnType.STRING,
+        flags: ST.ColumnFlag.ARRAY,
         transform: entry => {
             let values = [],
                 plain = [];
 
             for (const g of entry.groups) {
-                values.push(`<a href="${g.link}">${g.title}</a> <small>[${g.school}]</small>`);
+                values.push(`<a href="${g.link}">${ST.escapeHTML(g.title)}</a> <small>[${ST.escapeHTML(g.school)}]</small>`);
                 plain.push(g.title);
             }
 
-            return [
-                values.join("<br>"),
-                plain.join(","),
-                plain.join(","),
-            ];
+            return {
+                display: values,
+                sort: plain.join(","),
+                filter: plain,
+                export: plain.join("\n"),
+            };
         }
     },
 };
@@ -364,7 +360,8 @@ function* synthesizeData(raw)
         let u2 = {...u};
 
         // These fields don't exist in the data, generate them on-the-fly
-        u2.school_id = <%= @school.id %>;
+        u2._puavo_id = u.id;
+        u2._school_id = <%= @school.id %>;
         u2.name = `${u.first} ${u.last}`;
 
         // Rewrite group information in-place. Group information is highly repetitive
@@ -410,6 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
             defaultSorting: DEFAULT_SORTING,
             dynamicData: "/users/<%= @school.id %>/groups/get_all_groups_members",
             preFilterFunction: synthesizeData,
+            datamode: "custom",
         }
     );
 });

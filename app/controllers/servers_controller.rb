@@ -58,69 +58,11 @@ class ServersController < ApplicationController
       }
     end
 
-    # Get a raw list of servers in this organisation
-    raw = Server.search_as_utf8(:attributes => DevicesHelper.get_server_attributes())
-
-    # Known image release names
-    releases = get_releases()
-
-    # Convert the raw data into something we can easily parse in JavaScript
-    school_cache = {}
-    servers = []
-
-    raw.each do |dn, srv|
-      # Common attributes
-      server = DevicesHelper.convert_raw_device(srv, releases)
-
-      # Special attributes
-      server[:link] = "/devices/servers/#{server[:id]}"
-      server[:school_id] = -1   # servers are not bound to any specific school
-
-      if srv.include?('puavoDeviceAvailableImage')
-        images = []
-
-        Array(srv['puavoDeviceAvailableImage'] || []).each do |image|
-          images << {
-            file: image,
-            release: releases.fetch(image, nil),
-          }
-        end
-
-        if images.count > 0
-          server[:available_images] = images
-        end
-      end
-
-      # In servers, the puavoSchool attribute lists which schools the server serves
-      if srv.include?('puavoSchool')
-        schools = []
-
-        Array(srv['puavoSchool'] || []).each do |dn|
-          if schools_by_dn.include?(dn)
-            s = schools_by_dn[dn]
-
-            schools << {
-              valid: true,
-              title: s[:name],
-              link: s[:link],
-            }
-          else
-            schools << {
-              valid: false,
-              dn: dn,
-            }
-          end
-        end
-
-        if schools.count > 0
-          server[:schools] = schools
-        end
-      end
-
-      servers << server
-    end
-
-    servers
+    {
+      devices: Server.search_as_utf8(attributes: DevicesHelper.get_server_attributes()),
+      schools: schools_by_dn,
+      releases: get_releases(),
+    }
   end
 
   # GET /servers/1

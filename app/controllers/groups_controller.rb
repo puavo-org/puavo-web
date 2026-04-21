@@ -69,27 +69,27 @@ class GroupsController < ApplicationController
 
   # AJAX call
   def get_school_groups_list
-    # Get a raw list of groups in this school
-    raw = Group.search_as_utf8(filter: "(puavoSchool=#{@school.dn})",
-                               scope: :one,
-                               attributes: GroupsHelper.get_group_attributes())
+    groups = Group.search_as_utf8(filter: "(puavoSchool=#{@school.dn})", scope: :one, attributes: GroupsHelper.get_group_attributes())
 
-    # Convert the raw data into something we can easily parse in JavaScript
-    school_id = @school.id.to_i
-    groups = []
-
-    raw.each do |dn, grp|
-      # Common attributes
-      group = GroupsHelper.convert_raw_group(dn, grp)
-
-      # Special attributes
-      group[:link] = "/users/#{@school.id}/groups/#{group[:id]}"
-      group[:school_id] = school_id
-
-      groups << group
+    # Change the members list into a members count
+    groups.each do |_, g|
+      g['members_count'] = [g.fetch('memberUid', []).count]
+      g.delete('memberUid')
     end
 
-    render json: groups
+    render json: {
+      groups: groups,
+
+      # The client-side JavaScript code always assumes there's at least one school that it uses for formatting
+      # links and other stuff, so give it a school.
+      schools: {
+        "#{@school.dn}" => {
+          'id' => @school.id.to_i,
+          'cn' => @school.cn,
+          'name' => @school.displayName
+        }
+      }
+    }
   end
 
   # GET /:school_id/groups/1

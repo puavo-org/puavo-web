@@ -18,7 +18,7 @@ let GLOBAL_SUPERTABLE_INSTANCE = null;
 <%= render partial: 'shared/supertable_translations', formats: [:js] %>
 <%= render partial: 'shared/group_tables_common', formats: [:js] %>
 
-const DEFAULT_COLUMNS = ["name", "abbr", "type", "members_count", "eid"];
+const DEFAULT_COLUMNS = ["name", "abbreviation", "type", "members_count", "eid"];
 const DEFAULT_SORTING = { column: "name", dir: ST.SortOrder.ASCENDING };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -30,12 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Settings
         {
-            id: "orgGroups",
+            id: "schoolGroups",
             locale: "<%= supertable_sorting_locale %>",
             csvPrefix: `<%= LdapOrganisation.current.o %>-<%= @school.cn %>-groups`,
             columnDefinitions: COLUMN_DEFINITIONS,
             columnOrder: COLUMN_ORDER,
-            actions: userActions,
+            actions: groupActions,
             openCallback: openCallback,
             massSelects: MASS_SELECTS,
             massOperations: MASS_OPERATIONS,
@@ -43,6 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
             dynamicData: "/users/<%= @school.id %>/get_school_groups_list",
+            preparseFunction: preparse,
+            postparseFunction: postparse,
         }
     );
 });

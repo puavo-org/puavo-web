@@ -60,44 +60,54 @@ function sortSchools(schools)
 
     schools = schools.map(i => i[0]);
 
-    return [schools.join("<br>"), names.join(","), names.join(",")];
+    return {
+        display: schools.join("<br>"),
+        sort: names.join(","),
+        filter: names,
+        export: names
+    };
 }
 
 const COLUMN_DEFINITIONS = {
     id: {
-        key: "id",
         title: "<%= t('columns.puavoid') %>",
         type: ST.ColumnType.NUMERIC,
         alias: ["puavoid"],
     },
 
     name: {
-        key: "name",
         title: "<%= t('organisations.all_admins.columns.name') %>",
-        type: ST.ColumnType.STRING,
-        transform: entry => [`<a href="/users/${entry.school_id}/users/${entry.id}">${entry.name}</a> (${entry.username})`, entry.name, entry.name]
+        transform: entry => {
+            return {
+                display: `<a href="/users/${entry.school_id}/users/${entry.id}">${entry.name}</a> (${entry.username})`,
+                filter: entry.name,
+                sort: entry.name,
+                export: entry.name,
+            };
+        }
     },
 
     owner: {
-        key: "owner",
         title: "<%= t('organisations.all_admins.columns.owner') %>",
         type: ST.ColumnType.BOOL,
     },
 
     primary_school: {
-        key: "primary_school",
         title: "<%= t('columns.primary_school') %>",
-        type: ST.ColumnType.STRING,
         transform: entry => {
             const name = SCHOOLS[entry.school_id].name;
-            return [`<a href="/users/schools/${entry.school_id}">${name}</a>`, name, name];
+
+            return {
+                display: `<a href="/users/schools/${entry.school_id}">${name}</a>`,
+                filter: name,
+                sort: name,
+                export: name
+            };
         },
     },
 
     admin_in: {
-        key: "admin_in",
         title: "<%= t('organisations.all_admins.columns.admin_in') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
         transform: entry => {
             // Make a list of schools and highlight schools the user *isn't* in, but
@@ -114,7 +124,7 @@ const COLUMN_DEFINITIONS = {
                 if (school.id !== null && entry.school_id != id && !entry.other_schools.includes(id))
                     v += ` <span class="invalidAdminSchool" title="<%= t('organisations.all_admins.invalid_admin_school') %>">⚠️</span>`;
 
-                schools.push([v, name]);
+                schools.push([v, school.name]);
             }
 
             return sortSchools(schools);
@@ -122,9 +132,7 @@ const COLUMN_DEFINITIONS = {
     },
 
     other_schools: {
-        key: "other_schools",
         title: "<%= t('columns.users.other_schools') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
         transform: entry => {
             // Make a list of schools
@@ -141,9 +149,7 @@ const COLUMN_DEFINITIONS = {
     },
 
     permissions: {
-        key: "permissions",
         title: "<%= t('organisations.all_admins.columns.permissions') %>",
-        type: ST.ColumnType.STRING,
         flags: ST.ColumnFlag.ARRAY,
         transform: entry => {
             const userPermissions = new Set(entry.permissions);
@@ -155,7 +161,12 @@ const COLUMN_DEFINITIONS = {
                 if (userPermissions.has(p))
                     out.push(PERMISSIONS[p]);
 
-            return [out.join("<br>"), entry.permissions.join(","), entry.permissions.join(",")];
+            return {
+                display: out.join("<br>"),
+                filter: entry.permissions.join(","),
+                sort: entry.permissions.join(","),
+                export: entry.permissions
+            };
         }
     }
 };
@@ -261,10 +272,10 @@ const MASS_OPERATIONS = [
 
 function userActions(admin)
 {
-    if (admin.owner[ST.INDEX_FILTERABLE])
+    if (admin.owner?.value === true)
         return "";
 
-    return `<a href="/users/${admin.school_id}/users/${admin.id[ST.INDEX_FILTERABLE]}/edit_admin_permissions?org_admins=1" class="btn"><%= t('organisations.all_admins.edit') %></a>`;
+    return `<a href="/users/${admin._school_id}/users/${admin._puavo_id}/edit_admin_permissions?org_admins=1" class="btn"><%= t('organisations.all_admins.edit') %></a>`;
 }
 
 const COLUMN_ORDER = [
@@ -297,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
             defaultColumns: DEFAULT_COLUMNS,
             defaultSorting: DEFAULT_SORTING,
             staticData: ADMINS,
+            datamode: "custom",
         }
     );
 });

@@ -3,15 +3,7 @@
 import { create, getTemplate } from "../../common/dom.js";
 import { _tr, escapeHTML } from "../../common/utils.js";
 import { getColumnType } from "./utils.js";
-
-import {
-    ColumnType,
-    INDEX_EXISTS,
-    INDEX_DISPLAYABLE,
-    INDEX_FILTERABLE,
-    INDEX_SORTABLE
-} from "./constants.js";
-
+import { ColumnType } from "./constants.js";
 import * as Mass from "./mass_operations.js";
 
 export function setupRowSelections(table, frag)
@@ -63,7 +55,7 @@ export function onRowCheckboxClick(table, e)
               endRow = Math.max(table.previousRow, currentRow);
 
         // Select or deselect?
-        const state = selectedItems.has(table.data.transformed[table.data.current[table.previousRow]].id[INDEX_DISPLAYABLE]);
+        const state = selectedItems.has(table.data.transformed[table.data.current[table.previousRow]]._puavo_id);
 
         console.log(`${startRow} -> ${endRow}: ${state}`);
 
@@ -109,7 +101,7 @@ function updateItemIDSets(data, operation)
             data.selectedItems.clear();
 
             for (const index of data.current)
-                data.selectedItems.add(data.transformed[index].id[INDEX_DISPLAYABLE]);
+                data.selectedItems.add(data.transformed[index]._puavo_id);
 
             data.successItems.clear();
             data.failedItems.clear();
@@ -125,7 +117,7 @@ function updateItemIDSets(data, operation)
             let newState = new Set();
 
             for (const index of data.current) {
-                const id = data.transformed[index].id[INDEX_DISPLAYABLE];
+                const id = data.transformed[index]._puavo_id;
 
                 if (!data.selectedItems.has(id))
                     newState.add(id);
@@ -213,17 +205,17 @@ function selectSpecificRows(table, state)
     for (let i = 0, j = data.current.length; i < j; i++) {
         const item = data.transformed[data.current[i]];
 
-        if (!item[type][INDEX_EXISTS])
+        if (item[type] === undefined)
             continue;
 
-        const field = item[type][INDEX_FILTERABLE];
+        const field = item[type].filter ?? item[type].value;
 
         if (!entries.has(field))
             continue;
 
         found.add(field);
 
-        const id = item.id[INDEX_DISPLAYABLE];
+        const id = item._puavo_id;
 
         if (state) {
             // Select this row

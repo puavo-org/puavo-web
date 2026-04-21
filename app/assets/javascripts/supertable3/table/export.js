@@ -3,19 +3,42 @@
 import { _tr } from "../../common/utils.js";
 import { getTemplate } from "../../common/dom.js";
 import { getPopupContents } from "../../common/modal_popup.js";
-import { ColumnType, INDEX_FILTERABLE } from "./constants.js";
+import { ColumnType } from "./constants.js";
 import { JAVASCRIPT_TIME_GRANULARITY, getColumnType, isNullOrUndefined } from "./utils.js";
-
-// These characters will be escaped, even if the outputted value will be quoted
-const ESCAPE = [
-    ["\"", "\\\""],
-    ["\t", "\\t"],
-    ["\n", "\\n"],
-];
 
 const transformDate = v => new Date(v * JAVASCRIPT_TIME_GRANULARITY).toISOString();
 
-function exportColumnar(data, options, separator)
+function escape(str, extra=null)
+{
+    let out = [];
+
+    for (const chr of str) {
+        switch (chr) {
+            case "\n":
+                out.push("\\n");
+                break;
+
+            case "\r":
+                out.push("\\r");
+                break;
+
+            case "\t":
+                out.push("\\t");
+                break;
+
+            case "\\":
+                out.push("\\\\");
+                break;
+
+            default:
+                out.push(chr);
+        }
+    }
+
+    return out.join("");
+}
+
+function exportColumnar(data, options, columnSeparator, subvalueSeparator)
 {
     let output = [];
 
@@ -24,34 +47,48 @@ function exportColumnar(data, options, separator)
         let rowOut = [];
 
         for (const col of options.columns) {
-            if (col in row) {
-                let value = row[col][INDEX_FILTERABLE];
+            try {
+                let value = row[col];
 
-                if (isNullOrUndefined(value)) {         // output null for missing columns
+                if (isNullOrUndefined(value)) {
                     rowOut.push(null);
                     continue;
                 }
 
-                if (options.timeColumns.has(col))
-                    rowOut.push(transformDate(value));
-                else if (options.mustQuote.has(col)) {
-                    if (Array.isArray(value)) {
-                        for (const e of ESCAPE)
-                            for (let v of value)
-                                v = v.replaceAll(e[0], e[1]);
+                value = value.export ?? value.value;
 
-                        value = value.join("\n");
-                    } else {
-                        for (const e of ESCAPE)
-                            value = value.replaceAll(e[0], e[1]);
-                    }
+                if (options.timeColumns.has(col)) {
+                    rowOut.push(value);
+                    continue;
+                }
 
-                    rowOut.push(`"${value}"`);
-                } else rowOut.push(value);
+                // Escape an array of strings. This works because currently there can be only arrays of strings.
+                if (Array.isArray(value)) {
+                    let out = [];
+
+                    for (const v of value)
+                        out.push(escape(v));
+
+                    rowOut.push(out.join(subvalueSeparator));
+                    continue;
+                }
+
+                if (typeof(value) == "string") {
+                    rowOut.push(escape(value));
+                    continue;
+                }
+
+                // Use as-is
+                rowOut.push(value);
+            } catch (e) {
+                console.error(`Cannot transform row ${rowIndex} value "${col}":`);
+                console.error(e);
+                console.log(value);
+                return null;
             }
         }
 
-        output.push(rowOut.join(separator));
+        output.push(rowOut.join(columnSeparator));
     }
 
     return output;
@@ -67,14 +104,19 @@ function exportJSON(data, options)
 
         for (const col of options.columns) {
             if (col in row) {
-                const value = row[col][INDEX_FILTERABLE];
+                try {
+                    const value = row[col].export ?? row[col].value;
 
-                if (isNullOrUndefined(value))           // completely omit missing columns
-                    continue;
+                    if (isNullOrUndefined(value))           // completely omit missing columns
+                        continue;
 
-                if (options.timeColumns.has(col))
-                    rowOut[col] = transformDate(value);
-                else rowOut[col] = value;
+                    rowOut[col] = value;
+                } catch (e) {
+                    console.error(`Cannot transform row ${rowIndex} value "${col}":`);
+                    console.error(e);
+                    console.log(value);
+                    return null;
+                }
             }
         }
 
@@ -110,7 +152,7 @@ function doExport(table, format)
             for (const rowIndex of options.source) {
                 const row = table.data.transformed[rowIndex];
 
-                if (onlySelected && table.data.selectedItems.has(row.id[INDEX_FILTERABLE]))
+                if (onlySelected && table.data.selectedItems.has(row._puavo_id))
                     newSource.push(rowIndex);
             }
 
@@ -121,7 +163,6 @@ function doExport(table, format)
         options.columns = visibleCols ? table.columns.current : Object.keys(table.columns.definitions);
         options.headers = [];
         options.timeColumns = new Set();
-        options.mustQuote = new Set();
 
         for (const column of options.columns) {
             const definition = table.columns.definitions[column],
@@ -131,14 +172,11 @@ function doExport(table, format)
 
             if (type == ColumnType.UNIXTIME)
                 options.timeColumns.add(column);
-
-            if (type == ColumnType.STRING)
-                options.mustQuote.add(column);
         }
 
         const FORMATS = {
-            "csv":  { ext: "csv", sep: ";", mime: "text/csv", },
-            "tsv":  { ext: "tsv", sep: "\t", mime: "text/tab-separated-values" },
+            "csv":  { ext: "csv", sep: ",", subSep: ";", mime: "text/csv", },
+            "tsv":  { ext: "tsv", sep: "\t", subSep: ",", mime: "text/tab-separated-values" },
             "json": { ext: "json", mime: "json" }
         }
 
@@ -149,7 +187,7 @@ function doExport(table, format)
             case "csv":
             case "tsv":
                 output.push(options.headers.join(FORMATS[format].sep));
-                output = output.concat(exportColumnar(table.data, options, FORMATS[format].sep));
+                output = output.concat(exportColumnar(table.data, options, FORMATS[format].sep, FORMATS[format].subSep));
                 output = output.join("\n");
                 break;
 

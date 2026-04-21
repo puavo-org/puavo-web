@@ -93,34 +93,50 @@ class DevicesController < ApplicationController
 
   # AJAX call
   def get_school_devices_list
-    # Get a raw list of devices in this school
-    raw = Device.search_as_utf8(filter: "(puavoSchool=#{@school.dn})",
-                                scope: :one,
-                                attributes: DevicesHelper.get_device_attributes())
+    devices = Device.search_as_utf8(filter: "(puavoSchool=#{@school.dn})", scope: :one, attributes: DevicesHelper.get_device_attributes())
 
-    # Known image release names
-    releases = get_releases()
+    # Have to retrieve primary user data, because we will not send a list of all users to the clientside
+    cache = {}
 
-    # Convert the raw data into something we can easily parse in JavaScript
-    school_id = @school.id.to_i
+    devices.each do |_, d|
+      user_dn = d.fetch('puavoDevicePrimaryUser', [nil])[0]
+      next unless user_dn
 
-    devices = raw.collect do |dn, dev|
-      # Common attributes
-      device = DevicesHelper.convert_raw_device(dev, releases)
-
-      # Special attributes
-      device[:link] = "/devices/#{school_id}/devices/#{device[:id]}"
-      device[:school_id] = school_id
-
-      # Figure out the primary user
-      if device[:user]
-        device[:user] = DevicesHelper.format_device_primary_user(device[:user], school_id)
+      unless cache.include?(user_dn)
+        begin
+          cache[user_dn] = User.find(user_dn)
+        rescue StandardError
+          cache[user_dn] = nil
+        end
       end
 
-      device
+      user = cache[user_dn]
+
+      if user
+        d['puavoDevicePrimaryUser'] = {
+          valid: true,
+          link: "/users/#{user.primary_school.id}/users/#{user.id}",
+          title: "#{user.uid} (#{user.givenName} #{user.sn})"
+        }
+      else
+        d['puavoDevicePrimaryUser'] = {
+          valid: false,
+          dn: user_dn,
+        }
+      end
     end
 
-    render json: devices
+    render json: {
+      devices: devices,
+      schools: {
+        "#{@school.dn}" => {
+          'id' => @school.id.to_i,
+          'cn' => @school.cn,
+          'name' => @school.displayName,
+        }
+      },
+      releases: get_releases(),
+    }
   end
 
   # GET /devices/1

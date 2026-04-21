@@ -166,14 +166,19 @@ class ApplicationController < ActionController::Base
 
   end
 
-  # Makes a list of schools and their admin users (DNs). The return value is formatted as follows:
-  # {
-  #   "school dn 1" => Set { ... },
-  #   "school dn 2" => Set { ... }
-  # }
+  # Makes a list of schools and their admin users (DNs). The return value is a hash formatted as follows:
+  #
+  #   {
+  #     'school dn 1' => Set { 'puavoId=NNNN,ou=People,dc=edu,dc=hogwarts,dc=net', ... },
+  #     'school dn 2' => Set { ... }
+  #   }
+  #
+  # The hash will contain only those schools that have at least one admin. Do not assume the schools nor
+  # the user DNs in the sets are in any particular order.
   def list_school_admins
     School.search_as_utf8(attributes: ['puavoSchoolAdmin'])
           .collect { |s| [s[0], s[1].fetch('puavoSchoolAdmin', []).to_set] }
+          .reject! { |s| s[1].empty? }
           .to_h.freeze
   end
 

@@ -6,6 +6,28 @@ const keyName = table => `table-${table.id}-settings`;
 const haveString = (stored, key) => (key in stored) && (typeof(stored[key]) == "string");
 const haveBoolean = (stored, key) => (key in stored) && (typeof(stored[key]) == "boolean");
 
+// If a column is renamed, this "old names" mapping can be used to map it to the new name
+// when the settings are loaded, preserving the column. Afterwards, when the table settings
+// are saved, the new name will overwrite the old stored name, and this function won't
+// replace it again.
+function mapOldNames(columns, definitions)
+{
+    // Old name -> new name mapping table
+    const oldNames = new Map();
+
+    for (const [key, def] of Object.entries(definitions))
+        if ("old_name" in def)
+            oldNames.set(def.old_name, key);
+
+    // Rename the columns
+    let mappedColumns = [];
+
+    for (const c of columns)
+        mappedColumns.push(oldNames.has(c) ? oldNames.get(c) : c);
+
+    return mappedColumns;
+}
+
 function _loadSettings(table, stored)
 {
     // Restore open tool sections
@@ -19,6 +41,8 @@ function _loadSettings(table, stored)
         columns = stored.columns.split(",").map(i => i.trim()).filter(e => e != "");
 
     if (columns !== null) {
+        columns = mapOldNames(columns, table.columns.definitions);
+
         // Deduplicate the column names array and remove invalid/missing columns from it
         columns = [...new Set(columns)].filter(column => column in table.columns.definitions);
 
