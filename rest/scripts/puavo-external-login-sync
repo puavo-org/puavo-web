@@ -22,72 +22,7 @@ def log_warn(e, orig_msg)
   warn(msg)
 end
 
-# necessary for routing ExternalLogin logging to stdout/stderr
-$rest_log = SyncLog.new
-
-organisation = ARGV[0]
-if ARGV.count != 1 || !organisation then
-  warn "usage: #{ File.basename($0) } organisation_name"
-  exit 1
-end
-
-exitstatus = 0
-
-univention_provisioning = nil
-
-begin
-  topdomain = IO.read('/etc/puavo/topdomain').chomp
-
-  puavo_rest_base_conf = YAML::load_file('/etc/puavo-rest.yml')
-  raise '/etc/puavo-rest.yml is not a hash' \
-    unless puavo_rest_base_conf.kind_of?(Hash)
-
-  puavo_rest_extlogin_conf \
-    = YAML::load_file('/etc/puavo-rest.d/external_logins.yml')
-  raise '/etc/puavo-rest.d/external_logins.yml is not a hash' \
-    unless puavo_rest_extlogin_conf.kind_of?(Hash)
-
-  puavo_rest_conf = puavo_rest_base_conf.merge(puavo_rest_extlogin_conf)
-
-  extlogin_conf = puavo_rest_conf['external_login']
-
-  raise 'no external login configuration' unless extlogin_conf.kind_of?(Hash)
-
-  org_conf = extlogin_conf[organisation]
-  raise %Q{no external login configuration for "#{ organisation }"} \
-    unless org_conf.kind_of?(Hash)
-
-  puts ">>> checking organisation #{ organisation }"
-
-  org_domain = "#{ organisation }.#{ topdomain }"
-
-  manage_puavousers = org_conf['manage_puavousers']
-  raise 'no manage puavousers configuration value' if manage_puavousers.nil?
-
-  unless manage_puavousers then
-    puts %Q{>> users are not managed by external logins on "#{ organisation }"}
-    exit 0
-  end
-
-  admin_dn = org_conf['admin_dn']
-  raise 'no admin dn' unless admin_dn
-
-  admin_password = org_conf['admin_password']
-  raise 'no admin password' unless admin_password
-
-  LdapModel.setup(
-    :credentials  => { :dn => admin_dn, :password => admin_password },
-    :organisation => PuavoRest::Organisation.by_domain!(org_domain),
-    :rest_root    => 'DUMMY')
-
-  external_login = PuavoRest::ExternalLogin.new
-  login_service = external_login.new_external_service_handler()
-
-  if org_conf.has_key?('univention') then
-    univention_provisioning = login_service.provisioning
-    univention_provisioning.prepare
-  end
-
+def handle_batch_processing(external_login, login_service, organisation)
   external_users = nil
   begin
     external_users = login_service.lookup_all_users()
@@ -157,7 +92,75 @@ begin
     log_warn(nil, 'could not check and update one or more users' \
                     + ' from external login service')
   end
+end
 
+# necessary for routing ExternalLogin logging to stdout/stderr
+$rest_log = SyncLog.new
+
+organisation = ARGV[0]
+if ARGV.count != 1 || !organisation then
+  warn "usage: #{ File.basename($0) } organisation_name"
+  exit 1
+end
+
+exitstatus = 0
+
+univention_provisioning = nil
+
+begin
+  topdomain = IO.read('/etc/puavo/topdomain').chomp
+
+  puavo_rest_base_conf = YAML::load_file('/etc/puavo-rest.yml')
+  raise '/etc/puavo-rest.yml is not a hash' \
+    unless puavo_rest_base_conf.kind_of?(Hash)
+
+  puavo_rest_extlogin_conf \
+    = YAML::load_file('/etc/puavo-rest.d/external_logins.yml')
+  raise '/etc/puavo-rest.d/external_logins.yml is not a hash' \
+    unless puavo_rest_extlogin_conf.kind_of?(Hash)
+
+  puavo_rest_conf = puavo_rest_base_conf.merge(puavo_rest_extlogin_conf)
+
+  extlogin_conf = puavo_rest_conf['external_login']
+
+  raise 'no external login configuration' unless extlogin_conf.kind_of?(Hash)
+
+  org_conf = extlogin_conf[organisation]
+  raise %Q{no external login configuration for "#{ organisation }"} \
+    unless org_conf.kind_of?(Hash)
+
+  puts ">>> checking organisation #{ organisation }"
+
+  org_domain = "#{ organisation }.#{ topdomain }"
+
+  manage_puavousers = org_conf['manage_puavousers']
+  raise 'no manage puavousers configuration value' if manage_puavousers.nil?
+
+  unless manage_puavousers then
+    puts %Q{>> users are not managed by external logins on "#{ organisation }"}
+    exit 0
+  end
+
+  admin_dn = org_conf['admin_dn']
+  raise 'no admin dn' unless admin_dn
+
+  admin_password = org_conf['admin_password']
+  raise 'no admin password' unless admin_password
+
+  LdapModel.setup(
+    :credentials  => { :dn => admin_dn, :password => admin_password },
+    :organisation => PuavoRest::Organisation.by_domain!(org_domain),
+    :rest_root    => 'DUMMY')
+
+  external_login = PuavoRest::ExternalLogin.new
+  login_service = external_login.new_external_service_handler()
+
+  if org_conf.has_key?('univention') then
+    univention_provisioning = login_service.provisioning
+    univention_provisioning.prepare
+  end
+
+  handle_batch_processing(external_login, login_service, organisation)
 rescue StandardError => e
   log_warn(e, '!! error in updating users from external login service on' \
                 + %Q{ organisation "#{ organisation }"})
@@ -166,7 +169,7 @@ end
 
 if univention_provisioning then
   begin
-    univention_provisioning.run
+    univention_provisioning.wait_for_events
   rescue StandardError => e
     log_warn(e, '!! error in running Univention provisioning event handler' \
                   + %Q{ on organisation "#{ organisation }"})
