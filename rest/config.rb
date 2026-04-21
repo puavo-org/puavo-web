@@ -37,7 +37,7 @@ if ENV['RACK_ENV'] == 'test' then
   # XXX with the ldap accounts that puavo-rest uses.
 
   CONFIG = {
-    "ca_cert_path" => "/etc/puavo-conf/rootca.pem",
+    "ca_cert_path" => '/etc/ssl/certs/slapd-ca.crt',
     "ldap" => fqdn,
     "ldapmaster" => PUAVO_ETC.get(:ldap_master),
     "topdomain" => "puavo.net",
