@@ -6,6 +6,7 @@ require_relative './errors'
 require_relative './service'
 
 class UniventionDataError < ExternalLoginDataError; end
+class EmptyUniventionEvent < UniventionDataError; end
 class UniventionRequestError < ExternalLoginAccessError
   attr_reader :response
 
@@ -331,17 +332,29 @@ module PuavoRest
   class Event
     attr_reader :sequence_number, :username
 
-    def initialize(event_data)
-      @data = event_data
-      validate
-      subkey = is_being_deleted? ? 'old' : 'new'
+    def initialize(event_data, login_service, rlog)
+      # this should always succeed so we can acknowledge the event later
+      @data            = event_data
+      @login_service   = login_service
+      @rlog            = rlog
       @sequence_number = @data['sequence_number']
-      @options         = @data['body'][subkey]['options']
-      @username        = @data['body'][subkey]['properties']['username']
+      @validated       = false
+    end
+
+    def subkey
+      is_being_deleted? ? 'old' : 'new'
+    end
+
+    def options
+      @data['body'][subkey]['options']
+    end
+
+    def username
+      @data['body'][subkey]['properties']['username']
     end
 
     def is_ucsschool_user?
-      @options.any? do |opt, value|
+      options.any? do |opt, value|
         opt.match(/\Aucsschool/) \
           && (value.kind_of?(FalseClass) || value.kind_of?(TrueClass)) \
           && value
@@ -352,10 +365,50 @@ module PuavoRest
       @data['body']['new'].empty?
     end
 
+    def handle
+      validate
+
+      @rlog.info("handling event number #{ @sequence_number }" \
+                   + %Q{ for user "#{ username }"})
+
+      unless is_ucsschool_user? then
+        @rlog.info("ignoring event #{ @sequence_number }"            \
+                     + %Q{ for user "#{ username }" because he/she} \
+                     + ' has no ucsschool roles')
+        return
+      end
+
+      if is_being_deleted? then
+        # XXX instead of using username, this should probably look for
+        # XXX Puavo user with the same Univention Object Id?
+        puavo_user = User.by_username(username)
+        if puavo_user.mark_for_removal! then
+          @rlog.info("puavo user '#{ puavo_user.username }' is marked" \
+                       + ' for removal')
+          return
+        end
+      end
+
+      begin
+        user = get_user
+      rescue StandardError => e
+        @rlog.warn("can not get user from Univention: #{ e.message }")
+        return
+      end
+
+      begin
+        @login_service.update_from_external(event.username, user)
+      rescue StandardError => e
+        @rlog.warn("can not update user to Puavo: #{ e.message }")
+      end
+    end
+
     def validate
+      return if @validated
+
       check_types(@data, {
         'body'            => Hash,
-        'publisher_name'  => 'udm-listener',
+        'publisher_name'  => publisher_name,
         'realm'           => 'udm',
         'sequence_number' => Integer,
         'topic'           => 'users/user',
@@ -373,6 +426,8 @@ module PuavoRest
 
       check_types(@data['body'][subkey]['properties'],
                   { 'username' => String })
+
+      @validated = true
     end
 
     def check_types(data, types)
@@ -391,6 +446,18 @@ module PuavoRest
             unless value == constraint
         end
       end
+    end
+  end
+
+  class ListenerEvent < Event
+    def publisher_name
+      'udm-listener'
+    end
+  end
+
+  class PrefillEvent < Event
+    def publisher_name
+      'udm-pre-fill'
     end
   end
 
@@ -414,30 +481,42 @@ module PuavoRest
                                       'subscription_password not configured')
     end
 
+    def get_all_users
+      univention_user_list = []
+
+      get_and_handle_an_event(PrefillEvent)
+      get_and_handle_an_event(PrefillEvent)
+
+      raise 'unimplemented'
+      # handle_event(event)
+    end
+
     def prepare
       create_subscription
     end
 
-    def run
+    def get_and_handle_an_event(expected_eventclass)
+      event = nil
+      begin
+        event = get_next_event(expected_eventclass)
+        event.handle
+      ensure
+        if event then
+          # Acknowledge even in case of errors.  The show must go on.
+          send_acknowledgement(event)
+        end
+      end
+    end
+
+    def wait_for_events
       # XXX when to break out of the loop?  once a day, or in some unexpected
       # XXX events?
       loop do
         begin
-          event_data = get_next_event()
-          if event_data.nil? then
-            sleep 2
-            redo
-          end
-          event = nil
-          begin
-            event = Event.new(event_data)
-            handle_event(event)
-          ensure
-            if event then
-              # Acknowledge even in case of errors.  The show must go on.
-              send_acknowledgement(event)
-            end
-          end
+          get_and_handle_an_event(ListenerEvent)
+        rescue UniventionDataError => e
+          sleep 2
+          redo
         rescue StandardError => e
           @rlog.error("next event error: #{ e.message }")
           # in case of unexpected errors, wait a while before trying again
@@ -454,8 +533,10 @@ module PuavoRest
       # we set the @subscription_password here (to Univention)
       subscription_params = {
         'name': SUBSCRIPTION_NAME,
-        'realms_topics': [ { 'realm': 'udm', 'topic': 'users/user' } ],
-        'request_prefill': false,
+        'realms_topics': [
+          { 'realm': 'udm', 'topic': 'users/user' },
+        ],
+        'request_prefill': true,
         'password': @subscription_password,
       }
 
@@ -504,7 +585,7 @@ module PuavoRest
       URI("#{ subscriptions_baseuri }/#{ SUBSCRIPTION_NAME }")
     end
 
-    def get_next_event
+    def get_next_event(expected_eventclass)
       @rlog.info('making a new request for the next provisioning event')
 
       timeout_seconds = 60
@@ -519,43 +600,9 @@ module PuavoRest
                 'failure when getting the next event on subscription')
       end
 
-      JSON.parse(response.body)
-    end
-
-    def handle_event(event)
-      @rlog.info("handling event number #{ event.sequence_number }" \
-                   + %Q{ for user "#{ event.username }"})
-
-      unless event.is_ucsschool_user? then
-        @rlog.info("ignoring event #{ event.sequence_number }"            \
-                     + %Q{ for user "#{ event.username }" because he/she} \
-                     + ' has no ucsschool roles')
-        return
-      end
-
-      if event.is_being_deleted? then
-        # XXX instead of using username, this should probably look for
-        # XXX Puavo user with the same Univention Object Id?
-        puavo_user = User.by_username(event.username)
-        if puavo_user.mark_for_removal! then
-          @rlog.info("puavo user '#{ puavo_user.username }' is marked" \
-                       + ' for removal')
-          return
-        end
-      end
-
-      begin
-        user = get_user(event)
-      rescue StandardError => e
-        @rlog.warn("can not get user from Univention: #{ e.message }")
-        return
-      end
-
-      begin
-        @login_service.update_from_external(event.username, user)
-      rescue StandardError => e
-        @rlog.warn("can not update user to Puavo: #{ e.message }")
-      end
+      parsed_data = JSON.parse(response.body)
+      raise EmptyUniventionEvent('no data') if parsed_data.nil?
+      return expected_eventclass.new(parsed_data, @login_service, @rlog)
     end
 
     def send_acknowledgement(event)
