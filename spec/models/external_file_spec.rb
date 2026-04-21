@@ -59,7 +59,7 @@ describe ExternalFile, :type => :model do
     expect(json.keys).to eq(["id", "name", "data_hash"])
     expect(json["name"]).to eq("filename.txt")
     expect(json["data_hash"]).to eq("403926033d001b5279df37cbbe5287b7c7c267fa")
-    expect(json["id"].class).to eq(Fixnum)
+    expect(json["id"].class).to eq(Integer)
   end
 
 
