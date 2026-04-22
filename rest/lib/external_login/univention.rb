@@ -330,7 +330,7 @@ module PuavoRest
   end
 
   class Event
-    attr_reader :sequence_number, :username
+    attr_reader :sequence_number
 
     def initialize(event_data, login_service, rlog)
       # this should always succeed so we can acknowledge the event later
@@ -341,16 +341,46 @@ module PuavoRest
       @validated       = false
     end
 
-    def subkey
-      is_being_deleted? ? 'old' : 'new'
+    def handle
+      validate
     end
 
-    def options
-      @data['body'][subkey]['options']
+    def check_types(data, types)
+      types.each do |field, constraint|
+        raise "missing #{ field }" unless data.has_key?(field)
+        value = data[field]
+        if constraint.class == Class then
+          raise UniventionDataError, "#{ field } is not #{ constraint }" \
+            unless value.kind_of?(constraint)
+        elsif constraint.kind_of?(Array) then
+          raise UniventionDataError,
+                "#{ field } is not any of #{ constraint }" \
+            unless constraint.any? { |cls| value.kind_of?(cls) }
+        else
+          raise UniventionDataError, %Q{#{ field } is not #{ constraint }} \
+            unless value == constraint
+        end
+      end
+    end
+  end
+
+  class UserEvent < Event
+    attr_reader :username
+
+    def handle
+      @rlog.info("handling event number #{ @sequence_number }" \
+                   + %Q{ for user "#{ username }"})
+
+      unless is_ucsschool_user? then
+        @rlog.info("ignoring event #{ @sequence_number }"            \
+                     + %Q{ for user "#{ username }" because he/she} \
+                     + ' has no ucsschool roles')
+        return
+      end
     end
 
-    def username
-      @data['body'][subkey]['properties']['username']
+    def is_being_deleted?
+      @data['body']['new'].empty?
     end
 
     def is_ucsschool_user?
@@ -361,46 +391,16 @@ module PuavoRest
       end
     end
 
-    def is_being_deleted?
-      @data['body']['new'].empty?
+    def options
+      @data['body'][subkey]['options']
     end
 
-    def handle
-      validate
+    def subkey
+      is_being_deleted? ? 'old' : 'new'
+    end
 
-      @rlog.info("handling event number #{ @sequence_number }" \
-                   + %Q{ for user "#{ username }"})
-
-      unless is_ucsschool_user? then
-        @rlog.info("ignoring event #{ @sequence_number }"            \
-                     + %Q{ for user "#{ username }" because he/she} \
-                     + ' has no ucsschool roles')
-        return
-      end
-
-      if is_being_deleted? then
-        # XXX instead of using username, this should probably look for
-        # XXX Puavo user with the same Univention Object Id?
-        puavo_user = User.by_username(username)
-        if puavo_user.mark_for_removal! then
-          @rlog.info("puavo user '#{ puavo_user.username }' is marked" \
-                       + ' for removal')
-          return
-        end
-      end
-
-      begin
-        user = get_user
-      rescue StandardError => e
-        @rlog.warn("can not get user from Univention: #{ e.message }")
-        return
-      end
-
-      begin
-        @login_service.update_from_external(event.username, user)
-      rescue StandardError => e
-        @rlog.warn("can not update user to Puavo: #{ e.message }")
-      end
+    def username
+      @data['body'][subkey]['properties']['username']
     end
 
     def validate
@@ -429,33 +429,47 @@ module PuavoRest
 
       @validated = true
     end
-
-    def check_types(data, types)
-      types.each do |field, constraint|
-        raise "missing #{ field }" unless data.has_key?(field)
-        value = data[field]
-        if constraint.class == Class then
-          raise UniventionDataError, "#{ field } is not #{ constraint }" \
-            unless value.kind_of?(constraint)
-        elsif constraint.kind_of?(Array) then
-          raise UniventionDataError,
-                "#{ field } is not any of #{ constraint }" \
-            unless constraint.any? { |cls| value.kind_of?(cls) }
-        else
-          raise UniventionDataError, %Q{#{ field } is not #{ constraint }} \
-            unless value == constraint
-        end
-      end
-    end
   end
 
-  class ListenerEvent < Event
+  class ListenerUserEvent < UserEvent
+    def handle
+      super
+
+      if is_being_deleted? then
+        # XXX instead of using username, this should probably look for
+        # XXX Puavo user with the same Univention Object Id?
+        puavo_user = User.by_username(username)
+        if puavo_user.mark_for_removal! then
+          @rlog.info("puavo user '#{ puavo_user.username }' is marked" \
+                       + ' for removal')
+          return
+        end
+      end
+
+      begin
+        user = get_user
+      rescue StandardError => e
+        @rlog.warn("can not get user from Univention: #{ e.message }")
+        return
+      end
+
+      begin
+        @login_service.update_from_external(event.username, user)
+      rescue StandardError => e
+        @rlog.warn("can not update user to Puavo: #{ e.message }")
+      end
+    end
+
     def publisher_name
       'udm-listener'
     end
   end
 
-  class PrefillEvent < Event
+  class PrefillUserEvent < UserEvent
+    def handle
+      return self
+    end
+
     def publisher_name
       'udm-pre-fill'
     end
@@ -482,9 +496,10 @@ module PuavoRest
     def get_all_users
       univention_user_list = []
 
-      # XXX there could be many prefill events
-      get_and_handle_an_event(PrefillEvent)
-      raise 'unimplemented'
+      loop do
+        event = get_and_handle_an_event(PrefillUserEvent)
+        puts "got event #{ event.inspect }"
+      end
     end
 
     def prepare
@@ -495,7 +510,7 @@ module PuavoRest
       event = nil
       begin
         event = get_next_event(expected_eventclass)
-        event.handle
+        return event.handle
       ensure
         if event then
           # Acknowledge even in case of errors.  The show must go on.
@@ -509,12 +524,13 @@ module PuavoRest
       # XXX events?
       loop do
         begin
-          get_and_handle_an_event(ListenerEvent)
+          get_and_handle_an_event(ListenerUserEvent)
         rescue UniventionDataError => e
+          @rlog.error("univention data error: #{ e.message }")
           sleep 2
           redo
         rescue StandardError => e
-          @rlog.error("next event error: #{ e.message }")
+          @rlog.error("unexpected next event error: #{ e.message }")
           # in case of unexpected errors, wait a while before trying again
           sleep 10
         end
