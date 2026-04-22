@@ -34,7 +34,7 @@ module PuavoRest
       value = config[key]
       raise ExternalLoginConfigError, errmsg \
         unless value.kind_of?(String) && !value.empty?
-      return value
+      value
     end
   end
 
@@ -93,7 +93,7 @@ module PuavoRest
         (puavo_schools_by_id[external_school_id] ||= []) << school
       end
 
-      return puavo_schools_by_id
+      puavo_schools_by_id
     end
 
     def get_userinfo_for_puavo(username)
@@ -109,7 +109,7 @@ module PuavoRest
         puavo_extlogin_id_field => get_attr.call(@extlogin_id_field),
         'first_name'            => get_attr.call('firstname'),
         'last_name'             => get_attr.call('lastname'),
-        'ldap_password_hash'    => get_attr.call('userPasswordHash'),
+        # XXX 'ldap_password_hash'    => get_attr.call('userPasswordHash'),
         'locked'                => get_attr.call('disabled'),
         'username'              => username,
       }
@@ -125,15 +125,16 @@ module PuavoRest
                       "User '#{ username }' has no first name in Univention")
       check_attr.call('last_name',
                       "User '#{ username }' has no last name in Univention")
-      check_attr.call('ldap_password_hash',
-                      "User '#{ username }' has no ldap password in Univention")
+# XXX
+#     check_attr.call('ldap_password_hash',
+#                     "User '#{ username }' has no ldap password in Univention")
       check_attr.call('username',
                       "User '#{ username }' has no account name in Univention")
 
       # we apply some magicks to determine user school, groups and roles
       add_roles_and_schools!(userinfo)
 
-      return userinfo
+      userinfo
     end
 
     def add_roles_and_schools!(userinfo)
@@ -160,7 +161,7 @@ module PuavoRest
     def get_user_roles()
       user_roles = []
 
-      ucsschool_roles = @univention_userinfo['ucsschool_roles']
+      ucsschool_roles = @univention_userinfo['ucsschoolRole']
       unless ucsschool_roles.kind_of?(Array) && !ucsschool_roles.empty? then
         raise UniventionDataError,
               %Q{user "#{ @username }" has no roles in UCS@school}
@@ -187,7 +188,7 @@ module PuavoRest
                 + ' that actually" exist in Puavo'
       end
 
-      return user_roles
+      user_roles
     end
 
     def get_user_puavo_school_dns()
@@ -272,7 +273,10 @@ module PuavoRest
         }
       end
 
-      return users
+      raise 'Univention did not list any users, something is wrong' \
+        if users.empty?
+
+      users
     end
 
     def get_schools_by_url
@@ -302,12 +306,7 @@ module PuavoRest
     end
 
     def get_univention_attribute(univention_object, attribute)
-      case attribute
-        when 'univentionObjectIdentifier', 'userPasswordHash'
-          univention_object.dig('udm_properties', attribute) \
-        else
-          univention_object.dig(attribute)
-      end
+      univention_object.dig(attribute)
     end
 
     def set_userinfo_from_external(username, univention_userinfo)
@@ -507,32 +506,43 @@ module PuavoRest
                                                     'admin_password',
                                                     'admin_password not configured')
       # new one each time, kept only in memory
-      @subscription_password = SecureRandom.alphanumeric(50)
+      @subscription_password = SecureRandom.alphanumeric(32)
     end
 
     def get_all_users
       univention_user_list = []
 
       loop do
-        event = get_and_handle_an_event()
+        begin
+          subscription = get_subscription()
+          event = get_and_handle_an_event(5)
+        rescue EmptyUniventionEvent => e
+          # no event, check subscription state
+          subscription = get_subscription()
+          if subscription['prefill_queue_status'] == 'done' then
+            @rlog.info('no event and prefill queue status is done')
+            break
+          end
+          next
+        end
+
         if event.kind_of?(PrefillUserEvent) then
           user = event.user_properties
-          p "GOT USER: #{ user.inspect }"
+          univention_user_list << user
         else
-          p "GOT SOME OTHER EVENT: #{ event.inspect }"
+          # XXX
+          raise "GOT SOME OTHER EVENT: #{ event.inspect }"
         end
       end
+
+      univention_user_list
     end
 
-    def prepare
-      create_subscription
-    end
-
-    def get_and_handle_an_event
+    def get_and_handle_an_event(timeout_seconds)
       event = nil
       begin
-        event = get_next_event
-        event.handle
+        event = get_next_event(timeout_seconds)
+        event.handle()
         return event
       ensure
         if event then
@@ -547,7 +557,7 @@ module PuavoRest
       # XXX events?
       loop do
         begin
-          get_and_handle_an_event()
+          get_and_handle_an_event(60)
         rescue UniventionDataError => e
           @rlog.error("univention data error: #{ e.message }")
           sleep 2
@@ -558,6 +568,25 @@ module PuavoRest
           sleep 10
         end
       end
+    end
+
+    def create_event_object(parsed_data)
+      raise 'data is not a Hash' unless parsed_data.kind_of?(Hash)
+
+      publisher_name = parsed_data['publisher_name']
+      topic = parsed_data['topic']
+      if publisher_name == 'udm-listener' && topic == 'users/user' then
+        event_class = ListenerUserEvent
+      elsif publisher_name == 'udm-pre-fill' && topic == 'users/user' then
+        event_class = PrefillUserEvent
+      else
+        @rlog.warn("got an unknown event with" \
+                     + " publisher_name=#{ publisher_name }" \
+                     + " and topic=#{ topic }")
+        event_class = Event
+      end
+
+      event_class.new(parsed_data, @login_service, @rlog)
     end
 
     # needs to be called only once to setup subscription
@@ -610,6 +639,10 @@ module PuavoRest
       end
     end
 
+    def prepare
+      create_subscription
+    end
+
     def subscriptions_baseuri
       URI("#{ @server_uri }/univention/provisioning/v1/subscriptions")
     end
@@ -618,11 +651,19 @@ module PuavoRest
       URI("#{ subscriptions_baseuri }/#{ SUBSCRIPTION_NAME }")
     end
 
-    def get_next_event
+    def get_next_event(timeout_seconds)
       @rlog.info('making a new request for the next provisioning event')
+      parsed_data = make_request('/messages/next', timeout_seconds)
+      raise EmptyUniventionEvent, 'no data received' if parsed_data.nil?
+      create_event_object(parsed_data)
+    end
 
-      timeout_seconds = 60
-      uri = URI("#{ subscription_uri }/messages/next")
+    def get_subscription
+      make_request('', 60)
+    end
+
+    def make_request(subpath, timeout_seconds)
+      uri = URI("#{ subscription_uri }#{ subpath }")
       uri.query = URI.encode_www_form({ 'timeout' => timeout_seconds })
       request = Net::HTTP::Get.new(uri)
       request.basic_auth(SUBSCRIPTION_NAME, @subscription_password)
@@ -630,31 +671,10 @@ module PuavoRest
 
       unless response.is_a?(Net::HTTPSuccess) then
         raise UniventionRequestError.new(response,
-                'failure when getting the next event on subscription')
+                'failure when making a request to provisioning api')
       end
 
-      parsed_data = JSON.parse(response.body)
-      raise EmptyUniventionEvent, 'no data received' if parsed_data.nil?
-      create_event_object(parsed_data)
-    end
-
-    def create_event_object(parsed_data)
-      raise 'data is not a Hash' unless parsed_data.kind_of?(Hash)
-
-      publisher_name = parsed_data['publisher_name']
-      topic = parsed_data['topic']
-      if publisher_name == 'udm-listener' && topic == 'users/user' then
-        event_class = ListenerUserEvent
-      elsif publisher_name == 'udm-pre-fill' && topic == 'users/user' then
-        event_class = PrefillUserEvent
-      else
-        @rlog.warn("got an unknown event with" \
-                     + " publisher_name=#{ publisher_name }" \
-                     + " and topic=#{ topic }")
-        event_class = Event
-      end
-
-      return event_class.new(parsed_data, @login_service, @rlog)
+      JSON.parse(response.body)
     end
 
     def send_acknowledgement(event)
