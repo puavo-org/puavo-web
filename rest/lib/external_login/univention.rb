@@ -475,20 +475,16 @@ module PuavoRest
       @admin_password = Univention::get_conf_string(@provisioning_config,
                                                     'admin_password',
                                                     'admin_password not configured')
-      @subscription_password \
-        = Univention::get_conf_string(@provisioning_config,
-                                      'subscription_password',
-                                      'subscription_password not configured')
+      # new one each time, kept only in memory
+      @subscription_password = SecureRandom.alphanumeric(50)
     end
 
     def get_all_users
       univention_user_list = []
 
+      # XXX there could be many prefill events
       get_and_handle_an_event(PrefillEvent)
-      get_and_handle_an_event(PrefillEvent)
-
       raise 'unimplemented'
-      # handle_event(event)
     end
 
     def prepare
@@ -562,8 +558,6 @@ module PuavoRest
       end
     end
 
-    # not called from anywhere and normally not needed
-    # but is here in case this ever becomes useful
     def delete_subscription
       uri = URI("#{ subscriptions_baseuri }/#{ SUBSCRIPTION_NAME }")
       request = Net::HTTP::Delete.new(uri)
@@ -601,7 +595,7 @@ module PuavoRest
       end
 
       parsed_data = JSON.parse(response.body)
-      raise EmptyUniventionEvent('no data') if parsed_data.nil?
+      raise EmptyUniventionEvent, 'no data received' if parsed_data.nil?
       return expected_eventclass.new(parsed_data, @login_service, @rlog)
     end
 
