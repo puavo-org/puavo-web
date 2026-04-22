@@ -120,7 +120,7 @@ class School < LdapModel
   end
 
   def mountpoints=(value)
-    write_raw(:puavoMountpoint, value.map{|m| m.to_json})
+    write_raw(:puavomountpoint, value.map{|m| m.to_json})
   end
 
   # Cached organisation query
@@ -240,7 +240,7 @@ class School < LdapModel
   def write_samba_attrs
     set_samba_sid
 
-    write_raw(:sambaGroupType, ["2"])
+    write_raw(:sambagrouptype, ["2"])
   end
 
 end

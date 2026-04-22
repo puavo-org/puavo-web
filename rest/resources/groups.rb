@@ -143,7 +143,7 @@ class Group < LdapModel
   def write_samba_attrs
     set_samba_sid
 
-    write_raw(:sambaGroupType, ["2"])
+    write_raw(:sambagrouptype, ["2"])
   end
 
   # Cached organisation query

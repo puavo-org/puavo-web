@@ -3,15 +3,15 @@ module PuavoRest
   module SambaAttrs
 
     def set_samba_primary_group_sid(school_id)
-      write_raw(:sambaPrimaryGroupSID, ["#{samba_domain.sid}-#{school.id}"])
+      write_raw(:sambaprimarygroupsid, ["#{samba_domain.sid}-#{school.id}"])
     end
 
     def set_samba_sid
       rid = samba_domain.generate_next_rid!
 
-      write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid }"])
+      write_raw(:sambasid, ["#{ samba_domain.sid }-#{ rid }"])
 
-      samba_sid = Array(get_raw(:sambaSID)).first
+      samba_sid = Array(get_raw(:sambasid)).first
       if samba_sid && new?
         res = LdapModel.raw_filter(organisation["base"], "(sambaSID=#{ LdapModel.ldap_escape(samba_sid) })")
         if res && !res.empty?

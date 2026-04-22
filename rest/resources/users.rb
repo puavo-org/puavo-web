@@ -89,7 +89,7 @@ class User < LdapModel
   ])
 
   before :update, :create do
-    write_raw(:displayName, [first_name.to_s + " " + last_name.to_s])
+    write_raw(:displayname, [first_name.to_s + " " + last_name.to_s])
 
     auto_email, domain = get_automatic_email(User.current.organisation_name)
 
@@ -454,26 +454,26 @@ class User < LdapModel
       value = nil
     end
 
-    write_raw(:telephoneNumber, transform(:telephone_number, :write, value))
+    write_raw(:telephonenumber, transform(:telephone_number, :write, value))
   end
 
   # Fix the gid number when moving user to another school
   def school_dns=(_dn)
-    write_raw(:puavoSchool, Array(_dn))
+    write_raw(:puavoschool, Array(_dn))
 
     if primary_school_dn
       # Unfortunately it is not possible to validate the DN here. It can be momentarily
       # invalid before it gets fixed, or it could have been left to an invalid value
       # accidentally. There just is no way for us to know here.
-      write_raw(:gidNumber, [School.by_dn(primary_school_dn).gid_number.to_s])
+      write_raw(:gidnumber, [School.by_dn(primary_school_dn).gid_number.to_s])
     else
       # Let's hope for the best...
-      write_raw(:gidNumber, Array(School.by_dn(Array(_dn)[0]).gid_number.to_s))
+      write_raw(:gidnumber, Array(School.by_dn(Array(_dn)[0]).gid_number.to_s))
     end
   end
 
   def first_name=(name)
-    write_raw(:givenName, [name.strip])
+    write_raw(:givenname, [name.strip])
   end
 
   def last_name=(name)
@@ -487,7 +487,7 @@ class User < LdapModel
     write_raw(:cn, [name])
 
     # The posixAccount class *requires* this, so we have to set it. It's not used for anything.
-    write_raw(:homeDirectory, Array("/home/#{name}"))
+    write_raw(:homedirectory, Array("/home/#{name}"))
   end
 
   def clean_up_email_array(a)
@@ -504,7 +504,7 @@ class User < LdapModel
   end
 
   def verified_email=(_verified)
-    write_raw(:puavoVerifiedEmail, clean_up_email_array(_verified))
+    write_raw(:puavoverifiedemail, clean_up_email_array(_verified))
   end
 
   def learner_id=(lid)
@@ -515,7 +515,7 @@ class User < LdapModel
       value = [lid.strip]
     end
 
-    write_raw(:puavoLearnerId, value)
+    write_raw(:puavolearnerid, value)
   end
 
   def is_school_admin_in?(school)
@@ -713,7 +713,7 @@ class User < LdapModel
 
     if t.nil?
       # Specifying nil or [nil] won't work
-      write_raw(:puavoEduPersonAccountExpirationTime, [])
+      write_raw(:puavoedupersonaccountexpirationtime, [])
       return
     elsif t.is_a?(Integer)
       value = Time.at(t).utc
@@ -727,7 +727,7 @@ class User < LdapModel
       return
     end
 
-    write_raw(:puavoEduPersonAccountExpirationTime, [value.strftime('%Y%m%d%H%M%SZ')])
+    write_raw(:puavoedupersonaccountexpirationtime, [value.strftime('%Y%m%d%H%M%SZ')])
   end
 
   def get_request_domain(request_username, request_domain)
@@ -1027,7 +1027,7 @@ class User < LdapModel
   def write_samba_attrs
     set_samba_sid
 
-    write_raw(:sambaAcctFlags, ["[U]"])
+    write_raw(:sambaacctflags, ["[U]"])
     if school
       set_samba_primary_group_sid(school.id)
     end
