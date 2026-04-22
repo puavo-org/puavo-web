@@ -277,6 +277,7 @@ module PuavoRest
 
     def get_schools_by_url
       schools_by_url = {}
+      return schools_by_url     # XXX
 
       school_list = @provisioning.get_schools()
       school_list.each do |school|
@@ -345,6 +346,18 @@ module PuavoRest
       validate
     end
 
+    def validate
+      raise 'data is not a Hash' unless @data.kind_of?(Hash)
+
+      check_types(@data, {
+        'body'            => Hash,
+        'publisher_name'  => publisher_name,
+        'realm'           => 'udm',
+        'sequence_number' => Integer,
+        'topic'           => topic,
+      })
+    end
+
     def check_types(data, types)
       types.each do |field, constraint|
         raise "missing #{ field }" unless data.has_key?(field)
@@ -354,10 +367,11 @@ module PuavoRest
             unless value.kind_of?(constraint)
         elsif constraint.kind_of?(Array) then
           raise UniventionDataError,
-                "#{ field } is not any of #{ constraint }" \
+                "#{ field } is not any of #{ constraint }, but '#{ value }'" \
             unless constraint.any? { |cls| value.kind_of?(cls) }
         else
-          raise UniventionDataError, %Q{#{ field } is not #{ constraint }} \
+          raise UniventionDataError,
+                %Q{#{ field } is not #{ constraint }, but '#{ value }'} \
             unless value == constraint
         end
       end
@@ -368,6 +382,7 @@ module PuavoRest
     attr_reader :username
 
     def handle
+      super
       @rlog.info("handling event number #{ @sequence_number }" \
                    + %Q{ for user "#{ username }"})
 
@@ -399,20 +414,21 @@ module PuavoRest
       is_being_deleted? ? 'old' : 'new'
     end
 
+    def topic
+      'users/user'
+    end
+
     def username
-      @data['body'][subkey]['properties']['username']
+      user_properties['username']
+    end
+
+    def user_properties
+      @data['body'][subkey]['properties']
     end
 
     def validate
       return if @validated
-
-      check_types(@data, {
-        'body'            => Hash,
-        'publisher_name'  => publisher_name,
-        'realm'           => 'udm',
-        'sequence_number' => Integer,
-        'topic'           => 'users/user',
-      })
+      super
 
       subkey = 'new'
       check_types(@data['body'], { subkey => Hash })
@@ -467,6 +483,7 @@ module PuavoRest
 
   class PrefillUserEvent < UserEvent
     def handle
+      super
       return self
     end
 
@@ -497,8 +514,13 @@ module PuavoRest
       univention_user_list = []
 
       loop do
-        event = get_and_handle_an_event(PrefillUserEvent)
-        puts "got event #{ event.inspect }"
+        event = get_and_handle_an_event()
+        if event.kind_of?(PrefillUserEvent) then
+          user = event.user_properties
+          p "GOT USER: #{ user.inspect }"
+        else
+          p "GOT SOME OTHER EVENT: #{ event.inspect }"
+        end
       end
     end
 
@@ -506,11 +528,12 @@ module PuavoRest
       create_subscription
     end
 
-    def get_and_handle_an_event(expected_eventclass)
+    def get_and_handle_an_event
       event = nil
       begin
-        event = get_next_event(expected_eventclass)
-        return event.handle
+        event = get_next_event
+        event.handle
+        return event
       ensure
         if event then
           # Acknowledge even in case of errors.  The show must go on.
@@ -524,7 +547,7 @@ module PuavoRest
       # XXX events?
       loop do
         begin
-          get_and_handle_an_event(ListenerUserEvent)
+          get_and_handle_an_event()
         rescue UniventionDataError => e
           @rlog.error("univention data error: #{ e.message }")
           sleep 2
@@ -595,7 +618,7 @@ module PuavoRest
       URI("#{ subscriptions_baseuri }/#{ SUBSCRIPTION_NAME }")
     end
 
-    def get_next_event(expected_eventclass)
+    def get_next_event
       @rlog.info('making a new request for the next provisioning event')
 
       timeout_seconds = 60
@@ -612,7 +635,26 @@ module PuavoRest
 
       parsed_data = JSON.parse(response.body)
       raise EmptyUniventionEvent, 'no data received' if parsed_data.nil?
-      return expected_eventclass.new(parsed_data, @login_service, @rlog)
+      create_event_object(parsed_data)
+    end
+
+    def create_event_object(parsed_data)
+      raise 'data is not a Hash' unless parsed_data.kind_of?(Hash)
+
+      publisher_name = parsed_data['publisher_name']
+      topic = parsed_data['topic']
+      if publisher_name == 'udm-listener' && topic == 'users/user' then
+        event_class = ListenerUserEvent
+      elsif publisher_name == 'udm-pre-fill' && topic == 'users/user' then
+        event_class = PrefillUserEvent
+      else
+        @rlog.warn("got an unknown event with" \
+                     + " publisher_name=#{ publisher_name }" \
+                     + " and topic=#{ topic }")
+        event_class = Event
+      end
+
+      return event_class.new(parsed_data, @login_service, @rlog)
     end
 
     def send_acknowledgement(event)
