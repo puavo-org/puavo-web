@@ -78,7 +78,7 @@ class EmailManagement < PuavoSinatra
         end
       end
 
-      user.class.ldap_op(:modify, user.dn, operations)
+      user.class.ldap_op(:modify, dn: user.dn, operations: operations)
     rescue StandardError => e
       $rest_log.error("[#{request_id}] Could not update the email addresses: #{e}")
       status 500
