@@ -21,6 +21,17 @@ class UniventionRequestError < ExternalLoginAccessError
 end
 
 module PuavoRest
+  module PrefillEvent
+    def handle
+      super
+      return self
+    end
+
+    def publisher_name
+      'udm-pre-fill'
+    end
+  end
+
   module Univention
     def self.do_http_request(uri, request, read_timeout=nil)
       http = Net::HTTP.new(uri.host, uri.port)
@@ -254,12 +265,13 @@ module PuavoRest
     end
 
     def lookup_all_users
+      @provisioning.read_prefill_events()
+
       update_school_information_and_report_connections()
 
       users = {}
 
-      univention_user_list = @provisioning.get_all_users()
-      univention_user_list.each do |univention_user|
+      @provisioning.users.each do |univention_user|
         extlogin_id = get_univention_attribute(univention_user,
                                                @extlogin_id_field)
         next unless extlogin_id.kind_of?(String)
@@ -281,9 +293,8 @@ module PuavoRest
 
     def get_schools_by_url
       schools_by_url = {}
-      return schools_by_url     # XXX
 
-      school_list = @provisioning.get_schools()
+      school_list = @provisioning.schools
       school_list.each do |school|
         begin
           raise UniventionDataError,
@@ -345,6 +356,14 @@ module PuavoRest
       validate
     end
 
+    def options
+      @data['body'][subkey]['options']
+    end
+
+    def subkey
+      is_being_deleted? ? 'old' : 'new'
+    end
+
     def validate
       raise 'data is not a Hash' unless @data.kind_of?(Hash)
 
@@ -377,6 +396,32 @@ module PuavoRest
     end
   end
 
+  class ContainerEvent < Event
+    def is_ucs_school?
+      options['UCSschool-School-OU'] == true
+    end
+
+    def topic
+      'container/ou'
+    end
+  end
+
+  class GroupEvent < Event
+    def topic
+      'groups/group'
+    end
+  end
+
+  class UnknownEvent < Event
+    def publisher_name
+      @data['publisher_name']
+    end
+
+    def topic
+      @data['topic']
+    end
+  end
+
   class UserEvent < Event
     attr_reader :username
 
@@ -405,12 +450,8 @@ module PuavoRest
       end
     end
 
-    def options
-      @data['body'][subkey]['options']
-    end
-
-    def subkey
-      is_being_deleted? ? 'old' : 'new'
+    def properties
+      @data['body'][subkey]['properties']
     end
 
     def topic
@@ -418,11 +459,7 @@ module PuavoRest
     end
 
     def username
-      user_properties['username']
-    end
-
-    def user_properties
-      @data['body'][subkey]['properties']
+      properties['username']
     end
 
     def validate
@@ -480,19 +517,21 @@ module PuavoRest
     end
   end
 
-  class PrefillUserEvent < UserEvent
-    def handle
-      super
-      return self
-    end
+  class PrefillContainerEvent < ContainerEvent
+    include PrefillEvent
+  end
 
-    def publisher_name
-      'udm-pre-fill'
-    end
+  class PrefillGroupEvent < GroupEvent
+    include PrefillEvent
+  end
+
+  class PrefillUserEvent < UserEvent
+    include PrefillEvent
   end
 
   class Provisioning
     SUBSCRIPTION_NAME = 'puavo'
+    attr_reader :groups, :schools, :users
 
     def initialize(external_login, login_service, server_uri,
                    provisioning_config, rlog)
@@ -509,33 +548,42 @@ module PuavoRest
       @subscription_password = SecureRandom.alphanumeric(32)
     end
 
-    def get_all_users
-      univention_user_list = []
+    def read_prefill_events
+      @groups  = []
+      @schools = []
+      @users   = []
 
       loop do
         begin
-          subscription = get_subscription()
           event = get_and_handle_an_event(5)
         rescue EmptyUniventionEvent => e
           # no event, check subscription state
           subscription = get_subscription()
+          p subscription
           if subscription['prefill_queue_status'] == 'done' then
             @rlog.info('no event and prefill queue status is done')
-            break
+            # break
           end
           next
         end
 
-        if event.kind_of?(PrefillUserEvent) then
-          user = event.user_properties
-          univention_user_list << user
+        if event.kind_of?(PrefillContainerEvent) then
+          if event.is_ucs_school? then
+            @schools << event.properties
+          end
+        elsif event.kind_of?(PrefillGroupEvent) then
+          # XXX what to do with this?
+          @groups << event.properties
+        elsif event.kind_of?(PrefillUserEvent) then
+          user = event.properties
+          p user
+          @users << user
+        elsif event.kind_of?(UnknownEvent) then
+          true
         else
-          # XXX
-          raise "GOT SOME OTHER EVENT: #{ event.inspect }"
+          raise 'got an unexpected event'
         end
       end
-
-      univention_user_list
     end
 
     def get_and_handle_an_event(timeout_seconds)
@@ -575,15 +623,29 @@ module PuavoRest
 
       publisher_name = parsed_data['publisher_name']
       topic = parsed_data['topic']
-      if publisher_name == 'udm-listener' && topic == 'users/user' then
-        event_class = ListenerUserEvent
-      elsif publisher_name == 'udm-pre-fill' && topic == 'users/user' then
-        event_class = PrefillUserEvent
-      else
+      event_class = nil
+      case publisher_name
+        when 'udm-listener' then
+          case topic
+          when 'users/user' then
+            event_class = ListenerUserEvent
+        when 'udm-pre-fill' then
+          case topic
+          when 'container/ou'
+            event_class = PrefillContainerEvent
+          when 'groups/group'
+            event_class = PrefillGroupEvent
+          when 'users/user'
+            event_class = PrefillUserEvent
+          end
+        end
+      end
+
+      if not event_class then
         @rlog.warn("got an unknown event with" \
                      + " publisher_name=#{ publisher_name }" \
                      + " and topic=#{ topic }")
-        event_class = Event
+        event_class = UnknownEvent
       end
 
       event_class.new(parsed_data, @login_service, @rlog)
@@ -598,7 +660,9 @@ module PuavoRest
       subscription_params = {
         'name': SUBSCRIPTION_NAME,
         'realms_topics': [
-          { 'realm': 'udm', 'topic': 'users/user' },
+          { 'realm': 'udm', 'topic': 'container/ou', },
+          { 'realm': 'udm', 'topic': 'groups/group', },
+          { 'realm': 'udm', 'topic': 'users/user',   },
         ],
         'request_prefill': true,
         'password': @subscription_password,
@@ -679,8 +743,8 @@ module PuavoRest
 
     def send_acknowledgement(event)
       seq_number = event.sequence_number
-      @rlog.info("sending acknowledgement for event number #{ seq_number }" \
-                   + %Q{ for user "#{ event.username }"})
+      @rlog.info('sending acknowledgement for event number' \
+                   " #{ seq_number } (#{ event.topic })")
       uri = URI("#{ subscription_uri }/messages/#{ seq_number }/status")
       request = Net::HTTP::Patch.new(uri)
       request['Content-Type'] = 'application/json'
