@@ -149,14 +149,11 @@ test: config-to-system
 	bundle exec rails runner acl/runner.rb
 	@printf '===== puavo-web forced email tests starting at %s\n' "$$(date --iso=seconds)"
 	AUTOMATIC_EMAIL_ADDRESSES=enabled bundle exec cucumber --color --tags @automatic_email \
-			features/enforced_email_addresses.feature --format=message \
-			--out log/cucumber-tests-automatic-email-addresses.json
+			features/enforced_email_addresses.feature
 	@printf '===== puavo-web device registration test starting at %s\n' "$$(date --iso=seconds) ====="
-	bundle exec cucumber --color --tags @start_test_server \
-		--format=message --out log/cucumber-tests-TS.json
+	bundle exec cucumber --color --tags @start_test_server
 	@printf '===== puavo-web main tests starting at %s\n' "$$(date --iso=seconds) ====="
-	bundle exec cucumber --color --tags "not @start_test_server" --tags "not @automatic_email" \
-		--format=message --out log/cucumber-tests-notTS.json
+	bundle exec cucumber --color --tags "not @start_test_server" --tags "not @automatic_email"
 	@printf '===== puavo-web tests finished at %s\n' "$$(date --iso=seconds) ====="
 
 seed:
