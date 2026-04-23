@@ -93,42 +93,15 @@ class DevicesController < ApplicationController
 
   # AJAX call
   def get_school_devices_list
-    devices = Device.search_as_utf8(filter: "(puavoSchool=#{@school.dn})", scope: :one, attributes: DevicesHelper.get_device_attributes())
+    devices = Device.search_as_utf8(filter: "(puavoSchool=#{@school.dn})", scope: :one,
+                                    attributes: DevicesHelper.get_device_attributes)
 
-    # Have to retrieve primary user data, because we will not send a list of all users to the clientside
-    cache = {}
-
-    devices.each do |_, d|
-      user_dn = d.fetch('puavoDevicePrimaryUser', [nil])[0]
-      next unless user_dn
-
-      unless cache.include?(user_dn)
-        begin
-          cache[user_dn] = User.find(user_dn)
-        rescue StandardError
-          cache[user_dn] = nil
-        end
-      end
-
-      user = cache[user_dn]
-
-      if user
-        d['puavoDevicePrimaryUser'] = {
-          valid: true,
-          link: "/users/#{user.primary_school.id}/users/#{user.id}",
-          title: "#{user.uid} (#{user.givenName} #{user.sn})"
-        }
-      else
-        d['puavoDevicePrimaryUser'] = {
-          valid: false,
-          dn: user_dn,
-        }
-      end
-    end
+    DevicesHelper.fill_in_device_primary_users(devices)
 
     render json: {
       devices: devices,
       schools: {
+        # Only send the current school, not all schools (like the organisations controller does)
         "#{@school.dn}" => {
           'id' => @school.id.to_i,
           'cn' => @school.cn,

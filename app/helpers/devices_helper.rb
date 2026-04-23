@@ -102,6 +102,41 @@ module DevicesHelper
     return (self.get_device_attributes() + ["puavoDeviceAvailableImage"] - ["puavoDevicePrimaryUser"]).freeze
   end
 
+  # Used in devices controller and organisations controller, when generating a list of devices
+  # for the SuperTable. Used to retrieve primary user data, because we will not send a list of
+  # all users to the client side.
+  def self.fill_in_device_primary_users(raw_devices)
+    cache = {}
+
+    raw_devices.each do |_, d|
+      user_dn = d.fetch('puavoDevicePrimaryUser', [nil])[0]
+      next unless user_dn
+
+      unless cache.include?(user_dn)
+        begin
+          cache[user_dn] = User.find(user_dn)
+        rescue StandardError
+          cache[user_dn] = nil
+        end
+      end
+
+      user = cache[user_dn]
+
+      if user
+        d['puavoDevicePrimaryUser'] = {
+          valid: true,
+          link: "/users/#{user.primary_school.id}/users/#{user.id}",
+          title: "#{user.uid} (#{user.givenName} #{user.sn})"
+        }
+      else
+        d['puavoDevicePrimaryUser'] = {
+          valid: false,
+          dn: user_dn,
+        }
+      end
+    end
+  end
+
   def self.format_device_primary_user(dn, school_id)
     begin
       u = User.find(dn)
