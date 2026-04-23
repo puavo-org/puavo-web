@@ -1,18 +1,21 @@
+# frozen_string_literal: true
+
 module GroupsHelper
   include Puavo::Helpers
 
-  def self.get_group_attributes()
-    return [
-      'puavoId',
-      'displayName',
-      'cn',
-      'puavoEduGroupType',
-      'puavoExternalId',
-      'puavoNotes',
-      'memberUid',          # for listing the members count
-      'puavoSchool',
-      'createTimestamp',    # LDAP operational attribute
-      'modifyTimestamp',    # LDAP operational attribute
+  # Returns the attributes used in raw queries on groups list pages
+  def self.groups_raw_query_attributes
+    %w[
+      cn
+      createTimestamp
+      displayName
+      memberUid
+      modifyTimestamp
+      puavoEduGroupType
+      puavoExternalId
+      puavoId
+      puavoNotes
+      puavoSchool
     ].freeze
   end
 
@@ -23,13 +26,13 @@ module GroupsHelper
 
     # First do a raw search for all groups
     raw_groups = Group.search_as_utf8(
-      filter: "(puavoSchool=*)",
+      filter: '(puavoSchool=*)',
       scope: :one,
-      attributes: ['puavoId', 'displayName', 'puavoEduGroupType', 'puavoSchool', 'member']
+      attributes: %w[puavoId displayName puavoEduGroupType puavoSchool member]
     )
 
     # Then convert them into a more suitable format
-    raw_groups.each do |dn, raw_group|
+    raw_groups.each do |_, raw_group|
       school = schools_by_dn.fetch(raw_group['puavoSchool'][0], nil)
 
       unless accessible_schools.empty? || accessible_schools.include?(raw_group['puavoSchool'][0])
@@ -52,6 +55,6 @@ module GroupsHelper
       group_members[id] = members
     end
 
-    return groups, group_members
+    [groups, group_members]
   end
 end

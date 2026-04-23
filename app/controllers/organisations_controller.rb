@@ -348,7 +348,7 @@ class OrganisationsController < ApplicationController
 
   # AJAX call
   def get_all_groups
-    groups = Group.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: GroupsHelper.get_group_attributes())
+    groups = Group.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: GroupsHelper.groups_raw_query_attributes)
 
     # Change the members list into a members count
     groups.each do |_, g|

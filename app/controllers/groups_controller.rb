@@ -69,7 +69,7 @@ class GroupsController < ApplicationController
 
   # AJAX call
   def get_school_groups_list
-    groups = Group.search_as_utf8(filter: "(puavoSchool=#{@school.dn})", scope: :one, attributes: GroupsHelper.get_group_attributes())
+    groups = Group.search_as_utf8(filter: "(puavoSchool=#{@school.dn})", scope: :one, attributes: GroupsHelper.groups_raw_query_attributes)
 
     # Change the members list into a members count
     groups.each do |_, g|
