@@ -14,6 +14,10 @@ class Group < BaseGroup
   validate :validate
 
   def validate
+    self.displayName&.strip!
+    self.cn&.strip!
+    self.puavoExternalId&.strip!
+
     unless self.cn.to_s =~ /^[a-z0-9-]+$/
       errors.add( :cn, I18n.t("activeldap.errors.messages.group.invalid_characters") )
     end

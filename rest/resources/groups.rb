@@ -66,6 +66,18 @@ class Group < LdapModel
     end
   end
 
+  def name=(name)
+    write_raw(:displayName, [name&.strip])
+  end
+
+  def abbreviation=(abbreviation)
+    write_raw(:cn, [abbreviation&.strip])
+  end
+
+  def external_id=(external_id)
+    write_raw(:puavoExternalId, [external_id&.strip])
+  end
+
   computed_attr :school_id
   def school_id
     school_dn.to_s.match(/puavoid=([0-9]+)/i)[1]

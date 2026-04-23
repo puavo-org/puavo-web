@@ -13,7 +13,7 @@ describe LdapModel do
     @school.save!
 
     @group = PuavoRest::Group.new(
-      :name => "Test group 1",
+      :name => "  Test group 1          \n",
       :abbreviation => "testgroup1",
       :type => "teaching group",
       :notes => 'This is just an example teaching group. Nothing special.',
@@ -236,6 +236,59 @@ describe LdapModel do
       assert_equal "Maintenance",  data[0]["name"]
       assert_equal "Test group 2", data[1]["name"]
       assert_equal "Test group 3", data[2]["name"]
+    end
+  end
+
+  describe 'whitespace removal' do
+    it 'whitespace is removed from new group attributes' do
+      g = PuavoRest::Group.new(
+        name: "  Hölökyn kölökyn \n\t ",
+        abbreviation: "  fooo  \t   ",
+        external_id: nil,
+        type: 'teaching group',
+        school_dn: @school.dn
+      )
+
+      assert_equal g.name, 'Hölökyn kölökyn'
+      assert_equal g.abbreviation, 'fooo'
+      assert_nil g.external_id
+
+      g.external_id = " \r\r\r\r\n\t xyz"
+      assert_equal g.external_id, 'xyz'
+
+      g.save!
+
+      g2 = PuavoRest::Group.by_dn!(g.dn)
+
+      assert_equal g.name, 'Hölökyn kölökyn'
+      assert_equal g.abbreviation, 'fooo'
+      assert_equal g.external_id, 'xyz'
+    end
+
+    it 'whitespace is removed from edited group attributes' do
+      g = PuavoRest::Group.by_dn!(@group.dn)
+      assert_equal g.name, 'Test group 1'
+
+      g.name = nil
+      assert_nil g.name
+      g.abbreviation = nil
+      assert_nil g.abbreviation
+      g.external_id = nil
+      assert_nil g.external_id
+
+      g.name = "  a  \n "
+      assert_equal g.name, 'a'
+      g.abbreviation = "\nfoo\n"
+      assert_equal g.abbreviation, 'foo'
+      g.external_id = 'bar             '
+      assert_equal g.external_id, 'bar'
+      g.save!
+
+      g = PuavoRest::Group.by_dn!(@group.dn)
+
+      assert_equal g.name, 'a'
+      assert_equal g.abbreviation, 'foo'
+      assert_equal g.external_id, 'bar'
     end
   end
 end
