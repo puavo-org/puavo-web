@@ -1,5 +1,6 @@
-module LdapServicesHelper
+# frozen_string_literal: true
 
+module LdapServicesHelper
   def ldap_service_group_checked?(ldap_service, group)
     if ldap_service.groups.include?(group) ||
         ( params[:ldap_service] &&
@@ -7,7 +8,7 @@ module LdapServicesHelper
           params[:ldap_service][:groups].include?(group.cn) )
       ' checked="checked"'
     else
-      ""
+      ''
     end
   end
 end
