@@ -322,7 +322,7 @@ class OrganisationsController < ApplicationController
     end
 
     render json: {
-      users: User.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: UsersHelper.get_user_attributes()),
+      users: User.search_as_utf8(filter: '(puavoSchool=*)', scope: :one, attributes: UsersHelper.users_raw_query_attributes),
       schools: schools_by_dn,
       school_admins: list_school_admins(),
       owners: owners_set(),

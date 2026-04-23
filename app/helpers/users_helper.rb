@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module UsersHelper
   include Puavo::Helpers
 
@@ -5,42 +7,40 @@ module UsersHelper
     if user.jpegPhoto
       path
     else
-      "anonymous.png"
+      'anonymous.png'
     end
   end
 
-  def self.get_user_attributes()
-    # Which attributes to query? We could get *everything* with ["*"], but it would also
-    # return attributes like jpegPhoto which are useless for us (we're NOT transferring
-    # profile pictures here!).
-    return [
-      'puavoId',
-      'sn',
-      'givenName',
-      'uid',
-      'puavoEduPersonAffiliation',
-      'puavoExternalId',
-      'puavoExternalData',
-      'telephoneNumber',
-      'displayName',
-      'mail',
-      'puavoVerifiedEmail',
-      'puavoPrimaryEmail',
-      'puavoEduPersonPersonnelNumber',
-      'puavoEduPersonAccountExpirationTime',
-      'puavoRemovalRequestTime',
-      'puavoDoNotDelete',
-      'puavoLocked',
-      'createTimestamp',
-      'modifyTimestamp',
-      'authTimestamp',
-      'puavoSchool',
-      'puavoEduPersonPrimarySchool',
-      'puavoLearnerId',
-      'puavoLicenses',
-      'puavoUuid',
-      'puavoMFAEnabled',
-      'puavoNotes',
+  # Returns the attributes used in raw queries on users list pages
+  def self.users_raw_query_attributes
+    %w[
+      authTimestamp
+      createTimestamp
+      displayName
+      givenName
+      mail
+      modifyTimestamp
+      puavoDoNotDelete
+      puavoEduPersonAccountExpirationTime
+      puavoEduPersonAffiliation
+      puavoEduPersonPersonnelNumber
+      puavoEduPersonPrimarySchool
+      puavoExternalData
+      puavoExternalId
+      puavoId
+      puavoLearnerId
+      puavoLicenses
+      puavoLocked
+      puavoMFAEnabled
+      puavoNotes
+      puavoPrimaryEmail
+      puavoRemovalRequestTime
+      puavoSchool
+      puavoUuid
+      puavoVerifiedEmail
+      sn
+      telephoneNumber
+      uid
     ].freeze
   end
 end
