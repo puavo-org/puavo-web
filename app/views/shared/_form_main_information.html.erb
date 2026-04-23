@@ -3,7 +3,7 @@
   <tr>
     <th class="requiredField"><%= f.label :puavoHostname %></th>
     <td>
-      <% if f.object.hostCertificates %>
+      <% if f.object.hostCertificates || @is_new_device == false %>
       <%= f.object.puavoHostname %>
       <% else %>
       <%= f.text_field :puavoHostname, required: 'required', autofocus: @is_new_device ? true : nil %>
