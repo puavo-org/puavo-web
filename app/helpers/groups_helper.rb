@@ -16,41 +16,6 @@ module GroupsHelper
     ].freeze
   end
 
-  def self.convert_raw_group(dn, raw)
-    out = {}
-
-    out[:id] = raw['puavoId'][0].to_i
-
-    out[:name] = raw['displayName'][0]
-
-    out[:abbr] = raw['cn'][0]
-
-    if raw.include?('puavoEduGroupType') && raw['puavoEduGroupType']
-      out[:type] = raw['puavoEduGroupType'][0]
-    end
-
-    if raw.include?('puavoExternalId')
-      out[:eid] = raw['puavoExternalId'][0]
-    end
-
-    if raw.include?('puavoNotes')
-      out[:notes] = raw['puavoNotes'][0].gsub("\r", '').split("\n")
-    end
-
-    # This is just a plain number field, always include it
-    out[:members_count] = raw.include?('memberUid') ? raw['memberUid'].count : 0
-
-    if raw.include?('createTimestamp')
-      out[:created] = Puavo::Helpers.ldap_time_string_to_unixtime(raw['createTimestamp'])
-    end
-
-    if raw.include?('modifyTimestamp')
-      out[:modified] = Puavo::Helpers.ldap_time_string_to_unixtime(raw['modifyTimestamp'])
-    end
-
-    return out
-  end
-
   # Generates the raw groups for users list pages
   def self.load_group_member_lists(schools_by_dn, accessible_schools)
     groups = {}
