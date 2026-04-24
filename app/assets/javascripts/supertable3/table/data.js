@@ -231,6 +231,7 @@ function transformLDAP(context, columns)
                 } catch (e) {
                     console.error(`Synthesizer function call failed for entry ${dn}, column "${key}":`);
                     console.error(e);
+                    return [];
                 }
 
                 if (synth !== undefined)
