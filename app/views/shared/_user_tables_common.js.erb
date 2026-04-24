@@ -497,8 +497,12 @@ class MassUserLocking extends ST.MassOperation {
     prepareItem(item)
     {
         // Don't lock yourself
-        if (item._puavo_id == <%= @current_user_id %>)
+        if (item._puavo_id == <%= @current_user_id %>) {
+            if (item.locked?.filter === this.lock)
+                return { state: "skip" };
+
             return { state: "error", message: "<%= t('users.index.mass_operations.lock.cant_lock_yourself') %>" };
+        }
 
         // Don't lock organisation owners
         if (item.role.sort.includes("owner"))
