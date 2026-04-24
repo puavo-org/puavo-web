@@ -8,7 +8,7 @@ import * as Data from "./data";
 
 import * as Export from "./export.js";
 
-import * as ColumnEditor from "./column_editor.js";
+import { setupColumnEditor } from "./column_editor.js";
 
 import * as Headers from "./headers.js";
 
@@ -370,7 +370,7 @@ buildUI()
 
     // Setup event handling for the elements that are visible
     Export.setup(this, frag);
-    ColumnEditor.setup(this, frag);
+    setupColumnEditor(this, frag);
 
     // Setup filtering
     if (this.settings.enableFiltering) {
@@ -562,39 +562,6 @@ enableTable(isEnabled)
 // --------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------
 // DATA PROCESSING AND TABLE BUILDING
-
-// Called from the column editor
-setVisibleColumns(newColumns)
-{
-    this.columns.current = newColumns;
-
-    // Is the current sorting column still visible? If not, find another column to sort by.
-    let sortVisible = false,
-        defaultVisible = false;
-
-    for (const col of newColumns) {
-        if (this.sorting.column == col)
-            sortVisible = true;
-
-        if (this.columns.defaultSorting.column == col)
-            defaultVisible = true;
-    }
-
-    if (!sortVisible) {
-        if (defaultVisible) {
-            // The default column is visible, so use it
-            this.sorting.column = this.columns.defaultSorting.column;
-        } else {
-            // Pick the first column we have and use it
-            // FIXME: What happens if the first column has ColumnFlag.NOT_SORTABLE flag?
-            // FIXME: What happens if there are no sortable columns at all?
-            this.sorting.column = newColumns[0];
-        }
-    }
-
-    saveSettings(this);
-    this.updateTable();
-}
 
 // Retrieves the actual table rows
 getTableRows()

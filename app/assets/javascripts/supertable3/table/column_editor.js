@@ -60,7 +60,7 @@ function save(table)
         newColumns.push(c);
 
     update(table, false);
-    table.setVisibleColumns(newColumns);
+    applyColumns(table, newColumns);
 }
 
 function selectVisible(selected, table)
@@ -98,6 +98,38 @@ function resetOrder(table)
             nc.push(c);
 
     table.columns.current = nc;
+    saveSettings(table);
+    table.updateTable();
+}
+
+function applyColumns(table, newColumns)
+{
+    table.columns.current = newColumns;
+
+    // Is the current sorting column still visible? If not, find another column to sort by.
+    let sortVisible = false,
+        defaultVisible = false;
+
+    for (const col of newColumns) {
+        if (table.sorting.column == col)
+            sortVisible = true;
+
+        if (table.columns.defaultSorting.column == col)
+            defaultVisible = true;
+    }
+
+    if (!sortVisible) {
+        if (defaultVisible) {
+            // The default column is visible, so use it
+            table.sorting.column = table.columns.defaultSorting.column;
+        } else {
+            // Pick the first column we have and use it
+            // FIXME: What happens if the first column has ColumnFlag.NOT_SORTABLE flag?
+            // FIXME: What happens if there are no sortable columns at all?
+            table.sorting.column = newColumns[0];
+        }
+    }
+
     saveSettings(table);
     table.updateTable();
 }
@@ -142,7 +174,7 @@ function open(table, e)
     }
 }
 
-export function setup(table, frag)
+export function setupColumnEditor(table, frag)
 {
     const button = frag.querySelector("thead div#top button#columns");
 
