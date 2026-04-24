@@ -94,8 +94,10 @@ export function onRowCheckboxClick(table, e)
 }
 
 // Updates the internal item PuavoID sets to match the desired selection mode
-function updateItemIDSets(data, operation)
+function updateItemIDSets(table, operation)
 {
+    const data = table.data;
+
     switch (operation) {
         case "all":
             data.selectedItems.clear();
@@ -141,6 +143,10 @@ function updateItemIDSets(data, operation)
             window.alert(`updateItemIDSets(): invalid operation \"${operation}\"`);
             return;
     }
+
+    // Clear all row states
+    for (const row of table.getTableRows())
+        row.classList.remove("success", "fail");
 }
 
 // Actually sets and removes the checkmarks in the table to match the current selection set.
@@ -160,7 +166,7 @@ function selectAllRows(table, operation)
     if (table.isBusy())
         return;
 
-    updateItemIDSets(table.data, operation);
+    updateItemIDSets(table, operation);
     updateTableCheckboxes(table);
 
     setPreviousRow(table, -1);
