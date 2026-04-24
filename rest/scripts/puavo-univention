@@ -1,0 +1,163 @@
+#!/usr/bin/perl
+
+# sudo apt install libclass-tiny-perl libjson-maybexs-perl libjson-xs-perl
+#                  libnet-ldap-perl libyaml-tiny-perl
+
+use strict;
+use warnings;
+
+use IO::Handle;
+use YAML::Tiny;
+
+package Ldap {
+  use Class::Tiny qw(ldap_base ldap_host ldap_dn ldap_password);
+  use Net::LDAP;
+  use Net::LDAP::Control::SyncRequest;
+  use Net::LDAP::Constant qw(LDAP_SUCCESS LDAP_SYNC_REFRESH_AND_PERSIST);
+  use JSON;
+  use JSON::MaybeXS qw(encode_json);
+
+  sub BUILD {
+    my ($self, $args) = @_;
+    $self->{conn} = $self->open_connection();
+    $self->{refresh_done} = 0;
+  }
+
+  sub open_connection {
+    my ($self) = @_;
+
+    my $ldap_host = $self->{ldap_host};
+
+    my $ldap = Net::LDAP->new($ldap_host);
+    unless ($ldap) { die "no ldap server ${ldap_host}"; }
+
+    my $ldap_response = $ldap->start_tls();
+    if ($ldap_response->code != LDAP_SUCCESS) {
+      die "could not start_tls on ${ldap_host}";
+    }
+
+    $ldap_response = $ldap->bind($self->{ldap_dn},
+                                 password => $self->{ldap_password});
+    if ($ldap_response->code != LDAP_SUCCESS) {
+      die "failed to authenticate to ${ldap_host}";
+    }
+
+    return $ldap;
+  }
+
+  sub search_and_persist {
+    my ($self) = @_;
+
+    my $req = Net::LDAP::Control::SyncRequest->new(
+                mode => LDAP_SYNC_REFRESH_AND_PERSIST);
+
+    $self->{conn}->search(
+      base     => $self->{ldap_base},
+      callback => sub { $self->handle_search_event(@_); },
+      control  => [ $req ],
+      filter   => '(objectClass=*)',
+      scope    => 'sub',
+    );
+
+    die 'lost connection to ldap server';
+  }
+
+  sub entry_to_hash {
+    my ($self, $entry) = @_;
+    my %out = (dn => $entry->dn);
+
+    for my $attr ($entry->attributes) {
+        my @values = $entry->get_value($attr);
+
+        $out{$attr} = @values > 1  ? \@values   :
+                      @values == 1 ? $values[0] : undef;
+    }
+
+    \%out;
+  }
+
+  sub handle_search_event {
+    my ($self, $msg, $entry) = @_;
+
+    return unless $entry;
+
+    my $item = undef;
+
+    if ($entry->isa('Net::LDAP::Intermediate::SyncInfo')) {
+       my $refresh_done = $entry->{asn} && $entry->{asn}{refreshDelete}
+                            && $entry->{asn}{refreshDelete}{refreshDone};
+       if ($refresh_done) {
+         $self->{refresh_done} = 1;
+         $item = { type => 'refresh_done' };
+       }
+    }
+
+    if (!$item && $entry->isa('Net::LDAP::Entry')) {
+      my $entryhash = $self->entry_to_hash($entry);
+      $item = {
+        entry     => $entryhash,
+        is_update => $self->{refresh_done} ? JSON::true : JSON::false,
+        type      => 'entry',
+      };
+    }
+
+    if ($item) {
+      my $json = encode_json($item);
+      print "${json}\n";
+    }
+  }
+}
+
+sub get_univention_conf {
+  my ($organisation) = @_;
+
+  my $external_login_conf_path = '/etc/puavo-rest.d/external_logins.yml';
+  my $yaml = YAML::Tiny->read($external_login_conf_path)
+    or die "failed to read YAML: ${YAML::Tiny::errstr}";
+
+  my $extlogin_conf = $yaml->[0]->{external_login};
+  unless ($extlogin_conf) { die "no external login configuration"; }
+
+  my $org_config = $extlogin_conf->{$organisation};
+  unless ($org_config) {
+    die "no configuration for organisation '${organisation}'";
+  }
+
+  my $univention_config = $org_config->{univention};
+  unless ($univention_config) {
+    die "no Univention configuration for organisation '${organisation}'";
+  }
+
+  my $ldap_base = $univention_config->{ldap_base};
+  unless ($ldap_base) {
+    die "no Univention ldap base for '${organisation}'";
+  }
+
+  my $ldap_host = $univention_config->{ldap_host};
+  unless ($ldap_host) {
+    die "no Univention ldap host for '${organisation}'";
+  }
+
+  my $ldap_dn = $univention_config->{ldap_dn};
+  unless ($ldap_dn) {
+    die "no Univention ldap dn for '${organisation}'";
+  }
+
+  my $ldap_password = $univention_config->{ldap_password};
+  unless ($ldap_dn) {
+    die "no Univention ldap password for '${organisation}'";
+  }
+
+  $univention_config;
+}
+
+# Needed to ensure no buffering so that json items go out once ready.
+STDOUT->autoflush(1);
+
+my $organisation = $ARGV[0];
+unless ($organisation) { die "usage: $0 organisation"; }
+
+my $univention_conf = get_univention_conf($organisation);
+my $ldap = Ldap->new(%$univention_conf);
+
+$ldap->search_and_persist();
