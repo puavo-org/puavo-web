@@ -11,7 +11,7 @@ let startMousePos = null,       // Initial drag mouse position (X and Y)
     headerPositions = [],       // Array of [x, y, w, h] table header cell rectangles
     trackingElement = null,     // The header TH element which we're tracking before dragging starts
     dragOffset = null,          // Delta (distance) from the original event element to the mouse position ([dx, dy])
-    canSort = false,
+    canSort = false,            // is the clicked/dragged table column sortable?
     isDragActive = false;       // true if a header cell drag is active
 
 function resetDrag()
@@ -196,10 +196,7 @@ export function tryBeginDrag(table, event)
     dragHeader.style.top = `${dragY + window.scrollY}px`;
     dragHeader.style.width = `${location.width}px`;
     dragHeader.style.height = `${location.height}px`;
-
-    // Copy the title text, without the sorting arrow
-    // TODO: Restructure the header cells so that we don't need to look up 'canSort'
-    dragHeader.innerText = canSort ? event.target.firstChild.firstChild.innerText : event.target.innerText;
+    dragHeader.innerText = event.target.dataset.dragtitle;
 
     // Build the drop marker. It shows the position where the header will be placed when
     // the mouse button is released.

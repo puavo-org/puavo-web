@@ -38,6 +38,7 @@ function buildHeaders(table, currentColumn, haveActions)
 
         html += `<th title="${key}" ` +
                 `data-key="${key}" data-sortable="${sortable ? 1 : 0}" ` +
+                `data-dragtitle="${def.title}" ` +
                 `class="${classes.join(' ')}">`;
 
         // Figure out the cell contents (title + sort direction arrow)
