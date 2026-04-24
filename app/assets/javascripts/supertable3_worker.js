@@ -18,7 +18,7 @@ let attempt = 0;
 
 // Send one batch of data to the server and interprets the return value.
 // Thank $(deity) async functions can be called from onmessage below.
-async function _processBatch(url, csrf, singleShot, operation, parameters, rows)
+async function _processBatch(id, url, csrf, singleShot, operation, parameters, rows)
 {
     while (true) {
         console.log(`[worker] Network request attempt ${attempt}`);
@@ -55,7 +55,7 @@ async function _processBatch(url, csrf, singleShot, operation, parameters, rows)
             if (error.status == 500) {
                 // 500 errors halt the process immediately
                 hardFail = true;
-                postMessage({ message: "server_error", error: error.status });
+                postMessage({ message: "server_error", id: id, error: error.status });
                 return;
             }
         });
@@ -69,6 +69,7 @@ async function _processBatch(url, csrf, singleShot, operation, parameters, rows)
             if (response.ok) {
                 postMessage({
                     message: "batch_processed",
+                    id: id,
                     result: response.rows
                 });
 
@@ -79,6 +80,7 @@ async function _processBatch(url, csrf, singleShot, operation, parameters, rows)
 
             postMessage({
                 message: "server_error",
+                id: id,
                 error: response.message + "\n\nrequest_id: " + response.request_id
             });
 
@@ -96,6 +98,7 @@ async function _processBatch(url, csrf, singleShot, operation, parameters, rows)
 
             postMessage({
                 message: "network_error",
+                id: id,
                 error: "Network error?"
             });
 
@@ -104,12 +107,13 @@ async function _processBatch(url, csrf, singleShot, operation, parameters, rows)
     }
 }
 
-async function _skipBatch()
+async function _skipBatch(id)
 {
     await sleep(500);
 
     postMessage({
-        message: "batch_skipped"
+        message: "batch_skipped",
+        id: id
     });
 }
 
@@ -117,12 +121,12 @@ onmessage = function(e)
 {
     switch (e.data.message) {
         case "skip_batch":
-            _skipBatch();
+            _skipBatch(e.data.id);
             break;
 
         case "process_batch":
             attempt = 1;
-            _processBatch(e.data.url, e.data.csrf, e.data.singleShot, e.data.operation, e.data.parameters, e.data.rows);
+            _processBatch(e.data.id, e.data.url, e.data.csrf, e.data.singleShot, e.data.operation, e.data.parameters, e.data.rows);
             break;
 
         default:

@@ -1,11 +1,6 @@
 <% page_title t('titles.organisation'), t('titles.all_devices') %>
 
 <% content_for :javascript do %>
-<script>
-const SUPERTABLE_WORKER_FILE = "<%= javascript_path 'supertable3_worker' %>";
-let GLOBAL_SUPERTABLE_INSTANCE = null;
-</script>
-
 <%= javascript_include_tag 'javascripts/modal_popup' %>
 <%= javascript_include_tag 'javascripts/supertable3' %>
 <% end %>
@@ -31,7 +26,7 @@ const DEFAULT_SORTING = { column: "hwinfo_time", dir: ST.SortOrder.DESCENDING };
 document.addEventListener("DOMContentLoaded", () => {
     modalPopup.setupGlobalEvents();
 
-    GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(
+    new ST.SuperTable(
         // Main container DIV
         document.getElementById("tableDevices"),
 
@@ -53,7 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
             dynamicData: "/get_all_devices",
             preparseFunction: preparse,
             postparseFunction: postparse,
-        }
+        },
+        new Worker("<%= javascript_path 'supertable3_worker' %>")
     );
 });
 </script>

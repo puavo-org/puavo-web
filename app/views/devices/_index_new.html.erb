@@ -1,9 +1,4 @@
 <% content_for :javascript do %>
-<script>
-const SUPERTABLE_WORKER_FILE = "<%= javascript_path 'supertable3_worker' %>";
-let GLOBAL_SUPERTABLE_INSTANCE = null;
-</script>
-
 <%= javascript_include_tag 'javascripts/modal_popup' %>
 <%= javascript_include_tag 'javascripts/supertable3' %>
 <% end %>
@@ -27,7 +22,7 @@ const DEFAULT_SORTING = { column: "hostname", dir: ST.SortOrder.ASCENDING };
 document.addEventListener("DOMContentLoaded", () => {
     modalPopup.setupGlobalEvents();
 
-    GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(
+    new ST.SuperTable(
         // Main container DIV
         document.getElementById("tableDevices"),
 
@@ -49,7 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
             dynamicData: "/devices/<%= @school.id %>/get_school_devices_list",
             preparseFunction: preparse,
             postparseFunction: postparse,
-        }
+        },
+        new Worker("<%= javascript_path 'supertable3_worker' %>")
     );
 });
 

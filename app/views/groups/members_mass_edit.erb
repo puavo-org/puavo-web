@@ -1,11 +1,6 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.groups'), t('titles.group_members_mass_edit') %>
 
 <% content_for :javascript do %>
-<script>
-const SUPERTABLE_WORKER_FILE = "<%= javascript_path 'supertable3_worker' %>";
-let GLOBAL_SUPERTABLE_INSTANCE = null;
-</script>
-
 <%= javascript_include_tag 'javascripts/modal_popup' %>
 <%= javascript_include_tag 'javascripts/supertable3' %>
 <% end %>
@@ -388,7 +383,7 @@ function* synthesizeData(raw)
 document.addEventListener("DOMContentLoaded", () => {
     modalPopup.setupGlobalEvents();
 
-    GLOBAL_SUPERTABLE_INSTANCE = new ST.SuperTable(
+    new ST.SuperTable(
         // Main container DIV
         document.getElementById("tableGroupMembers"),
 
@@ -408,7 +403,8 @@ document.addEventListener("DOMContentLoaded", () => {
             dynamicData: "/users/<%= @school.id %>/groups/get_all_groups_members",
             preFilterFunction: synthesizeData,
             datamode: "custom",
-        }
+        },
+        new Worker("<%= javascript_path 'supertable3_worker' %>")
     );
 });
 

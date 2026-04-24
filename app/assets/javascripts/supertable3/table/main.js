@@ -26,13 +26,6 @@ import { isNullOrUndefined, isObject } from "./utils.js";
 
 import * as Mass from "./mass_operations.js";
 
-// SUPERTABLE_WORKER_FILE must be defined in the HTML file where the bundle is included in
-const MASS_WORKER = new Worker(SUPERTABLE_WORKER_FILE);
-
-MASS_WORKER.onmessage = e => {
-    GLOBAL_SUPERTABLE_INSTANCE.onWorkerMessage(e);
-};
-
 // These formatters are exported into the public namespace
 export const ST_DATE_FORMATTER = Intl.DateTimeFormat(document.documentElement.dataset.intlLocale, {
     weekday: "short",
@@ -53,6 +46,33 @@ export const ST_TIMESTAMP_FORMATTER = Intl.DateTimeFormat(document.documentEleme
     hour12: false,
     timeZone: document.documentElement.dataset.intlTimezone
 });
+
+// Table registry for worker thread message routing
+const superTableRegistry = {};
+
+function registerSuperTable(id, table)
+{
+    console.log(`Registering SuperTable instance "${id}"`);
+
+    if (id in superTableRegistry) {
+        console.error(`registerSuperTable(): Instance ID "${id}" already used!`);
+        return false;
+    }
+
+    superTableRegistry[id] = table;
+    return true;
+}
+
+// Sets up the message routing for the worker thread
+function setupWorkerThreadMessageRouting(worker)
+{
+    worker.onmessage = e => {
+        if (e.data.id in superTableRegistry)
+            return superTableRegistry[e.data.id].onWorkerMessage(e);
+
+        console.error(`onmessage(): table ID "${e.data.id}" not registered, don't know where to route the message "${e.data.message}"`);
+    };
+}
 
 // Validates the parameters passed to the table class
 function validateParameters(container, settings)
@@ -109,12 +129,21 @@ function validateParameters(container, settings)
 
 export class SuperTable {
 
-constructor(container, settings)
+constructor(container, settings, worker = null)
 {
     this.id = settings.id;
     this.container = container;
 
+    if (worker) {
+        setupWorkerThreadMessageRouting(worker);
+        this.worker = worker;
+    }
+
     if (!validateParameters(this.container, settings))
+        return;
+
+    // Register this table instance for worker thread message routing
+    if (!registerSuperTable(settings.id, this))
         return;
 
     // ----------------------------------------------------------------------------------------------
@@ -273,6 +302,12 @@ constructor(container, settings)
     // There's no point in permitting row selection if there are no mass tools
     if (this.settings.enableSelection && (this.user.massOperations.length == 0 || this.user.massOperationsEndpoint == null)) {
         console.warn("Row selection has been enabled, but no mass operations (or the mass operations endpoint) have been defined. Disabling row selection.");
+        this.settings.enableSelection = false;
+    }
+
+    // If the web worker thread is not present, disable mass tools
+    if (this.settings.enableSelection && !this.worker) {
+        console.warn("No worker thread present, row selections disabled");
         this.settings.enableSelection = false;
     }
 
@@ -852,15 +887,16 @@ processBatch(batch)
     if (batch.length == 0) {
         // Nothing to do for this batch. But these functions are not recursive, we have to
         // "route" the work through the worker thread.
-        MASS_WORKER.postMessage({ message: "skip_batch" });
+        this.worker.postMessage({ message: "skip_batch", id: this.id });
         return;
     }
 
     // We have at least 1 row to be processed
     console.log(`Have ${batch.length} rows in this batch`);
 
-    MASS_WORKER.postMessage({
+    this.worker.postMessage({
         message: "process_batch",
+        id: this.id,
         url: this.user.massOperationsEndpoint,
         singleShot: this.massOperation.singleShot,
         operation: this.massOperation.definition.operation,
