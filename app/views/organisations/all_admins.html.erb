@@ -203,8 +203,6 @@ class MassPermissionBase extends ST.MassOperation {
 
         for (const i of this.container.querySelectorAll("div#permissionsList input:checked"))
             this.permissions.push(i.parentNode.dataset.permission);
-
-        console.log(this.permissions);
     }
 
     getOperationParameters()

@@ -176,8 +176,6 @@ class GroupOperationBase extends ST.MassOperation {
 
         for (const i of this.getGroupItems(true))
             this.groupIDs.push(parseInt(i.parentNode.id, 10));
-
-        console.log(this.groupIDs);
     }
 
     getOperationParameters()
