@@ -58,37 +58,21 @@ module PuavoRest
       raise 'manage puavousers is not set to true' \
         unless external_login.manage_puavousers
 
-      @extlogin_id_field \
-        = Univention::get_conf_string(univention_config,
-                                      'extlogin_id_field',
-                                      'univention extlogin id field not configured')
-      @extschool_id_field \
-        = Univention::get_conf_string(univention_config,
-                                      'extschool_id_field',
-                                      'univention extschool id field not configured')
       @external_username_field \
-        = Univention::get_conf_string(univention_config,
-                                      'external_username_field',
-                                      'univention extlogin name field not configured')
-      server_uri = Univention::get_conf_string(univention_config,
-                     'server_uri', 'univention server uri not configured')
-
-      admin_username = Univention::get_conf_string(univention_config,
-                                                   'admin_username',
-                                                   'admin username not configured')
-      admin_password = Univention::get_conf_string(univention_config,
-                                                   'admin_password',
-                                                   'admin password not configured')
-      raise 'no provisioning configration' \
-        unless univention_config['provisioning'].kind_of?(Hash)
-      @provisioning = Provisioning.new(external_login,
-                                       self,
-                                       server_uri,
-                                       univention_config['provisioning'],
-                                       rlog)
+        = Univention::get_conf_string(
+            univention_config,
+            'external_username_field',
+            'univention extlogin name field not configured')
+      @extlogin_id_field = Univention::get_conf_string(
+                             univention_config,
+                             'extlogin_id_field',
+                             'univention extlogin id field not configured')
+      @extschool_id_field = Univention::get_conf_string(
+                              univention_config,
+                              'extschool_id_field',
+                              'univention extschool id field not configured')
 
       @puavo_schools_by_id = nil
-      @univention_schools_by_url = {}
     end
 
     def change_password(actor_username, actor_password, target_user_username,
@@ -105,6 +89,10 @@ module PuavoRest
       end
 
       puavo_schools_by_id
+    end
+
+    def has_realtime?
+      true
     end
 
     def get_userinfo_for_puavo(username)
@@ -544,8 +532,6 @@ module PuavoRest
       @admin_password = Univention::get_conf_string(@provisioning_config,
                                                     'admin_password',
                                                     'admin_password not configured')
-      # new one each time, kept only in memory
-      @subscription_password = SecureRandom.alphanumeric(32)
     end
 
     def read_prefill_events
@@ -600,7 +586,7 @@ module PuavoRest
       end
     end
 
-    def wait_for_events
+    def handle_realtime_events
       # XXX when to break out of the loop?  once a day, or in some unexpected
       # XXX events?
       loop do
@@ -651,68 +637,12 @@ module PuavoRest
       event_class.new(parsed_data, @login_service, @rlog)
     end
 
-    # needs to be called only once to setup subscription
-    # but if called multiple times with the same parameters it is okay
-    def create_subscription
-      @rlog.info('setting up provisioning subscription')
-
-      # we set the @subscription_password here (to Univention)
-      subscription_params = {
-        'name': SUBSCRIPTION_NAME,
-        'realms_topics': [
-          { 'realm': 'udm', 'topic': 'container/ou', },
-          { 'realm': 'udm', 'topic': 'groups/group', },
-          { 'realm': 'udm', 'topic': 'users/user',   },
-        ],
-        'request_prefill': true,
-        'password': @subscription_password,
-      }
-
-      uri = URI(subscriptions_baseuri)
-      request = Net::HTTP::Post.new(uri)
-      request['Content-Type'] = 'application/json'
-      request.basic_auth('admin', @admin_password)
-      request.body = subscription_params.to_json
-
-      response = Univention::do_http_request(uri, request)
-      if response.is_a?(Net::HTTPConflict) then
-        # Subscription already exists but with conflicting options,
-        # delete the old one and try again.
-        @rlog.info('> deleting existing provisioning subscription' \
-                     + ' because of conflicting configuration')
-        delete_subscription
-        response = Univention::do_http_request(uri, request)
-      end
-
-      unless response.is_a?(Net::HTTPSuccess) then
-        raise UniventionRequestError.new(response,
-                'failure when creating a provisioning subscription')
-      end
+    def prepare_realtime
+      run_puavo_univention
     end
 
-    def delete_subscription
-      uri = URI("#{ subscriptions_baseuri }/#{ SUBSCRIPTION_NAME }")
-      request = Net::HTTP::Delete.new(uri)
-      request['Content-Type'] = 'application/json'
-      request.basic_auth('admin', @admin_password)
-      request.body = { 'name': 'puavo' }.to_json
-      response = Univention::do_http_request(uri, request)
-      unless response.is_a?(Net::HTTPSuccess) then
-        raise UniventionRequestError.new(response,
-                'failure when deleting a provisioning subscription')
-      end
-    end
-
-    def prepare
-      create_subscription
-    end
-
-    def subscriptions_baseuri
-      URI("#{ @server_uri }/univention/provisioning/v1/subscriptions")
-    end
-
-    def subscription_uri
-      URI("#{ subscriptions_baseuri }/#{ SUBSCRIPTION_NAME }")
+    def run_puavo_univention
+      IO.open(
     end
 
     def get_next_event(timeout_seconds)
@@ -720,10 +650,6 @@ module PuavoRest
       parsed_data = make_request('/messages/next', timeout_seconds)
       raise EmptyUniventionEvent, 'no data received' if parsed_data.nil?
       create_event_object(parsed_data)
-    end
-
-    def get_subscription
-      make_request('', 60)
     end
 
     def make_request(subpath, timeout_seconds)
@@ -739,22 +665,6 @@ module PuavoRest
       end
 
       JSON.parse(response.body)
-    end
-
-    def send_acknowledgement(event)
-      seq_number = event.sequence_number
-      @rlog.info('sending acknowledgement for event number' \
-                   " #{ seq_number } (#{ event.topic })")
-      uri = URI("#{ subscription_uri }/messages/#{ seq_number }/status")
-      request = Net::HTTP::Patch.new(uri)
-      request['Content-Type'] = 'application/json'
-      request.basic_auth(SUBSCRIPTION_NAME, @subscription_password)
-      request.body = { 'status': 'ok' }.to_json
-      response = Univention::do_http_request(uri, request)
-      unless response.is_a?(Net::HTTPSuccess) then
-        raise UniventionRequestError.new(response,
-                'failure when acknowledging event number')
-      end
     end
   end
 end

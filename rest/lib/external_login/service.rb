@@ -8,6 +8,10 @@ module PuavoRest
       @service_name   = service_name
     end
 
+    def has_realtime?
+      false
+    end
+
     def update_from_external(username, external_user_entry)
       set_userinfo_from_external(username, external_user_entry)
       userinfo = get_userinfo_for_puavo(username)

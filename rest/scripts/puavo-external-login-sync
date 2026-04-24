@@ -155,9 +155,8 @@ begin
   external_login = PuavoRest::ExternalLogin.new
   login_service = external_login.new_external_service_handler()
 
-  if org_conf.has_key?('univention') then
-    univention_provisioning = login_service.provisioning
-    univention_provisioning.prepare
+  if login_service.has_realtime? then
+    login_service.prepare_realtime()
   end
 
   handle_batch_processing(external_login, login_service, organisation)
@@ -167,11 +166,11 @@ rescue StandardError => e
   exitstatus = 1
 end
 
-if univention_provisioning then
+if login_service.has_realtime? then
   begin
-    univention_provisioning.wait_for_events
+    login_service.handle_realtime_events()
   rescue StandardError => e
-    log_warn(e, '!! error in running Univention provisioning event handler' \
+    log_warn(e, '!! error in running realtime event handler' \
                   + %Q{ on organisation "#{ organisation }"})
     exitstatus = 1
   end
