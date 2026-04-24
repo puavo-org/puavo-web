@@ -1,24 +1,9 @@
 require 'json'
-require 'net/http'
-require 'uri'
 
 require_relative './errors'
 require_relative './service'
 
 class UniventionDataError < ExternalLoginDataError; end
-class EmptyUniventionEvent < UniventionDataError; end
-class UniventionRequestError < ExternalLoginAccessError
-  attr_reader :response
-
-  def initialize(response, errmsg)
-    @response = response
-    super(errmsg)
-  end
-  def message
-    "#{ super }: response code=#{ @response.code }" \
-      + " #{ @response.message } :: #{ @response.body }"
-  end
-end
 
 module PuavoRest
   module PrefillEvent
@@ -33,14 +18,6 @@ module PuavoRest
   end
 
   module Univention
-    def self.do_http_request(uri, request, read_timeout=nil)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.read_timeout = read_timeout if read_timeout
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE  # XXX
-      http.request(request)
-    end
-
     def self.get_conf_string(config, key, errmsg)
       value = config[key]
       raise ExternalLoginConfigError, errmsg \
@@ -93,6 +70,15 @@ module PuavoRest
 
     def has_realtime?
       true
+    end
+
+    def prepare_realtime
+      run_puavo_univention
+    end
+
+    def run_puavo_univention
+      # XXX
+      IO.open()
     end
 
     def get_userinfo_for_puavo(username)
@@ -253,7 +239,7 @@ module PuavoRest
     end
 
     def lookup_all_users
-      @provisioning.read_prefill_events()
+      raise 'unimplemented'
 
       update_school_information_and_report_connections()
 
@@ -572,20 +558,6 @@ module PuavoRest
       end
     end
 
-    def get_and_handle_an_event(timeout_seconds)
-      event = nil
-      begin
-        event = get_next_event(timeout_seconds)
-        event.handle()
-        return event
-      ensure
-        if event then
-          # Acknowledge even in case of errors.  The show must go on.
-          send_acknowledgement(event)
-        end
-      end
-    end
-
     def handle_realtime_events
       # XXX when to break out of the loop?  once a day, or in some unexpected
       # XXX events?
@@ -635,36 +607,6 @@ module PuavoRest
       end
 
       event_class.new(parsed_data, @login_service, @rlog)
-    end
-
-    def prepare_realtime
-      run_puavo_univention
-    end
-
-    def run_puavo_univention
-      IO.open(
-    end
-
-    def get_next_event(timeout_seconds)
-      @rlog.info('making a new request for the next provisioning event')
-      parsed_data = make_request('/messages/next', timeout_seconds)
-      raise EmptyUniventionEvent, 'no data received' if parsed_data.nil?
-      create_event_object(parsed_data)
-    end
-
-    def make_request(subpath, timeout_seconds)
-      uri = URI("#{ subscription_uri }#{ subpath }")
-      uri.query = URI.encode_www_form({ 'timeout' => timeout_seconds })
-      request = Net::HTTP::Get.new(uri)
-      request.basic_auth(SUBSCRIPTION_NAME, @subscription_password)
-      response = Univention::do_http_request(uri, request, timeout_seconds+10)
-
-      unless response.is_a?(Net::HTTPSuccess) then
-        raise UniventionRequestError.new(response,
-                'failure when making a request to provisioning api')
-      end
-
-      JSON.parse(response.body)
     end
   end
 end
