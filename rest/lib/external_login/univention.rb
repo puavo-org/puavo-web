@@ -49,6 +49,7 @@ module PuavoRest
                               'extschool_id_field',
                               'univention extschool id field not configured')
 
+      @connector = nil
       @puavo_schools_by_id = nil
     end
 
@@ -72,13 +73,13 @@ module PuavoRest
       true
     end
 
-    def prepare_realtime
-      run_puavo_univention
+    def prepare(organisation)
+      @connector = Connector.new(organisation, @rlog)
+      @connector.read_current()
     end
 
-    def run_puavo_univention
-      # XXX
-      IO.open()
+    def handle_events
+      @connector.handle_events()
     end
 
     def get_userinfo_for_puavo(username)
@@ -314,299 +315,98 @@ module PuavoRest
     end
   end
 
-  class Event
-    attr_reader :sequence_number
-
-    def initialize(event_data, login_service, rlog)
-      # this should always succeed so we can acknowledge the event later
-      @data            = event_data
-      @login_service   = login_service
-      @rlog            = rlog
-      @sequence_number = @data['sequence_number']
-      @validated       = false
-    end
-
-    def handle
-      validate
-    end
-
-    def options
-      @data['body'][subkey]['options']
-    end
-
-    def subkey
-      is_being_deleted? ? 'old' : 'new'
-    end
-
-    def validate
-      raise 'data is not a Hash' unless @data.kind_of?(Hash)
-
-      check_types(@data, {
-        'body'            => Hash,
-        'publisher_name'  => publisher_name,
-        'realm'           => 'udm',
-        'sequence_number' => Integer,
-        'topic'           => topic,
-      })
-    end
-
-    def check_types(data, types)
-      types.each do |field, constraint|
-        raise "missing #{ field }" unless data.has_key?(field)
-        value = data[field]
-        if constraint.class == Class then
-          raise UniventionDataError, "#{ field } is not #{ constraint }" \
-            unless value.kind_of?(constraint)
-        elsif constraint.kind_of?(Array) then
-          raise UniventionDataError,
-                "#{ field } is not any of #{ constraint }, but '#{ value }'" \
-            unless constraint.any? { |cls| value.kind_of?(cls) }
-        else
-          raise UniventionDataError,
-                %Q{#{ field } is not #{ constraint }, but '#{ value }'} \
-            unless value == constraint
-        end
-      end
-    end
-  end
-
-  class ContainerEvent < Event
-    def is_ucs_school?
-      options['UCSschool-School-OU'] == true
-    end
-
-    def topic
-      'container/ou'
-    end
-  end
-
-  class GroupEvent < Event
-    def topic
-      'groups/group'
-    end
-  end
-
-  class UnknownEvent < Event
-    def publisher_name
-      @data['publisher_name']
-    end
-
-    def topic
-      @data['topic']
-    end
-  end
-
-  class UserEvent < Event
-    attr_reader :username
-
-    def handle
-      super
-      @rlog.info("handling event number #{ @sequence_number }" \
-                   + %Q{ for user "#{ username }"})
-
-      unless is_ucsschool_user? then
-        @rlog.info("ignoring event #{ @sequence_number }"            \
-                     + %Q{ for user "#{ username }" because he/she} \
-                     + ' has no ucsschool roles')
-        return
-      end
-    end
-
-    def is_being_deleted?
-      @data['body']['new'].empty?
-    end
-
-    def is_ucsschool_user?
-      options.any? do |opt, value|
-        opt.match(/\Aucsschool/) \
-          && (value.kind_of?(FalseClass) || value.kind_of?(TrueClass)) \
-          && value
-      end
-    end
-
-    def properties
-      @data['body'][subkey]['properties']
-    end
-
-    def topic
-      'users/user'
-    end
-
-    def username
-      properties['username']
-    end
-
-    def validate
-      return if @validated
-      super
-
-      subkey = 'new'
-      check_types(@data['body'], { subkey => Hash })
-      subkey = 'old' if is_being_deleted?
-
-      check_types(@data['body'][subkey], {
-        'objectType' => 'users/user',
-        'properties' => Hash,
-        'options'    => Hash,
-      })
-
-      check_types(@data['body'][subkey]['properties'],
-                  { 'username' => String })
-
-      @validated = true
-    end
-  end
-
-  class ListenerUserEvent < UserEvent
-    def handle
-      super
-
-      if is_being_deleted? then
-        # XXX instead of using username, this should probably look for
-        # XXX Puavo user with the same Univention Object Id?
-        puavo_user = User.by_username(username)
-        if puavo_user.mark_for_removal! then
-          @rlog.info("puavo user '#{ puavo_user.username }' is marked" \
-                       + ' for removal')
-          return
-        end
-      end
-
-      begin
-        user = get_user
-      rescue StandardError => e
-        @rlog.warn("can not get user from Univention: #{ e.message }")
-        return
-      end
-
-      begin
-        @login_service.update_from_external(event.username, user)
-      rescue StandardError => e
-        @rlog.warn("can not update user to Puavo: #{ e.message }")
-      end
-    end
-
-    def publisher_name
-      'udm-listener'
-    end
-  end
-
-  class PrefillContainerEvent < ContainerEvent
-    include PrefillEvent
-  end
-
-  class PrefillGroupEvent < GroupEvent
-    include PrefillEvent
-  end
-
-  class PrefillUserEvent < UserEvent
-    include PrefillEvent
-  end
-
-  class Provisioning
-    SUBSCRIPTION_NAME = 'puavo'
+  class Connector
     attr_reader :groups, :schools, :users
 
-    def initialize(external_login, login_service, server_uri,
-                   provisioning_config, rlog)
-      @external_login      = external_login
-      @login_service       = login_service
-      @server_uri          = server_uri
-      @provisioning_config = provisioning_config
-      @rlog                = rlog
-
-      @admin_password = Univention::get_conf_string(@provisioning_config,
-                                                    'admin_password',
-                                                    'admin_password not configured')
-    end
-
-    def read_prefill_events
-      @groups  = []
-      @schools = []
-      @users   = []
-
-      loop do
-        begin
-          event = get_and_handle_an_event(5)
-        rescue EmptyUniventionEvent => e
-          # no event, check subscription state
-          subscription = get_subscription()
-          p subscription
-          if subscription['prefill_queue_status'] == 'done' then
-            @rlog.info('no event and prefill queue status is done')
-            # break
-          end
-          next
-        end
-
-        if event.kind_of?(PrefillContainerEvent) then
-          if event.is_ucs_school? then
-            @schools << event.properties
-          end
-        elsif event.kind_of?(PrefillGroupEvent) then
-          # XXX what to do with this?
-          @groups << event.properties
-        elsif event.kind_of?(PrefillUserEvent) then
-          user = event.properties
-          p user
-          @users << user
-        elsif event.kind_of?(UnknownEvent) then
-          true
-        else
-          raise 'got an unexpected event'
-        end
+    def initialize(organisation, rlog)
+      begin
+        @reader = IO.popen([ 'puavo-univention', organisation ])
+      rescue StandardError => e
+        raise "could not run puavo-univention script: #{ e.message }"
       end
+      @rlog = rlog
     end
 
-    def handle_realtime_events
-      # XXX when to break out of the loop?  once a day, or in some unexpected
-      # XXX events?
+    def read_current
+      @groups       = []
+      @schools      = []
+      @refresh_done = false
+      @users        = []
+
       loop do
         begin
-          get_and_handle_an_event(60)
-        rescue UniventionDataError => e
-          @rlog.error("univention data error: #{ e.message }")
-          sleep 2
-          redo
+          json = @reader.gets
+          raise 'EOF received when reading from puavo-univention' unless json
+          event = create_event_object( JSON.parse(json) )
+          if event.kind_of?(RefreshDoneEvent) then
+            @rlog.info('refresh done')
+            @refresh_done = true
+            break
+          end
+          entry = event.get_entry(false)
         rescue StandardError => e
-          @rlog.error("unexpected next event error: #{ e.message }")
-          # in case of unexpected errors, wait a while before trying again
-          sleep 10
+          errmsg = "connector reader error: #{ e.message }"
+          @rlog.error(errmsg)
+          raise errmsg
         end
       end
+    end
+
+    def handle_events
+      raise 'unimplemented'
     end
 
     def create_event_object(parsed_data)
       raise 'data is not a Hash' unless parsed_data.kind_of?(Hash)
 
-      publisher_name = parsed_data['publisher_name']
-      topic = parsed_data['topic']
-      event_class = nil
-      case publisher_name
-        when 'udm-listener' then
-          case topic
-          when 'users/user' then
-            event_class = ListenerUserEvent
-        when 'udm-pre-fill' then
-          case topic
-          when 'container/ou'
-            event_class = PrefillContainerEvent
-          when 'groups/group'
-            event_class = PrefillGroupEvent
-          when 'users/user'
-            event_class = PrefillUserEvent
-          end
-        end
-      end
+      type = parsed_data['type']
+      raise 'type is not a string' unless type.kind_of?(String)
 
-      if not event_class then
-        @rlog.warn("got an unknown event with" \
-                     + " publisher_name=#{ publisher_name }" \
-                     + " and topic=#{ topic }")
-        event_class = UnknownEvent
+      event_class = nil
+      case type
+      when 'entry' then
+        event_class = EntryEvent
+      when 'refresh_done'
+        event_class = RefreshDoneEvent
+      else
+        raise "unknown event type: #{ type }"
       end
 
       event_class.new(parsed_data, @login_service, @rlog)
+    end
+  end
+
+  class Event
+    def initialize(data, login_service, rlog)
+      @data          = data
+      @login_service = login_service
+      @rlog          = rlog
+    end
+
+    def get_entry(expect_update)
+      is_update = @data['is_update']
+      raise 'is_update is not a boolean value' \
+        unless is_update.kind_of?(TrueClass) || is_update.kind_of?(FalseClass)
+      raise 'update state did not match what we expected' \
+        unless is_update == expect_update
+
+      # XXX should determine what type of Entry this is
+
+      entry = @data['entry']
+      raise 'entry is not a Hash' unless entry.kind_of?(Hash)
+      entry
+    end
+  end
+
+  class EntryEvent < Event
+    def initialize(data, login_service, rlog)
+      super(data, login_service, rlog)
+    end
+  end
+
+  class RefreshDoneEvent < Event
+    def initialize(data, login_service, rlog)
+      super(data, login_service, rlog)
     end
   end
 end

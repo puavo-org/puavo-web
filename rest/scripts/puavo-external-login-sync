@@ -156,7 +156,7 @@ begin
   login_service = external_login.new_external_service_handler()
 
   if login_service.has_realtime? then
-    login_service.prepare_realtime()
+    login_service.prepare(organisation)
   end
 
   handle_batch_processing(external_login, login_service, organisation)
@@ -168,7 +168,7 @@ end
 
 if login_service.has_realtime? then
   begin
-    login_service.handle_realtime_events()
+    login_service.handle_events()
   rescue StandardError => e
     log_warn(e, '!! error in running realtime event handler' \
                   + %Q{ on organisation "#{ organisation }"})
