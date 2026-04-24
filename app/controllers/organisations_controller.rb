@@ -340,6 +340,7 @@ class OrganisationsController < ApplicationController
     @is_owner = true
     @permit_group_deletion = true
     @permit_mass_group_deletion = true
+    @permit_mass_group_change_type = true
 
     respond_to do |format|
       format.html   # all_groups.html.erb
