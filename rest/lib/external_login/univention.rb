@@ -89,16 +89,15 @@ module PuavoRest
                    end
 
       check_attr.call(puavo_extlogin_id_field,
-                      "User '#{ username }' has no extlogin id in Univention")
+        "User '#{ @username }' has no extlogin id in Univention")
       check_attr.call('first_name',
-                      "User '#{ username }' has no first name in Univention")
+        "User '#{ @username }' has no first name in Univention")
       check_attr.call('last_name',
-                      "User '#{ username }' has no last name in Univention")
-# XXX
-#     check_attr.call('ldap_password_hash',
-#                     "User '#{ username }' has no ldap password in Univention")
+        "User '#{ @username }' has no last name in Univention")
+      check_attr.call('ldap_password_hash',
+        "User '#{ @username }' has no ldap password in Univention")
       check_attr.call('username',
-                      "User '#{ username }' has no account name in Univention")
+        "User '#{ @username }' has no account name in Univention")
 
       # we apply some magicks to determine user school, groups and roles
       add_roles_and_schools!(userinfo)
@@ -130,8 +129,8 @@ module PuavoRest
     def get_user_roles()
       user_roles = []
 
-      ucsschool_roles = @univention_user.get('ucsschoolRole')
-      unless ucsschool_roles.kind_of?(Array) && !ucsschool_roles.empty? then
+      ucsschool_roles = Array(@univention_user.get('ucsschoolRole'))
+      if ucsschool_roles.empty? then
         raise UniventionDataError,
               %Q{user "#{ @username }" has no roles in UCS@school}
       end
@@ -163,24 +162,27 @@ module PuavoRest
     def get_user_puavo_school_dns()
       update_puavo_schools_by_id()
 
-      user_univention_school_urls = @univention_user.get('schools')
+      user_univention_schools_ous \
+        = Array(@univention_user.get('ucsschoolSchool'))
+      schools = @connector.schools.values
+      user_univention_schools \
+        = schools.filter do |school|
+            user_univention_schools_ous.include?(school.ou)
+          end
+
+      school_ous = schools.map { |school| school.ou }
       check_if_some_user_school_is_not_known \
         = lambda do
-            user_univention_school_urls.any? do |url|
-              !@connector.schools.has_key?(url)
-            end
+            user_univention_schools_ous.any? { |ou| !school_ous.include?(ou) }
           end
       if check_if_some_user_school_is_not_known.call() then
         raise UniventionDataError,
               %Q{user "#{ @username }" is in an unknown school}
       end
 
-      user_univention_schools \
-        = @univention_schools_by_url.values_at(*user_univention_school_urls)
-
       user_puavo_schools = []
-      @univention_schools_by_url.each do |school_url, univention_school_info|
-        extschool_id = univention_school.get(@extschool_id_field)
+      user_univention_schools.each do |school|
+        extschool_id = school.get(@extschool_id_field)
         puavo_schools = @puavo_schools_by_id[extschool_id]
         user_puavo_schools += puavo_schools if puavo_schools
       end
@@ -414,18 +416,15 @@ module PuavoRest
   end
 
   class UniventionSchool < UniventionEntry
+    def ou
+      get('ou')
+    end
   end
 
   class UniventionUser < UniventionEntry
     def is_locked?
-      begin
-        krb_flags = get('krb5KDCFlags')
-        return Integer(krb_flags) & (1 << 7) != 0
-      rescue
-        # maybe this is safer... but means that locking users might
-        # (more) silently break
-        return false
-      end
+      krb_flags = get('krb5KDCFlags')
+      Integer(krb_flags) & (1 << 7) != 0
     end
   end
 end
