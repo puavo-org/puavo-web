@@ -23,7 +23,14 @@ class LdapModel
   def compare(attribute, value)
     ldap_attr_sym = self.class.pretty_attrs_to_ldap([ attribute ]).first
     raise "no attribute named #{ attribute } known" unless ldap_attr_sym
-    self.class.ldap_op(:compare, dn, ldap_attr_sym.to_s, value)
+    begin
+      # returns true when there are no changes
+      return self.class.ldap_op(:compare, dn, ldap_attr_sym.to_s, value)
+    rescue LdapError => e
+      # XXX it would be better to check the error result exactly
+      # the attribute is likely missing, in which case it should be updated
+      return false
+    end
   end
 end
 
