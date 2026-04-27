@@ -61,8 +61,8 @@ module PuavoRest
     end
 
     def prepare(organisation)
-      @connector = Connector.new(organisation, @rlog)
-      @connector.read_current()
+      @connector = Connector.new(organisation, self, @rlog)
+      @connector.read_current_ldap_state()
     end
 
     def handle_events
@@ -264,7 +264,9 @@ module PuavoRest
   class Connector
     attr_reader :groups, :schools, :users
 
-    def initialize(organisation, rlog)
+    def initialize(organisation, login_service, rlog)
+      @login_service = login_service
+
       begin
         @reader = IO.popen([ 'puavo-univention', organisation ])
       rescue StandardError => e
@@ -273,7 +275,7 @@ module PuavoRest
       @rlog = rlog
     end
 
-    def read_current
+    def read_current_ldap_state
       @groups       = {}
       @schools      = {}
       @refresh_done = false
@@ -281,9 +283,7 @@ module PuavoRest
 
       loop do
         begin
-          json = @reader.gets
-          raise 'EOF received when reading from puavo-univention' unless json
-          event = create_event_object( JSON.parse(json) )
+          event = read_event()
           if event.kind_of?(RefreshDoneEvent) then
             @rlog.info('>>> ldap refresh from Univention done')
             @refresh_done = true
@@ -292,16 +292,39 @@ module PuavoRest
           entry = event.get_entry(false)
           sort_entry(entry)
         rescue StandardError => e
-          # XXX should this tolerate some errors such as missing attributes?
-          errmsg = "connector reader error: #{ e.message }"
-          @rlog.error(errmsg)
-          raise errmsg
+          @rlog.error('unexpected error when reading Univention ldap state: ' \
+                        + e.message)
+          raise e
         end
       end
     end
 
+    def read_event
+      begin
+        json = @reader.gets
+        raise 'EOF received when reading from puavo-univention' unless json
+        return create_event_object( JSON.parse(json) )
+      rescue StandardError => e
+        # XXX should this tolerate some errors such as missing attributes?
+        errmsg = "connector reader error: #{ e.message }"
+        @rlog.error(errmsg)
+        raise errmsg
+      end
+    end
+
     def handle_events
-      raise 'unimplemented'
+      loop do
+        begin
+          event = read_event()
+          entry = event.get_entry(true)
+          entry.handle()
+        rescue StandardError => e
+          errmsg = 'unexpected error when handling Univention events: ' \
+                     + e.message
+          @rlog.error(errmsg)
+          raise errmsg
+        end
+      end
     end
 
     def sort_entry(entry)
@@ -354,6 +377,7 @@ module PuavoRest
         if entry['univentionObjectType'] == 'container/ou' \
              && Array(entry['objectClass']).include?('ucsschoolOrganizationalUnit')
 
+# XXX
 #     @rlog.warn(
 #       "unknown Univention object type: #{ entry['univentionObjectType'] }")
       UniventionEntry
@@ -369,7 +393,7 @@ module PuavoRest
       entry = @data['entry']
       raise 'entry is not a Hash' unless entry.kind_of?(Hash)
 
-      entry_class(entry).new(entry, @rlog)
+      entry_class(entry).new(entry, @login_service, @rlog)
     end
   end
 
@@ -386,9 +410,10 @@ module PuavoRest
   end
 
   class UniventionEntry
-    def initialize(data, rlog)
-      @data = data
-      @rlog = rlog
+    def initialize(data, login_service, rlog)
+      @data          = data
+      @login_service = login_service
+      @rlog          = rlog
       validate
     end
 
@@ -422,9 +447,17 @@ module PuavoRest
   end
 
   class UniventionUser < UniventionEntry
+    def handle
+      @login_service.update_from_external(username, self)
+    end
+
     def is_locked?
       krb_flags = get('krb5KDCFlags')
       Integer(krb_flags) & (1 << 7) != 0
+    end
+
+    def username
+      get('uid')
     end
   end
 end
