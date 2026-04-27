@@ -63,6 +63,8 @@ function registerSuperTable(id, table)
     return true;
 }
 
+export const getTableById = id => superTableRegistry[id];
+
 // Sets up the message routing for the worker thread
 function setupWorkerThreadMessageRouting(worker)
 {
