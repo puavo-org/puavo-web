@@ -73,16 +73,14 @@ module PuavoRest
       raise 'univention userinfo not set' \
         unless @username && @univention_user
 
-      get_attr = lambda { |attr| @univention_user.get(attr) }
-
       puavo_extlogin_id_field = @external_login.puavo_extlogin_id_field
       userinfo = {
-        puavo_extlogin_id_field => get_attr.call(@extlogin_id_field),
-        'first_name'            => get_attr.call('givenName'),
-        'last_name'             => get_attr.call('sn'),
-        # XXX 'ldap_password_hash'    => get_attr.call('userPasswordHash'),
-        'locked'                => get_attr.call('disabled'),
-        'username'              => username,
+        puavo_extlogin_id_field => @univention_user.get(@extlogin_id_field),
+        'first_name'            => @univention_user.get('givenName'),
+        'last_name'             => @univention_user.get('sn'),
+        'ldap_password_hash'    => @univention_user.get('userPassword'),
+        'locked'                => @univention_user.is_locked?,
+        'username'              => @univention_user.get('uid'),
       }
 
       check_attr = lambda do |field, msg|
@@ -392,10 +390,14 @@ module PuavoRest
       validate
     end
 
+    def dn
+      @data['dn']
+    end
+
     def get(key)
       unless @data.has_key?(key) then
-        msg = "no such key as '#{ key }'"
-        @rlog.warn(msg + " in #{ @data.inspect }")
+        msg = "no such ldap field as '#{ key }' in entry dn=#{ dn }"
+        @rlog.warn(msg)
         raise msg
       end
       @data[key]
@@ -415,5 +417,15 @@ module PuavoRest
   end
 
   class UniventionUser < UniventionEntry
+    def is_locked?
+      begin
+        krb_flags = get('krb5KDCFlags')
+        return Integer(krb_flags) & (1 << 7) != 0
+      rescue
+        # maybe this is safer... but means that locking users might
+        # (more) silently break
+        return false
+      end
+    end
   end
 end
