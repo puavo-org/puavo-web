@@ -2,6 +2,8 @@
 
 import { create, destroy } from "../../common/dom.js";
 import { ColumnFlag, SortOrder } from "./constants.js";
+import { saveSettings } from "./settings.js";
+import { getTableById } from "./main.js";
 
 // Internal data. These can be global, because even if you have multiple SuperTables on the same page,
 // only one of them can have header dragging active at any moment.
@@ -12,7 +14,8 @@ let startMousePos = null,       // Initial drag mouse position (X and Y)
     trackingElement = null,     // The header TH element which we're tracking before dragging starts
     dragOffset = null,          // Delta (distance) from the original event element to the mouse position ([dx, dy])
     canSort = false,            // is the clicked/dragged table column sortable?
-    isDragActive = false;       // true if a header cell drag is active
+    isDragActive = false,       // true if a header cell drag is active
+    currentTableID = null;      // ID of the table we're tracking (header click or drag)
 
 function resetDrag()
 {
@@ -111,7 +114,7 @@ function toggleSorting(table, e)
     }
 }
 
-export function beginMouseTracking(table, e)
+function beginMouseTracking(table, e)
 {
     resetDrag();
 
@@ -124,7 +127,7 @@ export function beginMouseTracking(table, e)
     };
 }
 
-export function tryBeginDrag(table, event)
+function tryBeginDrag(table, event)
 {
     if (startMousePos === null)
         return;
@@ -212,7 +215,7 @@ export function tryBeginDrag(table, event)
     updateDrag(event);
 }
 
-export function updateDrag(event)
+function updateDrag(event)
 {
     if (!isDragActive || headerPositions.length == 0)
         return false;
@@ -256,18 +259,7 @@ export function updateDrag(event)
     return true;
 }
 
-export function shouldCancelMouseTracking(e)
-{
-    return !isDragActive && trackingElement != e.target;
-}
-
-export function cancelMouseTracking(table)
-{
-    setTableClasses(table, false);
-    resetDrag();
-}
-
-export function endMouseTracking(table, e)
+function endMouseTracking(table, e)
 {
     setTableClasses(table, false);
 
@@ -287,4 +279,70 @@ export function endMouseTracking(table, e)
     table.clearRowSelections();
     table.updateTable();
     table.updateStats();
+}
+
+function removeEventHandlers()
+{
+    document.removeEventListener("mouseup", onHeaderMouseUp);
+    document.removeEventListener("mousemove", onHeaderMouseMove);
+}
+
+// Either sort the table, or end cell reordering, depending on how far the mouse was moved
+// since the button went down
+function onHeaderMouseUp(e)
+{
+    e.preventDefault();
+
+    removeEventHandlers();
+
+    const table = getTableById(currentTableID);
+    currentTableID = null;
+
+    endMouseTracking(table, e);
+    saveSettings(table);
+}
+
+// Drag a header cell around, or track mouse movement to see if header drag should be started
+function onHeaderMouseMove(e)
+{
+    e.preventDefault();
+
+    if (updateDrag(e))
+        return;
+
+    const table = getTableById(currentTableID);
+
+    if (!isDragActive && trackingElement != e.target) {
+        // The mouse veered away from the tracked element before enough "distance" had been accumulated
+        // to trigger a header drag. Cancel the whole thing.
+        removeEventHandlers();
+        currentTableID = null;
+
+        setTableClasses(table, false);
+        resetDrag();
+
+        return;
+    }
+
+    tryBeginDrag(table, e);
+}
+
+// Begins the whole click/drag operation
+export function onHeaderMouseDown(e, id)
+{
+    e.preventDefault();
+
+    if (e.button != 0)      // LMB only (or RMB if the buttons are swapped)
+        return;
+
+    const table = getTableById(id);
+
+    if (table.isBusy())
+        return;
+
+    document.addEventListener("mouseup", onHeaderMouseUp);
+    document.addEventListener("mousemove", onHeaderMouseMove);
+
+    currentTableID = id;
+    beginMouseTracking(table, e);
 }

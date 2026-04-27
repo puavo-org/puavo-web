@@ -4,6 +4,7 @@ import { _tr } from "../../common/utils.js";
 import { create } from "../../common/dom.js";
 import { ColumnFlag, ColumnType, SortOrder } from "./constants.js";
 import { getColumnType } from "./utils.js";
+import { onHeaderMouseDown } from "./headers.js";
 
 function buildHeaders(table, currentColumn, haveActions)
 {
@@ -85,7 +86,7 @@ function buildHeaders(table, currentColumn, haveActions)
           count = haveActions ? headings.length - 1 : headings.length;  // skip the actions column
 
     for (let i = start; i < count; i++)
-        headings[i].addEventListener("mousedown", event => table.onHeaderMouseDown(event));
+        headings[i].addEventListener("mousedown", event => onHeaderMouseDown(event, table.id));
 
     return headersFragment;
 }

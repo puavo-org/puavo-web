@@ -10,8 +10,6 @@ import * as Export from "./export.js";
 
 import { setupColumnEditor } from "./column_editor.js";
 
-import * as Headers from "./headers.js";
-
 import { FilterEditor } from "../filters/editor/fe_main.js";
 
 import { setupRowSelections, onRowCheckboxClick } from "./row_selection.js";
@@ -292,12 +290,6 @@ constructor(container, settings, worker = null)
     this.updating = false;
     this.processing = false;
     this.stopRequested = false;
-
-    // Header drag callback functions. "bind()" is needed to get around some weird
-    // JS scoping garbage I don't understand.
-    this.onHeaderMouseDown = this.onHeaderMouseDown.bind(this);
-    this.onHeaderMouseUp = this.onHeaderMouseUp.bind(this);
-    this.onHeaderMouseMove = this.onHeaderMouseMove.bind(this);
 
     // ----------------------------------------------------------------------------------------------
 
@@ -913,60 +905,6 @@ onWorkerMessage(e)
     }
 
     this.processBatch(this.prepareNextBatch(BATCH_SIZE));
-}
-
-// --------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------
-// TABLE HEADER REORDERING
-
-// Start tracking a table header cell clicks/drags
-onHeaderMouseDown(e)
-{
-    e.preventDefault();
-
-    if (this.isBusy())
-        return;
-
-    if (e.button != 0)      // LMB only (or RMB if the buttons are swapped)
-        return;
-
-    Headers.beginMouseTracking(this, e);
-    document.addEventListener("mouseup", this.onHeaderMouseUp);
-    document.addEventListener("mousemove", this.onHeaderMouseMove);
-}
-
-// Either sort the table, or end cell reordering, depending on how far the mouse was moved
-// since the button went down
-onHeaderMouseUp(e)
-{
-    e.preventDefault();
-
-    document.removeEventListener("mouseup", this.onHeaderMouseUp);
-    document.removeEventListener("mousemove", this.onHeaderMouseMove);
-
-    Headers.endMouseTracking(this, e);
-    saveSettings(this);
-}
-
-// Drag a header cell around, or track mouse movement to see if header drag should be started
-onHeaderMouseMove(e)
-{
-    e.preventDefault();
-
-    if (Headers.updateDrag(e))
-        return;
-
-    if (Headers.shouldCancelMouseTracking(e)) {
-        // The mouse veered away from the tracked element before enough "distance" had been accumulated
-        // to trigger a header drag. Cancel the whole thing.
-        Headers.cancelMouseTracking(this);
-
-        document.removeEventListener("mouseup", this.onHeaderMouseUp);
-        document.removeEventListener("mousemove", this.onHeaderMouseMove);
-        return;
-    }
-
-    Headers.tryBeginDrag(this, e);
 }
 
 }   // class SuperTable
