@@ -415,11 +415,7 @@ module PuavoRest
     end
 
     def get(key)
-      unless @data.has_key?(key) then
-        msg = "no such ldap field as '#{ key }' in entry dn=#{ dn }"
-        @rlog.warn(msg)
-        raise msg
-      end
+      # if missing, returns nil and that is okay
       @data[key]
     end
 
