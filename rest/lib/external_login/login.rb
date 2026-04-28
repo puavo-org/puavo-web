@@ -1,4 +1,5 @@
 require 'net/ldap'
+require 'set'
 
 require_relative './errors'
 require_relative './ldap'
@@ -55,10 +56,11 @@ module PuavoRest
             'external_login manage_puavousers not set' \
         if @manage_puavousers.nil?
 
-      @managed_roles = @config['managed_roles']
+      managed_roles = @config['managed_roles']
       raise ExternalLoginConfigError,
             'external_login managed roles not set' \
-        unless @managed_roles.kind_of?(Array)
+        unless managed_roles.kind_of?(Array)
+      @managed_roles = Set.new(managed_roles)
 
       @puavo_extlogin_id_field = @config['puavo_extlogin_id_field']
       raise ExternalLoginConfigError,
@@ -330,28 +332,29 @@ module PuavoRest
       return external_login_status
     end
 
-    def update_user_info(userinfo, password, params)
-      external_groups_by_type = userinfo.delete('external_groups')
+    def update_user_info(ext_userinfo, password, params)
+      external_groups_by_type = ext_userinfo.delete('external_groups')
 
-      user = puavo_user_by_extlogin_id(userinfo[@puavo_extlogin_id_field])
-      user, user_update_status = update_user_attributes(user, userinfo, params)
+      user = puavo_user_by_extlogin_id(ext_userinfo[@puavo_extlogin_id_field])
+      user, user_update_status \
+        = update_user_attributes(user, ext_userinfo, params)
 
       if password then
         pw_update_status \
-          = set_puavo_password(userinfo['username'],
-                               userinfo[@puavo_extlogin_id_field],
+          = set_puavo_password(ext_userinfo['username'],
+                               ext_userinfo[@puavo_extlogin_id_field],
                                password)
         if pw_update_status == ExternalLoginStatus::UPDATED \
-          && userinfo['password_last_set'] then
+          && ext_userinfo['password_last_set'] then
             # must update the password_last_set to match what external ldap has
             # because password change operation changes the value in Puavo
             begin
-              user.password_last_set = userinfo['password_last_set']
+              user.password_last_set = ext_userinfo['password_last_set']
               user.save!
             rescue StandardError => e
               @rlog.info(
                 'error in updating password_last_set in Puavo' \
-                  + " for user #{ userinfo['username'] }: #{ e.message }")
+                  + " for user #{ ext_userinfo['username'] }: #{ e.message }")
             end
         end
       else
@@ -368,38 +371,38 @@ module PuavoRest
       return ExternalLoginStatus::NOCHANGE
     end
 
-    def update_user_attributes(user, userinfo, params)
+    def update_user_attributes(user, ext_userinfo, params)
       user_update_status = ExternalLoginStatus::NOCHANGE
 
       return user_update_status unless @manage_puavousers
 
-      if userinfo['school_dns'].empty? then
+      if ext_userinfo['school_dns'].empty? then
         school_dn_param = params[:school_dn].to_s
         if !school_dn_param.empty? then
-          userinfo['school_dns'] = [ school_dn_param ]
+          ext_userinfo['school_dns'] = [ school_dn_param ]
         end
       end
-      if userinfo['school_dns'].empty? then
+      if ext_userinfo['school_dns'].empty? then
         raise ExternalLoginError,
-              "could not determine user school for #{ userinfo['username'] }"
+              "could not determine user school for #{ ext_userinfo['username'] }"
       end
 
-      if userinfo['roles'].empty? then
+      if ext_userinfo['roles'].empty? then
         role_param = params[:role].to_s
         if !role_param.empty? then
-          userinfo['roles'] = [ role_param ]
+          ext_userinfo['roles'] = [ role_param ]
         end
       end
-      if userinfo['roles'].empty? then
+      if ext_userinfo['roles'].empty? then
         raise ExternalLoginError,
-              "could not determine user role for #{ userinfo['username'] }"
+              "could not determine user role for #{ ext_userinfo['username'] }"
       end
 
       begin
-        userinfo = adjust_userinfo(user, userinfo)
+        ext_userinfo = adjust_userinfo(user, ext_userinfo)
 
         if !user then
-          if userinfo['id'] then
+          if ext_userinfo['id'] then
             # We should not be creating users with a specific puavoId,
             # this should never happen and something is configured in an
             # unsupported way.
@@ -408,17 +411,17 @@ module PuavoRest
           end
 
           # All is good, we are missing a user and should create one.
-          user = User.new(userinfo)
+          user = User.new(ext_userinfo)
           user.save!
-          @rlog.info("created a new user '#{ userinfo['username'] }'")
+          @rlog.info("created a new user '#{ ext_userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::UPDATED
 
-        elsif user.check_if_changed_attributes(userinfo) then
-          userinfo.delete('id')
-          user.update!(userinfo)
+        elsif user.check_if_changed_attributes(ext_userinfo) then
+          ext_userinfo.delete('id')
+          user.update!(ext_userinfo)
           user.removal_request_time = nil
           user.save!
-          @rlog.info("updated user info for '#{ userinfo['username'] }'")
+          @rlog.info("updated user info for '#{ ext_userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::UPDATED
 
         else
@@ -428,7 +431,7 @@ module PuavoRest
           end
 
           @rlog.info('no change in user information for' \
-                       + " '#{ userinfo['username'] }'")
+                       + " '#{ ext_userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::NOCHANGE
         end
       rescue ValidationError => e
@@ -439,22 +442,23 @@ module PuavoRest
       return user, user_update_status
     end
 
-    def adjust_userinfo(user, userinfo)
-      return userinfo unless user
+    def adjust_userinfo(user, ext_userinfo)
+      return ext_userinfo unless user
 
       # We want to get roles listed in @managed_roles from the external
       # login information, but other roles we want to maintain ourselves
       # (often, for example, the "admin"-role).
-      new_user_roles = (user.roles - @managed_roles) + userinfo['roles']
-      userinfo['roles'] = new_user_roles.sort.uniq
+      ext_roles = Set.new(ext_userinfo['roles']) & @managed_roles
+      other_puavo_roles = Set.new(user.roles) - @managed_roles
+      ext_userinfo['roles'] = (ext_roles + other_puavo_roles).to_a
 
-      userinfo
+      ext_userinfo
    end
 
     def self.auth(username, password, organisation, params)
       rlog = $rest_log
 
-      userinfo = nil
+      ext_userinfo = nil
       user_status = nil
 
       begin
@@ -472,15 +476,15 @@ module PuavoRest
                       + " '#{ login_service.service_name }' by user" \
                       + " '#{ username }'"
           rlog.info(message)
-          userinfo = login_service.login(username, password)
+          ext_userinfo = login_service.login(username, password)
         rescue ExternalLoginUserMissing => e
           rlog.info("user does not exist in external LDAP: #{e.message}")
           remove_user_if_found = true
-          userinfo = nil
+          ext_userinfo = nil
         rescue ExternalLoginWrongCredentials => e
           rlog.info("user provided wrong username/password: #{e.message}")
           wrong_credentials = true
-          userinfo = nil
+          ext_userinfo = nil
         rescue ExternalLoginError => e
           raise e
         rescue StandardError => e
@@ -526,7 +530,7 @@ module PuavoRest
           end
         end
 
-        if !userinfo then
+        if !ext_userinfo then
           msg = 'could not login to external service' \
                   + " '#{ login_service.service_name }' by user" \
                   + " '#{ username }', username or password was wrong"
@@ -537,11 +541,11 @@ module PuavoRest
         # update user information after successful login
 
         message = 'successful login to external service' \
-                    + " by user '#{ userinfo['username'] }'"
+                    + " by user '#{ ext_userinfo['username'] }'"
         rlog.info(message)
 
         begin
-          extlogin_status = external_login.update_user_info(userinfo,
+          extlogin_status = external_login.update_user_info(ext_userinfo,
                                                             password,
                                                             params)
           user_status \
