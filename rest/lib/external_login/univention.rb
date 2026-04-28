@@ -321,6 +321,10 @@ module PuavoRest
     end
 
     def sort_entry(entry)
+      # XXX nothing is (yet) done with groups
+      if entry.kind_of?(UniventionGroup) then
+        @groups[ entry.id ] = entry
+      end
       if entry.kind_of?(UniventionSchool) then
         @schools[ entry.id ] = entry
       end
@@ -365,14 +369,39 @@ module PuavoRest
     def entry_class(entry)
       check_entry(entry)
 
-      return UniventionUser if entry['univentionObjectType'] == 'users/user'
+      return UniventionUser \
+        if entry['univentionObjectType'] == 'users/user'
       return UniventionSchool \
         if entry['univentionObjectType'] == 'container/ou' \
              && Array(entry['objectClass']).include?('ucsschoolOrganizationalUnit')
 
-# XXX
-#     @rlog.warn(
-#       "unknown Univention object type: #{ entry['univentionObjectType'] }")
+      return UniventionGroup \
+        if entry['univentionObjectType'] == 'groups/group' \
+             && Array(entry['objectClass']).include?('ucsschoolGroup')
+
+      # not interested in these (we should maybe not be even receiving
+      # these?)
+      return UniventionEntry \
+        if entry['univentionObjectType'] == 'container/cn' \
+             && Array(entry['objectClass']).include?('organizationalRole')
+      return UniventionEntry \
+        if entry['univentionObjectType'] == 'container/dc' \
+             && Array(entry['objectClass']).include?('krb5Realm')
+      return UniventionEntry \
+        if entry['univentionObjectType'] == 'container/ou' \
+             && Array(entry['objectClass']).include?('msGPO')
+      return UniventionEntry \
+        if entry['univentionObjectType'] == 'groups/group' \
+             && Array(entry['objectClass']).include?('ucsschoolImportGroup')
+      return UniventionEntry \
+        if entry['univentionObjectType'] == 'settings/cn' \
+             && Array(entry['objectClass']).include?('organizationalRole')
+
+      msg = 'unknown Univention object type: ' \
+               + "#{ entry['univentionObjectType'] }" \
+               + " with objectClasses: #{ entry['objectClass'] }"
+      @rlog.warn(msg)
+
       UniventionEntry
     end
 
@@ -419,6 +448,11 @@ module PuavoRest
       @data[key]
     end
 
+    def handle
+      @rlog.warn('should handle an unknown univention entry event' \
+                   + " dn=#{ dn } somehow but I do not know how")
+    end
+
     def id
       @data['univentionObjectIdentifier']
     end
@@ -427,6 +461,9 @@ module PuavoRest
       raise 'no univentionObjectIdentifier' \
         unless @data['univentionObjectIdentifier'].kind_of?(String)
     end
+  end
+
+  class UniventionGroup < UniventionEntry
   end
 
   class UniventionSchool < UniventionEntry
