@@ -16,6 +16,14 @@ module PuavoRest
   end
 
   class ExternalUniventionService < ExternalLoginService
+    OBJ_CLASS_TO_ROLE = {
+      'ucsschoolAdministrator' => 'admin',
+      'ucsschoolLegalGuardian' => 'parent',
+      'ucsschoolStaff'         => 'staff',
+      'ucsschoolStudent'       => 'student',
+      'ucsschoolTeacher'       => 'teacher',
+    }
+
     def initialize(external_login, univention_config, service_name, rlog)
       super(external_login, service_name, rlog)
 
@@ -127,28 +135,13 @@ module PuavoRest
     end
 
     def get_user_roles()
-      user_roles = []
+      # the "ucsschoolExam" role-related object class is also possible,
+      # but it is unclear what Puavo-role it could be mapped to
+      user_object_classes = Array(@univention_user.get('objectClass'))
 
-      ucsschool_roles = Array(@univention_user.get('ucsschoolRole'))
-      if ucsschool_roles.empty? then
-        raise UniventionDataError,
-              %Q{user "#{ @username }" has no roles in UCS@school}
-      end
-
-      # UCS@school supports separate roles for each school but Puavo does
-      # not, so dismiss school information in roles
-      ucsschool_roles.each do |ucs_role|
-        case ucs_role
-          when /\Alegal_guardian:/
-            user_roles << 'parent'
-          when /\Astaff:/
-            user_roles << 'staff'
-          when /\Astudent:/
-            user_roles << 'student'
-          when /\Ateacher:/
-            user_roles << 'teacher'
-        end
-      end
+      user_roles = user_object_classes.map do |obj_class|
+                     OBJ_CLASS_TO_ROLE[obj_class]
+                   end.compact
 
       if user_roles.empty? then
         raise UniventionDataError,
