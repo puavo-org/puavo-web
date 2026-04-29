@@ -4,6 +4,7 @@ require_relative './errors'
 require_relative './service'
 
 class UniventionDataError < ExternalLoginDataError; end
+class UniventionBadEntry  < UniventionDataError; end
 
 module PuavoRest
   module Univention
@@ -283,6 +284,7 @@ module PuavoRest
             break
           end
           entry = event.get_entry(false)
+          next unless entry
           sort_entry(entry)
         rescue StandardError => e
           @rlog.error('unexpected error when reading Univention ldap state: ' \
@@ -310,6 +312,7 @@ module PuavoRest
         begin
           event = read_event()
           entry = event.get_entry(true)
+          next unless entry
           entry.handle()
         rescue StandardError => e
           errmsg = 'unexpected error when handling Univention events: ' \
@@ -361,8 +364,13 @@ module PuavoRest
     end
 
     def check_entry(entry)
-      raise 'no univentionObjectType' \
-        unless entry.has_key?('univentionObjectType')
+      unless entry.has_key?('univentionObjectType') then
+        # should not happen but unlikely serious
+        raise UniventionBadEntry,
+              "no univentionObjectType on dn=#{ entry['dn'] }"
+      end
+
+      # something is more wrong, if an ldap entry has no objectClass
       raise 'no objectClass' unless entry.has_key?('objectClass')
     end
 
@@ -406,16 +414,25 @@ module PuavoRest
     end
 
     def get_entry(expect_update)
-      is_update = @data['is_update']
-      raise 'is_update is not a boolean value' \
-        unless is_update.kind_of?(TrueClass) || is_update.kind_of?(FalseClass)
-      raise 'update state did not match what we expected' \
-        unless is_update == expect_update
+      begin
+        is_update = @data['is_update']
 
-      entry = @data['entry']
-      raise 'entry is not a Hash' unless entry.kind_of?(Hash)
+        # these are serious enough that we will not raise UniventionBadEntry
+        # and catch them
+        raise 'is_update is not a boolean value' \
+          unless is_update.kind_of?(TrueClass) || is_update.kind_of?(FalseClass)
+        raise 'update state did not match what we expected' \
+          unless is_update == expect_update
 
-      entry_class(entry).new(entry, @login_service, @rlog)
+        entry = @data['entry']
+        raise 'entry is not a Hash' unless entry.kind_of?(Hash)
+
+        return entry_class(entry).new(entry, @login_service, @rlog)
+
+      rescue UniventionBadEntry => e
+        @rlog.warn("got bad Univention entry: #{ e.message }")
+        return nil
+      end
     end
   end
 
