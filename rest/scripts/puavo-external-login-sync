@@ -168,6 +168,7 @@ end
 
 if login_service.has_realtime? then
   begin
+    puts ">> starting real time event handler for #{ organisation }"
     login_service.handle_events()
   rescue StandardError => e
     log_warn(e, '!! error in running realtime event handler' \
