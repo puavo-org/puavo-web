@@ -13,7 +13,11 @@ package Ldap {
   use Class::Tiny qw(ldap_base ldap_host ldap_dn ldap_password);
   use Net::LDAP;
   use Net::LDAP::Control::SyncRequest;
-  use Net::LDAP::Constant qw(LDAP_SUCCESS LDAP_SYNC_REFRESH_AND_PERSIST);
+  use Net::LDAP::Constant qw(LDAP_SUCCESS LDAP_SYNC_ADD
+                             LDAP_SYNC_DELETE
+                             LDAP_SYNC_MODIFY
+                             LDAP_SYNC_PRESENT
+                             LDAP_SYNC_REFRESH_AND_PERSIST);
   use JSON;
   use JSON::MaybeXS qw(encode_json);
 
@@ -76,13 +80,24 @@ package Ldap {
     \%out;
   }
 
+  sub get_syncstate {
+    my ($self, $msg) = @_;
+    return unless $msg && $msg->control
+                    && $msg->control->isa('Net::LDAP::Control::SyncState');
+    my $state = $msg->control->state;
+    return 'add'     if ($state == LDAP_SYNC_ADD);
+    return 'delete'  if ($state == LDAP_SYNC_DELETE);
+    return 'modify'  if ($state == LDAP_SYNC_MODIFY);
+    return 'present' if ($state == LDAP_SYNC_PRESENT);
+    return undef;
+  }
+
   sub handle_search_event {
     my ($self, $msg, $entry) = @_;
 
     return unless $entry;
 
     my $item = undef;
-
     if ($entry->isa('Net::LDAP::Intermediate::SyncInfo')) {
        my $refresh_done = $entry->{asn} && $entry->{asn}{refreshDelete}
                             && $entry->{asn}{refreshDelete}{refreshDone};
@@ -94,9 +109,11 @@ package Ldap {
 
     if (!$item && $entry->isa('Net::LDAP::Entry')) {
       my $entryhash = $self->entry_to_hash($entry);
+      my $sync_state = $self->get_syncstate($msg);
       $item = {
         entry     => $entryhash,
         is_update => $self->{refresh_done} ? JSON::true : JSON::false,
+        state     => $sync_state,
         type      => 'entry',
       };
     }
