@@ -272,10 +272,11 @@ module PuavoRest
     end
 
     def read_current_ldap_state
-      @groups       = {}
-      @schools      = {}
-      @refresh_done = false
-      @users        = {}
+      @groups              = {}
+      @refresh_done        = false
+      @schools             = {}
+      @univention_dn_to_id = {}
+      @users               = {}
 
       loop do
         begin
@@ -360,12 +361,27 @@ module PuavoRest
     end
 
     def delete(entry)
-      raise "should delete #{ entry.dn }"
+      extlogin_id = @univention_dn_to_id[ entry.dn ]
+      unless extlogin_id then
+        @rlog.warn("ignoring delete event on dn=#{ entry.dn }" \
+                     + ' that we have not handled')
+        return
+      end
+
+      puavo_user = @login_service.external_login \
+                                 .puavo_user_by_extlogin_id(extlogin_id)
+      return unless puavo_user
+
+      if puavo_user.mark_for_removal! then
+        @rlog.info("puavo user '#{ puavo_user.username }' is marked" \
+                     + ' for removal')
+      end
     end
 
     def update(entry)
       if entry.kind_of?(UniventionUser) then
         @login_service.update_from_external(entry.username, entry)
+        @univention_dn_to_id[entry.dn] = entry.id
       end
     end
   end
@@ -500,9 +516,6 @@ module PuavoRest
   end
 
   class UniventionGroup < UniventionEntry
-    def update
-      raise 'group updates are unimplemented'
-    end
   end
 
   class UniventionSchool < UniventionEntry

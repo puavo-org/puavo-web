@@ -1,6 +1,6 @@
 module PuavoRest
   class ExternalLoginService
-    attr_reader :service_name
+    attr_reader :external_login, :service_name
 
     def initialize(external_login, service_name, rlog)
       @external_login = external_login
