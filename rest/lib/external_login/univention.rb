@@ -51,7 +51,13 @@ module PuavoRest
 
     def change_password(actor_username, actor_password, target_user_username,
                         target_user_password)
-      # XXX Do nothing.  Should this actually do something?
+      if @external_password_change['api'] == 'do-nothing' then
+        raise ExternalLoginNotConfigured,
+              'password changes are disabled in configuration'
+      end
+
+      raise ExternalLoginNotConfigured,
+            'Univention support does not handle changing upstream passwords'
     end
 
     def get_puavo_schools_by_id()
