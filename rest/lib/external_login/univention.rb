@@ -258,6 +258,8 @@ module PuavoRest
   class Connector
     attr_reader :groups, :schools, :users
 
+    ACCEPTED_STATES = %w(add delete modify present)
+
     def initialize(organisation, login_service, rlog)
       @login_service = login_service
 
@@ -311,9 +313,7 @@ module PuavoRest
       loop do
         begin
           event = read_event()
-          entry = event.get_entry(true)
-          next unless entry
-          entry.handle()
+          event.handle()
         rescue StandardError => e
           errmsg = 'unexpected error when handling Univention events: ' \
                      + e.message
@@ -324,8 +324,8 @@ module PuavoRest
     end
 
     def sort_entry(entry)
-      # XXX nothing is (yet) done with groups
       if entry.kind_of?(UniventionGroup) then
+        # XXX nothing is (yet) done with groups
         @groups[ entry.id ] = entry
       end
       if entry.kind_of?(UniventionSchool) then
@@ -344,38 +344,46 @@ module PuavoRest
 
       event_class = nil
       case type
-      when 'entry' then
+      when 'entry'
         event_class = EntryEvent
+        state = parsed_data['state']
+        raise 'state is not a string' unless state.kind_of?(String)
+        raise "state is not one of #{ ACCEPTED_STATES.join(',') }" \
+          unless ACCEPTED_STATES.include?(state)
       when 'refresh_done'
         event_class = RefreshDoneEvent
       else
         raise "unknown event type: #{ type }"
       end
 
-      event_class.new(parsed_data, @login_service, @rlog)
+      event_class.new(parsed_data, self, @rlog)
+    end
+
+    def delete(entry)
+      raise "should delete #{ entry.dn }"
+    end
+
+    def update(entry)
+      if entry.kind_of?(UniventionUser) then
+        @login_service.update_from_external(entry.username, entry)
+      end
     end
   end
 
   class Event
-    def initialize(data, login_service, rlog)
-      @data          = data
-      @login_service = login_service
-      @rlog          = rlog
+    def initialize(data, connector, rlog)
+      @data      = data
+      @connector = connector
+      @rlog      = rlog
     end
 
-    def check_entry(entry)
-      unless entry.has_key?('univentionObjectType') then
-        # should not happen but unlikely serious
-        raise UniventionBadEntry,
-              "no univentionObjectType on dn=#{ entry['dn'] }"
-      end
-
-      # something is more wrong, if an ldap entry has no objectClass
-      raise 'no objectClass' unless entry.has_key?('objectClass')
+    def state
+      @data['state']
     end
 
     def entry_class(entry)
-      check_entry(entry)
+      return Entry unless entry.has_key?('objectClass') \
+                            && entry.has_key?('univentionObjectType')
 
       return UniventionUser \
         if entry['univentionObjectType'] == 'users/user'
@@ -414,46 +422,55 @@ module PuavoRest
     end
 
     def get_entry(expect_update)
-      begin
-        is_update = @data['is_update']
+      is_update = @data['is_update']
 
-        # these are serious enough that we will not raise UniventionBadEntry
-        # and catch them
-        raise 'is_update is not a boolean value' \
-          unless is_update.kind_of?(TrueClass) || is_update.kind_of?(FalseClass)
-        raise 'update state did not match what we expected' \
-          unless is_update == expect_update
+      raise 'is_update is not a boolean value' \
+        unless is_update.kind_of?(TrueClass) || is_update.kind_of?(FalseClass)
+      raise 'update state did not match what we expected' \
+        unless is_update == expect_update
 
-        entry = @data['entry']
-        raise 'entry is not a Hash' unless entry.kind_of?(Hash)
-
-        return entry_class(entry).new(entry, @login_service, @rlog)
-
-      rescue UniventionBadEntry => e
-        @rlog.warn("got bad Univention entry: #{ e.message }")
-        return nil
+      if !expect_update && state == 'delete' then
+        raise 'got a delete event while not expecting update'
       end
+
+      entry = @data['entry']
+      raise 'entry is not a Hash' unless entry.kind_of?(Hash)
+
+      entry_class(entry).new(entry, @connector, @rlog)
     end
   end
 
   class EntryEvent < Event
-    def initialize(data, login_service, rlog)
-      super(data, login_service, rlog)
+    def initialize(data, connector, rlog)
+      super(data, connector, rlog)
+    end
+
+    def handle
+      entry = get_entry(true)
+      if state == 'delete' then
+        @connector.delete(entry)
+        return
+      end
+
+      @connector.update(entry)
     end
   end
 
   class RefreshDoneEvent < Event
-    def initialize(data, login_service, rlog)
-      super(data, login_service, rlog)
+    def initialize(data, connector, rlog)
+      super(data, connector, rlog)
     end
   end
 
-  class UniventionEntry
-    def initialize(data, login_service, rlog)
-      @data          = data
-      @login_service = login_service
-      @rlog          = rlog
-      validate
+  class Entry
+    def initialize(data, connector, rlog)
+      @data      = data
+      @connector = connector
+      @rlog      = rlog
+    end
+
+    def delete
+      raise "should delete dn=#{ dn }"
     end
 
     def dn
@@ -464,10 +481,12 @@ module PuavoRest
       # if missing, returns nil and that is okay
       @data[key]
     end
+  end
 
-    def handle
-      @rlog.warn('should handle an unknown univention entry event' \
-                   + " dn=#{ dn } somehow but I do not know how")
+  class UniventionEntry < Entry
+    def initialize(data, connector, rlog)
+      super(data, connector, rlog)
+      validate
     end
 
     def id
@@ -481,6 +500,9 @@ module PuavoRest
   end
 
   class UniventionGroup < UniventionEntry
+    def update
+      raise 'group updates are unimplemented'
+    end
   end
 
   class UniventionSchool < UniventionEntry
@@ -490,12 +512,9 @@ module PuavoRest
   end
 
   class UniventionUser < UniventionEntry
-    def handle
-      @login_service.update_from_external(username, self)
-    end
-
     def is_locked?
       krb_flags = get('krb5KDCFlags')
+      return false unless krb_flags
       Integer(krb_flags) & (1 << 7) != 0
     end
 
