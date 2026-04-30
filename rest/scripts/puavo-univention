@@ -35,7 +35,8 @@ package Ldap {
   use Class::Tiny qw(ldap_base ldap_host ldap_dn ldap_password);
   use Net::LDAP;
   use Net::LDAP::Control::SyncRequest;
-  use Net::LDAP::Constant qw(LDAP_SUCCESS LDAP_SYNC_ADD
+  use Net::LDAP::Constant qw(LDAP_SUCCESS
+                             LDAP_SYNC_ADD
                              LDAP_SYNC_DELETE
                              LDAP_SYNC_MODIFY
                              LDAP_SYNC_PRESENT
