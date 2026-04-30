@@ -490,8 +490,8 @@ module PuavoRest
 
         login_service = external_login.new_external_service_handler()
 
+        maybe_invalidate_puavo_creds = false
         remove_user_if_found = false
-        wrong_credentials    = false
 
         begin
           message = 'attempting external login to service' \
@@ -500,12 +500,19 @@ module PuavoRest
           rlog.info(message)
           ext_userinfo = login_service.login(username, password)
         rescue ExternalLoginUserMissing => e
-          rlog.info("user does not exist in external service: #{e.message}")
+          rlog.info("user does not exist in external service: #{ e.message }")
           remove_user_if_found = true
           ext_userinfo = nil
         rescue ExternalLoginWrongCredentials => e
-          rlog.info("user provided wrong username/password: #{e.message}")
-          wrong_credentials = true
+          rlog.info("user provided wrong username/password: #{ e.message }")
+          maybe_invalidate_puavo_creds = true
+          ext_userinfo = nil
+        rescue ExternalLoginWrongPuavoCredentials => e
+          rlog.info('user provided wrong (puavo) username/password: ' \
+                      + e.message)
+          # Invalidating puavo credentials only work if we have working
+          # puavo credentials, but in this case we know we do not have,
+          # so do not set "maybe_invalidate_puavo_creds" to true
           ext_userinfo = nil
         rescue ExternalLoginError => e
           raise e
@@ -529,7 +536,7 @@ module PuavoRest
           end
         end
 
-        if wrong_credentials then
+        if maybe_invalidate_puavo_creds then
           # Try looking up user from Puavo, but in case a user does not exist
           # yet (there is a mismatch between username in Puavo and username
           # in external service), look up the user extlogin_id from external

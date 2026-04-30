@@ -100,7 +100,7 @@ module PuavoRest
         }
       end
 
-      raise ExternalLoginWrongCredentials,
+      raise ExternalLoginWrongPuavoCredentials,
             "bind error: #{ ldap.get_operation_result.message }"
     end
 
