@@ -1,7 +1,29 @@
 #!/usr/bin/perl
 
-# sudo apt install libclass-tiny-perl libjson-maybexs-perl libjson-xs-perl
-#                  libnet-ldap-perl libyaml-tiny-perl
+# This script is intended to be used with puavo-rest to access an LDAP
+# server and convert its contents to newline separated output stream of
+# JSON structures.  If syncrepl is actived on the server, it will keep the
+# connection open and outputs changes occurring in the ldap database.
+# The output stream contains LDAP entries, state change type
+# (add/modify/delete/present), a distinct type for indicating the end of
+# initial refresh, and a field for indicating if the event was an update
+# (which is actually redundant but is included nevertheless).
+#
+# From the configuration file this script reads LDAP server hostname,
+# ldap base, and dn and password used for authentication.
+#
+# The JSON output stream should look similar to this:
+#
+#   ...
+#   {"state":"add","type":"entry","entry":{"dn":"cn=foo,dc=edu,dc=example,dc=net"is_update":false, (... other fields here ... ) }}
+#   {"type":"refresh_done"}
+#   {"state":"modify","type":"entry","is_update":true,"entry":{"dn":"cn=admin,cn=license,cn=univention,dc=kreahuj,dc=opinsys,dc=net", (... other fields here ...) }}
+#   {"type":"entry","state":"delete","entry":{"dn":"uid=nice.user,cn=users,ou=exampleschool,dc=kreahuj,dc=opinsys,dc=net"},"is_update":true}
+#   ...
+#
+# Needs the following dependencies on Debian:
+#   sudo apt install libclass-tiny-perl libjson-maybexs-perl libjson-xs-perl
+#                    libnet-ldap-perl libyaml-tiny-perl
 
 use strict;
 use warnings;
