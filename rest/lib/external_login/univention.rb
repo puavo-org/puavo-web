@@ -1,4 +1,5 @@
 require 'json'
+require 'net/ldap'
 
 require_relative './errors'
 require_relative './service'
@@ -69,6 +70,38 @@ module PuavoRest
       end
 
       puavo_schools_by_id
+    end
+
+    def login(username, password)
+      puavouser = User.by_username(username)
+      raise ExternalLoginPuavoUserMissing, 'user missing' unless puavouser
+      extlogin_id = @external_login.extlogin_id(puavouser)
+      raise ExternalLoginNotConfigured,
+            'puavo user has no extlogin_id' unless extlogin_id
+
+      ldap = Net::LDAP.new(host: CONFIG['ldap'],
+                           port: 389,
+                           auth: {
+                             method:   :simple,
+                             username: puavouser.dn,
+                             password: password,
+                           },
+                           :encryption => {
+                             # XXX this should include the certificate check
+                             :method => :start_tls
+                           })
+
+      if ldap.bind then
+        puavo_extlogin_id_field = @external_login.puavo_extlogin_id_field
+        return {
+          puavo_extlogin_id_field   => extlogin_id,
+          'ldap_password_plaintext' => password,
+          'username'                => username,
+        }
+      end
+
+      raise ExternalLoginWrongCredentials,
+            "bind error: #{ ldap.get_operation_result.message }"
     end
 
     def has_realtime?
@@ -253,11 +286,6 @@ module PuavoRest
     def update_puavo_schools_by_id()
       return if @puavo_schools_by_id
       @puavo_schools_by_id = get_puavo_schools_by_id()
-    end
-
-    def update_univentionuserinfo(username)
-      # XXX no-op but may be needed later?
-      return
     end
   end
 
