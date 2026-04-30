@@ -17,8 +17,8 @@
 #   ...
 #   {"state":"add","type":"entry","entry":{"dn":"cn=foo,dc=edu,dc=example,dc=net"is_update":false, (... other fields here ... ) }}
 #   {"type":"refresh_done"}
-#   {"state":"modify","type":"entry","is_update":true,"entry":{"dn":"cn=admin,cn=license,cn=univention,dc=kreahuj,dc=opinsys,dc=net", (... other fields here ...) }}
-#   {"type":"entry","state":"delete","entry":{"dn":"uid=nice.user,cn=users,ou=exampleschool,dc=kreahuj,dc=opinsys,dc=net"},"is_update":true}
+#   {"state":"modify","type":"entry","is_update":true,"entry":{"dn":"cn=admin,cn=license,cn=univention,dc=edu,dc=example,dc=net", (... other fields here ...) }}
+#   {"type":"entry","state":"delete","entry":{"dn":"uid=nice.user,cn=users,ou=exampleschool,dc=edu,dc=example,dc=net"},"is_update":true}
 #   ...
 #
 # Needs the following dependencies on Debian:
