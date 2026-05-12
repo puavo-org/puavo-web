@@ -714,6 +714,7 @@ class Devices < PuavoSinatra
           device_id: dev['puavoId'][0].to_i,
           device_hostname: dev['puavoHostname'][0],
           device_display_name: dev.include?('puavoDisplayName') ? dev['puavoDisplayName'][0].force_encoding('utf-8') : nil,
+          device_puavoconf: conf,
           school_id: school_cache[school_dn].id.to_i,
           school_abbr: school_cache[school_dn].abbreviation,
           school_name: school_cache[school_dn].name
