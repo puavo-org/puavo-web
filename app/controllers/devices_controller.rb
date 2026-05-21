@@ -718,6 +718,7 @@ class DevicesController < ApplicationController
       :printerLocation,
       :printerMakeAndModel,
       :puavoPrinterCartridge,
+      :puavoEKPublicKeys,
       :macAddress=>[],
       :puavoDeviceXrandr=>[],
       :puavoImageSeriesSourceURL=>[],
