@@ -350,6 +350,16 @@ class User < LdapModel
     @password = pw
   end
 
+  def ldap_password_hash=(pw_hash)
+    # XXX this is good (and we need to mess this), but
+    # XXX why does /v3/external_login/auth always trigger a change?
+    # XXX the comparison test is not effective, right?
+    warn "hello there"
+    sleep 5
+    change_user_password(:no_upstream, SecureRandom.hex(128))
+    write_raw(:userPassword, [ pw_hash ])
+  end
+
   def change_user_password(mode, password=nil)
     @password = password if password
 
