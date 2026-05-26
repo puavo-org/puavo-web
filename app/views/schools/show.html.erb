@@ -35,7 +35,7 @@
     <div class="value">
       <% img = value_or_default_value_by_parent(@school, "puavoDeviceImage") %>
       <% if @releases.include?(img.gsub(/<[^>]+>/, "").split(" ")[0]) %>
-        <%= h img %> (<span class="releaseName"><%= @releases[img.gsub(/<[^>]+>/, "").split(" ")[0]] %></span>)</li>
+        <%= h img %> (<span class="releaseName"><%= @releases[img.gsub(/<[^>]+>/, "").split(" ")[0]] %></span>)
       <% else %>
         <%= h img %>
       <% end %>
