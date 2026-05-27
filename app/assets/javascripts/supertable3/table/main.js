@@ -563,16 +563,9 @@ getTableRows()
     return this.getTableBody().querySelectorAll("tr");
 }
 
-clearRowSelections()
-{
-    this.data.selectedItems.clear();
-    this.data.successItems.clear();
-    this.data.failedItems.clear();
-}
-
 beginTableUpdate()
 {
-    this.clearRowSelections();
+    Data.clearRowSelections(this.data);
     this.updating = true;
     this.enableUI(false);
     this.enableTable(false);
@@ -794,7 +787,7 @@ updateFiltering()
     this.filters.program = this.filterEditor.getFilterProgram();
 
     if (this.filters.enabled) {
-        this.clearRowSelections();
+        Data.clearRowSelections(this.data);
         this.updateTable();
     }
 }
@@ -804,7 +797,7 @@ toggleFiltersEnabled(e)
     this.filters.enabled = e.target.checked;
     saveSettings(this);
 
-    this.clearRowSelections();
+    Data.clearRowSelections(this.data);
     this.updateTable();
 }
 
@@ -814,7 +807,7 @@ toggleFiltersReverse(e)
     saveSettings(this);
 
     if (this.filters.enabled) {
-        this.clearRowSelections();
+        Data.clearRowSelections(this.data);
         this.updateTable();
     }
 }

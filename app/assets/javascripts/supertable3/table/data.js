@@ -466,3 +466,10 @@ export function sortRows(columnDefinitions, sortBy, collator, data, indexes)
 
     return indexes;
 }
+
+export function clearRowSelections(data)
+{
+    data.selectedItems.clear();
+    data.successItems.clear();
+    data.failedItems.clear();
+}

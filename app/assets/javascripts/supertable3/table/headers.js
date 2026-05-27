@@ -4,6 +4,7 @@ import { create, destroy } from "../../common/dom.js";
 import { ColumnFlag, SortOrder } from "./constants.js";
 import { saveSettings } from "./settings.js";
 import { getTableById } from "./main.js";
+import { clearRowSelections } from "./data.js";
 
 // Internal data. These can be global, because even if you have multiple SuperTables on the same page,
 // only one of them can have header dragging active at any moment.
@@ -276,7 +277,7 @@ function endMouseTracking(table, e)
         return;
 
     toggleSorting(table, e.target);
-    table.clearRowSelections();
+    clearRowSelections(table.data);
     table.updateTable();
     table.updateStats();
 }
