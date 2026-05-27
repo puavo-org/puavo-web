@@ -71,6 +71,8 @@ export class PuavoConfEditor {
             this.storage.style.display = e.target.checked ? "initial" : "none";
         });
 
+        this.storage.addEventListener("input", () => this.rawEdited());
+
         // UI handles
         this.table = this.container.querySelector("table.pcTable");
         this.newInput = this.container.querySelector("input.new");
