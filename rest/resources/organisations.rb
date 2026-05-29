@@ -257,32 +257,6 @@ class Organisations < PuavoSinatra
 
   # Use at your own risk. Currently read-only.
 
-  USER_TO_LDAP = {
-    'abbreviation'             => 'cn',
-    'active_services'          => 'puavoActiveService',
-    'automatic_image_updates'  => 'puavoAutomaticImageUpdates',
-    'autopoweroff_mode'        => 'puavoDeviceAutoPowerOffMode',
-    'created'                  => 'createTimestamp',    # LDAP operational attribute
-    'description'              => 'description',
-    'dn'                       => 'dn',
-    'domain'                   => 'puavoDomain',
-    'homepage'                 => 'eduOrgHomePageURI',
-    'image_series_source_urls' => 'puavoImageSeriesSourceURL',
-    'keyboard_layout'          => 'puavoKeyboardLayout',
-    'keyboard_variant'         => 'puavoKeyboardVariant',
-    'locale'                   => 'puavoLocale',
-    'modified'                 => 'modifyTimestamp',    # LDAP operational attribute
-    'name'                     => 'o',
-    'notes'                    => 'puavoNotes',
-    'oid'                      => 'puavoOrganisationOID',
-    'owners'                   => 'owner',
-    'personal_device'          => 'puavoPersonalDevice',
-    'preferred_image'          => 'puavoDeviceImage',
-    'preferred_language'       => 'preferredLanguage',
-    'puavoconf'                => 'puavoConf',
-    'timezone'                 => 'puavoTimezone'
-  }.freeze
-
   LDAP_TO_USER = {
     'cn'                          => { name: 'abbreviation' },
     'createTimestamp'             => { name: 'created', type: :ldap_timestamp },
@@ -308,6 +282,10 @@ class Organisations < PuavoSinatra
     'puavoPersonalDevice'         => { name: 'personal_device', type: :boolean },
     'puavoTimezone'               => { name: 'timezone' }
   }.freeze
+
+  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
+  # the requested fields are actually returned in the queries.
+  USER_TO_LDAP = LDAP_TO_USER.to_h { |k, v| [v[:name], k] }.freeze
 
   # GET /v4/organisation?fields=...
   get '/v4/organisation' do

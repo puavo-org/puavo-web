@@ -180,25 +180,6 @@ class Groups < PuavoSinatra
 
   # Use at your own risk. Currently read-only.
 
-
-  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
-  # the requested fields are actually returned in the queries.
-  USER_TO_LDAP = {
-    'abbreviation'  => 'cn',
-    'created'       => 'createTimestamp',   # LDAP operational attribute
-    'dn'            => 'dn',
-    'external_id'   => 'puavoExternalId',
-    'gid_number'    => 'gidNumber',
-    'id'            => 'puavoId',
-    'member_dn'     => 'member',
-    'member_uid'    => 'memberUid',
-    'modified'      => 'modifyTimestamp',   # LDAP operational attribute
-    'name'          => 'displayName',
-    'notes'         => 'puavoNotes',
-    'school_id'     => 'puavoSchool',
-    'type'          => 'puavoEduGroupType',
-  }
-
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
     'cn'                => { name: 'abbreviation' },
@@ -213,8 +194,12 @@ class Groups < PuavoSinatra
     'puavoEduGroupType' => { name: 'type' },
     'puavoId'           => { name: 'id', type: :integer },
     'puavoNotes'        => { name: 'notes' },
-    'puavoSchool'       => { name: 'school_id', type: :id_from_dn },
-  }
+    'puavoSchool'       => { name: 'school_id', type: :id_from_dn }
+  }.freeze
+
+  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
+  # the requested fields are actually returned in the queries.
+  USER_TO_LDAP = LDAP_TO_USER.to_h { |k, v| [v[:name], k] }.freeze
 
   def v4_do_group_search(filters, requested_ldap_attrs)
     base = "ou=Groups,#{Organisation.current['base']}"

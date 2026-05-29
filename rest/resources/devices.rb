@@ -735,58 +735,6 @@ class Devices < PuavoSinatra
 
   # Use at your own risk. Currently read-only.
 
-
-  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
-  # the requested fields are actually returned in the queries.
-  USER_TO_LDAP = {
-    'allow_guest'             => 'puavoAllowGuest',
-    'audio_in'                => 'puavoDeviceDefaultAudioSource',
-    'audio_out'               => 'puavoDeviceDefaultAudioSink',
-    'automatic_updates'       => 'puavoAutomaticImageUpdates',
-    'autopoweroff_mode'       => 'puavoDeviceAutoPowerOffMode',
-    'autopoweroff_off_hour'   => 'puavoDeviceOffHour',
-    'autopoweroff_on_hour'    => 'puavoDeviceOnHour',
-    'boot_mode'               => 'puavoDeviceBootMode',
-    'created'                 => 'createTimestamp', # LDAP operational attribute
-    'current_image'           => 'puavoDeviceCurrentImage',
-    'default_printer'         => 'puavoDefaultPrinter',
-    'description'             => 'description',
-    'display_name'            => 'puavoDisplayName',
-    'dn'                      => 'dn',
-    'hostname'                => 'puavoHostname',
-    'device_expiration_time'  => 'puavoDeviceExpirationTime',
-    'hw_info'                 => 'puavoDeviceHWInfo',
-    'id'                      => 'puavoId',
-    'image'                   => 'puavoDeviceImage',
-    'image_series_url'        => 'puavoImageSeriesSourceURL',
-    'kernel_args'             => 'puavoDeviceKernelArguments',
-    'kernel_version'          => 'puavoDeviceKernelVersion',
-    'location_lat'            => 'puavoLatitude',
-    'location_lon'            => 'puavoLongitude',
-    'location_name'           => 'puavoLocationName',
-    'mac'                     => 'macAddress',
-    'manufacturer'            => 'puavoDeviceManufacturer',
-    'model'                   => 'puavoDeviceModel',
-    'modified'                => 'modifyTimestamp', # LDAP operational attribute
-    'monitors_xml'            => 'puavoDeviceMonitorsXML',
-    'notes'                   => 'puavoNotes',
-    'personal_device'         => 'puavoPersonalDevice',
-    'personally_administered' => 'puavoPersonallyAdministered',
-    'primary_user_id'         => 'puavoDevicePrimaryUser',
-    'printer_queue'           => 'puavoPrinterQueue',
-    'puavoconf'               => 'puavoConf',
-    'purchase_date'           => 'puavoPurchaseDate',
-    'purchase_location'       => 'puavoPurchaseLocation',
-    'school_id'               => 'puavoSchool',
-    'serial'                  => 'serialNumber',
-    'status'                  => 'puavoDeviceStatus',
-    'support_contract'        => 'puavoSupportContract',
-    'tags'                    => 'puavoTag',
-    'timezone'                => 'puavoTimezone',
-    'type'                    => 'puavoDeviceType',
-    'xrandr'                  => 'puavoDeviceXrandr',
-  }
-
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
     'createTimestamp'               => { name: 'created', type: :ldap_timestamp },
@@ -834,8 +782,12 @@ class Devices < PuavoSinatra
     'puavoSchool'                   => { name: 'school_id', type: :id_from_dn },
     'puavoSupportContract'          => { name: 'support_contract' },
     'puavoTag'                      => { name: 'tags' },
-    'serialNumber'                  => { name: 'serial' },
-  }
+    'serialNumber'                  => { name: 'serial' }
+  }.freeze
+
+  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
+  # the requested fields are actually returned in the queries.
+  USER_TO_LDAP = LDAP_TO_USER.to_h { |k, v| [v[:name], k] }.freeze
 
   def v4_do_device_search(filters, requested_ldap_attrs)
     base = "ou=Devices,ou=Hosts,#{Organisation.current['base']}"
