@@ -406,6 +406,12 @@ private
     user = PuavoRest::User.current
     primary_school = user.school
 
+    # Ensure the user has UUID set (the puavoUuid attribute has been added afterwards, so not all users have it set)
+    unless user.uuid
+      rlog.error("[#{request_id}] puavoUuid is missing")
+      generic_error(t.sso.incomplete_account(request_id), status: 400)
+    end
+
     # Check for expired accounts
     if user && user.account_expiration_time && Time.now.utc >= Time.at(user.account_expiration_time)
       return sso_render_form(request_id, error_message: t.sso.expired_account, exception: err, type: 'oidc', state_key: state_key)
