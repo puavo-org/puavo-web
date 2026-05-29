@@ -258,34 +258,56 @@ class Organisations < PuavoSinatra
   # Use at your own risk. Currently read-only.
 
   USER_TO_LDAP = {
-    'abbreviation'    => 'cn',
-    'active_services' => 'puavoActiveService',
-    'created'         => 'createTimestamp',   # LDAP operational attribute
-    'description'     => 'description',
-    'dn'              => 'dn',
-    'modified'        => 'modifyTimestamp',   # LDAP operational attribute
-    'name'            => 'o',
-    'notes'           => 'puavoNotes',
-    'oid'             => 'puavoOrganisationOID',
-    'owners'          => 'owner',
-    'puavoconf'       => 'puavoConf',
-    'timezone'        => 'puavoTimezone',
-  }
+    'abbreviation'             => 'cn',
+    'active_services'          => 'puavoActiveService',
+    'automatic_image_updates'  => 'puavoAutomaticImageUpdates',
+    'autopoweroff_mode'        => 'puavoDeviceAutoPowerOffMode',
+    'created'                  => 'createTimestamp',    # LDAP operational attribute
+    'description'              => 'description',
+    'dn'                       => 'dn',
+    'domain'                   => 'puavoDomain',
+    'homepage'                 => 'eduOrgHomePageURI',
+    'image_series_source_urls' => 'puavoImageSeriesSourceURL',
+    'keyboard_layout'          => 'puavoKeyboardLayout',
+    'keyboard_variant'         => 'puavoKeyboardVariant',
+    'locale'                   => 'puavoLocale',
+    'modified'                 => 'modifyTimestamp',    # LDAP operational attribute
+    'name'                     => 'o',
+    'notes'                    => 'puavoNotes',
+    'oid'                      => 'puavoOrganisationOID',
+    'owners'                   => 'owner',
+    'personal_device'          => 'puavoPersonalDevice',
+    'preferred_image'          => 'puavoDeviceImage',
+    'preferred_language'       => 'preferredLanguage',
+    'puavoconf'                => 'puavoConf',
+    'timezone'                 => 'puavoTimezone'
+  }.freeze
 
   LDAP_TO_USER = {
-    'cn'                  => { name: 'abbreviation' },
-    'createTimestamp'     => { name: 'created', type: :ldap_timestamp },
-    'description'         => { name: 'description' },
-    'dn'                  => { name: 'dn' },
-    'modifyTimestamp'     => { name: 'modified', type: :ldap_timestamp },
-    'o'                   => { name: 'name' },
-    'owner'               => { name: 'owners' },
-    'puavoActiveService'  => { name: 'active_services' },
-    'puavoConf'           => { name: 'puavoconf', type: :json },
-    'puavoNotes'          => { name: 'notes' },
-    'puavoOrganisationOID' => { name: 'oid' },
-    'puavoTimezone'       => { name: 'timezone' },
-  }
+    'cn'                          => { name: 'abbreviation' },
+    'createTimestamp'             => { name: 'created', type: :ldap_timestamp },
+    'description'                 => { name: 'description' },
+    'dn'                          => { name: 'dn' },
+    'eduOrgHomePageURI'           => { name: 'homepage' },
+    'modifyTimestamp'             => { name: 'modified', type: :ldap_timestamp },
+    'o'                           => { name: 'name' },
+    'owner'                       => { name: 'owners' },
+    'preferredLanguage'           => { name: 'preferred_language' },
+    'puavoActiveService'          => { name: 'active_services' },
+    'puavoAutomaticImageUpdates'  => { name: 'automatic_image_updates', type: :boolean },
+    'puavoConf'                   => { name: 'puavoconf', type: :json },
+    'puavoDeviceAutoPowerOffMode' => { name: 'autopoweroff_mode' },
+    'puavoDeviceImage'            => { name: 'preferred_image' },
+    'puavoDomain'                 => { name: 'domain' },
+    'puavoImageSeriesSourceURL'   => { name: 'image_series_source_urls' },
+    'puavoKeyboardLayout'         => { name: 'keyboard_layout' },
+    'puavoKeyboardVariant'        => { name: 'keyboard_variant' },
+    'puavoLocale'                 => { name: 'locale' },
+    'puavoNotes'                  => { name: 'notes' },
+    'puavoOrganisationOID'        => { name: 'oid' },
+    'puavoPersonalDevice'         => { name: 'personal_device', type: :boolean },
+    'puavoTimezone'               => { name: 'timezone' }
+  }.freeze
 
   # GET /v4/organisation?fields=...
   get '/v4/organisation' do
