@@ -21,6 +21,9 @@ describe PuavoRest::School do
       :displayName => "School 2",
       :puavoSchoolCode => "0123450",
       :puavoNotes => 'Muistiinpanoja',
+      :puavoConf => {
+        'key' => 'value'
+      }.to_json
     )
 
     @school2.save!
@@ -81,5 +84,80 @@ describe PuavoRest::School do
     assert_nil school.notes
   end
 
+  describe 'puavoconf endpoint tests' do
+    it 'get all puavoconf values' do
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get "/v3/schools/#{@school2.id}/puavoconf"
+      assert_equal 200, last_response.status
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('key') && conf['key'] == 'value'
+    end
+
+    it 'create, update and delete single puavoconf values' do
+      # Create
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      put "/v3/schools/#{@school2.id}/puavoconf/some.random.setting", 'some random value'
+      assert_equal 201, last_response.status
+
+      # Check
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get "/v3/schools/#{@school2.id}/puavoconf"
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('key') && conf['key'] == 'value'
+      assert conf.include?('some.random.setting') && conf['some.random.setting'] == 'some random value'
+
+      # Edit
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      put "/v3/schools/#{@school2.id}/puavoconf/some.random.setting", 'another value'
+      assert_equal 200, last_response.status
+
+      # Check again
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get "/v3/schools/#{@school2.id}/puavoconf"
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('key') && conf['key'] == 'value'
+      assert conf.include?('some.random.setting') && conf['some.random.setting'] == 'another value'
+
+      # Delete
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      delete "/v3/schools/#{@school2.id}/puavoconf/key"
+      assert_equal 200, last_response.status
+
+      # Check again
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get "/v3/schools/#{@school2.id}/puavoconf"
+      conf = JSON.parse(last_response.body)
+      assert !conf.include?('key')
+      assert conf.include?('some.random.setting') && conf['some.random.setting'] == 'another value'
+    end
+
+    it 'trying to delete a non-existent puavoconf value must fail' do
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      delete "/v3/schools/#{@school2.id}/puavoconf/foobar"
+      assert_equal 404, last_response.status
+    end
+
+    it 'school puavoconf patching' do
+      patch = [
+        { 'op' => 'copy', 'from' => '/key', 'path' => '/avain' },
+        { 'op' => 'remove', 'path' => '/key' },
+      ].to_json
+
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'application/json-patch+json'
+      patch "/v3/schools/#{@school2.id}/puavoconf", patch.to_s
+      assert_equal 200, last_response.status
+
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get "/v3/schools/#{@school2.id}/puavoconf"
+      conf = JSON.parse(last_response.body)
+      assert !conf.include?('key')
+      assert conf.include?('avain') && conf['avain'] == 'value'
+    end
+  end
 end
 end
