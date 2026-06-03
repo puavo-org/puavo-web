@@ -59,4 +59,49 @@ describe PuavoRest::Organisations do
     assert_equal "example.puavo.net", data["domain"]
     assert_equal "cucumber", data["owners"][0]["username"]
   end
+
+  describe 'puavoconf endpoint tests' do
+    it 'get all puavoconf values' do
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/organisations/example.puavo.net/puavoconf'
+      assert_equal 200, last_response.status
+    end
+
+    it 'create, update and delete single puavoconf values' do
+      # Create
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      put '/v3/organisations/example.puavo.net/puavoconf/puavo.xyz', 'text'
+      assert [200, 201].include?(last_response.status)    # organistion-level settings don't go away between tests
+
+      # Check
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/organisations/example.puavo.net/puavoconf'
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('puavo.xyz') && conf['puavo.xyz'] == 'text'
+
+      # Edit
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      put '/v3/organisations/example.puavo.net/puavoconf/puavo.xyz', 'more text'
+      assert_equal 200, last_response.status
+
+      # Check again
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/organisations/example.puavo.net/puavoconf'
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('puavo.xyz') && conf['puavo.xyz'] == 'more text'
+
+      # Delete
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      delete '/v3/organisations/example.puavo.net/puavoconf/puavo.xyz'
+      assert_equal 200, last_response.status
+
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/organisations/example.puavo.net/puavoconf'
+      conf = JSON.parse(last_response.body)
+      assert !conf.include?('some.random.setting')
+    end
+  end
 end

@@ -251,6 +251,98 @@ class Organisations < PuavoSinatra
     json Organisation.by_domain(params[:domain])
   end
 
+  get '/v3/organisations/:domain/puavoconf' do
+    oauth2 scopes: %w[puavo.read.organisation]
+    auth :oauth2_token, :basic_auth
+
+    config = Organisation.by_domain!(params['domain']).puavoconf
+    config = {} if config.nil?
+
+    json config
+  end
+
+  # Creates or updates a puavoconf-value
+  put '/v3/organisations/:domain/puavoconf/:key' do
+    oauth2 scopes: %w[puavo.read.organisation puavo.write.organisation]
+    auth :oauth2_token, :basic_auth
+
+    require_content_type('text/plain')
+    validate_puavoconf_key(params['key'])
+
+    org = Organisation.by_domain!(params['domain'])
+    conf = org.puavoconf
+    conf = {} if conf.nil?
+
+    code = conf.include?(params['key']) ? 200 : 201     # appropriate status if the key was created
+    conf[params['key']] = request.body.read
+    org.puavoconf = conf
+    org.save!
+
+    status code
+  end
+
+  # Deletes an existing puavo-conf value. If the key does not exist, returns an error.
+  delete '/v3/organisations/:domain/puavoconf/:key' do
+    oauth2 scopes: %w[puavo.read.organisation puavo.write.organisation]
+    auth :oauth2_token, :basic_auth
+
+    org = Organisation.by_domain!(params['domain'])
+    conf = org.puavoconf
+    conf = {} if conf.nil?
+
+    validate_puavoconf_key(params['key'])
+
+    halt 404 unless conf.include?(params['key'])
+    conf.delete(params['key'])
+    org.puavoconf = conf
+    org.save!
+
+    status 200
+  end
+
+  # Apply a JSON Patch to the organisation's puavoconf
+  patch '/v3/organisations/:domain/puavoconf' do
+    oauth2 scopes: %w[puavo.read.organisation puavo.write.organisation]
+    auth :oauth2_token, :basic_auth
+
+    require_content_type('application/json-patch+json')
+
+    org = Organisation.by_domain!(params['domain'])
+    conf = org.puavoconf
+    conf = {} if conf.nil?
+
+    begin
+      data = JSON.parse(request.body.read)
+    rescue StandardError => e
+      rlog.error("Cannot parse the request body JSON: #{e}")
+      raise BadInput, user: 'cannot parse the patch data'
+    end
+
+    validate_puavoconf_json_patch_keys(data)
+
+    begin
+      patch = Hana::Patch.new(data)
+    rescue StandardError => e
+      rlog.error("Cannot create the JSON patch object: #{e}")
+      raise BadInput, user: 'cannot create a JSON patch object'
+    end
+
+    # Apply the patch
+    begin
+      patch.apply(conf)
+      org.puavoconf = conf
+      org.save!
+    rescue Hana::Pointer::FormatError, Hana::Patch::InvalidPath => e
+      rlog.error("Cannot apply the patch: #{e}")
+      raise BadInput, user: 'incorrect JSON pointer (did you forget to start it with a slash?)'
+    rescue StandardError => e
+      rlog.error("Cannot apply the patch: #{e}")
+      raise BadInput, user: "the patch could not be applied: #{e}"
+    end
+
+    status 200
+  end
+
   # -------------------------------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------------
   # EXPERIMENTAL V4 API
