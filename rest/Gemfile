@@ -47,6 +47,7 @@ gem 'r18n-core'
 gem 'matrix'
 gem 'pg'
 gem 'argon2'
+gem 'hana'
 
 group :test do
   gem 'shotgun'

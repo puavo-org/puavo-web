@@ -9,6 +9,7 @@ require "gssapi/lib_gssapi"
 require "pry"
 require "redis-namespace"
 require "redlock"
+require 'hana'
 
 require_relative "./lib/ldap_converters"
 require_relative "./lib/helpers"

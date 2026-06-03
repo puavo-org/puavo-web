@@ -131,5 +131,30 @@ class PuavoSinatra < Sinatra::Base
       raise BadInput, user: 'the key is too long or it contains forbidden characters'
     end
   end
+
+  # Validate all the keys in the JSON patch
+  def validate_puavoconf_json_patch_keys(patch)
+    patch.each do |p|
+      paths = []
+
+      case p['op']
+        when 'add', 'remove', 'replace', 'test'
+          paths << p['path']
+
+        when 'copy', 'move'
+          paths << p['from']
+          paths << p['path']
+
+        else
+          raise BadInput, user: "invalid patch operation #{p['op'].inspect}"
+      end
+
+      paths.each do |p|
+        unless valid_puavoconf_key?(p[1..])
+          raise BadInput, user: "path #{p[1..].inspect} is too long or it contains forbidden characters"
+        end
+      end
+    end
+  end
 end
 end
