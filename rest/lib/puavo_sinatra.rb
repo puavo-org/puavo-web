@@ -108,6 +108,12 @@ class PuavoSinatra < Sinatra::Base
     phone.fetch(international ? 'international' : 'short', '?')
   end
 
+  def require_content_type(type)
+    unless request.env['CONTENT_TYPE'] == type
+      raise BadInput, user: "invalid Content-Type; expected #{type.inspect}, got #{request.env['CONTENT_TYPE'].inspect}"
+    end
+  end
+
   # PuavoConf helpers
   PUAVOCONF_KEY_VALIDATOR = /^[a-z][a-zA-Z0-9._-]+$/.freeze
   PUAVOCONF_KEY_MIN_LENGTH = 3.freeze
