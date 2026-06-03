@@ -728,6 +728,90 @@ class Devices < PuavoSinatra
     json exam_servers
   end
 
+  get '/v3/devices/:hostname/puavoconf' do
+    oauth2 scopes: %w[puavo.read.devices]
+    auth :oauth2_token, :basic_auth
+
+    json Device.by_hostname!(params['hostname']).puavoconf
+  end
+
+  # Creates or updates a puavoconf-value
+  put '/v3/devices/:hostname/puavoconf/:key' do
+    oauth2 scopes: %w[puavo.read.devices puavo.write.devices]
+    auth :oauth2_token, :basic_auth
+
+    require_content_type('text/plain')
+
+    device = Device.by_hostname!(params['hostname'])
+    validate_puavoconf_key(params['key'])
+
+    conf = device.puavoconf
+    code = conf.include?(params['key']) ? 200 : 201     # appropriate status if the key was created
+    conf[params['key']] = request.body.read
+    device.puavoconf = conf
+    device.save!
+
+    status code
+  end
+
+  # Deletes an existing puavo-conf value. If the key does not exist, returns an error.
+  delete '/v3/devices/:hostname/puavoconf/:key' do
+    oauth2 scopes: %w[puavo.read.devices puavo.write.devices]
+    auth :oauth2_token, :basic_auth
+
+    device = Device.by_hostname!(params['hostname'])
+    validate_puavoconf_key(params['key'])
+
+    conf = device.puavoconf
+    halt 404 unless conf.include?(params['key'])
+    conf.delete(params['key'])
+    device.puavoconf = conf
+    device.save!
+
+    status 200
+  end
+
+  # Apply a JSON Patch to the device's puavoconf
+  patch '/v3/devices/:hostname/puavoconf' do
+    oauth2 scopes: %w[puavo.read.devices puavo.write.devices]
+    auth :oauth2_token, :basic_auth
+
+    require_content_type('application/json-patch+json')
+
+    device = Device.by_hostname!(params['hostname'])
+
+    begin
+      data = JSON.parse(request.body.read)
+    rescue StandardError => e
+      rlog.error("Cannot parse the request body JSON: #{e}")
+      raise BadInput, user: 'cannot parse the patch data'
+    end
+
+    validate_puavoconf_json_patch_keys(data)
+
+    begin
+      patch = Hana::Patch.new(data)
+    rescue StandardError => e
+      rlog.error("Cannot create the JSON patch object: #{e}")
+      raise BadInput, user: 'cannot create a JSON patch object'
+    end
+
+    # Apply the patch
+    begin
+      conf = device.puavoconf
+      patch.apply(conf)
+      device.puavoconf = conf
+      device.save!
+    rescue Hana::Pointer::FormatError, Hana::Patch::InvalidPath => e
+      rlog.error("Cannot apply the patch: #{e}")
+      raise BadInput, user: 'incorrect JSON pointer (did you forget to start it with a slash?)'
+    rescue StandardError => e
+      rlog.error("Cannot apply the patch: #{e}")
+      raise BadInput, user: "the patch could not be applied: #{e}"
+    end
+
+    status 200
+  end
 
   # -------------------------------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------------

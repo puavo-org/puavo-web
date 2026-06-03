@@ -766,4 +766,129 @@ describe PuavoRest::Devices do
       assert_equal 500, last_response.status
     end
   end
+
+  describe 'puavoconf endpoint tests' do
+    before(:each) do
+      device = create_device(
+        puavoHostname: 'hilavitkutin',
+        puavoSchool: @school.dn,
+        puavoConf: {
+          'foo' => 'bar'
+        }.to_json)
+
+      device.save!
+    end
+
+    it 'get all puavoconf values' do
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/devices/hilavitkutin/puavoconf'
+      assert_equal 200, last_response.status
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('foo') && conf['foo'] == 'bar'
+    end
+
+    it 'create, update and delete single puavoconf values' do
+      # Create
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      put '/v3/devices/hilavitkutin/puavoconf/bar', 'baz'
+      assert_equal 201, last_response.status
+
+      # Check
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/devices/hilavitkutin/puavoconf'
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('foo') && conf['foo'] == 'bar'
+      assert conf.include?('foo') && conf['bar'] == 'baz'
+
+      # Edit
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      put '/v3/devices/hilavitkutin/puavoconf/bar', 'something else'
+      assert_equal 200, last_response.status
+
+      # Check again
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/devices/hilavitkutin/puavoconf'
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('foo') && conf['foo'] == 'bar'
+      assert conf.include?('foo') && conf['bar'] == 'something else'
+
+      # Delete
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      delete '/v3/devices/hilavitkutin/puavoconf/bar'
+      assert_equal 200, last_response.status
+
+      # Check again
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/devices/hilavitkutin/puavoconf'
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('foo') && conf['foo'] == 'bar'
+      assert !conf.include?('bar')
+    end
+
+    it 'trying to delete a non-existent puavoconf value must fail' do
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      delete '/v3/devices/hilavitkutin/puavoconf/bar'
+      assert_equal 404, last_response.status
+    end
+
+    it 'invalid puavo-conf keys' do
+      ['a', 'aa', 'ä', 'äääääääääää', 'Ö', 'foo%bar', '<>', '❌', 'a' * 129, 'a' * 65536].each do |s|
+        basic_authorize 'uid=admin,o=puavo', 'password'
+        header 'Content-Type', 'text/plain'
+        put CGI.escape("/v3/devices/hilavitkutin/puavoconf/#{s}"), 'value'
+        assert_equal 400, last_response.status
+        assert last_response.body.include?('the key is too long or it contains forbidden characters')
+      end
+    end
+
+    it 'device puavoconf patching' do
+      patch = [
+        { 'op' => 'copy', 'from' => '/foo', 'path' => '/bar' },
+        { 'op' => 'add', 'path' => '/puavo.graphics.display_server', 'value' => 'xorg' },
+        { 'op' => 'remove', 'path' => '/foo' },
+        { 'op' => 'replace', 'path' => '/bar', 'value' => 42 }
+      ].to_json
+
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'application/json-patch+json'
+      patch '/v3/devices/hilavitkutin/puavoconf', patch.to_s
+      assert_equal 200, last_response.status
+
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/devices/hilavitkutin/puavoconf'
+
+      conf = JSON.parse(last_response.body)
+      assert !conf.include?('foo')
+      assert conf.include?('bar') && conf['bar'] == 42
+      assert conf.include?('puavo.graphics.display_server') && conf['puavo.graphics.display_server'] == 'xorg'
+    end
+
+    it 'invalid JSON Pointer' do
+      patch = [
+        { 'op' => 'copy', 'from' => '/foo', 'path' => 'foobar' }
+      ].to_json
+
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'application/json-patch+json'
+      patch '/v3/devices/hilavitkutin/puavoconf', patch.to_s
+      assert_equal 400, last_response.status
+      assert last_response.body.include?('incorrect JSON pointer')
+    end
+
+    it 'invalid JSON patch operation' do
+      patch = [
+        { 'op' => 'quux', 'from' => '/foo', 'path' => 'foobar' }
+      ].to_json
+
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'application/json-patch+json'
+      patch '/v3/devices/hilavitkutin/puavoconf', patch.to_s
+      assert_equal 400, last_response.status
+      assert_equal JSON.parse(last_response.body)['error']['message'].include?('invalid patch operation "quux"'), true
+    end
+  end
 end
