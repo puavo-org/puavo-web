@@ -107,5 +107,23 @@ class PuavoSinatra < Sinatra::Base
 
     phone.fetch(international ? 'international' : 'short', '?')
   end
+
+  # PuavoConf helpers
+  PUAVOCONF_KEY_VALIDATOR = /^[a-z][a-zA-Z0-9._-]+$/.freeze
+  PUAVOCONF_KEY_MIN_LENGTH = 3.freeze
+  PUAVOCONF_KEY_MAX_LENGTH = 128.freeze
+
+  def valid_puavoconf_key?(key)
+    key.is_a?(String) &&
+      key.length >= PUAVOCONF_KEY_MIN_LENGTH &&
+      key.length <= PUAVOCONF_KEY_MAX_LENGTH &&
+      key.match?(PUAVOCONF_KEY_VALIDATOR)
+  end
+
+  def validate_puavoconf_key(key)
+    unless valid_puavoconf_key?(key)
+      raise BadInput, user: 'the key is too long or it contains forbidden characters'
+    end
+  end
 end
 end
