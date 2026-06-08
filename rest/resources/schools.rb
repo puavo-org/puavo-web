@@ -268,7 +268,7 @@ class Schools < PuavoSinatra
     oauth2 scopes: %w[puavo.read.schools]
     auth :oauth2_token, :basic_auth
 
-    json School.by_attr!(:id, params['school_id']).puavoconf
+    json School.by_attr!(:id, params['school_id']).get_own(:puavoconf) || {}
   end
 
   # Creates or updates a puavoconf-value
@@ -281,7 +281,7 @@ class Schools < PuavoSinatra
     school = School.by_attr!(:id, params['school_id'])
     validate_puavoconf_key(params['key'])
 
-    conf = school.puavoconf
+    conf = school.get_own(:puavoconf) || {}
     code = conf.include?(params['key']) ? 200 : 201     # appropriate status if the key was created
     conf[params['key']] = request.body.read
     school.puavoconf = conf
@@ -298,7 +298,7 @@ class Schools < PuavoSinatra
     school = School.by_attr!(:id, params['school_id'])
     validate_puavoconf_key(params['key'])
 
-    conf = school.puavoconf
+    conf = school.get_own(:puavoconf) || {}
     halt 404 unless conf.include?(params['key'])
     conf.delete(params['key'])
     school.puavoconf = conf
@@ -334,7 +334,7 @@ class Schools < PuavoSinatra
 
     # Apply the patch
     begin
-      conf = school.puavoconf
+      conf = school.get_own(:puavoconf) || {}
       patch.apply(conf)
       school.puavoconf = conf
       school.save!

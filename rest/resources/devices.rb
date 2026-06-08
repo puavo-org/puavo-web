@@ -732,7 +732,7 @@ class Devices < PuavoSinatra
     oauth2 scopes: %w[puavo.read.devices]
     auth :oauth2_token, :basic_auth
 
-    json Device.by_hostname!(params['hostname']).puavoconf
+    json Device.by_hostname!(params['hostname']).get_own(:puavoconf) || {}
   end
 
   # Creates or updates a puavoconf-value
@@ -745,7 +745,7 @@ class Devices < PuavoSinatra
     device = Device.by_hostname!(params['hostname'])
     validate_puavoconf_key(params['key'])
 
-    conf = device.puavoconf
+    conf = device.get_own(:puavoconf) || {}
     code = conf.include?(params['key']) ? 200 : 201     # appropriate status if the key was created
     conf[params['key']] = request.body.read
     device.puavoconf = conf
@@ -762,7 +762,7 @@ class Devices < PuavoSinatra
     device = Device.by_hostname!(params['hostname'])
     validate_puavoconf_key(params['key'])
 
-    conf = device.puavoconf
+    conf = device.get_own(:puavoconf) || {}
     halt 404 unless conf.include?(params['key'])
     conf.delete(params['key'])
     device.puavoconf = conf
@@ -798,7 +798,7 @@ class Devices < PuavoSinatra
 
     # Apply the patch
     begin
-      conf = device.puavoconf
+      conf = device.get_own(:puavoconf) || {}
       patch.apply(conf)
       device.puavoconf = conf
       device.save!
