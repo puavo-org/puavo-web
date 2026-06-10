@@ -263,5 +263,91 @@ class BootServers < PuavoSinatra
 
     status 200
   end
+
+  # -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  # EXPERIMENTAL V4 API
+
+  # Use at your own risk. Currently read-only.
+
+  # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
+  LDAP_TO_USER = {
+    'createTimestamp'               => { name: 'created', type: :ldap_timestamp },
+    'description'                   => { name: 'description' },
+    'dn'                            => { name: 'dn' },
+    'macAddress'                    => { name: 'mac' },
+    'modifyTimestamp'               => { name: 'modified', type: :ldap_timestamp },
+    'puavoConf'                     => { name: 'puavoconf' },
+    'puavoDefaultPrinter'           => { name: 'default_printer' },
+    'puavoDeviceAvailableImage'     => { name: 'available_images' },
+    'puavoDeviceCurrentImage'       => { name: 'current_image' },
+    'puavoDeviceDefaultAudioSink'   => { name: 'audio_out' },
+    'puavoDeviceDefaultAudioSource' => { name: 'audio_in' },
+    'puavoDeviceHWInfo'             => { name: 'hw_info' },
+    'puavoDeviceImage'              => { name: 'image' },
+    'puavoDeviceKernelArguments'    => { name: 'kernel_args' },
+    'puavoDeviceKernelVersion'      => { name: 'kernel_version' },
+    'puavoDeviceManufacturer'       => { name: 'manufacturer' },
+    'puavoDeviceModel'              => { name: 'model' },
+    'puavoDeviceMonitorsXML'        => { name: 'monitors_xml' },
+    'puavoDeviceStatus'             => { name: 'status' },
+    'puavoDeviceType'               => { name: 'type' },
+    'puavoDeviceXrandr'             => { name: 'xrandr' },
+    'puavoHostname'                 => { name: 'hostname' },
+    'puavoId'                       => { name: 'id', type: :integer },
+    'puavoImageSeriesSourceURL'     => { name: 'image_series_url' },
+    'puavoLatitude'                 => { name: 'location_lat' },
+    'puavoLocationName'             => { name: 'location_name' },
+    'puavoLongitude'                => { name: 'location_lon' },
+    'puavoNotes'                    => { name: 'notes' },
+    'puavoPurchaseDate'             => { name: 'purchase_date' },
+    'puavoPurchaseLocation'         => { name: 'purchase_location' },
+    'puavoSchool'                   => { name: 'school_restriction', type: :id_from_dn },   # the same attribute is used differently
+    'puavoSupportContract'          => { name: 'support_contract' },
+    'puavoTag'                      => { name: 'tags' },
+    'puavoTimezone'                 => { name: 'timezone' },
+    'serialNumber'                  => { name: 'serial' },
+  }.freeze
+
+  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
+  # the requested fields are actually returned in the queries.
+  USER_TO_LDAP = LDAP_TO_USER.to_h { |k, v| [v[:name], k] }.freeze
+
+  # Retrieve all (or some) boot servers in the organisation
+  # GET /v4/boot_servers?fields=...
+  get '/v4/boot_servers' do
+    oauth2 scopes: ['puavo.read.boot_servers']
+    auth :oauth2_token, :basic_auth, :kerberos
+
+    raise Unauthorized, user: nil unless v4_is_request_allowed?(User.current)
+
+    v4_do_operation do
+      # which fields to get?
+      user_fields = v4_get_fields(params).to_set
+      ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
+
+      # optional filters
+      filters, _ = v4_get_filters_from_params(params, USER_TO_LDAP)
+
+      # do the query
+      raw = BootServer.raw_filter(BootServer.ldap_base, v4_combine_filter_parts(filters), ldap_attrs)
+
+      # convert and return
+      out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
+      out = v4_ensure_is_array(out, 'available_images', 'mac', 'tags', 'image_series_url', 'school_restriction', 'xrandr')
+
+      out.each do |o|
+        if o.include?('puavoconf') && !o['puavoconf'].nil?
+          o['puavoconf'] = JSON.parse(o['puavoconf'])
+        end
+      end
+
+      return 200, json({
+        status: 'ok',
+        error: nil,
+        data: out,
+      })
+    end
+  end
 end
 end
