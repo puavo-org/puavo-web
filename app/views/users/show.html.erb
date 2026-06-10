@@ -349,6 +349,14 @@ toolbar do |tb|
                   owners: true
       end
 
+      if @can_set_random_password
+        menu.link t('.set_random_password'),
+                  href: set_random_password_path(@school, @user),
+                  icon: 'cog',
+                  confirm: t('general_confirm'),
+                  owners: true
+      end
+
       if Array(@user.mail || []).count > 0
         menu.link t('.request_password_reset'),
                   href: request_password_reset_path(@school, @user),

@@ -123,6 +123,7 @@ Rails.application.routes.draw do
       match 'users/:id/edit_teacher_permissions' => 'users#edit_teacher_permissions', :as => :edit_teacher_permissions, :via => :get
       match 'users/:id/save_teacher_permissions' => 'users#save_teacher_permissions', :as => :save_teacher_permissions, :via => :post
 
+      get 'users/:id/set_random_password' => 'users#set_random_password', :as => :set_random_password
       get 'users/:id/request_password_reset' => 'users#request_password_reset', :as => :request_password_reset
       get 'users/:id/reset_sso_session' => 'users#reset_sso_session', :as => :reset_sso_session
 

@@ -1,4 +1,5 @@
 require 'set'
+require 'fileutils'
 require 'devices_helper'    # Need clear_device_primary_user
 require 'groups_helper'     # For listing user groups in user tables
 
@@ -359,6 +360,11 @@ class UsersController < ApplicationController
     # Highlight invalid license data
     @licenses_ok = true
     @licenses = nil
+
+    # Is ffsend configured and we can reset the user's password?
+    ffsend_binary = Puavo::CONFIG.fetch('password_management', {}).fetch('ffsend_binary', nil)
+    ffsend_host = Puavo::CONFIG.fetch('password_management', {}).fetch('ffsend_host', nil)
+    @can_set_random_password = ffsend_binary && ffsend_host && File.exist?(ffsend_binary) && File.executable?(ffsend_binary)
 
     begin
       @licenses = JSON.parse(@user.puavoLicenses) if @user.puavoLicenses
@@ -763,6 +769,81 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(users_url) }
       format.xml  { head :ok }
+    end
+  end
+
+  def set_random_password
+    @user = get_user(params[:id])
+    return if @user.nil?
+
+    request_id = generate_synchronous_call_id()
+    org_id = LdapOrganisation.current.cn
+
+    temp_name = "/tmp/#{SecureRandom.uuid}.pdf"
+    logger.info "[#{request_id}] Resetting the password for user #{@user.uid.inspect} in organisation #{org_id.inspect}; temp file=#{temp_name.inspect}"
+
+    # Verify ffsend exists on the server
+    ffsend_binary = Puavo::CONFIG.fetch('password_management', {}).fetch('ffsend_binary', nil)
+    ffsend_host = Puavo::CONFIG.fetch('password_management', {}).fetch('ffsend_host', nil)
+
+    unless ffsend_binary && ffsend_host
+      logger.error("[#{request_id}] ffsend not installed/configured! (missing ffsend_binary and/or ffsend_host in puavo_web.yml)")
+      flash[:alert] = I18n.t('flash.user.random_password_reset_failed', request_id: request_id)
+      return redirect_to(user_path(@school, @user))
+    end
+
+    unless File.exist?(ffsend_binary) && File.executable?(ffsend_binary)
+      logger.error("[#{request_id}] ffsend binary #{ffsend_binary.inspect} either doesn't exist or it isn't executable")
+      flash[:alert] = I18n.t('flash.user.random_password_reset_failed', request_id: request_id)
+      return redirect_to(user_path(@school, @user))
+    end
+
+    new_password = 'adefghijlmnopqrtuvwxyz023456789'.split('').sample(10).join
+
+    # Generate the PDF first
+    begin
+      pdf = Prawn::Document.new(skip_page_creation: true, page_size: 'A4')
+      Prawn::Fonts::AFM.hide_m17n_warning = true
+
+      pdf.start_new_page()
+      pdf.font('Courier')
+      pdf.font_size(24)
+      pdf.draw_text(new_password, at: pdf.bounds.top_left)
+
+      File.binwrite(temp_name, pdf.render)
+    rescue StandardError => e
+      FileUtils.rm_f(temp_name)
+      logger.error("[#{request_id}] Failed to generate the new password PDF: #{e}")
+      flash[:alert] = I18n.t('flash.user.random_password_reset_failed', request_id: request_id)
+      return redirect_to(user_path(@school, @user))
+    end
+
+    # Actually change the password
+    begin
+      @user.new_password = new_password
+      @user.change_password
+    rescue StandardError => e
+      FileUtils.rm_f(temp_name)
+      logger.error("[#{request_id}] Failed to save user after the password was changed: #{e}")
+      flash[:alert] = I18n.t('flash.user.random_password_reset_failed', request_id: request_id)
+      return redirect_to(user_path(@school, @user))
+    end
+
+    # Upload the PDF to the preconfigured send service
+    stdout, stderr, status = Open3.capture3("#{ffsend_binary} u --host #{ffsend_host} --download-limit 1 --expiry-time 3600 \"#{temp_name}\"")
+    FileUtils.rm_f(temp_name)
+
+    if status.exitstatus != 0
+      logger.error("[#{request_id}] Failed to upload the password PDF: status=#{status.exitstatus}, stdout=#{stdout.inspect}, stderr=#{stderr.inspect}")
+      flash[:alert] = I18n.t('flash.user.random_password_reset_failed', request_id: request_id)
+      return redirect_to(user_path(@school, @user))
+    end
+
+    url = stdout.strip
+    flash[:notice] = t('flash.user.random_password_reset_success', url: url)
+
+    respond_to do |format|
+      format.html { redirect_to(user_path(@school, @user)) }
     end
   end
 
