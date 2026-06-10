@@ -178,5 +178,90 @@ class BootServers < PuavoSinatra
     end
 
   end
+
+  get '/v3/boot_servers/:hostname/puavoconf' do
+    oauth2 scopes: %w[puavo.read.bootservers]
+    auth :oauth2_token, :basic_auth
+
+    json BootServer.by_hostname!(params['hostname']).get_own(:puavoconf) || {}
+  end
+
+  # Creates or updates a puavoconf-value
+  put '/v3/boot_servers/:hostname/puavoconf/:key' do
+    oauth2 scopes: %w[puavo.read.bootservers puavo.write.bootservers]
+    auth :oauth2_token, :basic_auth
+
+    require_content_type('text/plain')
+
+    server = BootServer.by_hostname!(params['hostname'])
+    validate_puavoconf_key(params['key'])
+
+    conf = server.get_own(:puavoconf) || {}
+    code = conf.include?(params['key']) ? 200 : 201     # appropriate status if the key was created
+    conf[params['key']] = request.body.read
+    server.puavoconf = conf
+    server.save!
+
+    status code
+  end
+
+  # Deletes an existing puavo-conf value. If the key does not exist, returns an error.
+  delete '/v3/boot_servers/:hostname/puavoconf/:key' do
+    oauth2 scopes: %w[puavo.read.bootservers puavo.write.bootservers]
+    auth :oauth2_token, :basic_auth
+
+    server = BootServer.by_hostname!(params['hostname'])
+    validate_puavoconf_key(params['key'])
+
+    conf = server.get_own(:puavoconf) || {}
+    halt 404 unless conf.include?(params['key'])
+    conf.delete(params['key'])
+    server.puavoconf = conf
+    server.save!
+
+    status 200
+  end
+
+  # Apply a JSON Patch to the device's puavoconf
+  patch '/v3/boot_servers/:hostname/puavoconf' do
+    oauth2 scopes: %w[puavo.read.bootservers puavo.write.bootservers]
+    auth :oauth2_token, :basic_auth
+
+    require_content_type('application/json-patch+json')
+
+    server = BootServer.by_hostname!(params['hostname'])
+
+    begin
+      data = JSON.parse(request.body.read)
+    rescue StandardError => e
+      rlog.error("Cannot parse the request body JSON: #{e}")
+      raise BadInput, user: 'cannot parse the patch data'
+    end
+
+    validate_puavoconf_json_patch_keys(data)
+
+    begin
+      patch = Hana::Patch.new(data)
+    rescue StandardError => e
+      rlog.error("Cannot create the JSON patch object: #{e}")
+      raise BadInput, user: 'cannot create a JSON patch object'
+    end
+
+    # Apply the patch
+    begin
+      conf = server.get_own(:puavoconf) || {}
+      patch.apply(conf)
+      server.puavoconf = conf
+      server.save!
+    rescue Hana::Pointer::FormatError, Hana::Patch::InvalidPath => e
+      rlog.error("Cannot apply the patch: #{e}")
+      raise BadInput, user: 'incorrect JSON pointer (did you forget to start it with a slash?)'
+    rescue StandardError => e
+      rlog.error("Cannot apply the patch: #{e}")
+      raise BadInput, user: "the patch could not be applied: #{e}"
+    end
+
+    status 200
+  end
 end
 end

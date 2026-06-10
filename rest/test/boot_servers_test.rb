@@ -210,4 +210,104 @@ describe PuavoRest::BootServer do
       assert @data.keys.include?('root_ca_certificate')
     end
   end
+
+  describe 'boot server puavoconf endpoint tests' do
+    before(:each) do
+      @server2 = Server.new
+      @server2.attributes = {
+        puavoHostname: 'server2',
+        macAddress: 'bc:5f:f4:56:59:71',
+        puavoSchool: @school.dn,
+        puavoImageSeriesSourceURL: [
+          'https://foobar.puavo.net/images1.json',
+          'https://foobar.puavo.net/images2.json'
+        ],
+        puavoDeviceType: 'bootserver',
+        puavoConf: {
+          'puavo.kernel.version' => 'fresh',
+          'foo' => 'bar'
+        }.to_json,
+      }
+      @server2.save!
+    end
+
+    it 'get all puavoconf values' do
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/boot_servers/server2/puavoconf'
+      assert_equal 200, last_response.status
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('foo') && conf['foo'] == 'bar'
+      assert conf.include?('puavo.kernel.version') && conf['puavo.kernel.version'] == 'fresh'
+    end
+
+    it 'create, update and delete single puavoconf values' do
+      # Create
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      put '/v3/boot_servers/server2/puavoconf/bar', 'baz'
+      assert_equal 201, last_response.status
+
+      # Check
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/boot_servers/server2/puavoconf'
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('foo') && conf['foo'] == 'bar'
+      assert conf.include?('foo') && conf['bar'] == 'baz'
+
+      # Edit
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      put '/v3/boot_servers/server2/puavoconf/bar', 'something else'
+      assert_equal 200, last_response.status
+
+      # Check again
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/boot_servers/server2/puavoconf'
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('foo') && conf['foo'] == 'bar'
+      assert conf.include?('foo') && conf['bar'] == 'something else'
+
+      # Delete
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      delete '/v3/boot_servers/server2/puavoconf/bar'
+      assert_equal 200, last_response.status
+
+      # Check again
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/boot_servers/server2/puavoconf'
+      conf = JSON.parse(last_response.body)
+      assert conf.include?('foo') && conf['foo'] == 'bar'
+      assert !conf.include?('bar')
+    end
+
+    it 'trying to delete a non-existent puavoconf value must fail' do
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'text/plain'
+      delete '/v3/boot_servers/server2/puavoconf/bar'
+      assert_equal 404, last_response.status
+    end
+
+    it 'boot server puavoconf patching' do
+      patch = [
+        { 'op' => 'copy', 'from' => '/foo', 'path' => '/bar' },
+        { 'op' => 'add', 'path' => '/puavo.graphics.display_server', 'value' => 'xorg' },
+        { 'op' => 'remove', 'path' => '/foo' },
+        { 'op' => 'replace', 'path' => '/bar', 'value' => 42 }
+      ].to_json
+
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      header 'Content-Type', 'application/json-patch+json'
+      patch '/v3/boot_servers/server2/puavoconf', patch.to_s
+      assert_equal 200, last_response.status
+
+      basic_authorize 'uid=admin,o=puavo', 'password'
+      get '/v3/boot_servers/server2/puavoconf'
+
+      conf = JSON.parse(last_response.body)
+      assert !conf.include?('foo')
+      assert conf.include?('bar') && conf['bar'] == 42
+      assert conf.include?('puavo.graphics.display_server') && conf['puavo.graphics.display_server'] == 'xorg'
+    end
+  end
 end
