@@ -1,30 +1,27 @@
+# frozen_string_literal: true
+
 module BooleanAttributes
-  
   def puavoAllowGuest=(boolean)
-    value = fix_boolean_value(boolean)
-    set_attribute("puavoAllowGuest", value)
+    set_attribute('puavoAllowGuest', fix_boolean_value(boolean))
   end
 
   def puavoPersonalDevice=(boolean)
-    value = fix_boolean_value(boolean)
-    set_attribute("puavoPersonalDevice", value)
+    set_attribute('puavoPersonalDevice', fix_boolean_value(boolean))
   end
 
   def puavoAutomaticImageUpdates=(boolean)
-    value = fix_boolean_value(boolean)
-    set_attribute("puavoAutomaticImageUpdates", value)
+    set_attribute('puavoAutomaticImageUpdates', fix_boolean_value(boolean))
   end
 
   private
 
   def fix_boolean_value(value)
-    if value == true || value == "true" || value == "TRUE"
-      return "TRUE"
-    elsif value == false || value == "false" || value == "FALSE"
-      return "FALSE"
+    if [true, 'true', 'TRUE'].include?(value)
+      true
+    elsif [false, 'false', 'FALSE'].include?(value)
+      false
     else
-      return nil
+      nil
     end
   end
-
 end

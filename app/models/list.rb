@@ -1,4 +1,6 @@
-require_relative "../../rest/lib/mixin_user_lists"
+# frozen_string_literal: true
+
+require_relative '../../rest/lib/mixin_user_lists'
 
 class List
   include PuavoRest::MixinUserList
@@ -13,7 +15,6 @@ class List
     self.school_id = user.primary_school.puavoId
     self.description = description
 
-    super(user_ids, creator, description)
+    super
   end
-
 end

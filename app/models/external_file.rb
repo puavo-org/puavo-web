@@ -1,12 +1,11 @@
-class ExternalFile < LdapBase
+# frozen_string_literal: true
 
+class ExternalFile < LdapBase
   before_validation :set_dn, :set_hash
 
-  ldap_mapping(
-    :dn_attribute => "puavoId",
-    :prefix => "ou=Files,ou=Desktops",
-    :classes => ["top", "puavoFile"]
-  )
+  ldap_mapping dn_attribute: 'puavoId',
+               prefix: 'ou=Files,ou=Desktops',
+               classes: %w[top puavoFile]
 
   def set_dn
     self.puavoId = IdPool.next_puavo_id if self.puavoId.nil?
@@ -19,20 +18,21 @@ class ExternalFile < LdapBase
   end
 
   # Find all external files configured in config/puavo_external_files.yml
-  def self.find_configured(config=Puavo::EXTERNAL_FILES)
+  def self.find_configured(config = Puavo::EXTERNAL_FILES)
+    # Create an LDAP filter
+    filter = '(|'
 
-    # Create or ldap filter
-    filter = "(|"
     filter += config.map do |o|
-      "(cn=#{ o["name"] })"
-    end.join("")
-    filter += ")"
+      "(cn=#{o['name']})"
+    end.join
 
-    return ExternalFile.find(:all, :filter => filter)
+    filter += ')'
+
+    ExternalFile.find(:all, filter: filter)
   end
 
   def self.find_by_cn(cn)
-    ExternalFile.find(:first, :attribute => "cn", :value => cn)
+    ExternalFile.find(:first, attribute: 'cn', value: cn)
   end
 
   def self.find_or_create_by_cn(cn)
@@ -42,15 +42,14 @@ class ExternalFile < LdapBase
 
     f = ExternalFile.new
     f.cn = cn
-    return f
+    f
   end
 
   def as_json(*args)
-    return {
-      "id" => puavoId,
-      "name" => cn,
-      "data_hash" => puavoDataHash
+    {
+      'id' => puavoId,
+      'name' => cn,
+      'data_hash' => puavoDataHash
     }
   end
-
 end
