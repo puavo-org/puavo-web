@@ -1,4 +1,5 @@
 require 'net/ldap'
+require 'open3'
 require 'set'
 
 require_relative './errors'
@@ -150,6 +151,23 @@ module PuavoRest
                                 @rlog)
     end
 
+    def check_kerberos_password(principal, password)
+      begin
+        env = { 'KRB5CCNAME' => 'MEMORY:extlogin-password-check' }
+        cmd = [ 'timeout', '-k', '2', '5', 'kinit', principal ]
+        Open3.popen3(env, *cmd) do |stdin, stdout, stderr, wait_thr|
+          stdin.puts(password)
+          stdin.close
+          status = wait_thr.value
+          return status.success?
+        end
+      rescue StandardError => e
+        @rlog.warn("error in checking kerberos password for #{ principal }: " \
+                     + e.message)
+        return false
+      end
+    end
+
     def set_puavo_password(ext_userinfo, new_password)
       username = ext_userinfo['username']
       extlogin_id = ext_userinfo[@puavo_extlogin_id_field]
@@ -163,9 +181,15 @@ module PuavoRest
           return ExternalLoginStatus::NOCHANGE
         end
 
-        # Skip this check if we know already know the ldap password plaintext,
-        # the password change later is needed to change the kerberos password.
-        unless ext_userinfo.has_key?('ldap_password_plaintext') then
+        # If we know already know the ldap password plaintext, check
+        # the kerberos password and change password only if it does not match.
+        if ext_userinfo.has_key?('ldap_password_plaintext') then
+          return ExternalLoginStatus::NOCHANGE \
+            if check_kerberos_password(user.edu_person_principal_name,
+                                       new_password)
+        else
+          # We do not know the ldap password plaintext, so check if we have it
+          # and change password only if it does not match.
           begin
             # First test if user password is already valid.  No need to change
             # it in case new one is the same as old.  The point of this is

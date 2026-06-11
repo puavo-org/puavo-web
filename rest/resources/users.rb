@@ -980,9 +980,7 @@ class User < LdapModel
       end
 
       old_value = old_userinfo[attribute]
-      if old_value != new_value then
-        return true
-      end
+      return true if old_value != new_value
     end
 
     return false
