@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class ImageStatisticsController < ApplicationController
   before_action :find_school
 
-  ACCEPTED_TYPES = ['fatclient', 'thinclient', 'laptop'].freeze
-  CUSTOM_ATTRIBUTES = ['puavoId', 'puavoHostname', 'puavoDeviceType', 'puavoDeviceHWInfo'].freeze
+  ACCEPTED_TYPES = %w[fatclient thinclient laptop].freeze
+  CUSTOM_ATTRIBUTES = %w[puavoId puavoHostname puavoDeviceType puavoDeviceHWInfo].freeze
 
   # GET /device_statistics
   def index
@@ -54,7 +56,7 @@ class ImageStatisticsController < ApplicationController
         id: d[1]['puavoId'][0],
         name: d[1]['puavoHostname'][0],
         image: JSON.parse(d[1]['puavoDeviceHWInfo'][0])['this_image'],
-        school: school,
+        school: school
       }
     end
 
@@ -64,36 +66,32 @@ class ImageStatisticsController < ApplicationController
   def count_images(devices)
     return [] if devices.empty?
 
-    # get_releases() is defined in application_helper.rb. It reads the (optional)
-    # releases.json which contains official desktop image release names.
-    releases = get_releases()
-
+    releases = get_releases
     schools = {}
     images = {}
 
     devices.each do |d|
       img = d[:image]
-
       school = d[:school]
 
       unless schools.include?(school.cn)
         schools[school.cn] = {
           name: school.displayName,
-          link: school_path(school),
+          link: school_path(school)
         }
       end
 
       unless images.include?(img)
         images[img] = {
           release: releases[img.gsub('.img', '')] || nil,
-          devices: [],
+          devices: []
         }
       end
 
       images[img][:devices] << {
         name: d[:name],
         link: "/devices/#{d[:school].id}/devices/#{d[:id]}",
-        school: school.cn,
+        school: school.cn
       }
     end
 
