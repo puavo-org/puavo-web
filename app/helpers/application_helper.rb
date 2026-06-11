@@ -431,4 +431,13 @@ module ApplicationHelper
     return nil if t.nil?
     "<abbr class=\"timestamp dateonly\" title=\"#{t.utc.strftime('%Y-%m-%d')}\">#{t.utc.strftime('%Y-%m-%d')}</abbr>".html_safe
   end
+
+  def colorize_by_debian_release(s)
+      return s unless s.is_a?(String)
+
+      # Is the image based on a known Debian release?
+      debian = %w[trixie bookworm bullseye buster].find { |r| s.include?(r) }
+
+      debian ? "<span class=\"release-#{debian}\">#{s}</span>".html_safe : s
+  end
 end

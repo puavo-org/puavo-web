@@ -32,7 +32,7 @@ end
 
 <tr>
   <th class="main"><%= t('hwinfo.image.name') %></th>
-  <td colspan="2"><%= @info['this_image'] || '?' %></td>
+  <td colspan="2"><%= colorize_by_debian_release(@info['this_image'] || '?') %></td>
 </tr>
 
 <tr>

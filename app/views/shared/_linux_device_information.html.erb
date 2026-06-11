@@ -184,9 +184,9 @@
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceCurrentImage") %></th>
       <td>
         <% if @releases.include?(device.puavoDeviceCurrentImage) %>
-        <%= h device.puavoDeviceCurrentImage %> (<span class="releaseName"><%= @releases[device.puavoDeviceCurrentImage] %></span>)</li>
+        <%= h colorize_by_debian_release(device.puavoDeviceCurrentImage) %> (<span class="releaseName"><%= @releases[device.puavoDeviceCurrentImage] %></span>)</li>
         <% else %>
-        <%= h device.puavoDeviceCurrentImage %>
+        <%= h colorize_by_debian_release(device.puavoDeviceCurrentImage) %>
         <% end %>
       </td>
     </tr>
@@ -197,9 +197,9 @@
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceImage") %></th>
       <td>
         <% if @releases.include?(device.puavoDeviceImage) %>
-        <%= h device.puavoDeviceImage %> (<span class="releaseName"><%= @releases[device.puavoDeviceImage] %></span>)</li>
+        <%= h colorize_by_debian_release(device.puavoDeviceImage) %> (<span class="releaseName"><%= @releases[device.puavoDeviceImage] %></span>)</li>
         <% else %>
-        <%= h device.puavoDeviceImage %>
+        <%= h colorize_by_debian_release(device.puavoDeviceImage) %>
         <% end %>
       </td>
     </tr>
