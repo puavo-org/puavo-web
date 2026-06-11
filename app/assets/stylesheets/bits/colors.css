@@ -344,10 +344,10 @@
     --devices-imagestats-percentage-fore: #080;
     --devices-imagestats-devicelist-border: #aaa;
 
-    --devices-imagestats-release-stretch: #008;
     --devices-imagestats-release-buster: #080;
     --devices-imagestats-release-bullseye: #a00;
     --devices-imagestats-release-bookworm: #808;
+    --devices-imagestats-release-trixie: #008;
 
     /* Page footer (build info, hostname, uptime, etc.) */
     --footer-fore: #999;

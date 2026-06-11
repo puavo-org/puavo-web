@@ -171,10 +171,10 @@
 }
 
 span.release-other { }
-span.release-stretch { color: var(--devices-imagestats-release-stretch); }
 span.release-buster { color: var(--devices-imagestats-release-buster); }
 span.release-bullseye { color: var(--devices-imagestats-release-bullseye); }
 span.release-bookworm { color: var(--devices-imagestats-release-bookworm); }
+span.release-trixie { color: var(--devices-imagestats-release-trixie); }
 
 .releaseName {
   color: var(--devices-imagestats-release-name);

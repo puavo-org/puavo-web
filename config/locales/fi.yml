@@ -1040,7 +1040,7 @@ fi:
     no_images: "Laitetietoja ei ole vastaanotettu mistään laitteesta"
     download: "Lataa raakadata JSON-muodossa..."
     sorting: "Lajittelu"
-    sort_by_image: "Kuvan pohjanimi (<span class=\"release-bookworm\">Bookworm</span>, <span class=\"release-bullseye\">Bullseye</span>, <span class=\"release-buster\">Buster</span>, <span class=\"release-stretch\">Stretch</span>, muut) ja julkaisuaika (uusin ensin)"
+    sort_by_image: "Kuvan pohjanimi (<span class=\"release-trixie\">Trixie</span>, <span class=\"release-bookworm\">Bookworm</span>, <span class=\"release-bullseye\">Bullseye</span>, <span class=\"release-buster\">Buster</span>, muut) ja julkaisuaika (uusin ensin)"
     sort_by_usage: "Kuvaa käyttävien koneiden määrä"
     instructions: "Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista."
     image_name_column: "Kuvan nimi (<span class=\"releaseName\">julkaisun nimi</span>, jos tunnettu)"
@@ -1855,9 +1855,11 @@ fi:
       expired_device: "Tämä laite on vanhentunut"
 
       filters:
-        uses_stretch: "Käyttää Stretch-kuvaa"
-        uses_buster: "Käyttää Buster-kuvaa"
-        uses_bullseye: "Käyttää Bullseye-kuvaa"
+        uses_stretch: "Käyttää Stretch -pohjaista kuvaa"
+        uses_buster: "Käyttää Buster -pohjaista kuvaa"
+        uses_bullseye: "Käyttää Bullseye -pohjaista kuvaa"
+        uses_bookworm: "Käyttää Bookworm -pohjaista kuvaa"
+        uses_trixie: "Käyttää Trixie -pohjaista kuvaa"
         have_monitors_xml: "Laitteella on näyttöasetuksia (XML)"
         have_xrandr: "Laitteella on xrandr-asetuksia"
         have_hwinfo: "Laitteesta on saatu laitetiedot"

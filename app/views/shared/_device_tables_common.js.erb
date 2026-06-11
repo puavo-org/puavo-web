@@ -1070,6 +1070,22 @@ const FILTER_PRESETS = [
         },
 
         {
+            title: "<%= t('devices.index.filters.uses_bookworm') %>",
+            id: "uses_bookworm",
+            filters: [
+                [1,"current_image","=","bookworm"],
+            ],
+        },
+
+        {
+            title: "<%= t('devices.index.filters.uses_trixie') %>",
+            id: "uses_trixie",
+            filters: [
+                [1,"current_image","=","trixie"],
+            ],
+        },
+
+        {
             title: "<%= t('devices.index.filters.have_monitors_xml') %>",
             id: "has_monitors_xml",
             filters: [
@@ -1157,6 +1173,16 @@ const FILTER_PRESETS = [
         uses_bullseye: {
             title: "<%= t('devices.index.filters.uses_bullseye') %>",
             filter: "current_image = /bullseye/",
+        },
+
+        uses_bookworm: {
+            title: "<%= t('devices.index.filters.uses_bookworm') %>",
+            filter: "current_image = /bookworm/",
+        },
+
+        uses_trixie: {
+            title: "<%= t('devices.index.filters.uses_trixie') %>",
+            filter: "current_image = /trixie/",
         },
 
         has_monitors_xml: {

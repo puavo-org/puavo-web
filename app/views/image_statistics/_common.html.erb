@@ -97,17 +97,11 @@ function buildTable(images)
         const image = IMAGES[imageName];
         const row = getTemplate("statsRow");
 
-        // Decide how to colorize this row, based on the image name
-        let cls = "other";
+        // Decide how to colorize this row, based on the Debian release name in the image name
+        let cls = ["trixie", "bookworm", "bullseye", "buster"].find(r => imageName.includes(r));
 
-        if (imageName.includes("stretch"))
-            cls = "stretch";
-        else if (imageName.includes("buster"))
-            cls = "buster";
-        else if (imageName.includes("bullseye"))
-            cls = "bullseye";
-        else if (imageName.includes("bookworm"))
-            cls = "bookworm";
+        if (cls === undefined || cls === null)
+            cls = "other";
 
         const imageSpan = row.querySelector("span.imageName"),
               releaseSpan = row.querySelector("span.releaseName");
@@ -162,7 +156,7 @@ function sortByUsage(raw)
     for (const image of Object.keys(raw))
         images.push([image, raw[image].devices.length]);
 
-    return images.sort(function(a, b) {
+    return images.sort((a, b) => {
         if (a[1] == b[1]) {
             // compare image names to resolve the tie (and stabilize the sort a bit)
             return collator.compare(a[0], b[0]);
@@ -174,40 +168,39 @@ function sortByUsage(raw)
 
 function sortByImage(raw)
 {
-    // Split into multiple arrays based on the image name, sort them separately
-    // and finally concatenate
+    // Split into multiple arrays based on the Debian release name in the image name, then
+    // sort each array separately and finally concatenate them in Debian release order.
+
     function sortImages(what)
     {
-        return what.sort(function(a, b) {
-            return collator.compare(a, b) * -1;     // -1 = reverse the order
-        });
+        return what.sort((a, b) => collator.compare(a, b) * -1);    // -1 = reverse the order
     }
 
-    let bookworm = [],
+    let trixie = [],
+        bookworm = [],
         bullseye = [],
         buster = [],
-        stretch = [],
         other = [];
 
     for (const image of Object.keys(raw)) {
-        if (image.indexOf("bookworm") != -1)
+        if (image.indexOf("trixie") != -1)
+            trixie.push(image);
+        else if (image.indexOf("bookworm") != -1)
             bookworm.push(image);
         else if (image.indexOf("bullseye") != -1)
             bullseye.push(image);
         else if (image.indexOf("buster") != -1)
             buster.push(image);
-        else if (image.indexOf("stretch") != -1)
-            stretch.push(image);
         else other.push(image);
     }
 
+    trixie = sortImages(trixie);
     bookworm = sortImages(bookworm);
     bullseye = sortImages(bullseye);
     buster = sortImages(buster);
-    stretch = sortImages(stretch);
     other = sortImages(other);
 
-    return [].concat(bookworm, bullseye, buster, stretch, other);
+    return [].concat(trixie, bookworm, bullseye, buster, other);
 }
 
 function download()
