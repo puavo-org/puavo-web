@@ -25,7 +25,7 @@ module PasswordsPdfHelper
     groups.each do |group|
       next unless group[:members].include?(puavoid)
 
-      if best.nil? || GROUP_PRIORITY[group[:type]] > GROUP_PRIORITY[group[:type]]
+      if best.nil? || GROUP_PRIORITY[group[:type]] > GROUP_PRIORITY[best[:type]]
         best = group
       end
     end
