@@ -48,7 +48,7 @@ class ImageStatisticsController < ApplicationController
   def process_school_devices(school)
     out = []
 
-    DevicesHelper.get_devices_in_school(school.dn, CUSTOM_ATTRIBUTES).each do |d|
+    DevicesHelper.get_devices_in_school(school.dn, custom_attributes: CUSTOM_ATTRIBUTES).each do |d|
       next unless ACCEPTED_TYPES.include?(d[1]['puavoDeviceType'][0])
       next unless d[1].include?('puavoDeviceHWInfo')
 
