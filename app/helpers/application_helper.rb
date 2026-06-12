@@ -433,11 +433,11 @@ module ApplicationHelper
   end
 
   def colorize_by_debian_release(s)
-      return s unless s.is_a?(String)
+    return s unless s.is_a?(String)
 
-      # Is the image based on a known Debian release?
-      debian = %w[trixie bookworm bullseye buster].find { |r| s.include?(r) }
+    # Is the image based on a known Debian release?
+    debian = %w[trixie bookworm bullseye buster].find { |r| s.include?(r) }
 
-      debian ? "<span class=\"release-#{debian}\">#{s}</span>".html_safe : s
+    debian ? "<span class=\"release-#{debian}\">#{s}</span>".html_safe : s
   end
 end
