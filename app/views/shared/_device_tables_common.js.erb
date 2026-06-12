@@ -618,7 +618,7 @@ const COLUMN_DEFINITIONS = {
             } else {
                 // Missing user, show only the DN and highlight it
                 return {
-                    display: `<span class="data-error">${primary.dn}</span>`,
+                    display: `<span class="invalidData">${primary.dn}</span>`,
                     sort: primary.dn,
                     filter: primary.dn,
                     export: primary.dn,
