@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A helper module/method for generating PDFs that contain a list of users, grouped by
 # their primary group, and their new passwords.
 
@@ -11,7 +13,7 @@ module PasswordsPdfHelper
     'administrative group' => 2,
     'archive users' => 1,
     'other groups' => 0,
-    nil => -1,
+    nil => -1
   }.freeze
 
   def self.get_group_priorities
@@ -59,12 +61,12 @@ module PasswordsPdfHelper
     pdf.font_families['unicodefont'] = {
       normal: {
         font: 'Regular',
-        file: Pathname.new(Rails.root.join('app', 'assets', 'stylesheets', 'font', 'FreeSerif.ttf')),
+        file: Pathname.new(Rails.root.join('app', 'assets', 'stylesheets', 'font', 'FreeSerif.ttf'))
       }
     }
 
-    if users.count == 0
-      pdf.start_new_page()
+    if users.empty?
+      pdf.start_new_page
       pdf.font('unicodefont')
       pdf.font_size(12)
       pdf.draw_text(I18n.t('new_import.pdf.no_users'), at: pdf.bounds.top_left)
@@ -74,12 +76,12 @@ module PasswordsPdfHelper
 
     grouped_users.each do |group_name, group_users|
       group_users.each_slice(users_per_page).each_with_index do |block, _|
-        pdf.start_new_page()
+        pdf.start_new_page
 
         pdf.font('unicodefont')
         pdf.font_size(18)
         header_text = organisation_name
-        header_text += ", #{group_name}" if group_name && group_name.length > 0
+        header_text += ", #{group_name}" if group_name && !group_name.empty?
         pdf.text(header_text)
 
         pdf.font('unicodefont')
@@ -106,6 +108,6 @@ module PasswordsPdfHelper
       end
     end
 
-    return filename_timestamp, pdf
+    [filename_timestamp, pdf]
   end
 end
