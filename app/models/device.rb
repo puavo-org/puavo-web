@@ -40,7 +40,7 @@ class Device < DeviceBase
   end
 
   def self.json_attributes
-    # NOTE: The attribute value may be a raw LDAP value (eg. { puavoHostname => ["thinclient-01"] })
+    # NOTE: The attribute value may be a raw LDAP value (eg. { puavoHostname => ["laptop-01"] })
     DeviceBase.json_attributes.push(
       {
         original_attribute_name: 'puavoSchool',

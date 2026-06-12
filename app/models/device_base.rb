@@ -109,7 +109,7 @@ class DeviceBase < LdapBase
        end
     end
 
-    # macAddress is required attribute if device is bootable device (server, fatclient, thinclient, laptop etc.)
+    # macAddress is required attribute if device is bootable device (server, fatclient, laptop etc.)
     if self.classes.include?('puavoNetbootDevice') ||
         self.classes.include?('puavoLocalbootDevice') ||
         self.classes.include?('puavoServer')
@@ -412,7 +412,7 @@ class DeviceBase < LdapBase
   end
 
   def self.json_attributes
-    # Note: value of attribute may be raw ldap value eg. { puavoHostname => ["thinclient-01"] }
+    # NOTE: The attribute value may be a raw LDAP value (eg. { puavoHostname => ["laptop-01"] })
     [
       {
         original_attribute_name: 'description',

@@ -15,7 +15,7 @@ Feature: Manage devices
       | fatclient-01  | 33:2d:2b:13:ce:a0 | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
       | fatclient-02  | a0:4e:68:94:a1:7b | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
       | laptop-01     | a0:4e:68:94:a1:7c | laptop          | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
-      | thin-01       | 11:22:33:aa:bb:cc | thinclient      | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
+      | laptop-02     | 11:22:33:aa:bb:cc | laptop          | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
       | other-01      | 00:00:00:00:00:00 | other           | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
 
   Scenario: Add new printer to Puavo
@@ -177,21 +177,21 @@ Feature: Manage devices
 
   Scenario: Ensure invalid characters in the serial number field don't crash (part 2)
     Given I am on the devices list page
-    And I press "Edit..." on the "thin-01" row
+    And I press "Edit..." on the "laptop-01" row
     And I fill in "Serial number" with "ääääää"
     And I press "Update"
     Then I should see "Serial number contains invalid characters"
 
   Scenario: Invalid primary user should not crash
     Given I am on the devices list page
-    And I press "Edit..." on the "thin-01" row
+    And I press "Edit..." on the "laptop-01" row
     And I fill in "Device primary user" with "does not exist"
     And I press "Update"
     Then I should see "Device primary user is invalid"
 
   Scenario: Poor man's script injection check
     Given I am on the devices list page
-    And I press "Edit..." on the "thin-01" row
+    And I press "Edit..." on the "laptop-01" row
     And I fill in "Device manufacturer" with "<script>alert(456)</script>"
     And I press "Update"
     Then I should see "Device was successfully updated"
@@ -199,7 +199,7 @@ Feature: Manage devices
 
   Scenario: Ensure Markdown and HTML stays escaped and uninterpreted
     Given I am on the devices list page
-    And I press "Edit..." on the "thin-01" row
+    And I press "Edit..." on the "laptop-01" row
     And I fill in "Description" with:
         """
         <h1>TITLE</h1> <a href="#">foobar</a> <ul><li>foo</li><li>bar</li></ul>
@@ -320,12 +320,6 @@ Feature: Manage devices
     # Fatclient
     When I am on the devices list page
     Then I press "fatclient-01" on the "fatclient-01" row
-    And I should not see "Human-readable name"
-    When I follow "Edit..."
-    Then I should not see "Human-readable name"
-    # Thinclient
-    When I am on the devices list page
-    Then I press "thin-01" on the "thin-01" row
     And I should not see "Human-readable name"
     When I follow "Edit..."
     Then I should not see "Human-readable name"

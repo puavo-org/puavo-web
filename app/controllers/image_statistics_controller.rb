@@ -3,7 +3,7 @@
 class ImageStatisticsController < ApplicationController
   before_action :find_school
 
-  ACCEPTED_TYPES = %w[fatclient thinclient laptop].freeze
+  ACCEPTED_TYPES = %w[fatclient laptop].freeze
   CUSTOM_ATTRIBUTES = %w[puavoId puavoHostname puavoDeviceType puavoDeviceHWInfo].freeze
 
   # GET /device_statistics

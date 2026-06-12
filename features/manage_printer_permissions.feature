@@ -13,8 +13,8 @@ Feature: Manage printer permissions
       | Pavel     | Taylor | pavel | secret   | true         | admin                     |
     And the following devices:
       | puavoHostname | macAddress        | puavoDeviceType |
-      | athin         | 33:2d:2b:13:ce:a0 | thinclient      |
-      | anotherthin   | a0:4e:68:94:a1:7b | thinclient      |
+      | alaptop         | 33:2d:2b:13:ce:a0 | laptop      |
+      | anotherlaptop   | a0:4e:68:94:a1:7b | laptop      |
     And the following bootserver:
       | puavoHostname | macAddress        | school           |
       | boot1         | 27:b0:59:3c:ac:a4 | Example school 1 |
@@ -72,16 +72,16 @@ Feature: Manage printer permissions
 
   Scenario: Can activate printer from device
     Given I am logged in as "pavel" with password "secret"
-    And I am on the edit page of "athin" device
+    And I am on the edit page of "alaptop" device
     And I should see "Terminal information"
     And I check "printer1"
     And I press "Update"
     And I follow "Edit..."
     Then the "printer1" checkbox should be checked
     And I press the device printer link "printer1"
-    And I should see "athin"
+    And I should see "alaptop"
     # the remove checkbox
-    Then I check box on the "athin" row
+    Then I check box on the "alaptop" row
     And I press "Save"
-    Then I should not see "athin"
+    Then I should not see "alaptop"
 

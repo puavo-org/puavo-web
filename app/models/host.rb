@@ -5,7 +5,7 @@ class Host < DeviceBase
 
   # Generate new Hash by configuration. Key: Host type, value: list of the object classes
   # Example:
-  # { "thinclient" => "puavoNetbootDevice" }
+  # { "fatclient" => "puavoNetbootDevice" }
   @@objectClass_by_device_type = Puavo::CONFIG['device_types'].inject({}) do |result, type|
     result[type.first] = type.last['classes']
     result
