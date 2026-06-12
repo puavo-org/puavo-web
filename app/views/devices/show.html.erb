@@ -1,15 +1,15 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices'), @device.cn %>
 
-<%= render :partial => 'shared/main_information', :locals => { :device => @device} %>
+<%= render partial: 'shared/main_information', locals: { device: @device} %>
 
-<%= render :partial => 'shared/linux_device_information', :locals => { :device => @device} %>
+<%= render partial: 'shared/linux_device_information', locals: { device: @device} %>
 
 <% if @device.classes.include?('puavoPrinter') %>
-<%= render :partial => 'cups', :locals => { :device => @device } %>
+<%= render partial: 'cups', locals: { device: @device } %>
 <% end %>
 
-<% if ['laptop', 'fatclient', 'thinclient'].include?(@device.puavoDeviceType) %>
-<%= render :partial => 'devices/hwinfo', :locals => { :rawInfo => @device.puavoDeviceHWInfo } %>
+<% if %w[laptop fatclient thinclient].include?(@device.puavoDeviceType) %>
+<%= render partial: 'devices/hwinfo', locals: { rawInfo: @device.puavoDeviceHWInfo } %>
 <% end %>
 
 <hr>
