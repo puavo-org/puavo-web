@@ -21,14 +21,14 @@ describe PuavoRest::ExternalFiles do
     )
 
     @device = create_device(
-      :puavoHostname => "athin01",
+      :puavoHostname => "alaptop01",
       :macAddress => "bf:9a:8c:1b:e0:6a",
       :puavoSchool => @school.dn,
       :puavoPrinterPPD => 'PPD-data'
     )
 
     @device = create_device(
-      :puavoHostname => "athin02",
+      :puavoHostname => "alaptop02",
       :macAddress => "bf:9a:8c:1b:e0:6b",
       :puavoSchool => @school.dn
     )
@@ -63,7 +63,7 @@ describe PuavoRest::ExternalFiles do
   end
 
   it "has file metadata in index by device" do
-    get "/v3/devices/athin01/external_files"
+    get "/v3/devices/alaptop01/external_files"
     assert_200
     data = JSON.parse last_response.body
 
@@ -79,7 +79,7 @@ describe PuavoRest::ExternalFiles do
   end
 
   it "has no file metadata of printer_ppd in index by device" do
-    get "/v3/devices/athin02/external_files"
+    get "/v3/devices/alaptop02/external_files"
     assert_200
     data = JSON.parse last_response.body
 
@@ -91,13 +91,13 @@ describe PuavoRest::ExternalFiles do
   end
 
   it "has printer.ppd file contents by hostname" do
-    get "/v3/devices/athin01/external_files/printer.ppd"
+    get "/v3/devices/alaptop01/external_files/printer.ppd"
     assert_200
     assert_equal "PPD-data", last_response.body
   end
 
   it "has file contents by hostname" do
-    get "/v3/devices/athin01/external_files/test.txt"
+    get "/v3/devices/alaptop01/external_files/test.txt"
     assert_200
     assert_equal "test data", last_response.body
   end

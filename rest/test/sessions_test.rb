@@ -27,9 +27,9 @@ describe PuavoRest::Sessions do
       :puavoLocale => "fi_FI.UTF-8",
       :puavoSchoolHomePageURL => "gryffindor.example"
     )
-    @athin = create_device(
+    @alaptop = create_device(
       :puavoDeviceImage => "ownimage",
-      :puavoHostname => "athin",
+      :puavoHostname => "alaptop",
       :macAddress => "bf:9a:8c:1b:e0:6a",
       :puavoSchool => @school.dn
     )
@@ -223,11 +223,11 @@ describe PuavoRest::Sessions do
         @group.add_printer(@group_printer)
 
         @device_printer = create_printer(@bootserver, "device printer")
-        @athin.add_printer(@device_printer)
+        @alaptop.add_printer(@device_printer)
       end
 
       it "are given to guest sessions" do
-        post "/v3/sessions", { "hostname" => "athin" }, {
+        post "/v3/sessions", { "hostname" => "alaptop" }, {
           "HTTP_AUTHORIZATION" => "Bootserver"
         }
         assert_200
@@ -244,7 +244,7 @@ describe PuavoRest::Sessions do
       describe "for authenticated users" do
         before(:each) do
           basic_authorize "bob", "secret"
-          post "/v3/sessions", "hostname" => "athin"
+          post "/v3/sessions", "hostname" => "alaptop"
           assert_200
           @data = JSON.parse last_response.body
           assert @data["printer_queues"], "must have printer queues"
@@ -267,7 +267,7 @@ describe PuavoRest::Sessions do
       end
 
       it "for wireless users are given from /v3/devices/:hostname/wireless_printer_queues" do
-        get "/v3/devices/athin/wireless_printer_queues", {}, {
+        get "/v3/devices/alaptop/wireless_printer_queues", {}, {
           "HTTP_AUTHORIZATION" => "Bootserver"
         }
         assert_200
@@ -279,11 +279,11 @@ describe PuavoRest::Sessions do
 
       it "does not duplicate printers if they are in multiple sources" do
         @dupprinter = create_printer(@bootserver, "dupprinter")
-        @athin.add_printer(@dupprinter)
+        @alaptop.add_printer(@dupprinter)
         @school.add_printer(@dupprinter)
 
         basic_authorize "bob", "secret"
-        post "/v3/sessions", "hostname" => "athin"
+        post "/v3/sessions", "hostname" => "alaptop"
         assert_200
 
         data = JSON.parse(last_response.body)
@@ -298,7 +298,7 @@ describe PuavoRest::Sessions do
       it "group data is in user hash" do
         # TODO: should not be under printer tests
         basic_authorize "bob", "secret"
-        post "/v3/sessions", "hostname" => "athin"
+        post "/v3/sessions", "hostname" => "alaptop"
         assert_200
         data = JSON.parse(last_response.body)
 

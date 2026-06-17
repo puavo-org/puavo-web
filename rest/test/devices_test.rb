@@ -84,8 +84,8 @@ describe PuavoRest::Devices do
 
   describe "device information" do
     before(:each) do
-      @_athin = create_device(
-        :puavoHostname => "athin",
+      @_alaptop = create_device(
+        :puavoHostname => "alaptop",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoDeviceImage => "customimage",
         :puavoSchool => @school.dn,
@@ -112,7 +112,7 @@ describe PuavoRest::Devices do
       test_organisation.puavoPersonalDevice = "TRUE"
       test_organisation.puavoImageSeriesSourceURL = nil
       test_organisation.save!
-      get "/v3/devices/athin"
+      get "/v3/devices/alaptop"
       assert_200
       @data = JSON.parse last_response.body
     end
@@ -228,7 +228,7 @@ describe PuavoRest::Devices do
     it "it prefers language from the school" do
       @school.puavoLocale = "sv_FI.UTF-8"
       @school.save!
-      get "/v3/devices/athin"
+      get "/v3/devices/alaptop"
       assert_200
       data = JSON.parse last_response.body
 
@@ -245,10 +245,10 @@ describe PuavoRest::Devices do
 
     it 'can clear out the notes' do
       assert_equal 'Put some notes here', @data['notes']
-      @_athin.puavoNotes = nil
-      @_athin.save!
+      @_alaptop.puavoNotes = nil
+      @_alaptop.save!
 
-      get '/v3/devices/athin'
+      get '/v3/devices/alaptop'
       assert_200
       @data = JSON.parse last_response.body
 
@@ -260,13 +260,13 @@ describe PuavoRest::Devices do
 
     before(:each) do
       create_device(
-        :puavoHostname => "athin",
+        :puavoHostname => "alaptop",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoSchool => @school.dn,
         :puavoMountpoint => [ '{"fs":"nfs4","path":"10.0.0.2/share","mountpoint":"/home/device/share","options":"-o rw"}',
                               '{"fs":"nfs3","path":"10.4.4.4/share","mountpoint":"/home/school/share","options":"-o r"}' ]
       )
-      get "/v3/devices/athin"
+      get "/v3/devices/alaptop"
       assert_200
       @data = JSON.parse last_response.body
     end
@@ -319,11 +319,11 @@ describe PuavoRest::Devices do
 
     before(:each) do
       create_device(
-        :puavoHostname => "athin",
+        :puavoHostname => "alaptop",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoSchool => @school_without_fallback_value.dn
       )
-      get "/v3/devices/athin"
+      get "/v3/devices/alaptop"
       assert_200
       @data = JSON.parse last_response.body
     end
@@ -359,11 +359,19 @@ describe PuavoRest::Devices do
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoDeviceImage = "organisationprefimage"
       test_organisation.save!
-      create_device(
-        :puavoHostname => "athin",
-        :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoSchool => @school_without_fallback_value.dn
-      )
+
+      # create_device() can only create laptops, and we need a fatclient with puavoNetbootDevice class.
+      # "laptop" won't work here, because the image determination works differently on localboot and
+      # netboot devices and the test wants a netboot device.
+      dev = Device.new
+      dev.classes = %w[top device puppetClient puavoNetbootDevice]
+      dev.attributes = {
+        puavoHostname: 'afatclient',
+        puavoDeviceType: 'fatclient',
+        macAddress: 'bf:9a:8c:1b:e0:6a',
+        puavoSchool: @school_without_fallback_value.dn
+      }
+      dev.save!
 
       localboot_device = create_device(
         :puavoHostname => "localbootdevice",
@@ -379,8 +387,8 @@ describe PuavoRest::Devices do
 
     end
 
-    it "is used by thinclients " do
-      get "/v3/devices/athin"
+    it "is used by fatclients" do
+      get "/v3/devices/afatclient"
       assert_200
       data = JSON.parse last_response.body
       assert_equal "bootserverbootprefimage", data["preferred_image"]
@@ -400,7 +408,7 @@ describe PuavoRest::Devices do
   describe "device information with global default" do
     before(:each) do
       create_device(
-        :puavoHostname => "athin",
+        :puavoHostname => "alaptop",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoSchool => @school_without_fallback_value.dn
       )
@@ -408,7 +416,7 @@ describe PuavoRest::Devices do
       test_organisation.puavoAllowGuest = nil
       test_organisation.puavoPersonalDevice = nil
       test_organisation.save!
-      get "/v3/devices/athin"
+      get "/v3/devices/alaptop"
       assert_200
       @data = JSON.parse last_response.body
     end
@@ -454,26 +462,26 @@ describe PuavoRest::Devices do
 
   describe "device boot configuration" do
     before(:each) do
-      @thinclient01 = create_device(
-        :puavoHostname => "thinclient-01",
+      @laptop01 = create_device(
+        :puavoHostname => "laptop-01",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoSchool => @school.dn,
         :puavoDeviceBootImage => "deviceprefbootimage",
         :puavoDeviceImage => "deviceprefimage"
       )
-      @thinclient02 = create_device(
-        :puavoHostname => "thinclient-02",
+      @laptop02 = create_device(
+        :puavoHostname => "laptop-02",
         :macAddress => "bf:9a:8c:1b:e0:6b",
         :puavoSchool => @school.dn,
         :puavoDeviceImage => "deviceprefimage"
       )
-      @thinclient03 = create_device(
-        :puavoHostname => "thinclient-03",
+      @laptop03 = create_device(
+        :puavoHostname => "laptop-03",
         :macAddress => "bf:9a:8c:1b:e0:6b",
         :puavoSchool => @school.dn
       )
-      @thinclient04 = create_device(
-        :puavoHostname => "thinclient-04",
+      @laptop04 = create_device(
+        :puavoHostname => "laptop-04",
         :macAddress => "bf:9a:8c:1b:e0:6b",
         :puavoSchool => @school_without_fallback_value.dn
       )
@@ -482,25 +490,25 @@ describe PuavoRest::Devices do
       test_organisation.puavoDeviceImage = "organisationprefimage"
       test_organisation.save!
 
-      @rest_thinclient01 = PuavoRest::Device.by_dn(@thinclient01.dn.to_s)
-      @rest_thinclient02 = PuavoRest::Device.by_dn(@thinclient02.dn.to_s)
-      @rest_thinclient03 = PuavoRest::Device.by_dn(@thinclient03.dn.to_s)
-      @rest_thinclient04 = PuavoRest::Device.by_dn(@thinclient04.dn.to_s)
+      @rest_laptop01 = PuavoRest::Device.by_dn(@laptop01.dn.to_s)
+      @rest_laptop02 = PuavoRest::Device.by_dn(@laptop02.dn.to_s)
+      @rest_laptop03 = PuavoRest::Device.by_dn(@laptop03.dn.to_s)
+      @rest_laptop04 = PuavoRest::Device.by_dn(@laptop04.dn.to_s)
     end
 
     it "has preferred boot image by device" do
-      assert_equal @rest_thinclient01.preferred_boot_image, "deviceprefimage"
+      assert_equal @rest_laptop01.preferred_boot_image, "deviceprefimage"
     end
 
     it "has preferred boot image by device preferred image" do
-      assert_equal @rest_thinclient02.preferred_boot_image, "deviceprefimage"
+      assert_equal @rest_laptop02.preferred_boot_image, "deviceprefimage"
     end
 
     it "has preferred boot image by school preferred image" do
-      assert_equal @rest_thinclient03.preferred_boot_image, "schoolprefimage"
+      assert_equal @rest_laptop03.preferred_boot_image, "schoolprefimage"
     end
     it "has preferred boot image by organisation preferred image" do
-      assert_equal @rest_thinclient04.preferred_boot_image, "organisationprefimage"
+      assert_equal @rest_laptop04.preferred_boot_image, "organisationprefimage"
     end
     it "has not preferred boot image" do
 
@@ -511,14 +519,14 @@ describe PuavoRest::Devices do
 
     before(:each) do
       create_device(
-        :puavoHostname => "athin",
+        :puavoHostname => "alaptop",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoSchool => @school.dn
       )
     end
 
     it "has printer" do
-      get "/v3/devices/athin/wireless_printer_queues", {}, {
+      get "/v3/devices/alaptop/wireless_printer_queues", {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_200
@@ -544,7 +552,7 @@ describe PuavoRest::Devices do
       printer2.save!
       @school.add_wireless_printer(printer2)
 
-      get "/v3/devices/athin/wireless_printer_queues", {}, {
+      get "/v3/devices/alaptop/wireless_printer_queues", {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_200
@@ -609,7 +617,7 @@ describe PuavoRest::Devices do
   describe "device information with invalid data" do
     before(:each) do
       create_device(
-        :puavoHostname => "athin",
+        :puavoHostname => "alaptop",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoSchool => @school.dn,
         :puavoDevicePrimaryUser => @user.dn.to_s
@@ -618,7 +626,7 @@ describe PuavoRest::Devices do
       # device puavoDevicePrimaryUser is invalid when user 'bob' is removed
       @user.destroy!
 
-      get "/v3/devices/athin"
+      get "/v3/devices/alaptop"
       assert_200
       @data = JSON.parse last_response.body
     end
@@ -632,12 +640,12 @@ describe PuavoRest::Devices do
   describe "list of devices" do
     before(:each) do
       create_device(
-        :puavoHostname => "athin",
+        :puavoHostname => "alaptop",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoSchool => @school.dn
       )
       create_device(
-        :puavoHostname => "athin-02",
+        :puavoHostname => "alaptop-02",
         :macAddress => "bf:9a:8c:1b:e0:7b",
         :puavoSchool => @school.dn
       )

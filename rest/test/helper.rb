@@ -16,11 +16,11 @@ def create_server(attrs)
 end
 
 def create_device(attrs)
-  attrs[:puavoDeviceType] ||=  "thinclient"
-  attrs[:macAddress] ||= "bc:5f:f4:56:59:71"
+  attrs[:puavoDeviceType] ||= 'laptop'
+  attrs[:macAddress] ||= 'bc:5f:f4:56:59:71'
 
   d = Device.new
-  d.classes = ["top", "device", "puppetClient", "puavoNetbootDevice"]
+  d.classes = %w[top device puppetClient puavoLocalbootDevice]
   d.attributes = attrs
   d.save!
   d
