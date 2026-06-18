@@ -8,7 +8,7 @@
 <%= render partial: 'cups', locals: { device: @device } %>
 <% end %>
 
-<% if %w[laptop fatclient thinclient].include?(@device.puavoDeviceType) %>
+<% if %w[laptop fatclient].include?(@device.puavoDeviceType) %>
 <%= render partial: 'devices/hwinfo', locals: { rawInfo: @device.puavoDeviceHWInfo } %>
 <% end %>
 

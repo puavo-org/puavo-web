@@ -169,12 +169,7 @@
 
 <h2><%= t('shared.kernel_settings') %></h2>
 <table class="editForm">
-  <% if ["thinclient",
-         "fatclient",
-         "laptop",
-         "ltspserver",
-         "bootserver",
-         "wirelessaccesspoint"].include?(f.object.puavoDeviceType) %>
+  <% if %w[fatclient laptop ltspserver bootserver wirelessaccesspoint].include?(f.object.puavoDeviceType) %>
   <tr>
     <th><%= f.label :puavoDeviceImage %></th>
     <td>
@@ -184,13 +179,6 @@
       <%= render partial: 'shared/known_recent_releases_selector' %>
       <% end %>
     </td>
-  </tr>
-  <% end %>
-
-  <% if f.object.puavoDeviceType == "thinclient" %>
-  <tr>
-    <th><%= f.label :puavoDeviceBootImage %></th>
-    <td><%= f.text_field :puavoDeviceBootImage %></td>
   </tr>
   <% end %>
 
@@ -215,7 +203,7 @@
   </tr>
 </table>
 
-<% if ["thinclient", "fatclient", "laptop"].include?(f.object.puavoDeviceType) %>
+<% if %w[fatclient laptop].include?(f.object.puavoDeviceType) %>
 
 <h2><%= t('shared.printers_title') %></h2>
 

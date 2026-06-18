@@ -193,7 +193,7 @@
     </tr>
     <% end %>
 
-    <% if %w[thinclient fatclient laptop ltspserver bootserver].include?(device.puavoDeviceType) %>
+    <% if %w[fatclient laptop ltspserver bootserver].include?(device.puavoDeviceType) %>
     <tr>
       <th><%= t("activeldap.attributes.#{device_class}.puavoDeviceImage") %></th>
       <td>
@@ -203,13 +203,6 @@
         <%= h colorize_by_debian_release(device.puavoDeviceImage) %>
         <% end %>
       </td>
-    </tr>
-    <% end %>
-
-    <% if device.puavoDeviceType == 'thinclient' %>
-    <tr>
-      <th><%= t("activeldap.attributes.#{device_class}.puavoDeviceBootImage") %></th>
-      <td><%= h device.puavoDeviceBootImage %></td>
     </tr>
     <% end %>
 
