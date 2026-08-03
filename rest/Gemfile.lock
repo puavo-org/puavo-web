@@ -90,18 +90,18 @@ GEM
     bigdecimal (3.3.1)
     builder (3.3.0)
     byebug (12.0.0)
-    cgi (0.5.1)
+    cgi (0.5.2)
     coderay (1.1.3)
     colorize (1.1.0)
-    concurrent-ruby (1.3.6)
+    concurrent-ruby (1.3.8)
     connection_pool (2.5.5)
     crack (1.0.1)
       bigdecimal
       rexml
-    crass (1.0.6)
-    csv (3.3.5)
+    crass (1.0.7)
+    csv (3.3.6)
     date (3.5.1)
-    dnsruby (1.73.1)
+    dnsruby (1.74.0)
       base64 (>= 0.2)
       logger (~> 1.6)
       simpleidn (~> 0.2.1)
@@ -127,7 +127,7 @@ GEM
     gettext_i18n_rails (2.1.0)
       fast_gettext (>= 0.9.0)
     gibberish (2.1.1)
-    globalid (1.3.0)
+    globalid (1.4.0)
       activesupport (>= 6.1)
     gssapi (1.3.1)
       ffi (>= 1.0.1)
@@ -145,7 +145,7 @@ GEM
       csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
-    i18n (1.14.8)
+    i18n (1.15.2)
       concurrent-ruby (~> 1.0)
     io-console (0.8.2)
     irb (1.18.0)
@@ -153,7 +153,7 @@ GEM
       prism (>= 1.3.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (2.19.8)
+    json (2.21.2)
     jwe (1.1.1)
       base64
     jwt (3.2.0)
@@ -164,12 +164,12 @@ GEM
     locale (2.1.5)
       fiddle
     logger (1.7.0)
-    loofah (2.25.1)
+    loofah (2.25.2)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     m (1.7.0)
       rake
-    mail (2.9.0)
+    mail (2.9.1)
       logger
       mini_mime (>= 0.1.1)
       net-imap
@@ -194,7 +194,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2026.0414)
+    mime-types-data (3.2026.0701)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
     minitest (5.27.0)
@@ -218,7 +218,7 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.5)
-    nkf (0.2.0)
+    nkf (0.3.0)
     nokogiri (1.18.10)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
@@ -229,7 +229,7 @@ GEM
     pkg-config (1.6.5)
     pony (1.13.1)
       mail (>= 2.0)
-    pp (0.6.3)
+    pp (0.6.4)
       prettyprint
     prawn (2.5.0)
       matrix (~> 0.4)
@@ -282,8 +282,8 @@ GEM
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.7.0)
-      loofah (~> 2.25)
+    rails-html-sanitizer (1.7.1)
+      loofah (~> 2.25, >= 2.25.2)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
     railties (7.2.3.1)
       actionpack (= 7.2.3.1)
@@ -302,7 +302,7 @@ GEM
       tsort
     redis (5.4.1)
       redis-client (>= 0.22.0)
-    redis-client (0.29.0)
+    redis-client (0.30.1)
       connection_pool
     redis-namespace (1.11.0)
       redis (>= 4)
@@ -350,7 +350,7 @@ GEM
     stringio (3.2.0)
     text (1.3.1)
     thor (1.5.0)
-    tilt (2.7.0)
+    tilt (2.8.0)
     timecop (0.9.11)
     timeout (0.6.1)
     tsort (0.2.0)
@@ -365,12 +365,12 @@ GEM
       hashdiff (>= 0.4.0, < 2.0.0)
     webrick (1.9.2)
     webrobots (0.1.2)
-    websocket-driver (0.8.1)
+    websocket-driver (0.8.2)
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     yajl-ruby (1.4.3)
-    yard (0.9.44)
+    yard (0.9.45)
     zeitwerk (2.6.18)
 
 PLATFORMS
