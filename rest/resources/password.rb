@@ -91,7 +91,7 @@ class Password < PuavoSinatra
     $rest_log.info("[#{request_id}] Received a password reset request")
 
     begin
-      jwt_data = JWT.decode(params[:jwt], CONFIG["password_management"]["secret"])[0]
+      jwt_data = JWT.decode(params[:jwt], CONFIG['password_management']['secret'], true, { algorithm: 'HS256' })
     rescue JWT::DecodeError => e
       $rest_log.error("[#{request_id}] The JWT paylod cannot be decoded: #{e}")
       status 404
