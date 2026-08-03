@@ -701,17 +701,18 @@ class User < LdapBase
 
           logger.debug "User uid has changed. Remove memberUid from groups"
 
-          Group.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
-                        :scope => :one,
-                        :attributes => ['dn'] ).each do |group_dn, values|
+          Group.search_as_utf8(filter: "(memberUid=#{Net::LDAP::Filter.escape(old_user.uid)})",
+                               scope: :one,
+                               attributes: ['dn']).each do |group_dn, values|
             begin
               LdapBase.ldap_modify_operation(group_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
             rescue ActiveLdap::LdapError::NoSuchAttribute
             end
           end
-          School.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
-                         :scope => :one,
-                         :attributes => ['dn'] ).each do |school_dn, values|
+
+          School.search_as_utf8(filter: "(memberUid=#{Net::LDAP::Filter.escape(old_user.uid)})",
+                                scope: :one,
+                                attributes: ['dn']).each do |school_dn, values|
             begin
               LdapBase.ldap_modify_operation(school_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
             rescue ActiveLdap::LdapError::NoSuchAttribute
