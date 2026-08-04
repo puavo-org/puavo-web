@@ -150,16 +150,6 @@ end
 
 [
   {
-    :puavoHostname => "thin1",
-    :puavoDeviceType => "thinclient",
-    :macAddress => "00:60:2f:D0:77:1D",
-  },
-  {
-    :puavoHostname => "thin2",
-    :puavoDeviceType => "thinclient",
-    :macAddress => "00:60:2f:32:A3:55",
-  },
-  {
     :puavoHostname => "fat1",
     :puavoDeviceType => "fatclient",
     :macAddress => "00:60:2f:CB:1F:91",
