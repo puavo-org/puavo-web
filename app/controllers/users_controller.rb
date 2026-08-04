@@ -830,7 +830,7 @@ class UsersController < ApplicationController
     end
 
     # Upload the PDF to the preconfigured send service
-    stdout, stderr, status = Open3.capture3("#{ffsend_binary} u --host #{ffsend_host} --download-limit 1 --expiry-time 3600 \"#{temp_name}\"")
+    stdout, stderr, status = Open3.capture3(ffsend_binary, 'u', '--host', ffsend_host, '--download-limit', '1', '--expiry-time', '3600', temp_name)
     FileUtils.rm_f(temp_name)
 
     if status.exitstatus != 0

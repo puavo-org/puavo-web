@@ -73,7 +73,7 @@ class MfasController < ApplicationController
       url = "otpauth://totp/#{name}?issuer=#{issuer}&secret=#{secret}"
 
       # ...and store it in a QR code
-      stdout, stderr, status = Open3.capture3("qrencode --level M --margin=1 --type SVG --svg-path --rle \"#{url}\"")
+      stdout, stderr, status = Open3.capture3('qrencode', '--level', 'M', '--margin=1', '--type', 'SVG', '--svg-path', '--rle', url)
 
       if status.exitstatus != 0
         logger.error("[#{@request_id}] prepare(): qrencode failed with code #{status.exitstatus}, stderr: #{stderr}")
