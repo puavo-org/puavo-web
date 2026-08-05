@@ -169,18 +169,28 @@ end
 
 [
   {
-    :puavoHostname => "laptop1",
-    :puavoDeviceType => "laptop",
-    :macAddress => "00:60:2f:98:63:F8",
+    puavoHostname: 'laptop1',
+    puavoDeviceType: 'laptop',
+    macAddress: '00:60:2f:98:63:f8',
   },
   {
-    :puavoHostname => "laptop2",
-    :puavoDeviceType => "laptop",
-    :macAddress => "00:60:2f:42:16:FF",
+    puavoHostname: 'laptop2',
+    puavoDeviceType: 'laptop',
+    macAddress: '00:60:2f:42:16:ff',
+  },
+  {
+    puavoHostname: 'laptop3',
+    puavoDeviceType: 'laptop',
+    macAddress: '00:60:2f:d0:77:1d',
+  },
+  {
+    puavoHostname: 'laptop4',
+    puavoDeviceType: 'laptop',
+    macAddress: '00:60:2f:32:a3:55'
   }
 ].each do |attrs|
   device = Device.new
-  device.classes = ["top", "device", "puppetClient", "puavoLocalbootDevice", "simpleSecurityObject"]
+  device.classes = %w[top device puppetClient puavoLocalbootDevice simpleSecurityObject]
   device.attributes = attrs
   device.puavoSchool = school.dn
   device.save!
