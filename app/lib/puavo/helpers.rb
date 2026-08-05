@@ -52,6 +52,7 @@ module Puavo
       @yml_organisation
     end
 
+    # Returns the timezone name used in the main layout HTML element
     def get_organisation_intl_timezone
       org = LdapOrganisation.current
 
@@ -66,6 +67,7 @@ module Puavo
       'Europe/Helsinki'
     end
 
+    # Returns the locale used in the main layout HTML element
     def get_organisation_intl_locale
       org = LdapOrganisation.current
 
