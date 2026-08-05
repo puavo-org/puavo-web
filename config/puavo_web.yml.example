@@ -13,16 +13,6 @@ puavo_ca:
 password_management:
   host: "http://127.0.0.1:9393"
 device_types:
-  thinclient:
-    label:
-      en: Thinclient
-      fi: Kevytpääte
-    classes: puavoNetbootDevice
-    url: /devices/%s/devices/new.json?device_type=thinclient
-    order: 1
-    puppetclass: netboot
-    school_required: true
-    show_dashboard: true
   fatclient:
     label:
       en: Fatclient
