@@ -20,8 +20,15 @@
 function localizeTimestamps()
 {
     const intlDataset = document.documentElement.dataset;
+    let locale = intlDataset.intlLocale;
 
-    const dateFormatter = Intl.DateTimeFormat(intlDataset.intlLocale, {
+    if (locale == "en-US") {
+        // Override the timestamp locale, because no one wants to decipher weird mixed-endian dates
+        // and 12-hour clocks. A bit risky hack, but I've actually been asked about this.
+        locale = "en-GB";
+    }
+
+    const dateFormatter = Intl.DateTimeFormat(locale, {
         weekday: "short",
         year: "numeric",
         month: "numeric",
@@ -29,7 +36,7 @@ function localizeTimestamps()
         timeZone: intlDataset.intlTimezone
     });
 
-    const fullFormatter = Intl.DateTimeFormat(intlDataset.intlLocale, {
+    const fullFormatter = Intl.DateTimeFormat(locale, {
         weekday: "short",
         year: "numeric",
         month: "numeric",
