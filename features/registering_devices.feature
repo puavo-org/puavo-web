@@ -46,10 +46,10 @@ Feature: Devices registration
     10. Webcam
     11. Wireless access point
     """
-    When I enter "Thin Client" into process "puavo-register"
+    When I enter "Laptop" into process "puavo-register"
     Then I should see the following output from process "puavo-register":
     """
-    ===> selected [Thin Client]
+    ===> selected [Laptop]
     School selection:
     1. Administration
     2. Example school 1
@@ -60,7 +60,7 @@ Feature: Devices registration
     ===> selected [Example school 1]
     Hostname:
     """
-    When I enter "test-thin-01" into process "puavo-register"
+    When I enter "test-lap-01" into process "puavo-register"
     When I enter "52:54:00:aa:aa:aa" into process "puavo-register"
     When I enter "fake serial number" into process "puavo-register"
     When I enter "fake manufacturer" into process "puavo-register"
@@ -69,9 +69,9 @@ Feature: Devices registration
     Then I should see the following output from process "puavo-register":
     """
     HOST INFORMATION:
-    Device type:            Thin Client
+    Device type:            Laptop
     School:                 Example school 1
-    Hostname:               test-thin-01
+    Hostname:               test-lap-01
     MAC address(es):        52:54:00:aa:aa:aa
     Serial number:          fake serial number
     Device manufacturer:    fake manufacturer
