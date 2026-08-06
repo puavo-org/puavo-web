@@ -13,7 +13,7 @@ class ExternalService < ActiveLdap::Base
   end
 
   def ensure_slash_in_prefix
-    if self.puavoServicePathPrefix && self.puavoServicePathPrefix[0] != "/"
+    if self.puavoServicePathPrefix && self.puavoServicePathPrefix[0] != '/'
       self.puavoServicePathPrefix = "/#{self.puavoServicePathPrefix}"
     end
   end
