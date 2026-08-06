@@ -109,8 +109,6 @@ async function _processBatch(id, url, csrf, singleShot, operation, parameters, r
 
 async function _skipBatch(id)
 {
-    await sleep(500);
-
     postMessage({
         message: "batch_skipped",
         id: id
