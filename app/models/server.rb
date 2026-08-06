@@ -1,23 +1,21 @@
+# frozen_string_literal: true
+
 require 'digest'
 require 'base64'
 
 class Server < DeviceBase
-  ldap_mapping( :dn_attribute => "puavoId",
-                :prefix => "ou=Servers,ou=Hosts",
-                :classes => ['top', 'device', 'puppetClient', 'puavoServer', 'simpleSecurityObject'] )
+  ldap_mapping dn_attribute: 'puavoId',
+               prefix: 'ou=Servers,ou=Hosts',
+               classes: %w[top device puppetClient puavoServer simpleSecurityObject]
 
-  has_many( :automounts, :class_name => 'Automount',
-            :primary_key => 'dn',
-            :foreign_key => 'puavoServer' )
+  has_many :automounts, class_name: 'Automount', primary_key: 'dn', foreign_key: 'puavoServer'
 
   def forced_schools
     schools = []
 
     Array(puavoSchool).each do |school_dn|
-      begin
-        schools << School.find(school_dn)
-      rescue StandardError => e
-      end
+      schools << School.find(school_dn)
+    rescue StandardError
     end
 
     schools.sort { |a, b| a[:displayName].downcase <=> b[:displayName].downcase }
@@ -33,6 +31,6 @@ class Server < DeviceBase
   end
 
   def id
-    self.puavoId.to_s unless self.puavoId.nil?
+    self.puavoId&.to_s
   end
 end
