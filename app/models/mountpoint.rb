@@ -1,31 +1,25 @@
+# frozen_string_literal: true
+
 module Mountpoint
   attr_accessor :fs, :path, :mountpoint, :options
 
   def fs
-    if @fs.nil?
-      @fs = parse_mountpoint("fs")
-    end
+    @fs = parse_mountpoint('fs') if @fs.nil?
     @fs
   end
 
   def path
-    if @path.nil?
-      @path = parse_mountpoint("path")
-    end
+    @path = parse_mountpoint('path') if @path.nil?
     @path
   end
 
   def mountpoint
-    if @mountpoint.nil?
-      @mountpoint = parse_mountpoint("mountpoint")
-    end
+    @mountpoint = parse_mountpoint('mountpoint') if @mountpoint.nil?
     @mountpoint
   end
 
   def options
-    if @options.nil?
-      @options = parse_mountpoint("options")
-    end
+    @options = parse_mountpoint('options') if @options.nil?
     @options
   end
 
@@ -36,7 +30,7 @@ module Mountpoint
     @mountpoint = nil
     @options = nil
 
-    set_attribute("puavoMountpoint", args)
+    set_attribute('puavoMountpoint', args)
   end
 
   private
@@ -45,24 +39,24 @@ module Mountpoint
     Array(self.puavoMountpoint).map do |mount|
       JSON.parse(mount)[field]
     end
-
   end
 
   def set_puavo_mountpoint
-    new_mountpoint_values = Array.new
-    self.fs.each_index do |index|
-      if fs[index].empty? &&
-          path[index].empty? &&
-          mountpoint[index].empty? &&
-          options[index].empty?
-        next
-      end
+    new_mountpoint_values = []
 
-      new_mountpoint_values.push( { "fs" => fs[index],
-                                    "path" => path[index],
-                                    "mountpoint" => mountpoint[index],
-                                    "options" => options[index] }.to_json )
+    self.fs.each_index do |index|
+      next if fs[index].empty? && path[index].empty? && mountpoint[index].empty? && options[index].empty?
+
+      new_mountpoint_values.push(
+        {
+          'fs' => fs[index],
+          'path' => path[index],
+          'mountpoint' => mountpoint[index],
+          'options' => options[index]
+        }.to_json
+      )
     end
+
     self.puavoMountpoint = new_mountpoint_values
   end
 end
