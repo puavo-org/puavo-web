@@ -214,7 +214,7 @@
         <ul>
           <% Array(device.puavoDeviceAvailableImage).sort.each do |i| %>
           <% if @releases.include?(i) %>
-          <li><%= h i %> (<span class="releaseName"><%= @releases[i] %></span>)</li>
+          <li><%= h colorize_by_debian_release(i) %> (<span class="releaseName"><%= @releases[i] %></span>)</li>
           <% else %>
           <li><%= h i %></li>
           <% end %>

@@ -29,7 +29,7 @@ function formatRelease(context, image)
 
     image = image.replace(".img", "");
 
-    // Colorize the image name based on the underlying Debian release, even if the image name isn't an official
+    // Colorize the image name based on the underlying Debian release, even if the image name isn't an official release
     const debian = ["trixie", "bookworm", "bullseye", "buster"].find(r => image.includes(r));
 
     const displayImage = debian ? `<span class="release-${debian}">${image}</span>` : image;
@@ -184,15 +184,19 @@ const COLUMN_DEFINITIONS = {
             for (let image of available) {
                 image = image.replace(".img", "");
 
+                // Colorize the image name based on the underlying Debian release, even if the image name isn't an official release
+                const debian = ["trixie", "bookworm", "bullseye", "buster"].find(r => image.includes(r));
+                const coloredImage = debian ? `<span class="release-${debian}">${image}</span>` : image;
+
                 if (image in context.releases) {
                     const release = context.releases[image];
 
-                    display.push(`${image} <span class="releaseName">(${release})</span>`);
+                    display.push(`${coloredImage} <span class="releaseName">(${release})</span>`);
                     filter.push(`${image} ${release}`);
                     sort.push(`${image} ${release}`.toLowerCase());
                     export_.push(`${image} (${release})`);
                 } else {
-                    display.push(image);
+                    display.push(coloredImage);
                     filter.push(image);
                     sort.push(image);
                     export_.push(image);
