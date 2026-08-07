@@ -344,16 +344,7 @@ class SchoolsController < ApplicationController
   # GET /schools/1/wlan
   def wlan
     @school = School.find(params[:id])
-
-    # Make a sorted list of organisation-level wireless networks. They're stored as LDAP arrays of JSON.
-    networks = LdapOrganisation.current.puavoWlanSSID
-    @organisation_networks = []
-
-    if networks
-      @organisation_networks = Array(networks)
-        .map { |n| JSON.parse(n) }
-        .sort { |a, b| a['ssid'].downcase <=> b['ssid'].downcase }
-    end
+    @organisation_networks = list_organisation_networks
 
     unless can_edit_wlans?
       flash[:alert] = t('flash.you_must_be_an_owner')
@@ -369,6 +360,7 @@ class SchoolsController < ApplicationController
   # PUT /schools/1/wlan/update
   def wlan_update
     @school = School.find(params[:id])
+    @organisation_networks = list_organisation_networks
 
     unless can_edit_wlans?
       flash[:alert] = t('flash.you_must_be_an_owner')
@@ -482,6 +474,16 @@ class SchoolsController < ApplicationController
     clear_puavoconf(s)
 
     s
+  end
+
+  # Make a sorted list of organisation-level wireless networks. They're stored as LDAP arrays of JSON.
+  def list_organisation_networks
+    networks = LdapOrganisation.current.puavoWlanSSID
+    return [] unless networks
+
+    Array(networks)
+      .map { |n| JSON.parse(n) }
+      .sort { |a, b| a['ssid'].downcase <=> b['ssid'].downcase }
   end
 
   # Checks if the current user can edit school WLANs
