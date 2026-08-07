@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Base class for the School and Group classes.
 # Also School is group on the LDAP and operating systems.
 class BaseGroup < LdapBase
@@ -5,7 +7,7 @@ class BaseGroup < LdapBase
   validate :validate_unique_cn
 
   def id
-    self.puavoId.to_s unless self.puavoId.nil?
+    self.puavoId&.to_s
   end
 
   private
@@ -29,22 +31,18 @@ class BaseGroup < LdapBase
     # cn attribute must be unique on the group and school model.
     # cn == group name (operating system)
 
-    cn_escape = Net::LDAP::Filter.escape( self.cn )
+    filter = '(&' \
+      '(|(objectClass=puavoSchool)(objectClass=puavoEduGroup))' \
+      "(cn=#{Net::LDAP::Filter.escape(self.cn)})" \
+      ')'
 
-    filter = "(&" +
-      "(|(objectClass=puavoSchool)(objectClass=puavoEduGroup))" +
-      "(cn=#{ cn_escape })" +
-      ")"
-    group_ids = BaseGroup.search_as_utf8( :filter => filter,
-                                  :scope => :sub ).map{ |u| u.last["puavoId"].first }
+    group_ids = BaseGroup.search_as_utf8(filter: filter, scope: :sub).map { |u| u.last['puavoId'].first }
 
-    if self.puavoId
-      group_ids.delete_if{ |id| self.puavoId.to_i == id.to_i }
-    end
+    group_ids.delete_if { |id| self.puavoId.to_i == id.to_i } if self.puavoId
 
-    if self.cn.empty? || ! group_ids.empty?
-      errors.add :cn, I18n.t("activeldap.errors.messages.taken",
-                             :attribute => I18n.t("activeldap.attributes.#{self.class.to_s.downcase}.cn") )
+    if self.cn.empty? || !group_ids.empty?
+      errors.add :cn, I18n.t('activeldap.errors.messages.taken',
+                             attribute: I18n.t("activeldap.attributes.#{self.class.to_s.downcase}.cn"))
     end
   end
 end
