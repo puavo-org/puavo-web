@@ -1,18 +1,15 @@
+# frozen_string_literal: true
+
 require 'base64'
 
 module Wlan
-
   # Set WLAN networks as array
   #
   # @param [Array] Array of wlan networks.
   #     Each item should be a Hash with keys :ssid, :description, :type, :hidden, :wlan_ap and
   #     :password
   def wlan_networks=(data)
-    set_attribute("puavoWlanSSID",
-      data.map do |network|
-        network.to_json
-      end
-   )
+    set_attribute('puavoWlanSSID', data.map(&:to_json))
     data
   end
 
@@ -20,13 +17,11 @@ module Wlan
   #
   # @return [Array] Array of WLAN Network Hashes
   def wlan_networks
-    Array(get_attribute("puavoWlanSSID")).map do |network_json|
-      begin
-        JSON.parse(network_json)
-      rescue JSON::ParserError
-        logger.info "Invalid puavoWlanSSID JSON value: #{ network_json }"
-        nil
-      end
+    Array(get_attribute('puavoWlanSSID')).map do |network_json|
+      JSON.parse(network_json)
+    rescue JSON::ParserError
+      logger.info "Invalid puavoWlanSSID JSON value: #{network_json}"
+      nil
     end.compact
   end
 
@@ -50,23 +45,21 @@ module Wlan
     # then we'll talk.
 
     {
-      :wlan_ca_cert     => read_cert(new_attrs[:wlan_ca_cert], index) \
-                             || wlan_ca_cert[index],
-      :wlan_client_cert => read_cert(new_attrs[:wlan_client_cert], index) \
-                             || wlan_client_cert[index],
-      :wlan_client_key  => read_cert(new_attrs[:wlan_client_key], index) \
-                             || wlan_client_key[index],
+      wlan_ca_cert: read_cert(new_attrs[:wlan_ca_cert], index) || wlan_ca_cert[index],
+      wlan_client_cert: read_cert(new_attrs[:wlan_client_cert], index) || wlan_client_cert[index],
+      wlan_client_key: read_cert(new_attrs[:wlan_client_key], index) || wlan_client_key[index]
     }
   end
 
   def read_cert(certhash, index)
-    return nil unless certhash.kind_of?(Hash)
-    return nil unless certhash.has_key?(index.to_s)
+    return nil unless certhash.is_a?(Hash)
+    return nil unless certhash.key?(index.to_s)
     return nil unless certhash[index.to_s].respond_to?(:tempfile)
 
     Base64.encode64(certhash[index.to_s].tempfile.read)
   end
 
+  # Extracts WLAN attributes from the submitted form parameters
   def update_wlan_attributes(new_attrs)
     new_wlan_ap = new_attrs[:wlan_ap] || {}
     max_index = new_attrs[:wlan_name].keys.count - 1
@@ -78,51 +71,41 @@ module Wlan
       next if new_attrs[:wlan_name][index_s].empty?
 
       certs = get_certificates(new_attrs, index)
-
       new_wlan_type = new_attrs[:wlan_type][index_s]
 
       wlaninfo = {
-        :ssid        => new_attrs[:wlan_name][index_s],
-        :description => new_attrs[:wlan_description][index_s],
-        :type        => new_attrs[:wlan_type][index_s],
-        :priority    => new_attrs[:wlan_priority][index_s],
+        ssid: new_attrs[:wlan_name][index_s],
+        description: new_attrs[:wlan_description][index_s],
+        type: new_attrs[:wlan_type][index_s],
+        priority: new_attrs[:wlan_priority][index_s],
         # checkbox-type form elements are completely absent from the submitted data if they're
         # not checked, so more complicated logic is needed. Just accessing the nested arrays
         # directly will cause a crash.
-        :hidden      => new_attrs.fetch(:wlan_hidden, {}).fetch(index_s, nil) == 'hidden',
-        :wlan_ap     => %w(open psk).include?(new_wlan_type) \
-                         && (new_wlan_ap[index_s] == 'enabled'),
+        hidden: new_attrs.dig(:wlan_hidden, index_s) == 'hidden',
+        wlan_ap: %w[open psk].include?(new_wlan_type) && (new_wlan_ap[index_s] == 'enabled')
       }
 
       case new_attrs[:wlan_type][index_s]
         when 'eap-peap', 'eap-tls', 'eap-ttls'
-          if certs[:wlan_ca_cert] || certs[:wlan_client_cert] \
-               || certs[:wlan_client_key] then
+          if certs[:wlan_ca_cert] || certs[:wlan_client_cert] || certs[:wlan_client_key]
             wlaninfo[:certs] = {}
-            wlaninfo[:certs][:ca_cert] = certs[:wlan_ca_cert] \
-              if certs[:wlan_ca_cert]
-            wlaninfo[:certs][:client_cert] = certs[:wlan_client_cert] \
-              if certs[:wlan_client_cert]
-            wlaninfo[:certs][:client_key] = certs[:wlan_client_key] \
-              if certs[:wlan_client_key]
-            wlan_client_key_password \
-              = new_attrs[:wlan_client_key_password][index_s]
-            if wlan_client_key_password && !wlan_client_key_password.empty? then
+            wlaninfo[:certs][:ca_cert] = certs[:wlan_ca_cert] if certs[:wlan_ca_cert]
+            wlaninfo[:certs][:client_cert] = certs[:wlan_client_cert] if certs[:wlan_client_cert]
+            wlaninfo[:certs][:client_key] = certs[:wlan_client_key] if certs[:wlan_client_key]
+            wlan_client_key_password = new_attrs[:wlan_client_key_password][index_s]
+
+            if wlan_client_key_password && !wlan_client_key_password.empty?
               wlaninfo[:certs][:client_key_password] = wlan_client_key_password
             end
           end
 
           wlan_identity = new_attrs[:wlan_identity][index_s]
-          if wlan_identity && !wlan_identity.empty? then
-            wlaninfo[:identity] = wlan_identity
-          end
-          wlan_password = new_attrs[:wlan_password][index_s]
-          if wlan_password && !wlan_password.empty? then
-            wlaninfo[:password] = wlan_password
-          end
+          wlaninfo[:identity] = wlan_identity if wlan_identity && !wlan_identity.empty?
 
-          if new_attrs[:wlan_phase2_auth] \
-               && new_attrs[:wlan_phase2_auth][index_s] == 'enabled' then
+          wlan_password = new_attrs[:wlan_password][index_s]
+          wlaninfo[:password] = wlan_password if wlan_password && !wlan_password.empty?
+
+          if new_attrs[:wlan_phase2_auth] && new_attrs[:wlan_phase2_auth][index_s] == 'enabled'
             wlaninfo[:phase2_auth] = 'mschapv2'
           end
 
@@ -136,26 +119,63 @@ module Wlan
     self.wlan_networks = new_wlan_networks
   end
 
-  def wlan_attrs(key, subkey=nil)
-    if subkey then
+  def wlan_attrs(key, subkey = nil)
+    if subkey
       return wlan_networks.map { |w| w[key] ? w[key][subkey] : nil }
     end
 
     wlan_networks.map { |w| w[key] }
   end
 
-  def wlan_ap;          wlan_attrs('wlan_ap');     end
-  def wlan_identity;    wlan_attrs('identity');    end
-  def wlan_name;        wlan_attrs('ssid');        end
-  def wlan_description; wlan_attrs('description'); end
-  def wlan_password;    wlan_attrs('password');    end
-  def wlan_phase2_auth; wlan_attrs('phase2_auth'); end
-  def wlan_priority;    wlan_attrs('priority');    end
-  def wlan_type;        wlan_attrs('type');        end
-  def wlan_hidden;      wlan_attrs('hidden');      end
+  def wlan_ap
+    wlan_attrs('wlan_ap')
+  end
 
-  def wlan_ca_cert;             wlan_attrs('certs', 'ca_cert'            ); end
-  def wlan_client_cert;         wlan_attrs('certs', 'client_cert'        ); end
-  def wlan_client_key;          wlan_attrs('certs', 'client_key'         ); end
-  def wlan_client_key_password; wlan_attrs('certs', 'client_key_password'); end
+  def wlan_identity
+    wlan_attrs('identity')
+  end
+
+  def wlan_name
+    wlan_attrs('ssid')
+  end
+
+  def wlan_description
+    wlan_attrs('description')
+  end
+
+  def wlan_password
+    wlan_attrs('password')
+  end
+
+  def wlan_phase2_auth
+    wlan_attrs('phase2_auth')
+  end
+
+  def wlan_priority
+    wlan_attrs('priority')
+  end
+
+  def wlan_type
+    wlan_attrs('type')
+  end
+
+  def wlan_hidden
+    wlan_attrs('hidden')
+  end
+
+  def wlan_ca_cert
+    wlan_attrs('certs', 'ca_cert')
+  end
+
+  def wlan_client_cert
+    wlan_attrs('certs', 'client_cert')
+  end
+
+  def wlan_client_key
+    wlan_attrs('certs', 'client_key')
+  end
+
+  def wlan_client_key_password
+    wlan_attrs('certs', 'client_key_password')
+  end
 end
