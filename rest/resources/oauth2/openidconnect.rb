@@ -404,7 +404,18 @@ private
     oidc_state['auth_time'] = Time.now.utc.to_i
 
     user = PuavoRest::User.current
-    primary_school = user.school
+
+    if user.nil?
+      rlog.error("[#{request_id}] \"User.current\" is nil! Authentication was done using #{auth_method.inspect}.")
+      generic_error(t.sso.system_error(request_id), status: 400)
+    end
+
+    begin
+      primary_school = user.school
+    rescue StandardError => e
+      rlog.error("[#{request_id}] unable to access the user's school array: #{e}")
+      generic_error(t.sso.system_error(request_id), status: 400)
+    end
 
     # Ensure the user has UUID set (the puavoUuid attribute has been added afterwards, so not all users have it set)
     unless user.uuid

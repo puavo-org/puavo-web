@@ -85,7 +85,7 @@ class SSO < PuavoSinatra
 
     # Try to log in. Permit multiple different authentication methods.
     begin
-      auth :basic_auth, :from_post, :kerberos
+      auth_method = auth :basic_auth, :from_post, :kerberos
     rescue KerberosError => err
       # Kerberos authentication failed, present the normal login form
       return sso_render_form(request_id, error_message: t.sso.kerberos_error, exception: err)
@@ -104,7 +104,18 @@ class SSO < PuavoSinatra
     # If we get here, the user was authenticated. Either by Kerberos, or by basic auth,
     # or they filled in the username+password form.
     user = User.current
-    primary_school = user.school
+
+    if user.nil?
+      rlog.error("[#{request_id}] User.current returned nil! Authentication was done using #{auth_method.inspect}.")
+      generic_error(t.sso.system_error(request_id))
+    end
+
+    begin
+      primary_school = user.school
+    rescue StandardError => e
+      rlog.error("[#{request_id}] unable to access the user's school array: #{e}")
+      generic_error(t.sso.system_error(request_id))
+    end
 
     # Check for expired accounts
     if user && user.account_expiration_time && Time.now.utc >= Time.at(user.account_expiration_time)
