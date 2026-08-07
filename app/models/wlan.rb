@@ -31,10 +31,10 @@ module Wlan
   end
 
   def validate_wlan_attributes
-    wlan_names = Array( get_attribute("puavoWlanSSID") ).map { |ssid| ssid.split(":")[1] }
-    if wlan_names.count != wlan_names.uniq.count
-      errors.add( :puavoWlanSSID, I18n.t("activeldap.errors.messages.wlan.duplicate_name") )
-    end
+    wlan_names = wlan_networks.collect { |w| w['ssid'] }
+    return if wlan_names.count == wlan_names.uniq.count
+
+    errors.add(:puavoWlanSSID, I18n.t('activeldap.errors.messages.wlan.duplicate_name'))
   end
 
   def get_certificates(new_attrs, index)
