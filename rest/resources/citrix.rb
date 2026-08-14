@@ -360,6 +360,15 @@ class Citrix < PuavoSinatra
             # tested
             rlog.info("[#{@request_id}] The user already exists in Citrix")
             status = 'user_exists'
+
+            # even if user exists and is enabled, we should check if status
+            # is "Provisioned" because otherwise some operation might still
+            # be in progress
+            user_status = atria_user.xpath('//user/status').children[0].to_s
+            if user_status != 'Provisioned' then
+              rlog.info("[#{@request_id}] The user is not ready yet")
+              status = 'user_is_not_ready'
+            end
           else
             rlog.info("[#{@request_id}] The user exists in Citrix but is disabled")
             status = 'user_is_disabled'
