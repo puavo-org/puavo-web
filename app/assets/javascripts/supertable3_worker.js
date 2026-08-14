@@ -117,6 +117,8 @@ async function _skipBatch(id)
 
 onmessage = function(e)
 {
+    console.info(`[worker] received a message "${e.data.message}"`);
+
     switch (e.data.message) {
         case "skip_batch":
             _skipBatch(e.data.id);
@@ -128,7 +130,7 @@ onmessage = function(e)
             break;
 
         default:
-            console.error(`[worker] Received an unknown message "${e.data.message}"`);
+            console.error(`[worker] Unknown message!"`);
             break;
     }
 };
