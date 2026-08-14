@@ -98,14 +98,6 @@ function formatUptime(seconds)
 }
 
 const COLUMN_DEFINITIONS = {
-    abitti_version: {
-        title: "<%= t('columns.devices.abitti_version') %>",
-        synthesizer: (context, dn, entry) => {
-            const v = entry.puavoDeviceHWInfo?.extra_system_contents?.Abitti;
-            return (v === undefined) ? undefined : { value: v };
-        },
-    },
-
     abitti2_version: {
         title: "<%= t('columns.devices.abitti2_version') %>",
         synthesizer: (context, dn, entry) => {
@@ -978,7 +970,6 @@ const COLUMN_ORDER = [
     "monitors_xml",
     "lspci",
     "lsusb",
-    "abitti_version",
     "abitti2_version",
     "windows_license",
     "windows_installed",

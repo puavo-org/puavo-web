@@ -337,7 +337,6 @@ en:
       wifi: "WiFi"
       monitors_xml: "Display settings (XML)"
       xrandr: "Xrandr"
-      abitti_version: "Abitti version"
       abitti2_version: "Abitti 2 version"
       df_home: "Free /home (MiB)"
       df_images: "Free /images (MiB)"
@@ -2094,7 +2093,7 @@ en:
       capacity: "Capacity"
       percentage: "Percentage"
     abitti:
-      title: "Abitti version"
+      title: "Abitti 2 version"
       unknown: "(Unknown)"
     local_puavoconf:
       title: "Local PuavoConf settings"

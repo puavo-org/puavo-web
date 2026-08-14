@@ -337,7 +337,6 @@ fi:
       wifi: "WiFi"
       monitors_xml: "Näyttöasetukset (XML)"
       xrandr: "Xrandr"
-      abitti_version: "Abitti-versio"
       abitti2_version: "Abitti 2-versio"
       df_home: "Vapaana /home (MiB)"
       df_images: "Vapaana /images (MiB)"
@@ -2094,7 +2093,7 @@ fi:
       capacity: "Kapasiteetti"
       percentage: "Latausaste"
     abitti:
-      title: "Abitti-versio"
+      title: "Abitti 2-versio"
       unknown: "(Tuntematon)"
     local_puavoconf:
       title: "Paikalliset PuavoConf-asetukset"
