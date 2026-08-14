@@ -267,11 +267,11 @@ en:
     notes: "Notes"
     last_kerberos_auth_date: "Last login date (Kerberos)"
     last_ldap_auth_date: "Last login date (LDAP)"
+    locale: "Locale"
 
     schools:
       integrations: "Integrations"
       oid: "OID code"
-      locale: "Locale"
       timezone: "Time zone"
 
     users:

@@ -171,6 +171,11 @@ const COLUMN_DEFINITIONS = {
         flags: ST.ColumnFlag.DESCENDING_DEFAULT | ST.ColumnFlag.F_DATEONLY,
     },
 
+    locale: {
+        attribute: "puavoLocale",
+        title: "<%= t('columns.locale') %>"
+    },
+
     learner_id: {
         attribute: "puavoLearnerId",
         title: "<%= t('columns.users.learner_id') %>",
@@ -358,6 +363,7 @@ const COLUMN_ORDER = [
     "role",
     "eid",
     "learner_id",
+    "locale",
     "phone",
     "email",
     "v_email",

@@ -267,11 +267,11 @@ fi:
     notes: "Muistiinpanot"
     last_kerberos_auth_date: "Viimeisin kirjautumispäivä (Kerberos)"
     last_ldap_auth_date: "Viimeisin kirjautumispäivä (LDAP)"
+    locale: "Kieli"
 
     schools:
       integrations: "Integraatiot"
       oid: "OID-koodi"
-      locale: "Kieli"
       timezone: "Aikavyöhyke"
 
     users:

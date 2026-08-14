@@ -29,6 +29,7 @@ module UsersHelper
       puavoExternalId
       puavoId
       puavoLearnerId
+      puavoLocale
       puavoLicenses
       puavoLocked
       puavoMFAEnabled
