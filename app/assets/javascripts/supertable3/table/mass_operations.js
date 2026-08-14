@@ -67,6 +67,7 @@ import { BATCH_SIZE } from "./constants.js";
 import * as Pagination from "./pagination.js";
 import { saveSettings } from "./settings.js";
 import { onOpenMassRowSelectionPopup } from "./row_selection.js";
+import { getTableById } from "./main.js";
 
 export function setupMassTools(table, frag)
 {
@@ -131,7 +132,7 @@ export function changeOperation(table, e)
     const index = e.selectedIndex - 1;
 
     table.massOperation.definition = table.user.massOperations[index];
-    table.massOperation.handler = new table.massOperation.definition.cls(this, container);
+    table.massOperation.handler = new table.massOperation.definition.cls(table, container);
 
     // Hide/swap the UI
     container.innerText = "";
@@ -210,13 +211,10 @@ export function start(table)
     counter.innerHTML = _tr("status.mass_progress", { count: 0, total: table.massOperation.rows.length, success: 0, fail: 0 });
     counter.classList.remove("hidden");
 
-    if (table.massOperation.definition.singleShot) {
-        // Process all rows at once
-        table.processBatch(table.prepareNextBatch(table.data.selectedItems.size));
-    } else {
-        // Process in smaller batches
-        table.processBatch(table.prepareNextBatch(BATCH_SIZE));
-    }
+    // Process the initial (or the only, if the operation is single-shot) batch
+    const numInitialRows = table.massOperation.definition.singleShot ? table.data.selectedItems.size : BATCH_SIZE;
+
+    processBatch(table, prepareNextBatch(table, numInitialRows));
 }
 
 export function finish(table)
@@ -253,30 +251,36 @@ export function updateProgress(table)
     });
 }
 
-export function prepareBatch(table, batchSize)
+// Prepares the next N rows of the mass operation
+export function prepareNextBatch(table, batchSize)
 {
+    if (table.massOperation.pos >= table.massOperation.rows.length) {
+        console.log(`----- All items have been processed -----`);
+        finish(table);
+        return null;
+    }
+
+    // Prepare the rows using the user-supplied callback function
     const end = Math.min(table.massOperation.rows.length, table.massOperation.pos + batchSize);
-
-    table.massOperation.prevPos = table.massOperation.pos;
-
+    const tableRows = table.getTableRows();
     let batch = [];
 
-    // Go through the next N rows and prepare them
-    const tableRows = table.getTableRows();
+    table.massOperation.prevPos = table.massOperation.pos;
 
     for (; table.massOperation.pos < end; table.massOperation.pos++) {
         const item = table.massOperation.rows[table.massOperation.pos];
 
         const tRow = Pagination.isTableRowVisible(table.paging, item.index) ?
-            tableRows[item.index - table.paging.firstRowIndex] :
-            null;
+                tableRows[item.index - table.paging.firstRowIndex] :
+                null;
 
         console.log(`Processing item ${table.massOperation.pos + 1}/${table.massOperation.rows.length}: ${item.id} (row ${item.index})`);
 
         // Returns a { state, data } object
         const result = table.massOperation.handler.prepareItem(table.data.transformed[table.data.current[item.index]]);
 
-        // Immediately update the table if the results are already known
+        // Immediately update the table if the results are already known (for example, if the callback
+        // marked this row already being in the desired state)
         switch (result.state) {
             case "ready":
                 // This item can be processed
@@ -308,6 +312,7 @@ export function prepareBatch(table, batchSize)
             default:
                 console.error(result);
                 window.alert(`Unknown prepare status: "${result.state}". This is a fatal error, stopping here. See the console for details, then contact support.`);
+                finish(table);
                 return null;
         }
     }
@@ -315,8 +320,36 @@ export function prepareBatch(table, batchSize)
     return batch;
 }
 
-export function updateTableColors(table, e)
+export function processBatch(table, batch)
 {
+    if (!Array.isArray(batch))
+        return;
+
+    if (batch.length == 0) {
+        // Nothing to do for this batch. But these functions are not recursive, we have to
+        // "route" the work through the worker thread.
+        table.worker.postMessage({ message: "skip_batch", id: table.id });
+        return;
+    }
+
+    // We have at least 1 row to be processed
+    console.log(`Have ${batch.length} rows in this batch`);
+
+    table.worker.postMessage({
+        message: "process_batch",
+        id: table.id,
+        url: table.user.massOperationsEndpoint,
+        singleShot: table.massOperation.singleShot,
+        operation: table.massOperation.definition.operation,
+        parameters: table.massOperation.parameters,
+        csrf: document.querySelector("meta[name='csrf-token']")?.content,
+        rows: batch,
+    });
+}
+
+export function updateTableColors(tableId, e)
+{
+    const table = getTableById(tableId);
     const tableRows = table.getTableRows();
 
     for (const row of e.data.result) {
@@ -342,8 +375,9 @@ export function updateTableColors(table, e)
     }
 }
 
-export function flagNetworkError(table, e)
+export function flagNetworkError(tableId, e)
 {
+    const table = getTableById(tableId);
     const tableRows = table.getTableRows();
 
     for (let i = table.massOperation.prevPos; i < table.massOperation.pos; i++) {

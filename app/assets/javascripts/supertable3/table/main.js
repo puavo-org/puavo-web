@@ -816,50 +816,6 @@ toggleFiltersReverse(e)
 // --------------------------------------------------------------------------------------------------
 // MASS OPERATIONS
 
-// Prepares the next N rows of the mass operation
-prepareNextBatch(batchSize)
-{
-    if (this.massOperation.pos >= this.massOperation.rows.length) {
-        console.log(`----- All items have been processed -----`);
-        Mass.finish(this);
-        return null;
-    }
-
-    const batch = Mass.prepareBatch(this, batchSize);
-
-    if (batch === null)
-        Mass.finish(this);
-
-    return batch;
-}
-
-processBatch(batch)
-{
-    if (!Array.isArray(batch))
-        return;
-
-    if (batch.length == 0) {
-        // Nothing to do for this batch. But these functions are not recursive, we have to
-        // "route" the work through the worker thread.
-        this.worker.postMessage({ message: "skip_batch", id: this.id });
-        return;
-    }
-
-    // We have at least 1 row to be processed
-    console.log(`Have ${batch.length} rows in this batch`);
-
-    this.worker.postMessage({
-        message: "process_batch",
-        id: this.id,
-        url: this.user.massOperationsEndpoint,
-        singleShot: this.massOperation.singleShot,
-        operation: this.massOperation.definition.operation,
-        parameters: this.massOperation.parameters,
-        csrf: document.querySelector("meta[name='csrf-token']")?.content,
-        rows: batch,
-    });
-}
-
 onWorkerMessage(e)
 {
     console.log(`[main] worker sent message:`, e.data.message);
@@ -867,7 +823,7 @@ onWorkerMessage(e)
     switch (e.data.message) {
         case "batch_processed":
             // Update table row colors
-            Mass.updateTableColors(this, e);
+            Mass.updateTableColors(this.id, e);
             break;
 
         case "batch_skipped":
@@ -877,7 +833,7 @@ onWorkerMessage(e)
         case "server_error":
         case "network_error":
             // This batch could not be processed. Flag all rows as failed and move on.
-            Mass.flagNetworkError(this, e);
+            Mass.flagNetworkError(this.id, e);
             break;
 
         default:
@@ -897,7 +853,8 @@ onWorkerMessage(e)
         return;
     }
 
-    this.processBatch(this.prepareNextBatch(BATCH_SIZE));
+    // Proceed to the next batch
+    Mass.processBatch(this, Mass.prepareNextBatch(this, BATCH_SIZE));
 }
 
 }   // class SuperTable
