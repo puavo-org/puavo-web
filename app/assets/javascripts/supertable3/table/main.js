@@ -1,27 +1,15 @@
 import { _tr } from "../../common/utils.js";
-
 import { create, getTemplate } from "../../common/dom.js";
-
 import { ColumnFlag, SortOrder, DEFAULT_ROWS_PER_PAGE, BATCH_SIZE } from "./constants.js";
-
-import * as Data from "./data";
-
-import * as Export from "./export.js";
-
 import { setupColumnEditor } from "./column_editor.js";
-
 import { FilterEditor } from "../filters/editor/fe_main.js";
-
 import { setupRowSelections, onRowCheckboxClick } from "./row_selection.js";
-
 import { loadSettings, saveSettings } from "./settings.js";
-
-import * as Pagination from "./pagination.js";
-
 import { buildTable } from "./table_builder.js";
-
 import { isNullOrUndefined, isObject } from "./utils.js";
-
+import * as Data from "./data";
+import * as Export from "./export.js";
+import * as Pagination from "./pagination.js";
 import * as Mass from "./mass_operations.js";
 
 // These formatters are exported into the public namespace
