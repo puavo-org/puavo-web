@@ -200,6 +200,14 @@ private
 
     rlog.info("[#{request_id}] Redirect URI: #{redirect_uri.inspect}")
 
+    # RFC 6749 section 3.1.2 says "The endpoint URI MUST NOT include a fragment component"
+    uri = URI(redirect_uri)
+
+    unless uri.fragment.nil?
+      rlog.error("[#{request_id}] This redirect URI contains a fragment")
+      generic_error(t.oauth2.invalid_redirect_uri(request_id), status: 400)
+    end
+
     if client_config.fetch('allowed_redirects', []).find { |uri| uri == redirect_uri }.nil?
       # Tested
       rlog.error("[#{request_id}] This redirect URI is not allowed")

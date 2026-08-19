@@ -367,6 +367,16 @@ describe PuavoRest::OAuth2 do
       assert_equal last_response.status, 400
       assert last_response.body.include?('Invalid redirect URI. Login halted.')
     end
+
+    it 'fragments in the URI must fail' do
+      get format_uri('/oidc/authorize', client_id: 'test_login_service1', redirect_uri: 'http://service1.example.com#', response_type: 'code', scope: 'openid')
+      assert_equal last_response.status, 400
+      assert last_response.body.include?('Invalid redirect URI. Login halted.')
+
+      get format_uri('/oidc/authorize', client_id: 'test_login_service1', redirect_uri: 'http://service1.example.com#foo', response_type: 'code', scope: 'openid')
+      assert_equal last_response.status, 400
+      assert last_response.body.include?('Invalid redirect URI. Login halted.')
+    end
   end
 
   describe 'Login process tests' do
