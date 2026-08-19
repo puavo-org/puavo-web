@@ -11,6 +11,7 @@ require 'securerandom'
 require 'openssl'
 require 'jwt'
 require 'digest'
+require 'cgi'
 
 require 'base64'
 require 'argon2'
@@ -634,7 +635,14 @@ private
       query['scope'] = oidc_state['scopes'].join(' ')
     end
 
-    redirect_uri.query = URI.encode_www_form(query)
+    # Merge the new query parameters with the original redirect URI's parameters. (RFC 6749 section
+    # 3.1.2.) However, if the client uses one of the required parameters (like "iss" or "code"),
+    # their value gets overwritten. What happens if the same parameter is used multiple times is not
+    # well specced anywhere, but Ruby's CGI.parse() puts the values in an array. Which is handy,
+    # because they all get rewritten.
+    redirect_query = CGI.parse(redirect_uri.query || '')
+    redirect_query.merge!(query)
+    redirect_uri.query = URI.encode_www_form(redirect_query)
 
     rlog.info("[#{request_id}] Redirecting the browser to \"#{redirect_uri.to_s}\"")
 

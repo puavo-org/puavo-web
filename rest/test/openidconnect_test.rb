@@ -391,7 +391,15 @@ describe PuavoRest::OAuth2 do
       @external_service.puavoServiceTrusted = false
       @external_service.save!
 
-      activate_organisation_services([@external_service.dn.to_s])
+      @external_service2 = ExternalService.new
+      @external_service2.classes = ['top', 'puavoJWTService']
+      @external_service2.cn = 'The Service 2'
+      @external_service2.puavoServiceDomain = 'service2.example.com'
+      @external_service2.puavoServiceSecret = 'secret'
+      @external_service2.puavoServiceTrusted = false
+      @external_service2.save!
+
+      activate_organisation_services([@external_service.dn.to_s, @external_service2.dn.to_s])
 
       setup_login_clients([
         {
@@ -399,6 +407,13 @@ describe PuavoRest::OAuth2 do
           enabled: true,
           puavo_service_dn: @external_service.dn.to_s,
           redirects: ['http://service.example.com'],
+          scopes: %w[openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups]
+        },
+        {
+          client_id: 'test_login_service2',
+          enabled: true,
+          puavo_service_dn: @external_service2.dn.to_s,
+          redirects: ['http://service2.example.com?foo=bar&baz=quux&code=blurf'],
           scopes: %w[openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups]
         }
       ])
@@ -1009,6 +1024,143 @@ describe PuavoRest::OAuth2 do
       assert_equal id_token['preferred_username'], @user.username
       assert_equal id_token['puavo.uuid'], @user.uuid
       assert_equal id_token['puavo.puavoid'], @user.id
+    end
+
+    # Reference test with query parameters in the redirect URI
+    it 'Complete succesfull OpenID Connect login and userinfo test, with redirect URI query parameters' do
+      # Step 1: Authorize the user
+      get format_uri('/oidc/authorize',
+                     client_id: 'test_login_service2',
+                     redirect_uri: 'http://service2.example.com?foo=bar&baz=quux&code=blurf',
+                     response_type: 'code',
+                     scope: 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups',
+                     extra: { 'state' => 'foo', 'nonce' => 'bar' })
+
+      assert_equal last_response.status, 401
+      assert last_response.body.include?('Login to service <span>The Service 2</span>')
+
+      # Ensure we really are in OpenID Connect mode
+      assert get_named_form_value('type') == 'oidc'
+
+      # Since "organisation" is not set in the extra params, there must be no organisation name preset
+      # on the form
+      assert_equal css('input[name="organisation"]').count, 0
+      assert_equal css("div.col-orgname").count, 0
+
+      # Simulate a form submission. Forward the hidden form values the backend needs.
+      post '/oidc/authorize/post', {
+        type: 'oidc',
+        request_id: get_named_form_value('request_id'),
+        state_key: get_named_form_value('state_key'),
+        return_to: get_named_form_value('return_to'),
+        username: 'bob.brown@example.puavo.net',
+        password: 'secret',
+      }
+
+      # Check the response
+      assert last_response.redirect?
+      redirect = Addressable::URI.parse(last_response.headers['Location'])
+
+      assert_equal redirect.query_values['iss'], 'https://api.opinsys.fi'
+      assert_equal redirect.query_values['state'], 'foo'
+      assert_equal redirect.query_values.include?('nonce'), false
+      assert_equal redirect.query_values.include?('scope'), false   # the scopes have not changed
+
+      # The extra query parameters in the redirect URI must still be present, but the "code" parameter
+      # must have a different value since it got overwritten.
+      assert_equal redirect.query_values['foo'], 'bar'
+      assert_equal redirect.query_values['baz'], 'quux'
+      code = redirect.query_values['code']
+      assert code != 'blurf'
+
+      # No session cookie must be present
+      assert_equal last_response.headers.include?('Set-Cookie'), false
+      assert_equal last_response.cookies.include?(PUAVO_SSO_SESSION_KEY), false
+
+      # Step 2: Acquire the access and ID tokens (client_secret_post)
+      post '/oidc/token', {
+        grant_type: 'authorization_code',
+        client_id: 'test_login_service2',
+        client_secret: @external_service2.puavoServiceSecret,
+        redirect_uri: 'http://service2.example.com?foo=bar&baz=quux&code=blurf',
+        code: code,
+      }
+
+      assert_equal last_response.status, 200
+      assert_equal last_response.header['Content-Type'], 'application/json'
+
+      # Check the bearer token
+      token = JSON.parse(last_response.body)
+      validate_access_token(token)
+
+      # Validate the access token
+      access_token = decode_token(token['access_token'], audience: 'puavo-rest-userinfo')
+
+      assert_equal access_token['iss'], 'https://api.opinsys.fi'
+      assert_equal access_token['sub'], @user.uuid
+      assert_equal access_token['aud'], 'puavo-rest-userinfo'
+      assert_equal access_token['scopes'], 'openid profile puavo.read.userinfo.schools puavo.read.userinfo.groups'
+      assert_equal access_token['allowed_endpoints'], ['/oidc/userinfo']
+      assert_equal access_token['organisation_domain'], 'example.puavo.net'
+      assert_equal access_token['required_service_dn'], @external_service2.dn
+      assert_equal access_token['user_dn'], @user.dn.to_s
+
+      # Validate the ID token
+      id_token = decode_token(token['id_token'], audience: 'test_login_service2')
+
+      assert_equal id_token['iss'], 'https://api.opinsys.fi'
+      assert_equal id_token['sub'], @user.uuid
+      assert_equal id_token['aud'], 'test_login_service2'
+      assert_equal id_token['amr'], ['pwd']
+      assert_equal id_token['azp'], 'test_login_service2'
+      check_at_hash(token, id_token)
+      check_c_hash(code, id_token)
+      assert_equal id_token['nonce'], 'bar'
+      assert_equal id_token['given_name'], @user.first_name
+      assert_equal id_token['family_name'], @user.last_name
+      assert_equal id_token['name'], "#{@user.first_name} #{@user.last_name}"
+      assert_equal id_token['preferred_username'], @user.username
+      assert_equal id_token['puavo.uuid'], @user.uuid
+      assert_equal id_token['puavo.puavoid'], @user.id
+      assert_equal id_token['puavo.roles'], ['student']
+
+      assert_equal id_token['puavo.schools'].count, 1
+      assert_equal id_token['puavo.schools'][0]['name'], 'Gryffindor'
+      assert_equal id_token['puavo.schools'][0]['abbreviation'], 'gryffindor'
+      assert_equal id_token['puavo.schools'][0]['puavoid'], @school.id.to_i
+      assert_equal id_token['puavo.schools'][0]['primary'], true
+
+      assert_equal id_token['puavo.groups'].count, 1
+      assert_equal id_token['puavo.groups'][0]['name'], 'Group 1'
+      assert_equal id_token['puavo.groups'][0]['abbreviation'], 'group1'
+      assert_equal id_token['puavo.groups'][0]['puavoid'], @group.id.to_i
+      assert_equal id_token['puavo.groups'][0]['type'], 'teaching group'
+      assert_equal id_token['puavo.groups'][0]['school_abbreviation'], 'gryffindor'
+
+      # Step 3: Call the userinfo endpoint and compare the returned data with the ID token. They must match.
+      header 'Host', 'example.puavo.net'
+      header 'Authorization', "Bearer #{token['access_token']}"
+      get '/oidc/userinfo'
+
+      assert_equal last_response.status, 200
+      assert_equal last_response.header['Content-Type'], 'application/json'
+
+      userinfo = JSON.parse(last_response.body)
+
+      assert_equal userinfo['sub'], @user.uuid
+      assert_equal userinfo['given_name'], id_token['given_name']
+      assert_equal userinfo['family_name'], id_token['family_name']
+      assert_equal userinfo['name'], id_token['name']
+      assert_equal userinfo['preferred_username'], id_token['preferred_username']
+      assert_equal userinfo['puavo.uuid'], id_token['puavo.uuid']
+      assert_equal userinfo['puavo.puavoid'], id_token['puavo.puavoid']
+      assert_equal userinfo['puavo.roles'], id_token['puavo.roles']
+
+      # These are only known at the login time, so they must be omitted
+      assert_equal userinfo.include?('amr'), false
+      assert_equal userinfo.include?('at_hash'), false
+      assert_equal userinfo.include?('c_hash'), false
+      assert_equal userinfo.include?('auth_time'), false
     end
 
     it 'malformed client IDs in the token request' do
