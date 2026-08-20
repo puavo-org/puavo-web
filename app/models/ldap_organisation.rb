@@ -1,4 +1,6 @@
-require_relative "./puavo_conf_mixin"
+# frozen_string_literal: true
+
+require_relative 'puavo_conf_mixin'
 
 class LdapOrganisation < LdapBase
   include Wlan
@@ -6,9 +8,9 @@ class LdapOrganisation < LdapBase
   include PuavoConfMixin
   include Puavo::Locale
 
-  ldap_mapping( :dn_attribute => "dc",
-                :prefix => "",
-                :classes => ["dcObject", "organization", "puavoEduOrg", "eduOrg"] )
+  ldap_mapping dn_attribute: 'dc',
+               prefix: '',
+               classes: %w[dcObject organization puavoEduOrg eduOrg]
 
   validate :validate_puavoconf, :validate_wlan_attributes
 
@@ -18,8 +20,8 @@ class LdapOrganisation < LdapBase
     LdapOrganisation.first
   end
 
-  def rest_proxy(username=nil, password=nil)
-    if username.nil? && password.nil? then
+  def rest_proxy(username = nil, password = nil)
+    if username.nil? && password.nil?
       conf = self.class.configuration
       username = conf[:bind_dn]
       password = conf[:password]
@@ -28,27 +30,28 @@ class LdapOrganisation < LdapBase
     PuavoRestProxy.new(puavoDomain, username, password)
   end
 
-  def as_json(*args)
+  def as_json(*)
     # owner: return only users's puavoId, skip uid=admin,o=puavo user
-    { "domain" => self.puavoDomain,
-      "puppet_host" => self.puavoPuppetHost,
-      "owners" => Array(self.owner).select{|o| o.to_s.match(/puavoId/)}.map{ |org|
-        org.to_s.match(/puavoId=([^, ]+)/)[1].to_i },
-      "preferred_language" => self.preferredLanguage,
-      "name" => self.o }
+    {
+      'domain' => self.puavoDomain,
+      'puppet_host' => self.puavoPuppetHost,
+      'owners' => Array(self.owner).select { |o| o.to_s.match(/puavoId/) }
+                                   .map { |org| org.to_s.match(/puavoId=([^, ]+)/)[1].to_i },
+      'preferred_language' => self.preferredLanguage,
+      'name' => self.o
+    }
   end
 
   def add_owner(user)
     # FIXME: add owner also to Domain Admins
-    #domain_admin = SambaGroup.find("Domain Admins")
-    #domain_admin.memberUid = user.uid
-    #domain_admin.save!
+    # domain_admin = SambaGroup.find("Domain Admins")
+    # domain_admin.memberUid = user.uid
+    # domain_admin.save!
 
-    self.ldap_modify_operation( :add, [{"owner" => [user.dn.to_s]}] )
+    self.ldap_modify_operation(:add, [{ 'owner' => [user.dn.to_s] }])
   end
 
   def remove_owner(user)
-    self.ldap_modify_operation( :delete, [{"owner" => [user.dn.to_s]}] )
+    self.ldap_modify_operation(:delete, [{ 'owner' => [user.dn.to_s] }])
   end
-
 end
