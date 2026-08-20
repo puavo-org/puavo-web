@@ -107,7 +107,13 @@ class SSO < PuavoSinatra
 
     if user.nil?
       rlog.error("[#{request_id}] User.current returned nil! Authentication was done using #{auth_method.inspect}.")
-      generic_error(t.sso.system_error(request_id))
+
+      if auth_method == 'kerberos'
+        rlog.error("[#{request_id}] there's something wrong with the user's Kerberos session, possibly expired?")
+        generic_error(t.sso.possibly_expired_kerberos_session(request_id), status: 400)
+      else
+        generic_error(t.sso.system_error(request_id), status: 400)
+      end
     end
 
     begin
