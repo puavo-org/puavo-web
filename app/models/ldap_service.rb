@@ -1,32 +1,33 @@
+# frozen_string_literal: true
+
 require 'digest'
 require 'base64'
+
 class LdapService < LdapBase
   include Puavo::AuthenticationMixin
   include Puavo::Security
 
-  ldap_mapping( :dn_attribute => "uid",
-                :prefix => "ou=System Accounts",
-                :classes => ["simpleSecurityObject", "account"] )
+  ldap_mapping dn_attribute: 'uid',
+               prefix: 'ou=System Accounts',
+               classes: %w[simpleSecurityObject account]
 
-  belongs_to :groups, :class_name => 'SystemGroup', :many => 'member', :primary_key => "dn"
+  belongs_to :groups, class_name: 'SystemGroup', many: 'member', primary_key: 'dn'
 
   before_save :encrypt_userPassword
   after_save :update_groups
   before_destroy :remove_groups
-  validates_length_of( :userPassword,
-                       :minimum => 12,
-                       :allow_blank => true,
-                       :message =>
-                       I18n.t("activeldap.errors.messages.too_short",
-                              :attribute => I18n.t("userPassword",
-                                                   :scope => "activeldap.attributes.ldap_service"),
-                              :count => 12
-                              ))
+
+  validates_length_of :userPassword, minimum: 12, allow_blank: true,
+                       message: I18n.t('activeldap.errors.messages.too_short',
+                                       attribute: I18n.t('userPassword', scope: 'activeldap.attributes.ldap_service'),
+                                       count: 12)
 
   def update_groups
-    new_groups = self.groups.map{ |g| g.class == String ? g : g.id }
+    new_groups = self.groups.map { |g| g.instance_of?(String) ? g : g.id }
     self.reload
-    old_groups = self.groups.map &:id
+
+    old_groups = self.groups.map(&:id)
+
     # Add groups
     (new_groups - old_groups).each do |group_cn|
       update_group_member(group_cn, :add)
@@ -51,7 +52,8 @@ class LdapService < LdapBase
     ldif = ActiveLdap::LDIF.new
     record = ActiveLdap::LDIF::ModifyRecord.new(group.dn)
     ldif << record
-    record.add_operation(type, 'member', [], {'member' => [self.dn.to_s]})
+
+    record.add_operation(type, 'member', [], { 'member' => [self.dn.to_s] })
     LdapService.load(ldif.to_s)
   end
 end
