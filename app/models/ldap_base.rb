@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LdapBase < ActiveLdap::Base
   include Puavo::Connection
 
@@ -8,25 +10,28 @@ class LdapBase < ActiveLdap::Base
   def self.ldap_modify_operation(dn, type, attributes)
     ldif = ActiveLdap::LDIF.new
     record = ActiveLdap::LDIF::ModifyRecord.new(dn)
+
     ldif << record
+
     attributes.each do |attribute|
       record.add_operation(type, attribute.keys.first, [], attribute)
     end
+
     LdapBase.load(ldif.to_s)
   end
 
   def self.ensure_dn(o)
-    if o.class == ActiveLdap::DistinguishedName
+    if o.instance_of?(ActiveLdap::DistinguishedName)
       o
-    elsif o.class == String
-      ActiveLdap::DistinguishedName.parse o
+    elsif o.instance_of?(String)
+      ActiveLdap::DistinguishedName.parse(o)
     else
       o.dn
     end
   end
 
-  def <=>(other_object)
-    self.displayName.to_s <=> other_object.displayName.to_s
+  def <=>(other)
+    self.displayName.to_s <=> other.displayName.to_s
   end
 
   # Because Activeldap includes Enumerable mixin to the Base class[1] it gets
@@ -40,21 +45,24 @@ class LdapBase < ActiveLdap::Base
   # [2]: https://github.com/rails/rails/blob/v3.2.12/activesupport/lib/active_support/json/encoding.rb#L207
   def as_json(options = {})
     allowed_attributes = self.attributes
-    allowed_attributes.delete_if do |attribute, value|
+    allowed_attributes.delete_if do |attribute, _|
       !self.schema.attribute(attribute).syntax.human_readable?
     end
 
-    method_values = { }
+    method_values = {}
+
     # Create Hash by :methods name if :methods options is set.
-    if options.has_key?(:methods)
-      method_values = Array(options[:methods]).inject({ }) do |result, method|
-        result.merge( { "#{method}" => self.send(method) } )
+    if options.key?(:methods)
+      method_values = Array(options[:methods]).inject({}) do |result, method|
+        result.merge({ method.to_s => self.send(method) })
       end
+
       options.delete(:methods)
     end
+
     # Include method's values to the return value'
     method_values.empty? ? allowed_attributes :
-      allowed_attributes.merge( method_values )
+      allowed_attributes.merge(method_values)
   end
 
   def to_json(options = {})
@@ -68,9 +76,9 @@ class LdapBase < ActiveLdap::Base
       dn = entry[0]
       attributes = entry[1]
 
-      attributes.each do |key, value|
+      attributes.each_value do |value|
         value.each do |v|
-          v.force_encoding('utf-8') if v.class == String
+          v.force_encoding('utf-8') if v.instance_of?(String)
         end
       end
     end
@@ -81,7 +89,7 @@ class LdapBase < ActiveLdap::Base
   end
 
   def self.base
-    if self.name == "LdapBase"
+    if self.name == 'LdapBase'
       super
     else
       self.prefix ? self.prefix + LdapBase.base : LdapBase.base
@@ -90,16 +98,13 @@ class LdapBase < ActiveLdap::Base
 
   def self.resize_image(image_path)
     img = Magick::Image.read(image_path).first
-    img.format = "JPEG"
+    img.format = 'JPEG'
     img.strip!
     img.resize_to_fit(image_size[:width], image_size[:height]).to_blob
   end
 
   # resize image hook
   def resize_image
-    if self.image && !self.image.path.to_s.empty?
-      self.jpegPhoto = self.class.resize_image(self.image.path)
-    end
+    self.jpegPhoto = self.class.resize_image(self.image.path) if self.image && !self.image.path.to_s.empty?
   end
-
 end
