@@ -753,11 +753,7 @@ class MassUserChangeSchool extends ST.MassOperation {
         this.container.querySelector("input#remove").addEventListener("click", e => this.action = "remove");
         this.container.querySelector("input#keep").addEventListener("click", e => this.keep = e.target.checked);
         this.container.querySelector("input#remove_prev").addEventListener("click", e => this.removePrev = e.target.checked);
-
-        this.container.querySelector("select#destination_school").addEventListener("change", e => {
-            console.log(e.target.value);
-            this.schoolID = e.target.value
-        });
+        this.container.querySelector("select#destination_school").addEventListener("change", e => this.schoolID = e.target.value);
 
         this.schoolID = this.container.querySelector("select#destination_school").value;
 <% end %>
@@ -858,7 +854,6 @@ class MassSetExpirationTimes extends ST.MassOperation {
               offsetString = `${offset < 0 ? "+" : "-"}${pad(Math.abs(offset) / 60, 2)}:${pad(Math.abs(offset) % 60, 2)}`;
 
         this.expirationTime = new Date(e.target.value + offsetString);
-        console.log(this.expirationTime);
     }
 
     onClear()
@@ -1232,7 +1227,6 @@ function preparse(raw)
         user._expiration_timestamp = user.puavoEduPersonAccountExpirationTime ?
             new Date(ST.convertLDAPTimestampToISO8601String(user.puavoEduPersonAccountExpirationTime[0])) : null;
         user._has_expired = (user._expiration_timestamp !== null) && (context.now >= user._expiration_timestamp);
-        //console.log(user._expiration_timestamp, user._has_expired);
     }
 
     context.userGroups = userGroups;
