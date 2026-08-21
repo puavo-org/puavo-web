@@ -267,7 +267,7 @@ de:
     notes: "Notizen"
     last_kerberos_auth_date: "Letztes Login (Kerberos)"
     last_ldap_auth_date: "Letztes Login (LDAP)"
-    locale: "Locale"
+    locale: "Sprache"
 
     schools:
       integrations: "Integrationen"
