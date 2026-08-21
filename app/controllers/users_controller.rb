@@ -81,6 +81,8 @@ class UsersController < ApplicationController
       (current_user.has_admin_permission?(:user_edit_expiration_times) &&
       current_user.has_admin_permission?(:user_mass_edit_expiration_times))
 
+    @permit_user_mass_change_locale = @is_owner || current_user.has_admin_permission?(:user_mass_change_locale)
+
     @automatic_email_addresses, _ = get_automatic_email_addresses
 
     # Make a list of all schools in this organisation. Even limited users who can't access all

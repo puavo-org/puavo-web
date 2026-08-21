@@ -1180,6 +1180,8 @@ fi:
           title: "Aseta ja nollaa vanhenemisaikoja..."
           set_to: "Aseta aikaan:"
           dnd: "Kieltäydyttiin asettamasta vanhemisaikaa käyttäjälle jota ei voi poistaa"
+        change_locale:
+          title: "Vaihda kieltä"
 
     show:
       system_information: "Järjestelmätietoja"
@@ -1234,6 +1236,7 @@ fi:
         users_mass_clear_column_contents: "voi massatyhjentää tiettyjä käyttäjien tietoja"
         user_edit_expiration_times: "voi muokata käyttäjätunnuksien vanhenemisaikoja"
         user_mass_edit_expiration_times: "voi massamuokata käyttäjätunnuksien vanhenemisaikoja"
+        user_mass_change_locale: "voi massavaihtaa käyttäjien kieltä"
         create_groups: "voi luoda ryhmiä"
         delete_groups: "voi poistaa ryhmiä"
         mass_delete_groups: "voi massapoistaa useita ryhmiä"
@@ -1313,6 +1316,7 @@ fi:
         users_mass_clear_column_contents: "Voi massatyhjentää tiettyjä käyttäjien tietoja (sähköpostiosoite, puhelinnumero, ulkoinen ID, henkilönumero, muistiinpanot)"
         user_edit_expiration_times: "Voi muokata käyttäjätunnuksien vanhenemisaikoja"
         user_mass_edit_expiration_times: "Voi massamuokata käyttäjätunnuksien vanhenemisaikoja (yksittäisten tunnusten vanhenemisaikojen asetuksen on myös oltava sallittu jotta tämä toimisi)"
+        user_mass_change_locale: "Voi massavaihtaa käyttäjien kieltä"
         create_groups: "Voi luoda uusia ryhmiä"
         delete_groups: "Voi poistaa ryhmiä"
         mass_delete_groups: "Voi massapoistaa useita ryhmiä (tavallinen ryhmien poisto on myös oltava sallittuna)"

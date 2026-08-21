@@ -1181,6 +1181,8 @@ de:
           title: "Ablaufzeiten festlegen und löschen..."
           set_to: "Setzen auf:"
           dnd: "Das Setzen der Ablaufzeit für einen nicht löschbaren Benutzer wird verweigert"
+        change_locale:
+          title: "Sprache wechseln"
 
     show:
       system_information: Systeminformationen
@@ -1235,6 +1237,7 @@ de:
         import_users: "Benutzer-Massenimport-Tool"
         user_edit_expiration_times: "kann Ablaufzeiten von Benutzerkonten festlegen und löschen"
         user_mass_edit_expiration_times: "kann Ablaufzeiten von Benutzerkonten massenhaft festlegen und löschen"
+        user_mass_change_locale: "kann Sprache für mehrere Benutzer gleichzeitig ändern"
         create_groups: "kann Gruppen erstellen"
         delete_groups: "kann Gruppen löschen"
         mass_delete_groups: "kann Gruppen massenhaft löschen"
@@ -1314,6 +1317,7 @@ de:
         users_mass_clear_column_contents: "Kann bestimmte Benutzerinformationen massenhaft löschen (E-Mail-Adresse, Telefonnummer, externe ID, Personalnummer, Notizen)"
         user_edit_expiration_times: "Kann Ablaufzeiten von Benutzerkonten festlegen und löschen"
         user_mass_edit_expiration_times: "Kann Ablaufzeiten von Benutzerkonten massenhaft festlegen und löschen (das Festlegen und Löschen einzelner Benutzerablaufzeiten muss ebenfalls erlaubt sein, damit dies funktioniert)"
+        user_mass_change_locale: "Kann Sprache für mehrere Benutzer gleichzeitig ändern"
         create_groups: "Kann neue Gruppen erstellen"
         delete_groups: "Kann Gruppen löschen"
         mass_delete_groups: "Kann Gruppen massenhaft löschen (normale Gruppenlöschung muss ebenfalls gewährt sein)"

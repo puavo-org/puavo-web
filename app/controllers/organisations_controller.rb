@@ -289,6 +289,7 @@ class OrganisationsController < ApplicationController
     @permit_user_deletion = true
     @permit_mass_user_deletion = true
     @permit_user_mass_edit_expiration_times = true
+    @permit_user_mass_change_locale = true
 
     respond_to do |format|
       format.html   # all_users.html.erb

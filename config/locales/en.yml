@@ -1180,6 +1180,8 @@ en:
           title: "Set and clear expiration times..."
           set_to: "Set to:"
           dnd: "Refusing set expiration time for a non-deletable user"
+        change_locale:
+          title: "Change locale"
 
     show:
       system_information: System information
@@ -1234,6 +1236,7 @@ en:
         import_users: "user mass import tool"
         user_edit_expiration_times: "can set and clear user account expiration times"
         user_mass_edit_expiration_times: "can mass set and clear user account expiration times"
+        user_mass_change_locale: "can mass change users' locale"
         create_groups: "can create groups"
         delete_groups: "can delete groups"
         mass_delete_groups: "can mass delete groups"
@@ -1313,6 +1316,7 @@ en:
         users_mass_clear_column_contents: "Can mass clear specific user information (email address, phone number, external ID, personnel number, notes)"
         user_edit_expiration_times: "Can set and clear user account expiration times"
         user_mass_edit_expiration_times: "Can mass set and clear user account expiration times (setting and clearing individual user's expiration times must also be permitted for this to work)"
+        user_mass_change_locale: "Can mass change users' locale"
         create_groups: "Can create new groups"
         delete_groups: "Can delete groups"
         mass_delete_groups: "Can mass delete groups (normal group deletion must also be granted)"

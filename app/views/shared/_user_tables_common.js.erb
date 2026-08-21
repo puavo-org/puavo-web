@@ -920,6 +920,66 @@ class MassSetExpirationTimes extends ST.MassOperation {
 };
 <% end %>
 
+<% if @permit_user_mass_change_locale %>
+// Mass operation: change user locale
+class MassChangeUserLocale extends ST.MassOperation {
+    constructor(parent, container)
+    {
+        super(parent, container);
+        this.locale = null;
+    }
+
+    buildInterface()
+    {
+        this.container.innerHTML =
+`<table class="settingsChild">
+<tr>
+    <th><%= t('activeldap.attributes.user.puavoLocale') %>:</th>
+    <td>
+        <select>
+        <% locales_for_select.each do |i| %>
+            <option value="<%= i[1] %>"><%= i[0] %></option>
+        <% end %>
+        </select>
+    </td>
+</tr>
+</table>`;
+
+        const select = this.container.querySelector("select");
+
+        select.addEventListener("change", e => this.locale = e.target.value);
+        this.locale = select.value;
+    }
+
+    start()
+    {
+        for (const i of this.container.querySelectorAll("input"))
+            i.disabled = true;
+    }
+
+    finish()
+    {
+        for (const i of this.container.querySelectorAll("input"))
+            i.disabled = false;
+    }
+
+    getOperationParameters()
+    {
+        return { locale: this.locale };
+    }
+
+    prepareItem(item)
+    {
+        const current = item.locale?.value ?? "";
+
+        if (this.locale == current)
+            return { state: "skip" };
+
+        return { state: "ready" };
+    }
+};
+<% end %>
+
 const MASS_OPERATIONS = [
 <% if @permit_mass_user_deletion %>
     {
@@ -975,6 +1035,15 @@ const MASS_OPERATIONS = [
         title: "<%= t('users.index.mass_operations.set_expiration_times.title') %>",
         haveSettings: true,
         cls: MassSetExpirationTimes
+    },
+<% end %>
+
+<% if @permit_user_mass_change_locale %>
+    {
+        operation: "change_locale",
+        title: "<%= t('users.index.mass_operations.change_locale.title') %>",
+        haveSettings: true,
+        cls: MassChangeUserLocale
     },
 <% end %>
 ];

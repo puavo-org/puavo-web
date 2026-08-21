@@ -8,7 +8,8 @@ class UsersMassOperationsController < MassOperationsController
   USER_PERMISSIONS = {
     'clear_column' => %w[users_mass_clear_column_contents],
     'delete' => %w[delete_users mass_delete_users],
-    'set_expiration_time' => %w[user_edit_expiration_times user_mass_edit_expiration_times]
+    'set_expiration_time' => %w[user_edit_expiration_times user_mass_edit_expiration_times],
+    'change_locale' => %w[user_mass_change_locale]
   }.freeze
 
   # POST '/users_mass_operation'
@@ -50,6 +51,9 @@ class UsersMassOperationsController < MassOperationsController
 
         when 'set_expiration_time'
           _set_expiration_time(id, data)
+
+        when 'change_locale'
+          _change_locale(id, data)
 
         else
           next false, "Unknown operation \"#{@operation}\""
@@ -366,6 +370,25 @@ class UsersMassOperationsController < MassOperationsController
         user.puavoEduPersonAccountExpirationTime = d
         changed = true
       end
+    end
+
+    user.save! if changed
+
+    return [true, nil]
+  rescue StandardError => e
+    return [false, e]
+  end
+
+  def _change_locale(id, data)
+    locale = @parameters['locale']
+    locale = nil if locale == ''
+
+    user = User.find(id)
+    changed = false
+
+    if user.puavoLocale != locale
+      user.puavoLocale = locale
+      changed = true
     end
 
     user.save! if changed
