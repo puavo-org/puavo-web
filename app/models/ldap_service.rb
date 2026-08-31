@@ -9,7 +9,7 @@ class LdapService < LdapBase
 
   ldap_mapping dn_attribute: 'uid',
                prefix: 'ou=System Accounts',
-               classes: %w[simpleSecurityObject account]
+               classes: %w[simpleSecurityObject account puavoLdapService]
 
   belongs_to :groups, class_name: 'SystemGroup', many: 'member', primary_key: 'dn'
 
