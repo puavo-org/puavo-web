@@ -34,7 +34,7 @@ class Host < DeviceBase
 
   def self.types(boottype, current_user)
     # Create deep copy of any device_types configuration.
-    type_list = Marshal.load( Marshal.dump(Puavo::CONFIG['device_types']) )
+    type_list = Puavo::CONFIG['device_types'].deep_dup
 
     # Filter device_type by params[:boottype]
     case boottype
