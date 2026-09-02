@@ -32,6 +32,7 @@ class LdapServicesController < ApplicationController
     return if redirected_nonowner_user?
 
     @ldap_service = LdapService.new
+    @schools = get_schools()
     @system_groups = system_groups()
 
     respond_to do |format|
@@ -40,11 +41,18 @@ class LdapServicesController < ApplicationController
     end
   end
 
+  def get_schools
+    School.all.sort do |a, b|
+      a[:displayName].downcase <=> b[:displayName].downcase
+    end
+  end
+
   # GET /ldap_services/1/edit
   def edit
     return if redirected_nonowner_user?
 
     @ldap_service = LdapService.find(params[:id])
+    @schools = get_schools()
     @system_groups = system_groups()
   end
 
@@ -79,6 +87,9 @@ class LdapServicesController < ApplicationController
     unless params[:ldap_service].has_key?(:group)
       @ldap_service.groups = []
     end
+
+    # we need this in case no checkboxes are checked
+    @ldap_service.puavoSchool = ldap_service_params['puavoSchool']
 
     if params[:ldap_service][:userPassword] && params[:ldap_service][:userPassword].empty?
       params[:ldap_service].delete(:userPassword)
@@ -117,7 +128,7 @@ class LdapServicesController < ApplicationController
   def ldap_service_params
     params.require(:ldap_service) \
           .permit(:uid, :description, :puavoLdapServiceAccessAll,
-                  :userPassword, :groups=>[]) \
+                  :userPassword, :groups=>[], :puavoSchool=>[]) \
           .to_hash
   end
 

@@ -39,6 +39,29 @@
     </td>
   </tr>
 
+  <tr>
+    <th><%= f.label :schools %></th>
+    <td>
+      <ul class="noBullets">
+      <% @schools.each do |school| %>
+        <li>
+          <label>
+            <%= check_box_tag(
+              'ldap_service[puavoSchool][]',
+              school.dn,
+              Array(@ldap_service.puavoSchool).include?(school.dn.to_s),
+              id: "school_limit_#{ school.puavoId }"
+            ) %>
+            <span><%= school.displayName %></span>
+          </label>
+        </li>
+      <% end %>
+      </ul>
+    </td>
+
+    </td>
+  </tr>
+
   <tr class="buttonRow">
     <td colspan="2">
       <%= f.submit submit_text, class: 'btn' %>
