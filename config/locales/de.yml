@@ -2348,6 +2348,7 @@ de:
         groups: Systemgruppen
         dn: Bind-DN
         access_all_schools: Zugriff auf alle Schulen
+        schools: Schulen
       school:
         cn: Gruppenname
         displayName: Schulname

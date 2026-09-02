@@ -2347,6 +2347,7 @@ en:
         groups: System Groups
         dn: Bind DN
         access_all_schools: Access all schools
+        schools: Schools
       school:
         cn: Group name
         displayName: School name

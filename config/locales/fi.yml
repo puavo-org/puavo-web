@@ -2347,6 +2347,7 @@ fi:
         groups: "Järjestelmäryhmät"
         dn: Bind DN
         access_all_schools: Pääsy kaikkiin kouluihin
+        schools: Koulut
       school:
         cn: "Lyhenne"
         displayName: Koulun nimi
