@@ -4,6 +4,7 @@ class LdapServicesController < ApplicationController
   def index
     return if redirected_nonowner_user?
 
+    @all_schools   = get_all_schools_sorted()
     @ldap_services = LdapService.all
     @system_groups = system_groups()
 
@@ -18,6 +19,7 @@ class LdapServicesController < ApplicationController
   def show
     return if redirected_nonowner_user?
 
+    @all_schools  = get_all_schools_sorted()
     @ldap_service = LdapService.find(params[:id])
 
     respond_to do |format|
@@ -41,12 +43,6 @@ class LdapServicesController < ApplicationController
     end
   end
 
-  def get_all_schools_sorted
-    School.all.sort do |a, b|
-      a[:displayName].downcase <=> b[:displayName].downcase
-    end
-  end
-
   # GET /ldap_services/1/edit
   def edit
     return if redirected_nonowner_user?
@@ -61,7 +57,8 @@ class LdapServicesController < ApplicationController
   def create
     return if redirected_nonowner_user?
 
-    @ldap_service = LdapService.new(ldap_service_params)
+    @all_schools   = get_all_schools_sorted()
+    @ldap_service  = LdapService.new(ldap_service_params)
     @system_groups = system_groups()
 
     respond_to do |format|
@@ -81,7 +78,8 @@ class LdapServicesController < ApplicationController
   def update
     return if redirected_nonowner_user?
 
-    @ldap_service = LdapService.find(params[:id])
+    @all_schools   = get_all_schools_sorted()
+    @ldap_service  = LdapService.find(params[:id])
     @system_groups = system_groups()
 
     unless params[:ldap_service].has_key?(:group)
@@ -124,6 +122,12 @@ class LdapServicesController < ApplicationController
   end
 
   private
+
+  def get_all_schools_sorted
+    School.all.sort do |a, b|
+      a[:displayName].downcase <=> b[:displayName].downcase
+    end
+  end
 
   def ldap_service_params
     params.require(:ldap_service) \
