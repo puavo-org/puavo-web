@@ -115,7 +115,10 @@ class LdapServicesController < ApplicationController
   private
 
   def ldap_service_params
-    params.require(:ldap_service).permit(:uid, :description, :userPassword, :groups=>[]).to_hash
+    params.require(:ldap_service) \
+          .permit(:uid, :description, :puavoLdapServiceAccessAll,
+                  :userPassword, :groups=>[]) \
+          .to_hash
   end
 
   def system_groups
