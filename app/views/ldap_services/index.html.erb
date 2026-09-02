@@ -21,7 +21,7 @@
     <td data-title="<%= t('activeldap.attributes.ldap_service.groups') %>">
       <ul>
       <% @system_groups.each do |g| %>
-        <% if Array(ldap_service.groups).include?(g) %>
+        <% if ldap_service.groups.include?(g) %>
         <li><%= h g.description %> (<%= h g.cn %>)</li>
         <% end %>
       <% end %>
@@ -32,7 +32,7 @@
       <ul>
       <% @all_schools.each do |s| %>
         <% if !ldap_service.puavoLdapServiceAccessAll \
-                && Array(ldap_service.schools).include?(s) %>
+                && ldap_service.schools.include?(s) %>
         <li><%= h s.displayName %> (<%= h s.cn %>)</li>
         <% end %>
       <% end %>

@@ -11,9 +11,10 @@ class LdapService < LdapBase
                prefix: 'ou=System Accounts',
                classes: %w[simpleSecurityObject account puavoLdapService]
 
-  belongs_to :groups, class_name: 'SystemGroup', many: 'member', primary_key: 'dn'
-  belongs_to :schools, class_name: 'School', foreign_key: 'puavoSchool',
-                       primary_key: 'dn'
+  belongs_to :groups, class_name: 'SystemGroup', many: 'member',
+                      primary_key: 'dn'
+  has_many :schools, class_name: 'School', wrap: 'puavoSchool',
+                     primary_key: 'dn'
 
   before_validation :set_default_access
   before_save :encrypt_userPassword
