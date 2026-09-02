@@ -26,6 +26,11 @@
       <% end %>
     </td>
   </tr>
+
+  <tr>
+    <th><%= label "ldap_service", "access_all_schools" %></th>
+    <td class="value_td"><%= @ldap_service.puavoLdapServiceAccessAll ? t('helpers.boolean_true') : t('helpers.boolean_false') %></td>
+  </tr>
 </table>
 
 <%= end_box %>
