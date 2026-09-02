@@ -13,6 +13,7 @@ class LdapService < LdapBase
 
   belongs_to :groups, class_name: 'SystemGroup', many: 'member', primary_key: 'dn'
 
+  before_validation :set_default_access
   before_save :encrypt_userPassword
   after_save :update_groups
   before_destroy :remove_groups
@@ -21,6 +22,10 @@ class LdapService < LdapBase
                        message: I18n.t('activeldap.errors.messages.too_short',
                                        attribute: I18n.t('userPassword', scope: 'activeldap.attributes.ldap_service'),
                                        count: 12)
+
+  def set_default_access
+    self.puavoLdapServiceAccessAll = true if self.puavoLdapServiceAccessAll.nil?
+  end
 
   def update_groups
     new_groups = self.groups.map { |g| g.instance_of?(String) ? g : g.id }
