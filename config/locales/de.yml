@@ -2347,6 +2347,7 @@ de:
         userPassword: Passwort
         groups: Systemgruppen
         dn: Bind-DN
+        access_all_schools: Zugriff auf alle Schulen
       school:
         cn: Gruppenname
         displayName: Schulname
