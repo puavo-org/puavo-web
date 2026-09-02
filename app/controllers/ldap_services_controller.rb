@@ -31,8 +31,8 @@ class LdapServicesController < ApplicationController
   def new
     return if redirected_nonowner_user?
 
+    @all_schools = get_all_schools_sorted()
     @ldap_service = LdapService.new
-    @schools = get_schools()
     @system_groups = system_groups()
 
     respond_to do |format|
@@ -41,7 +41,7 @@ class LdapServicesController < ApplicationController
     end
   end
 
-  def get_schools
+  def get_all_schools_sorted
     School.all.sort do |a, b|
       a[:displayName].downcase <=> b[:displayName].downcase
     end
@@ -51,8 +51,8 @@ class LdapServicesController < ApplicationController
   def edit
     return if redirected_nonowner_user?
 
+    @all_schools = get_all_schools_sorted()
     @ldap_service = LdapService.find(params[:id])
-    @schools = get_schools()
     @system_groups = system_groups()
   end
 
