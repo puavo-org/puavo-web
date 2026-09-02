@@ -21,7 +21,7 @@
   <tr>
     <th><%= label "ldap_service", "groups" %></th>
     <td class="value_td">
-      <% @ldap_service.groups.each do |group| %>
+      <% @ldap_service.sorted_groups.each do |group| %>
       <div><%= group.description %></div>
       <% end %>
     </td>
@@ -35,7 +35,7 @@
   <tr>
     <th><%= label "ldap_service", "schools" %></th>
     <td class="value_td">
-      <% @ldap_service.schools.each do |school| %>
+      <% @ldap_service.sorted_schools.each do |school| %>
       <div><%= school.displayName %> (<%= school.cn %>)</div>
       <% end %>
     </td>

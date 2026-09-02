@@ -53,6 +53,14 @@ class LdapService < LdapBase
     end
   end
 
+  def sorted_groups
+    groups.sort_by { |group| group.description.to_s.downcase }
+  end
+
+  def sorted_schools
+    schools.sort_by { |school| school.displayName.to_s.downcase }
+  end
+
   private
 
   def update_group_member(group_cn, type)
