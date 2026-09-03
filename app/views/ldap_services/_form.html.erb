@@ -35,7 +35,7 @@
   <tr>
     <th><%= f.label :access_all_schools %></th>
     <td>
-      <%= f.check_box :puavoLdapServiceAccessAll %>
+      <%= f.check_box :puavoLdapServiceAccessAll, id: 'access_all_schools' %>
     </td>
   </tr>
 
@@ -50,7 +50,8 @@
               'ldap_service[puavoSchool][]',
               school.dn,
               Array(@ldap_service.puavoSchool).include?(school.dn.to_s),
-              id: "school_limit_#{ school.puavoId }"
+              class: 'school_checkbox',
+              id: "school_limit_#{ school.puavoId }",
             ) %>
             <span><%= school.displayName %></span>
           </label>
@@ -70,3 +71,20 @@
   </tr>
 </table>
 <% end %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const accessAll = document.getElementById('access_all_schools');
+  if (!accessAll)
+    return;
+
+  const updateSchoolCheckboxes = function() {
+    document.querySelectorAll('.school_checkbox').forEach((checkbox) => {
+      checkbox.disabled = accessAll.checked;
+    });
+  };
+
+  accessAll.addEventListener('change', updateSchoolCheckboxes);
+  updateSchoolCheckboxes();
+});
+</script>
