@@ -26,41 +26,41 @@ def define_basic(env)
   env.define :teacher do |config|
     test_image = Magick::Image.read("features/support/test.jpg").first.to_blob
     teacher = User.create(
-      :givenName                 => 'Severus',
-      :new_password              => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :jpegPhoto                 => test_image,
-      :mail                      => 'severus@example.com',
-      :preferredLanguage         => 'en',
-      :puavoAcceptedTerms        => 'TRUE',
-      :puavoEduPersonAffiliation => 'teacher',
-      :puavoLocale               => 'en_US.UTF-8',
-      :puavoSchool               => env.school.dn,
+      :givenName                   => 'Severus',
+      :jpegPhoto                   => test_image,
+      :mail                        => 'severus@example.com',
+      :new_password                => config.default_password,
+      :new_password_confirmation   => config.default_password,
+      :preferredLanguage           => 'en',
+      :puavoAcceptedTerms          => 'TRUE',
+      :puavoEduPersonAffiliation   => 'teacher',
       :puavoEduPersonPrimarySchool => env.school.dn,
-      :puavoTeacherPermissions   => [ 'set_student_password' ],
-      :sn                        => 'Snape',
-      :telephoneNumber           => '234567',
-      :uid                       => 'severus.snape')
+      :puavoLocale                 => 'en_US.UTF-8',
+      :puavoSchool                 => env.school.dn,
+      :puavoTeacherPermissions     => [ 'set_student_password' ],
+      :sn                          => 'Snape',
+      :telephoneNumber             => '234567',
+      :uid                         => 'severus.snape')
     config.dn = teacher.dn
   end
 
   env.define :admin do |config|
     test_image = Magick::Image.read("features/support/test.jpg").first.to_blob
     admin = User.create(
-      :givenName                 => 'Minerva',
-      :new_password              => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :jpegPhoto                 => test_image,
-      :mail                      => 'minerva@example.com',
-      :preferredLanguage         => 'en',
-      :puavoAcceptedTerms        => 'TRUE',
-      :puavoEduPersonAffiliation => 'admin',
-      :puavoLocale               => 'en_US.UTF-8',
-      :puavoSchool               => env.school.dn,
+      :givenName                   => 'Minerva',
+      :jpegPhoto                   => test_image,
+      :mail                        => 'minerva@example.com',
+      :new_password                => config.default_password,
+      :new_password_confirmation   => config.default_password,
+      :preferredLanguage           => 'en',
+      :puavoAcceptedTerms          => 'TRUE',
+      :puavoEduPersonAffiliation   => 'admin',
       :puavoEduPersonPrimarySchool => env.school.dn,
-      :sn                        => 'McGonagall',
-      :telephoneNumber           => '345678',
-      :uid                       => 'minerva.mcgonagall')
+      :puavoLocale                 => 'en_US.UTF-8',
+      :puavoSchool                 => env.school.dn,
+      :sn                          => 'McGonagall',
+      :telephoneNumber             => '345678',
+      :uid                         => 'minerva.mcgonagall')
     env.school.model_object.add_admin(admin)
     config.dn = admin.dn
   end
@@ -100,22 +100,22 @@ def define_basic(env)
   env.define :student do |config|
     test_image = Magick::Image.read("features/support/test.jpg").first.to_blob
     student = User.new(
-      :puavoSchool => env.school.dn,
-      :puavoEduPersonPrimarySchool => env.school.dn,
-      :givenName => "Harry",
-      :sn => "Potter",
-      :mail => "harry@example.com",
-      :uid => "harry.potter",
-      :new_password => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "student",
+      :givenName                     => "Harry",
+      :jpegPhoto                     => test_image,
+      :mail                          => "harry@example.com",
+      :new_password                  => config.default_password,
+      :new_password_confirmation     => config.default_password,
+      :preferredLanguage             => "en",
+      :puavoAcceptedTerms            => "TRUE",
+      :puavoEduPersonAffiliation     => "student",
       :puavoEduPersonPersonnelNumber => "123",
-      :jpegPhoto => test_image,
-      :preferredLanguage => "en",
-      :puavoLocale => "en_US.UTF-8",
-      :telephoneNumber => "123456",
-      :puavoAcceptedTerms => "TRUE",
-      :puavoLocked => "FALSE"
+      :puavoEduPersonPrimarySchool   => env.school.dn,
+      :puavoLocale                   => "en_US.UTF-8",
+      :puavoLocked                   => "FALSE",
+      :puavoSchool                   => env.school.dn,
+      :sn                            => "Potter",
+      :telephoneNumber               => "123456",
+      :uid                           => "harry.potter",
     )
     student.save!
     config.dn = student.dn
@@ -123,14 +123,14 @@ def define_basic(env)
 
   env.define :staff do |config|
     staff = User.new(
-      :givenName                 => 'Rubeus',
-      :new_password              => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => 'staff',
-      :puavoSchool               => env.school.dn,
+      :givenName                   => 'Rubeus',
+      :new_password                => config.default_password,
+      :new_password_confirmation   => config.default_password,
+      :puavoEduPersonAffiliation   => 'staff',
       :puavoEduPersonPrimarySchool => env.school.dn,
-      :sn                        => 'Hagrid',
-      :uid                       => 'rubeus.hagrid')
+      :puavoSchool                 => env.school.dn,
+      :sn                          => 'Hagrid',
+      :uid                         => 'rubeus.hagrid')
     staff.save!
     config.dn = staff.dn
   end
@@ -138,77 +138,77 @@ def define_basic(env)
   # teacher without student password change permissions
   env.define :teacher2 do |config|
     teacher2 = User.create(
-      :puavoSchool => env.school.dn,
+      :givenName                   => "Gilderoy",
+      :new_password                => config.default_password,
+      :new_password_confirmation   => config.default_password,
+      :puavoEduPersonAffiliation   => "teacher",
       :puavoEduPersonPrimarySchool => env.school.dn,
-      :givenName => "Gilderoy",
-      :sn => "Lockhart",
-      :uid => "gilderoy.lockhart",
-      :new_password => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "teacher")
+      :puavoSchool                 => env.school.dn,
+      :sn                          => "Lockhart",
+      :uid                         => "gilderoy.lockhart")
     config.dn = teacher2.dn
   end
 
   env.define :student2 do |config|
     student2 = User.create(
-      :puavoSchool => env.school.dn,
+      :givenName                   => "Ron",
+      :mail                        => "ron@example.com",
+      :new_password                => config.default_password,
+      :new_password_confirmation   => config.default_password,
+      :puavoEduPersonAffiliation   => "student",
       :puavoEduPersonPrimarySchool => env.school.dn,
-      :givenName => "Ron",
-      :mail => "ron@example.com",
-      :sn => "Weasley",
-      :uid => "ron.weasley",
-      :new_password => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "student")
+      :puavoSchool                 => env.school.dn,
+      :sn                          => "Weasley",
+      :uid                         => "ron.weasley")
     config.dn = student2.dn
   end
 
   env.define :other_school do |config|
     other_school = School.create(
-      :cn => 'beauxbatons',
+      :cn          => 'beauxbatons',
       :displayName => 'Beauxbatons')
     config.dn = other_school.dn
   end
 
   env.define :other_school_admin do |config|
     other_school_admin = User.create(
-      :givenName                 => 'Nicolas',
-      :mail                      => 'nicolas.flamel@example.com',
-      :new_password              => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => 'admin',
-      :puavoSchool               => env.other_school.dn,
+      :givenName                   => 'Nicolas',
+      :mail                        => 'nicolas.flamel@example.com',
+      :new_password                => config.default_password,
+      :new_password_confirmation   => config.default_password,
+      :puavoEduPersonAffiliation   => 'admin',
       :puavoEduPersonPrimarySchool => env.other_school.dn,
-      :sn                        => 'Flamel',
-      :uid                       => 'nicolas.flamel')
+      :puavoSchool                 => env.other_school.dn,
+      :sn                          => 'Flamel',
+      :uid                         => 'nicolas.flamel')
     config.dn = other_school_admin.dn
   end
 
   env.define :other_school_student do |config|
     other_school_student = User.create(
-      :givenName                 => 'Fleur',
-      :mail                      => 'fleur.delacour@example.com',
-      :new_password              => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => 'student',
-      :puavoSchool               => env.other_school.dn,
+      :givenName                   => 'Fleur',
+      :mail                        => 'fleur.delacour@example.com',
+      :new_password                => config.default_password,
+      :new_password_confirmation   => config.default_password,
+      :puavoEduPersonAffiliation   => 'student',
+      :puavoSchool                 => env.other_school.dn,
       :puavoEduPersonPrimarySchool => env.other_school.dn,
-      :sn                        => 'Delacour',
-      :uid                       => 'fleur.delacour')
+      :sn                          => 'Delacour',
+      :uid                         => 'fleur.delacour')
     config.dn = other_school_student.dn
   end
 
   env.define :other_school_teacher do |config|
     other_school_teacher = User.create(
-      :givenName                 => 'Madame',
-      :mail                      => 'madame.maxine@example.com',
-      :new_password              => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => 'teacher',
-      :puavoSchool               => env.other_school.dn,
+      :givenName                   => 'Madame',
+      :mail                        => 'madame.maxine@example.com',
+      :new_password                => config.default_password,
+      :new_password_confirmation   => config.default_password,
+      :puavoEduPersonAffiliation   => 'teacher',
+      :puavoSchool                 => env.other_school.dn,
       :puavoEduPersonPrimarySchool => env.other_school.dn,
-      :sn                        => 'Maxine',
-      :uid                       => 'madame.maxine')
+      :sn                          => 'Maxine',
+      :uid                         => 'madame.maxine')
     config.dn = other_school_teacher.dn
   end
 
