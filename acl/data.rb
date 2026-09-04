@@ -86,11 +86,12 @@ def define_basic(env)
     config.password = 'password'
   end
 
-  env.define :sysgroup_getent do |config|
-    service =  LdapService.new
+  env.define :systemaccount_with_getent do |config|
+    service = LdapService.new
+    service.groups = SystemGroup.all.map { |g| g.id }
+    service.puavoLdapServiceAccessAll = true
     service.uid = 'testservice'
     service.userPassword = 'secretsecretsecretsecretsecret'
-    service.groups = SystemGroup.all.map{ |g| g.id }
     service.save!
     config.dn = service.dn
     config.password = 'secretsecretsecretsecretsecret'
