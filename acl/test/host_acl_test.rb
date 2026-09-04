@@ -27,4 +27,9 @@ env.validate "host" do
 
   admin.can_read              laptop, [ :dn, :puavoHostname ]
   other_school_admin.can_read laptop, [ :dn, :puavoHostname ]
+
+  systemaccount_with_getent.can_read laptop, [ :cn ]
+  systemaccount_with_getent.can_read other_school_laptop, [ :cn ]
+  systemaccount_for_beauxbatons.cannot_read laptop, [ :cn ], InsufficientAccessRights
+  systemaccount_for_beauxbatons.can_read other_school_laptop, [ :cn ]
 end
