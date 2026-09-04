@@ -37,11 +37,11 @@ Feature: Manage LDAP services
 
   Scenario: Delete organisation-wide LDAP service
     Given the following LDAP services:
-      | uid   | description   | userPassword    | groups |
-      | uid 1 | description 1 | secretpassword1 | auth   |
-      | uid 2 | description 2 | secretpassword2 | auth   |
-      | uid 3 | description 3 | secretpassword3 | getent |
-      | uid 4 | description 4 | secretpassword4 | getent |
+      | uid   | description   | userPassword    | groups | puavoLdapServiceAccessAll |
+      | uid 1 | description 1 | secretpassword1 | auth   | true                      |
+      | uid 2 | description 2 | secretpassword2 | auth   | true                      |
+      | uid 3 | description 3 | secretpassword3 | getent | true                      |
+      | uid 4 | description 4 | secretpassword4 | getent | true                      |
     When I delete the 3rd LDAP service
     Then I should see "LDAP service was successfully removed."
     Then I should see the following LDAP services:
@@ -53,11 +53,11 @@ Feature: Manage LDAP services
 
   Scenario: Edit organisation-wide LDAP service
     Given the following LDAP services:
-      | uid   | description   | userPassword     | groups |
-      | uid 1 | description 1 | secretpassword1 | auth   |
-      | uid 2 | description 2 | secretpassword2 | auth   |
-      | uid 3 | description 3 | secretpassword3 | auth   |
-      | uid 4 | description 4 | secretpassword4 | auth   |
+      | uid   | description   | userPassword    | groups | puavoLdapServiceAccessAll |
+      | uid 1 | description 1 | secretpassword1 | auth   | true                      |
+      | uid 2 | description 2 | secretpassword2 | auth   | true                      |
+      | uid 3 | description 3 | secretpassword3 | auth   | true                      |
+      | uid 4 | description 4 | secretpassword4 | auth   | true                      |
     And I follow "LDAP service"
     And I follow "uid 1"
     And I follow "Edit..."
@@ -90,8 +90,8 @@ Feature: Manage LDAP services
 
   Scenario: Get organisation information with organisation-wide LDAP service user
     Given the following LDAP services:
-      | uid    | description   | userPassword    | groups  |
-      | iivari | description 1 | secretpassword1 | orginfo |
+      | uid    | description   | userPassword    | groups  | puavoLdapServiceAccessAll |
+      | iivari | description 1 | secretpassword1 | orginfo | true                      |
     When I get the organisation JSON page with "service/iivari" and "secretpassword1"
     Then I should see JSON '{"preferred_language": "en", "domain": "example.puavo.net", "name": "Example Organisation"}'
 
@@ -121,8 +121,8 @@ Feature: Manage LDAP services
 
   Scenario: Edit school-restricted LDAP service
     Given the following LDAP services:
-      | uid   | description   | userPassword    | groups |
-      | uid 7 | description 7 | secretpassword7 | auth   |
+      | uid   | description   | userPassword    | groups | puavoLdapServiceAccessAll |
+      | uid 7 | description 7 | secretpassword7 | auth   | true                      |
     And I follow "LDAP service"
     And I follow "uid 7"
     And I follow "Edit..."

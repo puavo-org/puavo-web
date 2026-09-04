@@ -1,6 +1,10 @@
 Given /^the following LDAP services:$/ do |ldap_service|
   set_ldap_admin_connection
-  LdapService.create(ldap_service.hashes)
+  services = ldap_service.hashes.map do |h|
+    h['puavoLdapServiceAccessAll'] = (h['puavoLdapServiceAccessAll'] == 'true')
+    h
+  end
+  LdapService.create(services)
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) LDAP service$/ do |pos|
@@ -31,6 +35,5 @@ end
 
 When /^I get the organisation JSON page with "([^\"]*)" and "([^\"]*)"$/ do |username, password|
   page.driver.browser.basic_authorize(username, password)
-  
   visit "/users/organisation.json"
 end
