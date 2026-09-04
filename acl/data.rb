@@ -86,17 +86,6 @@ def define_basic(env)
     config.password = 'password'
   end
 
-  env.define :systemaccount_with_getent do |config|
-    service = LdapService.new
-    service.groups = SystemGroup.all.map { |g| g.id }
-    service.puavoLdapServiceAccessAll = true
-    service.uid = 'testservice'
-    service.userPassword = 'secretsecretsecretsecretsecret'
-    service.save!
-    config.dn = service.dn
-    config.password = 'secretsecretsecretsecretsecret'
-  end
-
   env.define :student do |config|
     test_image = Magick::Image.read("features/support/test.jpg").first.to_blob
     student = User.new(
@@ -229,11 +218,34 @@ def define_basic(env)
     config.dn = printer.dn
   end
 
+  env.define :systemaccount_with_getent do |config|
+    service = LdapService.new
+    service.groups = SystemGroup.all.map { |g| g.id }
+    service.puavoLdapServiceAccessAll = true
+    service.uid = 'testservice'
+    service.userPassword = 'secretsecretsecretsecretsecret'
+    service.save!
+    config.dn = service.dn
+    config.password = 'secretsecretsecretsecretsecret'
+  end
+
+  env.define :systemaccount_for_beauxbatons do |config|
+    service = LdapService.new
+    service.groups = SystemGroup.all.map { |g| g.id }
+    service.puavoLdapServiceAccessAll = false
+    service.puavoSchool = env.other_school.dn
+    service.uid = 'testservice2'
+    service.userPassword = 'testservicesecret2'
+    service.save!
+    config.dn = service.dn
+    config.password = 'testservicesecret2'
+  end
+
   env.define :bootserver do |config|
     bootserver = Server.new
     bootserver.classes = %w(top device puppetClient puavoServer simpleSecurityObject)
     bootserver.description = 'test'
-    bootserver.macAddress  = '27:c0:59:3c:bc:b4'
+    bootserver.macAddress = '27:c0:59:3c:bc:b4'
     bootserver.puavoDeviceType = 'bootserver'
     bootserver.puavoHostname = 'boot01'
     bootserver.puavoSchool = env.school.dn
@@ -262,6 +274,20 @@ def define_basic(env)
     laptop.userPassword = config.default_password
     laptop.save!
     config.dn = laptop.dn
+    config.password = config.default_password
+  end
+
+  env.define :other_school_laptop do |config|
+    os_laptop = Device.new
+    os_laptop.classes = %w(top device puppetClient puavoLocalbootDevice simpleSecurityObject)
+    os_laptop.description = "beauxbatons laptop"
+    os_laptop.macAddress = "27:c0:19:3c:bc:ff"
+    os_laptop.puavoDeviceType = "laptop"
+    os_laptop.puavoHostname = "laptop-02"
+    os_laptop.puavoSchool = env.other_school.dn
+    os_laptop.userPassword = config.default_password
+    os_laptop.save!
+    config.dn = os_laptop.dn
     config.password = config.default_password
   end
 
