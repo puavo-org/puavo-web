@@ -244,6 +244,14 @@ class SchoolsController < ApplicationController
     end
 
     if can_delete
+      LdapService.find(:all,
+                       attribute: 'puavoSchool',
+                       value: @school.dn).each do |ldap_service|
+        ldap_service.schools = ldap_service.schools.select do |s|
+                                 s.dn != @school.dn
+                               end
+        ldap_service.save!
+      end
       # Remove school admins
       User.find(:all, attribute: 'puavoAdminOfSchool', value: @school.dn).each do |user|
         @school.remove_admin(user)
