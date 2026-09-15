@@ -8,6 +8,8 @@
     <th><%= sortable_list_column_header(t('activeldap.attributes.ldap_service.description')) %></th>
     <th><%= sortable_list_column_header(t('activeldap.attributes.ldap_service.dn')) %></th>
     <th><%= t('activeldap.attributes.ldap_service.groups') %></th>
+    <th><%= t('activeldap.attributes.ldap_service.access_all_schools') %></th>
+    <th><%= t('activeldap.attributes.ldap_service.schools') %></th>
     <th><%= t('.actions') %></th>
   </tr>
 
@@ -21,6 +23,17 @@
       <% @system_groups.each do |g| %>
         <% if ldap_service.groups.include?(g) %>
         <li><%= h g.description %> (<%= h g.cn %>)</li>
+        <% end %>
+      <% end %>
+      </ul>
+    </td>
+    <td data-title="<%= t('activeldap.attributes.ldap_service.access_all_schools') %>"><%= ldap_service.puavoLdapServiceAccessAll ? t('helpers.boolean_true') : t('helpers.boolean_false') %></td>
+    <td data-title="<%= t('activeldap.attributes.ldap_service.schools') %>">
+      <ul>
+      <% @all_schools.each do |s| %>
+        <% if !ldap_service.puavoLdapServiceAccessAll \
+                && ldap_service.schools.include?(s) %>
+        <li><%= h s.displayName %> (<%= h s.cn %>)</li>
         <% end %>
       <% end %>
       </ul>

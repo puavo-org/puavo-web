@@ -4,6 +4,7 @@ class LdapServicesController < ApplicationController
   def index
     return if redirected_nonowner_user?
 
+    @all_schools   = get_all_schools_sorted()
     @ldap_services = LdapService.all
     @system_groups = system_groups()
 
@@ -18,6 +19,7 @@ class LdapServicesController < ApplicationController
   def show
     return if redirected_nonowner_user?
 
+    @all_schools  = get_all_schools_sorted()
     @ldap_service = LdapService.find(params[:id])
 
     respond_to do |format|
@@ -31,6 +33,7 @@ class LdapServicesController < ApplicationController
   def new
     return if redirected_nonowner_user?
 
+    @all_schools = get_all_schools_sorted()
     @ldap_service = LdapService.new
     @system_groups = system_groups()
 
@@ -44,6 +47,7 @@ class LdapServicesController < ApplicationController
   def edit
     return if redirected_nonowner_user?
 
+    @all_schools = get_all_schools_sorted()
     @ldap_service = LdapService.find(params[:id])
     @system_groups = system_groups()
   end
@@ -53,7 +57,8 @@ class LdapServicesController < ApplicationController
   def create
     return if redirected_nonowner_user?
 
-    @ldap_service = LdapService.new(ldap_service_params)
+    @all_schools   = get_all_schools_sorted()
+    @ldap_service  = LdapService.new(ldap_service_params)
     @system_groups = system_groups()
 
     respond_to do |format|
@@ -73,12 +78,16 @@ class LdapServicesController < ApplicationController
   def update
     return if redirected_nonowner_user?
 
-    @ldap_service = LdapService.find(params[:id])
+    @all_schools   = get_all_schools_sorted()
+    @ldap_service  = LdapService.find(params[:id])
     @system_groups = system_groups()
 
     unless params[:ldap_service].has_key?(:group)
       @ldap_service.groups = []
     end
+
+    # we need this in case no checkboxes are checked
+    @ldap_service.puavoSchool = ldap_service_params['puavoSchool']
 
     if params[:ldap_service][:userPassword] && params[:ldap_service][:userPassword].empty?
       params[:ldap_service].delete(:userPassword)
@@ -114,8 +123,17 @@ class LdapServicesController < ApplicationController
 
   private
 
+  def get_all_schools_sorted
+    School.all.sort do |a, b|
+      a[:displayName].downcase <=> b[:displayName].downcase
+    end
+  end
+
   def ldap_service_params
-    params.require(:ldap_service).permit(:uid, :description, :userPassword, :groups=>[]).to_hash
+    params.require(:ldap_service) \
+          .permit(:uid, :description, :puavoLdapServiceAccessAll,
+                  :userPassword, :groups=>[], :puavoSchool=>[]) \
+          .to_hash
   end
 
   def system_groups

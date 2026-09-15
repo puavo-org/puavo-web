@@ -9,10 +9,14 @@ class LdapService < LdapBase
 
   ldap_mapping dn_attribute: 'uid',
                prefix: 'ou=System Accounts',
-               classes: %w[simpleSecurityObject account]
+               classes: %w[simpleSecurityObject account puavoLdapService]
 
-  belongs_to :groups, class_name: 'SystemGroup', many: 'member', primary_key: 'dn'
+  belongs_to :groups, class_name: 'SystemGroup', many: 'member',
+                      primary_key: 'dn'
+  has_many :schools, class_name: 'School', wrap: 'puavoSchool',
+                     primary_key: 'dn'
 
+  before_validation :set_default_access
   before_save :encrypt_userPassword
   after_save :update_groups
   before_destroy :remove_groups
@@ -21,6 +25,10 @@ class LdapService < LdapBase
                        message: I18n.t('activeldap.errors.messages.too_short',
                                        attribute: I18n.t('userPassword', scope: 'activeldap.attributes.ldap_service'),
                                        count: 12)
+
+  def set_default_access
+    self.puavoLdapServiceAccessAll = true if self.puavoLdapServiceAccessAll.nil?
+  end
 
   def update_groups
     new_groups = self.groups.map { |g| g.instance_of?(String) ? g : g.id }
@@ -43,6 +51,14 @@ class LdapService < LdapBase
     self.groups.each do |group|
       update_group_member(group.cn, :delete)
     end
+  end
+
+  def sorted_groups
+    groups.sort_by { |group| group.description.to_s.downcase }
+  end
+
+  def sorted_schools
+    schools.sort_by { |school| school.displayName.to_s.downcase }
   end
 
   private
