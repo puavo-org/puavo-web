@@ -19,17 +19,6 @@ curl for some reason.
 
 # Users
 
-## GET /v3/users
-
-Get list of all user data
-
-### Returns
-
-    [
-      <user object, see next>,
-      ...
-    ]
-
 ## GET /v3/users/:username
 
 Get user information
