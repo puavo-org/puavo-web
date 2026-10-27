@@ -575,7 +575,7 @@ class LdapModel
 
   # Add pending mod to be executed on the next {.save!} call
   #
-  # @param [Fixnum] Mod operation type. One of following constants
+  # @param [Integer] Mod operation type. One of following constants
   # LDAP::LDAP_MOD_REPLACE, LDAP::LDAP_MOD_ADD or LDAP::LDAP_MOD_DELETE,
   # @param [String] LDAP key string
   # @param [Array<String>] Value for the key

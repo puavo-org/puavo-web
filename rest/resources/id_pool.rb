@@ -6,8 +6,8 @@ class IdPool
   # Get range of Ids
   #
   # @param namespace [String] ID namespace. For example `puavoNextUidNumber` or `puavoNextGidNumber`
-  # @param count [Fixnum] How many IDs should be returned
-  # @return [Array<Fixnum>]
+  # @param count [Integer] How many IDs should be returned
+  # @return [Array<Integer>]
   def self.id_range(namespace, count)
     pool = get_redis_id_pool()
 
@@ -25,7 +25,7 @@ class IdPool
   # See what was the last given ID for the namespace
   #
   # @param namespace [String]
-  # @return Fixnum
+  # @return Integer
   def self.last_id(namespace)
     get_redis_id_pool.get(namespace)
   end
@@ -33,7 +33,7 @@ class IdPool
   # Get single id for ID the namespace
   #
   # @param namespace [String]
-  # @return Fixnum
+  # @return Integer
   def self.next_id(namespace)
     id_range(namespace, 1).first
   end
@@ -41,7 +41,7 @@ class IdPool
   # Set ID sequence to value. Using this can break things badly. Use with care!
   #
   # @param namespace [String]
-  # @param value [Fixnum]
+  # @param value [Integer]
   def self.set_id!(namespace, value)
     pool = get_redis_id_pool()
     pool.set(namespace, value)

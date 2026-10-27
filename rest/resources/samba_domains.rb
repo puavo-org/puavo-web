@@ -40,7 +40,7 @@ class SambaDomain < LdapModel
   # directly to our directory and they must be able to update the rid by
   # themselves
   #
-  # @return Fixnum
+  # @return Integer
   def generate_next_rid!
     lock_key = "samba_next_rid:#{ domain }"
 

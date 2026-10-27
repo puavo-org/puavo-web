@@ -35,7 +35,7 @@ module LdapConverters
     end
   end
 
-  # Force LDAP value to be single Fixnum number
+  # Force LDAP value to be single Integer number
   class Number < Base
     def read(v)
       if v.nil?
