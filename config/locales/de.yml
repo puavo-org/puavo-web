@@ -2556,8 +2556,8 @@ de:
     edit:
       title: Passwort eines anderen ändern
       head: Um das Passwort eines anderen Benutzers zu ändern, geben Sie Ihren eigenen Benutzernamen und Ihr Passwort ein, und dann den Benutzernamen und das neue Passwort für den Benutzer, dessen Passwort geändert wird. Sie müssen über ausreichende Berechtigungen verfügen, um die Passwörter anderer Benutzer zu ändern.
-      changing_user: Benutzer wird geändert
-      changed_user: Benutzer geändert
+      changing_user: Wer möchte die Änderung durchführen
+      changed_user: Welches Passwort soll geändert werden?
       password: Passwort
       link_own_password: Eigenes Passwort ändern
       domain_or: " oder "
