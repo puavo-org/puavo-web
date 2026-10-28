@@ -14,7 +14,7 @@ LimitNOFILE=65536
 Environment="RACK_ENV=production"
 ExecStartPre=/bin/mkdir -p /run/puavo-rest
 ExecStartPre=/bin/chown puavo:puavo /run/puavo-rest
-ExecStart=/bin/sh -c "bundle exec puma --workers 4 --port 9292"
+ExecStart=/usr/bin/bundle exec puma --workers 4 --port 9292
 Restart=on-abnormal
 RestartSec=30s
 SyslogIdentifier=puavo-rest
