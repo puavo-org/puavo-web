@@ -323,3 +323,68 @@ Basic auth or boot server auth
 ### Returns
 
     (Array)
+
+# Remote recovery
+
+The routes exist when `recovery` is configured, see RECOVERY.md. Binary
+values are base64. `expires_at` is the end of the recovery, the same in
+every state. Deletes answer 200. Errors are `RecoveryRequestNotFound`,
+`CodeInUse`, `WrongState`, `UnsupportedDeviceType`,
+`DeviceWithoutSerialNumber` and the usual ones.
+
+## POST /v3/devices/:hostname/recovery
+
+An organisation owner opens a recovery of the device. Basic auth. An
+earlier recovery of the device ends. Returns `code`, `serial_number`,
+`state` and `expires_at`. A device type without remote recovery answers
+`UnsupportedDeviceType`. Laptops and boot servers have it.
+
+## GET /v3/devices/:hostname/recovery
+
+An organisation owner looks at the recovery of the device. Basic auth.
+Returns `state`, `serial_number`, `opened_by`, `created_at`,
+`expires_at` and `wrong_codes`, the `code` while open, and
+`queue_position` while queued.
+
+## DELETE /v3/devices/:hostname/recovery
+
+An organisation owner closes the recovery of the device. Basic auth.
+
+## POST /v3/recovery/requests
+
+The device joins the recovery opened for it. No authentication.
+
+Body: `organisation_id`, `serial_number`, `code`, `bundle` and
+`return_public_key`. Other fields are ignored.
+
+Returns `id`, `state`, `expires_at` and `poll_seconds`, with 201. The
+id is the device's secret. A wrong code answers as no recovery and
+counts against the recovery in every state. The first join wins: a
+right code while a request is queued answers `CodeInUse`. The same
+join sent again, with the same bundle and return key, answers 200 with
+the queued request.
+
+## GET /v3/recovery/requests/:id
+
+The device polls its request. Returns `id`, `state`, `expires_at`,
+`poll_seconds`, `approval`, and `result` or `error` by state. A queued
+request also has `queue_position`. `poll_seconds` is the queue position
+in seconds, within a minimum and a maximum.
+
+## DELETE /v3/recovery/requests/:id
+
+The device ends the recovery after its result. Otherwise it cancels its
+request, which opens the recovery again.
+
+## GET /v3/recovery/queue
+
+The key service fetches queued requests, the earliest opened recovery
+first. OAuth 2 token with the scope `puavo.recovery.kps`. Returns
+`requests` with `id`, `organisation_id`, `serial_number`, `bundle`,
+`return_public_key` and `approval`.
+
+## PUT /v3/recovery/requests/:id/result
+
+The key service answers a queued request. OAuth 2 token with the scope
+`puavo.recovery.kps`. Body: either `result`, or `error` with `code` and
+`message`. Returns `state`.

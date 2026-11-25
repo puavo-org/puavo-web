@@ -156,3 +156,31 @@ class InsufficientOAuth2Scope < JSONError
     401
   end
 end
+
+# Recovery exceptions
+class RecoveryRequestNotFound < NotFound
+end
+
+class CodeInUse < JSONError
+  def http_code
+    409
+  end
+end
+
+class WrongState < JSONError
+  def http_code
+    409
+  end
+end
+
+class DeviceWithoutSerialNumber < JSONError
+  def http_code
+    409
+  end
+end
+
+class UnsupportedDeviceType < JSONError
+  def http_code
+    409
+  end
+end

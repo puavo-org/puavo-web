@@ -225,5 +225,9 @@ class Root < PuavoSinatra
     use PuavoRest::Citrix
   end
 
+  if CONFIG['recovery']
+    use PuavoRest::Recoveries
+  end
+
 end
 end

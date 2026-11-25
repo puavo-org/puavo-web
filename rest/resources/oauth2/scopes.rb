@@ -39,6 +39,7 @@ BUILTIN_PUAVO_OAUTH2_SCOPES = %w[
   puavo.write.users
   puavo.write.devices
   puavo.write.boot_servers
+  puavo.recovery.kps
 ].to_set.freeze
 
 # The return value of clean_scopes()
