@@ -2,6 +2,7 @@ require "socket"
 require "yaml"
 require "puavo/etc"
 require 'openssl'
+require 'tempfile'
 
 
 fqdn = Addrinfo.getaddrinfo(Socket.gethostname, nil).first.getnameinfo.first
@@ -25,6 +26,13 @@ default_config = {
 
 
 if ENV['RACK_ENV'] == 'test' then
+  # Made at each run, so no private key is stored. Kept in a constant, so
+  # the file lasts as long as the process.
+  RECOVERY_APPROVAL_TEST_KEY = Tempfile.new(['recovery_approval', '.pem'])
+  RECOVERY_APPROVAL_TEST_KEY.write(
+    OpenSSL::PKey::EC.generate('prime256v1').to_pem)
+  RECOVERY_APPROVAL_TEST_KEY.close
+
   # XXX For testing system we use a strange configuration, where
   # XXX puavo-rest is simultaneously a bootserver and a cloud server.
   # XXX Here, PUAVO_ETC.ldap_dn == "uid=admin,o=puavo" that is not in
@@ -118,6 +126,11 @@ if ENV['RACK_ENV'] == 'test' then
       :password => PUAVO_ETC.ldap_password
     },
     "puavo_ca" => "http://localhost:8080",
+    'recovery' => {
+      'approval_issuer' => 'puavo-rest-test',
+      'approval_key_id' => 'recovery-approval-test',
+      'approval_private_key' => RECOVERY_APPROVAL_TEST_KEY.path,
+    },
     'branding' => {
       'copyright' => '© Opinsys',
       'copyright_year' => '2025',
