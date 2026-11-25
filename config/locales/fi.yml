@@ -917,6 +917,35 @@ fi:
       sync_deletion_1: "<strong>VAROITUS:</strong> Seuraavissa kouluissa on käytössä käyttäjien synkronoituja poistoja eri ulkoisiin järjestelmiin:"
       sync_deletion_2: "Tee ylläolevien koulujen käyttäjien poistoja (yksittäin tai massana) hyvin varovasti. Saatat poistaa enemmän kuin mitä aioit, kuten käyttäjien sähköpostitilit sisältöineen! "
 
+  # Device recovery
+  recoveries:
+    title: Etäpalautus
+    none: Etäpalautusta ei ole avattu. Avaa se valikosta, kun laitteen levyn avaus epäonnistui.
+    open: Avaa etäpalautus
+    open_confirm: Koodi avaa tämän laitteen salatun levyn. Avaa palautus vain, kun tiedät kuka laitteella on.
+    close: Sulje etäpalautus
+    opened: Palautus on avattu. Kerro koodi laitteella olevalle henkilölle.
+    closed: Palautus on suljettu.
+    state: Tila
+    code: Koodi
+    queue_position: Sija jonossa
+    opened_by: Avaaja
+    created_at: Avattu
+    expires_at: Voimassa
+    wrong_codes: Vääriä koodeja syötetty
+    states:
+      open: Odottaa laitetta
+      queued: Avainpalvelun jonossa
+      done: Avain valmiina laitteelle
+      failed: Epäonnistui
+    errors:
+      RecoveryRequestNotFound: Palautus on päättynyt.
+      DeviceWithoutSerialNumber: Laitteella ei ole sarjanumeroa.
+      Forbidden: Vain organisaation omistajat voivat avata palautuksen.
+      UnsupportedDeviceType: Etäpalautus ei ole käytettävissä tälle laitetyypille.
+      no_answer: Palautuspalvelu ei vastannut.
+      other: Palautuspalvelussa tapahtui virhe.
+
   # LDAP services
   ldap_services:
     index:

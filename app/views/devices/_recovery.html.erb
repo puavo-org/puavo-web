@@ -1,0 +1,50 @@
+<%= start_box t('recoveries.title') %>
+<% if @recovery_error %>
+  <p class="genericError"><%= @recovery_error %></p>
+<% end %>
+
+<% if @recovery %>
+  <table>
+    <tr>
+      <th><%= t('recoveries.state') %></th>
+      <td id="recovery_state">
+        <%= t("recoveries.states.#{ @recovery['state'] }") %>
+      </td>
+    </tr>
+    <% if @recovery['code'] %>
+    <tr>
+      <th><%= t('recoveries.code') %></th>
+      <td id="recovery_code">
+        <%= DeviceRecovery.readable_code(@recovery['code']) %>
+      </td>
+    </tr>
+    <% end %>
+    <% if @recovery['queue_position'] %>
+    <tr>
+      <th><%= t('recoveries.queue_position') %></th>
+      <td><%= @recovery['queue_position'] %></td>
+    </tr>
+    <% end %>
+    <tr>
+      <th><%= t('recoveries.opened_by') %></th>
+      <td><%= @recovery['opened_by'] %></td>
+    </tr>
+    <tr>
+      <th><%= t('recoveries.created_at') %></th>
+      <td><%= utc_timestamp_for_localization(
+                Time.iso8601(@recovery['created_at'])) %></td>
+    </tr>
+    <tr>
+      <th><%= t('recoveries.expires_at') %></th>
+      <td><%= utc_timestamp_for_localization(
+                Time.iso8601(@recovery['expires_at'])) %></td>
+    </tr>
+    <tr>
+      <th><%= t('recoveries.wrong_codes') %></th>
+      <td><%= @recovery['wrong_codes'] %></td>
+    </tr>
+  </table>
+<% elsif !@recovery_error %>
+  <p><%= t('recoveries.none') %></p>
+<% end %>
+<%= end_box %>

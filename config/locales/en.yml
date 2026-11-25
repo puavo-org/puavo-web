@@ -917,6 +917,35 @@ en:
       sync_deletion_1: "<strong>WARNING:</strong> The following schools have enabled synchronised user deletions to various external systems:"
       sync_deletion_2: "Perform user deletions (either individually or by en masse) in the above schools very carefully. You might end up deleting more than what you intended to, for example, user email accounts with their contents!"
 
+  # Device recovery
+  recoveries:
+    title: Remote recovery
+    none: No remote recovery is open. Open one from the menu when the device failed to unlock its disk.
+    open: Open remote recovery
+    open_confirm: The code opens the encrypted disk of this device. Open a recovery only when you know who is at the device.
+    close: Close remote recovery
+    opened: The recovery is open. Tell the code to the person at the device.
+    closed: The recovery is closed.
+    state: State
+    code: Code
+    queue_position: Place in queue
+    opened_by: Opened by
+    created_at: Opened
+    expires_at: Valid until
+    wrong_codes: Wrong codes entered
+    states:
+      open: Waiting for the device
+      queued: In the key service queue
+      done: Key ready for the device
+      failed: Failed
+    errors:
+      RecoveryRequestNotFound: The recovery has ended.
+      DeviceWithoutSerialNumber: The device has no serial number.
+      Forbidden: Only organisation owners can open a recovery.
+      UnsupportedDeviceType: Remote recovery is not available for this device type.
+      no_answer: The recovery service failed to answer.
+      other: The recovery service failed.
+
   # LDAP services
   ldap_services:
     index:

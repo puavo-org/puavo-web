@@ -273,12 +273,26 @@ Rails.application.routes.draw do
       match( 'devices/:id/clear_reset_mode' => 'devices#clear_reset_mode',
              :as => 'clear_reset_mode_device',
              :via => :put )
+
+      match( 'devices/:id/recovery' => 'devices#open_recovery',
+             :as => 'device_recovery',
+             :via => :post )
+
+      match( 'devices/:id/recovery' => 'devices#close_recovery',
+             :via => :delete )
     end
 
     match 'servers/:id/image' => 'servers#image', :as => 'image_server', :via => :get
     match 'servers/:id/raw_hardware_info' => 'servers#raw_hardware_info', :as => 'server_raw_hardware_info', :via => :get
     match( 'servers/:id/revoke_certificate' => 'servers#revoke_certificate',
            :as => 'revoke_certificate_server',
+           :via => :delete )
+
+    match( 'servers/:id/recovery' => 'servers#open_recovery',
+           :as => 'server_recovery',
+           :via => :post )
+
+    match( 'servers/:id/recovery' => 'servers#close_recovery',
            :via => :delete )
     resources :servers
 

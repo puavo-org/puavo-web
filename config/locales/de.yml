@@ -918,6 +918,35 @@ de:
       sync_deletion_1: "<strong>WARNUNG:</strong> Die folgenden Schulen haben synchronisierte Benutzerlöschungen für verschiedene externe Systeme aktiviert:"
       sync_deletion_2: "Führen Sie Benutzerlöschungen (entweder einzeln oder in Massen) in den oben genannten Schulen sehr sorgfältig durch. Sie könnten am Ende mehr löschen, als Sie beabsichtigt haben, zum Beispiel Benutzer-E-Mail-Konten mit ihren Inhalten!"
 
+  # Device recovery
+  recoveries:
+    title: Fernwiederherstellung
+    none: Keine Fernwiederherstellung ist geöffnet. Öffnen Sie eine im Menü, wenn das Gerät seine Festplatte nicht entsperren konnte.
+    open: Fernwiederherstellung öffnen
+    open_confirm: Der Code öffnet die verschlüsselte Festplatte dieses Geräts. Öffnen Sie eine Wiederherstellung nur, wenn Sie wissen, wer am Gerät ist.
+    close: Fernwiederherstellung schließen
+    opened: Die Wiederherstellung ist geöffnet. Teilen Sie der Person am Gerät den Code mit.
+    closed: Die Wiederherstellung ist geschlossen.
+    state: Status
+    code: Code
+    queue_position: Platz in der Warteschlange
+    opened_by: Geöffnet von
+    created_at: Geöffnet
+    expires_at: Gültig bis
+    wrong_codes: Falsche Codes eingegeben
+    states:
+      open: Wartet auf das Gerät
+      queued: In der Warteschlange des Schlüsseldienstes
+      done: Schlüssel für das Gerät bereit
+      failed: Fehlgeschlagen
+    errors:
+      RecoveryRequestNotFound: Die Wiederherstellung ist beendet.
+      DeviceWithoutSerialNumber: Das Gerät hat keine Seriennummer.
+      Forbidden: Nur Besitzer der Organisation können eine Wiederherstellung öffnen.
+      UnsupportedDeviceType: Die Fernwiederherstellung gibt es für diesen Gerätetyp nicht.
+      no_answer: Der Wiederherstellungsdienst hat nicht geantwortet.
+      other: Der Wiederherstellungsdienst ist fehlgeschlagen.
+
   # LDAP services
   ldap_services:
     index:
