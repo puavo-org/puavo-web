@@ -6,6 +6,10 @@
 
 <%= render partial: 'devices/hwinfo', locals: { rawInfo: @server.puavoDeviceHWInfo } %>
 
+<% if @permit_device_recovery %>
+<%= render partial: 'devices/recovery' %>
+<% end %>
+
 <%= start_box t('.automounts'), extraClass="fullWidth" %>
   <% if Array(@server.puavoExport).empty? %>
   <p class="empty"><%= t('.no_automounts') %></p>
@@ -43,6 +47,10 @@ toolbar do |tb|
             method: 'delete',
             danger: true,
             icon: 'cancel'
+  end
+
+  if @permit_device_recovery
+    add_recovery_link(tb, @recovery, server_recovery_path(@server))
   end
 end %>
 <% end %>

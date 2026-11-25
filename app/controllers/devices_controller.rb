@@ -6,6 +6,7 @@ require_relative '../../rest/lib/inventory.rb'
 class DevicesController < ApplicationController
   include Puavo::Inventory
   include Puavo::PuavomenuEditor
+  include RecoveryActions
 
   before_action :find_school
 
@@ -135,6 +136,8 @@ class DevicesController < ApplicationController
     @permit_device_deletion = is_owner? || current_user.has_admin_permission?(:delete_devices)
     @permit_device_reset = is_owner? || current_user.has_admin_permission?(:reset_devices)
     @permit_device_school_change = is_owner? || current_user.has_admin_permission?(:device_change_school)
+    @permit_device_recovery = is_owner? && DeviceRecovery.offered_for?(@device)
+    find_recovery(@device) if @permit_device_recovery
 
     @releases = get_releases
 
@@ -504,6 +507,16 @@ class DevicesController < ApplicationController
     end
   end
 
+  # POST /:school_id/devices/:id/recovery
+  def open_recovery
+    change_device_recovery(:open, t('recoveries.opened'))
+  end
+
+  # DELETE /:school_id/devices/:id/recovery
+  def close_recovery
+    change_device_recovery(:close, t('recoveries.closed'))
+  end
+
   # GET /:school_id/devices/:id/select_school
   def select_school
     @device = Device.find(params[:id])
@@ -746,6 +759,15 @@ class DevicesController < ApplicationController
       redirect_to devices_path(@school)
       return nil
     end
+  end
+
+  def change_device_recovery(action, notice)
+    return if redirected_nonowner_user?
+
+    @device = get_device(params[:id])
+    return if @device.nil?
+
+    change_recovery(@device, action, notice, device_path(@school, @device))
   end
 
   # Makes a list of possible new device types. Used on device index pages.

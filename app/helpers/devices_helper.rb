@@ -38,6 +38,28 @@ module DevicesHelper
     end
   end
 
+  # Adds the link that opens or closes the remote recovery of a laptop or
+  # a boot server.
+  # @param toolbar [Toolbar, Toolbar::Menu] where the link goes
+  # @param recovery [Hash, nil] the recovery of the host, or nil for none
+  # @param recovery_path [String] the path of the recovery of the host
+  def add_recovery_link(toolbar, recovery, recovery_path)
+    if recovery
+      toolbar.link t('recoveries.close'),
+                   href: recovery_path,
+                   method: 'delete',
+                   icon: 'cancel'
+      return
+    end
+
+    toolbar.link t('recoveries.open'),
+                 href: recovery_path,
+                 confirm: t('recoveries.open_confirm'),
+                 method: 'post',
+                 danger: true,
+                 icon: 'key'
+  end
+
   def self.get_device_attributes
     %w[
       authTimestamp

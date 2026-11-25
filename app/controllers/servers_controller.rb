@@ -2,6 +2,7 @@ require_relative '../../rest/lib/inventory.rb'
 
 class ServersController < ApplicationController
   include Puavo::Inventory
+  include RecoveryActions
 
   # GET /servers
   # GET /servers.xml
@@ -92,6 +93,9 @@ class ServersController < ApplicationController
     @fqdn = "#{@server.puavoHostname}.#{LdapOrganisation.current.puavoDomain}"
 
     @full_puavoconf = list_all_puavoconf_values(LdapOrganisation.current.puavoConf, nil, @server.puavoConf)
+
+    @permit_device_recovery = DeviceRecovery.offered_for?(@server)
+    find_recovery(@server) if @permit_device_recovery
 
     respond_to do |format|
       format.html # show.html.erb
@@ -270,6 +274,16 @@ class ServersController < ApplicationController
     end
   end
 
+  # POST /servers/:id/recovery
+  def open_recovery
+    change_server_recovery(:open, t('recoveries.opened'))
+  end
+
+  # DELETE /servers/:id/recovery
+  def close_recovery
+    change_server_recovery(:close, t('recoveries.closed'))
+  end
+
   private
     def server_params
       server = params.require(:server).permit(
@@ -353,6 +367,15 @@ class ServersController < ApplicationController
         redirect_to servers_path
         return nil
       end
+    end
+
+    def change_server_recovery(action, notice)
+      return if redirected_nonowner_user?
+
+      @server = get_server(params[:id])
+      return if @server.nil?
+
+      change_recovery(@server, action, notice, server_path(@server))
     end
 
 end

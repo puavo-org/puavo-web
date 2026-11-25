@@ -12,6 +12,10 @@
 <%= render partial: 'devices/hwinfo', locals: { rawInfo: @device.puavoDeviceHWInfo } %>
 <% end %>
 
+<% if @permit_device_recovery %>
+<%= render partial: 'devices/recovery' %>
+<% end %>
+
 <hr>
 
 <% content_for :page_tools do %>
@@ -53,6 +57,12 @@ toolbar do |tb|
     end
 
     menu.separator
+
+    if @permit_device_recovery
+      add_recovery_link(menu, @recovery,
+                        device_recovery_path(@school, @device))
+      menu.separator
+    end
 
     if @permit_device_deletion
       if @device.hostCertificates
